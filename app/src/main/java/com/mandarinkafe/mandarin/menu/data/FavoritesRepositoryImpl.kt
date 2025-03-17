@@ -14,4 +14,9 @@ class FavoritesRepositoryImpl(private val localStorage: LocalStorage) : Favorite
     override fun getFavoriteIds() : List<String> {
         return localStorage.getSavedFavorites().toList()
     }
+
+
+    override fun checkIfFavorite(itemId: String): Boolean {
+        return getFavoriteIds().contains(itemId)
+    }
 }

@@ -48,7 +48,7 @@
         <item name="android:textSize">@dimen/text_size_16</item>
     </style>
 
-    <style name="PlaceholderButtonStyle">
+        <style name="PlaceholderButtonStyle">
         <item name="android:textAllCaps">false</item>
         <item name="android:backgroundTint">@color/orange</item>
         <item name="android:textColor">@color/white</item>
@@ -61,4 +61,11 @@
     <style name="CustomTabTextStyle" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">true</item>
     </style>
+
+    <style name="CustomBottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="android:colorBackground">@color/app_background_color</item>
+        <item name="floatingActionButtonStyle">@style/Widget.MaterialComponents.FloatingActionButton</item>
+      </style>
+
+
 </resources>

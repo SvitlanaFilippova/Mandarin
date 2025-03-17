@@ -36,9 +36,9 @@
 
     <fragment
         android:id="@+id/mealDetails"
-        android:name="com.mandarinkafe.mandarin.meal_details.ui.MealDetailsFragment"
+        android:name="com.mandarinkafe.mandarin.edit_meal.ui.EditMealBSFragment"
         android:label="fragment_meal_details"
-        tools:layout="@layout/fragment_meal_details">
+        tools:layout="@layout/fragment_edit_meal">
         <action
             android:id="@+id/action_mealDetails_to_cartFragment"
             app:destination="@id/cartFragment" />

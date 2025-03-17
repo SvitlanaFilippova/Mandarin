@@ -37,4 +37,8 @@
     <dimen name="placeholder_button_size_200">200dp</dimen>
     <dimen name="edit_meal_button_32">32dp</dimen>
     <dimen name="toggle_favorite_button_28">28dp</dimen>
+    <dimen name="bottom_sheet_corner_radius_16">16dp</dimen>
+    <dimen name="bs_divider_shape_radius_44">44dp</dimen>
+    <dimen name="bs_divider_width_48">48dp</dimen>
+    <dimen name="bs_divider_height_4">4dp</dimen>
 </resources>

@@ -6,6 +6,7 @@ interface FavoritesRepository {
     fun addToFavorites(meal: Meal)
     fun removeFromFavorites(meal: Meal)
     fun getFavoriteIds() : List<String>
+    fun checkIfFavorite(itemId: String): Boolean
 
 }
 

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui
+package com.mandarinkafe.mandarin.menu.presentation
 
 import android.view.LayoutInflater
 import android.view.View

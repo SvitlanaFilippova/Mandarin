@@ -11,4 +11,8 @@ class FavoritesInteractorImpl(private val repository: FavoritesRepository): Favo
     override fun removeFromFavorites(meal: Meal) {
         repository.removeFromFavorites(meal)
     }
+
+    override fun checkIfFavorite(itemId: String): Boolean {
+        return repository.checkIfFavorite(itemId)
+    }
 }

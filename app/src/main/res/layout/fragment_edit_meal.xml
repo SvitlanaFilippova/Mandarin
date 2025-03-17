@@ -1,127 +1,105 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".meal_details.ui.MealDetailsFragment">
+    android:orientation="vertical"
+    tools:context=".edit_meal.ui.EditMealBSFragment">
 
-    <ImageView
+    <View
+        android:layout_width="@dimen/bs_divider_width_48"
+        android:layout_height="@dimen/bs_divider_height_4"
+        android:layout_gravity="center"
+        android:layout_marginVertical="@dimen/small_margin_8"
+        android:background="@drawable/shape_rect_with_round_corners" />
+
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:contentDescription="@null"
-        android:scaleType="centerCrop"
-        android:src="@drawable/zigzag" />
+        android:layout_height="@dimen/head_toolbar_height_56"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/standart_margin_16">
 
+        <!-- Кнопка назад -->
+        <ImageButton
+            android:id="@+id/ib_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/back"
+            app:srcCompat="@drawable/ic_arrow_back"
+            app:tint="@color/white" />
 
-    <!-- AppBarLayout -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/transparent"
-        android:paddingHorizontal="0dp">
+        <!-- Пустое пространство -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/head_toolbar_height_56"
-            android:background="@color/orange_transparent_50"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="@dimen/standart_margin_16">
+        <!-- Текст по центру -->
+        <TextView
+            android:id="@+id/tv_meal_title_top"
+            style="@style/RegularTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="2"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="Маргарита" />
 
-            <!-- Кнопка назад -->
-            <ImageButton
-                android:id="@+id/ib_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/back"
-                app:srcCompat="@drawable/ic_arrow_back"
-                app:tint="@color/black" />
+        <!-- Пустое пространство -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent" />
 
-            <!-- Пустое пространство -->
-            <View
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@android:color/transparent" />
+        <!-- Правая кнопка -->
+        <ImageButton
+            android:id="@+id/iv_add_to_favorite"
+            android:layout_width="@dimen/toggle_favorite_button_28"
+            android:layout_height="@dimen/toggle_favorite_button_28"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/add_to_favorite"
+            app:srcCompat="@drawable/ic_favorite_inactive"
+            app:tint="@color/white" />
 
-            <!-- Текст по центру -->
-            <TextView
-                android:id="@+id/tv_meal_title_top"
-                style="@style/RegularTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:maxLines="1"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:text="Маргарита" />
+    </LinearLayout>
 
-            <!-- Пустое пространство -->
-            <View
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@android:color/transparent" />
-
-            <!-- Правая кнопка -->
-            <ImageButton
-                android:id="@+id/iv_add_to_favorite"
-                android:layout_width="@dimen/toggle_favorite_button_28"
-                android:layout_height="@dimen/toggle_favorite_button_28"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/add_to_favorite"
-                app:srcCompat="@drawable/ic_favorite_inactive"
-                app:tint="@color/black" />
-
-        </LinearLayout>
-
-    </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Основное содержимое (RecyclerView, и прочее) -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/transparent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:id="@+id/ll_collapsing_container"
+            android:background="@android:color/transparent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dr_cursor_wight_1"
             android:orientation="vertical">
 
-            <!-- Изображение блюда -->
-            <ImageView
-                android:id="@+id/iv_meal_picture"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/mealdetails_image_width_250"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/standart_margin_16"
-                android:layout_marginBottom="@dimen/big_margin_32"
-                android:adjustViewBounds="true"
-
-                android:contentDescription="@null"
-                tools:srcCompat="@tools:sample/avatars" />
-
-            <!-- Ингредиенты -->
             <TextView
                 android:id="@+id/tv_meal_ingredients"
                 style="@style/RegularTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/small_margin_8"
-                android:background="@color/app_black_transparent_50"
                 tools:text="Моцарелла, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/app_black_transparent_50"
-                android:orientation="horizontal"
+                  android:orientation="horizontal"
                 android:padding="@dimen/small_margin_8">
                 <!-- Вес -->
                 <TextView
@@ -157,10 +135,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="0dp"
-                android:background="@color/app_black_transparent_50"
                 android:paddingHorizontal="@dimen/small_margin_8"
                 android:paddingVertical="@dimen/standart_margin_16"
                 android:visibility="visible"
+                android:background="@android:color/transparent"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:tabIndicatorHeight="0dp"
                 app:tabMode="scrollable"
@@ -173,7 +151,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:background="@color/app_black_transparent_50"
                 android:padding="@dimen/small_margin_8"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -200,4 +177,4 @@
         app:layout_anchorGravity="bottom|center_horizontal" />
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

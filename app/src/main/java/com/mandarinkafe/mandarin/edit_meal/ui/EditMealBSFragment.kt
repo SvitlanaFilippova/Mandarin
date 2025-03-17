@@ -1,42 +1,34 @@
-package com.mandarinkafe.mandarin.meal_details.ui
+package com.mandarinkafe.mandarin.edit_meal.ui
 
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.bundle.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.core.ui.MainActivity
-import com.mandarinkafe.mandarin.databinding.FragmentMealDetailsBinding
+import com.mandarinkafe.mandarin.databinding.FragmentEditMealBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.mockPizzaAddsCheeseList
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.java.KoinJavaComponent.getKoin
 
-
-class MealDetailsFragment : Fragment() {
+class EditMealBSFragment : BottomSheetDialogFragment() {
     private val gson: Gson by lazy { Gson() }
-    private var _binding: FragmentMealDetailsBinding? = null
+    private var _binding: FragmentEditMealBinding? = null
     private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
-    private val viewModel by viewModel<MealDetailsViewModel> { parametersOf(meal) }
-    private val meal: Meal by lazy {
-        gson.fromJson(
-            requireArguments().getString(MEAL),
-            Meal::class.java
-        )
-    }
+    private val viewModel by viewModel<EditMealViewModel> { parametersOf(meal) }
+    private var _meal: Meal? = null
+    private val meal get() = requireNotNull(_meal!!) { "meal wasn't initialized" }
     private var mealPrice = 0
 
     private var addsCategoriesPizza = arrayListOf<String>(
@@ -49,25 +41,42 @@ class MealDetailsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentMealDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentEditMealBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun getTheme(): Int = R.style.CustomBottomSheetDialog
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _meal = gson.fromJson(
+            requireArguments().getString(MEAL),
+            Meal::class.java
+        )
+
         setupRecyclerView()
         setMealData()
         setTabs(addsCategoriesPizza)
 
+        viewModel.checkIfFavorite()
+
         viewModel.getIsFavoriteLiveData().observe(viewLifecycleOwner) { isFavorite ->
             toggleFavorite(isFavorite)
         }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        _meal = gson.fromJson(
+            requireArguments().getString(MEAL),
+            Meal::class.java
+        )
     }
 
     private fun setMealData() {
-        val cornerRadius =
-            resources.getDimensionPixelSize(R.dimen.image_corner_radius_2)
         mealPrice = meal.price
+
         binding.apply {
             tvMealTitleTop.text = meal.name
             tvMealIngredients.text = meal.description
@@ -76,38 +85,26 @@ class MealDetailsFragment : Fragment() {
                 text = getString(R.string.meal_weight_template, meal.weight)
             }
 
-
             tvMealPriceOriginal.text = getString(R.string.meal_price_template, meal.price)
 
-
-            Glide.with(requireContext())
-                .load(meal.imageUrl)
-                .centerCrop()
-                .transform(RoundedCorners(cornerRadius))
-                .placeholder(R.drawable.logo_orange)
-                .into(ivMealPicture)
-
-            fabAddToCartPrice.text = getString(
-                R.string.meal_price_template,
-                mealPrice
-            )
-
-
-            ivMealPicture.animation = AnimationUtils.loadAnimation(context, R.anim.fade_in)
-            ivMealPicture.animate()
-
             ibBack.setOnClickListener {
-                findNavController().navigateUp()
+                dismiss()
             }
-            fabAddToCartPrice.setOnClickListener {
-                onCartButtonClick()
+
+            fabAddToCartPrice.apply {
+                text = getString(
+                    R.string.meal_price_template,
+                    mealPrice
+                )
+                setOnClickListener {
+                    onCartButtonClick()
+                }
             }
             ivAddToFavorite.setOnClickListener {
                 viewModel.toggleFavorite()
             }
         }
     }
-
 
     private fun onCartButtonClick() {
         Toast.makeText(

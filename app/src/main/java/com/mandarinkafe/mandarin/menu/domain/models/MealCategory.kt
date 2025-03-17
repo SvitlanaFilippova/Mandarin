@@ -20,14 +20,14 @@ val mockMenuData = arrayListOf<MealCategory>(
         subCategories = listOf(
             MealCategory(
                 id = "d3872541-5a16-4c21-b9e7-c8ab8912fd36",
-                name = "Пицца 35см",
+                name = "Классическая",
                 meals = mockPizza35List,
                 subCategories = null,
                 tabIcon = null
             ),
             MealCategory(
                 id = "d3872541-5a16-4c21-b9e7-c8ab8912fd36",
-                name = "Римская пицца",
+                name = "Римская",
                 meals = mockPizzaRimList,
                 subCategories = null,
                 tabIcon = null
@@ -48,7 +48,7 @@ val mockMenuData = arrayListOf<MealCategory>(
             ),
             MealCategory(
                 id = "903872541-5a16-3533-b9e7-c8ab8912fd32",
-                name = "Роллы-маки",
+                name = "Маки-суши",
                 meals = mockMakiList,
                 subCategories = null,
                 tabIcon = null

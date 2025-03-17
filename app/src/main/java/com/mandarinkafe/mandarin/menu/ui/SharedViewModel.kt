@@ -45,10 +45,12 @@ class SharedViewModel(
 
 
     fun toggleFavorite(meal: Meal) {
-        if (meal.isFavorite) {
-            favoritesInteractor.removeFromFavorites(meal)
-        } else {
-            favoritesInteractor.addToFavorites(meal)
+        viewModelScope.launch {
+            if (meal.isFavorite) {
+                favoritesInteractor.removeFromFavorites(meal)
+            } else {
+                favoritesInteractor.addToFavorites(meal)
+            }
         }
     }
 

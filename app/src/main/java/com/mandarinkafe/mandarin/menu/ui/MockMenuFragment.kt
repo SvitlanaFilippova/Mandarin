@@ -23,10 +23,12 @@ import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.core.ui.MainActivity
 import com.mandarinkafe.mandarin.core.ui.RVItem
 import com.mandarinkafe.mandarin.databinding.FragmentMenuBinding
-import com.mandarinkafe.mandarin.meal_details.ui.MealDetailsFragment
+import com.mandarinkafe.mandarin.edit_meal.ui.EditMealBSFragment
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockBannersList
+import com.mandarinkafe.mandarin.menu.presentation.BannerAdapter
+import com.mandarinkafe.mandarin.menu.presentation.MenuAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -343,7 +345,7 @@ class MockMenuFragment : Fragment() {
     private fun showMealDetails(meal: Meal) {
         findNavController().navigate(
             R.id.action_mockMenuFragment_to_mealDetails,
-            MealDetailsFragment.createArgs(meal)
+            EditMealBSFragment.createArgs(meal)
         )
     }
 
@@ -353,7 +355,7 @@ class MockMenuFragment : Fragment() {
         _menuAdapter = MenuAdapter(object : MenuAdapter.MealClickListener {
             override fun onMealClick(meal: Meal) {
                 if (clickDebounce()) {
-                    if (meal.categoryId == "pizza") showMealDetails(meal)
+                    if (meal.isEditable) showMealDetails(meal)
                 }
             }
 

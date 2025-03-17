@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui
+package com.mandarinkafe.mandarin.menu.presentation
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -17,7 +17,7 @@ import com.mandarinkafe.mandarin.databinding.ListMenuItemBinding
 import com.mandarinkafe.mandarin.databinding.ListMenuSubHeaderBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
-import com.mandarinkafe.mandarin.menu.ui.MenuAdapter.MealClickListener
+import com.mandarinkafe.mandarin.menu.presentation.MenuAdapter.MealClickListener
 
 
 class MenuAdapter(

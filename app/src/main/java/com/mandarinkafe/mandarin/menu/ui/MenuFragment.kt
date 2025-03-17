@@ -25,10 +25,12 @@ import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.core.ui.MainActivity
 import com.mandarinkafe.mandarin.core.ui.RVItem
 import com.mandarinkafe.mandarin.databinding.FragmentMenuBinding
-import com.mandarinkafe.mandarin.meal_details.ui.MealDetailsFragment
+import com.mandarinkafe.mandarin.edit_meal.ui.EditMealBSFragment
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockBannersList
+import com.mandarinkafe.mandarin.menu.presentation.BannerAdapter
+import com.mandarinkafe.mandarin.menu.presentation.MenuAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -51,6 +53,7 @@ class MenuFragment : Fragment() {
 
     private var menuItems: List<RVItem>? = listOf()
 
+    val bottomSheetEditMeal = EditMealBSFragment()
 
     private var isClickAllowed = true
     private var isTabSyncing = false
@@ -88,7 +91,6 @@ class MenuFragment : Fragment() {
 
 
     }
-
 
 
     override fun onResume() {
@@ -289,10 +291,12 @@ class MenuFragment : Fragment() {
     }
 
     private fun showMealDetails(item: Meal) {
-        findNavController().navigate(
-            R.id.action_menuFragment_to_mealDetails,
-            MealDetailsFragment.createArgs(item)
-        )
+//        findNavController().navigate(
+//            R.id.action_menuFragment_to_mealDetails,
+//            EditMealBSFragment.createArgs(item)
+//        )
+        bottomSheetEditMeal.arguments = EditMealBSFragment.createArgs(item)
+        bottomSheetEditMeal.show(parentFragmentManager, "Редактирование блюда")
     }
 
     private fun renderMenuScreen(state: ScreenState) {
@@ -324,7 +328,7 @@ class MenuFragment : Fragment() {
         _menuAdapter = MenuAdapter(object : MenuAdapter.MealClickListener {
             override fun onMealClick(meal: Meal) {
                 if (clickDebounce()) {
-                    if (meal.categoryId == "pizza") showMealDetails(meal)
+                    if (meal.isEditable) showMealDetails(meal)
                 }
             }
 

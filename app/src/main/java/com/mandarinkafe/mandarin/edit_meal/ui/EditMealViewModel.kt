@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.meal_details.ui
+package com.mandarinkafe.mandarin.edit_meal.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,7 +8,7 @@ import com.mandarinkafe.mandarin.menu.domain.api.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import kotlinx.coroutines.launch
 
-class MealDetailsViewModel(
+class EditMealViewModel(
     private var meal: Meal,
     private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
@@ -16,6 +16,10 @@ class MealDetailsViewModel(
     private var isFavoriteLiveData = MutableLiveData<Boolean>()
     fun getIsFavoriteLiveData(): LiveData<Boolean> {
         return isFavoriteLiveData
+    }
+
+    fun checkIfFavorite() {
+        isFavoriteLiveData.value = favoritesInteractor.checkIfFavorite(meal.id)
     }
 
     fun toggleFavorite() {
