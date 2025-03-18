@@ -1,20 +1,20 @@
-package com.mandarinkafe.mandarin.ui
+package com.mandarinkafe.mandarin.core.ui
 
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.navigation.NavigationView
-import androidx.core.content.ContextCompat
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.cart.CartFragment
 import com.mandarinkafe.mandarin.databinding.ActivityMainBinding
-import com.mandarinkafe.mandarin.ui.cart.CartFragment
+import com.mandarinkafe.mandarin.menu.ui.SharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
     private val viewModel by viewModel<SharedViewModel>()
@@ -45,8 +45,9 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.container_view) as NavHostFragment? ?: return
         val navController = host.navController
         _appBarConfiguration = AppBarConfiguration(
-            navController.graph, drawerLayout
+            navController.graph
         )
+        binding.bnvMain.setupWithNavController(navController)
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.appBarMain.btCart.setOnClickListener {
             navController.navigate(

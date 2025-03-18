@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.ui.favorites
+package com.mandarinkafe.mandarin.favorites
 
 import android.os.Bundle
 import android.view.LayoutInflater

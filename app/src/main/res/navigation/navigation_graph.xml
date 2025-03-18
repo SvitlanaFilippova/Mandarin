@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_menuFragment_to_mockMenuFragment"
             app:destination="@id/mockMenuFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_favoritesFragment2"
+            app:destination="@id/favoritesFragment" />
     </fragment>
 
     <fragment
@@ -64,5 +67,10 @@
             android:id="@+id/action_mockMenuFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.mandarinkafe.mandarin.favorites.FavoritesFragment"
+        android:label="fragment_favorites"
+        tools:layout="@layout/fragment_favorites" />
 
 </navigation>
