@@ -7,42 +7,62 @@
 
     <fragment
         android:id="@+id/menuFragment"
-        android:name="com.mandarinkafe.mandarin.ui.menu.MenuFragment"
+        android:name="com.mandarinkafe.mandarin.menu.ui.MenuFragment"
         android:label="fragment_menu"
 
-        tools:layout="@layout/fragment_menu"> 
-   <action
+        tools:layout="@layout/fragment_menu">
+        <action
             android:id="@+id/action_menuFragment_to_mealDetails"
             app:destination="@id/mealDetails"
-            app:enterAnim="@anim/slide_in_right"
-          />
-</fragment>
+            app:enterAnim="@anim/slide_up" />
+
+        <action
+            android:id="@+id/action_menuFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_deliveryFragment"
+            app:destination="@id/deliveryFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mockMenuFragment"
+            app:destination="@id/mockMenuFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/cartFragment"
-        android:name="com.mandarinkafe.mandarin.ui.cart.CartFragment"
+        android:name="com.mandarinkafe.mandarin.cart.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart" />
 
-    
+
     <fragment
         android:id="@+id/mealDetails"
-        android:name="com.mandarinkafe.mandarin.ui.meal_details.MealDetailsFragment"
+        android:name="com.mandarinkafe.mandarin.edit_meal.ui.EditMealBSFragment"
         android:label="fragment_meal_details"
-        tools:layout="@layout/fragment_meal_details" />
-    <activity
-        android:id="@+id/mainActivity"
-        android:name="com.mandarinkafe.mandarin.ui.MainActivity"
-        android:label="app_bar_main"
-        tools:layout="@layout/app_bar_main" />
+        tools:layout="@layout/fragment_edit_meal">
+        <action
+            android:id="@+id/action_mealDetails_to_cartFragment"
+            app:destination="@id/cartFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/deliveryFragment"
-        android:name="com.mandarinkafe.mandarin.ui.delivery.DeliveryFragment"
+        android:name="com.mandarinkafe.mandarin.delivery.DeliveryFragment"
         android:label="fragment_delivery"
-        tools:layout="@layout/fragment_delivery" />
+        tools:layout="@layout/fragment_delivery">
+        <action
+            android:id="@+id/action_deliveryFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
+    </fragment>
     <fragment
-        android:id="@+id/favoritesFragment2"
-        android:name="com.mandarinkafe.mandarin.ui.favorites.FavoritesFragment"
-        android:label="fragment_favorites"
-        tools:layout="@layout/fragment_favorites" />
+        android:id="@+id/mockMenuFragment"
+        android:name="com.mandarinkafe.mandarin.menu.ui.MockMenuFragment"
+        android:label="MockMenuFragment" >
+        <action
+            android:id="@+id/action_mockMenuFragment_to_mealDetails"
+            app:destination="@id/mealDetails" />
+        <action
+            android:id="@+id/action_mockMenuFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
+    </fragment>
 
 </navigation>

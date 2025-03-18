@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.2"
+agp = "8.9.0"
 fragmentKtx = "1.8.5"
 glide = "4.16.0"
 koinAndroid = "4.0.0"
@@ -23,6 +23,9 @@ media3CommonKtx = "1.4.1"
 coordinatorlayout = "1.2.0"
 
 [libraries]
+adapterdelegates-dsl = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl:4.3.2"
+adapterdelegates-dsl-viewbinding = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl-viewbinding:4.3.2"
+circleindicator = "me.relex:circleindicator:2.1.6"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
@@ -50,4 +53,5 @@ androidx-coordinatorlayout = { group = "androidx.coordinatorlayout", name = "coo
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+navigation-safeargs-kotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref ="navigationFragment" }
 

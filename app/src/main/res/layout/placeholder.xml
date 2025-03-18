@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/big_margin_24">
+
+    <ImageView
+        android:id="@+id/iv_placeholder_image"
+        android:layout_width="@dimen/placeholder_image_size_120"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/standart_margin_16"
+        android:adjustViewBounds="true"
+        android:contentDescription="@null"
+        android:src="@drawable/logo_orange" />
+
+    <TextView
+        android:id="@+id/tv_placeholder_message"
+        style="@style/RegularTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        tools:text="@string/loading_error_template" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/bv_placeholder_retry"
+        style="@style/PlaceholderButtonStyle"
+        android:layout_width="@dimen/placeholder_button_size_200"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/standart_margin_16"
+        android:text="@string/placeholder_retry" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/bv_placeholder_call"
+        style="@style/PlaceholderButtonStyle"
+        android:layout_width="@dimen/placeholder_button_size_200"
+        android:layout_height="wrap_content"
+        app:tabIconTint="@color/white"
+        app:icon="@drawable/ic_call"
+        android:text="@string/placeholder_call" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/bv_placeholder_mock_menu"
+        style="@style/PlaceholderButtonStyle"
+        android:layout_width="@dimen/placeholder_button_size_200"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/standart_margin_16"
+        app:tabIconTint="@color/white"
+        android:text="Мок меню"
+        android:visibility="gone"/>
+</LinearLayout>

@@ -6,12 +6,14 @@
     style="@style/MealTitleStyle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
+    android:layout_gravity="center_vertical"
     android:ellipsize="end"
     android:maxLines="1"
-    android:padding="@dimen/standart_margin_16"
+    android:paddingHorizontal="@dimen/standart_margin_16"
+    android:paddingVertical="@dimen/small_margin_8"
+    android:textAllCaps="true"
     android:textSize="@dimen/big_text_24"
     android:textStyle="bold"
-    tools:text="ПИЦЦА" />
+    tools:text="Пицца" />
 
 

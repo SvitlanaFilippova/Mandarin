@@ -1,52 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="@dimen/standart_margin_16"
-    android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:layout_marginBottom="@dimen/small_margin_8"
+    android:animateLayoutChanges="true"
+    android:paddingHorizontal="@dimen/small_margin_8">
 
-    <ImageView
-        android:id="@+id/iv_meal_picture"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/small_meal_image_96"
-        android:layout_marginHorizontal="@dimen/small_margin_8"
-        android:background="@color/grey_transparent_10"
-        android:contentDescription="@null"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
 
-    <!-- Заголовок -->
     <TextView
         android:id="@+id/tv_meal_title"
         style="@style/RegularTextStyle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:maxLines="2"
+        android:layout_weight="1"
         android:ellipsize="end"
         android:gravity="center_horizontal"
+        android:maxLines="2"
         android:textSize="@dimen/regular_text_size_14"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_meal_picture"
-        app:layout_constraintTop_toTopOf="@id/iv_meal_picture"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="Охотничьи колбаски, 60г" />
 
     <TextView
         android:id="@+id/tv_meal_price"
-        style="@style/MealPriceStyle"
-        android:layout_width="match_parent"
+        style="@style/RegularTextStyle"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
+        android:layout_marginEnd="@dimen/standart_margin_16"
+        android:layout_weight="1"
         android:gravity="center_horizontal"
-        android:maxLines="1"
         android:textSize="@dimen/regular_text_size_14"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/bt_cart_plus"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="visible"
+        tools:text="135 ₽" />
 
+
+    <!-- Поле с информацией о количестве данного товара в корзин -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/background_for_cart_info"
+        style="@style/ToCartButtonsBackgroundStyle"
+        android:layout_width="@dimen/to_cart_button_big_120"
+        android:layout_height="0dp"
+        android:clickable="false"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/bt_cart_plus"
+        app:layout_constraintEnd_toEndOf="@id/bt_cart_plus"
+        app:layout_constraintTop_toTopOf="@id/bt_cart_plus" />
+
+
+    <TextView
+        android:id="@+id/tv_number_in_cart"
+        style="@style/CartButtonSmallTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/cntr_of_background_bt"
+        app:layout_constraintEnd_toStartOf="@id/bt_cart_plus"
+        app:layout_constraintStart_toEndOf="@id/bt_cart_minus"
+        tools:text="1 шт" />
+
+    <View
+        android:id="@+id/cntr_of_background_bt"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        app:layout_constraintBottom_toBottomOf="@id/bt_cart_plus"
+        app:layout_constraintEnd_toStartOf="@id/bt_cart_plus"
+        app:layout_constraintStart_toEndOf="@id/bt_cart_minus"
+        app:layout_constraintTop_toTopOf="@id/bt_cart_plus" />
+
+    <TextView
+        android:id="@+id/tv_total_price_in_cart"
+        style="@style/CartButtonSmallTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textColor="@color/white_transparent_75"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/bt_cart_plus"
+        app:layout_constraintStart_toEndOf="@id/bt_cart_minus"
+        app:layout_constraintTop_toTopOf="@id/cntr_of_background_bt"
+        tools:text="138 ₽" />
+
+    <!-- Кнопка уменьшения количества -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/bt_cart_minus"
+        style="@style/ToCartButtonStyle"
+        android:layout_width="@dimen/plus_cart_buttons_small_32"
+        android:layout_height="@dimen/to_cart_button_small_48"
+        android:padding="0dp"
+        android:text="@string/minus"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/bt_cart_plus"
+        app:layout_constraintStart_toStartOf="@id/background_for_cart_info"
+        app:layout_constraintTop_toTopOf="@id/bt_cart_plus" />
+
+    <!-- Кнопка увеличения количества -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/bt_cart_plus"
+        style="@style/ToCartButtonStyle"
+        android:layout_width="@dimen/plus_cart_buttons_small_32"
+        android:layout_height="@dimen/to_cart_button_small_48"
+        android:padding="0dp"
+        android:text="@string/plus"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_meal_picture"
-        app:layout_constraintTop_toTopOf="@id/iv_meal_picture"
-        tools:text="119 ₽" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-</LinearLayout>
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_extra_cart_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="background_for_cart_info, bt_cart_minus, tv_total_price_in_cart, tv_number_in_cart" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dr_cursor_wight_1"
+        android:background="@color/grey_transparent_10"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

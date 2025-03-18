@@ -25,8 +25,8 @@
 
             <ImageView
                 android:id="@+id/recommend_picture_in_card"
-                android:layout_width="@dimen/meal_image_120"
-                android:layout_height="@dimen/meal_image_120"
+                android:layout_width="@dimen/meal_image_136"
+                android:layout_height="@dimen/meal_image_136"
                 tools:srcCompat="@tools:sample/avatars" />
 
             <TextView
@@ -49,7 +49,7 @@
 
             <Button
                 android:id="@+id/price_recommendMeal_in_card"
-                style="@style/CartButtonStyle"
+                style="@style/ToCartButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/standart_margin_16"

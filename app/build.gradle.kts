@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.navigation.safeargs.kotlin)
 }
 
 android {
@@ -40,12 +41,17 @@ android {
 }
 
 dependencies {
+
+    implementation(libs.adapterdelegates.dsl)// AdapterDelegates
+    implementation(libs.adapterdelegates.dsl.viewbinding)//  модуль AdapterDelegates для работы с ViewBinding
+
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.viewpager2)
     implementation(libs.koin.android)
     implementation(libs.glide)
+    implementation(libs.circleindicator) //DotsIndicator
     implementation(libs.androidx.coordinatorlayout)
     annotationProcessor(libs.compiler)
     implementation(libs.retrofit)

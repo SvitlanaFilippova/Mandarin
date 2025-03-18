@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tv_category_title"
+    style="@style/MealTitleStyle"
+    android:layout_width="wrap_content"
+    android:textAllCaps="false"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:ellipsize="end"
+    android:maxLines="1"
+    android:paddingHorizontal="@dimen/standart_margin_16"
+    android:layout_marginBottom="@dimen/small_margin_8"
+    android:textSize="@dimen/big_text_24"
+    android:textStyle="bold"
+    tools:text="Пицца 35 см" />
+
+

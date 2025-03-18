@@ -1,14 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.delivery.DeliveryFragment">
+    android:orientation="vertical"
+    tools:context=".delivery.DeliveryFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Токен API"
+        android:textColor="@color/white"/>
 
-</FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_token"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="flKMASZ34535sgdsrhgLFJ456NA687u67556ZEDF" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/standart_margin_16"
+        android:layout_height="wrap_content"
+        android:text="Рестораны"
+        android:textColor="@color/white"/>
+
+
+    <TextView
+        android:id="@+id/tv_rests"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="flKMASZ34535sgdsrhgLFJ456NA687u67556ZEDF" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/standart_margin_16"
+        android:layout_height="wrap_content"
+        android:text="Ответ на запрос меню"
+        android:textColor="@color/white"/>
+
+
+    <TextView
+        android:id="@+id/tv_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="flKMASZ34535sgdsrhgLFJ456NA687u67556ZEDF" />
+
+
+</LinearLayout>

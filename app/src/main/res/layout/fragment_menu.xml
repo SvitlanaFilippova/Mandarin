@@ -4,9 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="@dimen/small_margin_8"
-    tools:context=".ui.menu.MenuFragment">
+    tools:context=".menu.ui.MenuFragment">
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="@dimen/placeholder_image_size_120"
+        android:layout_height="@dimen/placeholder_image_size_120"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/orange_transparent_50"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/placeholder"
+        layout="@layout/placeholder" />
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbarlayout_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
@@ -21,7 +34,6 @@
             android:layout_marginTop="@dimen/small_margin_8"
             android:background="@drawable/shape_rectangle_with_radius_8"
             android:orientation="horizontal"
-
             app:layout_scrollFlags="scroll|enterAlways">
 
             <ImageView
@@ -65,15 +77,15 @@
                 app:tint="@color/white" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/iv_banner"
+
+        <!-- ViewPager для баннеров -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager_banners"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small_margin_8"
-            android:adjustViewBounds="true"
-            android:contentDescription="@null"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:srcCompat="@drawable/banner" />
+            tools:listitem="@layout/item_banner" />
 
 
         <com.google.android.material.tabs.TabLayout
@@ -83,11 +95,13 @@
             android:layout_marginBottom="0dp"
             android:background="@android:color/transparent"
             app:layout_scrollFlags="scroll|enterAlways"
+
             app:tabIconTint="@color/tab_icon_tint"
             app:tabIndicatorHeight="0dp"
             app:tabMode="scrollable"
             app:tabRippleColor="@android:color/transparent"
             app:tabSelectedTextColor="@color/orange"
+            app:tabTextAppearance="@style/CustomTabTextStyle"
             app:tabTextColor="@color/white" />
 
         <com.google.android.material.tabs.TabLayout
@@ -96,11 +110,11 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="0dp"
             android:background="@color/app_background_color"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_scrollFlags="scroll|enterAlways"
             app:tabIndicatorHeight="0dp"
             app:tabMode="scrollable"
-            app:tabRippleColor="@android:color/transparent"
+                app:tabRippleColor="@android:color/transparent"
             app:tabSelectedTextColor="@color/orange"
             app:tabTextColor="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>

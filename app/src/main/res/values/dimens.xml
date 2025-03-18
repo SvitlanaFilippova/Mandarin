@@ -14,7 +14,7 @@
     <dimen name="guideline_4">4dp</dimen>
     <dimen name="small_button_24">24dp</dimen>
     <dimen name="image_corner_radius_2">2dp</dimen>
-    <dimen name="meal_image_120">120dp</dimen>
+    <dimen name="meal_image_136">136dp</dimen>
     <dimen name="big_text_24">24sp</dimen>
     <dimen name="dr_cursor_wight_1">1dp</dimen>
     <dimen name="button_radius_8">8dp</dimen>
@@ -27,4 +27,18 @@
     <dimen name="mealdetails_image_width_250">250dp</dimen>
     <dimen name="meal_details__cart_button_56">56dp</dimen>
     <dimen name="button_radius_16">16dp</dimen>
+    <dimen name="to_cart_button_small_48">48dp</dimen>
+    <dimen name="plus_cart_buttons_small_32">32dp</dimen>
+    <dimen name="to_cart_button_big_120">120dp</dimen>
+    <dimen name="icon_small_16">16dp</dimen>
+    <dimen name="to_cart_buttons_mediuml_80">80dp</dimen>
+    <dimen name="placeholder_image_size_120">120dp</dimen>
+    <dimen name="big_margin_24">24dp</dimen>
+    <dimen name="placeholder_button_size_200">200dp</dimen>
+    <dimen name="edit_meal_button_32">32dp</dimen>
+    <dimen name="toggle_favorite_button_28">28dp</dimen>
+    <dimen name="bottom_sheet_corner_radius_16">16dp</dimen>
+    <dimen name="bs_divider_shape_radius_44">44dp</dimen>
+    <dimen name="bs_divider_width_48">48dp</dimen>
+    <dimen name="bs_divider_height_4">4dp</dimen>
 </resources>

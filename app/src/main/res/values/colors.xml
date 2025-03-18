@@ -12,6 +12,7 @@
     <color name="grey">#AEAFB4</color>
     <color name="grey_transparent_10">#1AAEAFB4</color>
     <color name="grey_transparent_75">#BFAEAFB4</color>
+    <color name="white_transparent_75">#BFFFFFFF</color>
     <color name="transparent">#00000000</color>
 
 </resources>
