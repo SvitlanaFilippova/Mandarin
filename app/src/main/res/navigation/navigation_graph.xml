@@ -25,9 +25,6 @@
         <action
             android:id="@+id/action_menuFragment_to_mockMenuFragment"
             app:destination="@id/mockMenuFragment" />
-        <action
-            android:id="@+id/action_menuFragment_to_favoritesFragment2"
-            app:destination="@id/favoritesFragment" />
     </fragment>
 
     <fragment
