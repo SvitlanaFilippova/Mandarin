@@ -4,18 +4,17 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.CartFragment
 import com.mandarinkafe.mandarin.databinding.ActivityMainBinding
 import com.mandarinkafe.mandarin.menu.ui.SharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 class MainActivity : AppCompatActivity() {
     private val viewModel by viewModel<SharedViewModel>()
@@ -36,22 +35,19 @@ class MainActivity : AppCompatActivity() {
 //        viewModel.getScreenState().observe(this@MainActivity) { state ->
 //            renderScreen(state)
 //        }
-        viewModel.getMenu()
+            viewModel.getMenu()
     }
-
-
 
     private fun initializeUI() {
         setSupportActionBar(binding.appBarMain.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        val drawerLayout: DrawerLayout = binding.drawerLayoutMain
         val host: NavHostFragment = supportFragmentManager
             .findFragmentById(R.id.container_view) as NavHostFragment? ?: return
         val navController = host.navController
-
         _appBarConfiguration = AppBarConfiguration(
-            navController.graph, drawerLayout
+            navController.graph
         )
+        binding.bnvMain.setupWithNavController(navController)
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.appBarMain.btCart.setOnClickListener {
             navController.navigate(
@@ -75,7 +71,6 @@ class MainActivity : AppCompatActivity() {
 
                 else -> {
                     headToolbar.visibility = View.VISIBLE
-
                     window.statusBarColor =
                         ContextCompat.getColor(this, R.color.default_status_bar_color)
                 }
