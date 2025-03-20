@@ -23,21 +23,20 @@ import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.core.ui.MainActivity
 import com.mandarinkafe.mandarin.core.ui.RVItem
 import com.mandarinkafe.mandarin.databinding.FragmentMenuBinding
-import com.mandarinkafe.mandarin.edit_meal.ui.EditMealBSFragment
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockBannersList
 import com.mandarinkafe.mandarin.menu.presentation.BannerAdapter
 import com.mandarinkafe.mandarin.menu.presentation.MenuAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
-
+@AndroidEntryPoint
 class MockMenuFragment : Fragment() {
 
     private var _binding: FragmentMenuBinding? = null
@@ -55,7 +54,7 @@ class MockMenuFragment : Fragment() {
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
 
-    private val viewModel: MockMenuViewModel by activityViewModel()
+    private lateinit var viewModel: MockMenuViewModel
 
     private var isTabSyncing = false
     private var autoScrollJob: Job? = null
@@ -345,7 +344,7 @@ class MockMenuFragment : Fragment() {
     private fun showMealDetails(meal: Meal) {
         findNavController().navigate(
             R.id.action_mockMenuFragment_to_mealDetails,
-            EditMealBSFragment.createArgs(meal)
+            //EditMealBSFragment.createArgs(meal)
         )
     }
 

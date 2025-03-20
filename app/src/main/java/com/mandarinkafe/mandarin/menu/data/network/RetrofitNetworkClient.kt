@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
-class RetrofitNetworkClient(private val context: Context, private val ikkoService: IkkoApiService) :
+class RetrofitNetworkClient(private val context: Context, private val ikkoService: IikoApiService) :
     NetworkClient {
 
     private var token = ""

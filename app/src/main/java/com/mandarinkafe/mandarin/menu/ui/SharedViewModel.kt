@@ -9,9 +9,12 @@ import com.mandarinkafe.mandarin.core.ui.RVItem
 import com.mandarinkafe.mandarin.menu.domain.api.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.api.MenuInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SharedViewModel(
+@HiltViewModel
+class SharedViewModel @Inject constructor(
     private val menuInteractor: MenuInteractor,
     private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {

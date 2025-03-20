@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.bundle.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -18,18 +18,20 @@ import com.mandarinkafe.mandarin.core.ui.MainActivity
 import com.mandarinkafe.mandarin.databinding.FragmentEditMealBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.mockPizzaAddsCheeseList
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
-import org.koin.java.KoinJavaComponent.getKoin
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class EditMealBSFragment : BottomSheetDialogFragment() {
     private val gson: Gson by lazy { Gson() }
     private var _binding: FragmentEditMealBinding? = null
     private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
-    private val viewModel by viewModel<EditMealViewModel> { parametersOf(meal) }
+    private val viewModel: EditMealViewModel by viewModels()
     private var _meal: Meal? = null
     private val meal get() = requireNotNull(_meal!!) { "meal wasn't initialized" }
     private var mealPrice = 0
+
+    // надо сделать получение через safeArgs
+    val MEAL = "meal"
 
     private var addsCategoriesPizza = arrayListOf<String>(
         "МЯСО", "СЫР", "ОВОЩИ", "РЫБА И МОРЕПРОДУКТЫ"
@@ -178,12 +180,5 @@ class EditMealBSFragment : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        const val MEAL = "meal"
-        private val gson: Gson = getKoin().get()
-        fun createArgs(meal: Meal): Bundle =
-            bundleOf(MEAL to gson.toJson(meal))
     }
 }

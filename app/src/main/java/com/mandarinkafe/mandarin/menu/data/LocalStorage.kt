@@ -2,8 +2,9 @@ package com.mandarinkafe.mandarin.menu.data
 
 import android.content.SharedPreferences
 import android.util.Log
+import javax.inject.Inject
 
-class LocalStorage(private val sharedPreferences: SharedPreferences) {
+class LocalStorage @Inject constructor(private val sharedPreferences: SharedPreferences) {
     private companion object {
         const val FAVORITES_KEY = "FAVORITES_KEY"
     }

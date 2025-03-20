@@ -7,52 +7,86 @@ import com.mandarinkafe.mandarin.menu.data.DtoToDomainConverter
 import com.mandarinkafe.mandarin.menu.data.FavoritesRepositoryImpl
 import com.mandarinkafe.mandarin.menu.data.LocalStorage
 import com.mandarinkafe.mandarin.menu.data.MenuRepositoryImpl
-import com.mandarinkafe.mandarin.menu.data.network.IkkoApiService
+import com.mandarinkafe.mandarin.menu.data.network.IikoApiService
 import com.mandarinkafe.mandarin.menu.data.network.NetworkClient
 import com.mandarinkafe.mandarin.menu.data.network.RetrofitNetworkClient
 import com.mandarinkafe.mandarin.menu.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
-import org.koin.android.ext.koin.androidContext
-import org.koin.dsl.module
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
 
-val dataModule = module {
-    single<IkkoApiService> {
-        Retrofit.Builder()
+@Module
+@InstallIn(SingletonComponent::class)
+class DataModule {
+
+    @Provides
+    @Singleton
+    fun provideIikoApiService(): IikoApiService {
+        return Retrofit.Builder()
             .baseUrl("https://api-ru.iiko.services")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(
-                IkkoApiService::
+                IikoApiService::
                 class.java
             )
     }
-    single<NetworkClient> {
-        RetrofitNetworkClient(context = get(), ikkoService = get())
-    }
-    single<SharedPreferences> {
-        androidContext().getSharedPreferences("local_storage", Context.MODE_PRIVATE)
-    }
-    single<LocalStorage> {
-        LocalStorage(sharedPreferences = get())
+
+    @Provides
+    @Singleton
+    fun provideRetrofitNetworkClient(
+        @ApplicationContext
+        context: Context,
+        ikkoService: IikoApiService
+    ): NetworkClient {
+        return RetrofitNetworkClient(context = context, ikkoService = ikkoService)
     }
 
-    single<FavoritesRepository> {
-        FavoritesRepositoryImpl(localStorage = get())
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(
+        @ApplicationContext
+        context: Context
+    ): SharedPreferences {
+        return context.getSharedPreferences("local_storage", Context.MODE_PRIVATE)
     }
-    single<MenuRepository> {
-        MenuRepositoryImpl(networkClient = get(), converter = get())
+
+    @Provides
+    @Singleton
+    fun provideLocalStorage(sharedPreferences: SharedPreferences): LocalStorage {
+        return LocalStorage(sharedPreferences = sharedPreferences)
     }
-    single<MenuRepository> {
-        MenuRepositoryImpl(networkClient = get(), converter = get())
+
+    @Provides
+    @Singleton
+    fun provideFavoritesRepository(localStorage: LocalStorage): FavoritesRepository {
+        return FavoritesRepositoryImpl(localStorage = localStorage)
     }
-    single<Gson> {
-        Gson()
+
+    @Provides
+    @Singleton
+    fun provideMenuRepository(
+        networkClient: NetworkClient,
+        converter: DtoToDomainConverter
+    ): MenuRepository {
+        return MenuRepositoryImpl(networkClient = networkClient, converter = converter)
     }
-    single<DtoToDomainConverter> {
-        DtoToDomainConverter(
-            favoritesRepository = get()
-        )
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return Gson()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDtoToDomainConverter(favoritesRepository: FavoritesRepository): DtoToDomainConverter {
+        return DtoToDomainConverter(favoritesRepository = favoritesRepository)
     }
 }

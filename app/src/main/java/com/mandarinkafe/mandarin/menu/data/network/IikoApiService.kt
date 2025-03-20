@@ -11,7 +11,7 @@ import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
 
-interface IkkoApiService {
+interface IikoApiService {
     @POST("/api/1/access_token")
     suspend fun authenticate(@Body request: AuthRequest): AuthResponse
 
