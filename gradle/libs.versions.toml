@@ -1,9 +1,10 @@
 [versions]
 agp = "8.9.0"
+compiler = "1.5.15"
 fragmentKtx = "1.8.5"
 glide = "4.16.0"
 koinAndroid = "4.0.0"
-kotlin = "1.9.0"
+kotlin = "1.9.25"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -19,12 +20,16 @@ navigationFragment = "2.8.4"
 legacySupportV4 = "1.0.0"
 lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
-media3CommonKtx = "1.4.1"
 coordinatorlayout = "1.2.0"
+uiGraphicsAndroid = "1.7.8"
+composeBom = "2025.03.00"
+composeActivity = "1.10.1"
+composeViewModel = "2.8.7"
 
 [libraries]
 adapterdelegates-dsl = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl:4.3.2"
 adapterdelegates-dsl-viewbinding = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl-viewbinding:4.3.2"
+androidx-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compiler" }
 circleindicator = "me.relex:circleindicator:2.1.6"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
@@ -47,8 +52,18 @@ androidx-navigation-fragment = { group = "androidx.navigation", name = "navigati
 androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
-androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
 androidx-coordinatorlayout = { group = "androidx.coordinatorlayout", name = "coordinatorlayout", version.ref = "coordinatorlayout" }
+androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "uiGraphicsAndroid" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-material = { group = "androidx.compose.material", name = "material" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+androidx-compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "composeActivity" }
+androidx-compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeViewModel" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
