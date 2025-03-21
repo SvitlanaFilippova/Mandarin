@@ -4,7 +4,7 @@ compiler = "1.5.15"
 fragmentKtx = "1.8.5"
 glide = "4.16.0"
 koinAndroid = "4.0.0"
-kotlin = "1.9.25"
+kotlin = "2.1.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -69,4 +69,5 @@ androidx-compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-v
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 navigation-safeargs-kotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref ="navigationFragment" }
+jetbrains-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
