@@ -35,10 +35,15 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initializeUI()
-//        viewModel.getScreenState().observe(this@MainActivity) { state ->
-//            renderScreen(state)
-//        }
-            viewModel.getMenu()
+        /*viewModel.getScreenState().observe(this@MainActivity) { state ->
+            renderScreen(state)
+        }*/
+        viewModel.getMenu()
+        /* Здесь можно запускать composable экраны
+        setContent {
+            MainScreen()
+        }
+        */
     }
 
     private fun initializeUI() {
