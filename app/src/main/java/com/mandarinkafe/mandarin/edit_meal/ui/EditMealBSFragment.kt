@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.bundle.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
@@ -18,17 +19,15 @@ import com.mandarinkafe.mandarin.core.ui.MainActivity
 import com.mandarinkafe.mandarin.databinding.FragmentEditMealBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.mockPizzaAddsCheeseList
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
-import org.koin.java.KoinJavaComponent.getKoin
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class EditMealBSFragment : BottomSheetDialogFragment() {
-    private val gson: Gson by lazy { Gson() }
     private var _binding: FragmentEditMealBinding? = null
     private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
-    private val viewModel by viewModel<EditMealViewModel> { parametersOf(meal) }
-    private var _meal: Meal? = null
-    private val meal get() = requireNotNull(_meal!!) { "meal wasn't initialized" }
+    private val viewModel: EditMealViewModel by viewModels()
+    private val args by navArgs<EditMealBSFragmentArgs>()
+    private var meal: Meal? = null
     private var mealPrice = 0
 
     private var addsCategoriesPizza = arrayListOf<String>(
@@ -49,11 +48,7 @@ class EditMealBSFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _meal = gson.fromJson(
-            requireArguments().getString(MEAL),
-            Meal::class.java
-        )
-
+        meal = Gson().fromJson(args.meal, Meal::class.java)
         setupRecyclerView()
         setMealData()
         setTabs(addsCategoriesPizza)
@@ -66,42 +61,35 @@ class EditMealBSFragment : BottomSheetDialogFragment() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        _meal = gson.fromJson(
-            requireArguments().getString(MEAL),
-            Meal::class.java
-        )
-    }
-
     private fun setMealData() {
-        mealPrice = meal.price
-
-        binding.apply {
-            tvMealTitleTop.text = meal.name
-            tvMealIngredients.text = meal.description
-            tvMealWeight.apply {
-                if (meal.weight == null || meal.weight == 0) isVisible = false
-                text = getString(R.string.meal_weight_template, meal.weight)
-            }
-
-            tvMealPriceOriginal.text = getString(R.string.meal_price_template, meal.price)
-
-            ibBack.setOnClickListener {
-                dismiss()
-            }
-
-            fabAddToCartPrice.apply {
-                text = getString(
-                    R.string.meal_price_template,
-                    mealPrice
-                )
-                setOnClickListener {
-                    onCartButtonClick()
+        meal?.let {
+            mealPrice = it.price
+            binding.apply {
+                tvMealTitleTop.text = it.name
+                tvMealIngredients.text = it.description
+                tvMealWeight.apply {
+                    if (it.weight == null || it.weight == 0) isVisible = false
+                    text = getString(R.string.meal_weight_template, it.weight)
                 }
-            }
-            ivAddToFavorite.setOnClickListener {
-                viewModel.toggleFavorite()
+
+                tvMealPriceOriginal.text = getString(R.string.meal_price_template, it.price)
+
+                ibBack.setOnClickListener {
+                    dismiss()
+                }
+
+                fabAddToCartPrice.apply {
+                    text = getString(
+                        R.string.meal_price_template,
+                        mealPrice
+                    )
+                    setOnClickListener {
+                        onCartButtonClick()
+                    }
+                }
+                ivAddToFavorite.setOnClickListener {
+                    viewModel.toggleFavorite()
+                }
             }
         }
     }
@@ -109,10 +97,10 @@ class EditMealBSFragment : BottomSheetDialogFragment() {
     private fun onCartButtonClick() {
         Toast.makeText(
             requireContext(),
-            "Добавляю в корзину ${meal.name}, $mealPrice ₽",
+            "Добавляю в корзину ${meal?.name}, $mealPrice ₽",
             Toast.LENGTH_SHORT
         ).show()
-        Cart.addItem(meal)
+        Cart.addItem(meal!!)
         (requireActivity() as MainActivity).updateCartAdapter()
 
         findNavController().popBackStack()
@@ -178,12 +166,5 @@ class EditMealBSFragment : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        const val MEAL = "meal"
-        private val gson: Gson = getKoin().get()
-        fun createArgs(meal: Meal): Bundle =
-            bundleOf(MEAL to gson.toJson(meal))
     }
 }

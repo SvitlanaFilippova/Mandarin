@@ -14,12 +14,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
+import com.google.gson.Gson
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.core.ui.MainActivity
@@ -31,16 +33,18 @@ import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockBannersList
 import com.mandarinkafe.mandarin.menu.presentation.BannerAdapter
 import com.mandarinkafe.mandarin.menu.presentation.MenuAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
-
+@AndroidEntryPoint
 class MenuFragment : Fragment() {
+
+    private val viewModel: SharedViewModel by viewModels()
 
     private var _binding: FragmentMenuBinding? = null
     private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
@@ -53,12 +57,13 @@ class MenuFragment : Fragment() {
 
     private var menuItems: List<RVItem>? = listOf()
 
+    private val gson by lazy { Gson() }
+
     val bottomSheetEditMeal = EditMealBSFragment()
 
     private var isClickAllowed = true
     private var isTabSyncing = false
     private val handler = Handler(Looper.getMainLooper())
-    private val viewModel: SharedViewModel by activityViewModel()
     private var autoScrollJob: Job? = null
     private var userInteractingWithViewPager = false
     private val banners = mockBannersList
@@ -80,9 +85,9 @@ class MenuFragment : Fragment() {
         setPlaceholderCLickListeners()
         setRvAdapter()
 
-        viewModel.getScreenState().observe(viewLifecycleOwner)
-
-        { state -> renderMenuScreen(state) }
+        viewModel.getScreenState().observe(viewLifecycleOwner) { state ->
+            renderMenuScreen(state)
+        }
 
 
 //        Убрала пока dotsIndicator, поскольку он криво отображается в CoordinatorLayout
@@ -291,11 +296,13 @@ class MenuFragment : Fragment() {
     }
 
     private fun showMealDetails(item: Meal) {
-//        findNavController().navigate(
-//            R.id.action_menuFragment_to_mealDetails,
-//            EditMealBSFragment.createArgs(item)
-//        )
-        bottomSheetEditMeal.arguments = EditMealBSFragment.createArgs(item)
+        findNavController().navigate(
+            MenuFragmentDirections.actionMenuFragmentToMealDetails(
+                gson.toJson(
+                    item
+                )
+            )
+        )
         bottomSheetEditMeal.show(parentFragmentManager, "Редактирование блюда")
     }
 

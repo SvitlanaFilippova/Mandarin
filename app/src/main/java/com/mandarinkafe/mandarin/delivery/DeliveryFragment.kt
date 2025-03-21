@@ -6,8 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.mandarinkafe.mandarin.databinding.FragmentDeliveryBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class DeliveryFragment : Fragment() {
     private var _binding: FragmentDeliveryBinding? = null
     private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
