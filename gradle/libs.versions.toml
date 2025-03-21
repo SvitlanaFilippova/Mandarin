@@ -1,5 +1,6 @@
 [versions]
 agp = "8.9.0"
+compiler = "1.5.15"
 fragmentKtx = "1.8.5"
 glide = "4.16.0"
 kotlin = "2.1.0"
@@ -22,10 +23,15 @@ coordinatorlayout = "1.2.0"
 hilt = "2.55"
 ksp = "2.1.10-1.0.31"
 parcelize = "2.1.0-RC2"
+uiGraphicsAndroid = "1.7.8"
+composeBom = "2025.03.00"
+composeActivity = "1.10.1"
+composeViewModel = "2.8.7"
 
 [libraries]
 adapterdelegates-dsl = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl:4.3.2"
 adapterdelegates-dsl-viewbinding = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl-viewbinding:4.3.2"
+androidx-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compiler" }
 circleindicator = "me.relex:circleindicator:2.1.6"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
@@ -50,6 +56,17 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 androidx-coordinatorlayout = { group = "androidx.coordinatorlayout", name = "coordinatorlayout", version.ref = "coordinatorlayout" }
 com-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 com-hilt-ksp = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "uiGraphicsAndroid" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-material = { group = "androidx.compose.material", name = "material" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+androidx-compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "composeActivity" }
+androidx-compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeViewModel" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -58,6 +75,5 @@ navigation-safeargs-kotlin = { id = "androidx.navigation.safeargs.kotlin", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 jetbrains-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "parcelize" }
-
-
+jetbrains-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
