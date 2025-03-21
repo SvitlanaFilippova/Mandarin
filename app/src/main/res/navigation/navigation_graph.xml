@@ -9,12 +9,16 @@
         android:id="@+id/menuFragment"
         android:name="com.mandarinkafe.mandarin.menu.ui.MenuFragment"
         android:label="fragment_menu"
-
         tools:layout="@layout/fragment_menu">
         <action
             android:id="@+id/action_menuFragment_to_mealDetails"
             app:destination="@id/mealDetails"
-            app:enterAnim="@anim/slide_up" />
+            app:enterAnim="@anim/slide_up">
+            <argument
+                android:name="meal"
+                app:argType="string"
+                app:nullable="false" />
+        </action>
 
         <action
             android:id="@+id/action_menuFragment_to_cartFragment"
@@ -39,6 +43,10 @@
         android:name="com.mandarinkafe.mandarin.edit_meal.ui.EditMealBSFragment"
         android:label="fragment_meal_details"
         tools:layout="@layout/fragment_edit_meal">
+        <argument
+            android:name="meal"
+            app:argType="string"
+            app:nullable="false" />
         <action
             android:id="@+id/action_mealDetails_to_cartFragment"
             app:destination="@id/cartFragment" />

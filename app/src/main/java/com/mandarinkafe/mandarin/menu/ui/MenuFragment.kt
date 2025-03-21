@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
+import com.google.gson.Gson
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.core.ui.MainActivity
@@ -56,6 +57,8 @@ class MenuFragment : Fragment() {
 
     private var menuItems: List<RVItem>? = listOf()
 
+    private val gson by lazy { Gson() }
+
     val bottomSheetEditMeal = EditMealBSFragment()
 
     private var isClickAllowed = true
@@ -82,9 +85,9 @@ class MenuFragment : Fragment() {
         setPlaceholderCLickListeners()
         setRvAdapter()
 
-        viewModel.getScreenState().observe(viewLifecycleOwner)
-
-        { state -> renderMenuScreen(state) }
+        viewModel.getScreenState().observe(viewLifecycleOwner) { state ->
+            renderMenuScreen(state)
+        }
 
 
 //        Убрала пока dotsIndicator, поскольку он криво отображается в CoordinatorLayout
@@ -293,11 +296,13 @@ class MenuFragment : Fragment() {
     }
 
     private fun showMealDetails(item: Meal) {
-//        findNavController().navigate(
-//            R.id.action_menuFragment_to_mealDetails,
-//            EditMealBSFragment.createArgs(item)
-//        )
-        //bottomSheetEditMeal.arguments = EditMealBSFragment.createArgs(item)
+        findNavController().navigate(
+            MenuFragmentDirections.actionMenuFragmentToMealDetails(
+                gson.toJson(
+                    item
+                )
+            )
+        )
         bottomSheetEditMeal.show(parentFragmentManager, "Редактирование блюда")
     }
 
