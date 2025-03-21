@@ -21,6 +21,7 @@ lifecycleViewmodelKtx = "2.8.7"
 coordinatorlayout = "1.2.0"
 hilt = "2.55"
 ksp = "2.1.10-1.0.31"
+parcelize = "2.1.0-RC2"
 
 [libraries]
 adapterdelegates-dsl = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl:4.3.2"
@@ -56,5 +57,7 @@ jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = 
 navigation-safeargs-kotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref ="navigationFragment" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+jetbrains-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "parcelize" }
+
 
 
