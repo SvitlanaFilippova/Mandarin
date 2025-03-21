@@ -25,7 +25,7 @@ fun BottomNavigation(
         BottomNavigationItem.Favorites
     )
     NavigationBar(
-        containerColor = Color.Transparent
+        containerColor = Color.Black
     ) {
         val backStackEntry = navController.currentBackStackEntryAsState().value
         val currentRoute = backStackEntry?.destination?.route

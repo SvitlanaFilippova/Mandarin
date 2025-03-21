@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.core.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -15,6 +16,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.CartFragment
 import com.mandarinkafe.mandarin.databinding.ActivityMainBinding
 import com.mandarinkafe.mandarin.menu.ui.SharedViewModel
+import com.mandarinkafe.mandarin.navigation.MainScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,11 +41,10 @@ class MainActivity : AppCompatActivity() {
             renderScreen(state)
         }*/
         viewModel.getMenu()
-        /* Здесь можно запускать composable экраны
+
         setContent {
-            MainScreen()
+            MainScreen(supportFragmentManager)
         }
-        */
     }
 
     private fun initializeUI() {
