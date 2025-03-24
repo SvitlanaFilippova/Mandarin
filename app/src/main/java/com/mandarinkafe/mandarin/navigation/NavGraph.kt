@@ -20,12 +20,15 @@ fun NavGraph(navHostController: NavHostController, fragmentManager: FragmentMana
         startDestination = "search"
     ) {
         composable("search") {
+            // Вставьте сюда компоуз экран поиска
             FragmentContainer(fragmentManager, MenuFragment())
         }
         composable("delivery") {
+            // Вставьте сюда компоуз экран доставки
             FragmentContainer(fragmentManager, DeliveryFragment())
         }
         composable("favorites") {
+            // Вставьте сюда компоуз экран избранных
             FragmentContainer(fragmentManager, FavoritesFragment())
         }
     }
