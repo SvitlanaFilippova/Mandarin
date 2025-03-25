@@ -5,7 +5,7 @@ import androidx.compose.ui.text.font.FontWeight
 
 object Typography {
     val ToCartButtonStyle = TextStyle(
-        fontSize = Dimens.TextSizeRegular16,
+        fontSize = Dimens.TextSizeRegular14,
         fontWeight = FontWeight.Normal,
         color = Colors.White
     )
