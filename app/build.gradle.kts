@@ -76,6 +76,9 @@ dependencies {
     implementation(libs.glide)
     ksp(libs.compiler)
 
+    // Coil
+    implementation(libs.coil.compose)
+
     // DotsIndicator
     implementation(libs.circleindicator)
 

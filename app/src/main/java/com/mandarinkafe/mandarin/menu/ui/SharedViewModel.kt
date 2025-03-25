@@ -26,7 +26,7 @@ class SharedViewModel @Inject constructor(
     fun getMenu() {
         screenState.postValue(ScreenState.Loading)
         viewModelScope.launch {
-            menuInteractor.getMenu()
+            menuInteractor.getMenuRvItem()
                 .collect { pair ->
                     processMenuResult(
                         pair.first,

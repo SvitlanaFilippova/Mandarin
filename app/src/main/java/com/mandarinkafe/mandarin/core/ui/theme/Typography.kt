@@ -5,14 +5,11 @@ import androidx.compose.ui.text.font.FontWeight
 
 object Typography {
     val ToCartButtonStyle = TextStyle(
-        fontSize = Dimens.TextSizeRegular16,
-        fontWeight = FontWeight.Medium,
+        fontSize = Dimens.TextSizeRegular14,
+        fontWeight = FontWeight.Normal,
         color = Colors.White
     )
 
-    val ToCartButtonsBackgroundStyle = ToCartButtonStyle.copy(
-        color = Colors.GreyTransparent10
-    )
 
     val RegularTextStyle = TextStyle(
         fontSize = Dimens.TextSizeRegular16,
