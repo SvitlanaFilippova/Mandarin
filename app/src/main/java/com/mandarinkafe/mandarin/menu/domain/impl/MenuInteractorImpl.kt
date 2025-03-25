@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteractor {
 
 
-    override fun getMenu(): Flow<Pair<List<RVItem>?, String?>> {
+    override fun getMenuRvItem(): Flow<Pair<List<RVItem>?, String?>> {
         return repository.getMenu().map { result ->
             when (result) {
                 is Resource.Success -> {
@@ -26,6 +26,22 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
             }
         }
     }
+
+    override fun getMenu(): Flow<Pair<List<MealCategory>?, String?>> {
+        return repository.getMenu().map { result ->
+            when (result) {
+                is Resource.Success -> {
+                    Pair(result.data, null)
+                }
+
+                is Resource.Error -> {
+                    Pair(null, result.message)
+                }
+            }
+        }
+    }
+
+
 
     override fun getMockMenu(): List<RVItem> {
         return menuToMenuItems(mockMenuData)

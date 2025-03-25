@@ -11,7 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.mandarinkafe.mandarin.delivery.DeliveryFragment
 import com.mandarinkafe.mandarin.favorites.FavoritesFragment
-import com.mandarinkafe.mandarin.menu.ui.MenuFragment
+import com.mandarinkafe.mandarin.menu.ui.screen.MenuScreenPreview
 
 @Composable
 fun NavGraph(navHostController: NavHostController, fragmentManager: FragmentManager) {
@@ -20,8 +20,7 @@ fun NavGraph(navHostController: NavHostController, fragmentManager: FragmentMana
         startDestination = "search"
     ) {
         composable("search") {
-            // Вставьте сюда компоуз экран поиска
-            FragmentContainer(fragmentManager, MenuFragment())
+           MenuScreenPreview()
         }
         composable("delivery") {
             // Вставьте сюда компоуз экран доставки

@@ -43,7 +43,7 @@ import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 @Preview
 @Composable
-fun PreviewItemMenuMeal() {
+fun ItemMenuMealPreview() {
     val meal =
         Meal(
             "1",
@@ -71,10 +71,11 @@ fun ItemMenuMeal(meal: Meal) {
         mutableStateOf(false)
     }
     Row(
-        verticalAlignment = Alignment.Top
+        verticalAlignment = Alignment.Top,
+        modifier = Modifier.padding(Dimens.MarginSmall8)
     ) {
+        // временое мок-изображение для Preview. В дальенйшем будет AsyncImage
 //        Image(
-////временое мок-изображение для Preview. В дальенйшем будет AsyncImage
 //            painter = painterResource(R.drawable.margaritta_veg),
 //            contentDescription = "Превью изображения",
 //            modifier = Modifier
@@ -153,7 +154,8 @@ fun ButtonsRow(meal: Meal) {
             if (!isInTheCart) {
                 // Кнопка "Добавить в корзину"
                 Button(
-                    onClick = { isInTheCart = true },
+                    onClick = { isInTheCart = true
+                              },
                     shape = RoundedCornerShape(Dimens.ButtonRadius8),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Colors.Orange,
@@ -169,6 +171,7 @@ fun ButtonsRow(meal: Meal) {
                             painter = painterResource(R.drawable.ic_cart),
                             contentDescription = "Добавить в корзину",
                             tint = Color.White
+
                         )
 
                         Text(
@@ -247,6 +250,7 @@ fun ButtonsRow(meal: Meal) {
             }
 
         }
+        if (meal.isEditable) {
         // Кнопка "Редактировать"
         IconButton(
             onClick = { /* Действие */ },
@@ -259,6 +263,7 @@ fun ButtonsRow(meal: Meal) {
                 tint = Color.Unspecified
             )
         }
+            }
 
         // Кнопка "Избранное"
         IconButton(

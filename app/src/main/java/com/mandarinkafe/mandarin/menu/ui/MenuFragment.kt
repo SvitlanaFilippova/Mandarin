@@ -90,10 +90,6 @@ class MenuFragment : Fragment() {
         }
 
 
-//        Убрала пока dotsIndicator, поскольку он криво отображается в CoordinatorLayout
-//        val dotsIndicator = binding.dotsIndicator
-//        dotsIndicator.setViewPager(binding.viewPagerBanners)
-
 
     }
 

@@ -14,15 +14,14 @@ object Dimens {
     val ButtonEditMeal32 = 32.dp
     val ButtonToggleFavorite28 = 28.dp
     val ButtonPlaceholderSize200 = 200.dp
-    val IconSize16 = 16.dp
+    val IconSize24 = 24.dp
     val IconSmall16 = 16.dp
     val IconSearchImageSize92 = 92.dp
     val MarginStandard16 = 16.dp
     val MarginSmall8 = 8.dp
     val MarginSuperSmall4 = 4.dp
-    val MarginBig32 = 32.dp
     val MarginBig24 = 24.dp
-    val MarginText16 = 16.dp
+    val MarginBig32 = 32.dp
     val Elevation4 = 4.dp
     val RadiusSearchField8 = 8.dp
     val RadiusImageCorner2 = 2.dp
@@ -31,8 +30,6 @@ object Dimens {
     val SearchInputSize40 = 40.dp
     val DrCursorWidth2 = 2.dp
     val DrCursorWidth1 = 1.dp
-    val RecyclerViewOffset1 = 1.dp
-    val Guideline4 = 4.dp
     val MealImage136 = 136.dp
     val MealMinDescriptionHeight96 = 96.dp
     val MealImageSmall96 = 96.dp
