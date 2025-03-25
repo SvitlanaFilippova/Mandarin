@@ -12,7 +12,7 @@ data class Meal(
     val description: String?,
     val weight: Int?,
     val price: Int,
-    val imageUrl: String?,
+    val imageUrl: String,
     var categoryId: String?,
     var isFavorite: Boolean,
     val tags: List<Tag>?,

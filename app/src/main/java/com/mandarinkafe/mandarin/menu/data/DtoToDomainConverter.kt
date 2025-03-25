@@ -44,7 +44,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                 description = description,
                 weight = itemSizes.firstOrNull()?.portionWeightGrams?.toInt() ?: 0,
                 price = itemSizes.firstOrNull()?.prices?.firstOrNull()?.price?.toInt() ?: 0,
-                imageUrl = itemSizes.firstOrNull()?.buttonImageUrl,
+                imageUrl = itemSizes.firstOrNull()?.buttonImageUrl ?: "" ,
                 categoryId = categoryId,
                 isFavorite = storedFavorites.contains(itemId),
                 tags = tags,
