@@ -34,6 +34,7 @@ object Dimens {
     val RecyclerViewOffset1 = 1.dp
     val Guideline4 = 4.dp
     val MealImage136 = 136.dp
+    val MealMinDescriptionHeight96 = 96.dp
     val MealImageSmall96 = 96.dp
     val MealDetailsImageWidth250 = 250.dp
     val MealDetailsCartButton56 = 56.dp
