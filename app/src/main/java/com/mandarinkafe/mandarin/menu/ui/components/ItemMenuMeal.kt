@@ -45,14 +45,16 @@ fun ItemMenuMeal() {
     var isDescExpanded by remember {
         mutableStateOf(false)
     }
-
+    var isNameExpanded by remember {
+        mutableStateOf(false)
+    }
     val meal =
         //временная мок-переменная для Preview. В дальенйшем передавать meal как аргумент функции
         Meal(
             "1",
             "0013",
-            "МАРГАРИТА",
-            "Моцарелла, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, ещё моцарелла, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты,Моцарелла, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты,",
+            "МАРГАРИТА С ВЯЛЕНЫМИ ТОМАТАМИ И ПЕРЧИКАМИ ЧОРИЗЗО КОПЧЁНЫМИ НА ВОЛОСАХ ДЕВСТВЕНИЦЫ",
+            "Моцарелла, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, ещё моцарелла, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, и ещё больше моцареллы, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты",
             490,
             585,
             "https://optim.tildacdn.com/tild3064-3131-4362-b537-366634323165/-/resize/312x/-/format/webp/margaritta_veg.jpg",
@@ -87,13 +89,14 @@ fun ItemMenuMeal() {
             Text(
                 text = meal.name,
                 style = Typography.MealTitleStyle,
-                maxLines = 3,
+                maxLines = if (isNameExpanded) Int.MAX_VALUE else Int.MAX_VALUE,
                 overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.clickable { isNameExpanded = !isNameExpanded }
             )
             if (meal.description != null) {
                 Text(
                     text = meal.description,
-                    maxLines = if (isDescExpanded) Int.MAX_VALUE else 5,
+                    maxLines = if (isDescExpanded) Int.MAX_VALUE else Int.MAX_VALUE,
                     overflow = TextOverflow.Ellipsis,
                     style = Typography.MealSmallTextStyle,
                     modifier = Modifier.clickable { isDescExpanded = !isDescExpanded }
@@ -179,3 +182,5 @@ fun ButtonsRow(meal: Meal) {
         }
     }
 }
+
+
