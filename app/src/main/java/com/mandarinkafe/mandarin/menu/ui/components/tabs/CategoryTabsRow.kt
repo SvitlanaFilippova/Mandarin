@@ -20,10 +20,12 @@ fun CategoryTabsRow(
         selectedTabIndex = selectedTabIndex,
         edgePadding = Dimens.ZeroDp0,
         indicator = { tabPositions ->
-            SecondaryIndicator(
-                Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                color = Colors.Orange
-            )
+            if (selectedTabIndex >= 0) {
+                SecondaryIndicator(
+                    Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                    color = Colors.Orange
+                )
+            }
         }
     ) {
         categories.forEachIndexed { index, category ->

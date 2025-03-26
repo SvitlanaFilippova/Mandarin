@@ -26,9 +26,6 @@
         <action
             android:id="@+id/action_menuFragment_to_deliveryFragment"
             app:destination="@id/deliveryFragment" />
-        <action
-            android:id="@+id/action_menuFragment_to_mockMenuFragment"
-            app:destination="@id/mockMenuFragment" />
     </fragment>
 
     <fragment
@@ -59,17 +56,6 @@
         tools:layout="@layout/fragment_delivery">
         <action
             android:id="@+id/action_deliveryFragment_to_cartFragment"
-            app:destination="@id/cartFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/mockMenuFragment"
-        android:name="com.mandarinkafe.mandarin.menu.ui.MockMenuFragment"
-        android:label="MockMenuFragment" >
-        <action
-            android:id="@+id/action_mockMenuFragment_to_mealDetails"
-            app:destination="@id/mealDetails" />
-        <action
-            android:id="@+id/action_mockMenuFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
     </fragment>
     <fragment

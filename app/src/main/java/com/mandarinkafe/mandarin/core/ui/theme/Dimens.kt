@@ -44,8 +44,7 @@ object Dimens {
     val TextSizeSmall12 = 12.sp
     val TextSizeBig24 = 24.sp
     val TextSizeRegular14 = 14.sp
-    val DotsIndicatorSize4 = 4.dp
-    val DotsIndicatorSizeSelected8 = 8.dp
-
+    val BannerIndicatorWidth24 = 32.dp
+    val BannerIndicatorHeight4 = 4.dp
 }
 
