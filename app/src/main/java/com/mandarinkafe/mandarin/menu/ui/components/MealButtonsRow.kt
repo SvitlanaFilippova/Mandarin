@@ -20,7 +20,12 @@ import com.mandarinkafe.mandarin.menu.ui.components.buttons.FavoriteButton
 import com.mandarinkafe.mandarin.menu.ui.components.buttons.ToCartButton
 
 @Composable
-fun MealButtonsRow(meal: Meal) {
+fun MealButtonsRow(
+    meal: Meal,
+    onToggleFavorite: (Meal) -> Unit = {},
+    onAddToCart: (Meal) -> Unit = {},
+    onRemoveFromCart: (Meal) -> Unit = {},
+) {
     var isInTheCart by remember { mutableStateOf(false) }
     var numberInCart by remember { mutableIntStateOf(1) }
 
@@ -34,15 +39,16 @@ fun MealButtonsRow(meal: Meal) {
             CartControls(
                 numberInCart = numberInCart,
                 price = meal.price,
-                onIncrease = { numberInCart++ },
+                onIncrease = { onAddToCart(meal) },
                 onDecrease = {
+                    onRemoveFromCart(meal)
                     if (numberInCart > 1) numberInCart-- else isInTheCart = false
                 }
             )
         } else {
             ToCartButton(meal.price) {
                 isInTheCart = true
-                /* Действие */
+                onAddToCart(meal)
             }
         }
 
@@ -51,6 +57,9 @@ fun MealButtonsRow(meal: Meal) {
         } else {
             Spacer(modifier = Modifier.weight(1f))
         }
-        FavoriteButton(isFavorite = meal.isFavorite)
+        FavoriteButton(
+            meal = meal,
+            onToggleFavorite = onToggleFavorite
+        )
     }
 }

@@ -50,7 +50,12 @@ fun ItemMenuMealPreview() {
 }
 
 @Composable
-fun MenuMealItem(meal: Meal) {
+fun MenuMealItem(
+    meal: Meal,
+    onToggleFavorite: (Meal) -> Unit = {},
+    onAddToCart: (Meal) -> Unit = {},
+    onRemoveFromCart: (Meal) -> Unit = {},
+) {
     //переменные для отслеживания состояния длинных описаний и названий
     var isNameExpanded by remember {
         mutableStateOf(false)
@@ -111,7 +116,11 @@ fun MenuMealItem(meal: Meal) {
             }
             // Контейнер для кнопок, чтобы они прижимались вниз
             Box(contentAlignment = Alignment.BottomStart) {
-                MealButtonsRow(meal)
+                MealButtonsRow(
+                    meal = meal, onToggleFavorite = onToggleFavorite,
+                    onAddToCart = onAddToCart,
+                    onRemoveFromCart = onRemoveFromCart
+                )
             }
         }
     }

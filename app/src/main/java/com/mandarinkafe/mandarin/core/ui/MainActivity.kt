@@ -15,14 +15,14 @@ import androidx.navigation.ui.setupWithNavController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.CartFragment
 import com.mandarinkafe.mandarin.databinding.ActivityMainBinding
-import com.mandarinkafe.mandarin.menu.ui.SharedViewModel
+import com.mandarinkafe.mandarin.menu.ui.MenuViewModel
 import com.mandarinkafe.mandarin.navigation.MainScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: SharedViewModel by viewModels()
+    private val viewModel: MenuViewModel by viewModels()
 
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
@@ -37,10 +37,7 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initializeUI()
-        /*viewModel.getScreenState().observe(this@MainActivity) { state ->
-            renderScreen(state)
-        }*/
-        viewModel.getMenu()
+
 
         setContent {
             MainScreen(supportFragmentManager)

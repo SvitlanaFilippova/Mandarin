@@ -6,12 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.mandarinkafe.mandarin.delivery.DeliveryFragment
 import com.mandarinkafe.mandarin.favorites.FavoritesFragment
-import com.mandarinkafe.mandarin.menu.ui.screen.MenuScreenPreview
+import com.mandarinkafe.mandarin.menu.ui.MenuViewModel
+import com.mandarinkafe.mandarin.menu.ui.screen.MenuScreen
 
 @Composable
 fun NavGraph(navHostController: NavHostController, fragmentManager: FragmentManager) {
@@ -20,7 +22,8 @@ fun NavGraph(navHostController: NavHostController, fragmentManager: FragmentMana
         startDestination = "search"
     ) {
         composable("search") {
-           MenuScreenPreview()
+            val viewModel: MenuViewModel = hiltViewModel()
+            MenuScreen(viewModel = viewModel)
         }
         composable("delivery") {
             // Вставьте сюда компоуз экран доставки
