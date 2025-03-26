@@ -89,22 +89,48 @@ fun MenuScreen(menuItems: List<RVItem>) {
     val categories = menuItems.filterIsInstance<MenuRVItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
     var selectedTabIndex by remember { mutableIntStateOf(-1) }
+    var selectedSubTabIndex by remember { mutableIntStateOf(-1) }
     var isUserScrolled by remember { mutableStateOf(false) } // Флаг, был ли скролл
 
-
-    LaunchedEffect(listState.firstVisibleItemIndex) {
-        snapshotFlow { listState.firstVisibleItemIndex }
-            .collect { index ->
-                if (!isUserScrolled && index > 0) {
+    LaunchedEffect(remember { derivedStateOf { listState.layoutInfo.visibleItemsInfo } }) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
+            .collect { visibleItems ->
+                if (!isUserScrolled && listState.firstVisibleItemIndex > 0) {
                     isUserScrolled = true // Пользователь начал скроллить
                 }
                 if (isUserScrolled) {
-                    val item = menuItems.getOrNull(index)
-                    if (item is MenuRVItem.HeaderItem) {
-                        val newIndex = categoriesNames.indexOf(item.categoryName)
-                        if (newIndex != selectedTabIndex) {
-                            selectedTabIndex = newIndex
+                    // Ищем первое полностью видимое блюдо
+                    val firstFullyVisibleMeal = visibleItems
+                        .firstOrNull { it.offset >= 0 } // Только те, что полностью вошли в экран
+                        ?.index
+                        ?.let { menuItems.getOrNull(it) as? MenuRVItem.MealItem }
+
+                    firstFullyVisibleMeal?.let { mealItem ->
+                        // Ищем категорию блюда
+                        val parentCategory = menuItems
+                            .takeWhile { it !== mealItem }
+                            .lastOrNull { it is MenuRVItem.HeaderItem } as? MenuRVItem.HeaderItem
+
+                        parentCategory?.let { it ->
+                            val newIndex = categoriesNames.indexOf(it.categoryName)
+                            if (newIndex != selectedTabIndex) {
+                                selectedTabIndex = newIndex
+                            }
+                            // Ищем подкатегорию
+                            val parentSubCategory = menuItems
+                                .takeWhile { it !== mealItem }
+                                .lastOrNull { it is MenuRVItem.SubHeaderItem } as? MenuRVItem.SubHeaderItem
+
+                            parentSubCategory?.let { subCategory ->
+                                val newSubIndex =
+                                    parentCategory.subCategoriesNames?.indexOf(subCategory.categoryName)
+                                        ?: -1
+                                if (newSubIndex != selectedSubTabIndex) {
+                                    selectedSubTabIndex = newSubIndex
+                                }
+                            }
                         }
+
                     }
                 }
             }
@@ -153,8 +179,19 @@ fun MenuScreen(menuItems: List<RVItem>) {
                 ) {
                     SubCategoryTabsRow(
                         categories = currentSubCategories,
-                        selectedTabIndex = 0
-                    ) { }
+                        selectedTabIndex = selectedSubTabIndex,
+                        onTabSelected = { index ->
+                            selectedSubTabIndex = index
+                            coroutineScope.launch {
+                                val targetIndex = menuItems.indexOfFirst {
+                                    it is MenuRVItem.SubHeaderItem && it.categoryName == currentSubCategories[index]
+                                }
+                                if (targetIndex >= 0) {
+                                    listState.scrollToItem(targetIndex)
+                                }
+                            }
+                        }
+                    )
                 }
             }
         }
