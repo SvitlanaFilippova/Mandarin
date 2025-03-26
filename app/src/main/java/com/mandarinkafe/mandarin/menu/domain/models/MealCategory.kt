@@ -75,7 +75,7 @@ val mockMenuData = arrayListOf<MealCategory>(
         name = "WOK",
         meals = mockWokList,
         subCategories = null,
-        tabIcon = "https://static.tildacdn.com/tild3233-3165-4430-b231-313839323231/_.png"
+        tabIcon = "123https://static.tildacdn.com/tild3233-3165-4430-b231-313839323231/_.png"
     )
 )
 
