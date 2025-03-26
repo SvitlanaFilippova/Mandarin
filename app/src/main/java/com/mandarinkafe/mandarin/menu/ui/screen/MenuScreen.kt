@@ -14,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -87,17 +88,23 @@ fun MenuScreen(menuItems: List<RVItem>) {
 
     val categories = menuItems.filterIsInstance<MenuRVItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var selectedTabIndex by remember { mutableIntStateOf(-1) }
+    var isUserScrolled by remember { mutableStateOf(false) } // Флаг, был ли скролл
 
-    // Следим за первым видимым элементом в списке блюд
+
     LaunchedEffect(listState.firstVisibleItemIndex) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
-                val item = menuItems.getOrNull(index)
-                if (item is MenuRVItem.HeaderItem) {
-                    val newIndex = categoriesNames.indexOf(item.categoryName)
-                    if (newIndex != selectedTabIndex) {
-                        selectedTabIndex = newIndex
+                if (!isUserScrolled && index > 0) {
+                    isUserScrolled = true // Пользователь начал скроллить
+                }
+                if (isUserScrolled) {
+                    val item = menuItems.getOrNull(index)
+                    if (item is MenuRVItem.HeaderItem) {
+                        val newIndex = categoriesNames.indexOf(item.categoryName)
+                        if (newIndex != selectedTabIndex) {
+                            selectedTabIndex = newIndex
+                        }
                     }
                 }
             }
@@ -135,19 +142,20 @@ fun MenuScreen(menuItems: List<RVItem>) {
                 }
             }
         )
+        if (selectedTabIndex >= 0) {
+            val currentSubCategories = categories[selectedTabIndex].subCategoriesNames
 
-        val currentSubCategories = categories[selectedTabIndex].subCategoriesNames
-
-        if (!currentSubCategories.isNullOrEmpty() && !isTopPartVisible) {
-            AnimatedVisibility(
-                visible = currentSubCategories.isNotEmpty(),
-                enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically()
-            ) {
-                SubCategoryTabsRow(
-                    categories = currentSubCategories,
-                    selectedTabIndex = 0
-                ) { }
+            if (!currentSubCategories.isNullOrEmpty()) {
+                AnimatedVisibility(
+                    visible = currentSubCategories.isNotEmpty(),
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    SubCategoryTabsRow(
+                        categories = currentSubCategories,
+                        selectedTabIndex = 0
+                    ) { }
+                }
             }
         }
         MenuList(menuItems, listState, modifier = Modifier.weight(1f))
