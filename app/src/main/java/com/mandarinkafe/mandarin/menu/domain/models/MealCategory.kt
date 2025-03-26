@@ -16,7 +16,7 @@ data class MealCategory(
 val mockMenuData = arrayListOf<MealCategory>(
     MealCategory(
         id = "1",
-        name = "ПИЦЦА", meals = null,
+        name = "Пицца", meals = null,
         subCategories = listOf(
             MealCategory(
                 id = "d3872541-5a16-4c21-b9e7-c8ab8912fd36",
@@ -37,7 +37,7 @@ val mockMenuData = arrayListOf<MealCategory>(
     ),
     MealCategory(
         id = "2",
-        name = "СУШИ И РОЛЛЫ", meals = null,
+        name = "Суши и роллы", meals = null,
         subCategories = listOf(
             MealCategory(
                 id = "903872541-5a16-3533-b9e7-c8ab8912fd36",
@@ -58,21 +58,21 @@ val mockMenuData = arrayListOf<MealCategory>(
     ),
     MealCategory(
         id = "c21-b9e7-c8ab8912fd44444909090544436",
-        name = "БУРГЕРЫ",
+        name = "Бургеры",
         meals = mockBurgerList,
         subCategories = null,
         tabIcon = "https://static.tildacdn.com/tild3330-6165-4238-b132-303663663062/noroot.png"
     ),
     MealCategory(
         id = "d3222222222fd891246465554fd36",
-        name = "ХОТ-ДОГИ И ДОНЕР",
+        name = "Хот-доги и донер",
         meals = mockHotDogList,
         subCategories = null,
         tabIcon = "https://static.tildacdn.com/tild6430-3834-4539-b837-616230626534/noroot.png"
     ),
     MealCategory(
         id = "j3872541-5a16-444448912555f9090d36",
-        name = "WOK",
+        name = "Wok",
         meals = mockWokList,
         subCategories = null,
         tabIcon = "123https://static.tildacdn.com/tild3233-3165-4430-b231-313839323231/_.png"

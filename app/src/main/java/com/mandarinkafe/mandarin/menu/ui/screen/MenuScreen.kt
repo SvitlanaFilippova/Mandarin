@@ -1,20 +1,9 @@
 package com.mandarinkafe.mandarin.menu.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ScrollableTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,20 +13,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.AsyncImage
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.RVItem
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
-import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockMenuData
-import com.mandarinkafe.mandarin.menu.ui.components.ItemMenuMeal
+import com.mandarinkafe.mandarin.menu.ui.components.CategoryTabs
+import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import kotlinx.coroutines.launch
 
 @Preview
@@ -130,88 +113,9 @@ fun MenuScreen(menuItems: List<RVItem>) {
     }
 }
 
-@Composable
-fun CategoryTabs(
-    categories: List<MenuRVItem.HeaderItem>,
-    selectedTabIndex: Int,
-    onTabSelected: (Int) -> Unit
-) {
-    ScrollableTabRow(
-        containerColor = Colors.AppBlack,
-        selectedTabIndex = selectedTabIndex,
-        edgePadding = Dimens.MarginSmall8,
-        indicator = { tabPositions ->
-            SecondaryIndicator(
-                Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                color = Colors.Orange
-            )
-        }
-    ) {
-        categories.forEachIndexed { index, category ->
-            CategoryTab(
-                category = category,
-                isSelected = selectedTabIndex == index,
-                onClick = { onTabSelected(index) }
-            )
-        }
-    }
-}
 
-@Composable
-fun CategoryTab(category: MenuRVItem.HeaderItem, isSelected: Boolean, onClick: () -> Unit) {
-    Tab(
-        selected = isSelected,
-        onClick = onClick,
-        text = {
-            Text(
-                category.categoryName,
-                color = if (isSelected) Colors.Orange else Color.White
-            )
-        },
-        icon = {
-            AsyncImage(
-                model = category.tabIcon,
-                contentDescription = "Иконка ${category.categoryName}",
-                modifier = Modifier.size(Dimens.IconSize24),
-                error = painterResource(R.drawable.logo_orange),
-                placeholder = painterResource(R.drawable.logo_orange),
-                colorFilter = ColorFilter.tint(if (isSelected) Colors.Orange else Color.White)
-            )
-        },
-        selectedContentColor = Colors.Orange,
-    )
-}
 
-@Composable
-fun MenuList(menuItems: List<RVItem>, listState: LazyListState, modifier: Modifier ) {
-    LazyColumn(
-        state = listState,
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
-    ) {
-        items(menuItems) { item ->
-            when (item) {
-                is MenuRVItem.HeaderItem -> Text(
-                    text = item.categoryName,
-                    style = Typography.MealTitleStyle,
-                    modifier = Modifier.padding(
-                        start = Dimens.MarginSmall8,
-                        top = Dimens.MarginSmall8
-                    )
-                )
 
-                is MenuRVItem.SubHeaderItem -> Text(
-                    text = item.categoryName,
-                    style = Typography.MealTitleStyle,
-                    modifier = Modifier.padding(
-                        start = Dimens.MarginSmall8,
-                        bottom = Dimens.MarginSmall8
-                    )
-                )
 
-                is MenuRVItem.MealItem -> ItemMenuMeal(meal = item.meal)
-            }
-        }
-    }
-}
+
 
