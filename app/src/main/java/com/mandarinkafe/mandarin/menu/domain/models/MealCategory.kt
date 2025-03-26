@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.menu.domain.models
 import com.mandarinkafe.mandarin.menu.data.DtoToDomainConverter.Companion.PIZZA_ICON
 import com.mandarinkafe.mandarin.menu.data.DtoToDomainConverter.Companion.SUSHI_ICON
 
-
 data class MealCategory(
     val id: String,
     val name: String,
@@ -19,14 +18,14 @@ val mockMenuData = arrayListOf<MealCategory>(
         name = "Пицца", meals = null,
         subCategories = listOf(
             MealCategory(
-                id = "d3872541-5a16-4c21-b9e7-c8ab8912fd36",
+                id = "832b4f72-adeb-4a3d-8bf4-cfde11ac810f",
                 name = "Классическая",
                 meals = mockPizza35List,
                 subCategories = null,
                 tabIcon = null
             ),
             MealCategory(
-                id = "d3872541-5a16-4c21-b9e7-c8ab8912fd36",
+                id = "9a9c0f12-123b-4d9f-8a34-cf1234abcd12",
                 name = "Римская",
                 meals = mockPizzaRimList,
                 subCategories = null,
@@ -40,14 +39,14 @@ val mockMenuData = arrayListOf<MealCategory>(
         name = "Суши и роллы", meals = null,
         subCategories = listOf(
             MealCategory(
-                id = "903872541-5a16-3533-b9e7-c8ab8912fd36",
+                id = "12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36",
                 name = "Роллы",
                 meals = mockRollsList,
                 subCategories = null,
                 tabIcon = null
             ),
             MealCategory(
-                id = "903872541-5a16-3533-b9e7-c8ab8912fd32",
+                id = "23239a9c0f12-123b-4d9f-8a34-cf1234abcd12",
                 name = "Маки-суши",
                 meals = mockMakiList,
                 subCategories = null,

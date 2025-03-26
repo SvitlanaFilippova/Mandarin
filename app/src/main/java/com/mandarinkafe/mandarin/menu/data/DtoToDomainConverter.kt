@@ -117,13 +117,13 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
         //TODO выписать, когда будут в меню:
         RIM("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
         NEAPOL("123b4a72-cdfg-7b3c-8abc-cfde11abc810"),
-        CHICAGO("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        CALCONE("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        FOKACCHA("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        LAMADJO("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        HACHAPURI_ADJ("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        HACHAPURI_IM("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        RULETIKI("9a9c0f12-123b-4d9f-8a34-cf1234abcd12");
+        CHICAGO("39a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
+        CALCONE("29a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
+        FOKACCHA("19a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
+        LAMADJO("49a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
+        HACHAPURI_ADJ("59a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
+        HACHAPURI_IM("69a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
+        RULETIKI("79a9c0f12-123b-4d9f-8a34-cf1234abcd12");
 
         companion object {
             private val ids = entries.map { it.id }.toSet()
@@ -135,10 +135,10 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     }
 
     enum class SushiCategoriesIds(val id: String) {
-        ROLLS("d3872541-5a16-4c21-b9e7-c8ab8912fd36"),
+        ROLLS("12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36"),
 
         //TODO выписать, когда будут в меню:
-        MAKI("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
+        MAKI("23239a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
         NIGIRI("123b4a72-cdfg-7b3c-8abc-cfde11abc810"),
         GUNKAN("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
         SPICE("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),

@@ -54,8 +54,7 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
                             )
                             this += subCategory.meals.map {
                                 MenuRVItem.MealItem(
-                                    meal = it,
-                                    id = it.id
+                                    meal = it
                                 )
                             }
                         }
@@ -70,8 +69,7 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
                         )
                         this += category.meals.map {
                             MenuRVItem.MealItem(
-                                it,
-                                id = it.id
+                                it
                             )
                         }
                     }

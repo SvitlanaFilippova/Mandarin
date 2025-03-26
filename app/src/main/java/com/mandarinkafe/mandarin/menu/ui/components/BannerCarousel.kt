@@ -27,7 +27,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
@@ -36,21 +35,16 @@ import com.mandarinkafe.mandarin.menu.domain.models.mockBannersList
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_SLOW
 import com.mandarinkafe.mandarin.util.Constants.AUTO_SCROLL_INTERVAL
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@Preview
-@Composable
-fun BannerCarouselPreview() {
-    val banners = mockBannersList
-    BannerCarousel(banners = banners)
-}
-
 @Composable
 fun BannerCarousel(
-    banners: List<Banner>,
+    banners: List<Banner> = mockBannersList,
     autoScrollInterval: Long = AUTO_SCROLL_INTERVAL, // Интервал автопрокрутки
-    easing: Easing = LinearEasing
+    easing: Easing = LinearEasing,
+    onBannerClick: (String) -> Job
 ) {
     val pagerState = rememberPagerState { banners.size }
     val coroutineScope = rememberCoroutineScope()
@@ -97,9 +91,9 @@ fun BannerCarousel(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(2.91f) // Пропорции баннера
+                    .aspectRatio(2.91f)
                     .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                    .clickable { /* Действие */ }
+                    .clickable { onBannerClick(banners[page].goToIdOnClick) }
             )
         }
 

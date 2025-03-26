@@ -26,7 +26,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockMenuData
-import com.mandarinkafe.mandarin.menu.ui.components.BannerCarouselPreview
+import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.menu.ui.components.MenuHeader
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.CategoryTabsRow
@@ -46,15 +46,21 @@ fun MenuScreenPreview() {
                         subCategoriesNames = buildList {
                             category.subCategories.forEach { this += it.name }
                         },
-                        tabIcon = category.tabIcon
+                        tabIcon = category.tabIcon,
+                        id = category.id
                     )
 
                     category.subCategories.forEach { subCategory ->
                         if (!subCategory.meals.isNullOrEmpty()) {
                             this += MenuRVItem.SubHeaderItem(
-                                categoryName = subCategory.name
+                                categoryName = subCategory.name,
+                                id = subCategory.id
                             )
-                            this += subCategory.meals.map { MenuRVItem.MealItem(meal = it) }
+                            this += subCategory.meals.map {
+                                MenuRVItem.MealItem(
+                                    meal = it
+                                )
+                            }
                         }
                     }
                 } else {
@@ -62,9 +68,14 @@ fun MenuScreenPreview() {
                         this += MenuRVItem.HeaderItem(
                             categoryName = category.name,
                             subCategoriesNames = null,
-                            tabIcon = category.tabIcon
+                            tabIcon = category.tabIcon,
+                            id = category.id
                         )
-                        this += category.meals.map { MenuRVItem.MealItem(it) }
+                        this += category.meals.map {
+                            MenuRVItem.MealItem(
+                                it
+                            )
+                        }
                     }
                 }
             }
@@ -91,6 +102,26 @@ fun MenuScreen(menuItems: List<RVItem>) {
     var selectedTabIndex by remember { mutableIntStateOf(-1) }
     var selectedSubTabIndex by remember { mutableIntStateOf(-1) }
     var isUserScrolled by remember { mutableStateOf(false) } // Флаг, был ли скролл
+
+    // Функция для поиска индекса по ID
+    fun findIndexById(targetId: String): Int {
+        return menuItems.indexOfFirst { item ->
+            when (item) {
+                is MenuRVItem.HeaderItem -> item.id == targetId
+                is MenuRVItem.SubHeaderItem -> item.id == targetId
+                is MenuRVItem.MealItem -> item.meal.id == targetId
+                else -> false
+            }
+        }.takeIf { it >= 0 } ?: 0
+    }
+
+    // Обработчик клика по баннеру
+    val handleBannerClick = { targetId: String ->
+        coroutineScope.launch {
+            val targetIndex = findIndexById(targetId)
+            listState.scrollToItem(targetIndex)
+        }
+    }
 
     LaunchedEffect(remember { derivedStateOf { listState.layoutInfo.visibleItemsInfo } }) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo }
@@ -149,7 +180,7 @@ fun MenuScreen(menuItems: List<RVItem>) {
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 MenuHeader()
-                BannerCarouselPreview()
+                BannerCarousel(onBannerClick = handleBannerClick)
             }
         }
 
@@ -198,3 +229,4 @@ fun MenuScreen(menuItems: List<RVItem>) {
         MenuList(menuItems, listState, modifier = Modifier.weight(1f))
     }
 }
+
