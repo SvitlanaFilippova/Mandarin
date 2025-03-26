@@ -27,21 +27,6 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
         }
     }
 
-    override fun getMenu(): Flow<Pair<List<MealCategory>?, String?>> {
-        return repository.getMenu().map { result ->
-            when (result) {
-                is Resource.Success -> {
-                    Pair(result.data, null)
-                }
-
-                is Resource.Error -> {
-                    Pair(null, result.message)
-                }
-            }
-        }
-    }
-
-
 
     override fun getMockMenu(): List<RVItem> {
         return menuToMenuItems(mockMenuData)
@@ -57,15 +42,22 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
                         subCategoriesNames = buildList {
                             category.subCategories.forEach { this += it.name }
                         },
-                        tabIcon = category.tabIcon
+                        tabIcon = category.tabIcon,
+                        id = category.id
                     )
 
                     category.subCategories.forEach { subCategory ->
                         if (!subCategory.meals.isNullOrEmpty()) {
                             this += MenuRVItem.SubHeaderItem(
-                                categoryName = subCategory.name
+                                categoryName = subCategory.name,
+                                id = subCategory.id
                             )
-                            this += subCategory.meals.map { MenuRVItem.MealItem(meal = it) }
+                            this += subCategory.meals.map {
+                                MenuRVItem.MealItem(
+                                    meal = it,
+                                    id = it.id
+                                )
+                            }
                         }
                     }
                 } else {
@@ -73,9 +65,15 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
                         this += MenuRVItem.HeaderItem(
                             categoryName = category.name,
                             subCategoriesNames = null,
-                            tabIcon = category.tabIcon
+                            tabIcon = category.tabIcon,
+                            id = category.id
                         )
-                        this += category.meals.map { MenuRVItem.MealItem(it) }
+                        this += category.meals.map {
+                            MenuRVItem.MealItem(
+                                it,
+                                id = it.id
+                            )
+                        }
                     }
                 }
             }

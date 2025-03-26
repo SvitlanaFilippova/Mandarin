@@ -50,12 +50,6 @@ android {
 }
 
 dependencies {
-
-    // AdapterDelegates
-    implementation(libs.adapterdelegates.dsl)
-    // AdapterDelegates для работы с ViewBinding
-    implementation(libs.adapterdelegates.dsl.viewbinding)
-
     // Navigation
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.fragment.ktx)
@@ -78,9 +72,6 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
-
-    // DotsIndicator
-    implementation(libs.circleindicator)
 
     //Graphics
     implementation(libs.androidx.ui.graphics.android)
