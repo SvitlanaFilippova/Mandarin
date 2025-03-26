@@ -26,7 +26,7 @@ fun CartControls(numberInCart: Int, price: Int, onIncrease: () -> Unit, onDecrea
         modifier = Modifier
             .widthIn(min = Dimens.ButtonToCartBig120)
             .height(Dimens.ButtonToCartSmall32)
-            .clip(RoundedCornerShape(Dimens.ButtonRadius8))
+            .clip(RoundedCornerShape(Dimens.CornerRadius8))
             .background(Colors.GreyTransparent10)
     ) {
         Row(

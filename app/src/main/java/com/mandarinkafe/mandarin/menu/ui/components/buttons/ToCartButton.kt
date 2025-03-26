@@ -23,7 +23,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Typography
 fun ToCartButton(price: Int, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        shape = RoundedCornerShape(Dimens.ButtonRadius8),
+        shape = RoundedCornerShape(Dimens.CornerRadius8),
         colors = ButtonDefaults.buttonColors(
             containerColor = Colors.Orange,
             contentColor = Color.White

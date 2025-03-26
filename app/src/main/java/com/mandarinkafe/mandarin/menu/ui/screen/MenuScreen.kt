@@ -1,23 +1,32 @@
 package com.mandarinkafe.mandarin.menu.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockMenuData
+import com.mandarinkafe.mandarin.menu.ui.components.BannerCarouselPreview
+import com.mandarinkafe.mandarin.menu.ui.components.MenuHeader
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.SubCategoryTabsRow
@@ -61,15 +70,20 @@ fun MenuScreenPreview() {
         }
         return menuItems
     }
-
     MenuScreen(menuToMenuItems(mockMenuData))
 
 }
 
 @Composable
 fun MenuScreen(menuItems: List<RVItem>) {
+
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+
+    // Верхняя часть экрана видна только если пользователь в самом верху списка
+    val isTopPartVisible by remember {
+        derivedStateOf { listState.firstVisibleItemIndex == 0 }
+    }
 
     val categories = menuItems.filterIsInstance<MenuRVItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
@@ -95,6 +109,17 @@ fun MenuScreen(menuItems: List<RVItem>) {
             .background(Colors.AppBlack)
     ) {
 
+        AnimatedVisibility(
+            visible = isTopPartVisible,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                MenuHeader()
+                BannerCarouselPreview()
+            }
+        }
+
         CategoryTabsRow(
             categories = categories,
             selectedTabIndex = selectedTabIndex,
@@ -110,14 +135,21 @@ fun MenuScreen(menuItems: List<RVItem>) {
                 }
             }
         )
-        val currentSubCategories = categories[selectedTabIndex].subCategoriesNames
-        if (!currentSubCategories.isNullOrEmpty()) {
-            SubCategoryTabsRow(
-                categories = currentSubCategories,
-                selectedTabIndex = 0
-            ) { }
-        }
 
+        val currentSubCategories = categories[selectedTabIndex].subCategoriesNames
+
+        if (!currentSubCategories.isNullOrEmpty() && !isTopPartVisible) {
+            AnimatedVisibility(
+                visible = currentSubCategories.isNotEmpty(),
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                SubCategoryTabsRow(
+                    categories = currentSubCategories,
+                    selectedTabIndex = 0
+                ) { }
+            }
+        }
         MenuList(menuItems, listState, modifier = Modifier.weight(1f))
     }
 }

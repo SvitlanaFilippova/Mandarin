@@ -71,10 +71,10 @@ fun MenuMealItem(meal: Meal) {
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(Dimens.MealImage136)
-                .clip(RoundedCornerShape(Dimens.ButtonRadius8))
+                .clip(RoundedCornerShape(Dimens.CornerRadius8))
                 .background(
                     color = Colors.AppBlack,
-                    shape = RoundedCornerShape(Dimens.ButtonRadius8)
+                    shape = RoundedCornerShape(Dimens.CornerRadius8)
                 )
         )
 
