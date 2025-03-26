@@ -12,8 +12,7 @@ import kotlinx.coroutines.flow.map
 
 class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteractor {
 
-
-    override fun getMenuRvItem(): Flow<Pair<List<RVItem>?, String?>> {
+    override fun getMenu(): Flow<Pair<List<RVItem>?, String?>> {
         return repository.getMenu().map { result ->
             when (result) {
                 is Resource.Success -> {
