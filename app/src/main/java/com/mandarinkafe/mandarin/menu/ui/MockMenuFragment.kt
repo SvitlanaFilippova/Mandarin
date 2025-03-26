@@ -21,13 +21,13 @@ import com.google.android.material.tabs.TabLayout
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.core.ui.MainActivity
-import com.mandarinkafe.mandarin.core.ui.RVItem
 import com.mandarinkafe.mandarin.databinding.FragmentMenuBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockBannersList
 import com.mandarinkafe.mandarin.menu.presentation.BannerAdapter
 import com.mandarinkafe.mandarin.menu.presentation.MenuAdapter
+import com.mandarinkafe.mandarin.util.RVItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

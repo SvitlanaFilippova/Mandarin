@@ -11,14 +11,13 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.ui.RVItem
 import com.mandarinkafe.mandarin.databinding.ListMenuHeaderBinding
 import com.mandarinkafe.mandarin.databinding.ListMenuItemBinding
 import com.mandarinkafe.mandarin.databinding.ListMenuSubHeaderBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.presentation.MenuAdapter.MealClickListener
-
+import com.mandarinkafe.mandarin.util.RVItem
 
 class MenuAdapter(
     private val clickListener: MealClickListener

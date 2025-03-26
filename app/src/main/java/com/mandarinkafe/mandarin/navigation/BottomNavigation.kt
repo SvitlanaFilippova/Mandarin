@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.ui.theme.Colors
 
 @Composable
 fun BottomNavigation(
@@ -25,7 +26,7 @@ fun BottomNavigation(
         BottomNavigationItem.Favorites
     )
     NavigationBar(
-        containerColor = Color.Black
+        containerColor = Colors.AppBlack
     ) {
         val backStackEntry = navController.currentBackStackEntryAsState().value
         val currentRoute = backStackEntry?.destination?.route

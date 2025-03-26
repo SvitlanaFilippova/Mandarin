@@ -5,7 +5,7 @@ import androidx.compose.ui.unit.sp
 
 object Dimens {
     val ToolbarHeadHeight56 = 56.dp
-    val ButtonRadius8 = 8.dp
+    val CornerRadius8 = 8.dp
     val ButtonRadius16 = 16.dp
     val ButtonSmall24 = 24.dp
     val ButtonToCartSmall32 = 32.dp
@@ -38,10 +38,14 @@ object Dimens {
     val PlaceholderImageSize120 = 120.dp
     val BsDividerWidth48 = 48.dp
     val BsDividerHeight4 = 4.dp
+    val ZeroDp0 = 0.dp
     val TextSizeRegular16 = 16.sp
     val TextSizeSmall11 = 11.sp
-    val TextSize16 = 16.sp
+    val TextSizeSmall12 = 12.sp
     val TextSizeBig24 = 24.sp
     val TextSizeRegular14 = 14.sp
+    val DotsIndicatorSize4 = 4.dp
+    val DotsIndicatorSizeSelected8 = 8.dp
+
 }
 

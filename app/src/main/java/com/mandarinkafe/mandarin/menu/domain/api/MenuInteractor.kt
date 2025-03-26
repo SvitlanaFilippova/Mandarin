@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.menu.domain.api
-import com.mandarinkafe.mandarin.core.ui.RVItem
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
+import com.mandarinkafe.mandarin.util.RVItem
 import kotlinx.coroutines.flow.Flow
 
 interface MenuInteractor {

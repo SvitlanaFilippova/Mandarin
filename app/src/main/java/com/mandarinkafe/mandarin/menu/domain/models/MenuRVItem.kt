@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.menu.domain.models
 
-import com.mandarinkafe.mandarin.core.ui.RVItem
+import com.mandarinkafe.mandarin.util.RVItem
 
 
 sealed interface MenuRVItem : RVItem {

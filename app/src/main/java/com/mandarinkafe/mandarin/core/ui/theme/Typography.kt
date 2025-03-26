@@ -5,7 +5,7 @@ import androidx.compose.ui.text.font.FontWeight
 
 object Typography {
     val ToCartButtonStyle = TextStyle(
-        fontSize = Dimens.TextSizeRegular14,
+        fontSize = Dimens.TextSizeSmall12,
         fontWeight = FontWeight.Normal,
         color = Colors.White
     )
@@ -30,12 +30,20 @@ object Typography {
     )
 
     val MealTitleStyle = TextStyle(
-        fontSize = Dimens.TextSize16,
+        fontSize = Dimens.TextSizeRegular16,
+        color = Colors.White
+    )
+    val MenuCategoryStyle = TextStyle(
+        fontSize = Dimens.TextSizeBig24,
+        color = Colors.White
+    )
+    val MenuSubCategoryStyle = TextStyle(
+        fontSize = Dimens.TextSizeRegular16,
         color = Colors.White
     )
 
     val MealPriceStyle = TextStyle(
-        fontSize = Dimens.TextSize16,
+        fontSize = Dimens.TextSizeRegular16,
         color = Colors.White
     )
 
