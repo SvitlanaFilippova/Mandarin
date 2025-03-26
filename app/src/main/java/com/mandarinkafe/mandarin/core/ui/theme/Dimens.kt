@@ -37,7 +37,8 @@ object Dimens {
     val MealDetailsCartButton56 = 56.dp
     val PlaceholderImageSize120 = 120.dp
     val BsDividerWidth48 = 48.dp
-    val BsDividerHeight4 = 4.dp
+    val DividerHeight1 = 1.dp
+    val TabActivatedIndicatorHeight2 = 2.dp
     val ZeroDp0 = 0.dp
     val TextSizeRegular16 = 16.sp
     val TextSizeSmall11 = 11.sp
