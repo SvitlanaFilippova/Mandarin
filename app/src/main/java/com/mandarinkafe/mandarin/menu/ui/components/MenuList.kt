@@ -28,8 +28,7 @@ fun MenuList(menuItems: List<RVItem>, listState: LazyListState, modifier: Modifi
                     style = Typography.MenuCategoryStyle,
                     modifier = Modifier.padding(
                         start = Dimens.MarginSmall8,
-                        top = Dimens.MarginSmall8,
-                        bottom = Dimens.MarginSuperSmall4
+                        top = Dimens.MarginStandard16
                     )
                 )
 
