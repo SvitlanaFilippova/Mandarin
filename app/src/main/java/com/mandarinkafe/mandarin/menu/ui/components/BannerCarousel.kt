@@ -1,5 +1,8 @@
 package com.mandarinkafe.mandarin.menu.ui.components
 
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,17 +11,21 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
@@ -26,6 +33,9 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.menu.domain.models.mockBannersList
+import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
+import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_SLOW
+import com.mandarinkafe.mandarin.util.Constants.AUTO_SCROLL_INTERVAL
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -39,7 +49,8 @@ fun BannerCarouselPreview() {
 @Composable
 fun BannerCarousel(
     banners: List<Banner>,
-    autoScrollInterval: Long = 5000L // Интервал автопрокрутки
+    autoScrollInterval: Long = AUTO_SCROLL_INTERVAL, // Интервал автопрокрутки
+    easing: Easing = LinearEasing
 ) {
     val pagerState = rememberPagerState { banners.size }
     val coroutineScope = rememberCoroutineScope()
@@ -49,19 +60,36 @@ fun BannerCarousel(
         while (true) {
             delay(autoScrollInterval)
             coroutineScope.launch {
-                val nextPage = (pagerState.currentPage + 1) % banners.size
-                pagerState.animateScrollToPage(nextPage)
+                pagerState.animateScrollToPage(
+                    page = (pagerState.currentPage + 1) % banners.size,
+                    animationSpec = tween(
+                        durationMillis = ANIMATION_DURATION_SLOW,
+                        easing = easing
+                    )
+                )
             }
         }
     }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = Dimens.MarginSuperSmall4)
-    ) {
+
+    Column(modifier = Modifier.fillMaxWidth()) {
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxWidth()
+            pageSpacing = Dimens.MarginStandard16,
+            modifier = Modifier
+                .fillMaxWidth()
+                .graphicsLayer {
+                    // Рендеринг в offscreen buffer для плавности
+                    compositingStrategy = CompositingStrategy.Offscreen
+                },
+
+            // настройки "ручной" прокрутки
+            flingBehavior = PagerDefaults.flingBehavior(
+                state = pagerState,
+                snapAnimationSpec = tween(
+                    durationMillis = ANIMATION_DURATION_FAST,
+                    easing = easing
+                )
+            )
         ) { page ->
             AsyncImage(
                 model = banners[page].imageUrl,
@@ -81,18 +109,21 @@ fun BannerCarousel(
                 .fillMaxWidth()
                 .padding(
                     top = Dimens.MarginSmall8,
-                    start = Dimens.MarginBig32,
-                    end = Dimens.MarginBig32
+                    bottom = Dimens.MarginStandard16
                 ),
-            horizontalArrangement = Arrangement.Absolute.SpaceEvenly
+            horizontalArrangement = Arrangement.spacedBy(
+                Dimens.MarginSmall8,
+                Alignment.CenterHorizontally
+            )
+
         ) {
             banners.forEachIndexed { index, _ ->
                 val color = if (pagerState.currentPage == index) Colors.Orange else Colors.Grey
                 Box(
                     modifier = Modifier
-                        .size(if (pagerState.currentPage == index) Dimens.DotsIndicatorSizeSelected8 else Dimens.DotsIndicatorSize4)
-                        .background(color, shape = CircleShape)
-                        .padding(Dimens.MarginStandard16)
+                        .width(Dimens.BannerIndicatorWidth24)
+                        .height(Dimens.BannerIndicatorHeight4)
+                        .background(color, shape = RoundedCornerShape(Dimens.RadiusImageCorner2))
                 )
             }
         }
