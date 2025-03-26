@@ -4,7 +4,6 @@ import com.mandarinkafe.mandarin.menu.data.DtoToDomainConverter.Companion.PARENT
 import com.mandarinkafe.mandarin.menu.data.DtoToDomainConverter.Companion.PARENT_SUSHI_ID
 import com.mandarinkafe.mandarin.menu.data.dto.Tag
 
-
 data class Meal(
     val id: String,
     val sku: String,
@@ -19,7 +18,6 @@ data class Meal(
     val topCategoryId: String?,
     val isEditable: Boolean
 )
-
 
 var mockPizza35List = arrayListOf<Meal>(
     Meal(
@@ -631,14 +629,120 @@ var mockWokList = arrayListOf<Meal>(
                 "Шаг 2. Добавь мясо, начинку, дополнительный соус по своему вкусу!",
         null,
         0,
-        "https://optim.tildacdn.com/tild3866-3065-4137-b633-616633396165/-/resize/312x/-/format/webp/datsky_hot-dog_new.jpg",
+        "",
         "wok",
         false,
         null, "j3872541-5a16-444448912555f9090d36", false
     ),
 )
 
+var mockHachapuriList = arrayListOf<Meal>(
+    Meal(
+        "hachapuri-adjar-12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36", "0013",
+        "ХАЧАПУРИ ПО-АДЖАРСКИ КЛАССИКА",
+        "ХАЧАПУРИ ПО-АДЖАРСКИ КЛАССИКА",
+        430,
+        570,
+        "https://static.tildacdn.com/tild3630-3932-4536-a461-666663663565/hachapuri_po-adgarsk.jpg",
+        "hachapuri-j3872541-5a16-444448912555f9090d36",
+        false,
+        null, "j3872541-5a16-444448912555f9090d36", false
+    ),
+    Meal(
+        "hachapuri-2-12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36", "0013",
+        "ХАЧАПУРИ ПО-ИМЕРЕТИНСКИ КЛАССИКА",
+        "Сулугуни, имеретинский сыр, сливочное масло",
+        400,
+        610,
+        "https://static.tildacdn.com/tild6166-3366-4536-b364-326637313762/hachapuri_po-imereti.jpg",
+        "hachapuri-j3872541-5a16-444448912555f9090d36",
+        false,
+        null, "j3872541-5a16-444448912555f9090d36", false
+    ),
+    Meal(
+        "hachapuri-adjar-12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36", "0013",
+        "ХАЧАПУРИ ПО-АДЖАРСКИ КЛАССИКА",
+        "ХАЧАПУРИ ПО-АДЖАРСКИ КЛАССИКА",
+        430,
+        570,
+        "https://static.tildacdn.com/tild3630-3932-4536-a461-666663663565/hachapuri_po-adgarsk.jpg",
+        "hachapuri-j3872541-5a16-444448912555f9090d36",
+        false,
+        null, "j3872541-5a16-444448912555f9090d36", false
+    ),
+    Meal(
+        "hachapuri-2-12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36", "0013",
+        "ХАЧАПУРИ ПО-ИМЕРЕТИНСКИ КЛАССИКА",
+        "Сулугуни, имеретинский сыр, сливочное масло",
+        400,
+        610,
+        "https://static.tildacdn.com/tild6166-3366-4536-b364-326637313762/hachapuri_po-imereti.jpg",
+        "hachapuri-j3872541-5a16-444448912555f9090d36",
+        false,
+        null, "j3872541-5a16-444448912555f9090d36", false
+    )
+)
 
+var mockCalconeList = arrayListOf<Meal>(
+    Meal(
+        "hachapuri-2-12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36", "0013",
+        "ИНТЕРНАЦИОНАЛЕ",
+        "Охотничьи колбаски, красный лук, бекон, каперсы, моцарелла, томатный соус",
+        300,
+        610,
+        "https://static.tildacdn.com/tild3364-3931-4063-b231-383761313731/internationale.jpg",
+        "calcone-j3872541-5a16-444448912555f9090d36",
+        false,
+        null, "j3872541-5a16-444448912555f9090d36", false
+    ),
+    Meal(
+        "hachapuri-2-12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36", "0013",
+        "НАПОЛИ",
+        "Шампиньоны, вяленые томаты, соус песто, мягкая моцарелла, моцарелла, сливочно-чесночный соус",
+        300,
+        550,
+        "https://static.tildacdn.com/tild3463-6362-4466-b139-643537313265/napoli.jpg",
+        "calcone-j3872541-5a16-444448912555f9090d36",
+        false,
+        null, "j3872541-5a16-444448912555f9090d36", false
+    ),
+    Meal(
+        "hachapuri-2-12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36", "0013",
+        "ИНТЕРНАЦИОНАЛЕ",
+        "Охотничьи колбаски, красный лук, бекон, каперсы, моцарелла, томатный соус",
+        300,
+        610,
+        "https://static.tildacdn.com/tild3364-3931-4063-b231-383761313731/internationale.jpg",
+        "calcone-j3872541-5a16-444448912555f9090d36",
+        false,
+        null, "j3872541-5a16-444448912555f9090d36", false
+    ),
+    Meal(
+        "hachapuri-2-12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36", "0013",
+        "НАПОЛИ",
+        "Шампиньоны, вяленые томаты, соус песто, мягкая моцарелла, моцарелла, сливочно-чесночный соус",
+        300,
+        550,
+        "https://static.tildacdn.com/tild3463-6362-4466-b139-643537313265/napoli.jpg",
+        "calcone-j3872541-5a16-444448912555f9090d36",
+        false,
+        null, "j3872541-5a16-444448912555f9090d36", false
+    ),
+
+    )
+var mockNeapolitanoList = arrayListOf<Meal>(
+    Meal(
+        "mockNeapolitanoList-hachapuri-2-12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36", "0013",
+        "ПЬЯНАЯ ГРУША",
+        " Охотничьи колбаски, красный лук, бекон, каперсы, моцарелла, томатный соус",
+        300,
+        860,
+        "https://static.tildacdn.com/tild3363-6163-4461-b164-363734336663/pyanaya_grusha.jpg",
+        "calcone-j3872541-5a16-444448912555f9090d36",
+        false,
+        null, "j3872541-5a16-444448912555f9090d36", false
+    ),
+)
 
 var mockPizzaAddsCheeseList = arrayListOf<Meal>(
     Meal(

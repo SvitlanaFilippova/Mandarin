@@ -36,7 +36,7 @@ fun MenuList(
                     style = Typography.MenuCategoryStyle,
                     modifier = Modifier.padding(
                         start = Dimens.MarginSmall8,
-                        top = Dimens.MarginStandard16
+                        top = Dimens.MarginBig32
                     )
                 )
 

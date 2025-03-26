@@ -30,6 +30,20 @@ val mockMenuData = arrayListOf<MealCategory>(
                 meals = mockPizzaRimList,
                 subCategories = null,
                 tabIcon = null
+            ),
+            MealCategory(
+                id = "neapolitano9a9c0f12-123b-4d9f-8a34-cf11abcd12",
+                name = "Неаполитано",
+                meals = mockNeapolitanoList,
+                subCategories = null,
+                tabIcon = null
+            ),
+            MealCategory(
+                id = "calcone-j3872541-5a16-444448912555f9090d36",
+                name = "Кальцоне",
+                meals = mockCalconeList,
+                subCategories = null,
+                tabIcon = null
             )
         ),
         tabIcon = PIZZA_ICON
@@ -75,6 +89,13 @@ val mockMenuData = arrayListOf<MealCategory>(
         meals = mockWokList,
         subCategories = null,
         tabIcon = "123https://static.tildacdn.com/tild3233-3165-4430-b231-313839323231/_.png"
+    ),
+    MealCategory(
+        id = "hachapuri-j3872541-5a16-444448912555f9090d36",
+        name = "Хачапури",
+        meals = mockHachapuriList,
+        subCategories = null,
+        tabIcon = ""
     )
 )
 
