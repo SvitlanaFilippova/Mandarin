@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.menu.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,7 +38,7 @@ fun BannerCarouselPreview() {
 
 @Composable
 fun BannerCarousel(
-    banners: List<Banner>, // URL изображений
+    banners: List<Banner>,
     autoScrollInterval: Long = 5000L // Интервал автопрокрутки
 ) {
     val pagerState = rememberPagerState { banners.size }
@@ -58,7 +59,6 @@ fun BannerCarousel(
             .fillMaxWidth()
             .padding(horizontal = Dimens.MarginSuperSmall4)
     ) {
-        // Горизонтальный баннер с прокруткой
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxWidth()
@@ -71,6 +71,7 @@ fun BannerCarousel(
                     .fillMaxWidth()
                     .aspectRatio(2.91f) // Пропорции баннера
                     .clip(RoundedCornerShape(Dimens.CornerRadius8))
+                    .clickable { /* Действие */ }
             )
         }
 

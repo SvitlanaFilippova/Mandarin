@@ -40,7 +40,10 @@ fun MealButtonsRow(meal: Meal) {
                 }
             )
         } else {
-            ToCartButton(meal.price) { isInTheCart = true }
+            ToCartButton(meal.price) {
+                isInTheCart = true
+                /* Действие */
+            }
         }
 
         if (meal.isEditable) {
