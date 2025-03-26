@@ -35,12 +35,12 @@ object Typography {
     val MenuCategoryStyle = TextStyle(
         fontSize = Dimens.TextSizeBig24,
         color = Colors.White,
-        fontWeight = FontWeight(500)
+        fontWeight = FontWeight(800)
     )
     val MenuSubCategoryStyle = TextStyle(
         fontSize = Dimens.TextSizeBig20,
         color = Colors.White,
-        fontWeight = FontWeight(400)
+        fontWeight = FontWeight(800)
     )
 
     val MealPriceStyle = TextStyle(
