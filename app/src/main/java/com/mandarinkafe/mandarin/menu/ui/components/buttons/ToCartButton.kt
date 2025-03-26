@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.menu.ui.components.buttons
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -27,7 +28,9 @@ fun ToCartButton(price: Int, onClick: () -> Unit) {
             containerColor = Colors.Orange,
             contentColor = Color.White
         ),
-        modifier = Modifier.widthIn(min = Dimens.ButtonToCartBig120)
+        modifier = Modifier
+            .widthIn(min = Dimens.ButtonToCartBig120)
+            .height(Dimens.ButtonToCartSmall32)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

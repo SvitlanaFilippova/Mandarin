@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components
+package com.mandarinkafe.mandarin.menu.ui.components.tabs
 
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
@@ -10,7 +10,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 
 @Composable
-fun CategoryTabs(
+fun CategoryTabsRow(
     categories: List<MenuRVItem.HeaderItem>,
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit
@@ -18,7 +18,7 @@ fun CategoryTabs(
     ScrollableTabRow(
         containerColor = Colors.AppBlack,
         selectedTabIndex = selectedTabIndex,
-        edgePadding = Dimens.MarginSmall8,
+        edgePadding = Dimens.ZeroDp0,
         indicator = { tabPositions ->
             SecondaryIndicator(
                 Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),

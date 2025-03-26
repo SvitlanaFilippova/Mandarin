@@ -7,7 +7,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -18,8 +18,9 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockMenuData
-import com.mandarinkafe.mandarin.menu.ui.components.CategoryTabs
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
+import com.mandarinkafe.mandarin.menu.ui.components.tabs.CategoryTabsRow
+import com.mandarinkafe.mandarin.menu.ui.components.tabs.SubCategoryTabsRow
 import com.mandarinkafe.mandarin.util.RVItem
 import kotlinx.coroutines.launch
 
@@ -64,6 +65,7 @@ fun MenuScreenPreview() {
     MenuScreen(menuToMenuItems(mockMenuData))
 
 }
+
 @Composable
 fun MenuScreen(menuItems: List<RVItem>) {
     val listState = rememberLazyListState()
@@ -71,7 +73,7 @@ fun MenuScreen(menuItems: List<RVItem>) {
 
     val categories = menuItems.filterIsInstance<MenuRVItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     // Следим за первым видимым элементом в списке блюд
     LaunchedEffect(listState.firstVisibleItemIndex) {
@@ -93,7 +95,7 @@ fun MenuScreen(menuItems: List<RVItem>) {
             .background(Colors.AppBlack)
     ) {
 
-        CategoryTabs(
+        CategoryTabsRow(
             categories = categories,
             selectedTabIndex = selectedTabIndex,
             onTabSelected = { index ->
@@ -108,14 +110,14 @@ fun MenuScreen(menuItems: List<RVItem>) {
                 }
             }
         )
+        val currentSubCategories = categories[selectedTabIndex].subCategoriesNames
+        if (!currentSubCategories.isNullOrEmpty()) {
+            SubCategoryTabsRow(
+                categories = currentSubCategories,
+                selectedTabIndex = 0
+            ) { }
+        }
 
         MenuList(menuItems, listState, modifier = Modifier.weight(1f))
     }
 }
-
-
-
-
-
-
-
