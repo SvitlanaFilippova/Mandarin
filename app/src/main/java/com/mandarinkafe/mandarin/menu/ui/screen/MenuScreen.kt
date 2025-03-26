@@ -14,13 +14,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.mandarinkafe.mandarin.core.ui.RVItem
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockMenuData
 import com.mandarinkafe.mandarin.menu.ui.components.CategoryTabs
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
+import com.mandarinkafe.mandarin.util.RVItem
 import kotlinx.coroutines.launch
 
 @Preview

@@ -58,7 +58,7 @@ fun ItemMenuMealPreview() {
         Meal(
             id = "1",
             sku = "0013",
-            name = "МАРГАРИТА С ВЯЛЕНЫМИ ТОМАТАМИ И ПЕРЧИКАМИ ЧОРИЗЗО КОПЧЁНЫМИ НА ВОЛОСАХ ДЕВСТВЕНИЦЫ",
+            name = "МАРГАРИТА С ВЯЛЕНЫМИ ТОМАТАМИ",
             description = "Томатный соус, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы",
             weight = 490,
             price = 2585,
@@ -94,10 +94,10 @@ fun MenuMealItem(meal: Meal) {
             contentScale = ContentScale.Crop, // Обрезает изображение, сохраняя пропорции
             modifier = Modifier
                 .size(Dimens.MealImage136) // Фиксированный квадратный размер
-                .clip(RoundedCornerShape(12.dp)) // Скругление углов
+                .clip(RoundedCornerShape(Dimens.ButtonRadius8)) // Скругление углов
                 .background(
                     color = Colors.AppBlack,
-                    shape = RoundedCornerShape(12.dp) // Скругление для фона
+                    shape = RoundedCornerShape(Dimens.ButtonRadius8) // Скругление для фона
                 )
         )
 
@@ -199,6 +199,7 @@ fun ButtonsRow(meal: Meal) {
                 var numberInCart by remember { mutableIntStateOf(1) }
                 val sumInCart = numberInCart * meal.price
 
+                //Доп кнопки, когда товар в корзине
                 Box(
                     modifier = Modifier
                         .width(Dimens.ButtonToCartBig120)

@@ -5,10 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.core.ui.RVItem
 import com.mandarinkafe.mandarin.menu.domain.api.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.api.MenuInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.util.RVItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

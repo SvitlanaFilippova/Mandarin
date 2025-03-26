@@ -1,11 +1,11 @@
 package com.mandarinkafe.mandarin.menu.domain.impl
 
-import com.mandarinkafe.mandarin.core.ui.RVItem
 import com.mandarinkafe.mandarin.menu.domain.api.MenuInteractor
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockMenuData
+import com.mandarinkafe.mandarin.util.RVItem
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

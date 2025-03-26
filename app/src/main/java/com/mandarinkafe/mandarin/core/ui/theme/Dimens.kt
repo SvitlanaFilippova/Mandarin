@@ -40,8 +40,8 @@ object Dimens {
     val BsDividerHeight4 = 4.dp
     val TextSizeRegular16 = 16.sp
     val TextSizeSmall11 = 11.sp
-    val TextSize16 = 16.sp
-    val TextSizeBig24 = 24.sp
+    val TextSizeSmall12 = 12.sp
+      val TextSizeBig24 = 24.sp
     val TextSizeRegular14 = 14.sp
 }
 
