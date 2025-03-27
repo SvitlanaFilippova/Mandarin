@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.util
+package com.mandarinkafe.mandarin.menu.ui.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

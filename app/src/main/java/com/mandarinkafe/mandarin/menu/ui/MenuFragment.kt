@@ -27,12 +27,6 @@ class MenuFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.tabLayoutCategories.removeAllTabs()
         _binding = null
-
-    }
-
-    private companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

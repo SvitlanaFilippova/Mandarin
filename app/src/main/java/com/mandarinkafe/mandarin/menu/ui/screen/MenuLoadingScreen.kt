@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.util
+package com.mandarinkafe.mandarin.menu.ui.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun LoadingScreen() {
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Loading Srceen")
+        Text(text = "Loading Screen")
         CircularProgressIndicator()
     }
 }

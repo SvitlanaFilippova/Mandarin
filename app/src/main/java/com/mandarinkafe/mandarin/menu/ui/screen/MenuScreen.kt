@@ -8,8 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.menu.ui.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.MenuViewModel
-import com.mandarinkafe.mandarin.util.ErrorScreen
-import com.mandarinkafe.mandarin.util.LoadingScreen
 
 @Composable
 fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
@@ -43,4 +41,3 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
         }
     }
 }
-
