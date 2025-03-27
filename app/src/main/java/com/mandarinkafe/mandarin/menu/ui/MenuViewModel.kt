@@ -50,13 +50,11 @@ class MenuViewModel @Inject constructor(
         if (newIndex >= 0) {
             _state.update { it.copy(selectedTabIndex = newIndex) }
         }
-        Log.d("DEBUG SCROLL", "scrollToCategory, selectedTabIndex = ${newIndex}")
     }
 
     private fun scrollToSubCategory(newIndex: Int) {
         if (newIndex >= 0) {
             _state.update { it.copy(selectedSubTabIndex = newIndex) }
-            Log.d("DEBUG SCROLL", "scrollToSubCategory, selectedTabIndex = ${newIndex}")
         }
     }
 
@@ -69,17 +67,21 @@ class MenuViewModel @Inject constructor(
             .collect { (menu, errorMessage) ->
             if (!menu.isNullOrEmpty()) {
                 _state.value = MenuViewState.Content(menuItems = menu)
+                 Log.d("DEBUG", "loadMenu. Меню получено. Ниже первые 10 пунктов из него")
+                menu.take(10).forEach {
+                    Log.d("DEBUG", "$it")
+                }
             } else {
                 _state.value = MenuViewState.Error
             }
-*/
+            */
+
             /*  Для получения мок-меню */
             val menu = menuInteractor.getMockMenu()
             if (menu.isNotEmpty()) {
                 _state.update {
                     it.copy(isLoading = false, menuItems = menu)
                 }
-                Log.d("DEBUG", "loadMenu. Меню получено: ${menu.take(10)}")
 
             } else {
                 _state.update {
@@ -102,13 +104,17 @@ class MenuViewModel @Inject constructor(
                 favoritesInteractor.addToFavorites(meal)
             }
         }
+        Log.d("DEBUG", "ViewModel toggleFavorite for $meal")
+        }
     }
 
     private fun addToCart(meal: Meal) {
         Cart.addItem(meal)
+        Log.d("DEBUG", "ViewModel addToCart for $meal")
     }
 
     private fun removeFromCart(meal: Meal) {
         /* Жду реализацию логики корзины */
+        Log.d("DEBUG", "ViewModel removeFromCart for $meal")
     }
-}
+
