@@ -1,14 +1,20 @@
 package com.mandarinkafe.mandarin.menu.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.menu.domain.api.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.api.MenuInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,22 +24,58 @@ class MenuViewModel @Inject constructor(
     private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
-    private val _state = MutableLiveData<MenuViewState>(MenuViewState.Loading)
-    val state: LiveData<MenuViewState> = _state
+    private val _state = MutableStateFlow(MenuContract.State()) // для хранения состояния ЮИ
+    val state: StateFlow<MenuContract.State> = _state.asStateFlow()
 
-    fun handleIntent(intent: MenuIntent) {
-        when (intent) {
-            is MenuIntent.LoadMenu -> loadMenu()
-            is MenuIntent.SelectCategory -> selectCategory(intent.index)
-            is MenuIntent.SelectSubCategory -> selectSubCategory(intent.index)
-            is MenuIntent.ToggleFavorite -> toggleFavorite(intent.meal)
-            is MenuIntent.AddToCart -> addToCart(intent.meal)
-            is MenuIntent.RemoveFromCart -> removeFromCart(intent.meal)
+    private val _effect =
+        MutableSharedFlow<MenuContract.Effect>() // для одноразовых событий. Например, показа снекбар
+    val effect: SharedFlow<MenuContract.Effect> = _effect.asSharedFlow()
+
+    init {
+        onEvent(MenuContract.Event.LoadMenu)
+    }
+
+    fun onEvent(event: MenuContract.Event) {
+        when (event) {
+            is MenuContract.Event.LoadMenu -> loadMenu()
+            is MenuContract.Event.ToggleFavorite -> toggleFavorite(event.meal)
+            is MenuContract.Event.AddToCart -> addToCart(event.meal)
+            is MenuContract.Event.RemoveFromCart -> removeFromCart(event.meal)
+            is MenuContract.Event.ScrollToCategory -> scrollToCategory(event.categoryId)
+            is MenuContract.Event.ScrollToSubCategory -> scrollToSubCategory(event.categoryId)
         }
     }
 
+    private fun scrollToSubCategory(categoryId: String) {
+        val newIndex = state.value.menuItems
+            .filterIsInstance<MenuRVItem.SubHeaderItem>()
+            .indexOfFirst { it.id == categoryId }
+        if (newIndex >= 0) {
+            _state.update { it.copy(selectedSubTabIndex = newIndex) }
+        }
+    }
+
+    private fun scrollToCategory(categoryId: String) {
+        val newIndex = state.value.menuItems
+            .filterIsInstance<MenuRVItem.HeaderItem>()
+            .indexOfFirst { it.id == categoryId }
+        if (newIndex >= 0) {
+            _state.update { it.copy(selectedTabIndex = newIndex, selectedSubTabIndex = -1) }
+        }
+    }
+
+    private fun selectCategory(index: Int) {
+        _state.value = state.value.copy(selectedTabIndex = index, selectedSubTabIndex = -1)
+    }
+
+    private fun selectSubCategory(index: Int) {
+        _state.value = state.value.copy(selectedSubTabIndex = index)
+    }
+
+
+
     private fun loadMenu() {
-        _state.value = MenuViewState.Loading
+        _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
 
             /*  Для получения реального меню из ikko
@@ -45,27 +87,25 @@ class MenuViewModel @Inject constructor(
                 _state.value = MenuViewState.Error
             }
 */
-
             /*  Для получения мок-меню */
             val menu = menuInteractor.getMockMenu()
             if (menu.isNotEmpty()) {
-                _state.value = MenuViewState.Content(menuItems = menu)
+                _state.update {
+                    it.copy(isLoading = false, menuItems = menu)
+                }
             } else {
-                _state.value = MenuViewState.Error
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = " Кажется, что-по пошло не так - в меню ничего нет"
+                    )
+                }
 
             }
         }
     }
 
-    private fun selectCategory(index: Int) {
-        val currentState = _state.value as? MenuViewState.Content ?: return
-        _state.value = currentState.copy(selectedTabIndex = index, selectedSubTabIndex = -1)
-    }
 
-    private fun selectSubCategory(index: Int) {
-        val currentState = _state.value as? MenuViewState.Content ?: return
-        _state.value = currentState.copy(selectedSubTabIndex = index)
-    }
 
     private fun toggleFavorite(meal: Meal) {
         viewModelScope.launch {
@@ -82,6 +122,6 @@ class MenuViewModel @Inject constructor(
     }
 
     private fun removeFromCart(meal: Meal) {
-        // TODO()
+        /* Жду реализацию логики корзины */
     }
 }
