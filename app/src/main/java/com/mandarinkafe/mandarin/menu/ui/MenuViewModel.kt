@@ -7,7 +7,6 @@ import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.menu.domain.api.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.api.MenuInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,26 +41,22 @@ class MenuViewModel @Inject constructor(
             is MenuContract.Event.ToggleFavorite -> toggleFavorite(event.meal)
             is MenuContract.Event.AddToCart -> addToCart(event.meal)
             is MenuContract.Event.RemoveFromCart -> removeFromCart(event.meal)
-            is MenuContract.Event.ScrollToCategory -> scrollToCategory(event.categoryId)
-            is MenuContract.Event.ScrollToSubCategory -> scrollToSubCategory(event.categoryId)
+            is MenuContract.Event.ScrollToCategory -> scrollToCategory(event.newIndex)
+            is MenuContract.Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
         }
     }
 
-    private fun scrollToSubCategory(categoryId: String) {
-        val newIndex = state.value.menuItems
-            .filterIsInstance<MenuRVItem.SubHeaderItem>()
-            .indexOfFirst { it.id == categoryId }
+    private fun scrollToCategory(newIndex: Int) {
+        if (newIndex >= 0) {
+            _state.update { it.copy(selectedTabIndex = newIndex) }
+        }
+        Log.d("DEBUG SCROLL", "scrollToCategory, selectedTabIndex = ${newIndex}")
+    }
+
+    private fun scrollToSubCategory(newIndex: Int) {
         if (newIndex >= 0) {
             _state.update { it.copy(selectedSubTabIndex = newIndex) }
-        }
-    }
-
-    private fun scrollToCategory(categoryId: String) {
-        val newIndex = state.value.menuItems
-            .filterIsInstance<MenuRVItem.HeaderItem>()
-            .indexOfFirst { it.id == categoryId }
-        if (newIndex >= 0) {
-            _state.update { it.copy(selectedTabIndex = newIndex, selectedSubTabIndex = -1) }
+            Log.d("DEBUG SCROLL", "scrollToSubCategory, selectedTabIndex = ${newIndex}")
         }
     }
 
@@ -98,8 +93,6 @@ class MenuViewModel @Inject constructor(
             }
         }
     }
-
-
 
     private fun toggleFavorite(meal: Meal) {
         viewModelScope.launch {

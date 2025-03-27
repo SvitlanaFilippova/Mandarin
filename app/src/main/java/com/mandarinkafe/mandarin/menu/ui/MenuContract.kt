@@ -8,8 +8,8 @@ sealed interface MenuContract {
     sealed interface Event {
         data object LoadMenu : Event
         data class ToggleFavorite(val meal: Meal) : Event
-        data class ScrollToCategory(val categoryId: String) : Event
-        data class ScrollToSubCategory(val categoryId: String) : Event
+        data class ScrollToCategory(val newIndex: Int) : Event
+        data class ScrollToSubCategory(val newIndex: Int) : Event
         data class AddToCart(val meal: Meal) : Event
         data class RemoveFromCart(val meal: Meal) : Event
     }
@@ -23,7 +23,7 @@ sealed interface MenuContract {
         val isLoading: Boolean = false,
         val menuItems: List<RVItem> = emptyList(),
         val errorMessage: String? = null,
-        val selectedTabIndex: Int = 0,
+        val selectedTabIndex: Int = -1,
         val selectedSubTabIndex: Int = -1
     )
 }

@@ -74,7 +74,7 @@ fun MenuContentScreen(
                         parentCategory?.let { category ->
                             val newIndex = categoriesNames.indexOf(category.categoryName)
                             if (newIndex != selectedTabIndex) {
-                                onEvent(MenuContract.Event.ScrollToCategory(category.id))
+                                onEvent(MenuContract.Event.ScrollToCategory(newIndex))
                             }
                             // Ищем подкатегорию
                             val parentSubCategory = menuItems
@@ -86,7 +86,7 @@ fun MenuContentScreen(
                                     parentCategory.subCategoriesNames?.indexOf(subCategory.categoryName)
                                         ?: -1
                                 if (newSubIndex != selectedSubTabIndex) {
-                                    onEvent(MenuContract.Event.ScrollToSubCategory(subCategory.id))
+                                    onEvent(MenuContract.Event.ScrollToSubCategory(newSubIndex))
                                 }
                             }
                         }
@@ -115,7 +115,7 @@ fun MenuContentScreen(
             categories = categories,
             selectedTabIndex = selectedTabIndex,
             onTabSelected = { index ->
-                onEvent(MenuContract.Event.ScrollToCategory(categories[index].id))
+                onEvent(MenuContract.Event.ScrollToCategory(index))
                 coroutineScope.launch {
                     val targetIndex = menuItems.indexOfFirst {
                         it is MenuRVItem.HeaderItem && it.categoryName == categories[index].categoryName
@@ -141,9 +141,7 @@ fun MenuContentScreen(
                         selectedTabIndex = selectedSubTabIndex,
                         onTabSelected = { index ->
                             onEvent(
-                                MenuContract.Event.ScrollToCategory(
-                                    currentSubCategories[index]
-                                )
+                                MenuContract.Event.ScrollToCategory(index)
                             )
                             coroutineScope.launch {
                                 val targetIndex = menuItems.indexOfFirst {
