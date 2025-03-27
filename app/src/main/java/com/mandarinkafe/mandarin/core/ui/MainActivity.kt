@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.core.ui
 import android.os.Bundle
 import android.view.View
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
@@ -15,15 +14,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.CartFragment
 import com.mandarinkafe.mandarin.databinding.ActivityMainBinding
-import com.mandarinkafe.mandarin.menu.ui.SharedViewModel
 import com.mandarinkafe.mandarin.navigation.MainScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    private val viewModel: SharedViewModel by viewModels()
-
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
     private var _appBarConfiguration: AppBarConfiguration? = null
@@ -37,10 +32,6 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initializeUI()
-        /*viewModel.getScreenState().observe(this@MainActivity) { state ->
-            renderScreen(state)
-        }*/
-        viewModel.getMenu()
 
         setContent {
             MainScreen(supportFragmentManager)
@@ -63,7 +54,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.cartFragment
             )
         }
-
 
         val headToolbar = binding.appBarMain.toolbar
 
@@ -91,7 +81,6 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.container_view)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
-
 
     fun updateCartAdapter() {
         cartFragment?.displayCartItems()
