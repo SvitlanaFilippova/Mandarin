@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.menu.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.cart.Cart
@@ -64,16 +65,6 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    private fun selectCategory(index: Int) {
-        _state.value = state.value.copy(selectedTabIndex = index, selectedSubTabIndex = -1)
-    }
-
-    private fun selectSubCategory(index: Int) {
-        _state.value = state.value.copy(selectedSubTabIndex = index)
-    }
-
-
-
     private fun loadMenu() {
         _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
@@ -93,13 +84,16 @@ class MenuViewModel @Inject constructor(
                 _state.update {
                     it.copy(isLoading = false, menuItems = menu)
                 }
+                Log.d("DEBUG", "loadMenu. Меню получено: ${menu.take(10)}")
+
             } else {
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = " Кажется, что-по пошло не так - в меню ничего нет"
+                        errorMessage = "Кажется, что-по пошло не так - в меню ничего нет"
                     )
                 }
+                Log.d("DEBUG", "loadMenu. Что-по пошло не так - в меню ничего нет")
 
             }
         }

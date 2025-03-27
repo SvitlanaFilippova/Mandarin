@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.menu.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,6 +25,7 @@ fun MenuList(
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
 ) {
+    Log.d("DEBUG", "MenuList старт. Меню: ${menuItems.take(10)}")
     LazyColumn(
         state = listState,
         modifier = modifier,
