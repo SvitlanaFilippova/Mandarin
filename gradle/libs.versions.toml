@@ -29,6 +29,7 @@ composeBom = "2025.03.00"
 composeActivity = "1.10.1"
 composeViewModel = "2.8.7"
 navigationCompose = "2.8.9"
+mapkit = "4.13.0-lite"
 
 [libraries]
 androidx-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compiler" }
@@ -68,6 +69,7 @@ androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime
 androidx-compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "composeActivity" }
 androidx-compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeViewModel" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+com-yandex-maps-mobile = { group = "com.yandex.android", name = "maps.mobile", version.ref = "mapkit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
