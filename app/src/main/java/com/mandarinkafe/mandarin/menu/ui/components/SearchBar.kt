@@ -22,6 +22,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
@@ -35,7 +37,7 @@ fun SearchBar(
     onMealClick: (Meal) -> Unit,
     onEvent: (Event) -> Unit,
 
-) {
+    ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var isActive by remember { mutableStateOf(false) }
 
@@ -55,7 +57,7 @@ fun SearchBar(
         },
 
         //внешний вид
-        placeholder = { Text("Поиск по меню") },
+        placeholder = { Text(stringResource(id = R.string.search_in_menu)) },
         shape = RoundedCornerShape(Dimens.RadiusSearchField8),
         colors = SearchBarDefaults.colors(
             containerColor = Colors.GreyTransparent10,
@@ -67,7 +69,10 @@ fun SearchBar(
             )
         ),
         leadingIcon = {
-            Icon(Icons.Default.Search, contentDescription = "Иконка поиска")
+            Icon(
+                Icons.Default.Search,
+                contentDescription = stringResource(id = R.string.search_in_menu)
+            )
         },
         trailingIcon = {
             if (isActive) {
@@ -79,7 +84,10 @@ fun SearchBar(
                         isActive = false
                     }
                 }) {
-                    Icon(Icons.Default.Close, contentDescription = "Закрыть")
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.search_close)
+                    )
                 }
             }
         },
@@ -100,7 +108,7 @@ fun SearchBar(
         } else {
             if (!latestSearchText.isEmpty()) {
                 Text(
-                    text = "Ничего не найдено :(",
+                    text = stringResource(id = R.string.search_nothing_found),
                     color = Colors.White,
                     modifier = Modifier.padding(
                         Dimens.MarginStandard16
@@ -110,4 +118,3 @@ fun SearchBar(
         }
     }
 }
-

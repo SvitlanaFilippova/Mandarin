@@ -33,6 +33,3 @@ fun SearchResults(
         }
     }
 }
-
-
-
