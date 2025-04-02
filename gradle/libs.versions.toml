@@ -4,7 +4,6 @@ coilCompose = "2.5.0"
 compiler = "1.5.15"
 fragmentKtx = "1.8.5"
 glide = "4.16.0"
-hiltNavigationCompose = "1.2.0"
 kotlin = "2.1.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -30,13 +29,12 @@ composeBom = "2025.03.00"
 composeActivity = "1.10.1"
 composeViewModel = "2.8.7"
 navigationCompose = "2.8.9"
-runtimeLivedata = "1.7.8"
+mapkit = "4.13.0-lite"
 
 [libraries]
 androidx-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compiler" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
-androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationFragmentKtx" }
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
@@ -71,7 +69,7 @@ androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime
 androidx-compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "composeActivity" }
 androidx-compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeViewModel" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
-androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+com-yandex-maps-mobile = { group = "com.yandex.android", name = "maps.mobile", version.ref = "mapkit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
