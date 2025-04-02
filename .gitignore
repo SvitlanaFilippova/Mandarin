@@ -6,6 +6,8 @@ build/
 local.properties
 apikeys.properties
 
+apikeys.properties
+
 # Log/OS Files
 *.log
 

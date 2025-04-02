@@ -22,14 +22,16 @@ lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
 coordinatorlayout = "1.2.0"
 hilt = "2.55"
+hiltNavigationCompose = "1.2.0"
 ksp = "2.1.10-1.0.31"
 parcelize = "2.1.0-RC2"
 uiGraphicsAndroid = "1.7.8"
-composeBom = "2025.03.00"
+composeBom = "2025.03.01"
 composeActivity = "1.10.1"
 composeViewModel = "2.8.7"
 navigationCompose = "2.8.9"
 mapkit = "4.13.0-lite"
+runtimeLivedata = "1.7.8"
 
 [libraries]
 androidx-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compiler" }
@@ -57,6 +59,7 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 androidx-coordinatorlayout = { group = "androidx.coordinatorlayout", name = "coordinatorlayout", version.ref = "coordinatorlayout" }
 com-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 com-hilt-ksp = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "uiGraphicsAndroid" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
@@ -70,6 +73,7 @@ androidx-compose-activity = { group = "androidx.activity", name = "activity-comp
 androidx-compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeViewModel" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 com-yandex-maps-mobile = { group = "com.yandex.android", name = "maps.mobile", version.ref = "mapkit" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

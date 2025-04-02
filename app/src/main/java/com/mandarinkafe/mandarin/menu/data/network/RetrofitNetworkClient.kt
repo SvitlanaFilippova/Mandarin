@@ -8,6 +8,7 @@ import com.mandarinkafe.mandarin.menu.data.dto.AuthRequest
 import com.mandarinkafe.mandarin.menu.data.dto.MenuRequest
 import com.mandarinkafe.mandarin.menu.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.menu.data.dto.Response
+import com.yandex.maps.mobile.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -26,7 +27,9 @@ class RetrofitNetworkClient(private val context: Context, private val ikkoServic
         }
         return withContext(Dispatchers.IO) {
             try {
-                val authResponse = ikkoService.authenticate(AuthRequest(API_LOGIN))
+
+                ikkoService.authenticate(
+                    AuthRequest((BuildConfig.))
                 token =
                     "Bearer ${authResponse.token}"
                 Log.d("DEBUG IKKO API", "Токен получен: $token")
@@ -81,8 +84,4 @@ class RetrofitNetworkClient(private val context: Context, private val ikkoServic
         }
         return false
     }
-    companion object {
-        const val API_LOGIN = "3a901a233be740bea54bf0a38e1bfaa3"
-    }
-
 }
