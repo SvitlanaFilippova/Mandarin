@@ -40,7 +40,6 @@ android {
             name = "IIKO_API_KEY",
             value = properties.getProperty("IIKO_API_KEY") ?: ""
         )
-
     }
 
     buildTypes {
