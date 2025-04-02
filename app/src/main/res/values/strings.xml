@@ -1,42 +1,64 @@
 <resources>
+    <!-- Основное -->
     <string name="app_name">Мандарин</string>
+    <string name="logo_cafe">Логотип кафе</string>
+    <string name="cafe_phone_number">+7&#160;(495)&#160;108–70–55</string>
+
+    <!-- Навигация -->
+    <string name="back">Назад</string>
+    <string name="search">Поиск</string>
     <string name="search_in_menu">Поиск по меню</string>
     <string name="search_field_icon">Поле поиска</string>
     <string name="clear_text">Очистить текст</string>
-    <string name="add_to_cart">Добавить в корзину</string>
-     <string name="add_to_favorite">Добавить в избранное</string>
-    <string name="minus">-</string>
-    <string name="plus">+</string>
-    <string name="logo_cafe">Логотип кафе</string>
+
+    <!-- Корзина и избранное -->
     <string name="cart">Корзина</string>
-    <string name="cafe_phone_number">+7&#160;(495)&#160;108–70–55</string>
-      <string name="delivery">Доставка</string>
-    <string name="delivery_history">История заказов</string>
+    <string name="add_to_cart">Добавить в корзину</string>
+    <string name="question_add_to_cart">Добавить в корзину ?</string>
+    <string name="add_to_favorite">Добавить в избранное</string>
     <string name="favorite">Избранное</string>
+
+    <!-- Доставка -->
+    <string name="delivery">Доставка</string>
+    <string name="delivery_history">История заказов</string>
+    <string name="delivery_price">СТОИМОСТЬ ДОСТАВКИ</string>
+    <string name="delivery_price_info">Доставка — БЕСПЛАТНО, при условии заказа на минимальную сумму. Чем дальше от Черноголовки, тем сумма выше. Все суммы указаны на карте ниже.</string>
+    <string name="delivery_price_info_other">Стоимость доставки в остальные населенные пункты и СНТ уточняйте у оператора.</string>
+    <string name="pickup">САМОВЫВОЗ</string>
+    <string name="pickup_info">Вы всегда можете воспользоваться услугой самовывоза из нашего кафе.\n\nМы находимся по адресу: г. Черноголовка, ул. Береговая, 24. Посмотреть на карте.</string>
+    <string name="pay">ОПЛАТА</string>
+    <string name="pay_info">- Наличными курьеру\n- Карточкой курьеру (через мобильный терминал)\n- Online-перевод на карту Сбербанка</string>
+
+
+    <!-- Категории еды -->
     <string name="sushi">Суши</string>
     <string name="pizza">Пицца</string>
     <string name="hamburger">Гамбургеры</string>
     <string name="hot_dog">Хот-доги</string>
     <string name="fast_roll">Фаст-роллы</string>
-    <string name="question_add_to_cart">Добавить в корзину ?</string>
+
+    <!-- Кнопки действий -->
+    <string name="minus">-</string>
+    <string name="plus">+</string>
+
+    <!-- Шаблоны текста -->
+    <string name="default_price_for_button">000 ₽</string>
+    <string name="meal_weight_template">%1$d г</string>
+    <string name="meal_price_template">%1$d ₽</string>
+    <string name="meal_title_with_weight_template">%1$s, %2$d г</string>
+    <string name="meal_in_cart_count_template">%1$d шт</string>
+
+    <!-- Ошибки и сообщения -->
+    <string name="loading_error_template">Загрузка не удалась. Проверьте подключение к&#160;интернету и попробуйте ещё раз.\n\nИли просто позвоните нам по&#160;телефону %s, чтобы сделать заказ.</string>
+    <string name="placeholder_retry">Обновить</string>
+    <string name="placeholder_call">Позвонить</string>
+
+    <!-- Длинный текст -->
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
         "A material metaphor is the unifying theory of a rationalized space and a system of motion."
         "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
         "technologically advanced and open to imagination and magic.\n"
-
     </string>
-    <string name="menu">Меню</string>
-    <string name="back">Назад</string>
-    <string name="default_price_for_button">000 ₽</string>
-    <string name="meal_weight_template">%1$d г</string>
-    <string name="meal_price_template">%1$d ₽</string>
-    <string name="meal_title_with_weight_template">%1$s, %2$d г</string>
-    <string name="meal_in_cart_count_template">%1$d шт</string>
-    <string name="loading_error_template">Загрузка не удалась. Проверьте подключение к&#160;интернету и попробуйте ещё раз.\n\nИли просто позвоните нам по&#160;телефону %s, чтобы сделать заказ.</string>
-    <string name="placeholder_retry">Обновить</string>
-    <string name="placeholder_call">Позвонить</string>
-
-
 </resources>
