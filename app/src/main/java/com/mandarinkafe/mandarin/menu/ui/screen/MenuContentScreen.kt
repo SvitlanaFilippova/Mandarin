@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.menu.ui.screen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -38,7 +37,6 @@ fun MenuContentScreen(
     selectedSubTabIndex: Int,
     onEvent: (MenuContract.Event) -> Unit
 ) {
-    Log.d("DEBUG", "MenuContentScreen старт. Меню: ${menuItems.take(10)}")
 
     val categories = menuItems.filterIsInstance<MenuRVItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
@@ -104,7 +102,7 @@ fun MenuContentScreen(
             visible = isTopPartVisible,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically()
-        ) {
+        ) { // Эта часть экрана видна только до начала скролла
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 MenuHeader()
                 BannerCarousel(onBannerClick = handleBannerClick)

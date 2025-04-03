@@ -37,6 +37,8 @@ object Dimens {
     val MealDetailsImageWidth250 = 250.dp
     val MealDetailsCartButton56 = 56.dp
     val PlaceholderImageSize120 = 120.dp
+    val ProgressBarSize100 = 100.dp
+    val ProgressBarWidth24 = 24.dp
     val BsDividerWidth48 = 48.dp
     val DividerHeight1 = 1.dp
     val TabActivatedIndicatorHeight2 = 2.dp
