@@ -18,7 +18,7 @@ class MenuRepositoryImpl(
         val response = networkClient.doRequest()
         when (response.resultCode) {
             -1 -> {
-                emit(Resource.Error("Проверьте подключение к интернету. "))
+                emit(Resource.Error("Проверьте подключение к интернету."))
             }
 
             200 -> {
