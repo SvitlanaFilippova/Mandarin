@@ -3,30 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/menuFragment">
+    app:startDestination="@id/cartFragment">
 
-    <fragment
-        android:id="@+id/menuFragment"
-        android:name="com.mandarinkafe.mandarin.menu.ui.MenuFragment"
-        android:label="fragment_menu"
-        tools:layout="@layout/fragment_menu">
-        <action
-            android:id="@+id/action_menuFragment_to_mealDetails"
-            app:destination="@id/mealDetails"
-            app:enterAnim="@anim/slide_up">
-            <argument
-                android:name="meal"
-                app:argType="string"
-                app:nullable="false" />
-        </action>
-
-        <action
-            android:id="@+id/action_menuFragment_to_cartFragment"
-            app:destination="@id/cartFragment" />
-        <action
-            android:id="@+id/action_menuFragment_to_deliveryFragment"
-            app:destination="@id/deliveryFragment" />
-    </fragment>
 
     <fragment
         android:id="@+id/cartFragment"

@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.menu.domain.api.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.api.MenuInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,21 +63,29 @@ class MenuViewModel @Inject constructor(
         _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
 
-            /*  Для получения реального меню из ikko
-            menuInteractor.getMenu()
-            .collect { (menu, errorMessage) ->
-            if (!menu.isNullOrEmpty()) {
-                _state.value = MenuViewState.Content(menuItems = menu)
-                 Log.d("DEBUG", "loadMenu. Меню получено. Ниже первые 10 пунктов из него")
-                menu.take(10).forEach {
-                    Log.d("DEBUG", "$it")
-                }
-            } else {
-                _state.value = MenuViewState.Error
-            }
-            */
+//              Для получения реального меню из ikko
+//            menuInteractor.getMenu()
+//                .collect { (menu, errorMessage) ->
+//                    if (!menu.isNullOrEmpty()) {
+//                        _state.update {
+//                            it.copy(isLoading = false, menuItems = menu)
+//                        }
+//                        Log.d("DEBUG", "loadMenu. Меню получено. Ниже первые 10 пунктов из него")
+//                        menu.take(10).forEach {
+//                            Log.d("DEBUG", "$it")
+//                        }
+//                    } else {
+//                        _state.update {
+//                            it.copy(
+//                                isLoading = false,
+//                                errorMessage = errorMessage
+//                            )
+//                        }
+//                    }
+//                }
+//        }
 
-            /*  Для получения мок-меню */
+            //            Для получения мок-меню
             val menu = menuInteractor.getMockMenu()
             if (menu.isNotEmpty()) {
                 _state.update {
@@ -98,14 +107,29 @@ class MenuViewModel @Inject constructor(
 
     private fun toggleFavorite(meal: Meal) {
         viewModelScope.launch {
-            if (meal.isFavorite) {
+            val isNowFavorite = if (meal.isFavorite) {
                 favoritesInteractor.removeFromFavorites(meal)
+                false
             } else {
                 favoritesInteractor.addToFavorites(meal)
+                true
+            }
+
+            _state.update { state ->
+                val index = state.menuItems.indexOfFirst {
+                    it is MenuRVItem.MealItem && it.meal.id == meal.id
+                }
+                if (index == -1) return@update state // Если не нашли, ничего не делаем
+
+                val updatedList = state.menuItems.toMutableList()
+                val mealItem = updatedList[index] as MenuRVItem.MealItem
+                updatedList[index] =
+                    mealItem.copy(meal = mealItem.meal.copy(isFavorite = isNowFavorite))
+
+                state.copy(menuItems = updatedList)
             }
         }
         Log.d("DEBUG", "ViewModel toggleFavorite for $meal")
-        }
     }
 
     private fun addToCart(meal: Meal) {
@@ -117,4 +141,5 @@ class MenuViewModel @Inject constructor(
         /* Жду реализацию логики корзины */
         Log.d("DEBUG", "ViewModel removeFromCart for $meal")
     }
+}
 

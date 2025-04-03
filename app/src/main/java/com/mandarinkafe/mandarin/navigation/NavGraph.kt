@@ -19,9 +19,9 @@ import com.mandarinkafe.mandarin.menu.ui.screen.MenuScreen
 fun NavGraph(navHostController: NavHostController, fragmentManager: FragmentManager) {
     NavHost(
         navController = navHostController,
-        startDestination = "search"
+        startDestination = "menu"
     ) {
-        composable("search") {
+        composable("menu") {
             val viewModel: MenuViewModel = hiltViewModel()
             MenuScreen(viewModel = viewModel)
         }

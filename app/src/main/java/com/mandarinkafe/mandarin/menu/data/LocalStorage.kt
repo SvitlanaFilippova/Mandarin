@@ -16,7 +16,7 @@ class LocalStorage @Inject constructor(private val sharedPreferences: SharedPref
 
     fun removeFromFavorites(mealId: String) {
         changeFavorites(mealId = mealId, remove = true)
-        Log.d("DEBUG LocalStorage", "Removed from fvorites: $mealId")
+        Log.d("DEBUG LocalStorage", "Removed from favorites: $mealId")
     }
 
     fun getSavedFavorites(): Set<String> {

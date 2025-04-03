@@ -27,7 +27,7 @@
         "technologically advanced and open to imagination and magic.\n"
 
     </string>
-    <string name="search">Поиск</string>
+    <string name="menu">Меню</string>
     <string name="back">Назад</string>
     <string name="default_price_for_button">000 ₽</string>
     <string name="meal_weight_template">%1$d г</string>
