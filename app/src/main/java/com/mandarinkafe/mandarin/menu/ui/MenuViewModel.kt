@@ -64,45 +64,45 @@ class MenuViewModel @Inject constructor(
         viewModelScope.launch {
 
 //              Для получения реального меню из ikko
-//            menuInteractor.getMenu()
-//                .collect { (menu, errorMessage) ->
-//                    if (!menu.isNullOrEmpty()) {
-//                        _state.update {
-//                            it.copy(isLoading = false, menuItems = menu)
-//                        }
-//                        Log.d("DEBUG", "loadMenu. Меню получено. Ниже первые 10 пунктов из него")
-//                        menu.take(10).forEach {
-//                            Log.d("DEBUG", "$it")
-//                        }
-//                    } else {
-//                        _state.update {
-//                            it.copy(
-//                                isLoading = false,
-//                                errorMessage = errorMessage
-//                            )
-//                        }
-//                    }
-//                }
-//        }
+            menuInteractor.getMenu()
+                .collect { (menu, errorMessage) ->
+                    if (!menu.isNullOrEmpty()) {
+                        _state.update {
+                            it.copy(isLoading = false, menuItems = menu)
+                        }
+                        Log.d("DEBUG", "loadMenu. Меню получено. Ниже первые 10 пунктов из него")
+                        menu.take(10).forEach {
+                            Log.d("DEBUG", "$it")
+                        }
+                    } else {
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = errorMessage
+                            )
+                        }
+                    }
+                }
+        }
 
             //            Для получения мок-меню
-            val menu = menuInteractor.getMockMenu()
-            if (menu.isNotEmpty()) {
-                _state.update {
-                    it.copy(isLoading = false, menuItems = menu)
-                }
-
-            } else {
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Кажется, что-по пошло не так - в меню ничего нет"
-                    )
-                }
-                Log.d("DEBUG", "loadMenu. Что-по пошло не так - в меню ничего нет")
-
-            }
-        }
+//            val menu = menuInteractor.getMockMenu()
+//            if (menu.isNotEmpty()) {
+//                _state.update {
+//                    it.copy(isLoading = false, menuItems = menu)
+//                }
+//
+//            } else {
+//                _state.update {
+//                    it.copy(
+//                        isLoading = false,
+//                        errorMessage = "Кажется, что-по пошло не так - в меню ничего нет"
+//                    )
+//                }
+//                Log.d("DEBUG", "loadMenu. Что-по пошло не так - в меню ничего нет")
+//
+//            }
+//        }
     }
 
     private fun toggleFavorite(meal: Meal) {
