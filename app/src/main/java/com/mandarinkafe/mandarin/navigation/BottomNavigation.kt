@@ -21,8 +21,8 @@ fun BottomNavigation(
 ) {
     val context = LocalContext.current
     val listItems = listOf(
-        BottomNavigationItem.Search,
         BottomNavigationItem.Delivery,
+        BottomNavigationItem.Menu,
         BottomNavigationItem.Favorites
     )
     NavigationBar(
