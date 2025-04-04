@@ -52,14 +52,12 @@ class MenuViewModel @Inject constructor(
     private fun scrollToCategory(newIndex: Int) {
         if (newIndex >= 0) {
             _state.update { it.copy(selectedTabIndex = newIndex, selectedSubTabIndex = -1) }
-            Log.d("DEBUG", "scrollToCategory, selectedTabIndex = $newIndex")
         }
     }
 
     private fun scrollToSubCategory(newIndex: Int) {
         if (newIndex >= 0) {
             _state.update { it.copy(selectedSubTabIndex = newIndex) }
-            Log.d("DEBUG", "scrollToSubCategory, selectedSubTabIndex = $newIndex")
         }
     }
 

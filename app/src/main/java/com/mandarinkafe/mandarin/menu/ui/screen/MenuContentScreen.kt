@@ -42,8 +42,11 @@ fun MenuContentScreen(
     val categoriesNames = categories.map { it.categoryName }
     val coroutineScope = rememberCoroutineScope()
     val isTopPartVisible by remember {
-        derivedStateOf { listState.firstVisibleItemIndex == 0 }
+        derivedStateOf {
+            listState.firstVisibleItemScrollOffset == 0
+        }
     }
+
     val handleBannerClick = { targetName: String ->
         coroutineScope.launch {
             onEvent(
@@ -118,7 +121,7 @@ fun MenuContentScreen(
                         it is MenuRVItem.HeaderItem && it.categoryName == categories[index].categoryName
                     }
                     if (targetIndex >= 0) {
-                        listState.scrollToItem(targetIndex)
+                        listState.scrollToItem(index = targetIndex, scrollOffset = 1)
                     }
                 }
             }
@@ -137,15 +140,13 @@ fun MenuContentScreen(
                         categories = currentSubCategories,
                         selectedTabIndex = selectedSubTabIndex,
                         onTabSelected = { index ->
-                            onEvent(
-                                MenuContract.Event.ScrollToSubCategory(index)
-                            )
+                            onEvent(MenuContract.Event.ScrollToSubCategory(index))
                             coroutineScope.launch {
                                 val targetIndex = menuItems.indexOfFirst {
                                     it is MenuRVItem.SubHeaderItem && it.categoryName == currentSubCategories[index]
                                 }
                                 if (targetIndex >= 0) {
-                                    listState.scrollToItem(targetIndex)
+                                    listState.scrollToItem(index = targetIndex, scrollOffset = 1)
                                 }
                             }
                         }
