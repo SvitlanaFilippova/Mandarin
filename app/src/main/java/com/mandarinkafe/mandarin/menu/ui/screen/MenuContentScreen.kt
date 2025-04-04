@@ -35,27 +35,26 @@ fun MenuContentScreen(
     listState: LazyListState,
     selectedTabIndex: Int,
     selectedSubTabIndex: Int,
+    selectedBannerIndex: Int,
     onEvent: (MenuContract.Event) -> Unit
 ) {
-
     val categories = menuItems.filterIsInstance<MenuRVItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
     val coroutineScope = rememberCoroutineScope()
     val isTopPartVisible by remember {
         derivedStateOf { listState.firstVisibleItemIndex == 0 }
     }
-
-    val handleBannerClick = { targetId: String ->
+    val handleBannerClick = { targetName: String ->
         coroutineScope.launch {
-            val targetIndex = menuItems.indexOfFirst { item ->
-                when (item) {
-                    is MenuRVItem.HeaderItem -> item.id == targetId
-                    is MenuRVItem.SubHeaderItem -> item.id == targetId
-                    is MenuRVItem.MealItem -> item.meal.id == targetId
-                    else -> false
-                }
-            }.takeIf { it >= 0 } ?: 0
-            listState.scrollToItem(targetIndex)
+            onEvent(
+                MenuContract.Event.BannerClick(targetName)
+            )
+        }
+    }
+    // Отслеживание изменения selectedBannerIndex и скролл при обновлении
+    LaunchedEffect(selectedBannerIndex) {
+        if (selectedBannerIndex >= 0) {
+            listState.scrollToItem(selectedBannerIndex)
         }
     }
 

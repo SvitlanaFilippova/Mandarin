@@ -2,12 +2,11 @@ package com.mandarinkafe.mandarin.menu.domain
 
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
-import com.mandarinkafe.mandarin.util.RVItem
 
 object MenuConverter {
 
-    fun menuToMenuItems(menu: List<MealCategory>?): List<RVItem> {
-        val menuItems = buildList<RVItem> {
+    fun menuToMenuItems(menu: List<MealCategory>?): List<MenuRVItem> {
+        val menuItems = buildList<MenuRVItem> {
             menu?.forEach { category ->
                 if (!category.subCategories.isNullOrEmpty()) {
                     this += MenuRVItem.HeaderItem(

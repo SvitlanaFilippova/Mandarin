@@ -23,6 +23,7 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
             listState = listState,
             selectedTabIndex = state.selectedTabIndex,
             selectedSubTabIndex = state.selectedSubTabIndex,
+            selectedBannerIndex = state.selectedBannerIndex,
             onEvent = viewModel::onEvent
         )
     }

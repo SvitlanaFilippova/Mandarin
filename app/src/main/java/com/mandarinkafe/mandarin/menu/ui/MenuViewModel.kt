@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.getName
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -44,6 +45,7 @@ class MenuViewModel @Inject constructor(
             is MenuContract.Event.RemoveFromCart -> removeFromCart(event.meal)
             is MenuContract.Event.ScrollToCategory -> scrollToCategory(event.newIndex)
             is MenuContract.Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
+            is MenuContract.Event.BannerClick -> handleBannerClick(event.targetName)
         }
     }
 
@@ -121,5 +123,25 @@ class MenuViewModel @Inject constructor(
     private fun removeFromCart(meal: Meal) {
         /* Жду реализацию логики корзины */
         Log.d("DEBUG", "ViewModel removeFromCart for $meal")
+    }
+
+    private fun handleBannerClick(targetName: String) {
+        viewModelScope.launch {
+            var menuItems = state.value.menuItems
+
+            // Ищем сначала точное совпадение, затем частичное
+            val targetIndex = menuItems
+                .indexOfFirst { item ->
+                    item.getName()?.equals(targetName, ignoreCase = true) == true
+                }
+                .takeIf { it >= 0 }
+                ?: menuItems.indexOfFirst { item ->
+                    item.getName()?.contains(targetName, ignoreCase = true) == true
+                }
+                    .takeIf { it >= 0 }
+                ?: 0
+
+            _state.update { it.copy(selectedBannerIndex = targetIndex) }
+        }
     }
 }

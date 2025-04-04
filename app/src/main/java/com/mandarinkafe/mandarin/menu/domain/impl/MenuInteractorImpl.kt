@@ -3,8 +3,8 @@ package com.mandarinkafe.mandarin.menu.domain.impl
 import com.mandarinkafe.mandarin.menu.domain.MenuConverter
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
+import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
-import com.mandarinkafe.mandarin.util.RVItem
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +14,7 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
 
     private val menuCache = MutableStateFlow<Resource<List<MealCategory>>?>(null)
 
-    override fun getMenu(): Flow<Pair<List<RVItem>?, String?>> = flow {
+    override fun getMenu(): Flow<Pair<List<MenuRVItem>?, String?>> = flow {
         // Загружаем и кэшируем меню, если ещё не загружено
         if (menuCache.value == null) {
             repository.getMenu().collect { menuCache.value = it }
@@ -33,7 +33,7 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
         )
     }
 
-    override fun getAddons(): Flow<Pair<List<RVItem>?, String?>> = flow {
+    override fun getAddons(): Flow<Pair<List<MenuRVItem>?, String?>> = flow {
         if (menuCache.value == null) {
             repository.getMenu().collect { menuCache.value = it }
         }
@@ -51,7 +51,7 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
         )
     }
 
-    override fun getRecommends(): Flow<Pair<List<RVItem>?, String?>> = flow {
+    override fun getRecommends(): Flow<Pair<List<MenuRVItem>?, String?>> = flow {
         if (menuCache.value == null) {
             repository.getMenu().collect { menuCache.value = it }
         }
@@ -79,7 +79,7 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
         return category.name.contains("добавки", ignoreCase = true)
     }
 
-    // метод, чтобы принудительно перезагрузить меню и обновить в кэше:
+    // метод, чтобы принудительно перезагрузить меню и обновить его в кэше:
     override suspend fun refreshMenu() {
         repository.getMenu().collect { menuCache.value = it }
     }

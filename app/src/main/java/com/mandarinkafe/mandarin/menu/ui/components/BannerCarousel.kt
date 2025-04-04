@@ -93,7 +93,7 @@ fun BannerCarousel(
                     .fillMaxWidth()
                     .aspectRatio(2.91f)
                     .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                    .clickable { onBannerClick(banners[page].goToIdOnClick) }
+                    .clickable { onBannerClick(banners[page].goToNameOnClick) }
             )
         }
 
