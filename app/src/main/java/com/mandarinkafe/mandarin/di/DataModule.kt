@@ -6,11 +6,11 @@ import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
 import com.mandarinkafe.mandarin.core.data.network.RetrofitNetworkClient
-import com.mandarinkafe.mandarin.menu.data.FavoritesRepositoryImpl
-import com.mandarinkafe.mandarin.menu.data.LocalStorage
-import com.mandarinkafe.mandarin.menu.data.MenuRepositoryImpl
+import com.mandarinkafe.mandarin.favorites.data.LocalStorage
+import com.mandarinkafe.mandarin.favorites.data.impl.FavoritesRepositoryImpl
+import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
+import com.mandarinkafe.mandarin.menu.data.impl.MenuRepositoryImpl
 import com.mandarinkafe.mandarin.menu.data.mapper.DtoToDomainConverter
-import com.mandarinkafe.mandarin.menu.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import dagger.Module
 import dagger.Provides

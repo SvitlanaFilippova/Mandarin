@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components.tabs
+package com.mandarinkafe.mandarin.menu.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -33,10 +33,10 @@ fun MenuHeaderItem(item: MenuRVItem.HeaderItem) {
         if (item.description.isNotEmpty()) {
             ExpandableText(
                 text = item.description,
-                style = Typography.RegularTextStyle,
+                style = Typography.MealSmallTextStyle,
                 isExpanded = isDescriptionExpanded,
                 onClick = { isDescriptionExpanded = !isDescriptionExpanded },
-                maxLinesCollapsed = 3
+                maxLinesCollapsed = 4
             )
         }
     }

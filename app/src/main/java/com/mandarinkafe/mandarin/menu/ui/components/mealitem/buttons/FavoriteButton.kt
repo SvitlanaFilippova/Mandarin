@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components.buttons
+package com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon

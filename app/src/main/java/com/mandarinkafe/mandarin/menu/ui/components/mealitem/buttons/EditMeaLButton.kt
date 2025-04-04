@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components.buttons
+package com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth

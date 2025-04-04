@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.ui.components.MenuHeader
+import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
 
 @Preview
 @Composable
@@ -22,7 +22,7 @@ fun LoadingScreen() {
             .fillMaxSize()
             .background(Colors.AppBlack)
     ) {
-        MenuHeader()
+        MenuTopBar()
         Column(
             modifier = Modifier
                 .fillMaxSize(),

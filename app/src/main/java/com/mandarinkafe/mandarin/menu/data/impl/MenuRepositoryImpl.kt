@@ -1,5 +1,4 @@
-package com.mandarinkafe.mandarin.menu.data
-
+package com.mandarinkafe.mandarin.menu.data.impl
 
 import android.util.Log
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient

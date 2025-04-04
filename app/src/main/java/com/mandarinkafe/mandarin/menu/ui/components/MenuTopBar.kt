@@ -13,7 +13,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 
 @Composable
-fun MenuHeader() {
+fun MenuTopBar() {
     Row(
         modifier = Modifier
             .fillMaxWidth()

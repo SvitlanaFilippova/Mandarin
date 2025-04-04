@@ -22,8 +22,8 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.ui.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
-import com.mandarinkafe.mandarin.menu.ui.components.MenuHeader
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
+import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.SubCategoryTabsRow
 import com.mandarinkafe.mandarin.util.RVItem
@@ -104,7 +104,7 @@ fun MenuContentScreen(
             exit = fadeOut() + shrinkVertically()
         ) { // Эта часть экрана видна только до начала скролла
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                MenuHeader()
+                MenuTopBar()
                 BannerCarousel(onBannerClick = handleBannerClick)
             }
         }

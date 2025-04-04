@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.menu.data.mapper
 
 import android.util.Log
+import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.data.dto.CategoryDto
 import com.mandarinkafe.mandarin.menu.data.dto.MealDto
-import com.mandarinkafe.mandarin.menu.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 

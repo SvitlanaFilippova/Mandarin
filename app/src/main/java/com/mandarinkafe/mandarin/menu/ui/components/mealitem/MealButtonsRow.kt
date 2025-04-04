@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components
+package com.mandarinkafe.mandarin.menu.ui.components.mealitem
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,10 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.ui.components.buttons.CartControls
-import com.mandarinkafe.mandarin.menu.ui.components.buttons.EditMealButton
-import com.mandarinkafe.mandarin.menu.ui.components.buttons.FavoriteButton
-import com.mandarinkafe.mandarin.menu.ui.components.buttons.ToCartButton
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControls
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.EditMealButton
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.FavoriteButton
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.ToCartButton
 
 @Composable
 fun MealButtonsRow(

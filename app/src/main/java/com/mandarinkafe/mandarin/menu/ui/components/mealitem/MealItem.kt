@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components
+package com.mandarinkafe.mandarin.menu.ui.components.mealitem
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

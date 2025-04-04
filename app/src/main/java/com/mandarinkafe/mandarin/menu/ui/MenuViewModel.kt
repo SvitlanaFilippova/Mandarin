@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.cart.Cart
-import com.mandarinkafe.mandarin.menu.domain.api.FavoritesInteractor
-import com.mandarinkafe.mandarin.menu.domain.api.MenuInteractor
+import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,8 +62,6 @@ class MenuViewModel @Inject constructor(
     private fun loadMenu() {
         _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-
-//              Для получения реального меню из ikko
             menuInteractor.getMenu()
                 .collect { (menu, errorMessage) ->
                     if (!menu.isNullOrEmpty()) {
@@ -84,25 +82,6 @@ class MenuViewModel @Inject constructor(
                     }
                 }
         }
-
-//            Для получения мок-меню
-//            val menu = menuInteractor.getMockMenu()
-//            if (menu.isNotEmpty()) {
-//                _state.update {
-//                    it.copy(isLoading = false, menuItems = menu)
-//                }
-//
-//            } else {
-//                _state.update {
-//                    it.copy(
-//                        isLoading = false,
-//                        errorMessage = "Кажется, что-по пошло не так - в меню ничего нет"
-//                    )
-//                }
-//                Log.d("DEBUG", "loadMenu. Что-по пошло не так - в меню ничего нет")
-//
-//            }
-//        }
     }
 
     private fun toggleFavorite(meal: Meal) {

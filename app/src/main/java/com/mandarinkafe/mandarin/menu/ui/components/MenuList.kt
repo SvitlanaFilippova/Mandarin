@@ -10,8 +10,7 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
-import com.mandarinkafe.mandarin.menu.ui.components.tabs.MenuHeaderItem
-import com.mandarinkafe.mandarin.menu.ui.components.tabs.MenuSubHeaderItem
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.MenuMealItem
 import com.mandarinkafe.mandarin.util.RVItem
 
 @Composable
