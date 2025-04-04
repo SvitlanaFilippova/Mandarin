@@ -51,6 +51,29 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
         )
     }
 
+    override fun getRecommends(): Flow<Pair<List<RVItem>?, String?>> = flow {
+        if (menuCache.value == null) {
+            repository.getMenu().collect { menuCache.value = it }
+        }
+
+        emit(
+            when (val result = menuCache.value) {
+                is Resource.Success -> {
+                    val addons = result.data?.filter { isRecommends(it) }
+                    Pair(MenuConverter.menuToMenuItems(addons), null)
+                }
+
+                is Resource.Error -> Pair(null, result.message)
+                else -> Pair(null, "Неизвестная ошибка")
+            }
+        )
+    }
+
+    private fun isRecommends(category: MealCategory): Boolean {
+        // TODO Вместо хардкода потом вынести в конфиг
+        return category.name.contains("рекоменд", ignoreCase = true)
+    }
+
     private fun isAddonCategory(category: MealCategory): Boolean {
         // TODO Вместо хардкода потом вынести в конфиг
         return category.name.contains("добавки", ignoreCase = true)
