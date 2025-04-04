@@ -70,31 +70,38 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
         }
 
         val childCategoriesMap = groupSubcategories(menuDto)
-        val topLevelSet = menuDto
-            .filter { !it.name.contains("/") }
-            .mapTo(mutableSetOf()) { it.name }
+        val topLevelCategories = menuDto.filter { !it.hasParent() }
+        val topLevelNames = topLevelCategories.map { it.name }.toSet()
 
-        val processedParents = mutableSetOf<String>()
+        val result = mutableListOf<MealCategory>()
 
-        return buildList {
-            for (category in menuDto) {
-                val split = category.name.split("/")
+        // 1. Обработка родительских категорий
+        for (parent in topLevelCategories) {
+            val subCategories = childCategoriesMap[parent.name]
 
-                if (split.size == 1) {
-                    // Родительская категория
-                    val parentName = category.name
-                    if (processedParents.add(parentName)) {
-                        add(buildParentCategory(category, childCategoriesMap[parentName]))
-                    }
-                } else {
-                    // Подкатегория без родителя
-                    val parentName = split.first()
-                    if (!topLevelSet.contains(parentName)) {
-                        add(buildLonelySubcategory(category))
-                    }
-                }
+            if (subCategories.isNullOrEmpty()) {
+                // Нет подкатегорий — обычная категория с блюдами
+                result.add(
+                    parent.toDomain(
+                        storedFavorites = storedFavorites,
+                        parentCategory = null
+                    )
+                )
+            } else {
+                // Есть подкатегории — собрать как категорию с subCategories
+                result.add(buildParentCategory(parent, subCategories))
             }
         }
+
+        // 2. Обработка случайных подкатегорий без родителя
+        for (category in menuDto.filter { it.hasParent() }) {
+            val parentName = category.parentName()
+            if (!topLevelNames.contains(parentName)) {
+                result.add(buildLonelySubcategory(category))
+            }
+        }
+
+        return result
     }
 
     private fun groupSubcategories(menuDto: List<CategoryDto>): Map<String, List<CategoryDto>> {
