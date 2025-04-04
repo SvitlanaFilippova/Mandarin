@@ -1,7 +1,7 @@
-package com.mandarinkafe.mandarin.menu.domain.impl
+package com.mandarinkafe.mandarin.favorites.domain.impl
 
-import com.mandarinkafe.mandarin.menu.domain.api.FavoritesInteractor
-import com.mandarinkafe.mandarin.menu.domain.api.FavoritesRepository
+import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
+import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 class FavoritesInteractorImpl(private val repository: FavoritesRepository): FavoritesInteractor {

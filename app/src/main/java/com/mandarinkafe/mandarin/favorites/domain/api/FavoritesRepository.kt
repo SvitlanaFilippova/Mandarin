@@ -1,9 +1,11 @@
-package com.mandarinkafe.mandarin.menu.domain.api
+package com.mandarinkafe.mandarin.favorites.domain.api
 
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
-interface FavoritesInteractor {
+interface FavoritesRepository {
     fun addToFavorites(meal: Meal)
     fun removeFromFavorites(meal: Meal)
+    fun getFavoriteIds() : List<String>
     fun checkIfFavorite(itemId: String): Boolean
+
 }

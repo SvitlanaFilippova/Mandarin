@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.data
+package com.mandarinkafe.mandarin.favorites.data
 
 import android.content.SharedPreferences
 import android.util.Log

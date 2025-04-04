@@ -1,6 +1,6 @@
-package com.mandarinkafe.mandarin.menu.data
+package com.mandarinkafe.mandarin.favorites.data
 
-import com.mandarinkafe.mandarin.menu.domain.api.FavoritesRepository
+import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 class FavoritesRepositoryImpl(private val localStorage: LocalStorage) : FavoritesRepository {
