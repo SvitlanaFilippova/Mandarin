@@ -36,7 +36,7 @@ fun MenuHeaderItem(item: MenuRVItem.HeaderItem) {
                 style = Typography.MealSmallTextStyle,
                 isExpanded = isDescriptionExpanded,
                 onClick = { isDescriptionExpanded = !isDescriptionExpanded },
-                maxLinesCollapsed = 4
+                maxLinesCollapsed = 6
             )
         }
     }

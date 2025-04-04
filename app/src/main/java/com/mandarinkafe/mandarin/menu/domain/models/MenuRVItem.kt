@@ -1,8 +1,6 @@
 package com.mandarinkafe.mandarin.menu.domain.models
 
-import com.mandarinkafe.mandarin.util.RVItem
-
-sealed interface MenuRVItem : RVItem {
+sealed interface MenuRVItem {
     data class HeaderItem(
         val categoryName: String,
         var subCategoriesNames: List<String>?,
@@ -16,4 +14,3 @@ sealed interface MenuRVItem : RVItem {
 
     data class MealItem(val meal: Meal) : MenuRVItem
 }
-

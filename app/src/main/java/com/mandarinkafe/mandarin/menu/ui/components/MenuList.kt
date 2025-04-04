@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.menu.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -11,18 +10,16 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.MenuMealItem
-import com.mandarinkafe.mandarin.util.RVItem
 
 @Composable
 fun MenuList(
-    menuItems: List<RVItem>,
+    menuItems: List<MenuRVItem>,
     listState: LazyListState,
     modifier: Modifier,
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
 ) {
-    Log.d("DEBUG", "MenuList старт. Меню: ${menuItems.take(10)}")
     LazyColumn(
         state = listState,
         modifier = modifier,

@@ -26,12 +26,11 @@ import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.SubCategoryTabsRow
-import com.mandarinkafe.mandarin.util.RVItem
 import kotlinx.coroutines.launch
 
 @Composable
 fun MenuContentScreen(
-    menuItems: List<RVItem>,
+    menuItems: List<MenuRVItem>,
     listState: LazyListState,
     selectedTabIndex: Int,
     selectedSubTabIndex: Int,

@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.menu.ui
 
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 
 sealed interface MenuContract {
 
@@ -25,8 +26,8 @@ sealed interface MenuContract {
         val isLoading: Boolean = false,
         val menuItems: List<MenuRVItem> = emptyList(),
         val errorMessage: String? = null,
-        val selectedTabIndex: Int = -1,
-        val selectedSubTabIndex: Int = -1,
-        val selectedBannerIndex: Int = -1
+        val selectedTabIndex: Int = DEFAULT_UNSELECTED_INDEX,
+        val selectedSubTabIndex: Int = DEFAULT_UNSELECTED_INDEX,
+        val selectedBannerIndex: Int = DEFAULT_UNSELECTED_INDEX
     )
 }

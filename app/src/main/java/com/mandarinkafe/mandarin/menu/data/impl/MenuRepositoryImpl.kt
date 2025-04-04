@@ -1,11 +1,11 @@
 package com.mandarinkafe.mandarin.menu.data.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
 import com.mandarinkafe.mandarin.menu.data.dto.MenuResponse
 import com.mandarinkafe.mandarin.menu.data.mapper.DtoToDomainConverter
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
+import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -15,13 +15,13 @@ class MenuRepositoryImpl(
     private val converter: DtoToDomainConverter
 ) : MenuRepository {
     override fun getMenu(): Flow<Resource<List<MealCategory>>> = flow {
-        val response = networkClient.doRequest()
+        val response = networkClient.getMenu()
         when (response.resultCode) {
             -1 -> {
                 emit(Resource.Error("Проверьте подключение к интернету."))
             }
 
-            200 -> {
+            HTTP_SUCCESS -> {
                 val categories = (response as MenuResponse).itemCategories
                 if (categories != null) {
                     emit(
@@ -30,7 +30,6 @@ class MenuRepositoryImpl(
                         )
                     )
                 } else {
-                    Log.e("DEBUG", "response.itemCategories оказался null")
                     emit(Resource.Error("Сервер вернул пустые данные категорий"))
                 }
             }
@@ -40,5 +39,4 @@ class MenuRepositoryImpl(
             }
         }
     }
-
 }
