@@ -4,10 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.cart.Cart
-import com.mandarinkafe.mandarin.menu.domain.api.FavoritesInteractor
-import com.mandarinkafe.mandarin.menu.domain.api.MenuInteractor
+import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.getName
+import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,12 +45,13 @@ class MenuViewModel @Inject constructor(
             is MenuContract.Event.RemoveFromCart -> removeFromCart(event.meal)
             is MenuContract.Event.ScrollToCategory -> scrollToCategory(event.newIndex)
             is MenuContract.Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
+            is MenuContract.Event.BannerClick -> handleBannerClick(event.targetName)
         }
     }
 
     private fun scrollToCategory(newIndex: Int) {
         if (newIndex >= 0) {
-            _state.update { it.copy(selectedTabIndex = newIndex) }
+            _state.update { it.copy(selectedTabIndex = newIndex, selectedSubTabIndex = -1) }
         }
     }
 
@@ -62,46 +64,25 @@ class MenuViewModel @Inject constructor(
     private fun loadMenu() {
         _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-
-//              Для получения реального меню из ikko
-//            menuInteractor.getMenu()
-//                .collect { (menu, errorMessage) ->
-//                    if (!menu.isNullOrEmpty()) {
-//                        _state.update {
-//                            it.copy(isLoading = false, menuItems = menu)
-//                        }
-//                        Log.d("DEBUG", "loadMenu. Меню получено. Ниже первые 10 пунктов из него")
-//                        menu.take(10).forEach {
-//                            Log.d("DEBUG", "$it")
-//                        }
-//                    } else {
-//                        _state.update {
-//                            it.copy(
-//                                isLoading = false,
-//                                errorMessage = errorMessage
-//                            )
-//                        }
-//                    }
-//                }
-//        }
-
-            //            Для получения мок-меню
-            val menu = menuInteractor.getMockMenu()
-            if (menu.isNotEmpty()) {
-                _state.update {
-                    it.copy(isLoading = false, menuItems = menu)
+            menuInteractor.getMenu()
+                .collect { (menu, errorMessage) ->
+                    if (!menu.isNullOrEmpty()) {
+                        _state.update {
+                            it.copy(isLoading = false, menuItems = menu)
+                        }
+                        Log.d("DEBUG", "loadMenu. Меню получено. Ниже первые 10 пунктов из него")
+                        menu.take(10).forEach {
+                            Log.d("DEBUG", "$it")
+                        }
+                    } else {
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = errorMessage
+                            )
+                        }
+                    }
                 }
-
-            } else {
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Кажется, что-по пошло не так - в меню ничего нет"
-                    )
-                }
-                Log.d("DEBUG", "loadMenu. Что-по пошло не так - в меню ничего нет")
-
-            }
         }
     }
 
@@ -141,5 +122,24 @@ class MenuViewModel @Inject constructor(
         /* Жду реализацию логики корзины */
         Log.d("DEBUG", "ViewModel removeFromCart for $meal")
     }
-}
 
+    private fun handleBannerClick(targetName: String) {
+        viewModelScope.launch {
+            var menuItems = state.value.menuItems
+
+            // Ищем сначала точное совпадение, затем частичное
+            val targetIndex = menuItems
+                .indexOfFirst { item ->
+                    item.getName()?.equals(targetName, ignoreCase = true) == true
+                }
+                .takeIf { it >= 0 }
+                ?: menuItems.indexOfFirst { item ->
+                    item.getName()?.contains(targetName, ignoreCase = true) == true
+                }
+                    .takeIf { it >= 0 }
+                ?: 0
+
+            _state.update { it.copy(selectedBannerIndex = targetIndex) }
+        }
+    }
+}

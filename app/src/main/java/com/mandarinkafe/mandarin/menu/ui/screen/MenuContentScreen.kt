@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.menu.ui.screen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -23,8 +22,8 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.ui.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
-import com.mandarinkafe.mandarin.menu.ui.components.MenuHeader
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
+import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.SubCategoryTabsRow
 import com.mandarinkafe.mandarin.util.RVItem
@@ -36,28 +35,29 @@ fun MenuContentScreen(
     listState: LazyListState,
     selectedTabIndex: Int,
     selectedSubTabIndex: Int,
+    selectedBannerIndex: Int,
     onEvent: (MenuContract.Event) -> Unit
 ) {
-    Log.d("DEBUG", "MenuContentScreen старт. Меню: ${menuItems.take(10)}")
-
     val categories = menuItems.filterIsInstance<MenuRVItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
     val coroutineScope = rememberCoroutineScope()
     val isTopPartVisible by remember {
-        derivedStateOf { listState.firstVisibleItemIndex == 0 }
+        derivedStateOf {
+            listState.firstVisibleItemScrollOffset == 0
+        }
     }
 
-    val handleBannerClick = { targetId: String ->
+    val handleBannerClick = { targetName: String ->
         coroutineScope.launch {
-            val targetIndex = menuItems.indexOfFirst { item ->
-                when (item) {
-                    is MenuRVItem.HeaderItem -> item.id == targetId
-                    is MenuRVItem.SubHeaderItem -> item.id == targetId
-                    is MenuRVItem.MealItem -> item.meal.id == targetId
-                    else -> false
-                }
-            }.takeIf { it >= 0 } ?: 0
-            listState.scrollToItem(targetIndex)
+            onEvent(
+                MenuContract.Event.BannerClick(targetName)
+            )
+        }
+    }
+    // Отслеживание изменения selectedBannerIndex и скролл при обновлении
+    LaunchedEffect(selectedBannerIndex) {
+        if (selectedBannerIndex >= 0) {
+            listState.scrollToItem(selectedBannerIndex)
         }
     }
 
@@ -104,9 +104,9 @@ fun MenuContentScreen(
             visible = isTopPartVisible,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically()
-        ) {
+        ) { // Эта часть экрана видна только до начала скролла
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                MenuHeader()
+                MenuTopBar()
                 BannerCarousel(onBannerClick = handleBannerClick)
             }
         }
@@ -121,7 +121,7 @@ fun MenuContentScreen(
                         it is MenuRVItem.HeaderItem && it.categoryName == categories[index].categoryName
                     }
                     if (targetIndex >= 0) {
-                        listState.scrollToItem(targetIndex)
+                        listState.scrollToItem(index = targetIndex, scrollOffset = 1)
                     }
                 }
             }
@@ -140,15 +140,13 @@ fun MenuContentScreen(
                         categories = currentSubCategories,
                         selectedTabIndex = selectedSubTabIndex,
                         onTabSelected = { index ->
-                            onEvent(
-                                MenuContract.Event.ScrollToCategory(index)
-                            )
+                            onEvent(MenuContract.Event.ScrollToSubCategory(index))
                             coroutineScope.launch {
                                 val targetIndex = menuItems.indexOfFirst {
                                     it is MenuRVItem.SubHeaderItem && it.categoryName == currentSubCategories[index]
                                 }
                                 if (targetIndex >= 0) {
-                                    listState.scrollToItem(targetIndex)
+                                    listState.scrollToItem(index = targetIndex, scrollOffset = 1)
                                 }
                             }
                         }

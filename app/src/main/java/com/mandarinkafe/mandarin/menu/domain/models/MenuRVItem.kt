@@ -7,10 +7,13 @@ sealed interface MenuRVItem : RVItem {
         val categoryName: String,
         var subCategoriesNames: List<String>?,
         val tabIcon: String?,
+        val description: String,
         val id: String
     ) : MenuRVItem
 
-    data class SubHeaderItem(val categoryName: String, val id: String) : MenuRVItem
+    data class SubHeaderItem(val categoryName: String, val description: String, val id: String) :
+        MenuRVItem
+
     data class MealItem(val meal: Meal) : MenuRVItem
 }
 

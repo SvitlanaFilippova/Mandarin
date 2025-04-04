@@ -1,31 +1,87 @@
 package com.mandarinkafe.mandarin.menu.domain.impl
 
 import com.mandarinkafe.mandarin.menu.domain.MenuConverter
-import com.mandarinkafe.mandarin.menu.domain.api.MenuInteractor
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
-import com.mandarinkafe.mandarin.menu.domain.models.mockMenuData
-import com.mandarinkafe.mandarin.util.RVItem
+import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
+import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 
 class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteractor {
 
-    override fun getMenu(): Flow<Pair<List<RVItem>?, String?>> {
-        return repository.getMenu().map { result ->
-            when (result) {
-                is Resource.Success -> {
-                    Pair(MenuConverter.menuToMenuItems(result.data), null)
-                }
+    private val menuCache = MutableStateFlow<Resource<List<MealCategory>>?>(null)
 
-                is Resource.Error -> {
-                    Pair(null, result.message)
-                }
-            }
+    override fun getMenu(): Flow<Pair<List<MenuRVItem>?, String?>> = flow {
+        // Загружаем и кэшируем меню, если ещё не загружено
+        if (menuCache.value == null) {
+            repository.getMenu().collect { menuCache.value = it }
         }
+        emit(
+            when (val result = menuCache.value) {
+                is Resource.Success -> {
+                    // Фильтруем все категории, которые не должны отображаться в общем меню (флаг isHidden)
+                    val visibleMenu = result.data?.filterNot { it.isHidden }
+                    Pair(MenuConverter.menuToMenuItems(visibleMenu), null)
+                }
+
+                is Resource.Error -> Pair(null, result.message)
+                else -> Pair(null, "Неизвестная ошибка")
+            }
+        )
     }
 
-    override fun getMockMenu(): List<RVItem> {
-        return MenuConverter.menuToMenuItems(mockMenuData)
+    override fun getAddons(): Flow<Pair<List<MenuRVItem>?, String?>> = flow {
+        if (menuCache.value == null) {
+            repository.getMenu().collect { menuCache.value = it }
+        }
+
+        emit(
+            when (val result = menuCache.value) {
+                is Resource.Success -> {
+                    val addons = result.data?.filter { isAddonCategory(it) }
+                    Pair(MenuConverter.menuToMenuItems(addons), null)
+                }
+
+                is Resource.Error -> Pair(null, result.message)
+                else -> Pair(null, "Неизвестная ошибка")
+            }
+        )
     }
+
+    override fun getRecommends(): Flow<Pair<List<MenuRVItem>?, String?>> = flow {
+        if (menuCache.value == null) {
+            repository.getMenu().collect { menuCache.value = it }
+        }
+
+        emit(
+            when (val result = menuCache.value) {
+                is Resource.Success -> {
+                    val addons = result.data?.filter { isRecommends(it) }
+                    Pair(MenuConverter.menuToMenuItems(addons), null)
+                }
+
+                is Resource.Error -> Pair(null, result.message)
+                else -> Pair(null, "Неизвестная ошибка")
+            }
+        )
+    }
+
+    private fun isRecommends(category: MealCategory): Boolean {
+        // TODO Вместо хардкода потом вынести в конфиг
+        return category.name.contains("рекоменд", ignoreCase = true)
+    }
+
+    private fun isAddonCategory(category: MealCategory): Boolean {
+        // TODO Вместо хардкода потом вынести в конфиг
+        return category.name.contains("добавки", ignoreCase = true)
+    }
+
+    // метод, чтобы принудительно перезагрузить меню и обновить его в кэше:
+    override suspend fun refreshMenu() {
+        repository.getMenu().collect { menuCache.value = it }
+    }
+
 }

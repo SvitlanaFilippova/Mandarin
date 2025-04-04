@@ -12,8 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mandarinkafe.mandarin.databinding.FragmentCartBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.mockPizza35List
-
 
 class CartFragment : Fragment() {
     private lateinit var binding: FragmentCartBinding
@@ -46,7 +44,7 @@ class CartFragment : Fragment() {
 
     private fun setupRecommendedRecyclerView() {
 
-        recommendedAdapter = RecommendedAdapter(mockPizza35List){ meal ->
+        recommendedAdapter = RecommendedAdapter(listOf()) { meal ->
             addToCart(meal) // добавляем обработчик нажатия
         }
 
