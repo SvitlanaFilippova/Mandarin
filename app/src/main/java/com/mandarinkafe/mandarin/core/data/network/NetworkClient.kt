@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.data.network
+package com.mandarinkafe.mandarin.core.data.network
 
 import com.mandarinkafe.mandarin.core.data.dto.Response
 

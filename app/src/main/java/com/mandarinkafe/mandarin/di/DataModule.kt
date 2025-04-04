@@ -3,13 +3,13 @@ package com.mandarinkafe.mandarin.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.mandarinkafe.mandarin.menu.data.DtoToDomainConverter
+import com.mandarinkafe.mandarin.core.data.network.IikoApiService
+import com.mandarinkafe.mandarin.core.data.network.NetworkClient
+import com.mandarinkafe.mandarin.core.data.network.RetrofitNetworkClient
 import com.mandarinkafe.mandarin.menu.data.FavoritesRepositoryImpl
 import com.mandarinkafe.mandarin.menu.data.LocalStorage
 import com.mandarinkafe.mandarin.menu.data.MenuRepositoryImpl
-import com.mandarinkafe.mandarin.menu.data.network.IikoApiService
-import com.mandarinkafe.mandarin.menu.data.network.NetworkClient
-import com.mandarinkafe.mandarin.menu.data.network.RetrofitNetworkClient
+import com.mandarinkafe.mandarin.menu.data.mapper.DtoToDomainConverter
 import com.mandarinkafe.mandarin.menu.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import dagger.Module

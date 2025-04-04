@@ -2,8 +2,9 @@ package com.mandarinkafe.mandarin.menu.data
 
 
 import android.util.Log
+import com.mandarinkafe.mandarin.core.data.network.NetworkClient
 import com.mandarinkafe.mandarin.menu.data.dto.MenuResponse
-import com.mandarinkafe.mandarin.menu.data.network.NetworkClient
+import com.mandarinkafe.mandarin.menu.data.mapper.DtoToDomainConverter
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.util.Resource

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.data
+package com.mandarinkafe.mandarin.menu.data.mapper
 
 import android.util.Log
 import com.mandarinkafe.mandarin.menu.data.dto.CategoryDto
@@ -69,70 +69,70 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
             return emptyList()
         }
 
-        val topLevelSet = mutableSetOf<String>()
-        val processedParents = mutableSetOf<String>()
-        val childCategoriesMap = mutableMapOf<String, MutableList<CategoryDto>>()
+        val childCategoriesMap = groupSubcategories(menuDto)
+        val topLevelSet = menuDto
+            .filter { !it.name.contains("/") }
+            .mapTo(mutableSetOf()) { it.name }
 
-        // Группируем дочерние категории по имени родителя
-        for (category in menuDto) {
-            val split = category.name.split("/")
-            if (split.size > 1) {
-                val parentName = split.first()
-                childCategoriesMap.getOrPut(parentName) { mutableListOf() }.add(category)
-            } else {
-                topLevelSet.add(category.name)
-            }
-        }
+        val processedParents = mutableSetOf<String>()
 
         return buildList {
             for (category in menuDto) {
                 val split = category.name.split("/")
+
                 if (split.size == 1) {
                     // Родительская категория
                     val parentName = category.name
-                    if (processedParents.contains(parentName)) continue
-
-                    val subCategoriesDto = childCategoriesMap[parentName]
-                    processedParents.add(parentName)
-
-                    if (subCategoriesDto != null) {
-                        add(
-                            MealCategory(
-                                id = category.id,
-                                name = parentName,
-                                meals = null,
-                                subCategories = subCategoriesDto.map { subDto ->
-                                    val cleanedName = subDto.name.substringAfter("/")
-                                    subDto.copy(name = cleanedName)
-                                        .toDomain(
-                                            storedFavorites = storedFavorites,
-                                            parentCategory = category.id
-                                        )
-                                },
-                                tabIcon = category.buttonImageUrl,
-                                description = category.description ?: "",
-                                isHidden = category.isHidden
-                            )
-                        )
-                    } else {
-                        add(
-                            category.toDomain(
-                                storedFavorites = storedFavorites,
-                                parentCategory = null
-                            )
-                        )
+                    if (processedParents.add(parentName)) {
+                        add(buildParentCategory(category, childCategoriesMap[parentName]))
                     }
                 } else {
-                    // Дочерние категории обрабатываются только в составе родителя
-                    continue
+                    // Подкатегория без родителя
+                    val parentName = split.first()
+                    if (!topLevelSet.contains(parentName)) {
+                        add(buildLonelySubcategory(category))
+                    }
                 }
             }
         }
     }
 
+    private fun groupSubcategories(menuDto: List<CategoryDto>): Map<String, List<CategoryDto>> {
+        return menuDto
+            .filter { it.hasParent() }
+            .groupBy { it.parentName() }
+    }
+
+    private fun buildParentCategory(
+        parentDto: CategoryDto,
+        subCategories: List<CategoryDto>?
+    ): MealCategory {
+        return MealCategory(
+            id = parentDto.id,
+            name = parentDto.name,
+            meals = null,
+            subCategories = subCategories?.map { subDto ->
+                subDto.copy(name = subDto.subName()).toDomain(
+                    storedFavorites = storedFavorites,
+                    parentCategory = parentDto.id
+                )
+            },
+            tabIcon = parentDto.buttonImageUrl,
+            description = parentDto.description.orEmpty(),
+            isHidden = parentDto.isHidden
+        )
+    }
+
+    private fun buildLonelySubcategory(category: CategoryDto): MealCategory {
+        Log.w("DEBUG", "Подкатегория '${category.name}' без родителя")
+        return category.copy(name = category.subName()).toDomain(
+            storedFavorites = storedFavorites,
+            parentCategory = null
+        )
+    }
+
     enum class PizzaCategoriesIds(val id: String) {
         PIZZA35("832b4f72-adeb-4a3d-8bf4-cfde11ac810f"),
-        //TODO выписать, когда будут в меню:
         RIM("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
     }
 }

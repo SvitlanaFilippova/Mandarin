@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.data.network
+package com.mandarinkafe.mandarin.core.data.network
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -7,7 +7,7 @@ import android.util.Log
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.Response
-import com.mandarinkafe.mandarin.menu.data.dto.MenuRequest
+import com.mandarinkafe.mandarin.menu.data.network.MenuRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
