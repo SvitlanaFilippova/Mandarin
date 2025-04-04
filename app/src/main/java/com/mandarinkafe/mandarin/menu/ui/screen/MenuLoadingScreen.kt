@@ -37,6 +37,5 @@ fun LoadingScreen() {
                 trackColor = Colors.GreyTransparent10
             )
         }
-
     }
 }

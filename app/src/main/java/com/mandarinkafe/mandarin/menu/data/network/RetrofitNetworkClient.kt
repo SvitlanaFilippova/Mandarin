@@ -4,13 +4,12 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
-import com.mandarinkafe.mandarin.menu.data.dto.AuthRequest
+import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
+import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
+import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.menu.data.dto.MenuRequest
-import com.mandarinkafe.mandarin.menu.data.dto.OrganizationsRequest
-import com.mandarinkafe.mandarin.menu.data.dto.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
 
 class RetrofitNetworkClient(private val context: Context, private val ikkoService: IikoApiService) :
     NetworkClient {

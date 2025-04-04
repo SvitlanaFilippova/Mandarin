@@ -23,14 +23,9 @@ object Dimens {
     val MarginSuperSmall4 = 4.dp
     val MarginBig24 = 24.dp
     val MarginBig32 = 32.dp
-    val Elevation4 = 4.dp
     val RadiusSearchField8 = 8.dp
     val RadiusImageCorner2 = 2.dp
-    val RadiusBottomSheet16 = 16.dp
-    val RadiusBsDividerShape44 = 44.dp
     val SearchInputSize40 = 40.dp
-    val DrCursorWidth2 = 2.dp
-    val DrCursorWidth1 = 1.dp
     val MealImage136 = 136.dp
     val MealMinDescriptionHeight96 = 96.dp
     val MealImageSmall96 = 96.dp

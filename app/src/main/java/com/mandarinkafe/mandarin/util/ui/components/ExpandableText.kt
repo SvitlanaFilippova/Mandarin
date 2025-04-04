@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components
+package com.mandarinkafe.mandarin.util.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -37,7 +37,7 @@ fun ExpandableText(
     maxLinesCollapsed: Int
 ) {
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
-    val isTextOverflow = textLayoutResult?.hasVisualOverflow ?: false
+    val isTextOverflow = textLayoutResult?.hasVisualOverflow == true
 
     Box(
         modifier = Modifier
@@ -77,7 +77,7 @@ fun ExpandableText(
                     }
             )
 
-            // 3. Иконка стрелки (отдельный слой поверх градиента)
+            // Иконка стрелки (отдельный слой поверх градиента)
             Box(
                 modifier = Modifier
                     .matchParentSize()

@@ -7,14 +7,12 @@ import com.mandarinkafe.mandarin.menu.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 
-
 class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     private val storedFavorites = favoritesRepository.getFavoriteIds()
     private val editableCategoryIds = setOf(
         PizzaCategoriesIds.PIZZA35.id,
         PizzaCategoriesIds.RIM.id,
     )
-
 
     private fun CategoryDto.toDomain(storedFavorites: List<String>, parentCategory: String?) =
         MealCategory(
@@ -28,7 +26,9 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                 )
             },
             subCategories = null,
-            tabIcon = buttonImageUrl
+            tabIcon = buttonImageUrl,
+            description = description ?: "",
+            isHidden = isHidden,
         )
 
     private fun MealDto.toDomain(
@@ -44,13 +44,13 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                 description = description,
                 weight = itemSizes.firstOrNull()?.portionWeightGrams?.toInt() ?: 0,
                 price = itemSizes.firstOrNull()?.prices?.firstOrNull()?.price?.toInt() ?: 0,
-                imageUrl = itemSizes.firstOrNull()?.buttonImageUrl ?: "" ,
+                imageUrl = itemSizes.firstOrNull()?.buttonImageUrl ?: "",
                 categoryId = categoryId,
                 isFavorite = storedFavorites.contains(itemId),
                 tags = tags,
                 topCategoryId = topCategoryId,
-                isEditable = checkIfEditable(categoryId)
-
+                isEditable = checkIfEditable(categoryId),
+                isHidden = isHidden,
             )
             return item
         } catch (e: Throwable) {
@@ -63,114 +63,76 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
         return editableCategoryIds.contains(categoryId)
     }
 
-
-    private fun menuDtoToDomain(menuDto: List<CategoryDto>?, parentCategory: String?): List<MealCategory> {
+    fun menuDtoToDomain(menuDto: List<CategoryDto>?): List<MealCategory> {
         if (menuDto.isNullOrEmpty()) {
             Log.e("DEBUG", "menuDto оказался null или пустым")
             return emptyList()
         }
-        val menuDomain = menuDto.map {
-            it.toDomain(storedFavorites = storedFavorites, parentCategory)
-        }
-        return menuDomain
-    }
 
-    fun setMenuStructure(menuDto: List<CategoryDto>?): List<MealCategory> {
-        if (menuDto.isNullOrEmpty()) {
-            Log.e("DEBUG", "menuDto оказался null или пустым")
-            return emptyList()
-        }
-        return buildList<MealCategory> {
-            this.add(
-                PIZZA_INDEX,
-                MealCategory(
-                    id = PARENT_PIZZA_ID,
-                    name = PIZZA_PARENT_CATEGORY_NAME,
-                    meals = null,
-                    subCategories = menuDtoToDomain(menuDto, PARENT_PIZZA_ID)
-                        .filter { category -> PizzaCategoriesIds.contains(category.id) }, // Потом применяем filter
-                    tabIcon = PIZZA_ICON
-                )
-            )
+        val topLevelSet = mutableSetOf<String>()
+        val processedParents = mutableSetOf<String>()
+        val childCategoriesMap = mutableMapOf<String, MutableList<CategoryDto>>()
 
-            this.add(
-                SUSHI_INDEX,
-                MealCategory(
-                    id = PARENT_SUSHI_ID,
-                    name = SUSHI_PARENT_CATEGORY_NAME,
-                    meals = null,
-                    subCategories = menuDtoToDomain(menuDto, PARENT_SUSHI_ID)
-                        .filter { category -> SushiCategoriesIds.contains(category.id) }, // Потом применяем filter
-                    tabIcon = SUSHI_ICON
-                )
-            )
-            this += menuDtoToDomain(menuDto, null).filter { category ->
-                !SushiCategoriesIds.contains(category.id) && !PizzaCategoriesIds.contains(category.id)
+        // Группируем дочерние категории по имени родителя
+        for (category in menuDto) {
+            val split = category.name.split("/")
+            if (split.size > 1) {
+                val parentName = split.first()
+                childCategoriesMap.getOrPut(parentName) { mutableListOf() }.add(category)
+            } else {
+                topLevelSet.add(category.name)
+            }
+        }
+
+        return buildList {
+            for (category in menuDto) {
+                val split = category.name.split("/")
+                if (split.size == 1) {
+                    // Родительская категория
+                    val parentName = category.name
+                    if (processedParents.contains(parentName)) continue
+
+                    val subCategoriesDto = childCategoriesMap[parentName]
+                    processedParents.add(parentName)
+
+                    if (subCategoriesDto != null) {
+                        add(
+                            MealCategory(
+                                id = category.id,
+                                name = parentName,
+                                meals = null,
+                                subCategories = subCategoriesDto.map { subDto ->
+                                    val cleanedName = subDto.name.substringAfter("/")
+                                    subDto.copy(name = cleanedName)
+                                        .toDomain(
+                                            storedFavorites = storedFavorites,
+                                            parentCategory = category.id
+                                        )
+                                },
+                                tabIcon = category.buttonImageUrl,
+                                description = category.description ?: "",
+                                isHidden = category.isHidden
+                            )
+                        )
+                    } else {
+                        add(
+                            category.toDomain(
+                                storedFavorites = storedFavorites,
+                                parentCategory = null
+                            )
+                        )
+                    }
+                } else {
+                    // Дочерние категории обрабатываются только в составе родителя
+                    continue
+                }
             }
         }
     }
-
 
     enum class PizzaCategoriesIds(val id: String) {
         PIZZA35("832b4f72-adeb-4a3d-8bf4-cfde11ac810f"),
-
         //TODO выписать, когда будут в меню:
         RIM("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        NEAPOL("123b4a72-cdfg-7b3c-8abc-cfde11abc810"),
-        CHICAGO("39a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        CALCONE("29a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        FOKACCHA("19a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        LAMADJO("49a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        HACHAPURI_ADJ("59a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        HACHAPURI_IM("69a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        RULETIKI("79a9c0f12-123b-4d9f-8a34-cf1234abcd12");
-
-        companion object {
-            private val ids = entries.map { it.id }.toSet()
-            fun contains(id: String): Boolean {
-                return id in ids
-            }
-
-        }
-    }
-
-    enum class SushiCategoriesIds(val id: String) {
-        ROLLS("12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36"),
-
-        //TODO выписать, когда будут в меню:
-        MAKI("23239a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        NIGIRI("123b4a72-cdfg-7b3c-8abc-cfde11abc810"),
-        GUNKAN("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        SPICE("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        BAKED("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        HOT("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        ONIGIRI("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-        SETS("9a9c0f12-123b-4d9f-8a34-cf1234abcd12");
-
-        companion object {
-            private val ids = entries.map { it.id }.toSet()
-            fun contains(id: String): Boolean {
-                return id in ids
-            }
-        }
-    }
-
-    companion object {
-        const val PIZZA_ICON =
-            "https://static.tildacdn.com/tild3061-3031-4532-a465-613433653562/noroot.png"
-        const val SUSHI_ICON =
-            "https://static.tildacdn.com/tild6163-3565-4364-b832-646639656462/noroot.png"
-        const val PIZZA_INDEX = 0
-        const val SUSHI_INDEX = 1
-        const val PIZZA_PARENT_CATEGORY_NAME = "Пицца"
-        const val SUSHI_PARENT_CATEGORY_NAME = "Суши и роллы"
-        const val PARENT_PIZZA_ID = "parent_pizza_category_id"
-        const val PARENT_SUSHI_ID = "parent_sushi_category_id"
     }
 }
-
-
-
-
-
-

@@ -1,125 +1,124 @@
 package com.mandarinkafe.mandarin.menu.domain.models
 
-import com.mandarinkafe.mandarin.menu.data.DtoToDomainConverter.Companion.PIZZA_ICON
-import com.mandarinkafe.mandarin.menu.data.DtoToDomainConverter.Companion.SUSHI_ICON
 
 data class MealCategory(
     val id: String,
     val name: String,
-    val meals: List<Meal>?, //перечень всех блюд, входящих в категорию. Для родительской категории - null
+    val meals: List<Meal>?,
     val subCategories: List<MealCategory>?,
-    val tabIcon: String?
+    val tabIcon: String?,
+    val description: String,
+    val isHidden: Boolean
 )
 
-
-val mockMenuData = arrayListOf<MealCategory>(
-    MealCategory(
-        id = "1",
-        name = "Пицца", meals = null,
-        subCategories = listOf(
-            MealCategory(
-                id = "832b4f72-adeb-4a3d-8bf4-cfde11ac810f",
-                name = "Классическая",
-                meals = mockPizza35List,
-                subCategories = null,
-                tabIcon = null
-            ),
-            MealCategory(
-                id = "9a9c0f12-123b-4d9f-8a34-cf1234abcd12",
-                name = "Римская",
-                meals = mockPizzaRimList,
-                subCategories = null,
-                tabIcon = null
-            ),
-            MealCategory(
-                id = "neapolitano9a9c0f12-123b-4d9f-8a34-cf11abcd12",
-                name = "Неаполитано",
-                meals = mockNeapolitanoList,
-                subCategories = null,
-                tabIcon = null
-            ),
-            MealCategory(
-                id = "calcone-j3872541-5a16-444448912555f9090d36",
-                name = "Кальцоне",
-                meals = mockCalconeList,
-                subCategories = null,
-                tabIcon = null
-            )
-        ),
-        tabIcon = PIZZA_ICON
-    ),
-    MealCategory(
-        id = "2",
-        name = "Суши и роллы", meals = null,
-        subCategories = listOf(
-            MealCategory(
-                id = "12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36",
-                name = "Роллы",
-                meals = mockRollsList,
-                subCategories = null,
-                tabIcon = null
-            ),
-            MealCategory(
-                id = "23239a9c0f12-123b-4d9f-8a34-cf1234abcd12",
-                name = "Маки-суши",
-                meals = mockMakiList,
-                subCategories = null,
-                tabIcon = null
-            ),
-        ),
-        tabIcon = SUSHI_ICON
-    ),
-    MealCategory(
-        id = "c21-b9e7-c8ab8912fd44444909090544436",
-        name = "Бургеры",
-        meals = mockBurgerList,
-        subCategories = null,
-        tabIcon = "https://static.tildacdn.com/tild3330-6165-4238-b132-303663663062/noroot.png"
-    ),
-    MealCategory(
-        id = "d3222222222fd891246465554fd36",
-        name = "Хот-доги и донер",
-        meals = mockHotDogList,
-        subCategories = null,
-        tabIcon = "https://static.tildacdn.com/tild6430-3834-4539-b837-616230626534/noroot.png"
-    ),
-    MealCategory(
-        id = "j3872541-5a16-444448912555f9090d36",
-        name = "Wok",
-        meals = mockWokList,
-        subCategories = null,
-        tabIcon = "123https://static.tildacdn.com/tild3233-3165-4430-b231-313839323231/_.png"
-    ),
-    MealCategory(
-        id = "hachapuri-j3872541-5a16-444448912555f9090d36",
-        name = "Хачапури",
-        meals = mockHachapuriList,
-        subCategories = null,
-        tabIcon = ""
-    )
-)
-
-val mockAddsForPizza = arrayListOf<MealCategory>(
-    MealCategory(
-        id = "parent_pizza_adds_id",
-        name = "Добавки к пицце",
-        meals = null,
-        subCategories = listOf(
-            MealCategory(
-                id = "d3872-5ab9e7-c8ab812250d36",
-                name = "Сыр",
-                meals = mockPizzaAddsCheeseList,
-                subCategories = null,
-                tabIcon = null
-            ),
-            MealCategory(
-                id = "adds_for_pizza_zs78g3zsg535",
-                name = "Мясо",
-                meals = mockPizzaAddsMeatList,
-                subCategories = null,
-                tabIcon = null
-            )
-        ),
-        tabIcon = null
-    )
-)
+//val mockMenuData = arrayListOf<MealCategory>(
+//    MealCategory(
+//        id = "1",
+//        name = "Пицца", meals = null,
+//        subCategories = listOf(
+//            MealCategory(
+//                id = "832b4f72-adeb-4a3d-8bf4-cfde11ac810f",
+//                name = "Классическая",
+//                meals = mockPizza35List,
+//                subCategories = null,
+//                tabIcon = null
+//            ),
+//            MealCategory(
+//                id = "9a9c0f12-123b-4d9f-8a34-cf1234abcd12",
+//                name = "Римская",
+//                meals = mockPizzaRimList,
+//                subCategories = null,
+//                tabIcon = null
+//            ),
+//            MealCategory(
+//                id = "neapolitano9a9c0f12-123b-4d9f-8a34-cf11abcd12",
+//                name = "Неаполитано",
+//                meals = mockNeapolitanoList,
+//                subCategories = null,
+//                tabIcon = null
+//            ),
+//            MealCategory(
+//                id = "calcone-j3872541-5a16-444448912555f9090d36",
+//                name = "Кальцоне",
+//                meals = mockCalconeList,
+//                subCategories = null,
+//                tabIcon = null
+//            )
+//        ),
+//        tabIcon = PIZZA_ICON
+//    ),
+//    MealCategory(
+//        id = "2",
+//        name = "Суши и роллы", meals = null,
+//        subCategories = listOf(
+//            MealCategory(
+//                id = "12355555d3872541-5a16-4c21-b9e7-c8ab8912fd36",
+//                name = "Роллы",
+//                meals = mockRollsList,
+//                subCategories = null,
+//                tabIcon = null
+//            ),
+//            MealCategory(
+//                id = "23239a9c0f12-123b-4d9f-8a34-cf1234abcd12",
+//                name = "Маки-суши",
+//                meals = mockMakiList,
+//                subCategories = null,
+//                tabIcon = null
+//            ),
+//        ),
+//        tabIcon = SUSHI_ICON
+//    ),
+//    MealCategory(
+//        id = "c21-b9e7-c8ab8912fd44444909090544436",
+//        name = "Бургеры",
+//        meals = mockBurgerList,
+//        subCategories = null,
+//        tabIcon = "https://static.tildacdn.com/tild3330-6165-4238-b132-303663663062/noroot.png"
+//    ),
+//    MealCategory(
+//        id = "d3222222222fd891246465554fd36",
+//        name = "Хот-доги и донер",
+//        meals = mockHotDogList,
+//        subCategories = null,
+//        tabIcon = "https://static.tildacdn.com/tild6430-3834-4539-b837-616230626534/noroot.png"
+//    ),
+//    MealCategory(
+//        id = "j3872541-5a16-444448912555f9090d36",
+//        name = "Wok",
+//        meals = mockWokList,
+//        subCategories = null,
+//        tabIcon = "123https://static.tildacdn.com/tild3233-3165-4430-b231-313839323231/_.png"
+//    ),
+//    MealCategory(
+//        id = "hachapuri-j3872541-5a16-444448912555f9090d36",
+//        name = "Хачапури",
+//        meals = mockHachapuriList,
+//        subCategories = null,
+//        tabIcon = ""
+//    )
+//)
+//
+//val mockAddsForPizza = arrayListOf<MealCategory>(
+//    MealCategory(
+//        id = "parent_pizza_adds_id",
+//        name = "Добавки к пицце",
+//        meals = null,
+//        subCategories = listOf(
+//            MealCategory(
+//                id = "d3872-5ab9e7-c8ab812250d36",
+//                name = "Сыр",
+//                meals = mockPizzaAddsCheeseList,
+//                subCategories = null,
+//                tabIcon = null
+//            ),
+//            MealCategory(
+//                id = "adds_for_pizza_zs78g3zsg535",
+//                name = "Мясо",
+//                meals = mockPizzaAddsMeatList,
+//                subCategories = null,
+//                tabIcon = null
+//            )
+//        ),
+//        tabIcon = null
+//    )
+//)

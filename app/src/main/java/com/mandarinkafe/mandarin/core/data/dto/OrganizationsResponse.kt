@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.data.dto
+package com.mandarinkafe.mandarin.core.data.dto
 
 data class OrganizationsResponse(
     val organizations: List<Organization>

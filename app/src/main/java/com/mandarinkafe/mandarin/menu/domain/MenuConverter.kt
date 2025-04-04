@@ -16,6 +16,7 @@ object MenuConverter {
                             category.subCategories.forEach { this += it.name }
                         },
                         tabIcon = category.tabIcon,
+                        description = category.description,
                         id = category.id
                     )
 
@@ -23,6 +24,7 @@ object MenuConverter {
                         if (!subCategory.meals.isNullOrEmpty()) {
                             this += MenuRVItem.SubHeaderItem(
                                 categoryName = subCategory.name,
+                                description = subCategory.description,
                                 id = subCategory.id
                             )
                             this += subCategory.meals.map {
@@ -38,6 +40,7 @@ object MenuConverter {
                             categoryName = category.name,
                             subCategoriesNames = null,
                             tabIcon = category.tabIcon,
+                            description = category.description,
                             id = category.id
                         )
                         this += category.meals.map {

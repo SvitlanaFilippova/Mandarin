@@ -10,7 +10,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.R
@@ -18,7 +17,6 @@ import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.core.ui.MainActivity
 import com.mandarinkafe.mandarin.databinding.FragmentEditMealBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.mockPizzaAddsCheeseList
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -127,27 +125,27 @@ class EditMealBSFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupRecyclerView() {
-        val recyclerView = binding.rvAdds
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = MealAdditionalsAdapter(
-            mockPizzaAddsCheeseList,
-            object : MealAdditionalsAdapter.AddsClickListener {
-
-                override fun plusToCartClick(additional: Meal) {
-                    //TODO сделать логику корзины для добавок к блюду
-                    mealPrice += additional.price
-                    binding.fabAddToCartPrice.text =
-                        getString(R.string.meal_price_template, mealPrice)
-
-                }
-
-                override fun minusToCartClick(additional: Meal) {
-                    //TODO сделать логику корзины для добавок к блюду
-                    mealPrice -= additional.price
-                    binding.fabAddToCartPrice.text =
-                        getString(R.string.meal_price_template, mealPrice)
-                }
-            })
+//        val recyclerView = binding.rvAdds
+//        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+//        recyclerView.adapter = MealAdditionalsAdapter(
+//            mockPizzaAddsCheeseList,
+//            object : MealAdditionalsAdapter.AddsClickListener {
+//
+//                override fun plusToCartClick(additional: Meal) {
+//                    //TODO сделать логику корзины для добавок к блюду
+//                    mealPrice += additional.price
+//                    binding.fabAddToCartPrice.text =
+//                        getString(R.string.meal_price_template, mealPrice)
+//
+//                }
+//
+//                override fun minusToCartClick(additional: Meal) {
+//                    //TODO сделать логику корзины для добавок к блюду
+//                    mealPrice -= additional.price
+//                    binding.fabAddToCartPrice.text =
+//                        getString(R.string.meal_price_template, mealPrice)
+//                }
+//            })
     }
 
     private fun setTabs(addsCategories: ArrayList<String>) {

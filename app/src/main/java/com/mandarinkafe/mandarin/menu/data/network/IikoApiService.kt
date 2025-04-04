@@ -1,12 +1,12 @@
 package com.mandarinkafe.mandarin.menu.data.network
-import com.mandarinkafe.mandarin.menu.data.dto.AuthRequest
-import com.mandarinkafe.mandarin.menu.data.dto.AuthResponse
+
+import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
+import com.mandarinkafe.mandarin.core.data.dto.AuthResponse
+import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
+import com.mandarinkafe.mandarin.core.data.dto.OrganizationsResponse
 import com.mandarinkafe.mandarin.menu.data.dto.MenuIdResponse
 import com.mandarinkafe.mandarin.menu.data.dto.MenuRequest
 import com.mandarinkafe.mandarin.menu.data.dto.MenuResponse
-import com.mandarinkafe.mandarin.menu.data.dto.OrganizationsRequest
-import com.mandarinkafe.mandarin.menu.data.dto.OrganizationsResponse
-
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST

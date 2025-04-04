@@ -25,8 +25,8 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.menu.data.DtoToDomainConverter.Companion.PARENT_PIZZA_ID
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.util.ui.components.ExpandableText
 
 @Preview
 @Composable
@@ -43,8 +43,9 @@ fun ItemMenuMealPreview() {
             categoryId = "pizza",
             isFavorite = false,
             tags = null,
-            topCategoryId = PARENT_PIZZA_ID,
-            isEditable = true
+            topCategoryId = null,
+            isEditable = true,
+            isHidden = false
         )
     MenuMealItem(meal)
 }

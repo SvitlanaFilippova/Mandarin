@@ -85,7 +85,7 @@ class MenuViewModel @Inject constructor(
                 }
         }
 
-            //            Для получения мок-меню
+//            Для получения мок-меню
 //            val menu = menuInteractor.getMockMenu()
 //            if (menu.isNotEmpty()) {
 //                _state.update {
@@ -142,4 +142,3 @@ class MenuViewModel @Inject constructor(
         Log.d("DEBUG", "ViewModel removeFromCart for $meal")
     }
 }
-
