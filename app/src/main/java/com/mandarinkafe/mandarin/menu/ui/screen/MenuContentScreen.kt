@@ -139,7 +139,7 @@ fun MenuContentScreen(
                         selectedTabIndex = selectedSubTabIndex,
                         onTabSelected = { index ->
                             onEvent(
-                                MenuContract.Event.ScrollToCategory(index)
+                                MenuContract.Event.ScrollToSubCategory(index)
                             )
                             coroutineScope.launch {
                                 val targetIndex = menuItems.indexOfFirst {
