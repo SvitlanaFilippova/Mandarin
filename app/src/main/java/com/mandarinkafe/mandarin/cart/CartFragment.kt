@@ -14,7 +14,10 @@ import com.mandarinkafe.mandarin.databinding.FragmentCartBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 class CartFragment : Fragment() {
-    private lateinit var binding: FragmentCartBinding
+
+    private var _binding: FragmentCartBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var cartAdapter: CartAdapter
     private lateinit var recommendedAdapter: RecommendedAdapter
 
@@ -22,7 +25,7 @@ class CartFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCartBinding.inflate(inflater, container, false)
+        _binding = FragmentCartBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -86,4 +89,8 @@ class CartFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
