@@ -46,6 +46,13 @@ class MenuViewModel @Inject constructor(
             is MenuContract.Event.ScrollToCategory -> scrollToCategory(event.newIndex)
             is MenuContract.Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is MenuContract.Event.BannerClick -> handleBannerClick(event.targetName)
+            is MenuContract.Event.OpenMealCustomization -> openMealCustomization(event.meal)
+        }
+    }
+
+    private fun openMealCustomization(meal: Meal) {
+        viewModelScope.launch {
+            _effect.emit(MenuContract.Effect.OpenMealCustomization(meal))
         }
     }
 

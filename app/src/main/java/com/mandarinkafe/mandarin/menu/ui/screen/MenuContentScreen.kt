@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.ui.MenuContract
+import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
@@ -35,7 +36,7 @@ fun MenuContentScreen(
     selectedTabIndex: Int,
     selectedSubTabIndex: Int,
     selectedBannerIndex: Int,
-    onEvent: (MenuContract.Event) -> Unit
+    onEvent: (Event) -> Unit
 ) {
     val categories = menuItems.filterIsInstance<MenuRVItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
@@ -49,7 +50,7 @@ fun MenuContentScreen(
     val handleBannerClick = { targetName: String ->
         coroutineScope.launch {
             onEvent(
-                MenuContract.Event.BannerClick(targetName)
+                Event.BannerClick(targetName)
             )
         }
     }
@@ -73,7 +74,7 @@ fun MenuContentScreen(
                         parentCategory?.let { category ->
                             val newIndex = categoriesNames.indexOf(category.categoryName)
                             if (newIndex != selectedTabIndex) {
-                                onEvent(MenuContract.Event.ScrollToCategory(newIndex))
+                                onEvent(Event.ScrollToCategory(newIndex))
                             }
                             // Ищем подкатегорию
                             val parentSubCategory = menuItems
@@ -85,7 +86,7 @@ fun MenuContentScreen(
                                     parentCategory.subCategoriesNames?.indexOf(subCategory.categoryName)
                                         ?: -1
                                 if (newSubIndex != selectedSubTabIndex) {
-                                    onEvent(MenuContract.Event.ScrollToSubCategory(newSubIndex))
+                                    onEvent(Event.ScrollToSubCategory(newSubIndex))
                                 }
                             }
                         }
@@ -114,7 +115,7 @@ fun MenuContentScreen(
             categories = categories,
             selectedTabIndex = selectedTabIndex,
             onTabSelected = { index ->
-                onEvent(MenuContract.Event.ScrollToCategory(index))
+                onEvent(Event.ScrollToCategory(index))
                 coroutineScope.launch {
                     val targetIndex = menuItems.indexOfFirst {
                         it is MenuRVItem.HeaderItem && it.categoryName == categories[index].categoryName
@@ -139,7 +140,7 @@ fun MenuContentScreen(
                         categories = currentSubCategories,
                         selectedTabIndex = selectedSubTabIndex,
                         onTabSelected = { index ->
-                            onEvent(MenuContract.Event.ScrollToSubCategory(index))
+                            onEvent(Event.ScrollToSubCategory(index))
                             coroutineScope.launch {
                                 val targetIndex = menuItems.indexOfFirst {
                                     it is MenuRVItem.SubHeaderItem && it.categoryName == currentSubCategories[index]
@@ -158,9 +159,10 @@ fun MenuContentScreen(
             menuItems = menuItems,
             listState = listState,
             modifier = Modifier.weight(1f),
-            onToggleFavorite = { mealId -> onEvent(MenuContract.Event.ToggleFavorite(mealId)) },
-            onAddToCart = { mealId -> onEvent(MenuContract.Event.AddToCart(mealId)) },
-            onRemoveFromCart = { mealId -> onEvent(MenuContract.Event.RemoveFromCart(mealId)) }
+            onToggleFavorite = { meal -> onEvent(Event.ToggleFavorite(meal)) },
+            onAddToCart = { meal -> onEvent(Event.AddToCart(meal)) },
+            onRemoveFromCart = { meal -> onEvent(Event.RemoveFromCart(meal)) },
+            onCustomizeClick = { meal -> onEvent(Event.OpenMealCustomization(meal)) }
         )
     }
 }

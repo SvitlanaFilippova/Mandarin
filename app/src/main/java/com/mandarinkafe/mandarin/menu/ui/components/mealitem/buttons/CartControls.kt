@@ -21,7 +21,12 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 
 @Composable
-fun CartControls(numberInCart: Int, price: Int, onIncrease: () -> Unit, onDecrease: () -> Unit) {
+fun CartControls(
+    numberInCart: Int,
+    price: Int,
+    onIncrease: () -> Unit,
+    onDecrease: () -> Unit
+) {
     Box(
         modifier = Modifier
             .widthIn(min = Dimens.ButtonToCartBig120)

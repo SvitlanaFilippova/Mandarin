@@ -1,14 +1,17 @@
-package com.mandarinkafe.mandarin.edit_meal.ui
+package com.mandarinkafe.mandarin.meal_customization.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class EditMealViewModel @Inject constructor(
+class MealCustomizationViewModel @Inject constructor(
     //private var meal: Meal,
     private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
@@ -17,6 +20,13 @@ class EditMealViewModel @Inject constructor(
     fun getIsFavoriteLiveData(): LiveData<Boolean> {
         return isFavoriteLiveData
     }
+
+    fun loadMeal(meal: Meal) {
+        viewModelScope.launch {
+
+        }
+    }
+
 
     fun checkIfFavorite() {
         //isFavoriteLiveData.value = favoritesInteractor.checkIfFavorite(meal.id)

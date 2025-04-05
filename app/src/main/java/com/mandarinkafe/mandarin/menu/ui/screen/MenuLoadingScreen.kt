@@ -31,7 +31,7 @@ fun LoadingScreen() {
         ) {
 
             CircularProgressIndicator(
-                modifier = Modifier.size(Dimens.ProgressBarSize100),
+                modifier = Modifier.size(Dimens.ProgressBarSize124),
                 color = Colors.Orange,
                 strokeWidth = Dimens.ProgressBarWidth24,
                 trackColor = Colors.GreyTransparent10

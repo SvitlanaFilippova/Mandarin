@@ -15,7 +15,7 @@
 
     <fragment
         android:id="@+id/mealDetails"
-        android:name="com.mandarinkafe.mandarin.edit_meal.ui.EditMealBSFragment"
+        android:name="com.mandarinkafe.mandarin.meal_customization.ui.EditMealBSFragment"
         android:label="fragment_meal_details"
         tools:layout="@layout/fragment_edit_meal">
         <argument
