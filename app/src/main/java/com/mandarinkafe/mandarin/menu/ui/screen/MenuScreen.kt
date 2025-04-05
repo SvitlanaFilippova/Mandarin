@@ -35,8 +35,8 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
                     // Показываем снекбар
                 }
 
-                is MenuContract.Effect.NavigateTo -> {
-                    // Навигация
+                is MenuContract.Effect.OpenMealCustomization -> {
+                    // Обработка клика по кнопке кастомизации
                 }
             }
         }

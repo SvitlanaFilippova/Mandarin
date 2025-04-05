@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -28,34 +27,13 @@ import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.util.ui.components.ExpandableText
 
-@Preview
-@Composable
-fun ItemMenuMealPreview() {
-    val meal =
-        Meal(
-            id = "1",
-            sku = "0013",
-            name = "МАРГАРИТА С ВЯЛЕНЫМИ ТОМАТАМИ",
-            description = "Томатный соус, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы, ветчина, маринованные огурцы",
-            weight = 490,
-            price = 2585,
-            imageUrl = "https://optim.tildacdn.com/tild3064-3131-4362-b537-366634323165/-/resize/312x/-/format/webp/margaritta_veg.jpg",
-            categoryId = "pizza",
-            isFavorite = false,
-            tags = null,
-            topCategoryId = null,
-            isEditable = true,
-            isHidden = false
-        )
-    MenuMealItem(meal)
-}
-
 @Composable
 fun MenuMealItem(
     meal: Meal,
-    onToggleFavorite: (Meal) -> Unit = {},
-    onAddToCart: (Meal) -> Unit = {},
-    onRemoveFromCart: (Meal) -> Unit = {},
+    onToggleFavorite: (Meal) -> Unit,
+    onAddToCart: (Meal) -> Unit,
+    onRemoveFromCart: (Meal) -> Unit,
+    onCustomizeClick: (Meal) -> Unit
 ) {
     //переменные для отслеживания состояния длинных описаний и названий
     var isNameExpanded by remember {
@@ -115,12 +93,13 @@ fun MenuMealItem(
                     )
                 }
             }
-            // Контейнер для кнопок, чтобы они прижимались вниз
+            // Контейнер для кнопок
             Box(contentAlignment = Alignment.BottomStart) {
                 MealButtonsRow(
                     meal = meal, onToggleFavorite = onToggleFavorite,
                     onAddToCart = onAddToCart,
-                    onRemoveFromCart = onRemoveFromCart
+                    onRemoveFromCart = onRemoveFromCart,
+                    onCustomizeClick = onCustomizeClick
                 )
             }
         }

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.edit_meal.ui
+package com.mandarinkafe.mandarin.meal_customization.ui
 
 import android.view.LayoutInflater
 import android.view.View

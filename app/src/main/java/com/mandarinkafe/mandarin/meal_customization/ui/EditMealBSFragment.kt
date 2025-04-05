@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.edit_meal.ui
+package com.mandarinkafe.mandarin.meal_customization.ui
 
 import android.os.Bundle
 import android.util.Log
@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class EditMealBSFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentEditMealBinding? = null
     private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
-    private val viewModel: EditMealViewModel by viewModels()
+    private val viewModel: MealCustomizationViewModel by viewModels()
     private val args by navArgs<EditMealBSFragmentArgs>()
     private var meal: Meal? = null
     private var mealPrice = 0

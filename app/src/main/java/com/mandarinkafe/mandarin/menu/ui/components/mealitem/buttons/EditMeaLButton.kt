@@ -14,18 +14,21 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 
 @Composable
-fun EditMealButton(modifier: Modifier = Modifier) {
+fun CustomizeMealButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
         IconButton(
-            onClick = { /* Действие */ },
+            onClick = { onClick },
             modifier = Modifier.size(Dimens.ButtonToCartSmall32)
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_additionals),
-                contentDescription = "Редактировать",
+                contentDescription = "Редактировать блюдо",
                 modifier = Modifier.size(Dimens.ButtonEditMeal32),
                 tint = Color.Unspecified
             )

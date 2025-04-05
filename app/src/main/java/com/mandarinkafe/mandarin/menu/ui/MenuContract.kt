@@ -14,12 +14,12 @@ sealed interface MenuContract {
         data class BannerClick(val targetName: String) : Event
         data class AddToCart(val meal: Meal) : Event
         data class RemoveFromCart(val meal: Meal) : Event
-
+        data class OpenMealCustomization(val meal: Meal) : Event
     }
 
     sealed interface Effect {
         data class ShowSnackbar(val message: String) : Effect
-        data class NavigateTo(val route: String) : Effect
+        data class OpenMealCustomization(val meal: Meal) : Effect
     }
 
     data class State(

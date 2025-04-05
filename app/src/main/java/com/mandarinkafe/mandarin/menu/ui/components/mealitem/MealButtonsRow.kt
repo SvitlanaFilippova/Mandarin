@@ -15,16 +15,17 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControls
-import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.EditMealButton
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CustomizeMealButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.FavoriteButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.ToCartButton
 
 @Composable
 fun MealButtonsRow(
     meal: Meal,
-    onToggleFavorite: (Meal) -> Unit = {},
-    onAddToCart: (Meal) -> Unit = {},
-    onRemoveFromCart: (Meal) -> Unit = {},
+    onToggleFavorite: (Meal) -> Unit,
+    onAddToCart: (Meal) -> Unit,
+    onRemoveFromCart: (Meal) -> Unit,
+    onCustomizeClick: (Meal) -> Unit
 ) {
     var isInTheCart by remember { mutableStateOf(false) }
     var numberInCart by remember { mutableIntStateOf(1) }
@@ -53,7 +54,10 @@ fun MealButtonsRow(
         }
 
         if (meal.isEditable) {
-            EditMealButton(modifier = Modifier.weight(1f))
+            CustomizeMealButton(
+                modifier = Modifier.weight(1f),
+                onClick = { onCustomizeClick(meal) }
+            )
         } else {
             Spacer(modifier = Modifier.weight(1f))
         }

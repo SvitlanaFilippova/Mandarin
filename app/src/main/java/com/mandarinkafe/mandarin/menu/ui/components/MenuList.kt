@@ -19,6 +19,7 @@ fun MenuList(
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
+    onCustomizeClick: (Meal) -> Unit
 ) {
     LazyColumn(
         state = listState,
@@ -38,7 +39,8 @@ fun MenuList(
                 is MenuRVItem.MealItem -> MenuMealItem(
                     meal = item.meal, onToggleFavorite = onToggleFavorite,
                     onAddToCart = onAddToCart,
-                    onRemoveFromCart = onRemoveFromCart
+                    onRemoveFromCart = onRemoveFromCart,
+                    onCustomizeClick = onCustomizeClick
                 )
             }
         }
