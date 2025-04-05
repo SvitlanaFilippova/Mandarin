@@ -9,6 +9,7 @@ import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.getName
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
+import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,19 +35,19 @@ class MenuViewModel @Inject constructor(
     val effect: SharedFlow<MenuContract.Effect> = _effect.asSharedFlow()
 
     init {
-        onEvent(MenuContract.Event.LoadMenu)
+        onEvent(Event.LoadMenu)
     }
 
-    fun onEvent(event: MenuContract.Event) {
+    fun onEvent(event: Event) {
         when (event) {
-            is MenuContract.Event.LoadMenu -> loadMenu()
-            is MenuContract.Event.ToggleFavorite -> toggleFavorite(event.meal)
-            is MenuContract.Event.AddToCart -> addToCart(event.meal)
-            is MenuContract.Event.RemoveFromCart -> removeFromCart(event.meal)
-            is MenuContract.Event.ScrollToCategory -> scrollToCategory(event.newIndex)
-            is MenuContract.Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
-            is MenuContract.Event.BannerClick -> handleBannerClick(event.targetName)
-            is MenuContract.Event.OpenMealCustomization -> openMealCustomization(event.meal)
+            is Event.LoadMenu -> loadMenu()
+            is Event.ToggleFavorite -> toggleFavorite(event.meal)
+            is Event.AddToCart -> addToCart(event.meal)
+            is Event.RemoveFromCart -> removeFromCart(event.meal)
+            is Event.ScrollToCategory -> scrollToCategory(event.newIndex)
+            is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
+            is Event.BannerClick -> handleBannerClick(event.targetName)
+            is Event.OpenMealCustomization -> openMealCustomization(event.meal)
         }
     }
 
