@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.menu.ui.components.mealitem
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +29,8 @@ fun MenuMealSmallItem(
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
-    onCustomizeClick: (Meal) -> Unit
+    onCustomizeClick: (Meal) -> Unit,
+    onItemClick: (Meal) -> Unit,
 ) {
 
     Row(
@@ -36,6 +38,7 @@ fun MenuMealSmallItem(
         modifier = Modifier
             .padding(vertical = Dimens.MarginSmall8)
             .fillMaxWidth()
+            .clickable { onItemClick(meal) }
     ) {
 
         AsyncImage(

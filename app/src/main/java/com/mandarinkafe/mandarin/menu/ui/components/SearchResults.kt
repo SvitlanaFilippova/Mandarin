@@ -16,7 +16,8 @@ fun SearchResults(
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
-    onCustomizeClick: (Meal) -> Unit
+    onCustomizeClick: (Meal) -> Unit,
+    onMealClick: (Meal) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.padding(Dimens.MarginStandard16),
@@ -27,7 +28,10 @@ fun SearchResults(
                     meal = item.meal, onToggleFavorite = onToggleFavorite,
                     onAddToCart = onAddToCart,
                     onRemoveFromCart = onRemoveFromCart,
-                    onCustomizeClick = onCustomizeClick
+                    onCustomizeClick = onCustomizeClick,
+                    onItemClick = {
+                        onMealClick(it)
+                    }
                 )
 
             }

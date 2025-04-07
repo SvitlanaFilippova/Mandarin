@@ -30,23 +30,23 @@ import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 @Composable
 fun MySearchBar(
     filteredMenuItems: List<MenuRVItem>,
+    latestSearchText: String,
     onSearch: (String) -> Unit,
     onClearSearch: () -> Unit,
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
     onCustomizeClick: (Meal) -> Unit,
     onToggleFavorite: (Meal) -> Unit,
+    onMealClick: (Meal) -> Unit
 
-    ) {
+) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    var searchText by remember { mutableStateOf("") }
     var isActive by remember { mutableStateOf(false) }
 
     SearchBar(
         //логика работы
-        query = searchText,
+        query = latestSearchText,
         onQueryChange = { text ->
-            searchText = text
             onSearch(text)
         },
         onSearch = { text ->
@@ -56,7 +56,7 @@ fun MySearchBar(
         active = isActive,
         onActiveChange = {
             isActive = it
-            onClearSearch()
+//            onClearSearch()
         },
 
         //внешний вид
@@ -77,8 +77,7 @@ fun MySearchBar(
         trailingIcon = {
             if (isActive) {
                 IconButton(onClick = {
-                    if (searchText.isNotEmpty()) {
-                        searchText = ""
+                    if (latestSearchText.isNotEmpty()) {
                         onClearSearch()
                     } else {
                         isActive = false
@@ -100,10 +99,13 @@ fun MySearchBar(
                 onRemoveFromCart = onRemoveFromCart,
                 onCustomizeClick = onCustomizeClick,
                 onToggleFavorite = onToggleFavorite,
-
-                )
+                onMealClick = { meal ->
+                    onMealClick(meal)
+                    isActive = false
+                },
+            )
         } else {
-            if (!searchText.isEmpty()) {
+            if (!latestSearchText.isEmpty()) {
                 Text(
                     text = "Ничего не найдено :(",
                     color = Colors.White,

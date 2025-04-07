@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.menu.ui.screen
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.ui.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
@@ -31,14 +33,17 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MenuContentScreen(
-    menuItems: List<MenuRVItem>,
-    filteredMenuItems: List<MenuRVItem>,
     listState: LazyListState,
-    selectedTabIndex: Int,
-    selectedSubTabIndex: Int,
-    selectedBannerIndex: Int,
-    onEvent: (Event) -> Unit
+    onEvent: (Event) -> Unit,
+    state: MenuContract.State
 ) {
+
+    val menuItems = state.menuItems
+    val filteredMenuItems = state.filteredMenuItems
+    val latestSearchText = state.latestSearchText
+    val selectedTabIndex = state.selectedTabIndex
+    val selectedSubTabIndex = state.selectedSubTabIndex
+    val selectedBannerIndex = state.selectedBannerIndex
     val categories = menuItems.filterIsInstance<MenuRVItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
     val coroutineScope = rememberCoroutineScope()
@@ -55,6 +60,22 @@ fun MenuContentScreen(
             )
         }
     }
+
+    val handleMealFromSearchClick = { mealId: String ->
+        coroutineScope.launch {
+            val index = menuItems.indexOfFirst {
+                it is MenuRVItem.MealItem && it.meal.id == mealId
+            }
+            Log.d(
+                "DEBUG SCROLL",
+                "fun handleMealFromSearchClick in MenuContentScreenindex = $index"
+            )
+            if (index >= 0) {
+                listState.scrollToItem(index)
+            }
+        }
+    }
+
     // Отслеживание изменения selectedBannerIndex и скролл при обновлении
     LaunchedEffect(selectedBannerIndex) {
         if (selectedBannerIndex >= 0) {
@@ -111,12 +132,14 @@ fun MenuContentScreen(
                 MenuTopBar()
                 MySearchBar(
                     filteredMenuItems = filteredMenuItems,
+                    latestSearchText = latestSearchText,
                     onSearch = { text -> onEvent(Event.SearchMealsByText(text)) },
                     onAddToCart = { meal -> onEvent(Event.AddToCart(meal)) },
                     onToggleFavorite = { meal -> onEvent(Event.ToggleFavorite(meal)) },
                     onRemoveFromCart = { meal -> onEvent(Event.RemoveFromCart(meal)) },
                     onCustomizeClick = { meal -> onEvent(Event.OpenMealCustomization(meal)) },
-                    onClearSearch = { onEvent(Event.ClearSearchInput) }
+                    onClearSearch = { onEvent(Event.ClearSearchInput) },
+                    onMealClick = { meal -> handleMealFromSearchClick(meal.id) }
                 )
                 BannerCarousel(onBannerClick = handleBannerClick)
             }

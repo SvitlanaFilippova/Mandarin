@@ -46,6 +46,7 @@ class MenuViewModel @Inject constructor(
             is Event.RemoveFromCart -> removeFromCart(event.meal)
             is Event.ScrollToCategory -> scrollToCategory(event.newIndex)
             is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
+            is Event.ScrollToMeal -> scrollToMeal(event.meal)
             is Event.BannerClick -> handleBannerClick(event.targetName)
             is Event.OpenMealCustomization -> openMealCustomization(event.meal)
             is Event.SearchMealsByText -> filterMenu(event.searchText)
@@ -95,6 +96,9 @@ class MenuViewModel @Inject constructor(
         }
     }
 
+    private fun scrollToMeal(meal: Meal) {
+    }
+
     private fun loadMenu() {
         _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
@@ -141,7 +145,6 @@ class MenuViewModel @Inject constructor(
             }
         }
     }
-
 
     private fun addToCart(meal: Meal) {
         Cart.addItem(meal)
