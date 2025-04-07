@@ -22,7 +22,7 @@ import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.ToCartButto
 @Composable
 fun MealButtonsRow(
     meal: Meal,
-    onToggleFavorite: (Meal) -> Unit,
+    onToggleFavorite: ((Meal) -> Unit)? = null, // можно использовать функцию без кнопки "Избранное"
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
     onCustomizeClick: (Meal) -> Unit
@@ -61,9 +61,12 @@ fun MealButtonsRow(
         } else {
             Spacer(modifier = Modifier.weight(1f))
         }
-        FavoriteButton(
-            meal = meal,
-            onToggleFavorite = onToggleFavorite
-        )
+
+        if (onToggleFavorite != null) {
+            FavoriteButton(
+                meal = meal,
+                onToggleFavorite = onToggleFavorite
+            )
+        }
     }
 }

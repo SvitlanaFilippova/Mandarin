@@ -15,6 +15,8 @@ sealed interface MenuContract {
         data class AddToCart(val meal: Meal) : Event
         data class RemoveFromCart(val meal: Meal) : Event
         data class OpenMealCustomization(val meal: Meal) : Event
+        data class SearchMealsByText(val searchText: String) : Event
+        data object ClearSearchInput : Event
     }
 
     sealed interface Effect {
@@ -28,6 +30,8 @@ sealed interface MenuContract {
         val errorMessage: String? = null,
         val selectedTabIndex: Int = DEFAULT_UNSELECTED_INDEX,
         val selectedSubTabIndex: Int = DEFAULT_UNSELECTED_INDEX,
-        val selectedBannerIndex: Int = DEFAULT_UNSELECTED_INDEX
+        val selectedBannerIndex: Int = DEFAULT_UNSELECTED_INDEX,
+        val filteredMenuItems: List<MenuRVItem> = emptyList(),
+        val latestSearchText: String = "",
     )
 }

@@ -37,7 +37,8 @@ fun MenuList(
                 }
 
                 is MenuRVItem.MealItem -> MenuMealItem(
-                    meal = item.meal, onToggleFavorite = onToggleFavorite,
+                    meal = item.meal,
+                    onToggleFavorite = onToggleFavorite,
                     onAddToCart = onAddToCart,
                     onRemoveFromCart = onRemoveFromCart,
                     onCustomizeClick = onCustomizeClick

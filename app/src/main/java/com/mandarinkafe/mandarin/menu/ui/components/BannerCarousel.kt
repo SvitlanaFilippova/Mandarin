@@ -65,7 +65,9 @@ fun BannerCarousel(
         }
     }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = Dimens.MarginSmall8)) {
         HorizontalPager(
             state = pagerState,
             pageSpacing = Dimens.MarginStandard16,
@@ -103,7 +105,7 @@ fun BannerCarousel(
                 .fillMaxWidth()
                 .padding(
                     top = Dimens.MarginSmall8,
-                    bottom = Dimens.MarginStandard16
+                    bottom = Dimens.MarginSmall8
                 ),
             horizontalArrangement = Arrangement.spacedBy(
                 Dimens.MarginSmall8,

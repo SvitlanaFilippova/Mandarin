@@ -27,13 +27,14 @@ object Dimens {
     val RadiusImageCorner2 = 2.dp
     val SearchInputSize40 = 40.dp
     val MealImage136 = 136.dp
+    val MealSmallImage72 = 72.dp
     val MealMinDescriptionHeight96 = 96.dp
-    val MealImageSmall96 = 96.dp
     val MealDetailsImageWidth250 = 250.dp
     val MealDetailsCartButton56 = 56.dp
     val PlaceholderImageSize120 = 120.dp
     val ProgressBarSize124 = 124.dp
     val ProgressBarWidth24 = 24.dp
+    val SearchBarHeight56 = 56.dp
     val BsDividerWidth48 = 48.dp
     val DividerHeight1 = 1.dp
     val TabActivatedIndicatorHeight2 = 2.dp

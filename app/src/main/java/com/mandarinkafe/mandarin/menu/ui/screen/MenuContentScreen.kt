@@ -20,11 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
-import com.mandarinkafe.mandarin.menu.ui.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
+import com.mandarinkafe.mandarin.menu.ui.components.MySearchBar
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.SubCategoryTabsRow
 import kotlinx.coroutines.launch
@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MenuContentScreen(
     menuItems: List<MenuRVItem>,
+    filteredMenuItems: List<MenuRVItem>,
     listState: LazyListState,
     selectedTabIndex: Int,
     selectedSubTabIndex: Int,
@@ -104,13 +105,24 @@ fun MenuContentScreen(
             visible = isTopPartVisible,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically()
-        ) { // Эта часть экрана видна только до начала скролла
+        ) {
+            // Эта часть экрана видна только до начала скролла
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 MenuTopBar()
+                MySearchBar(
+                    filteredMenuItems = filteredMenuItems,
+                    onSearch = { text -> onEvent(Event.SearchMealsByText(text)) },
+                    onAddToCart = { meal -> onEvent(Event.AddToCart(meal)) },
+                    onToggleFavorite = { meal -> onEvent(Event.ToggleFavorite(meal)) },
+                    onRemoveFromCart = { meal -> onEvent(Event.RemoveFromCart(meal)) },
+                    onCustomizeClick = { meal -> onEvent(Event.OpenMealCustomization(meal)) },
+                    onClearSearch = { onEvent(Event.ClearSearchInput) }
+                )
                 BannerCarousel(onBannerClick = handleBannerClick)
             }
         }
 
+        // Табы-категории, видно всегда
         CategoryTabsRow(
             categories = categories,
             selectedTabIndex = selectedTabIndex,
@@ -136,6 +148,8 @@ fun MenuContentScreen(
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically()
                 ) {
+
+                    // Табы-подкатегории, появляются при наличии в текущей категории
                     SubCategoryTabsRow(
                         categories = currentSubCategories,
                         selectedTabIndex = selectedSubTabIndex,
@@ -155,6 +169,7 @@ fun MenuContentScreen(
             }
         }
 
+        // Основное меню
         MenuList(
             menuItems = menuItems,
             listState = listState,

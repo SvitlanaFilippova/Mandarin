@@ -48,6 +48,8 @@ class MenuViewModel @Inject constructor(
             is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is Event.BannerClick -> handleBannerClick(event.targetName)
             is Event.OpenMealCustomization -> openMealCustomization(event.meal)
+            is Event.SearchMealsByText -> filterMenu(event.searchText)
+            is Event.ClearSearchInput -> clearSearchInput()
         }
     }
 
@@ -55,6 +57,30 @@ class MenuViewModel @Inject constructor(
         viewModelScope.launch {
             _effect.emit(MenuContract.Effect.OpenMealCustomization(meal))
         }
+    }
+
+    private fun filterMenu(searchText: String? = null, filters: Any? = null) {
+        if (!searchText.isNullOrEmpty()) {
+            val filteredMenuItems = _state.value.menuItems.filter {
+                it is MenuRVItem.MealItem && it.meal.name.contains(searchText, ignoreCase = true)
+            }
+                .sortedWith( // Дополнительная сортировка, чтобы в начале от ображались избранные блюда
+                    compareByDescending<MenuRVItem> {
+                        (it as MenuRVItem.MealItem).meal.isFavorite
+                    }
+                )
+            _state.update {
+                it.copy(
+                    filteredMenuItems = filteredMenuItems,
+                    latestSearchText = searchText
+                )
+            }
+        }
+
+    }
+
+    private fun clearSearchInput() {
+        _state.update { it.copy(filteredMenuItems = emptyList(), latestSearchText = "") }
     }
 
     private fun scrollToCategory(newIndex: Int) {
@@ -77,10 +103,6 @@ class MenuViewModel @Inject constructor(
                     if (!menu.isNullOrEmpty()) {
                         _state.update {
                             it.copy(isLoading = false, menuItems = menu)
-                        }
-                        Log.d("DEBUG", "loadMenu. Меню получено. Ниже первые 10 пунктов из него")
-                        menu.take(10).forEach {
-                            Log.d("DEBUG", "$it")
                         }
                     } else {
                         _state.update {

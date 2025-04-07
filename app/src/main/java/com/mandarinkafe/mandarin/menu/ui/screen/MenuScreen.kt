@@ -20,6 +20,7 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
         state.errorMessage != null -> ErrorScreen(state.errorMessage)
         else -> MenuContentScreen(
             menuItems = state.menuItems,
+            filteredMenuItems = state.filteredMenuItems,
             listState = listState,
             selectedTabIndex = state.selectedTabIndex,
             selectedSubTabIndex = state.selectedSubTabIndex,
