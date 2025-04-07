@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 
@@ -28,7 +29,7 @@ fun CustomizeMealButton(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_additionals),
-                contentDescription = "Редактировать блюдо",
+                contentDescription = stringResource(R.string.customize_meal),
                 modifier = Modifier.size(Dimens.ButtonEditMeal32),
                 tint = Color.Unspecified
             )

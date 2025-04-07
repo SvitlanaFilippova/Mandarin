@@ -27,7 +27,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.Banner
@@ -42,7 +44,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun BannerCarousel(
     banners: List<Banner> = mockBannersList,
-    autoScrollInterval: Long = AUTO_SCROLL_INTERVAL, // Интервал автопрокрутки
+    autoScrollInterval: Long = AUTO_SCROLL_INTERVAL,
     easing: Easing = LinearEasing,
     onBannerClick: (String) -> Job
 ) {
@@ -65,9 +67,11 @@ fun BannerCarousel(
         }
     }
 
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = Dimens.MarginSmall8)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimens.MarginSmall8)
+    ) {
         HorizontalPager(
             state = pagerState,
             pageSpacing = Dimens.MarginStandard16,
@@ -89,7 +93,7 @@ fun BannerCarousel(
         ) { page ->
             AsyncImage(
                 model = banners[page].imageUrl,
-                contentDescription = "Баннер $page",
+                contentDescription = stringResource(R.string.banner_number, page),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()

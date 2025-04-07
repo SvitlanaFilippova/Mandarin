@@ -16,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
@@ -40,18 +42,29 @@ fun CartControls(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(onClick = onDecrease, modifier = Modifier.size(Dimens.ButtonToCartSmall32)) {
-                Text("-", style = Typography.ToCartButtonStyle, color = Color.White)
+                Text(
+                    stringResource(id = R.string.minus),
+                    style = Typography.ToCartButtonStyle,
+                    color = Color.White
+                )
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("$numberInCart шт", style = Typography.CartButtonSmallTextStyle)
                 Text(
-                    "${numberInCart * price} ₽",
+                    stringResource(R.string.meal_in_cart_count_template, numberInCart),
+                    style = Typography.CartButtonSmallTextStyle
+                )
+                Text(
+                    stringResource(R.string.meal_price_template, numberInCart * price),
                     style = Typography.CartButtonSmallTextStyle,
                     color = Colors.WhiteTransparent75
                 )
             }
             IconButton(onClick = onIncrease, modifier = Modifier.size(Dimens.ButtonToCartSmall32)) {
-                Text("+", style = Typography.ToCartButtonStyle, color = Color.White)
+                Text(
+                    stringResource(id = R.string.plus),
+                    style = Typography.ToCartButtonStyle,
+                    color = Color.White
+                )
             }
         }
     }

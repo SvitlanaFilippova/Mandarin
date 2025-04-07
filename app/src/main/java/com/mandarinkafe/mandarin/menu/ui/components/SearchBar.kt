@@ -86,7 +86,7 @@ fun SearchBar(
                 }) {
                     Icon(
                         Icons.Default.Close,
-                        contentDescription = stringResource(id = R.string.search_close)
+                        contentDescription = stringResource(id = R.string.clear_text)
                     )
                 }
             }
@@ -108,7 +108,7 @@ fun SearchBar(
         } else {
             if (!latestSearchText.isEmpty()) {
                 Text(
-                    text = stringResource(id = R.string.search_nothing_found),
+                    text = stringResource(id = R.string.nothing_found),
                     color = Colors.White,
                     modifier = Modifier.padding(
                         Dimens.MarginStandard16

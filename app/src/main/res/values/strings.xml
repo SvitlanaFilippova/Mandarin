@@ -40,6 +40,7 @@
     <!-- Кнопки действий -->
     <string name="minus">-</string>
     <string name="plus">+</string>
+    <string name="customize_meal">Редактировать блюдо</string>
 
     <!-- Шаблоны текста -->
     <string name="default_price_for_button">000 ₽</string>
@@ -52,6 +53,7 @@
     <string name="loading_error_template">Загрузка не удалась. Проверьте подключение к&#160;интернету и попробуйте ещё раз.\n\nИли просто позвоните нам по&#160;телефону %s, чтобы сделать заказ.</string>
     <string name="placeholder_retry">Обновить</string>
     <string name="placeholder_call">Позвонить</string>
+    <string name="nothing_found">Ничего не найдено :(</string>
 
     <!-- Длинный текст -->
     <string name="large_text">
@@ -61,4 +63,8 @@
         "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
         "technologically advanced and open to imagination and magic.\n"
     </string>
+    <!-- Для contentDescription  -->
+    <string name="picture_of_meal_template">Изображение %1$s</string>
+    <string name="icon_of_category">Иконка категории "%1$s"</string>
+    <string name="banner_number">Баннер №%1$d</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.menu.ui.screen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -66,10 +65,6 @@ fun MenuContentScreen(
             val index = menuItems.indexOfFirst {
                 it is MenuRVItem.MealItem && it.meal.id == mealId
             }
-            Log.d(
-                "DEBUG SCROLL",
-                "fun handleMealFromSearchClick in MenuContentScreenindex = $index"
-            )
             if (index >= 0) {
                 listState.scrollToItem(index)
             }

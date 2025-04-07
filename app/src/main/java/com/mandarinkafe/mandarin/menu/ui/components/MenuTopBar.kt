@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 
@@ -23,7 +24,7 @@ fun MenuTopBar() {
         Image(
             modifier = Modifier.padding(Dimens.MarginSmall8),
             painter = painterResource(R.drawable.logo_text_mandarin),
-            contentDescription = "Mandarin",
+            contentDescription = stringResource(R.string.logo_cafe),
         )
     }
 }

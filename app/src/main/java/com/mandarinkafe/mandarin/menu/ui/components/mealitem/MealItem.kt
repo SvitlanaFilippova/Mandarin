@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -47,7 +48,7 @@ fun MenuMealItem(
 
         AsyncImage(
             model = meal.imageUrl.ifEmpty { R.drawable.logo_orange_square },
-            contentDescription = "Изображение ${meal.name}",
+            contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
             error = painterResource(R.drawable.logo_orange_square),
             placeholder = painterResource(R.drawable.logo_orange_square),
             contentScale = ContentScale.Crop,
@@ -86,7 +87,7 @@ fun MenuMealItem(
                 }
                 if (meal.weight != null && meal.weight != 0) {
                     Text(
-                        text = "${meal.weight}г",
+                        text = stringResource(R.string.meal_weight_template, meal.weight),
                         style = Typography.MealSmallTextStyle
                     )
                 }

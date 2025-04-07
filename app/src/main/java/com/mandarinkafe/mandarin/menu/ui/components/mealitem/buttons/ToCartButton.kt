@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
@@ -38,10 +39,13 @@ fun ToCartButton(price: Int, onClick: () -> Unit) {
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_cart),
-                contentDescription = "Добавить в корзину",
+                contentDescription = stringResource(id = R.string.add_to_cart),
                 tint = Color.White
             )
-            Text("$price ₽", style = Typography.ToCartButtonStyle)
+            Text(
+                stringResource(id = R.string.meal_price_template, price),
+                style = Typography.ToCartButtonStyle
+            )
         }
     }
 }
