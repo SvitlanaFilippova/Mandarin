@@ -19,21 +19,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import com.mandarinkafe.mandarin.util.ui.components.ExpandableText
 
 @Composable
 fun MenuMealItem(
     meal: Meal,
-    onToggleFavorite: (Meal) -> Unit,
-    onAddToCart: (Meal) -> Unit,
-    onRemoveFromCart: (Meal) -> Unit,
-    onCustomizeClick: (Meal) -> Unit
+    onEvent: (Event) -> Unit
 ) {
     //переменные для отслеживания состояния длинных описаний и названий
     var isNameExpanded by remember {
@@ -49,7 +48,7 @@ fun MenuMealItem(
 
         AsyncImage(
             model = meal.imageUrl.ifEmpty { R.drawable.logo_orange_square },
-            contentDescription = "Изображение ${meal.name}",
+            contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
             error = painterResource(R.drawable.logo_orange_square),
             placeholder = painterResource(R.drawable.logo_orange_square),
             contentScale = ContentScale.Crop,
@@ -88,7 +87,7 @@ fun MenuMealItem(
                 }
                 if (meal.weight != null && meal.weight != 0) {
                     Text(
-                        text = "${meal.weight}г",
+                        text = stringResource(R.string.meal_weight_template, meal.weight),
                         style = Typography.MealSmallTextStyle
                     )
                 }
@@ -96,10 +95,8 @@ fun MenuMealItem(
             // Контейнер для кнопок
             Box(contentAlignment = Alignment.BottomStart) {
                 MealButtonsRow(
-                    meal = meal, onToggleFavorite = onToggleFavorite,
-                    onAddToCart = onAddToCart,
-                    onRemoveFromCart = onRemoveFromCart,
-                    onCustomizeClick = onCustomizeClick
+                    meal = meal,
+                    onEvent = onEvent
                 )
             }
         }

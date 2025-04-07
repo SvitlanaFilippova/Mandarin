@@ -25,19 +25,24 @@ import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
+import com.mandarinkafe.mandarin.menu.ui.components.search.MySearchBar
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.SubCategoryTabsRow
 import kotlinx.coroutines.launch
 
 @Composable
 fun MenuContentScreen(
-    menuItems: List<MenuRVItem>,
     listState: LazyListState,
-    selectedTabIndex: Int,
-    selectedSubTabIndex: Int,
-    selectedBannerIndex: Int,
-    onEvent: (Event) -> Unit
+    onEvent: (Event) -> Unit,
+    state: MenuContract.State
 ) {
+
+    val menuItems = state.menuItems
+    val filteredMenuItems = state.filteredMenuItems
+    val latestSearchText = state.latestSearchText
+    val selectedTabIndex = state.selectedTabIndex
+    val selectedSubTabIndex = state.selectedSubTabIndex
+    val selectedBannerIndex = state.selectedBannerIndex
     val categories = menuItems.filterIsInstance<MenuRVItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
     val coroutineScope = rememberCoroutineScope()
@@ -54,6 +59,18 @@ fun MenuContentScreen(
             )
         }
     }
+
+    val handleMealFromSearchClick = { mealId: String ->
+        coroutineScope.launch {
+            val index = menuItems.indexOfFirst {
+                it is MenuRVItem.MealItem && it.meal.id == mealId
+            }
+            if (index >= 0) {
+                listState.scrollToItem(index = index, scrollOffset = 1)
+            }
+        }
+    }
+
     // Отслеживание изменения selectedBannerIndex и скролл при обновлении
     LaunchedEffect(selectedBannerIndex) {
         if (selectedBannerIndex >= 0) {
@@ -104,13 +121,21 @@ fun MenuContentScreen(
             visible = isTopPartVisible,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically()
-        ) { // Эта часть экрана видна только до начала скролла
+        ) {
+            // Эта часть экрана видна только до начала скролла
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 MenuTopBar()
+                MySearchBar(
+                    filteredMenuItems = filteredMenuItems,
+                    latestSearchText = latestSearchText,
+                    onEvent = onEvent,
+                    onMealClick = { meal -> handleMealFromSearchClick(meal.id) }
+                )
                 BannerCarousel(onBannerClick = handleBannerClick)
             }
         }
 
+        // Табы-категории, видно всегда
         CategoryTabsRow(
             categories = categories,
             selectedTabIndex = selectedTabIndex,
@@ -136,6 +161,8 @@ fun MenuContentScreen(
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically()
                 ) {
+
+                    // Табы-подкатегории, появляются при наличии в текущей категории
                     SubCategoryTabsRow(
                         categories = currentSubCategories,
                         selectedTabIndex = selectedSubTabIndex,
@@ -155,14 +182,12 @@ fun MenuContentScreen(
             }
         }
 
+        // Основное меню
         MenuList(
             menuItems = menuItems,
             listState = listState,
             modifier = Modifier.weight(1f),
-            onToggleFavorite = { meal -> onEvent(Event.ToggleFavorite(meal)) },
-            onAddToCart = { meal -> onEvent(Event.AddToCart(meal)) },
-            onRemoveFromCart = { meal -> onEvent(Event.RemoveFromCart(meal)) },
-            onCustomizeClick = { meal -> onEvent(Event.OpenMealCustomization(meal)) }
+            onEvent = onEvent,
         )
     }
 }

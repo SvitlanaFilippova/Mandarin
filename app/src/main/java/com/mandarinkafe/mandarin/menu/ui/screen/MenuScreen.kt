@@ -19,12 +19,9 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
         state.isLoading -> LoadingScreen()
         state.errorMessage != null -> ErrorScreen(state.errorMessage)
         else -> MenuContentScreen(
-            menuItems = state.menuItems,
             listState = listState,
-            selectedTabIndex = state.selectedTabIndex,
-            selectedSubTabIndex = state.selectedSubTabIndex,
-            selectedBannerIndex = state.selectedBannerIndex,
-            onEvent = viewModel::onEvent
+            onEvent = viewModel::onEvent,
+            state = state
         )
     }
 

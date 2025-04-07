@@ -12,7 +12,8 @@ object MenuConverter {
                     this += MenuRVItem.HeaderItem(
                         categoryName = category.name,
                         subCategoriesNames = buildList {
-                            category.subCategories.forEach { this += it.name }
+                            category.subCategories.filter { !it.meals.isNullOrEmpty() }
+                                .forEach { this += it.name }
                         },
                         tabIcon = category.tabIcon,
                         description = category.description,

@@ -9,6 +9,7 @@ import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.getName
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
+import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,19 +35,21 @@ class MenuViewModel @Inject constructor(
     val effect: SharedFlow<MenuContract.Effect> = _effect.asSharedFlow()
 
     init {
-        onEvent(MenuContract.Event.LoadMenu)
+        onEvent(Event.LoadMenu)
     }
 
-    fun onEvent(event: MenuContract.Event) {
+    fun onEvent(event: Event) {
         when (event) {
-            is MenuContract.Event.LoadMenu -> loadMenu()
-            is MenuContract.Event.ToggleFavorite -> toggleFavorite(event.meal)
-            is MenuContract.Event.AddToCart -> addToCart(event.meal)
-            is MenuContract.Event.RemoveFromCart -> removeFromCart(event.meal)
-            is MenuContract.Event.ScrollToCategory -> scrollToCategory(event.newIndex)
-            is MenuContract.Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
-            is MenuContract.Event.BannerClick -> handleBannerClick(event.targetName)
-            is MenuContract.Event.OpenMealCustomization -> openMealCustomization(event.meal)
+            is Event.LoadMenu -> loadMenu()
+            is Event.ToggleFavorite -> toggleFavorite(event.meal)
+            is Event.AddToCart -> addToCart(event.meal)
+            is Event.RemoveFromCart -> removeFromCart(event.meal)
+            is Event.ScrollToCategory -> scrollToCategory(event.newIndex)
+            is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
+            is Event.BannerClick -> handleBannerClick(event.targetName)
+            is Event.OpenMealCustomization -> openMealCustomization(event.meal)
+            is Event.SearchMealsByText -> filterMenu(event.searchText)
+            is Event.ClearSearchInput -> clearSearchInput()
         }
     }
 
@@ -54,6 +57,30 @@ class MenuViewModel @Inject constructor(
         viewModelScope.launch {
             _effect.emit(MenuContract.Effect.OpenMealCustomization(meal))
         }
+    }
+
+    private fun filterMenu(searchText: String? = null, filters: Any? = null) {
+        if (!searchText.isNullOrEmpty()) {
+            val filteredMenuItems = _state.value.menuItems.filter {
+                it is MenuRVItem.MealItem && it.meal.name.contains(searchText, ignoreCase = true)
+            }
+                .sortedWith( // Дополнительная сортировка, чтобы в начале от ображались избранные блюда
+                    compareByDescending<MenuRVItem> {
+                        (it as MenuRVItem.MealItem).meal.isFavorite
+                    }
+                )
+            _state.update {
+                it.copy(
+                    filteredMenuItems = filteredMenuItems,
+                    latestSearchText = searchText
+                )
+            }
+        }
+
+    }
+
+    private fun clearSearchInput() {
+        _state.update { it.copy(filteredMenuItems = emptyList(), latestSearchText = "") }
     }
 
     private fun scrollToCategory(newIndex: Int) {
@@ -76,10 +103,6 @@ class MenuViewModel @Inject constructor(
                     if (!menu.isNullOrEmpty()) {
                         _state.update {
                             it.copy(isLoading = false, menuItems = menu)
-                        }
-                        Log.d("DEBUG", "loadMenu. Меню получено. Ниже первые 10 пунктов из него")
-                        menu.take(10).forEach {
-                            Log.d("DEBUG", "$it")
                         }
                     } else {
                         _state.update {
@@ -104,20 +127,19 @@ class MenuViewModel @Inject constructor(
             }
 
             _state.update { state ->
-                val index = state.menuItems.indexOfFirst {
-                    it is MenuRVItem.MealItem && it.meal.id == meal.id
+                val updatedMenuItems = updateMealItemInList(state.menuItems, meal.id, isNowFavorite)
+                val updatedFiltered = if (state.filteredMenuItems.isNotEmpty()) {
+                    updateMealItemInList(state.filteredMenuItems, meal.id, isNowFavorite)
+                } else {
+                    state.filteredMenuItems
                 }
-                if (index == -1) return@update state // Если не нашли, ничего не делаем
 
-                val updatedList = state.menuItems.toMutableList()
-                val mealItem = updatedList[index] as MenuRVItem.MealItem
-                updatedList[index] =
-                    mealItem.copy(meal = mealItem.meal.copy(isFavorite = isNowFavorite))
-
-                state.copy(menuItems = updatedList)
+                state.copy(
+                    menuItems = updatedMenuItems,
+                    filteredMenuItems = updatedFiltered
+                )
             }
         }
-        Log.d("DEBUG", "ViewModel toggleFavorite for $meal")
     }
 
     private fun addToCart(meal: Meal) {
@@ -148,5 +170,24 @@ class MenuViewModel @Inject constructor(
 
             _state.update { it.copy(selectedBannerIndex = targetIndex) }
         }
+    }
+
+    private fun updateMealItemInList(
+        list: List<MenuRVItem>,
+        mealId: String,
+        isFavorite: Boolean
+    ): List<MenuRVItem> {
+        val index = list.indexOfFirst {
+            it is MenuRVItem.MealItem && it.meal.id == mealId
+        }
+
+        if (index == -1) return list
+
+        val updatedList = list.toMutableList()
+        val mealItem = updatedList[index] as MenuRVItem.MealItem
+        updatedList[index] = mealItem.copy(
+            meal = mealItem.meal.copy(isFavorite = isFavorite)
+        )
+        return updatedList
     }
 }

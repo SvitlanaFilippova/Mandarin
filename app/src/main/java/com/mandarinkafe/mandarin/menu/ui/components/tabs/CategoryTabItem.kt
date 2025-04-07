@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -28,7 +29,10 @@ fun CategoryTabItem(category: MenuRVItem.HeaderItem, isSelected: Boolean, onClic
         icon = {
             AsyncImage(
                 model = category.tabIcon,
-                contentDescription = "Иконка ${category.categoryName}",
+                contentDescription = stringResource(
+                    R.string.icon_of_category,
+                    category.categoryName
+                ),
                 modifier = Modifier.size(Dimens.IconSize24),
                 error = painterResource(R.drawable.logo_orange),
                 placeholder = painterResource(R.drawable.logo_orange),
