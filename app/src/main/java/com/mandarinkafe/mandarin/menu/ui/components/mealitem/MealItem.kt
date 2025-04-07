@@ -25,15 +25,13 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import com.mandarinkafe.mandarin.util.ui.components.ExpandableText
 
 @Composable
 fun MenuMealItem(
     meal: Meal,
-    onToggleFavorite: (Meal) -> Unit,
-    onAddToCart: (Meal) -> Unit,
-    onRemoveFromCart: (Meal) -> Unit,
-    onCustomizeClick: (Meal) -> Unit
+    onEvent: (Event) -> Unit
 ) {
     //переменные для отслеживания состояния длинных описаний и названий
     var isNameExpanded by remember {
@@ -96,10 +94,8 @@ fun MenuMealItem(
             // Контейнер для кнопок
             Box(contentAlignment = Alignment.BottomStart) {
                 MealButtonsRow(
-                    meal = meal, onToggleFavorite = onToggleFavorite,
-                    onAddToCart = onAddToCart,
-                    onRemoveFromCart = onRemoveFromCart,
-                    onCustomizeClick = onCustomizeClick
+                    meal = meal,
+                    onEvent = onEvent
                 )
             }
         }

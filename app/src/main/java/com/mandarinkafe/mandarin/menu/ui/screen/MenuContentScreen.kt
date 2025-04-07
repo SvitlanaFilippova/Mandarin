@@ -133,12 +133,7 @@ fun MenuContentScreen(
                 MySearchBar(
                     filteredMenuItems = filteredMenuItems,
                     latestSearchText = latestSearchText,
-                    onSearch = { text -> onEvent(Event.SearchMealsByText(text)) },
-                    onAddToCart = { meal -> onEvent(Event.AddToCart(meal)) },
-                    onToggleFavorite = { meal -> onEvent(Event.ToggleFavorite(meal)) },
-                    onRemoveFromCart = { meal -> onEvent(Event.RemoveFromCart(meal)) },
-                    onCustomizeClick = { meal -> onEvent(Event.OpenMealCustomization(meal)) },
-                    onClearSearch = { onEvent(Event.ClearSearchInput) },
+                    onEvent = onEvent,
                     onMealClick = { meal -> handleMealFromSearchClick(meal.id) }
                 )
                 BannerCarousel(onBannerClick = handleBannerClick)
@@ -197,10 +192,7 @@ fun MenuContentScreen(
             menuItems = menuItems,
             listState = listState,
             modifier = Modifier.weight(1f),
-            onToggleFavorite = { meal -> onEvent(Event.ToggleFavorite(meal)) },
-            onAddToCart = { meal -> onEvent(Event.AddToCart(meal)) },
-            onRemoveFromCart = { meal -> onEvent(Event.RemoveFromCart(meal)) },
-            onCustomizeClick = { meal -> onEvent(Event.OpenMealCustomization(meal)) }
+            onEvent = onEvent,
         )
     }
 }

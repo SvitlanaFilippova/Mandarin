@@ -26,18 +26,14 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 
 @Composable
 fun MySearchBar(
     filteredMenuItems: List<MenuRVItem>,
     latestSearchText: String,
-    onSearch: (String) -> Unit,
-    onClearSearch: () -> Unit,
-    onAddToCart: (Meal) -> Unit,
-    onRemoveFromCart: (Meal) -> Unit,
-    onCustomizeClick: (Meal) -> Unit,
-    onToggleFavorite: (Meal) -> Unit,
-    onMealClick: (Meal) -> Unit
+    onMealClick: (Meal) -> Unit,
+    onEvent: (Event) -> Unit,
 
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -47,11 +43,11 @@ fun MySearchBar(
         //логика работы
         query = latestSearchText,
         onQueryChange = { text ->
-            onSearch(text)
+            onEvent(Event.SearchMealsByText(text))
         },
         onSearch = { text ->
             keyboardController?.hide()
-            onSearch(text)
+            onEvent(Event.SearchMealsByText(text))
         },
         active = isActive,
         onActiveChange = {
@@ -78,7 +74,7 @@ fun MySearchBar(
             if (isActive) {
                 IconButton(onClick = {
                     if (latestSearchText.isNotEmpty()) {
-                        onClearSearch()
+                        onEvent(Event.ClearSearchInput)
                     } else {
                         isActive = false
                     }
@@ -95,14 +91,11 @@ fun MySearchBar(
         if (filteredMenuItems.isNotEmpty()) {
             SearchResults(
                 filteredMenuItems = filteredMenuItems,
-                onAddToCart = onAddToCart,
-                onRemoveFromCart = onRemoveFromCart,
-                onCustomizeClick = onCustomizeClick,
-                onToggleFavorite = onToggleFavorite,
                 onMealClick = { meal ->
                     onMealClick(meal)
                     isActive = false
                 },
+                onEvent = onEvent,
             )
         } else {
             if (!latestSearchText.isEmpty()) {

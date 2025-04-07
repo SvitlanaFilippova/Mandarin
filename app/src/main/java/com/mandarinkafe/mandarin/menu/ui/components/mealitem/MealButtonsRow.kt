@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControls
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CustomizeMealButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.FavoriteButton
@@ -22,10 +23,7 @@ import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.ToCartButto
 @Composable
 fun MealButtonsRow(
     meal: Meal,
-    onToggleFavorite: ((Meal) -> Unit)? = null, // можно использовать функцию без кнопки "Избранное"
-    onAddToCart: (Meal) -> Unit,
-    onRemoveFromCart: (Meal) -> Unit,
-    onCustomizeClick: (Meal) -> Unit
+    onEvent: (Event) -> Unit,
 ) {
     var isInTheCart by remember { mutableStateOf(false) }
     var numberInCart by remember { mutableIntStateOf(1) }
@@ -40,33 +38,32 @@ fun MealButtonsRow(
             CartControls(
                 numberInCart = numberInCart,
                 price = meal.price,
-                onIncrease = { onAddToCart(meal) },
+                onIncrease = { onEvent(Event.AddToCart(meal)) },
                 onDecrease = {
-                    onRemoveFromCart(meal)
+                    onEvent(Event.RemoveFromCart(meal))
                     if (numberInCart > 1) numberInCart-- else isInTheCart = false
                 }
             )
         } else {
             ToCartButton(meal.price) {
                 isInTheCart = true
-                onAddToCart(meal)
+                onEvent(Event.AddToCart(meal))
             }
         }
 
         if (meal.isEditable) {
             CustomizeMealButton(
                 modifier = Modifier.weight(1f),
-                onClick = { onCustomizeClick(meal) }
+                onClick = { onEvent(Event.OpenMealCustomization(meal)) }
             )
         } else {
             Spacer(modifier = Modifier.weight(1f))
         }
 
-        if (onToggleFavorite != null) {
-            FavoriteButton(
-                meal = meal,
-                onToggleFavorite = onToggleFavorite
-            )
-        }
+        FavoriteButton(
+            meal = meal,
+            onToggleFavorite = { onEvent(Event.ToggleFavorite(meal)) }
+        )
     }
 }
+

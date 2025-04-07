@@ -22,14 +22,12 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 
 @Composable
 fun MenuMealSmallItem(
     meal: Meal,
-    onToggleFavorite: (Meal) -> Unit,
-    onAddToCart: (Meal) -> Unit,
-    onRemoveFromCart: (Meal) -> Unit,
-    onCustomizeClick: (Meal) -> Unit,
+    onEvent: (Event) -> Unit,
     onItemClick: (Meal) -> Unit,
 ) {
 
@@ -69,10 +67,8 @@ fun MenuMealSmallItem(
             )
 
             MealButtonsRow(
-                meal = meal, onToggleFavorite = onToggleFavorite,
-                onAddToCart = onAddToCart,
-                onRemoveFromCart = onRemoveFromCart,
-                onCustomizeClick = onCustomizeClick
+                meal = meal,
+                onEvent = onEvent,
             )
         }
     }
