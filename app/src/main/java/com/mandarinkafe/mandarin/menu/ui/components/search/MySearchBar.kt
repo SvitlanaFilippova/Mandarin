@@ -33,21 +33,25 @@ fun MySearchBar(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var isExpanded by remember { mutableStateOf(false) }
-
+    val handleOnClear = {
+        onEvent(Event.ClearSearchInput)
+        keyboardController?.show()
+        isExpanded = false
+    }
 
     SearchBar(
         inputField = {
             SearchBarInputField(
                 query = latestSearchText,
-                onQueryChange = {
-                    onEvent(Event.SearchMealsByText(it))
-                    isExpanded = true
+                onQueryChange = { text ->
+                    if (text.isEmpty()) {
+                        handleOnClear()
+                    } else {
+                        onEvent(Event.SearchMealsByText(text))
+                        isExpanded = true
+                    }
                 },
-                onClear = {
-                    onEvent(Event.ClearSearchInput)
-                    keyboardController?.show()
-                    isExpanded = false
-                }
+                onClear = { handleOnClear() }
             )
         },
         expanded = isExpanded,

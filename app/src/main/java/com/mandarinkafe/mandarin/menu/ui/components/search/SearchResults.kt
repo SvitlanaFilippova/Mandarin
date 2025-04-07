@@ -35,7 +35,9 @@ fun SearchResults(
                     bottomEnd = Dimens.RadiusSearchField8
                 )
             )
+            .padding(top = Dimens.ZeroDp0)
             .background(Colors.Transparent)
+
     ) {
         if (filteredMenuItems.isNotEmpty()) {
             MenuFilteredMenuList(
