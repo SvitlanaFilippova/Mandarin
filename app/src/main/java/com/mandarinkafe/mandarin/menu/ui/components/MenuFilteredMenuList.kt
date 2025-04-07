@@ -12,7 +12,7 @@ import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.MenuMealSmallItem
 
 @Composable
-fun SearchResults(
+fun MenuFilteredMenuList(
     filteredMenuItems: List<MenuRVItem>,
     onMealClick: (Meal) -> Unit,
     onEvent: (Event) -> Unit

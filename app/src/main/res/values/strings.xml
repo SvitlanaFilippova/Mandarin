@@ -6,7 +6,7 @@
 
     <!-- Навигация -->
     <string name="back">Назад</string>
-    <string name="search">Поиск</string>
+    <string name="menu">Меню</string>
     <string name="search_in_menu">Поиск по меню</string>
     <string name="search_field_icon">Поле поиска</string>
     <string name="clear_text">Очистить текст</string>
