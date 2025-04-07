@@ -29,7 +29,7 @@ import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 
 @Composable
-fun MySearchBar(
+fun SearchBar(
     filteredMenuItems: List<MenuRVItem>,
     latestSearchText: String,
     onMealClick: (Meal) -> Unit,
@@ -52,7 +52,6 @@ fun MySearchBar(
         active = isActive,
         onActiveChange = {
             isActive = it
-//            onClearSearch()
         },
 
         //внешний вид
@@ -75,6 +74,7 @@ fun MySearchBar(
                 IconButton(onClick = {
                     if (latestSearchText.isNotEmpty()) {
                         onEvent(Event.ClearSearchInput)
+                        keyboardController?.show()
                     } else {
                         isActive = false
                     }

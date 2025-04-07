@@ -26,7 +26,7 @@ import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
-import com.mandarinkafe.mandarin.menu.ui.components.MySearchBar
+import com.mandarinkafe.mandarin.menu.ui.components.SearchBar
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.SubCategoryTabsRow
 import kotlinx.coroutines.launch
@@ -130,7 +130,7 @@ fun MenuContentScreen(
             // Эта часть экрана видна только до начала скролла
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 MenuTopBar()
-                MySearchBar(
+                SearchBar(
                     filteredMenuItems = filteredMenuItems,
                     latestSearchText = latestSearchText,
                     onEvent = onEvent,
