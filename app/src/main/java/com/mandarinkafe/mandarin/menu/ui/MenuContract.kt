@@ -11,7 +11,6 @@ sealed interface MenuContract {
         data class ToggleFavorite(val meal: Meal) : Event
         data class ScrollToCategory(val newIndex: Int) : Event
         data class ScrollToSubCategory(val newIndex: Int) : Event
-        data class ScrollToMeal(val meal: Meal) : Event
         data class BannerClick(val targetName: String) : Event
         data class AddToCart(val meal: Meal) : Event
         data class RemoveFromCart(val meal: Meal) : Event

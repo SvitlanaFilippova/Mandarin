@@ -46,7 +46,6 @@ class MenuViewModel @Inject constructor(
             is Event.RemoveFromCart -> removeFromCart(event.meal)
             is Event.ScrollToCategory -> scrollToCategory(event.newIndex)
             is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
-            is Event.ScrollToMeal -> scrollToMeal(event.meal)
             is Event.BannerClick -> handleBannerClick(event.targetName)
             is Event.OpenMealCustomization -> openMealCustomization(event.meal)
             is Event.SearchMealsByText -> filterMenu(event.searchText)
@@ -94,9 +93,6 @@ class MenuViewModel @Inject constructor(
         if (newIndex >= 0) {
             _state.update { it.copy(selectedSubTabIndex = newIndex) }
         }
-    }
-
-    private fun scrollToMeal(meal: Meal) {
     }
 
     private fun loadMenu() {
