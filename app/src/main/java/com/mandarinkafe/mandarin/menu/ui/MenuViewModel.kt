@@ -127,21 +127,21 @@ class MenuViewModel @Inject constructor(
             }
 
             _state.update { state ->
-                val index = state.menuItems.indexOfFirst {
-                    it is MenuRVItem.MealItem && it.meal.id == meal.id
+                val updatedMenuItems = updateMealItemInList(state.menuItems, meal.id, isNowFavorite)
+                val updatedFiltered = if (state.filteredMenuItems.isNotEmpty()) {
+                    updateMealItemInList(state.filteredMenuItems, meal.id, isNowFavorite)
+                } else {
+                    state.filteredMenuItems
                 }
-                if (index == -1) return@update state // Если не нашли, ничего не делаем
 
-                val updatedList = state.menuItems.toMutableList()
-                val mealItem = updatedList[index] as MenuRVItem.MealItem
-                updatedList[index] =
-                    mealItem.copy(meal = mealItem.meal.copy(isFavorite = isNowFavorite))
-
-                state.copy(menuItems = updatedList)
+                state.copy(
+                    menuItems = updatedMenuItems,
+                    filteredMenuItems = updatedFiltered
+                )
             }
         }
-        Log.d("DEBUG", "ViewModel toggleFavorite for $meal")
     }
+
 
     private fun addToCart(meal: Meal) {
         Cart.addItem(meal)
@@ -171,5 +171,24 @@ class MenuViewModel @Inject constructor(
 
             _state.update { it.copy(selectedBannerIndex = targetIndex) }
         }
+    }
+
+    private fun updateMealItemInList(
+        list: List<MenuRVItem>,
+        mealId: String,
+        isFavorite: Boolean
+    ): List<MenuRVItem> {
+        val index = list.indexOfFirst {
+            it is MenuRVItem.MealItem && it.meal.id == mealId
+        }
+
+        if (index == -1) return list
+
+        val updatedList = list.toMutableList()
+        val mealItem = updatedList[index] as MenuRVItem.MealItem
+        updatedList[index] = mealItem.copy(
+            meal = mealItem.meal.copy(isFavorite = isFavorite)
+        )
+        return updatedList
     }
 }
