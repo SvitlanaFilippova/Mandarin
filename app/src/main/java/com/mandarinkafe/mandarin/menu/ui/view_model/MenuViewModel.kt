@@ -9,6 +9,7 @@ import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.getName
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.Constants.DELAY_BEFORE_NEXT_ATTEMPT
@@ -35,8 +36,8 @@ class MenuViewModel @Inject constructor(
     val state: StateFlow<MenuContract.State> = _state.asStateFlow()
 
     private val _effect =
-        MutableSharedFlow<MenuContract.Effect>() // для одноразовых событий. Например, показа снекбар
-    val effect: SharedFlow<MenuContract.Effect> = _effect.asSharedFlow()
+        MutableSharedFlow<Effect>() // для одноразовых событий. Например, показа снекбар
+    val effect: SharedFlow<Effect> = _effect.asSharedFlow()
 
     init {
         onEvent(Event.LoadMenu)
@@ -53,29 +54,17 @@ class MenuViewModel @Inject constructor(
             is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is Event.ScrollToTop -> scrollToTop()
             is Event.BannerClick -> findMenuItemIndexByName(event.targetName)
-            is Event.OnMealCustomizationClick -> openMealCustomization(event.meal)
+            is Event.OnMealCustomizationClick -> sendEffect(Effect.OpenMealCustomization(event.meal))
             is Event.SearchMealsByText -> filterMenu(event.searchText)
             is Event.SearchClearInput -> clearSearchInput()
-            is Event.SearchOnOpenSearchClick -> openSearch()
+            is Event.SearchOnOpenSearchClick -> sendEffect(Effect.OpenSearch)
             is Event.SearchOnMealClick -> findMealIndexById(event.targetId)
-            is Event.OnPhoneClick -> callByPhone()
+            is Event.OnPhoneClick -> sendEffect(Effect.CallPhone)
         }
     }
 
-    private fun callByPhone() {
-        // TODO Позвонить
-    }
-
-    private fun openMealCustomization(meal: Meal) {
-        viewModelScope.launch {
-            _effect.emit(MenuContract.Effect.OpenMealCustomization(meal))
-        }
-    }
-
-    private fun openSearch() {
-        viewModelScope.launch {
-            _effect.emit(MenuContract.Effect.OpenSearch)
-        }
+    private fun sendEffect(effect: Effect) {
+        viewModelScope.launch { _effect.emit(effect) }
     }
 
     // Поиск по меню

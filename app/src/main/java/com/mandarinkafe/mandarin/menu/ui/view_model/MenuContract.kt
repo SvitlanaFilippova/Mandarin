@@ -29,6 +29,7 @@ sealed interface MenuContract {
         data class ShowSnackbar(val message: String) : Effect
         data class OpenMealCustomization(val meal: Meal) : Effect
         data object OpenSearch : Effect
+        data object CallPhone : Effect
     }
 
     data class State(

@@ -1,20 +1,24 @@
 package com.mandarinkafe.mandarin.menu.ui.screen
 
+import android.content.Intent
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
+import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER
 
 @Composable
 fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), onSearchClick: () -> Unit) {
     val state by viewModel.state.collectAsState()
     val effectFlow = viewModel.effect
     val listState = rememberLazyListState()
-
+    val context = LocalContext.current
     when {
         state.isLoading -> LoadingScreen()
         state.errorMessage != null -> ErrorScreen(state.errorMessage)
@@ -38,6 +42,13 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), onSearchClick: () -> 
 
                 is MenuContract.Effect.OpenSearch -> {
                     onSearchClick()
+                }
+
+                MenuContract.Effect.CallPhone -> {
+                    val intent = Intent(Intent.ACTION_DIAL).apply {
+                        data = PHONE_NUMBER.toUri()
+                    }
+                    context.startActivity(intent)
                 }
             }
         }

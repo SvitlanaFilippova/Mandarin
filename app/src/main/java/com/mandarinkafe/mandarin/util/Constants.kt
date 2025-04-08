@@ -27,4 +27,7 @@ object Constants {
     const val SEARCH_SCREEN_ROUTE = "search"
     const val DELIVERY_SCREEN_ROUTE = "delivery"
     const val FAVORITES_SCREEN_ROUTE = "favorites"
+
+    //Контакты - вынести в конфиг для возможности изменений извне???
+    const val PHONE_NUMBER = "tel:+74951087055"
 }
