@@ -2,8 +2,7 @@ package com.mandarinkafe.mandarin.menu.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,34 +13,53 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 
 @Composable
-fun MenuTopBar(onSearchClick: () -> Unit) {
-    Row(
+fun MenuTopBar(
+    onSearchClick: () -> Unit,
+    onPhoneClick: () -> Unit,
+    onLogoCLick: () -> Unit
+) {
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(Dimens.ToolbarHeadHeight56),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+            .height(Dimens.ToolbarHeadHeight56)
     ) {
+        // Иконка поиска
         Icon(
-            painter = painterResource(R.drawable.ic_search), tint = Colors.White,
-            contentDescription = "поиск",
+            painter = painterResource(R.drawable.ic_search),
+            tint = Colors.White,
+            contentDescription = stringResource(R.string.search_in_menu),
             modifier = Modifier
-                .size(24.dp)
-                .clickable(
-                    onClick = { onSearchClick() }
-                )
-                .padding(8.dp)
+                .align(Alignment.CenterStart)
+                .size(Dimens.ToolbarHeadHeight56)
+                .clickable { onSearchClick() }
+                .padding(Dimens.MarginStandard16)
         )
+
+        // Логотип
         Image(
-            modifier = Modifier.padding(Dimens.MarginSmall8),
             painter = painterResource(R.drawable.logo_text_mandarin),
             contentDescription = stringResource(R.string.logo_cafe),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(Dimens.MarginSmall8)
+                .clickable { onLogoCLick() }
+        )
+
+        // Иконка звонка
+        Icon(
+            painter = painterResource(R.drawable.ic_call),
+            tint = Colors.White,
+            contentDescription = stringResource(R.string.placeholder_call),
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .size(Dimens.ToolbarHeadHeight56)
+                .clickable { onPhoneClick() }
+                .padding(Dimens.MarginStandard16)
         )
     }
 }

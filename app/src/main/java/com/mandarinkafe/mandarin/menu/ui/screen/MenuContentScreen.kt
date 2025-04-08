@@ -13,21 +13,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
-import com.mandarinkafe.mandarin.menu.ui.components.search.MySearchBar
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.SubCategoryTabsRow
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.util.ui.ScrollPosition
 import kotlinx.coroutines.launch
 
 @Composable
@@ -38,17 +39,24 @@ fun MenuContentScreen(
 ) {
 
     val menuItems = state.menuItems
-    val filteredMenuItems = state.filteredMenuItems
-    val latestSearchText = state.latestSearchText
     val selectedTabIndex = state.selectedTabIndex
     val selectedSubTabIndex = state.selectedSubTabIndex
-    val selectedBannerIndex = state.selectedBannerIndex
+    val selectedMenuItemIndex = state.selectedMenuItemIndex
     val categories = menuItems.filterIsInstance<MenuRVItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
     val coroutineScope = rememberCoroutineScope()
-    val isTopPartVisible by remember {
+    val isAtTop by remember {
         derivedStateOf {
             listState.firstVisibleItemScrollOffset == 0
+        }
+    }
+
+    val isScrollingUp = remember { mutableStateOf(false) }
+    var previousPosition by remember { mutableStateOf(ScrollPosition(0, 0)) }
+
+    val showMenuTopBar by remember {
+        derivedStateOf {
+            isAtTop || isScrollingUp.value
         }
     }
 
@@ -60,22 +68,37 @@ fun MenuContentScreen(
         }
     }
 
-    val handleMealFromSearchClick = { mealId: String ->
+    val handleLogoClick = {
         coroutineScope.launch {
-            val index = menuItems.indexOfFirst {
-                it is MenuRVItem.MealItem && it.meal.id == mealId
-            }
-            if (index >= 0) {
-                listState.scrollToItem(index = index, scrollOffset = 1)
-            }
+            listState.scrollToItem(index = 0)
+            onEvent(Event.ScrollToTop)
         }
     }
 
     // Отслеживание изменения selectedBannerIndex и скролл при обновлении
-    LaunchedEffect(selectedBannerIndex) {
-        if (selectedBannerIndex >= 0) {
-            listState.scrollToItem(selectedBannerIndex)
+    LaunchedEffect(selectedMenuItemIndex) {
+        if (selectedMenuItemIndex >= 0) {
+            listState.scrollToItem(selectedMenuItemIndex, scrollOffset = 1)
         }
+    }
+
+    //  Отслеживание направления скролла
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            ScrollPosition(
+                listState.firstVisibleItemIndex,
+                listState.firstVisibleItemScrollOffset
+            )
+        }
+            .collect { currentPosition ->
+                val isScrollingUpNow = when {
+                    currentPosition.index < previousPosition.index -> true
+                    currentPosition.index > previousPosition.index -> false
+                    else -> currentPosition.offset < previousPosition.offset
+                }
+                isScrollingUp.value = isScrollingUpNow
+                previousPosition = currentPosition
+            }
     }
 
     // Отслеживание скролла для обновления активного таба
@@ -117,25 +140,42 @@ fun MenuContentScreen(
             .fillMaxSize()
             .background(Colors.AppBlack)
     ) {
+        // Меню-бар появляется всегда, когда пользователь вверху или скроллит вверх
         AnimatedVisibility(
-            visible = isTopPartVisible,
+            visible = showMenuTopBar,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically()
         ) {
-            // Эта часть экрана видна только до начала скролла
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                MenuTopBar(
-                    onSearchClick = { onEvent(Event.onSearchClick) }
-                )
-                MySearchBar(
-                    filteredMenuItems = filteredMenuItems,
-                    latestSearchText = latestSearchText,
-                    onEvent = onEvent,
-                    onMealClick = { meal -> handleMealFromSearchClick(meal.id) }
-                )
-                BannerCarousel(onBannerClick = handleBannerClick)
-            }
+            MenuTopBar(
+                onSearchClick = { onEvent(Event.SearchOnOpenSearchClick) },
+                onPhoneClick = { onEvent(Event.OnPhoneClick) },
+                onLogoCLick = { handleLogoClick() }
+            )
         }
+
+        // Баннеры только если пользователь в самом верху
+        AnimatedVisibility(
+            visible = isAtTop,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
+            BannerCarousel(onBannerClick = handleBannerClick)
+        }
+
+//            AnimatedVisibility(
+//                visible = isAtTop,
+//                enter = fadeIn() + expandVertically(),
+//                exit = fadeOut() + shrinkVertically()
+//            ) {
+//                // Эта часть экрана видна только до начала скролла
+//                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//                    MenuTopBar(
+//                        onSearchClick = { onEvent(Event.SearchOnOpenSearchClick) },
+//                        onPhoneClick = { onEvent(Event.OnPhoneClick) },
+//                        onLogoCLick = { handleLogoClick() }
+//                    )
+//                    BannerCarousel(onBannerClick = handleBannerClick)
+//                }
 
         // Табы-категории, видно всегда
         CategoryTabsRow(
@@ -175,7 +215,10 @@ fun MenuContentScreen(
                                     it is MenuRVItem.SubHeaderItem && it.categoryName == currentSubCategories[index]
                                 }
                                 if (targetIndex >= 0) {
-                                    listState.scrollToItem(index = targetIndex, scrollOffset = 1)
+                                    listState.scrollToItem(
+                                        index = targetIndex,
+                                        scrollOffset = 1
+                                    )
                                 }
                             }
                         }
@@ -193,3 +236,4 @@ fun MenuContentScreen(
         )
     }
 }
+

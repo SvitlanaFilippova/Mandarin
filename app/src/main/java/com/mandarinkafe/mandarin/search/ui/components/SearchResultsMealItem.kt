@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components.mealitem
+package com.mandarinkafe.mandarin.search.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,10 +23,11 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.MealButtonsRow
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
 @Composable
-fun MenuMealSmallItem(
+fun SearchResultsMealItem(
     meal: Meal,
     onEvent: (Event) -> Unit,
     onItemClick: (Meal) -> Unit,

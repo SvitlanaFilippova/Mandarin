@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components.search
+package com.mandarinkafe.mandarin.search.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -13,18 +13,15 @@ import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
-import com.mandarinkafe.mandarin.menu.ui.components.MenuFilteredMenuList
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
 @Composable
 fun SearchResults(
     filteredMenuItems: List<MenuRVItem>,
     latestSearchText: String,
-    onMealClick: (Meal) -> Unit,
     onEvent: (Event) -> Unit,
-    onDismissSearch: () -> Unit
+    onMealClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -40,11 +37,11 @@ fun SearchResults(
 
     ) {
         if (filteredMenuItems.isNotEmpty()) {
-            MenuFilteredMenuList(
+            SearchResultsLazyColumn(
                 filteredMenuItems = filteredMenuItems,
-                onMealClick = { meal ->
-                    onMealClick(meal)
-                    onDismissSearch()
+                onMealClick = {
+                    onEvent(Event.SearchOnMealClick(it.id))
+                    onMealClick()
                 },
                 onEvent = onEvent
             )
