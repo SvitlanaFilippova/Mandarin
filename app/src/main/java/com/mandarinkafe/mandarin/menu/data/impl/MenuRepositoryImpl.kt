@@ -28,7 +28,7 @@ class MenuRepositoryImpl @Inject constructor(
 ) : MenuRepository {
 
     private val _menu =
-        MutableStateFlow<Resource<List<MealCategory>>>(Resource.Error(context.getString(R.string.error_no_menu_data)))
+        MutableStateFlow<Resource<List<MealCategory>>>(Resource.Loading()) // Состояние загрузки
     override val menu: StateFlow<Resource<List<MealCategory>>> = _menu.asStateFlow()
 
     override fun getMenu(): Flow<Resource<List<MealCategory>>> {
@@ -37,7 +37,6 @@ class MenuRepositoryImpl @Inject constructor(
 
         // если данных нет, начинаем загрузку
         fetchMenuFromNetwork()
-
         return menu
     }
 
@@ -50,6 +49,7 @@ class MenuRepositoryImpl @Inject constructor(
         // Если данных нет или нужно принудительное обновление
         if (_menu.value !is Resource.Success || force) {
             CoroutineScope(Dispatchers.IO).launch {
+                _menu.value = Resource.Loading()
                 try {
                     // Загружаем меню
                     val response = networkClient.getMenu()

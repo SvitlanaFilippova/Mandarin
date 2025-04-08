@@ -46,7 +46,7 @@
     <string name="placeholder_retry">Обновить</string>
     <string name="placeholder_call">Позвонить</string>
     <string name="nothing_found">Ничего не найдено :(</string>
-    <string name="error_no_menu_data">Меню не загружено</string>
+    <string name="error_no_menu_data">Не удалось загрузить меню. Попробуйте позже</string>
     <string name="error_no_internet">Проверьте подключение к интернету</string>
     <string name="error_empty_menu">Сервер вернул пустые данные категорий</string>
     <string name="error_server_error">Ошибка сервера</string>

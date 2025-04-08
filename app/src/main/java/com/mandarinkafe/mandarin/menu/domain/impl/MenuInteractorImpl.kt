@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteractor {
 
-    override fun getMenu(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.menu
+    override fun getMenu(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.getMenu()
         .map { result ->
             when (result) {
                 is Resource.Success -> {
@@ -23,10 +23,14 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
                 is Resource.Error -> {
                     Pair(null, result.message)
                 }
+
+                is Resource.Loading -> {
+                    Pair(null, null)
+                }
             }
         }
 
-    override fun getAddons(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.menu
+    override fun getAddons(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.getMenu()
         .map { result ->
             when (result) {
                 is Resource.Success -> {
@@ -37,10 +41,14 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
                 is Resource.Error -> {
                     Pair(null, result.message)
                 }
+
+                is Resource.Loading -> {
+                    Pair(null, null)
+                }
             }
         }
 
-    override fun getRecommends(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.menu
+    override fun getRecommends(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.getMenu()
         .map { result ->
             when (result) {
                 is Resource.Success -> {
@@ -51,16 +59,20 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
                 is Resource.Error -> {
                     Pair(null, result.message)
                 }
+
+                is Resource.Loading -> {
+                    Pair(null, null)
+                }
             }
         }
 
     private fun isRecommends(category: MealCategory): Boolean {
-        // TODO Вместо хардкода потом вынести в конфиг
+        //TODO вместо хардкода вынести в конфиг
         return category.name.contains("рекоменд", ignoreCase = true)
     }
 
     private fun isAddonCategory(category: MealCategory): Boolean {
-        // TODO Вместо хардкода потом вынести в конфиг
+        //TODO вместо хардкода вынести в конфиг
         return category.name.contains("добавки", ignoreCase = true)
     }
 
