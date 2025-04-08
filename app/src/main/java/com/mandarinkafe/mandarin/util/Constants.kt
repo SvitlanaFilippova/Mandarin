@@ -20,4 +20,11 @@ object Constants {
     // DI
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
     const val LOCAL_STORAGE_NAME = "local_storage"
+
+    //Navigation Routes
+    const val MENU_SCREEN_ROUTE = "menu"
+    const val MENU_SCOPE_ROUTE = "menu_scope"
+    const val SEARCH_SCREEN_ROUTE = "search"
+    const val DELIVERY_SCREEN_ROUTE = "delivery"
+    const val FAVORITES_SCREEN_ROUTE = "favorites"
 }

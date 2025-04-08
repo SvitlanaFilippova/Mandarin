@@ -6,11 +6,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.mandarinkafe.mandarin.menu.ui.MenuContract
-import com.mandarinkafe.mandarin.menu.ui.MenuViewModel
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
 
 @Composable
-fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
+fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), onSearchClick: () -> Unit) {
     val state by viewModel.state.collectAsState()
     val effectFlow = viewModel.effect
     val listState = rememberLazyListState()
@@ -34,6 +34,10 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
 
                 is MenuContract.Effect.OpenMealCustomization -> {
                     // Обработка клика по кнопке кастомизации
+                }
+
+                is MenuContract.Effect.OpenSearch -> {
+                    onSearchClick()
                 }
             }
         }

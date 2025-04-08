@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui
+package com.mandarinkafe.mandarin.menu.ui.view_model
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -9,7 +9,7 @@ import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.getName
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
-import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 import com.mandarinkafe.mandarin.util.Constants.DELAY_BEFORE_NEXT_ATTEMPT
 import com.mandarinkafe.mandarin.util.Constants.MAX_ATTEMPTS
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -51,24 +51,22 @@ class MenuViewModel @Inject constructor(
             is Event.ScrollToCategory -> scrollToCategory(event.newIndex)
             is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is Event.BannerClick -> handleBannerClick(event.targetName)
-            is Event.OpenMealCustomization -> openMealCustomization(event.meal)
+            is Event.OnMealCustomizationClick -> openMealCustomization(event.meal)
             is Event.SearchMealsByText -> filterMenu(event.searchText)
             is Event.ClearSearchInput -> clearSearchInput()
-
-        }
-    }
-
-    private fun forceRefreshMenu() {
-        _state.update { it.copy(isLoading = true) }
-        viewModelScope.launch {
-            menuInteractor.forceRefresh()
-            loadMenu()
+            is Event.onSearchClick -> openSearch()
         }
     }
 
     private fun openMealCustomization(meal: Meal) {
         viewModelScope.launch {
             _effect.emit(MenuContract.Effect.OpenMealCustomization(meal))
+        }
+    }
+
+    private fun openSearch() {
+        viewModelScope.launch {
+            _effect.emit(MenuContract.Effect.OpenSearch)
         }
     }
 
@@ -92,24 +90,8 @@ class MenuViewModel @Inject constructor(
 
     }
 
-    private fun clearSearchInput() {
-        _state.update { it.copy(filteredMenuItems = emptyList(), latestSearchText = "") }
-    }
-
-    private fun scrollToCategory(newIndex: Int) {
-        if (newIndex >= 0) {
-            _state.update { it.copy(selectedTabIndex = newIndex, selectedSubTabIndex = -1) }
-        }
-    }
-
-    private fun scrollToSubCategory(newIndex: Int) {
-        if (newIndex >= 0) {
-            _state.update { it.copy(selectedSubTabIndex = newIndex) }
-        }
-    }
-
+    // Метод для загрузки меню
     private fun loadMenu() {
-
         _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             var attempts = 0
@@ -155,6 +137,65 @@ class MenuViewModel @Inject constructor(
         }
     }
 
+    // Принудительное обновление меню с очисткой закешированной информации
+    private fun forceRefreshMenu() {
+        _state.update { it.copy(isLoading = true) }
+        viewModelScope.launch {
+            menuInteractor.forceRefresh()
+            loadMenu()
+        }
+    }
+
+    private fun clearSearchInput() {
+        _state.update { it.copy(filteredMenuItems = emptyList(), latestSearchText = "") }
+    }
+
+    // Методы для сохранения в state информации о текущей каегории и подкатегории
+    private fun scrollToCategory(newIndex: Int) {
+        if (newIndex >= 0) {
+            _state.update { it.copy(selectedTabIndex = newIndex, selectedSubTabIndex = -1) }
+        }
+    }
+
+    private fun scrollToSubCategory(newIndex: Int) {
+        if (newIndex >= 0) {
+            _state.update { it.copy(selectedSubTabIndex = newIndex) }
+        }
+    }
+
+    // Взаимодействие с корзиной
+    private fun addToCart(meal: Meal) {
+        Cart.addItem(meal)
+        Log.d("DEBUG", "ViewModel addToCart for $meal")
+    }
+
+    private fun removeFromCart(meal: Meal) {
+        /* Жду реализацию логики корзины */
+        Log.d("DEBUG", "ViewModel removeFromCart for $meal")
+    }
+
+    // Обработка кликов по баннерам - поиск подходящей категории/блюда в меню и скролл к нему
+    private fun handleBannerClick(targetName: String) {
+        viewModelScope.launch {
+            var menuItems = state.value.menuItems
+
+            // Ищем сначала точное совпадение, затем частичное
+            val targetIndex = menuItems
+                .indexOfFirst { item ->
+                    item.getName()?.equals(targetName, ignoreCase = true) == true
+                }
+                .takeIf { it >= 0 }
+                ?: menuItems.indexOfFirst { item ->
+                    item.getName()?.contains(targetName, ignoreCase = true) == true
+                }
+                    .takeIf { it >= 0 }
+                ?: 0
+
+            _state.update { it.copy(selectedBannerIndex = targetIndex) }
+        }
+    }
+
+    // Добавить блюдо в избранное или удалить
     private fun toggleFavorite(meal: Meal) {
         viewModelScope.launch {
             val isNowFavorite = if (meal.isFavorite) {
@@ -180,37 +221,6 @@ class MenuViewModel @Inject constructor(
             }
         }
     }
-
-    private fun addToCart(meal: Meal) {
-        Cart.addItem(meal)
-        Log.d("DEBUG", "ViewModel addToCart for $meal")
-    }
-
-    private fun removeFromCart(meal: Meal) {
-        /* Жду реализацию логики корзины */
-        Log.d("DEBUG", "ViewModel removeFromCart for $meal")
-    }
-
-    private fun handleBannerClick(targetName: String) {
-        viewModelScope.launch {
-            var menuItems = state.value.menuItems
-
-            // Ищем сначала точное совпадение, затем частичное
-            val targetIndex = menuItems
-                .indexOfFirst { item ->
-                    item.getName()?.equals(targetName, ignoreCase = true) == true
-                }
-                .takeIf { it >= 0 }
-                ?: menuItems.indexOfFirst { item ->
-                    item.getName()?.contains(targetName, ignoreCase = true) == true
-                }
-                    .takeIf { it >= 0 }
-                ?: 0
-
-            _state.update { it.copy(selectedBannerIndex = targetIndex) }
-        }
-    }
-
     private fun updateMealItemInList(
         list: List<MenuRVItem>,
         mealId: String,
@@ -219,7 +229,6 @@ class MenuViewModel @Inject constructor(
         val index = list.indexOfFirst {
             it is MenuRVItem.MealItem && it.meal.id == mealId
         }
-
         if (index == -1) return list
 
         val updatedList = list.toMutableList()

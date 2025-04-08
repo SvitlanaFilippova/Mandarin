@@ -14,11 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControls
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CustomizeMealButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.FavoriteButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.ToCartButton
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
 @Composable
 fun MealButtonsRow(
@@ -54,7 +54,7 @@ fun MealButtonsRow(
         if (meal.isEditable) {
             CustomizeMealButton(
                 modifier = Modifier.weight(1f),
-                onClick = { onEvent(Event.OpenMealCustomization(meal)) }
+                onClick = { onEvent(Event.OnMealCustomizationClick(meal)) }
             )
         } else {
             Spacer(modifier = Modifier.weight(1f))

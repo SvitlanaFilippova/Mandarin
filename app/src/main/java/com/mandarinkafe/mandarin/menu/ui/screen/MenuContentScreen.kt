@@ -20,14 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
-import com.mandarinkafe.mandarin.menu.ui.MenuContract
-import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
 import com.mandarinkafe.mandarin.menu.ui.components.search.MySearchBar
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.SubCategoryTabsRow
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 import kotlinx.coroutines.launch
 
 @Composable
@@ -124,7 +124,9 @@ fun MenuContentScreen(
         ) {
             // Эта часть экрана видна только до начала скролла
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                MenuTopBar()
+                MenuTopBar(
+                    onSearchClick = { onEvent(Event.onSearchClick) }
+                )
                 MySearchBar(
                     filteredMenuItems = filteredMenuItems,
                     latestSearchText = latestSearchText,
