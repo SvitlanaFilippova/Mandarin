@@ -29,14 +29,6 @@
     <string name="pay">ОПЛАТА</string>
     <string name="pay_info">- Наличными курьеру\n- Карточкой курьеру (через мобильный терминал)\n- Online-перевод на карту Сбербанка</string>
 
-
-    <!-- Категории еды -->
-    <string name="sushi">Суши</string>
-    <string name="pizza">Пицца</string>
-    <string name="hamburger">Гамбургеры</string>
-    <string name="hot_dog">Хот-доги</string>
-    <string name="fast_roll">Фаст-роллы</string>
-
     <!-- Кнопки действий -->
     <string name="minus">-</string>
     <string name="plus">+</string>
@@ -54,6 +46,11 @@
     <string name="placeholder_retry">Обновить</string>
     <string name="placeholder_call">Позвонить</string>
     <string name="nothing_found">Ничего не найдено :(</string>
+    <string name="error_no_menu_data">Не удалось загрузить меню. Попробуйте позже</string>
+    <string name="error_no_internet">Проверьте подключение к интернету</string>
+    <string name="error_empty_menu">Сервер вернул пустые данные категорий</string>
+    <string name="error_server_error">Ошибка сервера</string>
+    <string name="error_something_wrong">Что-то пошло не так: %1$s</string>
 
     <!-- Длинный текст -->
     <string name="large_text">

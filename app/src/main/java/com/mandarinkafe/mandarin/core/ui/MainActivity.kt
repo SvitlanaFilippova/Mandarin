@@ -14,7 +14,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.CartFragment
 import com.mandarinkafe.mandarin.databinding.ActivityMainBinding
-import com.mandarinkafe.mandarin.navigation.MainScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

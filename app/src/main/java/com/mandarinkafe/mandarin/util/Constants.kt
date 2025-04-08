@@ -7,9 +7,17 @@ object Constants {
     const val HTTP_BAD_REQUEST = 400
     const val HTTP_SERVER_ERROR = 500
 
-    // Menu
+    // Menu UI
     const val AUTO_SCROLL_INTERVAL: Long = 5000L
     const val ANIMATION_DURATION_SLOW = 1000
     const val ANIMATION_DURATION_FAST = 300
     const val DEFAULT_UNSELECTED_INDEX = -1
+
+    // Menu loading
+    const val MAX_ATTEMPTS = 3
+    const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 100L
+
+    // DI
+    const val IIKO_BASE_URL = "https://api-ru.iiko.services"
+    const val LOCAL_STORAGE_NAME = "local_storage"
 }

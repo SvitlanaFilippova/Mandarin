@@ -10,7 +10,10 @@ import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.models.getName
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
+import com.mandarinkafe.mandarin.util.Constants.DELAY_BEFORE_NEXT_ATTEMPT
+import com.mandarinkafe.mandarin.util.Constants.MAX_ATTEMPTS
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -41,6 +44,7 @@ class MenuViewModel @Inject constructor(
     fun onEvent(event: Event) {
         when (event) {
             is Event.LoadMenu -> loadMenu()
+            is Event.ForceRefreshMenu -> forceRefreshMenu()
             is Event.ToggleFavorite -> toggleFavorite(event.meal)
             is Event.AddToCart -> addToCart(event.meal)
             is Event.RemoveFromCart -> removeFromCart(event.meal)
@@ -50,6 +54,15 @@ class MenuViewModel @Inject constructor(
             is Event.OpenMealCustomization -> openMealCustomization(event.meal)
             is Event.SearchMealsByText -> filterMenu(event.searchText)
             is Event.ClearSearchInput -> clearSearchInput()
+
+        }
+    }
+
+    private fun forceRefreshMenu() {
+        _state.update { it.copy(isLoading = true) }
+        viewModelScope.launch {
+            menuInteractor.forceRefresh()
+            loadMenu()
         }
     }
 
@@ -96,23 +109,49 @@ class MenuViewModel @Inject constructor(
     }
 
     private fun loadMenu() {
+
         _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            menuInteractor.getMenu()
-                .collect { (menu, errorMessage) ->
-                    if (!menu.isNullOrEmpty()) {
-                        _state.update {
-                            it.copy(isLoading = false, menuItems = menu)
-                        }
-                    } else {
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                errorMessage = errorMessage
-                            )
+            var attempts = 0
+            var success = false
+
+            // Попытки до максимума
+            while (attempts < MAX_ATTEMPTS) {
+                menuInteractor.getMenu()
+                    .collect { (menu, errorMessage) ->
+                        // Если меню в процессе загрузки, пробуем снова
+                        if (menu == null && errorMessage == null) {
+                            attempts++
+                            delay(DELAY_BEFORE_NEXT_ATTEMPT) // Задержка перед повторной попыткой
+                        } else {
+                            // Обработка успешной загрузки данных
+                            if (!menu.isNullOrEmpty()) {
+                                _state.update {
+                                    it.copy(isLoading = false, menuItems = menu)
+                                }
+                                success = true
+                            } else {
+                                // Обработка ошибки
+                                _state.update {
+                                    it.copy(
+                                        isLoading = false,
+                                        errorMessage = errorMessage
+                                    )
+                                }
+                            }
+                            return@collect // Завершаем коллекцию данных после успешной обработки
                         }
                     }
+            }
+            // Если после всех попыток данных нет, устанавливаем ошибку
+            if (!success) {
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Не удалось загрузить меню. Попробуйте позже."
+                    )
                 }
+            }
         }
     }
 
