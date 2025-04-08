@@ -7,67 +7,52 @@ import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteractor {
 
-    private val menuCache = MutableStateFlow<Resource<List<MealCategory>>?>(null)
-
-    override fun getMenu(): Flow<Pair<List<MenuRVItem>?, String?>> = flow {
-        // Загружаем и кэшируем меню, если ещё не загружено
-        if (menuCache.value == null) {
-            repository.getMenu().collect { menuCache.value = it }
-        }
-        emit(
-            when (val result = menuCache.value) {
+    override fun getMenu(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.menu
+        .map { result ->
+            when (result) {
                 is Resource.Success -> {
                     // Фильтруем все категории, которые не должны отображаться в общем меню (флаг isHidden)
                     val visibleMenu = result.data?.filterNot { it.isHidden }
                     Pair(MenuConverter.menuToMenuItems(visibleMenu), null)
                 }
 
-                is Resource.Error -> Pair(null, result.message)
-                else -> Pair(null, "Неизвестная ошибка")
+                is Resource.Error -> {
+                    Pair(null, result.message)
+                }
             }
-        )
-    }
-
-    override fun getAddons(): Flow<Pair<List<MenuRVItem>?, String?>> = flow {
-        if (menuCache.value == null) {
-            repository.getMenu().collect { menuCache.value = it }
         }
 
-        emit(
-            when (val result = menuCache.value) {
+    override fun getAddons(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.menu
+        .map { result ->
+            when (result) {
                 is Resource.Success -> {
                     val addons = result.data?.filter { isAddonCategory(it) }
                     Pair(MenuConverter.menuToMenuItems(addons), null)
                 }
 
-                is Resource.Error -> Pair(null, result.message)
-                else -> Pair(null, "Неизвестная ошибка")
+                is Resource.Error -> {
+                    Pair(null, result.message)
+                }
             }
-        )
-    }
-
-    override fun getRecommends(): Flow<Pair<List<MenuRVItem>?, String?>> = flow {
-        if (menuCache.value == null) {
-            repository.getMenu().collect { menuCache.value = it }
         }
 
-        emit(
-            when (val result = menuCache.value) {
+    override fun getRecommends(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.menu
+        .map { result ->
+            when (result) {
                 is Resource.Success -> {
-                    val addons = result.data?.filter { isRecommends(it) }
-                    Pair(MenuConverter.menuToMenuItems(addons), null)
+                    val recommends = result.data?.filter { isRecommends(it) }
+                    Pair(MenuConverter.menuToMenuItems(recommends), null)
                 }
 
-                is Resource.Error -> Pair(null, result.message)
-                else -> Pair(null, "Неизвестная ошибка")
+                is Resource.Error -> {
+                    Pair(null, result.message)
+                }
             }
-        )
-    }
+        }
 
     private fun isRecommends(category: MealCategory): Boolean {
         // TODO Вместо хардкода потом вынести в конфиг
@@ -79,9 +64,8 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
         return category.name.contains("добавки", ignoreCase = true)
     }
 
-    // метод, чтобы принудительно перезагрузить меню и обновить его в кэше:
-    override suspend fun refreshMenu() {
-        repository.getMenu().collect { menuCache.value = it }
+    // метод, чтобы принудительно перезагрузить меню
+    override suspend fun forceRefresh() {
+        repository.forceRefresh()
     }
-
 }

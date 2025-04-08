@@ -7,5 +7,5 @@ interface MenuInteractor {
     fun getMenu(): Flow<Pair<List<MenuRVItem>?, String?>>
     fun getAddons(): Flow<Pair<List<MenuRVItem>?, String?>>
     fun getRecommends(): Flow<Pair<List<MenuRVItem>?, String?>>
-    suspend fun refreshMenu()
+    suspend fun forceRefresh()
 }

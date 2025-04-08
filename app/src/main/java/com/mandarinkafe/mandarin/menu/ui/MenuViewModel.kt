@@ -41,6 +41,7 @@ class MenuViewModel @Inject constructor(
     fun onEvent(event: Event) {
         when (event) {
             is Event.LoadMenu -> loadMenu()
+            is Event.ForceRefreshMenu -> forceRefreshMenu()
             is Event.ToggleFavorite -> toggleFavorite(event.meal)
             is Event.AddToCart -> addToCart(event.meal)
             is Event.RemoveFromCart -> removeFromCart(event.meal)
@@ -50,6 +51,15 @@ class MenuViewModel @Inject constructor(
             is Event.OpenMealCustomization -> openMealCustomization(event.meal)
             is Event.SearchMealsByText -> filterMenu(event.searchText)
             is Event.ClearSearchInput -> clearSearchInput()
+
+        }
+    }
+
+    private fun forceRefreshMenu() {
+        _state.update { it.copy(isLoading = true) }
+        viewModelScope.launch {
+            menuInteractor.forceRefresh()
+            loadMenu()
         }
     }
 

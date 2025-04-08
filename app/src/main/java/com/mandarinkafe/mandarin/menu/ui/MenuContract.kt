@@ -8,6 +8,7 @@ sealed interface MenuContract {
 
     sealed interface Event {
         data object LoadMenu : Event
+        data object ForceRefreshMenu : Event
         data class ToggleFavorite(val meal: Meal) : Event
         data class ScrollToCategory(val newIndex: Int) : Event
         data class ScrollToSubCategory(val newIndex: Int) : Event
