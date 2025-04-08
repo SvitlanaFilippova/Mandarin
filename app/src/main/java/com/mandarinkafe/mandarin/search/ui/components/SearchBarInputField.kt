@@ -1,8 +1,9 @@
-package com.mandarinkafe.mandarin.menu.ui.components.search
+package com.mandarinkafe.mandarin.search.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -21,7 +22,8 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 fun SearchBarInputField(
     query: String,
     onQueryChange: (String) -> Unit,
-    onClear: () -> Unit
+    onClear: () -> Unit,
+    onSearchDismiss: () -> Unit
 ) {
     TextField(
         value = query,
@@ -41,10 +43,18 @@ fun SearchBarInputField(
         },
         trailingIcon = {
             if (query.isNotEmpty()) {
-                IconButton(onClick = onClear) {
+                IconButton(onClick = { onClear() }) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = stringResource(id = R.string.clear_text),
+                        tint = Colors.White
+                    )
+                }
+            } else {
+                IconButton(onClick = { onSearchDismiss() }) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(id = R.string.back),
                         tint = Colors.White
                     )
                 }

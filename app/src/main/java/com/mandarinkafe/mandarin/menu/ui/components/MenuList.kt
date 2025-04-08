@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
-import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.MenuMealItem
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
 @Composable
 fun MenuList(

@@ -26,7 +26,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.ui.MenuContract.Event
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 import com.mandarinkafe.mandarin.util.ui.components.ExpandableText
 
 @Composable
