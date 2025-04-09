@@ -26,4 +26,3 @@ fun SearchScreen(
         onSearchDismiss = { navController.popBackStack() }
     )
 }
-

@@ -12,7 +12,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -23,8 +28,20 @@ fun SearchBarInputField(
     query: String,
     onQueryChange: (String) -> Unit,
     onClear: () -> Unit,
-    onSearchDismiss: () -> Unit
+    onSearchDismiss: () -> Unit,
+    autoFocus: Boolean = false
 ) {
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    // Фокус и клавиатура сразу при отображении
+    LaunchedEffect(Unit) {
+        if (autoFocus) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
+
     TextField(
         value = query,
         onValueChange = onQueryChange,
@@ -70,7 +87,11 @@ fun SearchBarInputField(
             unfocusedContainerColor = Colors.Transparent,
             unfocusedIndicatorColor = Colors.Transparent,
         ),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
+
         shape = RoundedCornerShape(Dimens.RadiusSearchField8),
+        enabled = true,
     )
 }

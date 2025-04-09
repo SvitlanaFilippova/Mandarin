@@ -59,7 +59,8 @@ fun MySearchBar(
                         }
                     },
                     onClear = { handleOnClear() },
-                    onSearchDismiss = { onSearchDismiss() }
+                    onSearchDismiss = { onSearchDismiss() },
+                    autoFocus = true
                 )
             },
             expanded = isExpanded,
