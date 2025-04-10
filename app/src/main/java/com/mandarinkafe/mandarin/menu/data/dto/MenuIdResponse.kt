@@ -1,5 +1,7 @@
 package com.mandarinkafe.mandarin.menu.data.dto
 
+import com.mandarinkafe.mandarin.core.data.dto.Response
+
 data class MenuIdResponse(
     val correlationId: String,
     val externalMenus: List<Menu>,

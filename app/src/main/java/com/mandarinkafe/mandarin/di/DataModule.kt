@@ -3,15 +3,17 @@ package com.mandarinkafe.mandarin.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.mandarinkafe.mandarin.menu.data.DtoToDomainConverter
-import com.mandarinkafe.mandarin.menu.data.FavoritesRepositoryImpl
-import com.mandarinkafe.mandarin.menu.data.LocalStorage
-import com.mandarinkafe.mandarin.menu.data.MenuRepositoryImpl
-import com.mandarinkafe.mandarin.menu.data.network.IikoApiService
-import com.mandarinkafe.mandarin.menu.data.network.NetworkClient
-import com.mandarinkafe.mandarin.menu.data.network.RetrofitNetworkClient
-import com.mandarinkafe.mandarin.menu.domain.api.FavoritesRepository
+import com.mandarinkafe.mandarin.core.data.network.IikoApiService
+import com.mandarinkafe.mandarin.core.data.network.NetworkClient
+import com.mandarinkafe.mandarin.core.data.network.RetrofitNetworkClient
+import com.mandarinkafe.mandarin.favorites.data.LocalStorage
+import com.mandarinkafe.mandarin.favorites.data.impl.FavoritesRepositoryImpl
+import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
+import com.mandarinkafe.mandarin.menu.data.impl.MenuRepositoryImpl
+import com.mandarinkafe.mandarin.menu.data.mapper.DtoToDomainConverter
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
+import com.mandarinkafe.mandarin.util.Constants.IIKO_BASE_URL
+import com.mandarinkafe.mandarin.util.Constants.LOCAL_STORAGE_NAME
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,7 +31,7 @@ class DataModule {
     @Singleton
     fun provideIikoApiService(): IikoApiService {
         return Retrofit.Builder()
-            .baseUrl("https://api-ru.iiko.services")
+            .baseUrl(IIKO_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(
@@ -54,7 +56,7 @@ class DataModule {
         @ApplicationContext
         context: Context
     ): SharedPreferences {
-        return context.getSharedPreferences("local_storage", Context.MODE_PRIVATE)
+        return context.getSharedPreferences(LOCAL_STORAGE_NAME, Context.MODE_PRIVATE)
     }
 
     @Provides
@@ -73,9 +75,15 @@ class DataModule {
     @Singleton
     fun provideMenuRepository(
         networkClient: NetworkClient,
-        converter: DtoToDomainConverter
+        converter: DtoToDomainConverter,
+        @ApplicationContext
+        context: Context
     ): MenuRepository {
-        return MenuRepositoryImpl(networkClient = networkClient, converter = converter)
+        return MenuRepositoryImpl(
+            networkClient = networkClient,
+            converter = converter,
+            context = context
+        )
     }
 
     @Provides

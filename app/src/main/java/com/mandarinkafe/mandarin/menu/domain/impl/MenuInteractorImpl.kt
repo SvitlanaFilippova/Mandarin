@@ -1,82 +1,83 @@
 package com.mandarinkafe.mandarin.menu.domain.impl
 
-import com.mandarinkafe.mandarin.menu.domain.api.MenuInteractor
+import com.mandarinkafe.mandarin.menu.domain.MenuConverter
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
-import com.mandarinkafe.mandarin.menu.domain.models.mockMenuData
-import com.mandarinkafe.mandarin.util.RVItem
+import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteractor {
 
-
-    override fun getMenuRvItem(): Flow<Pair<List<RVItem>?, String?>> {
-        return repository.getMenu().map { result ->
+    override fun getMenu(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.getMenu()
+        .map { result ->
             when (result) {
                 is Resource.Success -> {
-                    Pair(menuToMenuItems(result.data), null)
+                    // Фильтруем все категории, которые не должны отображаться в общем меню (флаг isHidden)
+                    val visibleMenu = result.data?.filterNot { it.isHidden }
+                    Pair(MenuConverter.menuToMenuItems(visibleMenu), null)
                 }
 
                 is Resource.Error -> {
                     Pair(null, result.message)
                 }
-            }
-        }
-    }
 
-
-    override fun getMockMenu(): List<RVItem> {
-        return menuToMenuItems(mockMenuData)
-    }
-
-
-    private fun menuToMenuItems(menu: List<MealCategory>?): List<RVItem> {
-        val menuItems = buildList<RVItem> {
-            menu?.forEach { category ->
-                if (!category.subCategories.isNullOrEmpty()) {
-                    this += MenuRVItem.HeaderItem(
-                        categoryName = category.name,
-                        subCategoriesNames = buildList {
-                            category.subCategories.forEach { this += it.name }
-                        },
-                        tabIcon = category.tabIcon,
-                        id = category.id
-                    )
-
-                    category.subCategories.forEach { subCategory ->
-                        if (!subCategory.meals.isNullOrEmpty()) {
-                            this += MenuRVItem.SubHeaderItem(
-                                categoryName = subCategory.name,
-                                id = subCategory.id
-                            )
-                            this += subCategory.meals.map {
-                                MenuRVItem.MealItem(
-                                    meal = it
-                                )
-                            }
-                        }
-                    }
-                } else {
-                    if (!category.meals.isNullOrEmpty()) {
-                        this += MenuRVItem.HeaderItem(
-                            categoryName = category.name,
-                            subCategoriesNames = null,
-                            tabIcon = category.tabIcon,
-                            id = category.id
-                        )
-                        this += category.meals.map {
-                            MenuRVItem.MealItem(
-                                it
-                            )
-                        }
-                    }
+                is Resource.Loading -> {
+                    Pair(null, null)
                 }
             }
         }
-        return menuItems
+
+    override fun getAddons(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.getMenu()
+        .map { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val addons = result.data?.filter { isAddonCategory(it) }
+                    Pair(MenuConverter.menuToMenuItems(addons), null)
+                }
+
+                is Resource.Error -> {
+                    Pair(null, result.message)
+                }
+
+                is Resource.Loading -> {
+                    Pair(null, null)
+                }
+            }
+        }
+
+    override fun getRecommends(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.getMenu()
+        .map { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val recommends = result.data?.filter { isRecommends(it) }
+                    Pair(MenuConverter.menuToMenuItems(recommends), null)
+                }
+
+                is Resource.Error -> {
+                    Pair(null, result.message)
+                }
+
+                is Resource.Loading -> {
+                    Pair(null, null)
+                }
+            }
+        }
+
+    private fun isRecommends(category: MealCategory): Boolean {
+        //TODO вместо хардкода вынести в конфиг
+        return category.name.contains("рекоменд", ignoreCase = true)
+    }
+
+    private fun isAddonCategory(category: MealCategory): Boolean {
+        //TODO вместо хардкода вынести в конфиг
+        return category.name.contains("добавки", ignoreCase = true)
+    }
+
+    // метод, чтобы принудительно перезагрузить меню
+    override suspend fun forceRefresh() {
+        repository.forceRefresh()
     }
 }
-
