@@ -6,6 +6,7 @@
 
     <!-- Навигация -->
     <string name="back">Назад</string>
+    <string name="search">Поиск</string>
     <string name="menu">Меню</string>
 
     <!-- Корзина и избранное -->
@@ -14,6 +15,13 @@
     <string name="question_add_to_cart">Добавить в корзину ?</string>
     <string name="add_to_favorite">Добавить в избранное</string>
     <string name="favorite">Избранное</string>
+
+    <!-- Категории еды -->
+    <string name="sushi">Суши</string>
+    <string name="pizza">Пицца</string>
+    <string name="hamburger">Гамбургеры</string>
+    <string name="hot_dog">Хот-доги</string>
+    <string name="fast_roll">Фаст-роллы</string>
 
     <!-- Доставка -->
     <string name="delivery">Доставка</string>
@@ -60,6 +68,7 @@
         "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
         "technologically advanced and open to imagination and magic.\n"
     </string>
+
     <!-- Для contentDescription  -->
     <string name="picture_of_meal_template">Изображение %1$s</string>
     <string name="icon_of_category">Иконка категории "%1$s"</string>
