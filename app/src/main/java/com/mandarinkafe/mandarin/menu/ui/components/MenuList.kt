@@ -1,31 +1,23 @@
 package com.mandarinkafe.mandarin.menu.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
-import com.mandarinkafe.mandarin.util.RVItem
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.MenuMealItem
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
 @Composable
 fun MenuList(
-    menuItems: List<RVItem>,
+    menuItems: List<MenuRVItem>,
     listState: LazyListState,
     modifier: Modifier,
-    onToggleFavorite: (Meal) -> Unit,
-    onAddToCart: (Meal) -> Unit,
-    onRemoveFromCart: (Meal) -> Unit,
+    onEvent: (Event) -> Unit,
 ) {
-    Log.d("DEBUG", "MenuList старт. Меню: ${menuItems.take(10)}")
     LazyColumn(
         state = listState,
         modifier = modifier,
@@ -33,33 +25,17 @@ fun MenuList(
     ) {
         itemsIndexed(menuItems) { index, item ->
             when (item) {
-                is MenuRVItem.HeaderItem -> Text(
-                    text = item.categoryName,
-                    style = Typography.MenuCategoryStyle,
-                    modifier = Modifier.padding(
-                        start = Dimens.MarginSmall8,
-                        top = Dimens.MarginBig32
-                    )
-                )
+                is MenuRVItem.HeaderItem -> MenuHeaderItem(item)
 
                 is MenuRVItem.SubHeaderItem -> {
                     val previousItem = if (index > 0) menuItems[index - 1] else null
                     val hasHeaderBefore = previousItem is MenuRVItem.HeaderItem
-                    Text(
-                        text = item.categoryName,
-                        style = Typography.MenuSubCategoryStyle,
-                        modifier = Modifier.padding(
-                            start = Dimens.MarginSmall8,
-                            top = if (!hasHeaderBefore) Dimens.MarginStandard16 else 0.dp,
-                            bottom = Dimens.MarginSmall8
-                        )
-                    )
+                    MenuSubHeaderItem(item, hasHeaderBefore)
                 }
 
                 is MenuRVItem.MealItem -> MenuMealItem(
-                    meal = item.meal, onToggleFavorite = onToggleFavorite,
-                    onAddToCart = onAddToCart,
-                    onRemoveFromCart = onRemoveFromCart
+                    meal = item.meal,
+                    onEvent = onEvent,
                 )
             }
         }

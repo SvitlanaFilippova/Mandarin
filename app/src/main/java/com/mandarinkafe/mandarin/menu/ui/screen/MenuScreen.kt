@@ -1,29 +1,31 @@
 package com.mandarinkafe.mandarin.menu.ui.screen
 
+import android.content.Intent
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.mandarinkafe.mandarin.menu.ui.MenuContract
-import com.mandarinkafe.mandarin.menu.ui.MenuViewModel
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
+import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER
 
 @Composable
-fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
+fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), onSearchClick: () -> Unit) {
     val state by viewModel.state.collectAsState()
     val effectFlow = viewModel.effect
     val listState = rememberLazyListState()
-
+    val context = LocalContext.current
     when {
         state.isLoading -> LoadingScreen()
         state.errorMessage != null -> ErrorScreen(state.errorMessage)
         else -> MenuContentScreen(
-            menuItems = state.menuItems,
             listState = listState,
-            selectedTabIndex = state.selectedTabIndex,
-            selectedSubTabIndex = state.selectedSubTabIndex,
-            onEvent = viewModel::onEvent
+            onEvent = viewModel::onEvent,
+            state = state
         )
     }
 
@@ -34,8 +36,19 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
                     // Показываем снекбар
                 }
 
-                is MenuContract.Effect.NavigateTo -> {
-                    // Навигация
+                is MenuContract.Effect.OpenMealCustomization -> {
+                    // Обработка клика по кнопке кастомизации
+                }
+
+                is MenuContract.Effect.OpenSearch -> {
+                    onSearchClick()
+                }
+
+                MenuContract.Effect.CallPhone -> {
+                    val intent = Intent(Intent.ACTION_DIAL).apply {
+                        data = PHONE_NUMBER.toUri()
+                    }
+                    context.startActivity(intent)
                 }
             }
         }

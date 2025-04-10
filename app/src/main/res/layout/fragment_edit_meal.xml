@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".edit_meal.ui.EditMealBSFragment">
+    tools:context=".meal_customization.ui.EditMealBSFragment">
 
     <View
         android:layout_width="@dimen/bs_divider_width_48"

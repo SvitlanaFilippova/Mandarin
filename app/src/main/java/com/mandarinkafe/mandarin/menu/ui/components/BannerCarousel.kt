@@ -27,7 +27,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.Banner
@@ -42,7 +44,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun BannerCarousel(
     banners: List<Banner> = mockBannersList,
-    autoScrollInterval: Long = AUTO_SCROLL_INTERVAL, // Интервал автопрокрутки
+    autoScrollInterval: Long = AUTO_SCROLL_INTERVAL,
     easing: Easing = LinearEasing,
     onBannerClick: (String) -> Job
 ) {
@@ -65,7 +67,11 @@ fun BannerCarousel(
         }
     }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimens.MarginSmall8)
+    ) {
         HorizontalPager(
             state = pagerState,
             pageSpacing = Dimens.MarginStandard16,
@@ -87,13 +93,13 @@ fun BannerCarousel(
         ) { page ->
             AsyncImage(
                 model = banners[page].imageUrl,
-                contentDescription = "Баннер $page",
+                contentDescription = stringResource(R.string.banner_number, page),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(2.91f)
                     .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                    .clickable { onBannerClick(banners[page].goToIdOnClick) }
+                    .clickable { onBannerClick(banners[page].goToNameOnClick) }
             )
         }
 
@@ -103,7 +109,7 @@ fun BannerCarousel(
                 .fillMaxWidth()
                 .padding(
                     top = Dimens.MarginSmall8,
-                    bottom = Dimens.MarginStandard16
+                    bottom = Dimens.MarginSmall8
                 ),
             horizontalArrangement = Arrangement.spacedBy(
                 Dimens.MarginSmall8,

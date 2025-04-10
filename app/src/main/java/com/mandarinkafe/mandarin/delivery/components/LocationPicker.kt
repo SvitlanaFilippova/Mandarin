@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.delivery.components
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
@@ -57,6 +58,7 @@ fun LocationPicker() {
         }
     }
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     Scaffold(
         Modifier
             .heightIn(min = Dimens.MapMinSize200, max = Dimens.MapMaxSize600)
@@ -84,8 +86,15 @@ fun LocationPicker() {
         val blueColor = Color.argb(100, 128, 0, 128)
         snapshotFlow { mapView.value }.collect { mapViewInstance ->
             mapViewInstance?.let {
-                val center = Point(55.998040, 38.375328)
-                addColoredArea(it, center, blueColor)
+                val area = listOf<Point>(
+                    Point(55.993074, 38.387079),
+                    Point(55.991741, 38.368890),
+                    Point(55.998916, 38.356102),
+                    Point(56.006845, 38.364157),
+                    Point(56.005308, 38.372411),
+                    Point(56.002917, 38.379587),
+                )
+                addColoredArea(it, area, blueColor)
             }
         }
     }
@@ -146,18 +155,9 @@ private fun moveCamera(mapView: MapView?, lat: Double, lon: Double) {
     )
 }
 
-//сейчас получаем центр и вокруг него создаем прямоугольник
-//в дальнейшем будем передавать координаты области
-fun addColoredArea(mapView: MapView, center: Point, color: Int) {
+fun addColoredArea(mapView: MapView, area: List<Point>, color: Int) {
     val mapObjects: MapObjectCollection = mapView.mapWindow?.map?.mapObjects ?: return
-
-    val polygonCoordinates = listOf(
-        Point(center.latitude + 0.001, center.longitude - 0.001),
-        Point(center.latitude + 0.001, center.longitude + 0.001),
-        Point(center.latitude - 0.001, center.longitude + 0.001),
-        Point(center.latitude - 0.001, center.longitude - 0.001),
-    )
-    val polygon = Polygon(LinearRing(polygonCoordinates), emptyList())
+    val polygon = Polygon(LinearRing(area), emptyList())
     val polygonObject = mapObjects.addPolygon(polygon)
     polygonObject.fillColor = color
     mapObjects.addPolygon(polygon)
