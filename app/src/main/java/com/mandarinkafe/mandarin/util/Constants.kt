@@ -19,6 +19,9 @@ object Constants {
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
     const val LOCAL_STORAGE_NAME = "local_storage"
 
+    // API
+    const val BEARER_PREFIX = "Bearer "
+
     //Контакты - вынести в конфиг для возможности изменений извне
     const val PHONE_NUMBER = "tel:+74951087055"
 }

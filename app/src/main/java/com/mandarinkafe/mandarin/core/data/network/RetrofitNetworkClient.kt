@@ -2,10 +2,12 @@ package com.mandarinkafe.mandarin.core.data.network
 
 import android.content.Context
 import android.util.Log
+import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.menu.data.network.MenuRequest
+import com.mandarinkafe.mandarin.util.Constants.BEARER_PREFIX
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.NetworkMonitor
@@ -49,9 +51,8 @@ class RetrofitNetworkClient(private val context: Context, private val ikkoServic
 
     private suspend fun authenticate() {
         try {
-            val authResponse = ikkoService.authenticate(AuthRequest(API_LOGIN))
-            token =
-                "Bearer ${authResponse.token}"
+            val authResponse = ikkoService.authenticate(AuthRequest(BuildConfig.IIKO_API_KEY))
+            token = BEARER_PREFIX + authResponse.token
 
             val organizationsResponse = ikkoService.getOrganizations(
                 token = token,
@@ -67,9 +68,5 @@ class RetrofitNetworkClient(private val context: Context, private val ikkoServic
 
     private fun isConnected(): Boolean {
         return NetworkMonitor.isNetworkAvailable(context)
-    }
-
-    companion object {
-        const val API_LOGIN = "3a901a233be740bea54bf0a38e1bfaa3"
     }
 }
