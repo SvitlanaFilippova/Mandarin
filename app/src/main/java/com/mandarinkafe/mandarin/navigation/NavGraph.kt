@@ -1,11 +1,7 @@
 package com.mandarinkafe.mandarin.navigation
 
-import android.view.View
-import android.widget.FrameLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -15,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.mandarinkafe.mandarin.delivery.screen.DeliveryScreen
-import com.mandarinkafe.mandarin.favorites.FavoritesFragment
+import com.mandarinkafe.mandarin.favorites.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.menu.ui.screen.MenuScreen
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
 import com.mandarinkafe.mandarin.navigation.NavRoutes.DELIVERY_SCREEN_ROUTE
@@ -67,22 +63,7 @@ fun NavGraph(navHostController: NavHostController, fragmentManager: FragmentMana
             DeliveryScreen()
         }
         composable(FAVORITES_SCREEN_ROUTE) {
-            // Вставьте сюда компоуз экран избранных
-            FragmentContainer(fragmentManager, FavoritesFragment())
+            FavoritesScreen()
         }
     }
-}
-
-@Composable
-fun FragmentContainer(fragmentManager: FragmentManager, fragment: Fragment) {
-    AndroidView(
-        factory = { context ->
-            FrameLayout(context).apply { id = View.generateViewId() }
-        },
-        update = { frameLayout ->
-            fragmentManager.beginTransaction()
-                .replace(frameLayout.id, fragment)
-                .commitNow()
-        }
-    )
 }
