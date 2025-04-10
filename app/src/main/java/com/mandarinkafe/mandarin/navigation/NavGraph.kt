@@ -2,7 +2,6 @@ package com.mandarinkafe.mandarin.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.fragment.app.FragmentManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -23,7 +22,7 @@ import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.search.ui.screen.SearchScreen
 
 @Composable
-fun NavGraph(navHostController: NavHostController, fragmentManager: FragmentManager) {
+fun NavGraph(navHostController: NavHostController) {
     NavHost(
         navController = navHostController,
         startDestination = MENU_SCOPE_ROUTE
