@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -20,6 +22,17 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Mapkit
+        val keystoreFile = project.rootProject.file("apikeys.properties")
+        val properties = Properties()
+        properties.load(keystoreFile.inputStream())
+        val apiKey = properties.getProperty("MAPKIT_API_KEY") ?: ""
+        buildConfigField(
+            type = "String",
+            name = "MAPKIT_API_KEY",
+            value = apiKey
+        )
     }
 
     buildTypes {
@@ -46,6 +59,7 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
+        buildConfig = true
     }
 }
 
@@ -126,4 +140,7 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.viewmodel)
+
+    //Mapkit
+    implementation(libs.com.yandex.maps.mobile)
 }
