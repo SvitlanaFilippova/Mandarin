@@ -55,11 +55,13 @@ class MenuViewModel @Inject constructor(
             is Event.ScrollToTop -> scrollToTop()
             is Event.BannerClick -> findMenuItemIndexByName(event.targetName)
             is Event.OnMealCustomizationClick -> sendEffect(Effect.OpenMealCustomization(event.meal))
+            is Event.SearchOnOpenSearchClick -> sendEffect(Effect.OpenSearch(focusSearch = true))
             is Event.SearchMealsByText -> filterMenu(event.searchText)
             is Event.SearchClearInput -> clearSearchInput()
-            is Event.SearchOnOpenSearchClick -> sendEffect(Effect.OpenSearch)
             is Event.SearchOnMealClick -> findMealIndexById(event.targetId)
+            is Event.OnOpenFavoritesClick -> sendEffect(Effect.OpenFavorites)
             is Event.OnPhoneClick -> sendEffect(Effect.CallPhone)
+            is Event.OnLabelsClick -> sendEffect(Effect.OpenSearch(focusSearch = false))
         }
     }
 

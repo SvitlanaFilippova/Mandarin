@@ -22,13 +22,15 @@ sealed interface MenuContract {
         data class SearchOnMealClick(val targetId: String) : Event
         data object SearchClearInput : Event
         data object SearchOnOpenSearchClick : Event
-
+        data object OnOpenFavoritesClick : Event
+        data object OnLabelsClick : Event
     }
 
     sealed interface Effect {
         data class ShowSnackbar(val message: String) : Effect
         data class OpenMealCustomization(val meal: Meal) : Effect
-        data object OpenSearch : Effect
+        data class OpenSearch(val focusSearch: Boolean) : Effect
+        data object OpenFavorites : Effect
         data object CallPhone : Effect
     }
 

@@ -35,6 +35,7 @@ object Dimens {
     val ProgressBarSize124 = 124.dp
     val ProgressBarWidth24 = 24.dp
     val SearchBarHeight56 = 56.dp
+    val FakeSearchBarHeight48 = 48.dp
     val BsDividerWidth48 = 48.dp
     val DividerHeight1 = 1.dp
     val TabActivatedIndicatorHeight2 = 2.dp
