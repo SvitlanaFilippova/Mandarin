@@ -9,19 +9,22 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.mandarinkafe.mandarin.delivery.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.favorites.FavoritesFragment
 import com.mandarinkafe.mandarin.menu.ui.screen.MenuScreen
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
+import com.mandarinkafe.mandarin.navigation.NavRoutes.DELIVERY_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavRoutes.FAVORITES_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCOPE_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ARG_FOCUS
+import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.search.ui.screen.SearchScreen
-import com.mandarinkafe.mandarin.util.Constants.DELIVERY_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.util.Constants.FAVORITES_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.util.Constants.MENU_SCOPE_ROUTE
-import com.mandarinkafe.mandarin.util.Constants.MENU_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.util.Constants.SEARCH_SCREEN_ROUTE
 
 @Composable
 fun NavGraph(navHostController: NavHostController, fragmentManager: FragmentManager) {
@@ -39,18 +42,23 @@ fun NavGraph(navHostController: NavHostController, fragmentManager: FragmentMana
                 val menuViewModel: MenuViewModel = hiltViewModel(parentEntry)
                 MenuScreen(
                     viewModel = menuViewModel,
-                    onSearchClick = { navHostController.navigate(SEARCH_SCREEN_ROUTE) }
+                    navController = navHostController
                 )
             }
-            composable(SEARCH_SCREEN_ROUTE) { entry ->
+            composable(
+                route = "$SEARCH_SCREEN_ROUTE/{$SEARCH_SCREEN_ARG_FOCUS}",
+                arguments = listOf(
+                    navArgument(SEARCH_SCREEN_ARG_FOCUS) { type = NavType.BoolType }
+                )) { entry ->
                 val parentEntry = remember(entry) {
                     navHostController.getBackStackEntry(MENU_SCOPE_ROUTE)
                 }
                 val menuViewModel: MenuViewModel = hiltViewModel(parentEntry)
+                val focusInput = entry.arguments?.getBoolean(SEARCH_SCREEN_ARG_FOCUS) != false
                 SearchScreen(
                     viewModel = menuViewModel,
-                    onMealClick = { navHostController.navigate(MENU_SCREEN_ROUTE) },
-                    navController = navHostController
+                    navController = navHostController,
+                    focusSearchBarInput = focusInput
                 )
             }
 

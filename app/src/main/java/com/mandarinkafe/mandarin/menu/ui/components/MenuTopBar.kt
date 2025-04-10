@@ -19,7 +19,6 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 
 @Composable
 fun MenuTopBar(
-    onSearchClick: () -> Unit,
     onPhoneClick: () -> Unit,
     onLogoCLick: () -> Unit
 ) {
@@ -28,17 +27,6 @@ fun MenuTopBar(
             .fillMaxWidth()
             .height(Dimens.ToolbarHeadHeight56)
     ) {
-        // Иконка поиска
-        Icon(
-            painter = painterResource(R.drawable.ic_search),
-            tint = Colors.White,
-            contentDescription = stringResource(R.string.search_in_menu),
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .size(Dimens.ToolbarHeadHeight56)
-                .clickable { onSearchClick() }
-                .padding(Dimens.MarginStandard16)
-        )
 
         // Логотип
         Image(

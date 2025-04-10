@@ -9,12 +9,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
+import com.mandarinkafe.mandarin.navigation.navigateToFavoritesScreen
+import com.mandarinkafe.mandarin.navigation.navigateToSearchScreen
 import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER
 
 @Composable
-fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), onSearchClick: () -> Unit) {
+fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), navController: NavHostController) {
+
     val state by viewModel.state.collectAsState()
     val effectFlow = viewModel.effect
     val listState = rememberLazyListState()
@@ -41,7 +45,11 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), onSearchClick: () -> 
                 }
 
                 is MenuContract.Effect.OpenSearch -> {
-                    onSearchClick()
+                    navController.navigateToSearchScreen(focusInput = effect.focusSearch)
+                }
+
+                is MenuContract.Effect.OpenFavorites -> {
+                    navController.navigateToFavoritesScreen()
                 }
 
                 MenuContract.Effect.CallPhone -> {

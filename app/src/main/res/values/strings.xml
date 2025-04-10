@@ -8,9 +8,6 @@
     <string name="back">Назад</string>
     <string name="search">Поиск</string>
     <string name="menu">Меню</string>
-    <string name="search_in_menu">Поиск по меню</string>
-    <string name="search_field_icon">Поле поиска</string>
-    <string name="clear_text">Очистить текст</string>
 
     <!-- Корзина и избранное -->
     <string name="cart">Корзина</string>
@@ -41,6 +38,9 @@
     <string name="minus">-</string>
     <string name="plus">+</string>
     <string name="customize_meal">Редактировать блюдо</string>
+    <string name="search_in_menu">Поиск по меню</string>
+    <string name="filter_by_label">Фильтровать по тегам</string>
+    <string name="clear_text">Очистить текст</string>
 
     <!-- Шаблоны текста -->
     <string name="default_price_for_button">000 ₽</string>
@@ -73,4 +73,5 @@
     <string name="picture_of_meal_template">Изображение %1$s</string>
     <string name="icon_of_category">Иконка категории "%1$s"</string>
     <string name="banner_number">Баннер №%1$d</string>
+    <string name="search_field_icon">Поле поиска</string>
 </resources>
