@@ -32,7 +32,8 @@ fun MySearchBar(
     latestSearchText: String,
     onEvent: (Event) -> Unit,
     onMealClick: () -> Unit,
-    onSearchDismiss: () -> Unit
+    onSearchDismiss: () -> Unit,
+    focusSearchBarInput: Boolean
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var isExpanded by remember { mutableStateOf(true) }
@@ -60,7 +61,7 @@ fun MySearchBar(
                     },
                     onClear = { handleOnClear() },
                     onSearchDismiss = { onSearchDismiss() },
-                    autoFocus = true
+                    autoFocus = focusSearchBarInput
                 )
             },
             expanded = isExpanded,

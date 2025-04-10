@@ -24,6 +24,7 @@ import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
+import com.mandarinkafe.mandarin.menu.ui.components.SearchAndFilterBar
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.SubCategoryTabsRow
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
@@ -140,19 +141,29 @@ fun MenuContentScreen(
             .fillMaxSize()
             .background(Colors.AppBlack)
     ) {
-        // Меню-бар появляется всегда, когда пользователь вверху или скроллит вверх
+        // Лого-бар появляется только если пользователь в самом верху
+        AnimatedVisibility(
+            visible = isAtTop,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
+            MenuTopBar(
+                onPhoneClick = { onEvent(Event.OnPhoneClick) },
+                onLogoCLick = { handleLogoClick() }
+            )
+        }
+        // Бар с поиском и фильтрами появляется всегда, когда пользователь вверху или скроллит вверх
         AnimatedVisibility(
             visible = showMenuTopBar,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically()
         ) {
-            MenuTopBar(
+            SearchAndFilterBar(
                 onSearchClick = { onEvent(Event.SearchOnOpenSearchClick) },
-                onPhoneClick = { onEvent(Event.OnPhoneClick) },
-                onLogoCLick = { handleLogoClick() }
+                onFilterClick = { onEvent(Event.OnLabelsClick) },
+                onFavoriteClick = { onEvent(Event.OnOpenFavoritesClick) }
             )
         }
-
         // Баннеры только если пользователь в самом верху
         AnimatedVisibility(
             visible = isAtTop,
@@ -161,22 +172,6 @@ fun MenuContentScreen(
         ) {
             BannerCarousel(onBannerClick = handleBannerClick)
         }
-
-//            AnimatedVisibility(
-//                visible = isAtTop,
-//                enter = fadeIn() + expandVertically(),
-//                exit = fadeOut() + shrinkVertically()
-//            ) {
-//                // Эта часть экрана видна только до начала скролла
-//                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-//                    MenuTopBar(
-//                        onSearchClick = { onEvent(Event.SearchOnOpenSearchClick) },
-//                        onPhoneClick = { onEvent(Event.OnPhoneClick) },
-//                        onLogoCLick = { handleLogoClick() }
-//                    )
-//                    BannerCarousel(onBannerClick = handleBannerClick)
-//                }
-
         // Табы-категории, видно всегда
         CategoryTabsRow(
             categories = categories,
@@ -236,4 +231,3 @@ fun MenuContentScreen(
         )
     }
 }
-

@@ -6,14 +6,17 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
+import com.mandarinkafe.mandarin.navigation.navigateToMenuScreen
 import com.mandarinkafe.mandarin.search.ui.components.MySearchBar
 
 @Composable
 fun SearchScreen(
     viewModel: MenuViewModel = hiltViewModel(),
     navController: NavController,
-    onMealClick: () -> Unit
+    focusSearchBarInput: Boolean
 ) {
+
+    val onMealClick = { navController.navigateToMenuScreen() }
     val state by viewModel.state.collectAsState()
     val filteredMenuItems = state.filteredMenuItems
     val latestSearchText = state.latestSearchText
@@ -23,6 +26,7 @@ fun SearchScreen(
         latestSearchText = latestSearchText,
         onEvent = viewModel::onEvent,
         onMealClick = onMealClick,
-        onSearchDismiss = { navController.popBackStack() }
+        onSearchDismiss = { navController.popBackStack() },
+        focusSearchBarInput = focusSearchBarInput,
     )
 }
