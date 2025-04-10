@@ -4,7 +4,6 @@ coilCompose = "2.5.0"
 compiler = "1.5.15"
 fragmentKtx = "1.8.5"
 glide = "4.16.0"
-hiltNavigationCompose = "1.2.0"
 kotlin = "2.1.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -23,10 +22,11 @@ lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
 coordinatorlayout = "1.2.0"
 hilt = "2.55"
+hiltNavigationCompose = "1.2.0"
 ksp = "2.1.10-1.0.31"
 parcelize = "2.1.0-RC2"
 uiGraphicsAndroid = "1.7.8"
-composeBom = "2025.03.00"
+composeBom = "2025.03.01"
 composeActivity = "1.10.1"
 composeViewModel = "2.8.7"
 navigationCompose = "2.8.9"
@@ -37,7 +37,6 @@ runtimeLivedata = "1.7.8"
 androidx-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compiler" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
-androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationFragmentKtx" }
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
@@ -60,6 +59,7 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 androidx-coordinatorlayout = { group = "androidx.coordinatorlayout", name = "coordinatorlayout", version.ref = "coordinatorlayout" }
 com-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 com-hilt-ksp = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "uiGraphicsAndroid" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }

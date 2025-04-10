@@ -27,11 +27,18 @@ android {
         val keystoreFile = project.rootProject.file("apikeys.properties")
         val properties = Properties()
         properties.load(keystoreFile.inputStream())
-        val apiKey = properties.getProperty("MAPKIT_API_KEY") ?: ""
+        val mapKitApiKey = properties.getProperty("MAPKIT_API_KEY") ?: ""
         buildConfigField(
             type = "String",
             name = "MAPKIT_API_KEY",
-            value = apiKey
+            value = mapKitApiKey
+        )
+
+        // iiko
+        buildConfigField(
+            type = "String",
+            name = "IIKO_API_KEY",
+            value = properties.getProperty("IIKO_API_KEY") ?: ""
         )
     }
 
@@ -42,6 +49,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
         }
     }
     compileOptions {
