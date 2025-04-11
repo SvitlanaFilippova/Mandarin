@@ -4,8 +4,11 @@ import android.util.Log
 import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.data.dto.CategoryDto
 import com.mandarinkafe.mandarin.menu.data.dto.MealDto
+import com.mandarinkafe.mandarin.menu.data.dto.TagDto
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
+import com.mandarinkafe.mandarin.menu.domain.models.Tag
+import com.mandarinkafe.mandarin.util.applyTypography
 
 class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     private val storedFavorites = favoritesRepository.getFavoriteIds()
@@ -17,7 +20,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     private fun CategoryDto.toDomain(storedFavorites: List<String>, parentCategory: String?) =
         MealCategory(
             id = id,
-            name = name,
+            name = name.applyTypography(),
             meals = items.mapNotNull {
                 it.toDomain(
                     storedFavorites = storedFavorites,
@@ -27,7 +30,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
             },
             subCategories = null,
             tabIcon = buttonImageUrl,
-            description = description ?: "",
+            description = (description ?: "").applyTypography(),
             isHidden = isHidden,
         )
 
@@ -39,16 +42,13 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
         try {
             val item = Meal(
                 id = itemId,
-                sku = sku,
-                name = name,
-                description = description,
+                name = name.applyTypography(),
+                description = (description ?: "").applyTypography(),
                 weight = itemSizes.firstOrNull()?.portionWeightGrams?.toInt() ?: 0,
                 price = itemSizes.firstOrNull()?.prices?.firstOrNull()?.price?.toInt() ?: 0,
                 imageUrl = itemSizes.firstOrNull()?.buttonImageUrl ?: "",
-                categoryId = categoryId,
                 isFavorite = storedFavorites.contains(itemId),
-                tags = tags,
-                topCategoryId = topCategoryId,
+                tags = (tags ?: emptyList()).map { it.toDomain() },
                 isEditable = checkIfEditable(categoryId),
                 isHidden = isHidden,
             )
@@ -58,6 +58,11 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
         }
         return null
     }
+
+    private fun TagDto.toDomain() = Tag(
+        id = id,
+        name = name
+    )
 
     private fun checkIfEditable(categoryId: String): Boolean {
         return editableCategoryIds.contains(categoryId)
