@@ -17,7 +17,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
         PizzaCategoriesIds.RIM.id,
     )
 
-    private fun CategoryDto.toDomain(storedFavorites: List<String>, parentCategory: String?) =
+    private fun CategoryDto.toDomain(storedFavorites: List<String>) =
         MealCategory(
             id = id,
             name = name.applyTypography(),
@@ -25,7 +25,6 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                 it.toDomain(
                     storedFavorites = storedFavorites,
                     categoryId = id,
-                    topCategoryId = parentCategory ?: id
                 )
             },
             subCategories = null,
@@ -37,7 +36,6 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     private fun MealDto.toDomain(
         storedFavorites: List<String>,
         categoryId: String,
-        topCategoryId: String
     ): Meal? {
         try {
             val item = Meal(
@@ -88,8 +86,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                 // Нет подкатегорий — обычная категория с блюдами
                 result.add(
                     parent.toDomain(
-                        storedFavorites = storedFavorites,
-                        parentCategory = null
+                        storedFavorites = storedFavorites
                     )
                 )
             } else {
@@ -125,8 +122,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
             meals = null,
             subCategories = subCategories?.map { subDto ->
                 subDto.copy(name = subDto.subName()).toDomain(
-                    storedFavorites = storedFavorites,
-                    parentCategory = parentDto.id
+                    storedFavorites = storedFavorites
                 )
             },
             tabIcon = parentDto.buttonImageUrl,
@@ -138,8 +134,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     private fun buildLonelySubcategory(category: CategoryDto): MealCategory {
         Log.w("DEBUG", "Подкатегория '${category.name}' без родителя")
         return category.copy(name = category.subName()).toDomain(
-            storedFavorites = storedFavorites,
-            parentCategory = null
+            storedFavorites = storedFavorites
         )
     }
 
