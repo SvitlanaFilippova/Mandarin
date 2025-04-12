@@ -15,7 +15,7 @@ import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
 import com.mandarinkafe.mandarin.navigation.navigateToFavoritesScreen
 import com.mandarinkafe.mandarin.navigation.navigateToSearchScreen
 import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER
-import com.mandarinkafe.mandarin.util.ui.components.Placeholder
+import com.mandarinkafe.mandarin.util.ui.components.PlaceholderScreen
 
 @Composable
 fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), navController: NavHostController) {
@@ -26,7 +26,10 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), navController: NavHos
     val context = LocalContext.current
     when {
         state.isLoading -> LoadingScreen()
-        state.errorMessage != null -> Placeholder(state.errorMessage)
+        state.errorMessage != null -> PlaceholderScreen(
+            state.errorMessage!!,
+            onEvent = viewModel::onEvent,
+        )
         else -> MenuContentScreen(
             listState = listState,
             onEvent = viewModel::onEvent,

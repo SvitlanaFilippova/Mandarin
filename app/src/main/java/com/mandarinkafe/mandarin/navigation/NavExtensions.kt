@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.navigation
 import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.navigation.NavRoutes.FAVORITES_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavRoutes.PLACEHOLDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ROUTE
 
 fun NavController.navigateToSearchScreen(focusInput: Boolean) {
@@ -16,8 +15,4 @@ fun NavController.navigateToMenuScreen() {
 
 fun NavController.navigateToFavoritesScreen() {
     this.navigate(FAVORITES_SCREEN_ROUTE)
-}
-
-fun NavController.navigateToPlaceholder() {
-    this.navigate(PLACEHOLDER_SCREEN_ROUTE)
 }

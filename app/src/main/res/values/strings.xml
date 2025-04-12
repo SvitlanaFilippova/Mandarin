@@ -50,7 +50,7 @@
     <string name="meal_in_cart_count_template">%1$d шт</string>
 
     <!-- Ошибки и сообщения -->
-    <string name="loading_error_template">Загрузка не удалась. Проверьте подключение к&#160;интернету и попробуйте ещё раз.\n\nИли просто позвоните нам по&#160;телефону %s, чтобы сделать заказ.</string>
+    <string name="placeholder_message_call_us">Попробуйте ещё&#160;раз или просто позвоните нам по&#160;телефону %1$s, чтобы сделать заказ.</string>
     <string name="placeholder_retry">Обновить</string>
     <string name="placeholder_call">Позвонить</string>
     <string name="nothing_found">Ничего не найдено :(</string>
@@ -58,7 +58,7 @@
     <string name="error_no_internet">Проверьте подключение к интернету</string>
     <string name="error_empty_menu">Сервер вернул пустые данные категорий</string>
     <string name="error_server_error">Ошибка сервера</string>
-    <string name="error_something_wrong">Что-то пошло не так: %1$s</string>
+    <string name="error_something_wrong">Что-то пошло не так :(</string>
 
     <!-- Длинный текст -->
     <string name="large_text">

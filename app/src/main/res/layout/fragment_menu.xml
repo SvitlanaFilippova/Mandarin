@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="@dimen/small_margin_8"
-    tools:context=".menu.ui.MenuFragment">
+    android:paddingHorizontal="@dimen/small_margin_8">
 
     <ProgressBar
         android:id="@+id/progressbar"
@@ -14,9 +13,6 @@
         android:indeterminateTint="@color/orange_transparent_50"
         android:visibility="gone" />
 
-    <include
-        android:id="@+id/placeholder"
-        layout="@layout/placeholder" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarlayout_content"
