@@ -43,13 +43,4 @@
         app:icon="@drawable/ic_call"
         android:text="@string/placeholder_call" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/bv_placeholder_mock_menu"
-        style="@style/PlaceholderButtonStyle"
-        android:layout_width="@dimen/placeholder_button_size_200"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/standart_margin_16"
-        app:tabIconTint="@color/white"
-        android:text="Мок меню"
-        android:visibility="gone"/>
 </LinearLayout>
