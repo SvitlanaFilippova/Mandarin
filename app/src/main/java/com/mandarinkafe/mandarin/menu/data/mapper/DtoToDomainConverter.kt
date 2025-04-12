@@ -4,8 +4,11 @@ import android.util.Log
 import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.data.dto.CategoryDto
 import com.mandarinkafe.mandarin.menu.data.dto.MealDto
+import com.mandarinkafe.mandarin.menu.data.dto.TagDto
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
+import com.mandarinkafe.mandarin.menu.domain.models.Tag
+import com.mandarinkafe.mandarin.util.applyTypography
 
 class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     private val storedFavorites = favoritesRepository.getFavoriteIds()
@@ -14,41 +17,36 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
         PizzaCategoriesIds.RIM.id,
     )
 
-    private fun CategoryDto.toDomain(storedFavorites: List<String>, parentCategory: String?) =
+    private fun CategoryDto.toDomain(storedFavorites: List<String>) =
         MealCategory(
             id = id,
-            name = name,
+            name = name.applyTypography(),
             meals = items.mapNotNull {
                 it.toDomain(
                     storedFavorites = storedFavorites,
                     categoryId = id,
-                    topCategoryId = parentCategory ?: id
                 )
             },
             subCategories = null,
             tabIcon = buttonImageUrl,
-            description = description ?: "",
+            description = (description ?: "").applyTypography(),
             isHidden = isHidden,
         )
 
     private fun MealDto.toDomain(
         storedFavorites: List<String>,
         categoryId: String,
-        topCategoryId: String
     ): Meal? {
         try {
             val item = Meal(
                 id = itemId,
-                sku = sku,
-                name = name,
-                description = description,
+                name = name.applyTypography(),
+                description = (description ?: "").applyTypography(),
                 weight = itemSizes.firstOrNull()?.portionWeightGrams?.toInt() ?: 0,
                 price = itemSizes.firstOrNull()?.prices?.firstOrNull()?.price?.toInt() ?: 0,
                 imageUrl = itemSizes.firstOrNull()?.buttonImageUrl ?: "",
-                categoryId = categoryId,
                 isFavorite = storedFavorites.contains(itemId),
-                tags = tags,
-                topCategoryId = topCategoryId,
+                tags = (tags ?: emptyList()).map { it.toDomain() },
                 isEditable = checkIfEditable(categoryId),
                 isHidden = isHidden,
             )
@@ -58,6 +56,11 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
         }
         return null
     }
+
+    private fun TagDto.toDomain() = Tag(
+        id = id,
+        name = name
+    )
 
     private fun checkIfEditable(categoryId: String): Boolean {
         return editableCategoryIds.contains(categoryId)
@@ -83,8 +86,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                 // Нет подкатегорий — обычная категория с блюдами
                 result.add(
                     parent.toDomain(
-                        storedFavorites = storedFavorites,
-                        parentCategory = null
+                        storedFavorites = storedFavorites
                     )
                 )
             } else {
@@ -120,8 +122,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
             meals = null,
             subCategories = subCategories?.map { subDto ->
                 subDto.copy(name = subDto.subName()).toDomain(
-                    storedFavorites = storedFavorites,
-                    parentCategory = parentDto.id
+                    storedFavorites = storedFavorites
                 )
             },
             tabIcon = parentDto.buttonImageUrl,
@@ -133,8 +134,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     private fun buildLonelySubcategory(category: CategoryDto): MealCategory {
         Log.w("DEBUG", "Подкатегория '${category.name}' без родителя")
         return category.copy(name = category.subName()).toDomain(
-            storedFavorites = storedFavorites,
-            parentCategory = null
+            storedFavorites = storedFavorites
         )
     }
 

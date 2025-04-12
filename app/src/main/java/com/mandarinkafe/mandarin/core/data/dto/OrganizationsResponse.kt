@@ -7,5 +7,4 @@ data class OrganizationsResponse(
 data class Organization(
     val id: String,
     val name: String,
-
 )
