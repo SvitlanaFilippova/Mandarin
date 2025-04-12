@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.screen
+package com.mandarinkafe.mandarin.util.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ErrorScreen(errorMessage: String?) {
+fun Placeholder(errorMessage: String?) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = errorMessage ?: "ErrorScreen")
     }

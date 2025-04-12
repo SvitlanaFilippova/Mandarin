@@ -22,10 +22,8 @@ import com.mandarinkafe.mandarin.navigation.NavRoutes.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.FAVORITES_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCOPE_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavRoutes.PLACEHOLDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ARG_FOCUS
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.placeholder.ui.screen.PlaceholderScreen
 import com.mandarinkafe.mandarin.search.ui.screen.SearchScreen
 
 @Composable
@@ -67,11 +65,6 @@ fun NavGraph(navHostController: NavHostController, fragmentManager: FragmentMana
         }
         composable(DELIVERY_SCREEN_ROUTE) {
             DeliveryScreen()
-        }
-        composable(PLACEHOLDER_SCREEN_ROUTE) {
-            PlaceholderScreen(
-                errorMessage = TODO()
-            )
         }
         composable(FAVORITES_SCREEN_ROUTE) {
             // Вставьте сюда компоуз экран избранных
