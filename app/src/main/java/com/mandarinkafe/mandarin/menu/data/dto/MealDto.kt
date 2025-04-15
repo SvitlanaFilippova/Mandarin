@@ -5,6 +5,7 @@ data class MealDto(
     val name: String,
     val description: String?,
     val tags: List<TagDto>?,
-    val itemSizes: List<ItemSize>,
-    val isHidden: Boolean
+    val labels: List<LabelDto>?,
+    val itemSizes: List<ItemSize>?,
+    val isHidden: Boolean?
 )
