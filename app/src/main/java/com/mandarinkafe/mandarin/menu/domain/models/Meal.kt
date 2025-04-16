@@ -9,6 +9,7 @@ data class Meal(
     val imageUrl: String,
     var isFavorite: Boolean,
     val tags: List<Tag>,
+    val labels: List<Label>,
     val isHidden: Boolean,
     val isEditable: Boolean
 )

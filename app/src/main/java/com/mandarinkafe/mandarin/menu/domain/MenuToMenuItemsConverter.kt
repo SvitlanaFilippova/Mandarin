@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.menu.domain
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 
-object MenuConverter {
+object MenuToMenuItemsConverter {
 
     fun menuToMenuItems(menu: List<MealCategory>?): List<MenuRVItem> {
         val menuItems = buildList<MenuRVItem> {
