@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.compose.rememberNavController
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.navigation.BottomNavigation
@@ -15,7 +14,7 @@ import com.mandarinkafe.mandarin.navigation.NavGraph
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen(fragmentManager: FragmentManager) {
+fun MainScreen() {
     val navController = rememberNavController()
 
     Scaffold(
@@ -29,8 +28,7 @@ fun MainScreen(fragmentManager: FragmentManager) {
                 .background(Colors.AppBackgroundColor)
         ) {
               NavGraph(
-                  navHostController = navController,
-                  fragmentManager = fragmentManager
+                  navHostController = navController
               )
         }
     }
