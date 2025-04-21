@@ -1,14 +1,16 @@
 package com.mandarinkafe.mandarin.favorites.domain.impl
 
-import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.favorites.domain.models.FavoriteMeal
+import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 
 class FavoritesInteractorImpl(private val repository: FavoritesRepository): FavoritesInteractor {
-    override fun addToFavorites(meal: Meal) {
+    override fun getFavorites(): List<FavoriteMeal> = repository.getFavorites()
+
+    override fun addToFavorites(meal: FavoriteMeal) {
         repository.addToFavorites(meal) }
 
-    override fun removeFromFavorites(meal: Meal) {
+    override fun removeFromFavorites(meal: FavoriteMeal) {
         repository.removeFromFavorites(meal)
     }
 
