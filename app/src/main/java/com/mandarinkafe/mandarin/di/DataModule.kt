@@ -6,8 +6,9 @@ import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
 import com.mandarinkafe.mandarin.core.data.network.RetrofitNetworkClient
-import com.mandarinkafe.mandarin.favorites.data.LocalStorage
 import com.mandarinkafe.mandarin.favorites.data.impl.FavoritesRepositoryImpl
+import com.mandarinkafe.mandarin.favorites.data.sharedprefs.LocalStorage
+import com.mandarinkafe.mandarin.favorites.data.sharedprefs.LocalStorageImpl
 import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.data.impl.MenuRepositoryImpl
 import com.mandarinkafe.mandarin.menu.data.mapper.DtoToDomainConverter
@@ -62,7 +63,7 @@ class DataModule {
     @Provides
     @Singleton
     fun provideLocalStorage(sharedPreferences: SharedPreferences): LocalStorage {
-        return LocalStorage(sharedPreferences = sharedPreferences)
+        return LocalStorageImpl(sharedPreferences = sharedPreferences)
     }
 
     @Provides
