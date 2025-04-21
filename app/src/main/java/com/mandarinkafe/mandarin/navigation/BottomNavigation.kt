@@ -14,9 +14,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navOptions
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
+import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
 
 @Composable
 fun BottomNavigation(
@@ -38,7 +40,16 @@ fun BottomNavigation(
             NavigationBarItem(
                 selected = currentRoute == it.route,
                 onClick = {
-                    navController.navigate(it.route)
+                    navController.navigate(
+                        route = it.route,
+                        navOptions = navOptions {
+                            launchSingleTop = true
+                            popUpTo(MENU_SCREEN_ROUTE) {
+                                inclusive = false
+                                saveState = true
+                            }
+                            restoreState = true
+                        })
                 },
                 icon = {
                     Icon(

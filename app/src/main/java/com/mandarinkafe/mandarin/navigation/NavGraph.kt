@@ -62,10 +62,7 @@ fun NavGraph(navHostController: NavHostController) {
             DeliveryScreen()
         }
         composable(FAVORITES_SCREEN_ROUTE) {
-            val parentEntry = remember(it) {
-                navHostController.getBackStackEntry(MENU_SCOPE_ROUTE)
-            }
-            val menuViewModel: MenuViewModel = hiltViewModel(parentEntry)
+            val menuViewModel: MenuViewModel = hiltViewModel()
             FavoritesScreen(viewModel = menuViewModel)
         }
     }
