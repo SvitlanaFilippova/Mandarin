@@ -14,7 +14,7 @@ import com.mandarinkafe.mandarin.util.Constants.PIZZA_ADDS
 import com.mandarinkafe.mandarin.util.applyTypography
 
 class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
-    private val storedFavorites = favoritesRepository.getFavoriteIds()
+    private val storedFavoritesIds = favoritesRepository.getFavorites().map { it.id }
 
     fun menuDtoToDomain(menuDto: List<CategoryDto>?): List<MealCategory> {
         if (menuDto.isNullOrEmpty()) {
@@ -36,7 +36,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                 // Нет подкатегорий — обычная категория с блюдами
                 result.add(
                     parent.toDomain(
-                        storedFavorites = storedFavorites
+                        storedFavorites = storedFavoritesIds
                     )
                 )
             } else {
@@ -129,7 +129,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
             meals = null,
             subCategories = subCategories?.map { subDto ->
                 subDto.copy(name = subDto.subName()).toDomain(
-                    storedFavorites = storedFavorites
+                    storedFavorites = storedFavoritesIds
                 )
             },
             tabIcon = parentDto.buttonImageUrl,
@@ -140,9 +140,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
 
     private fun buildLonelySubcategory(category: CategoryDto): MealCategory {
         Log.w("DEBUG", "Подкатегория '${category.name}' без родителя")
-        return category.copy(name = category.subName()).toDomain(
-            storedFavorites = storedFavorites
-        )
+        return category.copy(name = category.subName()).toDomain(storedFavoritesIds)
     }
 
     fun CategoryDto.hasParent(): Boolean =
