@@ -3,65 +3,18 @@ package com.mandarinkafe.mandarin.menu.data.mapper
 import android.util.Log
 import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.data.dto.CategoryDto
+import com.mandarinkafe.mandarin.menu.data.dto.LabelDto
 import com.mandarinkafe.mandarin.menu.data.dto.MealDto
+import com.mandarinkafe.mandarin.menu.data.dto.TagDto
+import com.mandarinkafe.mandarin.menu.domain.models.Label
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
+import com.mandarinkafe.mandarin.menu.domain.models.Tag
+import com.mandarinkafe.mandarin.util.Constants.PIZZA_ADDS
+import com.mandarinkafe.mandarin.util.applyTypography
 
 class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     private val storedFavorites = favoritesRepository.getFavoriteIds()
-    private val editableCategoryIds = setOf(
-        PizzaCategoriesIds.PIZZA35.id,
-        PizzaCategoriesIds.RIM.id,
-    )
-
-    private fun CategoryDto.toDomain(storedFavorites: List<String>, parentCategory: String?) =
-        MealCategory(
-            id = id,
-            name = name,
-            meals = items.mapNotNull {
-                it.toDomain(
-                    storedFavorites = storedFavorites,
-                    categoryId = id,
-                    topCategoryId = parentCategory ?: id
-                )
-            },
-            subCategories = null,
-            tabIcon = buttonImageUrl,
-            description = description ?: "",
-            isHidden = isHidden,
-        )
-
-    private fun MealDto.toDomain(
-        storedFavorites: List<String>,
-        categoryId: String,
-        topCategoryId: String
-    ): Meal? {
-        try {
-            val item = Meal(
-                id = itemId,
-                sku = sku,
-                name = name,
-                description = description,
-                weight = itemSizes.firstOrNull()?.portionWeightGrams?.toInt() ?: 0,
-                price = itemSizes.firstOrNull()?.prices?.firstOrNull()?.price?.toInt() ?: 0,
-                imageUrl = itemSizes.firstOrNull()?.buttonImageUrl ?: "",
-                categoryId = categoryId,
-                isFavorite = storedFavorites.contains(itemId),
-                tags = tags,
-                topCategoryId = topCategoryId,
-                isEditable = checkIfEditable(categoryId),
-                isHidden = isHidden,
-            )
-            return item
-        } catch (e: Throwable) {
-            Log.d("DEBUG", "Error in fun ItemDto.toDomain. ${e.message}")
-        }
-        return null
-    }
-
-    private fun checkIfEditable(categoryId: String): Boolean {
-        return editableCategoryIds.contains(categoryId)
-    }
 
     fun menuDtoToDomain(menuDto: List<CategoryDto>?): List<MealCategory> {
         if (menuDto.isNullOrEmpty()) {
@@ -83,8 +36,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                 // Нет подкатегорий — обычная категория с блюдами
                 result.add(
                     parent.toDomain(
-                        storedFavorites = storedFavorites,
-                        parentCategory = null
+                        storedFavorites = storedFavorites
                     )
                 )
             } else {
@@ -104,6 +56,63 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
         return result
     }
 
+    private fun CategoryDto.toDomain(storedFavorites: List<String>): MealCategory {
+        val categoryLabels = labels?.map { it.toDomain() } ?: emptyList()
+        val categoryTags = tags?.map { it.toDomain() } ?: emptyList()
+
+        val safeItems = items?.mapNotNull {
+            it.toDomain(
+                storedFavorites = storedFavorites,
+                categoryLabels = categoryLabels,
+                categoryTags = categoryTags
+            )
+        } ?: emptyList()
+
+        return MealCategory(
+            id = id,
+            name = name,
+            meals = safeItems,
+            subCategories = null,
+            tabIcon = buttonImageUrl,
+            description = (description ?: "").applyTypography(),
+            isHidden = isHidden == true,
+        )
+    }
+
+    private fun MealDto.toDomain(
+        storedFavorites: List<String>,
+        categoryLabels: List<Label>,
+        categoryTags: List<Tag>
+    ): Meal? {
+        val firstSize = itemSizes?.firstOrNull()
+        val safeWeight = firstSize?.portionWeightGrams?.toInt() ?: 0
+        val safePrice = firstSize?.prices?.firstOrNull()?.price?.toInt() ?: 0
+        val safeImageUrl = firstSize?.buttonImageUrl ?: ""
+
+        val mealLabels = (labels ?: emptyList()).map { it.toDomain() }
+        val mealTags = (tags ?: emptyList()).map { it.toDomain() }
+        val finalMealTags = (mealTags + categoryTags).distinctBy { it.name }
+        val finalMealLabels = (mealLabels + categoryLabels).distinctBy { it.name }
+
+        return Meal(
+            id = itemId,
+            name = name.applyTypography(),
+            description = (description ?: "").applyTypography(),
+            weight = safeWeight,
+            price = safePrice,
+            imageUrl = safeImageUrl,
+            isFavorite = storedFavorites.contains(itemId),
+            labels = finalMealLabels,
+            tags = finalMealTags,
+            isEditable = checkIfEditable(finalMealTags),
+            isHidden = isHidden == true,
+        )
+    }
+
+    private fun checkIfEditable(tags: List<Tag>): Boolean {
+        return tags.any { it.name.equals(PIZZA_ADDS, ignoreCase = true) }
+    }
+
     private fun groupSubcategories(menuDto: List<CategoryDto>): Map<String, List<CategoryDto>> {
         return menuDto
             .filter { it.hasParent() }
@@ -120,26 +129,38 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
             meals = null,
             subCategories = subCategories?.map { subDto ->
                 subDto.copy(name = subDto.subName()).toDomain(
-                    storedFavorites = storedFavorites,
-                    parentCategory = parentDto.id
+                    storedFavorites = storedFavorites
                 )
             },
             tabIcon = parentDto.buttonImageUrl,
             description = parentDto.description.orEmpty(),
-            isHidden = parentDto.isHidden
+            isHidden = parentDto.isHidden == true
         )
     }
 
     private fun buildLonelySubcategory(category: CategoryDto): MealCategory {
         Log.w("DEBUG", "Подкатегория '${category.name}' без родителя")
         return category.copy(name = category.subName()).toDomain(
-            storedFavorites = storedFavorites,
-            parentCategory = null
+            storedFavorites = storedFavorites
         )
     }
 
-    enum class PizzaCategoriesIds(val id: String) {
-        PIZZA35("832b4f72-adeb-4a3d-8bf4-cfde11ac810f"),
-        RIM("9a9c0f12-123b-4d9f-8a34-cf1234abcd12"),
-    }
+    fun CategoryDto.hasParent(): Boolean =
+        name.contains("/")
+
+    fun CategoryDto.parentName(): String =
+        name.substringBefore("/")
+
+    fun CategoryDto.subName(): String =
+        name.substringAfter("/")
+
+    fun TagDto.toDomain() = Tag(
+        id = id,
+        name = name
+    )
+
+    fun LabelDto.toDomain() = Label(
+        code = code,
+        name = name
+    )
 }

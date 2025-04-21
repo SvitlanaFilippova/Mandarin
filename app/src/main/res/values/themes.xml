@@ -6,17 +6,8 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="android:shadowColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@color/app_background_color</item>
-        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-
     </style>
 
     <style name="Theme.Mandarin" parent="Base.Theme.Mandarin" />
-
-
-    <!-- Hamburger icon color-->
-    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="spinBars">true</item>
-        <item name="color">@color/white</item>
-    </style>
 
 </resources>

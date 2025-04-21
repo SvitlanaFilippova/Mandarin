@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.menu.domain.impl
 
-import com.mandarinkafe.mandarin.menu.domain.MenuConverter
+import com.mandarinkafe.mandarin.menu.domain.MenuToMenuItemsConverter
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
@@ -17,7 +17,7 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
                 is Resource.Success -> {
                     // Фильтруем все категории, которые не должны отображаться в общем меню (флаг isHidden)
                     val visibleMenu = result.data?.filterNot { it.isHidden }
-                    Pair(MenuConverter.menuToMenuItems(visibleMenu), null)
+                    Pair(MenuToMenuItemsConverter.menuToMenuItems(visibleMenu), null)
                 }
 
                 is Resource.Error -> {
@@ -35,7 +35,7 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
             when (result) {
                 is Resource.Success -> {
                     val addons = result.data?.filter { isAddonCategory(it) }
-                    Pair(MenuConverter.menuToMenuItems(addons), null)
+                    Pair(MenuToMenuItemsConverter.menuToMenuItems(addons), null)
                 }
 
                 is Resource.Error -> {
@@ -53,7 +53,7 @@ class MenuInteractorImpl(private val repository: MenuRepository) : MenuInteracto
             when (result) {
                 is Resource.Success -> {
                     val recommends = result.data?.filter { isRecommends(it) }
-                    Pair(MenuConverter.menuToMenuItems(recommends), null)
+                    Pair(MenuToMenuItemsConverter.menuToMenuItems(recommends), null)
                 }
 
                 is Resource.Error -> {
