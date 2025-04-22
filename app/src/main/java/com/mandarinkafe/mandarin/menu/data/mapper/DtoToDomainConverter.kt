@@ -10,7 +10,7 @@ import com.mandarinkafe.mandarin.menu.domain.models.Label
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.Tag
-import com.mandarinkafe.mandarin.util.Constants.PIZZA_ADDS
+import com.mandarinkafe.mandarin.util.Constants.TAG_PIZZA_ADDS
 import com.mandarinkafe.mandarin.util.applyTypography
 
 class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
@@ -110,7 +110,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     }
 
     private fun checkIfEditable(tags: List<Tag>): Boolean {
-        return tags.any { it.name.equals(PIZZA_ADDS, ignoreCase = true) }
+        return tags.any { it.name.equals(TAG_PIZZA_ADDS, ignoreCase = true) }
     }
 
     private fun groupSubcategories(menuDto: List<CategoryDto>): Map<String, List<CategoryDto>> {

@@ -1,0 +1,11 @@
+package com.mandarinkafe.mandarin.di
+
+import jakarta.inject.Qualifier
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class Recommends
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class Addons
