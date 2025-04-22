@@ -7,13 +7,13 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.MenuMealItem
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
 @Composable
 fun MenuList(
-    menuItems: List<MenuRVItem>,
+    menuItems: List<MenuItem>,
     listState: LazyListState,
     modifier: Modifier,
     onEvent: (Event) -> Unit,
@@ -25,15 +25,15 @@ fun MenuList(
     ) {
         itemsIndexed(menuItems) { index, item ->
             when (item) {
-                is MenuRVItem.HeaderItem -> MenuHeaderItem(item)
+                is MenuItem.HeaderItem -> MenuHeaderItem(item)
 
-                is MenuRVItem.SubHeaderItem -> {
+                is MenuItem.SubHeaderItem -> {
                     val previousItem = if (index > 0) menuItems[index - 1] else null
-                    val hasHeaderBefore = previousItem is MenuRVItem.HeaderItem
+                    val hasHeaderBefore = previousItem is MenuItem.HeaderItem
                     MenuSubHeaderItem(item, hasHeaderBefore)
                 }
 
-                is MenuRVItem.MealItem -> MenuMealItem(
+                is MenuItem.MealItem -> MenuMealItem(
                     meal = item.meal,
                     onEvent = onEvent,
                 )

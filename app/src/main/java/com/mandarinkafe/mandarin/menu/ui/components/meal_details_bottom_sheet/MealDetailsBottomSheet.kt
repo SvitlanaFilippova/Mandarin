@@ -5,22 +5,28 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.pizza_ads.PizzaAdsScreen
-import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.menu.ui.screen.LoadingScreen
+import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract.Event
+import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealDetailsBottomSheet(
+    viewModel: MealDetailsViewModel = hiltViewModel(),
     meal: Meal,
-    adds: List<MealCategory>,
-    onEvent: (Event) -> Unit,
     onDismiss: () -> Unit
 ) {
+    viewModel.onEvent(Event.SetMeal(meal))
+
+    val state by viewModel.state.collectAsState()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
@@ -30,24 +36,35 @@ fun MealDetailsBottomSheet(
         sheetState.show()
     }
 
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = Colors.AppBlack
-    ) {
 
-        // TODO Тут добавить обработку по тегам и дальше разводить на разные экраны
+    when {
+        state.isLoading -> LoadingScreen()
 
-        PizzaAdsScreen(
-            meal = meal,
-            onEvent = onEvent,
-            adds = adds,
-            onClose = {
-                coroutineScope.launch {
-                    sheetState.hide()
-                    onDismiss()
-                }
+        else ->
 
-            })
+            ModalBottomSheet(
+                onDismissRequest = onDismiss,
+                sheetState = sheetState,
+                containerColor = Colors.AppBlack
+            ) {
+
+                BottomSheetHeader(
+                    meal = meal,
+                    onToggleFavorite = { viewModel.onEvent(Event.ToggleFavorite) },
+                    onClose = {
+                        coroutineScope.launch {
+                            sheetState.hide()
+                            onDismiss()
+                        }
+                    }
+                )
+
+                // TODO Тут добавить обработку по тегам и дальше разводить на разные экраны
+
+                PizzaAdsScreen(
+                    state = state,
+                    onEvent = viewModel::onEvent,
+                )
+            }
     }
 }

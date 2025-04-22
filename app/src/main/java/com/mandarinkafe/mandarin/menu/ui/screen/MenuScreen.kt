@@ -6,14 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
@@ -81,8 +77,6 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), navController: NavHos
     ) { effect, onDismiss ->
         MealDetailsBottomSheet(
             meal = effect.meal,
-            adds = state.pizzaAds,
-            onEvent = viewModel::onEvent,
             onDismiss = onDismiss
         )
     }

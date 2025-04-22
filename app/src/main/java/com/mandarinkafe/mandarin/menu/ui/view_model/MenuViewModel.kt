@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.domain.models.getName
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect
@@ -54,7 +54,7 @@ class MenuViewModel @Inject constructor(
             is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is Event.ScrollToTop -> scrollToTop()
             is Event.BannerClick -> findMenuItemIndexByName(event.targetName)
-            is Event.OnMealCustomizationClick -> onMealCustomizationClick(event.meal)
+            is Event.OnMealCustomizationClick -> sendEffect(Effect.OpenMealCustomization(event.meal))
             is Event.SearchOnOpenSearchClick -> sendEffect(Effect.OpenSearch(focusSearch = true))
             is Event.SearchMealsByText -> filterMenu(event.searchText)
             is Event.SearchClearInput -> clearSearchInput()
@@ -73,11 +73,11 @@ class MenuViewModel @Inject constructor(
     private fun filterMenu(searchText: String? = null, filters: Any? = null) {
         if (!searchText.isNullOrEmpty()) {
             val filteredMenuItems = _state.value.menuItems.filter {
-                it is MenuRVItem.MealItem && it.meal.name.contains(searchText, ignoreCase = true)
+                it is MenuItem.MealItem && it.meal.name.contains(searchText, ignoreCase = true)
             }
                 .sortedWith( // Дополнительная сортировка, чтобы в начале от ображались избранные блюда
-                    compareByDescending<MenuRVItem> {
-                        (it as MenuRVItem.MealItem).meal.isFavorite
+                    compareByDescending<MenuItem> {
+                        (it as MenuItem.MealItem).meal.isFavorite
                     }
                 )
             _state.update {
@@ -150,31 +150,6 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    private fun onMealCustomizationClick(meal: Meal) {
-        sendEffect(Effect.OpenMealCustomization(meal))
-        _state.update { it.copy(isLoading = true) }
-
-        if (!state.value.pizzaAds.isEmpty()) {
-            _state.update { it.copy(isLoading = false) }
-        } else {
-            viewModelScope.launch {
-                menuInteractor.getAddons().collect { (adds, errorMessage) ->
-                    if (!adds.isNullOrEmpty()) {
-                        _state.update { it.copy(isLoading = false, pizzaAds = adds) }
-                    } else {
-                        // Обработка ошибки
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                errorMessage = errorMessage
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     // Методы управлением скроллом
     private fun scrollToCategory(newIndex: Int) {
         if (newIndex >= 0) {
@@ -205,7 +180,7 @@ class MenuViewModel @Inject constructor(
     // Взаимодействие с корзиной
     private fun addToCart(meal: Meal) {
         Cart.addItem(meal)
-        Log.d("DEBUG", "ViewModel addToCart for $meal")
+        Log.d("DEBUG", "MenuViewModel addToCart for $meal")
     }
 
     private fun removeFromCart(meal: Meal) {
@@ -239,7 +214,7 @@ class MenuViewModel @Inject constructor(
         viewModelScope.launch {
             var menuItems = state.value.menuItems
             val targetIndex = menuItems.indexOfFirst {
-                it is MenuRVItem.MealItem && it.meal.id == targetId
+                it is MenuItem.MealItem && it.meal.id == targetId
             }
             _state.update { it.copy(selectedMenuItemIndex = targetIndex) }
         }
@@ -274,17 +249,17 @@ class MenuViewModel @Inject constructor(
     }
 
     private fun updateMealItemInList(
-        list: List<MenuRVItem>,
+        list: List<MenuItem>,
         mealId: String,
         isFavorite: Boolean
-    ): List<MenuRVItem> {
+    ): List<MenuItem> {
         val index = list.indexOfFirst {
-            it is MenuRVItem.MealItem && it.meal.id == mealId
+            it is MenuItem.MealItem && it.meal.id == mealId
         }
         if (index == -1) return list
 
         val updatedList = list.toMutableList()
-        val mealItem = updatedList[index] as MenuRVItem.MealItem
+        val mealItem = updatedList[index] as MenuItem.MealItem
         updatedList[index] = mealItem.copy(
             meal = mealItem.meal.copy(isFavorite = isFavorite)
         )

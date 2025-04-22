@@ -17,11 +17,16 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.menu.domain.models.MealAdditional
 
 @Composable
-fun AddsItem(add: Meal, onEvent: (Event) -> Unit) {
+fun AddsItem(
+    add: MealAdditional,
+    onCheckedChange: (Boolean, MealAdditional) -> Unit,
+    isAdded: Boolean
+
+) {
+
     Column {
         Row(
             modifier = Modifier
@@ -30,10 +35,12 @@ fun AddsItem(add: Meal, onEvent: (Event) -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Checkbox(
-                checked = false,
-                onCheckedChange = { },
+                checked = isAdded,
+                onCheckedChange = {
+                    onCheckedChange(!isAdded, add)
+                },
                 enabled = true,
-                colors = CheckboxDefaults.colors()
+                colors = CheckboxDefaults.colors(checkedColor = Colors.Orange)
             )
             Text(text = add.name, style = Typography.RegularTextStyle)
             Spacer(modifier = Modifier.weight(1f))

@@ -20,7 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
@@ -43,7 +43,7 @@ fun MenuContentScreen(
     val selectedTabIndex = state.selectedTabIndex
     val selectedSubTabIndex = state.selectedSubTabIndex
     val selectedMenuItemIndex = state.selectedMenuItemIndex
-    val categories = menuItems.filterIsInstance<MenuRVItem.HeaderItem>()
+    val categories = menuItems.filterIsInstance<MenuItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
     val coroutineScope = rememberCoroutineScope()
     val isAtTop by remember {
@@ -107,10 +107,10 @@ fun MenuContentScreen(
         snapshotFlow { listState.layoutInfo.visibleItemsInfo }
             .collect { visibleItems ->
                 visibleItems.firstOrNull { it.offset >= 0 }?.index?.let { index ->
-                    (menuItems.getOrNull(index) as? MenuRVItem.MealItem)?.let { mealItem ->
+                    (menuItems.getOrNull(index) as? MenuItem.MealItem)?.let { mealItem ->
                         val parentCategory = menuItems
                             .takeWhile { it !== mealItem }
-                            .lastOrNull { it is MenuRVItem.HeaderItem } as? MenuRVItem.HeaderItem
+                            .lastOrNull { it is MenuItem.HeaderItem } as? MenuItem.HeaderItem
 
                         parentCategory?.let { category ->
                             val newIndex = categoriesNames.indexOf(category.categoryName)
@@ -120,7 +120,7 @@ fun MenuContentScreen(
                             // Ищем подкатегорию
                             val parentSubCategory = menuItems
                                 .takeWhile { it !== mealItem }
-                                .lastOrNull { it is MenuRVItem.SubHeaderItem } as? MenuRVItem.SubHeaderItem
+                                .lastOrNull { it is MenuItem.SubHeaderItem } as? MenuItem.SubHeaderItem
 
                             parentSubCategory?.let { subCategory ->
                                 val newSubIndex =
@@ -181,7 +181,7 @@ fun MenuContentScreen(
                 onEvent(Event.ScrollToCategory(index))
                 coroutineScope.launch {
                     val targetIndex = menuItems.indexOfFirst {
-                        it is MenuRVItem.HeaderItem && it.categoryName == categories[index].categoryName
+                        it is MenuItem.HeaderItem && it.categoryName == categories[index].categoryName
                     }
                     if (targetIndex >= 0) {
                         listState.scrollToItem(index = targetIndex, scrollOffset = 1)
@@ -208,7 +208,7 @@ fun MenuContentScreen(
                             onEvent(Event.ScrollToSubCategory(index))
                             coroutineScope.launch {
                                 val targetIndex = menuItems.indexOfFirst {
-                                    it is MenuRVItem.SubHeaderItem && it.categoryName == currentSubCategories[index]
+                                    it is MenuItem.SubHeaderItem && it.categoryName == currentSubCategories[index]
                                 }
                                 if (targetIndex >= 0) {
                                     listState.scrollToItem(

@@ -13,12 +13,12 @@ import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
 @Composable
 fun SearchResults(
-    filteredMenuItems: List<MenuRVItem>,
+    filteredMenuItems: List<MenuItem>,
     latestSearchText: String,
     onEvent: (Event) -> Unit,
     onMealClick: () -> Unit,

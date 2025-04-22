@@ -8,25 +8,29 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.AddsItem
-import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
 @Composable
 fun AddsList(
-    addsItems: List<Meal>?,
+    addsItems: List<MealAdditional>?,
+    chosenAdds: List<MealAdditional>,
     listState: LazyListState,
     modifier: Modifier,
-    onEvent: (Event) -> Unit,
+    onCheckedChange: (Boolean, MealAdditional) -> Unit
 ) {
-    if (addsItems != null)
+    if (!addsItems.isNullOrEmpty())
         LazyColumn(
             state = listState,
             modifier = modifier.padding(vertical = Dimens.MarginSmall8),
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
             itemsIndexed(addsItems) { index, item ->
-                AddsItem(add = item, onEvent = onEvent)
+                AddsItem(
+                    add = item,
+                    onCheckedChange = onCheckedChange,
+                    isAdded = chosenAdds.contains(item)
+                )
 
             }
         }

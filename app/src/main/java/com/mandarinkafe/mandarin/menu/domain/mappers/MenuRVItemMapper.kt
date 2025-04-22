@@ -1,15 +1,15 @@
 package com.mandarinkafe.mandarin.menu.domain.mappers
 
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 
 object MenuRVItemMapper {
 
-    fun menuToMenuItems(menu: List<MealCategory>?): List<MenuRVItem> {
-        val menuItems = buildList<MenuRVItem> {
+    fun menuToMenuItems(menu: List<MealCategory>?): List<MenuItem> {
+        val menuItems = buildList<MenuItem> {
             menu?.forEach { category ->
                 if (!category.subCategories.isNullOrEmpty()) {
-                    this += MenuRVItem.HeaderItem(
+                    this += MenuItem.HeaderItem(
                         categoryName = category.name,
                         subCategoriesNames = buildList {
                             category.subCategories.filter { !it.meals.isNullOrEmpty() }
@@ -22,13 +22,13 @@ object MenuRVItemMapper {
 
                     category.subCategories.forEach { subCategory ->
                         if (!subCategory.meals.isNullOrEmpty()) {
-                            this += MenuRVItem.SubHeaderItem(
+                            this += MenuItem.SubHeaderItem(
                                 categoryName = subCategory.name,
                                 description = subCategory.description,
                                 id = subCategory.id
                             )
                             this += subCategory.meals.map {
-                                MenuRVItem.MealItem(
+                                MenuItem.MealItem(
                                     meal = it
                                 )
                             }
@@ -36,7 +36,7 @@ object MenuRVItemMapper {
                     }
                 } else {
                     if (!category.meals.isNullOrEmpty()) {
-                        this += MenuRVItem.HeaderItem(
+                        this += MenuItem.HeaderItem(
                             categoryName = category.name,
                             subCategoriesNames = null,
                             tabIcon = category.tabIcon,
@@ -44,7 +44,7 @@ object MenuRVItemMapper {
                             id = category.id
                         )
                         this += category.meals.map {
-                            MenuRVItem.MealItem(
+                            MenuItem.MealItem(
                                 it
                             )
                         }

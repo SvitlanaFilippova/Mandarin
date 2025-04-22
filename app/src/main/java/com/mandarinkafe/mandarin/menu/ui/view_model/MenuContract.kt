@@ -1,8 +1,7 @@
 package com.mandarinkafe.mandarin.menu.ui.view_model
 
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 
@@ -38,8 +37,6 @@ sealed interface MenuContract {
         data object OnOpenFavoritesClick : Event
         data object OnLabelsClick : Event
 
-        // Meal Details
-
     }
 
     sealed interface Effect {
@@ -52,13 +49,12 @@ sealed interface MenuContract {
 
     data class State(
         val isLoading: Boolean = false,
-        val menuItems: List<MenuRVItem> = emptyList(),
-        val pizzaAds: List<MealCategory> = emptyList(),
+        val menuItems: List<MenuItem> = emptyList(),
         val errorMessage: String? = null,
         val selectedTabIndex: Int = DEFAULT_UNSELECTED_INDEX,
         val selectedSubTabIndex: Int = DEFAULT_UNSELECTED_INDEX,
         val selectedMenuItemIndex: Int = DEFAULT_UNSELECTED_INDEX,
-        val filteredMenuItems: List<MenuRVItem> = emptyList(),
+        val filteredMenuItems: List<MenuItem> = emptyList(),
         val latestSearchText: String = "",
     )
 }

@@ -13,10 +13,10 @@ import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 
 @Composable
-fun CategoryTabItem(category: MenuRVItem.HeaderItem, isSelected: Boolean, onClick: () -> Unit) {
+fun CategoryTabItem(category: MenuItem.HeaderItem, isSelected: Boolean, onClick: () -> Unit) {
     Tab(
         selected = isSelected,
         onClick = onClick,

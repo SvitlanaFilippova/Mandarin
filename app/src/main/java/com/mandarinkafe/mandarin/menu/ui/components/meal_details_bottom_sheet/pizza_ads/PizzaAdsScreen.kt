@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,26 +17,20 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.MealInfo
 import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.ToCartButton
-import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract
+import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract.Event
 
 @Composable
 fun PizzaAdsScreen(
-    meal: Meal,
+    state: MealDetailsContract.State,
     onEvent: (Event) -> Unit,
-    adds: List<MealCategory>,
-    onClose: () -> Unit,
 ) {
+    val meal = state.meal ?: return // если meal null — не отображаем ничего
+    val adds = state.pizzaAds
     val listState = rememberLazyListState()
-    var sumPrice by remember {
-        mutableIntStateOf(meal.price)
-    }
-    var selectedTabIndex by remember {
-        mutableIntStateOf(0)
-    }
+    val selectedTabIndex = state.selectedTabIndex
 
     Column(
         modifier = Modifier
@@ -49,9 +39,7 @@ fun PizzaAdsScreen(
     )
     {
         MealInfo(
-            meal = meal,
-            onToggleFavorite = { onEvent(Event.ToggleFavorite(meal)) },
-            onClose = onClose
+            meal = meal
         )
 
         Text(
@@ -66,13 +54,22 @@ fun PizzaAdsScreen(
         AddsCategoryTabsRow(
             categories = adds.map { it.name },
             selectedTabIndex = selectedTabIndex,
-            onTabSelected = { tab -> selectedTabIndex = tab }
+            onTabSelected = { index -> onEvent(Event.ChooseCategory(index)) }
         )
         AddsList(
             addsItems = adds[selectedTabIndex].meals,
+            chosenAdds = meal.adds,
             listState = listState,
             modifier = Modifier.weight(1f),
-            onEvent = { }
+            onCheckedChange = { isAdded, add ->
+                onEvent(
+                    Event.ChangeAdds(
+                        add = add,
+                        isAdded = isAdded
+                    )
+                )
+            },
+
         )
         Row(
             modifier = Modifier
@@ -88,12 +85,12 @@ fun PizzaAdsScreen(
             )
 
             Text(
-                text = stringResource(R.string.meal_price_template, sumPrice),
+                text = stringResource(R.string.meal_price_template, state.sumPrice),
                 style = Typography.MealPriceStyle
             )
         }
         ToCartButton(
-            onClick = {}
+            onClick = { onEvent(Event.AddToCart) }
         )
 
     }

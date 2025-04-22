@@ -10,6 +10,7 @@ object Constants {
     const val ANIMATION_DURATION_SLOW = 1000
     const val ANIMATION_DURATION_FAST = 300
     const val DEFAULT_UNSELECTED_INDEX = -1
+    const val DEFAULT_SELECTED_FIRST_INDEX = 0
 
     // Menu loading
     const val MAX_ATTEMPTS = 3
