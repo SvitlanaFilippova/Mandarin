@@ -5,15 +5,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,12 +40,14 @@ import com.mandarinkafe.mandarin.menu.domain.models.Label
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.Tag
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.FavoriteButton
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.ToCartButton
 import com.mandarinkafe.mandarin.menu.ui.components.tabs.SubCategoryTabItem
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
 @Preview
 @Composable
 fun PizzaAdsScreenPreview() {
+
     val meal = Meal(
         id = "1",
         name = "Маргарита",
@@ -70,21 +76,30 @@ fun PizzaAdsScreenPreview() {
 
 @Composable
 fun PizzaAdsScreen(meal: Meal) {
+    val listState = rememberLazyListState()
+    var sumPrice = meal.price
     Column(
-        modifier = Modifier.background(Colors.Transparent)
+        modifier = Modifier
+            .background(Colors.AppBlack)
+            .padding(Dimens.MarginSmall8)
     )
     {
         MealDetails(meal)
         AdsCategoryTabsRow(
-            categories = TODO(),
-            selectedTabIndex = TODO(),
-            onTabSelected = TODO()
+            categories = mockAddslist,
+            selectedTabIndex = 1,
+            onTabSelected = { }
         )
         AddsList(
-            addsItems = TODO(),
-            listState = TODO(),
-            modifier = TODO(),
-            onEvent = TODO()
+            addsItems = mockPizzaAdds,
+            listState = listState,
+            modifier = Modifier.weight(1f),
+            onEvent = { }
+        )
+        ToCartButton(
+            modifier = Modifier.fillMaxWidth(),
+            price = sumPrice,
+            onClick = { }
         )
     }
 }
@@ -92,10 +107,7 @@ fun PizzaAdsScreen(meal: Meal) {
 @Composable
 fun MealDetails(meal: Meal) {
 
-    Column(
-        modifier = Modifier
-            .padding(Dimens.MarginSmall8)
-    ) {
+    Column {
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -216,17 +228,125 @@ fun AddsList(
 ) {
     LazyColumn(
         state = listState,
-        modifier = modifier,
+        modifier = modifier.padding(vertical = Dimens.MarginSmall8),
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
         itemsIndexed(addsItems) { index, item ->
-            AddsItem(onEvent = onEvent)
+            AddsItem(add = item, onEvent = onEvent)
 
         }
     }
 }
 
 @Composable
-fun AddsItem(onEvent: (Event) -> Unit) {
+fun AddsItem(add: Meal, onEvent: (Event) -> Unit) {
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = add.name, style = Typography.RegularTextStyle)
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = stringResource(R.string.meal_price_template, add.price),
+                style = Typography.MealPriceStyle
+            )
+            Checkbox(
+                checked = false,
+                onCheckedChange = { },
+                enabled = true,
+                colors = CheckboxDefaults.colors()
+            )
+        }
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            thickness = Dimens.DividerHeight1,
+            color = Colors.Grey.copy(alpha = 0.1f)
+        )
+    }
 
 }
+
+val mockAddslist = listOf(
+    "Мясо", "Сыр", "Овощи", "Рыба и морепродукты"
+)
+val mockPizzaAdds = listOf(
+    Meal(
+        id = "9",
+        name = "Салями 50г",
+        description = "",
+        weight = 0,
+        price = 200,
+        imageUrl = "",
+        isFavorite = false,
+        tags = emptyList(),
+        labels = emptyList(),
+        isHidden = true,
+        isEditable = false
+    ), Meal(
+        id = "12",
+        name = "Бекон 30г",
+        description = "",
+        weight = 0,
+        price = 140,
+        imageUrl = "",
+        isFavorite = false,
+        tags = emptyList(),
+        labels = emptyList(),
+        isHidden = true,
+        isEditable = false
+    ),
+    Meal(
+        id = "123",
+        name = "Окорок 50г",
+        description = "",
+        weight = 0,
+        price = 180,
+        imageUrl = "",
+        isFavorite = false,
+        tags = emptyList(),
+        labels = emptyList(),
+        isHidden = true,
+        isEditable = false
+    ),
+    Meal(
+        id = "1",
+        name = "Моцарела 50г",
+        description = "",
+        weight = 0,
+        price = 100,
+        imageUrl = "",
+        isFavorite = false,
+        tags = emptyList(),
+        labels = emptyList(),
+        isHidden = true,
+        isEditable = false
+    ), Meal(
+        id = "12",
+        name = "Пармезан 30г",
+        description = "",
+        weight = 0,
+        price = 140,
+        imageUrl = "",
+        isFavorite = false,
+        tags = emptyList(),
+        labels = emptyList(),
+        isHidden = true,
+        isEditable = false
+    ),
+    Meal(
+        id = "123",
+        name = "Чеддер 50г",
+        description = "",
+        weight = 0,
+        price = 120,
+        imageUrl = "",
+        isFavorite = false,
+        tags = emptyList(),
+        labels = emptyList(),
+        isHidden = true,
+        isEditable = false
+    )
+)
