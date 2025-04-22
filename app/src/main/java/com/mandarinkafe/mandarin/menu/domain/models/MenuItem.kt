@@ -12,5 +12,5 @@ sealed interface MenuItem {
     data class SubHeaderItem(val categoryName: String, val description: String, val id: String) :
         MenuItem
 
-    data class MealItem(val meal: BaseMeal) : MenuItem
+    data class MealItem(val meal: Meal) : MenuItem
 }

@@ -17,6 +17,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
+import com.mandarinkafe.mandarin.menu.domain.mappers.toMealAdditional
 import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.MealInfo
 import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.ToCartButton
 import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract
@@ -57,7 +58,7 @@ fun PizzaAdsScreen(
             onTabSelected = { index -> onEvent(Event.ChooseCategory(index)) }
         )
         AddsList(
-            addsItems = adds[selectedTabIndex].meals,
+            addsItems = adds[selectedTabIndex].meals?.map { it.toMealAdditional() },
             chosenAdds = meal.adds,
             listState = listState,
             modifier = Modifier.weight(1f),
@@ -70,7 +71,7 @@ fun PizzaAdsScreen(
                 )
             },
 
-        )
+            )
         Row(
             modifier = Modifier
                 .fillMaxWidth()

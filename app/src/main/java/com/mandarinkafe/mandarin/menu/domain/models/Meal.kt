@@ -1,11 +1,11 @@
 package com.mandarinkafe.mandarin.menu.domain.models
 
 data class Meal(
-    override val id: String,
-    override val name: String,
-    override val weight: Int,
-    override val price: Int,
-    override val isHidden: Boolean,
+    val id: String,
+    val name: String,
+    val weight: Int,
+    val price: Int,
+    val isHidden: Boolean,
     val imageUrl: String,
     var isFavorite: Boolean,
     val description: String,
@@ -24,7 +24,6 @@ data class Meal(
     Показывает, должно ли блюдо отображаться в общем меню
      */
 
-
     /**
     Показывает, должен ли открываться дополнительный экран с кастомизацией блюда
      */
@@ -34,5 +33,4 @@ data class Meal(
     В списке будут хранится выбранные добавки для пиццы
      */
     val adds: List<MealAdditional> = emptyList<MealAdditional>()
-) : BaseMeal()
-
+)
