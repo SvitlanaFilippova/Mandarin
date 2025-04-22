@@ -19,7 +19,7 @@ fun FavoriteButton(
 ) {
     IconButton(
         onClick = { onToggleFavorite(meal) },
-        modifier = Modifier.size(Dimens.ButtonToCartSmall32)
+        modifier = Modifier.size(Dimens.ButtonBox32)
     ) {
         Icon(
             painter = painterResource(

@@ -11,6 +11,7 @@ object Dimens {
     val ButtonRadius16 = 16.dp
     val ButtonSmall24 = 24.dp
     val ButtonToCartSmall32 = 32.dp
+    val ButtonBox32 = 32.dp
     val ButtonToCartMedium80 = 80.dp
     val ButtonToCartBig120 = 120.dp
     val ButtonEditMeal32 = 32.dp
