@@ -24,7 +24,7 @@ fun CustomizeMealButton(
         contentAlignment = Alignment.Center
     ) {
         IconButton(
-            onClick = { onClick },
+            onClick = onClick,
             modifier = Modifier.size(Dimens.ButtonToCartSmall32)
         ) {
             Icon(

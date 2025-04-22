@@ -10,6 +10,12 @@ object Typography {
         color = Colors.White
     )
 
+    val ToCartButtonBigStyle = TextStyle(
+        fontSize = Dimens.TextSizeRegular16,
+        fontWeight = FontWeight.Normal,
+        color = Colors.White
+    )
+
     val RegularTextStyle = TextStyle(
         fontSize = Dimens.TextSizeRegular16,
         fontWeight = FontWeight.Normal,

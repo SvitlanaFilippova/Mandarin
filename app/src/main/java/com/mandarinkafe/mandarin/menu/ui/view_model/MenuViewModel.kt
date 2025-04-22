@@ -54,7 +54,7 @@ class MenuViewModel @Inject constructor(
             is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is Event.ScrollToTop -> scrollToTop()
             is Event.BannerClick -> findMenuItemIndexByName(event.targetName)
-            is Event.OnMealCustomizationClick -> sendEffect(Effect.OpenMealCustomization(event.meal))
+            is Event.OnMealCustomizationClick -> onMealCustomizationClick(event.meal)
             is Event.SearchOnOpenSearchClick -> sendEffect(Effect.OpenSearch(focusSearch = true))
             is Event.SearchMealsByText -> filterMenu(event.searchText)
             is Event.SearchClearInput -> clearSearchInput()
@@ -147,6 +147,31 @@ class MenuViewModel @Inject constructor(
         viewModelScope.launch {
             menuInteractor.forceRefresh()
             loadMenu()
+        }
+    }
+
+    private fun onMealCustomizationClick(meal: Meal) {
+        sendEffect(Effect.OpenMealCustomization(meal))
+        _state.update { it.copy(isLoading = true) }
+
+        if (!state.value.pizzaAds.isEmpty()) {
+            _state.update { it.copy(isLoading = false) }
+        } else {
+            viewModelScope.launch {
+                menuInteractor.getAddons().collect { (adds, errorMessage) ->
+                    if (!adds.isNullOrEmpty()) {
+                        _state.update { it.copy(isLoading = false, pizzaAds = adds) }
+                    } else {
+                        // Обработка ошибки
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = errorMessage
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 

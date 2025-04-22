@@ -160,7 +160,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     )
 
     fun LabelDto.toDomain() = Label(
-        code = code,
+        id = code,
         name = name
     )
 }

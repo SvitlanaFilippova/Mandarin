@@ -25,8 +25,8 @@ import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
 import com.mandarinkafe.mandarin.menu.ui.components.SearchAndFilterBar
-import com.mandarinkafe.mandarin.menu.ui.components.tabs.CategoryTabsRow
-import com.mandarinkafe.mandarin.menu.ui.components.tabs.SubCategoryTabsRow
+import com.mandarinkafe.mandarin.menu.ui.components.category_tabs.CategoryTabsRow
+import com.mandarinkafe.mandarin.menu.ui.components.category_tabs.SubCategoryTabsRow
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 import com.mandarinkafe.mandarin.util.ui.ScrollPosition

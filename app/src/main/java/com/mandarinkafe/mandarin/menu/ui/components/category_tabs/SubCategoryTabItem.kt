@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components.tabs
+package com.mandarinkafe.mandarin.menu.ui.components.category_tabs
 
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text

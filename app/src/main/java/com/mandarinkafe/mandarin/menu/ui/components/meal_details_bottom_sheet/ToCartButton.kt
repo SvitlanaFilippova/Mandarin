@@ -1,9 +1,9 @@
-package com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons
+package com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -21,7 +21,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 
 @Composable
-fun ToCartButton(price: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun ToCartButton(onClick: () -> Unit) {
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
@@ -29,9 +29,9 @@ fun ToCartButton(price: Int, onClick: () -> Unit, modifier: Modifier = Modifier)
             containerColor = Colors.Orange,
             contentColor = Color.White
         ),
-        modifier = modifier
-            .widthIn(min = Dimens.ButtonToCartBig120)
-            .height(Dimens.ButtonToCartSmall32)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(Dimens.ButtonToCartMedium40)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -43,8 +43,9 @@ fun ToCartButton(price: Int, onClick: () -> Unit, modifier: Modifier = Modifier)
                 tint = Color.White
             )
             Text(
-                stringResource(id = R.string.meal_price_template, price),
-                style = Typography.ToCartButtonStyle
+                stringResource(id = R.string.to_cart),
+                style = Typography.ToCartButtonBigStyle
+
             )
         }
     }

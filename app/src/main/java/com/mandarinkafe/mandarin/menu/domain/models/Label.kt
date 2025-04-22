@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.menu.domain.models
 
 data class Label(
-    val code: String,
+    val id: String,
     val name: String
 )

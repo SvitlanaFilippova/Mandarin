@@ -76,7 +76,7 @@ fun MenuMealItem(
                     maxLinesCollapsed = 3
                 )
 
-                if (meal.description != null) {
+                if (meal.description.isNotEmpty()) {
                     ExpandableText(
                         text = meal.description,
                         style = Typography.MealSmallTextStyle,
@@ -85,7 +85,7 @@ fun MenuMealItem(
                         maxLinesCollapsed = 4
                     )
                 }
-                if (meal.weight != null && meal.weight != 0) {
+                if (meal.weight != 0) {
                     Text(
                         text = stringResource(R.string.meal_weight_template, meal.weight),
                         style = Typography.MealSmallTextStyle
