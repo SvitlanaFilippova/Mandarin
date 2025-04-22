@@ -1,9 +1,9 @@
-package com.mandarinkafe.mandarin.menu.domain
+package com.mandarinkafe.mandarin.menu.domain.mappers
 
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 
-object MenuToMenuItemsConverter {
+object MenuRVItemMapper {
 
     fun menuToMenuItems(menu: List<MealCategory>?): List<MenuRVItem> {
         val menuItems = buildList<MenuRVItem> {

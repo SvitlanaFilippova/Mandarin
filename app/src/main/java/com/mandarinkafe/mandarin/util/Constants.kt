@@ -22,10 +22,14 @@ object Constants {
     // API
     const val BEARER_PREFIX = "Bearer "
 
-    //Контакты - вынести в конфиг для возможности изменений извне
+    // Контакты - вынести в конфиг для возможности изменений извне
     const val PHONE_NUMBER = "tel:+74951087055"
 
-    //Внутренние теги для особой логики в меню
-    const val PIZZA_ADDS = "добавки к пицце"
-    const val WOK_CONSTRUCTOR = "конструктор вок"
+    // Внутренние теги для особой логики в меню
+    const val TAG_PIZZA_ADDS = "добавки к пицце"
+    const val TAG_WOK_CONSTRUCTOR = "конструктор вок"
+
+    // Для обработки особых категорий по их названиям
+    const val CATEGORY_PIZZA_ADDS = "добавки"
+    const val CATEGORY_RECOMMENDS = "рекоменд"
 }
