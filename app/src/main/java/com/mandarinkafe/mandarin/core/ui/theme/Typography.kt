@@ -16,6 +16,12 @@ object Typography {
         color = Colors.White
     )
 
+    val TitleStyle = TextStyle(
+        fontSize = Dimens.TextSizeBig20,
+        fontWeight = FontWeight(800),
+        color = Colors.White
+    )
+
     val MealSmallTextStyle = TextStyle(
         fontSize = Dimens.TextSizeSmall11,
         fontWeight = FontWeight.Normal,
@@ -37,20 +43,10 @@ object Typography {
         color = Colors.White,
         fontWeight = FontWeight(800)
     )
-    val MenuSubCategoryStyle = TextStyle(
-        fontSize = Dimens.TextSizeBig20,
-        color = Colors.White,
-        fontWeight = FontWeight(800)
-    )
+    val MenuSubCategoryStyle = TitleStyle
 
     val MealPriceStyle = TextStyle(
         fontSize = Dimens.TextSizeRegular16,
-        color = Colors.White
-    )
-
-    val PlaceholderButtonStyle = TextStyle(
-        fontSize = Dimens.TextSizeRegular16,
-        fontWeight = FontWeight.Medium,
         color = Colors.White
     )
 }

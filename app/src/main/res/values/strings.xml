@@ -16,12 +16,9 @@
     <string name="add_to_favorite">Добавить в избранное</string>
     <string name="favorite">Избранное</string>
 
-    <!-- Категории еды -->
-    <string name="sushi">Суши</string>
-    <string name="pizza">Пицца</string>
-    <string name="hamburger">Гамбургеры</string>
-    <string name="hot_dog">Хот-доги</string>
-    <string name="fast_roll">Фаст-роллы</string>
+    <!-- Детали блюда -->
+    <string name="adds">Добавки</string>
+
 
     <!-- Доставка -->
     <string name="delivery">Доставка</string>
@@ -60,14 +57,6 @@
     <string name="error_server_error">Ошибка сервера</string>
     <string name="error_something_wrong">Что-то пошло не так :(</string>
 
-    <!-- Длинный текст -->
-    <string name="large_text">
-        "Material is the metaphor.\n\n"
-
-        "A material metaphor is the unifying theory of a rationalized space and a system of motion."
-        "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
-        "technologically advanced and open to imagination and magic.\n"
-    </string>
 
     <!-- Для contentDescription  -->
     <string name="picture_of_meal_template">Изображение %1$s</string>

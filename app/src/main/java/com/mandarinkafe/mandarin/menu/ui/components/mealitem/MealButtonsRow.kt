@@ -45,10 +45,10 @@ fun MealButtonsRow(
                 }
             )
         } else {
-            ToCartButton(meal.price) {
+            ToCartButton(meal.price, onClick = {
                 isInTheCart = true
                 onEvent(Event.AddToCart(meal))
-            }
+            })
         }
 
         if (meal.isEditable) {
