@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.favorites.domain.impl.FavoritesInteractorImpl
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.menu.domain.impl.MenuInteractorImpl
+import com.mandarinkafe.mandarin.menu.domain.usecase.CategoryFilter
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import dagger.Module
 import dagger.Provides
@@ -21,7 +22,15 @@ class DomainModule {
     }
 
     @Provides
-    fun provideMenuInteractor(repository: MenuRepository): MenuInteractor {
-        return MenuInteractorImpl(repository)
+    fun provideMenuInteractor(
+        repository: MenuRepository,
+        @Recommends recommendsFilter: CategoryFilter,
+        @Addons addonsFilter: CategoryFilter
+    ): MenuInteractor {
+        return MenuInteractorImpl(
+            repository = repository,
+            recommendsFilter = recommendsFilter,
+            addonsFilter = addonsFilter
+        )
     }
 }
