@@ -245,10 +245,10 @@ class MenuViewModel @Inject constructor(
     private fun toggleFavorite(meal: Meal) {
         viewModelScope.launch {
             val isNowFavorite = if (meal.isFavorite) {
-                favoritesInteractor.removeFromFavorites(meal)
+                favoritesInteractor.removeFromFavorites(meal.toFavoriteMeal())
                 false
             } else {
-                favoritesInteractor.addToFavorites(meal)
+                favoritesInteractor.addToFavorites(meal.toFavoriteMeal())
                 true
             }
 
@@ -289,6 +289,11 @@ class MenuViewModel @Inject constructor(
                 filteredMenuItems = updatedFilteredMenuItems
             )
         }
+    }
+
+    // Получить список избранных блюд
+    fun getFavorites(): List<MenuItem> {
+        return favoritesInteractor.getFavorites().map { it.toMealItem() }
     }
 
     private fun updateMealItemInList(
