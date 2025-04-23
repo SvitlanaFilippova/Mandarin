@@ -15,4 +15,17 @@
     <color name="white_transparent_75">#BFFFFFFF</color>
     <color name="transparent">#00000000</color>
 
+    <!-- Цвета областей доставки -->
+    <color name="first_area">#AA0B7B6B</color>
+    <color name="second_area">#AA195A42</color>
+    <color name="third_area">#AA376946</color>
+    <color name="fourth_area">#AA637334</color>
+    <color name="fifth_area">#AA978829</color>
+    <color name="sixth_area">#AA9C7345</color>
+    <color name="seventh_area">#AA8D3A34</color>
+    <color name="eighth_area">#AA8A1832</color>
+    <color name="ninth_area">#AA83155C</color>
+    <color name="tenth_area">#AA482366</color>
+    <color name="eleventh_area">#AA214464</color>
+    <color name="twelfth_area">#AA2E2B70</color>
 </resources>

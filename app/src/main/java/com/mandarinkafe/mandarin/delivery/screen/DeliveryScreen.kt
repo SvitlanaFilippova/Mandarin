@@ -1,13 +1,11 @@
 package com.mandarinkafe.mandarin.delivery.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,11 +24,14 @@ fun DeliveryScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Colors.AppBlack)
-            .scrollable(rememberScrollState(), orientation = Orientation.Vertical),
+            .background(Colors.AppBlack),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(modifier = Modifier.padding(horizontal = Dimens.MarginStandard16)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = Dimens.MarginStandard16)
+        ) {
             Text(
                 text = context.getString(R.string.delivery_price),
                 fontSize = Dimens.TextSizeRegular16,
@@ -80,6 +81,11 @@ fun DeliveryScreen() {
                 modifier = Modifier.padding(vertical = Dimens.MarginSuperSmall4)
             )
         }
-        LocationPicker()
+        Box(
+            modifier = Modifier
+                .weight(1f)
+        ) {
+            LocationPicker()
+        }
     }
 }
