@@ -5,7 +5,6 @@ data class Meal(
     val name: String,
     val weight: Int,
     val price: Int,
-    val isHidden: Boolean,
     val imageUrl: String,
     var isFavorite: Boolean,
     val description: String,
@@ -23,14 +22,21 @@ data class Meal(
     /**
     Показывает, должно ли блюдо отображаться в общем меню
      */
+    val isHidden: Boolean,
 
     /**
-    Показывает, должен ли открываться дополнительный экран с кастомизацией блюда
+    Тип дополнительного экрана, который должен открываться при клике на блюдо
      */
-    val isEditable: Boolean,
+    val type: MealType,
 
     /**
-    В списке будут хранится выбранные добавки для пиццы
+    Группы модификаторов, применимых для блюда
+     */
+    val modifiers: List<ModifierGroup>,
+
+    /**
+    Выбранные добавок для пиццы
      */
     val adds: List<MealAdditional> = emptyList<MealAdditional>()
+
 )

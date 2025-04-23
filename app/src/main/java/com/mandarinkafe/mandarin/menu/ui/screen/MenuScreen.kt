@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.menu.ui.screen
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -81,7 +80,6 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), navController: NavHos
             onDismiss = onDismiss,
             onFavoriteChanged = { id, isFavorite ->
                 viewModel.onEvent(MenuContract.Event.UpdateMealFavorite(id, isFavorite))
-                Log.d("DEBUG updateFavorite", "Вызов колбека onFavoriteChanged в MenuScreen")
             }
         )
     }

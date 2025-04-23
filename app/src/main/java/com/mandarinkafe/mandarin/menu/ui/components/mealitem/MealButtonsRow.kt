@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.MealType
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControls
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CustomizeMealButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.FavoriteButton
@@ -51,7 +52,7 @@ fun MealButtonsRow(
             })
         }
 
-        if (meal.isEditable) {
+        if (meal.type == MealType.PIZZA) {
             CustomizeMealButton(
                 modifier = Modifier.weight(1f),
                 onClick = {
