@@ -77,7 +77,9 @@ class MealDetailsViewModel @Inject constructor(
     }
 
     private fun setMeal(meal: Meal) {
-        _state.update { it.copy(meal = meal) }
+        _state.update {
+            if (it.meal == null) it.copy(meal = meal) else it
+        }
     }
 
     private fun changeAdds(add: MealAdditional, isAdded: Boolean) {
