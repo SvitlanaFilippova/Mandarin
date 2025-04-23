@@ -3,11 +3,11 @@ package com.mandarinkafe.mandarin.menu.domain.models
 data class Meal(
     val id: String,
     val name: String,
-    val description: String,
     val weight: Int,
     val price: Int,
     val imageUrl: String,
     var isFavorite: Boolean,
+    val description: String,
 
     /**
     Внутренние теги для особой обработки блюда в меню
@@ -25,7 +25,18 @@ data class Meal(
     val isHidden: Boolean,
 
     /**
-    Показывает, должен ли открываться дополнительный экран с кастомизацией блюда
+    Тип дополнительного экрана, который должен открываться при клике на блюдо
      */
-    val isEditable: Boolean
+    val editableType: EditableType?,
+
+    /**
+    Группы модификаторов, применимых для блюда
+     */
+    val modifiers: List<ModifierGroup>,
+
+    /**
+    Выбранные добавок для пиццы
+     */
+    val adds: List<MealAdditional> = emptyList<MealAdditional>()
+
 )

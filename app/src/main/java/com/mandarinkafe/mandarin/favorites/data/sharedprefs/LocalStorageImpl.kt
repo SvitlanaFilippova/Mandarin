@@ -10,9 +10,6 @@ import javax.inject.Inject
 
 class LocalStorageImpl @Inject constructor(private val sharedPreferences: SharedPreferences) :
     LocalStorage {
-    private companion object {
-        const val FAVORITES_KEY = "FAVORITES_KEY"
-    }
 
     override fun addToFavorites(meal: FavoriteMeal) {
         val updatedFavorites = getFavorites().toMutableSet().apply { add(meal) }
@@ -29,12 +26,21 @@ class LocalStorageImpl @Inject constructor(private val sharedPreferences: Shared
     }
 
     override fun getFavorites(): Set<FavoriteMeal> {
-        val json = sharedPreferences.getString(FAVORITES_KEY, null)
-        val listType = object : TypeToken<Set<FavoriteMeal>>() {}.type
-        return if (json.isNullOrEmpty()) {
+        return try {
+            val json = sharedPreferences.getString(FAVORITES_KEY, null)
+            val listType = object : TypeToken<Set<FavoriteMeal>>() {}.type
+            if (json.isNullOrEmpty()) {
+                mutableSetOf()
+            } else {
+                Gson().fromJson(json, listType) ?: mutableSetOf()
+            }
+        } catch (e: ClassCastException) {
+            sharedPreferences.edit().remove(FAVORITES_KEY).apply()
             mutableSetOf()
-        } else {
-            Gson().fromJson(json, listType) ?: mutableSetOf()
         }
+    }
+
+    private companion object {
+        const val FAVORITES_KEY = "FAVORITES_KEY"
     }
 }

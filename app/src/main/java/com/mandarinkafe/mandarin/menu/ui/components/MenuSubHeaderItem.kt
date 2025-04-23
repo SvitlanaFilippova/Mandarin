@@ -12,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.util.ui.components.ExpandableText
 
 @Composable
-fun MenuSubHeaderItem(item: MenuRVItem.SubHeaderItem, hasHeaderBefore: Boolean) {
+fun MenuSubHeaderItem(item: MenuItem.SubHeaderItem, hasHeaderBefore: Boolean) {
     var isDescriptionExpanded by remember {
         mutableStateOf(false)
     }

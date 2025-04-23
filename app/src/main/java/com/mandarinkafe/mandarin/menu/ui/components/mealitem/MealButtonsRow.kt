@@ -13,11 +13,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
+import com.mandarinkafe.mandarin.menu.domain.models.EditableType
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControls
-import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CustomizeMealButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.FavoriteButton
-import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.ToCartButton
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.PizzaAddsButton
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.ToCartButtonWithPrice
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
 @Composable
@@ -45,24 +46,26 @@ fun MealButtonsRow(
                 }
             )
         } else {
-            ToCartButton(meal.price) {
+            ToCartButtonWithPrice(meal.price, onClick = {
                 isInTheCart = true
                 onEvent(Event.AddToCart(meal))
-            }
+            })
         }
 
-        if (meal.isEditable) {
-            CustomizeMealButton(
+        if (meal.editableType == EditableType.PIZZA) {
+            PizzaAddsButton(
                 modifier = Modifier.weight(1f),
-                onClick = { onEvent(Event.OnMealCustomizationClick(meal)) }
+                onClick = {
+                    onEvent(Event.OnMealCustomizationClick(meal))
+                }
             )
         } else {
             Spacer(modifier = Modifier.weight(1f))
         }
 
         FavoriteButton(
-            meal = meal,
-            onToggleFavorite = { onEvent(Event.ToggleFavorite(meal)) }
+            isFavorite = meal.isFavorite,
+            onClick = { onEvent(Event.ToggleFavorite(meal)) }
         )
     }
 }

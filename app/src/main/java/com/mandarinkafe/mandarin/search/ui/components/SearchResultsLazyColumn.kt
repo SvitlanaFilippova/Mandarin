@@ -7,12 +7,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
 @Composable
 fun SearchResultsLazyColumn(
-    filteredMenuItems: List<MenuRVItem>,
+    filteredMenuItems: List<MenuItem>,
     onMealClick: (Meal) -> Unit,
     onEvent: (Event) -> Unit
 ) {
@@ -20,7 +20,7 @@ fun SearchResultsLazyColumn(
         modifier = Modifier.padding(Dimens.MarginStandard16),
     ) {
         itemsIndexed(filteredMenuItems) { index, item ->
-            if (item is MenuRVItem.MealItem) {
+            if (item is MenuItem.MealItem) {
                 SearchResultsMealItem(
                     meal = item.meal,
                     onEvent = onEvent,

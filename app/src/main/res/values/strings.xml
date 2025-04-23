@@ -16,12 +16,11 @@
     <string name="add_to_favorite">Добавить в избранное</string>
     <string name="favorite">Избранное</string>
 
-    <!-- Категории еды -->
-    <string name="sushi">Суши</string>
-    <string name="pizza">Пицца</string>
-    <string name="hamburger">Гамбургеры</string>
-    <string name="hot_dog">Хот-доги</string>
-    <string name="fast_roll">Фаст-роллы</string>
+    <!-- Детали блюда -->
+    <string name="adds">Добавки</string>
+    <string name="to_cart">В корзину</string>
+    <string name="price_with_adds">Цена с добавками</string>
+
 
     <!-- Доставка -->
     <string name="delivery">Доставка</string>
@@ -42,6 +41,12 @@
     <string name="filter_by_label">Фильтровать по тегам</string>
     <string name="clear_text">Очистить текст</string>
 
+
+    <!-- Кастомизация бюлюда -->
+    <string name="add_additionals">Добавить начинку</string>
+    <string name="choose">Выбрать</string>
+    <string name="create_own_box">Собрать свою коробочку</string>
+
     <!-- Шаблоны текста -->
     <string name="default_price_for_button">000 ₽</string>
     <string name="meal_weight_template">%1$d г</string>
@@ -60,14 +65,6 @@
     <string name="error_server_error">Ошибка сервера</string>
     <string name="error_something_wrong">Что-то пошло не так :(</string>
 
-    <!-- Длинный текст -->
-    <string name="large_text">
-        "Material is the metaphor.\n\n"
-
-        "A material metaphor is the unifying theory of a rationalized space and a system of motion."
-        "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
-        "technologically advanced and open to imagination and magic.\n"
-    </string>
 
     <!-- Для contentDescription  -->
     <string name="picture_of_meal_template">Изображение %1$s</string>

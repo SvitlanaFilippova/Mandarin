@@ -10,20 +10,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 @Composable
 fun FavoriteButton(
-    meal: Meal,
-    onToggleFavorite: (Meal) -> Unit = {},
+    isFavorite: Boolean,
+    onClick: () -> Unit
 ) {
     IconButton(
-        onClick = { onToggleFavorite(meal) },
-        modifier = Modifier.size(Dimens.ButtonToCartSmall32)
+        onClick = onClick,
+        modifier = Modifier.size(Dimens.ButtonBox32)
     ) {
         Icon(
             painter = painterResource(
-                if (meal.isFavorite) R.drawable.ic_favorite_active
+                if (isFavorite) R.drawable.ic_favorite_active
                 else R.drawable.ic_favorite_inactive
             ),
             contentDescription = stringResource(R.string.add_to_favorite),

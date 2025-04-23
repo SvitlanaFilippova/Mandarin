@@ -15,7 +15,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 
 @Composable
-fun CustomizeMealButton(
+fun PizzaAddsButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -24,7 +24,7 @@ fun CustomizeMealButton(
         contentAlignment = Alignment.Center
     ) {
         IconButton(
-            onClick = { onClick },
+            onClick = onClick,
             modifier = Modifier.size(Dimens.ButtonToCartSmall32)
         ) {
             Icon(

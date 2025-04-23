@@ -5,12 +5,18 @@ import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.data.dto.CategoryDto
 import com.mandarinkafe.mandarin.menu.data.dto.LabelDto
 import com.mandarinkafe.mandarin.menu.data.dto.MealDto
+import com.mandarinkafe.mandarin.menu.data.dto.ModifierGroupDto
+import com.mandarinkafe.mandarin.menu.data.dto.ModifierItemDto
 import com.mandarinkafe.mandarin.menu.data.dto.TagDto
+import com.mandarinkafe.mandarin.menu.domain.models.EditableType
 import com.mandarinkafe.mandarin.menu.domain.models.Label
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
+import com.mandarinkafe.mandarin.menu.domain.models.ModifierGroup
+import com.mandarinkafe.mandarin.menu.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.menu.domain.models.Tag
 import com.mandarinkafe.mandarin.util.Constants.TAG_PIZZA_ADDS
+import com.mandarinkafe.mandarin.util.Constants.TAG_WOK_CONSTRUCTOR
 import com.mandarinkafe.mandarin.util.applyTypography
 
 class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
@@ -87,6 +93,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
         val firstSize = itemSizes?.firstOrNull()
         val safeWeight = firstSize?.portionWeightGrams?.toInt() ?: 0
         val safePrice = firstSize?.prices?.firstOrNull()?.price?.toInt() ?: 0
+        val safeModifiers = firstSize?.itemModifierGroups?.map { it.toDomain() } ?: emptyList()
         val safeImageUrl = firstSize?.buttonImageUrl ?: ""
 
         val mealLabels = (labels ?: emptyList()).map { it.toDomain() }
@@ -104,13 +111,22 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
             isFavorite = storedFavorites.contains(itemId),
             labels = finalMealLabels,
             tags = finalMealTags,
-            isEditable = checkIfEditable(finalMealTags),
             isHidden = isHidden == true,
+            modifiers = safeModifiers,
+            editableType = checkMealType(finalMealTags, safeModifiers),
         )
     }
 
-    private fun checkIfEditable(tags: List<Tag>): Boolean {
-        return tags.any { it.name.equals(TAG_PIZZA_ADDS, ignoreCase = true) }
+    private fun checkMealType(tags: List<Tag>, modifiers: List<ModifierGroup>): EditableType? {
+        if (tags.any { it.name.equals(TAG_PIZZA_ADDS, ignoreCase = true) }) {
+            return EditableType.PIZZA
+        } else
+            if (tags.any { it.name.equals(TAG_WOK_CONSTRUCTOR, ignoreCase = true) }) {
+                return EditableType.WOK
+            } else if (modifiers.isNotEmpty()) {
+                return EditableType.MODIFIABLE
+            } else
+                return null
     }
 
     private fun groupSubcategories(menuDto: List<CategoryDto>): Map<String, List<CategoryDto>> {
@@ -158,7 +174,30 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     )
 
     fun LabelDto.toDomain() = Label(
-        code = code,
+        id = code,
         name = name
     )
+
+    fun ModifierItemDto.toDomain(): ModifierItem {
+
+        val safeWeight = portionWeightGrams?.toInt() ?: 0
+        val safePrice = prices?.firstOrNull()?.price?.toInt() ?: 0
+
+        return ModifierItem(
+            id = itemId ?: "",
+            name = name ?: "",
+            sku = sku ?: "",
+            isHidden = isHidden == true,
+            weight = safeWeight,
+            price = safePrice
+        )
+    }
+
+    fun ModifierGroupDto.toDomain() = ModifierGroup(
+        id = itemGroupId ?: "",
+        name = name ?: "",
+        sku = sku ?: "",
+        items = items?.map { it.toDomain() } ?: emptyList()
+    )
+
 }

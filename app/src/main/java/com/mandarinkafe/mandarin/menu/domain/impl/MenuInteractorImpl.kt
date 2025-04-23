@@ -4,7 +4,10 @@ import com.mandarinkafe.mandarin.di.Addons
 import com.mandarinkafe.mandarin.di.Recommends
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.menu.domain.mappers.MenuRVItemMapper
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.mappers.toMealAdditionalCategory
+import com.mandarinkafe.mandarin.menu.domain.models.MealAdditionalCategory
+import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.domain.usecase.CategoryFilter
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.util.Resource
@@ -17,7 +20,7 @@ class MenuInteractorImpl(
     @Addons private val addonsFilter: CategoryFilter
 ) : MenuInteractor {
 
-    override fun getMenu(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.getMenu()
+    override fun getMenu(): Flow<Pair<List<MenuItem>?, String?>> = repository.getMenu()
         .map { result ->
             when (result) {
                 is Resource.Success -> {
@@ -36,12 +39,18 @@ class MenuInteractorImpl(
             }
         }
 
-    override fun getAddons(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.getMenu()
+    override fun getAddons(): Flow<Pair<List<MealAdditionalCategory>?, String?>> =
+        repository.getMenu()
         .map { result ->
             when (result) {
                 is Resource.Success -> {
-                    val addons = result.data?.filter { addonsFilter.isMatch(it) }
-                    Pair(MenuRVItemMapper.menuToMenuItems(addons), null)
+                    val addonsParents = result.data?.filter { addonsFilter.isMatch(it) }
+                    val addonsCategories: List<MealCategory> = addonsParents
+                        ?.flatMap {
+                            it.subCategories ?: emptyList()
+                        } ?: emptyList()
+
+                    Pair(addonsCategories.map { it.toMealAdditionalCategory() }, null)
                 }
 
                 is Resource.Error -> {
@@ -54,7 +63,7 @@ class MenuInteractorImpl(
             }
         }
 
-    override fun getRecommends(): Flow<Pair<List<MenuRVItem>?, String?>> = repository.getMenu()
+    override fun getRecommends(): Flow<Pair<List<MenuItem>?, String?>> = repository.getMenu()
         .map { result ->
             when (result) {
                 is Resource.Success -> {

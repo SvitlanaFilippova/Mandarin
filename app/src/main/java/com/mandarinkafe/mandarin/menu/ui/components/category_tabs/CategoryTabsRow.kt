@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components.tabs
+package com.mandarinkafe.mandarin.menu.ui.components.category_tabs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,11 +10,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 
 @Composable
 fun CategoryTabsRow(
-    categories: List<MenuRVItem.HeaderItem>,
+    categories: List<MenuItem.HeaderItem>,
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit
 ) {

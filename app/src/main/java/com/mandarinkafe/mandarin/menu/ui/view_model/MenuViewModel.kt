@@ -8,10 +8,14 @@ import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toFavorite
 import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toMealItem
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.domain.models.getName
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.CallPhone
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.OpenFavorites
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.OpenMealDetailsBS
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.OpenSearch
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.Constants.DELAY_BEFORE_NEXT_ATTEMPT
@@ -49,6 +53,7 @@ class MenuViewModel @Inject constructor(
         when (event) {
             is Event.LoadMenu -> loadMenu()
             is Event.ForceRefreshMenu -> forceRefreshMenu()
+            is Event.OnPhoneClick -> sendEffect(CallPhone)
             is Event.ToggleFavorite -> toggleFavorite(event.meal)
             is Event.AddToCart -> addToCart(event.meal)
             is Event.RemoveFromCart -> removeFromCart(event.meal)
@@ -56,14 +61,30 @@ class MenuViewModel @Inject constructor(
             is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is Event.ScrollToTop -> scrollToTop()
             is Event.BannerClick -> findMenuItemIndexByName(event.targetName)
-            is Event.OnMealCustomizationClick -> sendEffect(Effect.OpenMealCustomization(event.meal))
-            is Event.SearchOnOpenSearchClick -> sendEffect(Effect.OpenSearch(focusSearch = true))
+            is Event.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
             is Event.SearchMealsByText -> filterMenu(event.searchText)
             is Event.SearchClearInput -> clearSearchInput()
             is Event.SearchOnMealClick -> findMealIndexById(event.targetId)
-            is Event.OnOpenFavoritesClick -> sendEffect(Effect.OpenFavorites)
-            is Event.OnPhoneClick -> sendEffect(Effect.CallPhone)
-            is Event.OnLabelsClick -> sendEffect(Effect.OpenSearch(focusSearch = false))
+            is Event.OnOpenFavoritesClick -> sendEffect(OpenFavorites)
+            is Event.OnLabelsClick -> sendEffect(OpenSearch(focusSearch = false))
+            is Event.UpdateMealFavorite -> updateMealFavorite(
+                id = event.id,
+                isFavorite = event.isFavorite
+            )
+
+            is Event.OnMealCustomizationClick -> sendEffect(
+                OpenMealDetailsBS(
+                    meal = event.meal,
+                    shouldOpenCustomization = true
+                )
+            )
+
+            is Event.OnMealDetailsClick -> sendEffect(
+                OpenMealDetailsBS(
+                    meal = event.meal,
+                    shouldOpenCustomization = false
+                )
+            )
         }
     }
 
@@ -75,11 +96,11 @@ class MenuViewModel @Inject constructor(
     private fun filterMenu(searchText: String? = null, filters: Any? = null) {
         if (!searchText.isNullOrEmpty()) {
             val filteredMenuItems = _state.value.menuItems.filter {
-                it is MenuRVItem.MealItem && it.meal.name.contains(searchText, ignoreCase = true)
+                it is MenuItem.MealItem && it.meal.name.contains(searchText, ignoreCase = true)
             }
                 .sortedWith( // Дополнительная сортировка, чтобы в начале от ображались избранные блюда
-                    compareByDescending<MenuRVItem> {
-                        (it as MenuRVItem.MealItem).meal.isFavorite
+                    compareByDescending<MenuItem> {
+                        (it as MenuItem.MealItem).meal.isFavorite
                     }
                 )
             _state.update {
@@ -182,7 +203,7 @@ class MenuViewModel @Inject constructor(
     // Взаимодействие с корзиной
     private fun addToCart(meal: Meal) {
         Cart.addItem(meal)
-        Log.d("DEBUG", "ViewModel addToCart for $meal")
+        Log.d("DEBUG", "MenuViewModel addToCart for $meal")
     }
 
     private fun removeFromCart(meal: Meal) {
@@ -216,7 +237,7 @@ class MenuViewModel @Inject constructor(
         viewModelScope.launch {
             var menuItems = state.value.menuItems
             val targetIndex = menuItems.indexOfFirst {
-                it is MenuRVItem.MealItem && it.meal.id == targetId
+                it is MenuItem.MealItem && it.meal.id == targetId
             }
             _state.update { it.copy(selectedMenuItemIndex = targetIndex) }
         }
@@ -250,23 +271,45 @@ class MenuViewModel @Inject constructor(
         }
     }
 
+    // Если состояние избранного менялось в другом месте (например,в BottomSheet)
+    private fun updateMealFavorite(id: String, isFavorite: Boolean) {
+        _state.update { currentState ->
+            val updatedMenuItems = currentState.menuItems.map { item ->
+                if (item is MenuItem.MealItem && item.meal.id == id) {
+                    item.copy(meal = item.meal.copy(isFavorite = isFavorite))
+                } else item
+            }
+
+            val updatedFilteredMenuItems = currentState.filteredMenuItems.map { item ->
+                if (item is MenuItem.MealItem && item.meal.id == id) {
+                    item.copy(meal = item.meal.copy(isFavorite = isFavorite))
+                } else item
+            }
+
+            currentState.copy(
+                menuItems = updatedMenuItems,
+                filteredMenuItems = updatedFilteredMenuItems
+            )
+        }
+    }
+
     // Получить список избранных блюд
-    fun getFavorites(): List<MenuRVItem> {
+    fun getFavorites(): List<MenuItem> {
         return favoritesInteractor.getFavorites().map { it.toMealItem() }
     }
 
     private fun updateMealItemInList(
-        list: List<MenuRVItem>,
+        list: List<MenuItem>,
         mealId: String,
         isFavorite: Boolean
-    ): List<MenuRVItem> {
+    ): List<MenuItem> {
         val index = list.indexOfFirst {
-            it is MenuRVItem.MealItem && it.meal.id == mealId
+            it is MenuItem.MealItem && it.meal.id == mealId
         }
         if (index == -1) return list
 
         val updatedList = list.toMutableList()
-        val mealItem = updatedList[index] as MenuRVItem.MealItem
+        val mealItem = updatedList[index] as MenuItem.MealItem
         updatedList[index] = mealItem.copy(
             meal = mealItem.meal.copy(isFavorite = isFavorite)
         )

@@ -22,13 +22,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MySearchBar(
-    filteredMenuItems: List<MenuRVItem>,
+    filteredMenuItems: List<MenuItem>,
     latestSearchText: String,
     onEvent: (Event) -> Unit,
     onMealClick: () -> Unit,
