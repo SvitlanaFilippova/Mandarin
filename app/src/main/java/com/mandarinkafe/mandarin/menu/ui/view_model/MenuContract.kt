@@ -14,6 +14,7 @@ sealed interface MenuContract {
 
         // Избранные
         data class ToggleFavorite(val meal: Meal) : Event
+        data class UpdateMealFavorite(val id: String, val isFavorite: Boolean) : Event
 
         // Скролл по меню
         data object ScrollToTop : Event

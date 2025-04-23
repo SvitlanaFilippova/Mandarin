@@ -23,7 +23,8 @@ import kotlinx.coroutines.launch
 fun MealDetailsBottomSheet(
     viewModel: MealDetailsViewModel = hiltViewModel(),
     initMeal: Meal,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onFavoriteChanged: (String, Boolean) -> Unit
 ) {
     LaunchedEffect(Unit) {
         viewModel.onEvent(Event.SetMeal(initMeal))
@@ -43,8 +44,10 @@ fun MealDetailsBottomSheet(
         {
             coroutineScope.launch {
                 sheetState.hide()
+                state.meal?.let { meal ->
+                    onFavoriteChanged(meal.id, meal.isFavorite)
+                }
                 onDismiss()
-                viewModel.onEvent(Event.SetMeal(null))
             }
         }
     }
@@ -54,7 +57,7 @@ fun MealDetailsBottomSheet(
         else ->
 
             ModalBottomSheet(
-                onDismissRequest = onDismiss,
+                onDismissRequest = onClose,
                 sheetState = sheetState,
                 containerColor = Colors.AppBlack
             ) {

@@ -1,7 +1,8 @@
-package com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet
+package com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.pizza_ads
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,19 +42,22 @@ fun AddsItem(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .clickable { onCheckedChange(!isAdded, add) },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Checkbox(
                 checked = isAdded,
-                onCheckedChange = { checked ->
-                    onCheckedChange(checked, add)
-                },
+                onCheckedChange = null, // обработка клика происходит в Row
                 enabled = true,
                 colors = CheckboxDefaults.colors(checkedColor = Colors.Orange)
             )
-            Text(text = add.name, style = Typography.RegularTextStyle)
+            Text(
+                modifier = Modifier.padding(Dimens.MarginSmall8),
+                text = add.name,
+                style = Typography.RegularTextStyle
+            )
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 modifier = Modifier.padding(Dimens.MarginSmall8),

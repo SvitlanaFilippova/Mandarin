@@ -10,6 +10,10 @@ import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.domain.models.getName
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.CallPhone
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.OpenFavorites
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.OpenMealCustomization
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.OpenSearch
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.Constants.DELAY_BEFORE_NEXT_ATTEMPT
@@ -47,6 +51,7 @@ class MenuViewModel @Inject constructor(
         when (event) {
             is Event.LoadMenu -> loadMenu()
             is Event.ForceRefreshMenu -> forceRefreshMenu()
+            is Event.OnPhoneClick -> sendEffect(CallPhone)
             is Event.ToggleFavorite -> toggleFavorite(event.meal)
             is Event.AddToCart -> addToCart(event.meal)
             is Event.RemoveFromCart -> removeFromCart(event.meal)
@@ -54,14 +59,17 @@ class MenuViewModel @Inject constructor(
             is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is Event.ScrollToTop -> scrollToTop()
             is Event.BannerClick -> findMenuItemIndexByName(event.targetName)
-            is Event.OnMealCustomizationClick -> sendEffect(Effect.OpenMealCustomization(event.meal))
-            is Event.SearchOnOpenSearchClick -> sendEffect(Effect.OpenSearch(focusSearch = true))
+            is Event.OnMealCustomizationClick -> sendEffect(OpenMealCustomization(event.meal))
+            is Event.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
             is Event.SearchMealsByText -> filterMenu(event.searchText)
             is Event.SearchClearInput -> clearSearchInput()
             is Event.SearchOnMealClick -> findMealIndexById(event.targetId)
-            is Event.OnOpenFavoritesClick -> sendEffect(Effect.OpenFavorites)
-            is Event.OnPhoneClick -> sendEffect(Effect.CallPhone)
-            is Event.OnLabelsClick -> sendEffect(Effect.OpenSearch(focusSearch = false))
+            is Event.OnOpenFavoritesClick -> sendEffect(OpenFavorites)
+            is Event.OnLabelsClick -> sendEffect(OpenSearch(focusSearch = false))
+            is Event.UpdateMealFavorite -> updateMealFavorite(
+                id = event.id,
+                isFavorite = event.isFavorite
+            )
         }
     }
 
@@ -246,6 +254,29 @@ class MenuViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    // Если состояние избранного менялось в другом месте (например,в BottomSheet)
+    private fun updateMealFavorite(id: String, isFavorite: Boolean) {
+        _state.update { currentState ->
+            val updatedMenuItems = currentState.menuItems.map { item ->
+                if (item is MenuItem.MealItem && item.meal.id == id) {
+                    item.copy(meal = item.meal.copy(isFavorite = isFavorite))
+                } else item
+            }
+
+            val updatedFilteredMenuItems = currentState.filteredMenuItems.map { item ->
+                if (item is MenuItem.MealItem && item.meal.id == id) {
+                    item.copy(meal = item.meal.copy(isFavorite = isFavorite))
+                } else item
+            }
+
+            currentState.copy(
+                menuItems = updatedMenuItems,
+                filteredMenuItems = updatedFilteredMenuItems
+            )
+        }
+        Log.d("DEBUG updateFavorite", "Вызов вupdateMealFavorite в ВМ")
     }
 
     private fun updateMealItemInList(

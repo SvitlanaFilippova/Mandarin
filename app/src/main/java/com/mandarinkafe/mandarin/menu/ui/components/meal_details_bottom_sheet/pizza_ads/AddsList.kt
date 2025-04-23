@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.MealAdditional
-import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.AddsItem
 
 @Composable
 fun AddsList(
