@@ -1,5 +1,5 @@
 [versions]
-agp = "8.9.0"
+agp = "8.9.1"
 coilCompose = "2.5.0"
 compiler = "1.5.15"
 fragmentKtx = "1.8.5"
