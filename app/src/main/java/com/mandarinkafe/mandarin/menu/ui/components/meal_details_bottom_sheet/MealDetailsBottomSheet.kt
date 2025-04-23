@@ -112,22 +112,25 @@ fun MealDetailsBottomSheet(
                         }
 
                     }
-                }
+
 
                 if (!shouldOpenCustomization && meal.editableType != null) {
                     OpenCustomizationButton(
+                        modifier = Modifier.padding(Dimens.MarginSmall8),
                         editableType = meal.editableType,
                         onClick = { shouldOpenCustomization = true }
                     )
                 }
 
                 ToCartButton(
+                    modifier = Modifier.padding(Dimens.MarginSmall8),
                     totalPrice = totalPrice,
                     onClick = {
                         viewModel.onEvent(Event.AddToCart)
                         onClose()
                     }
                 )
+            }
             }
     }
 }

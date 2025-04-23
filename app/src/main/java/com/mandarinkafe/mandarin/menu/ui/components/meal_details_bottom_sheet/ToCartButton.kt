@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,8 +32,7 @@ fun ToCartButton(
             contentColor = Color.White
         ),
         modifier = modifier
-            .fillMaxWidth()
-            .padding(Dimens.MarginStandard16),
+            .fillMaxWidth(),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
