@@ -35,7 +35,7 @@ data class Meal(
     val modifiers: List<ModifierGroup>,
 
     /**
-    Выбранные добавок для пиццы
+    Выбранные добавки для пиццы
      */
     val adds: List<MealAdditional> = emptyList<MealAdditional>()
 

@@ -1,107 +1,166 @@
 package com.mandarinkafe.mandarin.cart.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
+import com.mandarinkafe.mandarin.menu.domain.models.EditableType
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControls
 
 /**
  * Компонент, который отвечает за отображение товара, который выбрали в меню
  */
 
+@Preview
 @Composable
-fun itemCart(itenCartMeals: Meal) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(colorResource(R.color.black))
-            .padding(bottom = dimensionResource(R.dimen.standart_margin_16))
-    ) {
-        // Используем AsyncImage из Coil для загрузки изображения из URL
-        AsyncImage(
-            model = itenCartMeals.imageUrl,
-            contentDescription = "Изображекние блюда",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(136.dp)
-                .padding(end = dimensionResource(R.dimen.small_margin_8))
+fun PreviewItemCart() {
+    ItemCart(
+        Meal(
+            id = "111",
+            name = "Маргарита",
+            weight = 111,
+            price = 990,
+            imageUrl = "https://optim.tildacdn.com/tild6461-3330-4761-b163-616164303634/-/resize/312x/-/format/webp/dolce_vita_new.jpg",
+            isFavorite = false,
+            description = "Моцарелла, сливочно-чесночный соус, шампиньоны, вяленые томаты, соус песто с грецким орехом, укроп, мягкая моцарелла",
+            tags = emptyList(),
+            labels = emptyList(),
+            isHidden = false,
+            editableType = EditableType.PIZZA,
+            modifiers = emptyList(),
+            adds = listOf(
+                MealAdditional(
+                    id = "111",
+                    name = "Моцарелла",
+                    weight = 0,
+                    price = 220,
+                    isHidden = false
+                ),
+                MealAdditional(
+                    id = "111",
+                    name = "Креветки",
+                    weight = 0,
+                    price = 290,
+                    isHidden = false
+                ),
+                MealAdditional(
+                    id = "111",
+                    name = "Грибы",
+                    weight = 0,
+                    price = 192,
+                    isHidden = false
+                ),
+            )
         )
-        Column(
+    )
+}
+
+@Composable
+fun ItemCart(meal: Meal) {
+    val totalPrice = meal.price + meal.adds.sumOf { it.price }
+
+    Column(
+        modifier = Modifier
+            .background(Colors.AppBlack)
+            .padding(Dimens.MarginStandard16)
+    ) {
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(
-                    start = dimensionResource(R.dimen.dr_cursor_wight_2),
-                    bottom = dimensionResource(R.dimen.dr_cursor_wight_2)
-                )
                 .fillMaxWidth()
         ) {
-            //Название блюда
-            Text(
-                text = itenCartMeals.name,
-                style = Typography.RegularTextStyle,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                modifier = Modifier
-                    .fillMaxWidth(),
 
-                )
-            //Ингридиенты блюда
-            if (itenCartMeals.description != null) {
-                Text(
-                    text = itenCartMeals.description,
-                    style = Typography.MealSmallTextStyle,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
-            // Вес блюда
-            if (itenCartMeals.weight != null) {
-                Text(
-                    text = "${itenCartMeals.weight}г",
-                    style = Typography.MealSmallTextStyle,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
-            // Цена блюда
-            Box(
+            AsyncImage(
+                model = meal.imageUrl.ifEmpty { R.drawable.logo_orange_square },
+                contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .clip(RoundedCornerShape(Dimens.RadiusSearchField8))
-                    .background(Colors.Orange)
+                    .size(Dimens.MealSmallImage72)
+                    .clip(RoundedCornerShape(Dimens.CornerRadius8))
+                    .padding(end = Dimens.MarginSmall8)
+            )
+            Column(
+                modifier = Modifier
+                    .padding(
+                        start = Dimens.MarginSuperSmall4,
+                        bottom = Dimens.MarginSuperSmall4
+                    )
+                    .fillMaxWidth()
             ) {
+                //Название блюда
                 Text(
-                    text = "${itenCartMeals.price}р.",
-                    style = Typography.MealPriceStyle,
+                    text = meal.name,
+                    style = Typography.RegularTextStyle,
                     overflow = TextOverflow.Ellipsis,
+                    maxLines = 2,
                     modifier = Modifier
                         .fillMaxWidth()
                 )
+
+                if (meal.adds.isNotEmpty()) {
+                    val addsText = meal.adds.joinToString(", ") { it.name }
+                    Text(
+                        text = stringResource(R.string.adds_prefix, addsText),
+                        style = Typography.MealSmallTextStyle,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+
             }
 
         }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+
+            // Стоимость с учётом всех добавок и модификаторов
+            Text(
+                text = stringResource(R.string.meal_price_template, totalPrice),
+                style = Typography.MealPriceStyle,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Spacer(modifier = Modifier.weight(1f))
+
+            CartControls(
+                numberInCart = 1,
+                price = totalPrice,
+                onIncrease = {},
+                onDecrease = { }
+            )
+        }
+
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = Dimens.MarginSmall8),
+            thickness = Dimens.DividerHeight1,
+            color = Colors.Grey.copy(alpha = 0.1f)
+        )
     }
 }

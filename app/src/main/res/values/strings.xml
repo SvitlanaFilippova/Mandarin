@@ -53,6 +53,7 @@
     <string name="meal_price_template">%1$d ₽</string>
     <string name="meal_title_with_weight_template">%1$s, %2$d г</string>
     <string name="meal_in_cart_count_template">%1$d шт</string>
+    <string name="adds_prefix">+ %1$s</string>
 
     <!-- Ошибки и сообщения -->
     <string name="placeholder_message_call_us">Попробуйте ещё&#160;раз или просто позвоните нам по&#160;телефону %1$s, чтобы сделать заказ.</string>
