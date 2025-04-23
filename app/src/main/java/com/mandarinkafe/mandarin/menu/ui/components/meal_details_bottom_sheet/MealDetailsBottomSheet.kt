@@ -22,11 +22,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun MealDetailsBottomSheet(
     viewModel: MealDetailsViewModel = hiltViewModel(),
-    meal: Meal,
+    initMeal: Meal,
     onDismiss: () -> Unit
 ) {
     LaunchedEffect(Unit) {
-        viewModel.onEvent(Event.SetMeal(meal))
+        viewModel.onEvent(Event.SetMeal(initMeal))
     }
 
     val state by viewModel.state.collectAsState()
@@ -44,6 +44,7 @@ fun MealDetailsBottomSheet(
             coroutineScope.launch {
                 sheetState.hide()
                 onDismiss()
+                viewModel.onEvent(Event.SetMeal(null))
             }
         }
     }
@@ -59,7 +60,7 @@ fun MealDetailsBottomSheet(
             ) {
 
                 BottomSheetHeader(
-                    meal = meal,
+                    meal = state.meal ?: initMeal,
                     onToggleFavorite = { viewModel.onEvent(Event.ToggleFavorite) },
                     onClose = onClose
                 )

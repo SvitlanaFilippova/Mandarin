@@ -71,14 +71,19 @@ class MealDetailsViewModel @Inject constructor(
                     true
                 }
 
-                setMeal(meal.copy(isFavorite = isNowFavorite))
+                _state.update { currentState ->
+                    currentState.copy(
+                        meal = currentState.meal?.copy(isFavorite = isNowFavorite)
+                    )
+                }
             }
         }
+
     }
 
-    private fun setMeal(meal: Meal) {
+    private fun setMeal(meal: Meal?) {
         _state.update {
-            if (it.meal == null) it.copy(meal = meal) else it
+            it.copy(meal = meal)
         }
     }
 

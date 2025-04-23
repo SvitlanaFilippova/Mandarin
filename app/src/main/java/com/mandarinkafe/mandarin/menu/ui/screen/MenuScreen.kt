@@ -76,7 +76,7 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), navController: NavHos
         cast = { it as? MenuContract.Effect.OpenMealCustomization }
     ) { effect, onDismiss ->
         MealDetailsBottomSheet(
-            meal = effect.meal,
+            initMeal = effect.meal,
             onDismiss = onDismiss
         )
     }

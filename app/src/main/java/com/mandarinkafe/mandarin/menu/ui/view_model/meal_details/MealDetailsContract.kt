@@ -9,7 +9,7 @@ sealed interface MealDetailsContract {
     sealed interface Event {
         data object GetAddons : Event
         data class ChangeAdds(val add: MealAdditional, val isChecked: Boolean) : Event
-        data class SetMeal(val meal: Meal) : Event
+        data class SetMeal(val meal: Meal?) : Event
         data object ToggleFavorite : Event
         data object AddToCart : Event
         data class ChooseCategory(val newIndex: Int) : Event
