@@ -106,8 +106,8 @@ fun MealDetailsBottomSheet(
                                 onClose = onClose
                             )
 
-                            EditableType.MODIFIABLE -> TODO()
-                            EditableType.WOK -> TODO()
+                            EditableType.MODIFIABLE -> {}
+                            EditableType.WOK -> {}
                             null -> {}
                         }
 
