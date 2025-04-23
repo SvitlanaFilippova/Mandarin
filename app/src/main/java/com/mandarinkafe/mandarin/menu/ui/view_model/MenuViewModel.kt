@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.cart.Cart
+import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
+import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toMealItem
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
@@ -224,10 +226,10 @@ class MenuViewModel @Inject constructor(
     private fun toggleFavorite(meal: Meal) {
         viewModelScope.launch {
             val isNowFavorite = if (meal.isFavorite) {
-                favoritesInteractor.removeFromFavorites(meal)
+                favoritesInteractor.removeFromFavorites(meal.toFavoriteMeal())
                 false
             } else {
-                favoritesInteractor.addToFavorites(meal)
+                favoritesInteractor.addToFavorites(meal.toFavoriteMeal())
                 true
             }
 
@@ -246,6 +248,11 @@ class MenuViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    // Получить список избранных блюд
+    fun getFavorites(): List<MenuRVItem> {
+        return favoritesInteractor.getFavorites().map { it.toMealItem() }
     }
 
     private fun updateMealItemInList(

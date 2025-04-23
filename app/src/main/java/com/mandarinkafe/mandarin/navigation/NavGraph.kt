@@ -10,7 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.mandarinkafe.mandarin.delivery.screen.DeliveryScreen
-import com.mandarinkafe.mandarin.favorites.FavoritesScreen
+import com.mandarinkafe.mandarin.favorites.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.menu.ui.screen.MenuScreen
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
 import com.mandarinkafe.mandarin.navigation.NavRoutes.DELIVERY_SCREEN_ROUTE
@@ -62,7 +62,8 @@ fun NavGraph(navHostController: NavHostController) {
             DeliveryScreen()
         }
         composable(FAVORITES_SCREEN_ROUTE) {
-            FavoritesScreen()
+            val menuViewModel: MenuViewModel = hiltViewModel()
+            FavoritesScreen(viewModel = menuViewModel)
         }
     }
 }

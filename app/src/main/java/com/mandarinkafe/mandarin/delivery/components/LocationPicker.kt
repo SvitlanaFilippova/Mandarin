@@ -26,20 +26,33 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
+import com.mandarinkafe.mandarin.delivery.Coordinates.eighthArea
+import com.mandarinkafe.mandarin.delivery.Coordinates.eleventhArea
+import com.mandarinkafe.mandarin.delivery.Coordinates.fifthArea
+import com.mandarinkafe.mandarin.delivery.Coordinates.firstArea
+import com.mandarinkafe.mandarin.delivery.Coordinates.fourthArea
+import com.mandarinkafe.mandarin.delivery.Coordinates.ninthArea
+import com.mandarinkafe.mandarin.delivery.Coordinates.secondArea
+import com.mandarinkafe.mandarin.delivery.Coordinates.seventhArea
+import com.mandarinkafe.mandarin.delivery.Coordinates.sixthArea
+import com.mandarinkafe.mandarin.delivery.Coordinates.tenthArea
+import com.mandarinkafe.mandarin.delivery.Coordinates.thirdArea
+import com.mandarinkafe.mandarin.delivery.Coordinates.twelfthArea
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.LinearRing
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.geometry.Polygon
 import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.mapview.MapView
 
 @Composable
@@ -83,18 +96,56 @@ fun LocationPicker() {
         }
     }
     LaunchedEffect(key1 = "addColoredArea") {
-        val blueColor = Color.argb(100, 128, 0, 128)
         snapshotFlow { mapView.value }.collect { mapViewInstance ->
             mapViewInstance?.let {
-                val area = listOf<Point>(
-                    Point(55.993074, 38.387079),
-                    Point(55.991741, 38.368890),
-                    Point(55.998916, 38.356102),
-                    Point(56.006845, 38.364157),
-                    Point(56.005308, 38.372411),
-                    Point(56.002917, 38.379587),
+                addColoredArea(
+                    it, firstArea,
+                    ContextCompat.getColor(context, R.color.first_area)
                 )
-                addColoredArea(it, area, blueColor)
+                addAreaWithHole(
+                    it, secondArea, firstArea,
+                    ContextCompat.getColor(context, R.color.second_area)
+                )
+                addAreaWithHole(
+                    it, thirdArea, secondArea,
+                    ContextCompat.getColor(context, R.color.third_area)
+                )
+                addAreaWithHole(
+                    it, fourthArea, thirdArea,
+                    ContextCompat.getColor(context, R.color.fourth_area)
+                )
+                addAreaWithHole(
+                    it, fifthArea, fourthArea,
+                    ContextCompat.getColor(context, R.color.fifth_area)
+                )
+                addAreaWithHole(
+                    it, sixthArea, fifthArea,
+                    ContextCompat.getColor(context, R.color.sixth_area)
+                )
+                addAreaWithHole(
+                    it, seventhArea, sixthArea,
+                    ContextCompat.getColor(context, R.color.seventh_area)
+                )
+                addAreaWithHole(
+                    it, eighthArea, seventhArea,
+                    ContextCompat.getColor(context, R.color.eighth_area)
+                )
+                addAreaWithHole(
+                    it, ninthArea, eighthArea,
+                    ContextCompat.getColor(context, R.color.ninth_area)
+                )
+                addAreaWithHole(
+                    it, tenthArea, ninthArea,
+                    ContextCompat.getColor(context, R.color.tenth_area)
+                )
+                addAreaWithHole(
+                    it, eleventhArea, tenthArea,
+                    ContextCompat.getColor(context, R.color.eleventh_area)
+                )
+                addAreaWithHole(
+                    it, twelfthArea, eleventhArea,
+                    ContextCompat.getColor(context, R.color.twelfth_area)
+                )
             }
         }
     }
@@ -156,9 +207,17 @@ private fun moveCamera(mapView: MapView?, lat: Double, lon: Double) {
 }
 
 fun addColoredArea(mapView: MapView, area: List<Point>, color: Int) {
-    val mapObjects: MapObjectCollection = mapView.mapWindow?.map?.mapObjects ?: return
+    val mapObjects = mapView.mapWindow?.map?.mapObjects ?: return
     val polygon = Polygon(LinearRing(area), emptyList())
     val polygonObject = mapObjects.addPolygon(polygon)
     polygonObject.fillColor = color
-    mapObjects.addPolygon(polygon)
+    polygonObject.strokeColor = Color.TRANSPARENT
+}
+
+fun addAreaWithHole(mapView: MapView, outer: List<Point>, hole: List<Point>, color: Int) {
+    val mapObjects = mapView.mapWindow?.map?.mapObjects ?: return
+    val polygon = Polygon(LinearRing(outer), listOf(LinearRing(hole)))
+    val polygonObject = mapObjects.addPolygon(polygon)
+    polygonObject.fillColor = color
+    polygonObject.strokeColor = Color.TRANSPARENT
 }

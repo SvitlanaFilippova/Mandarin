@@ -1,23 +1,23 @@
 package com.mandarinkafe.mandarin.favorites.data.impl
 
-import com.mandarinkafe.mandarin.favorites.data.LocalStorage
+import com.mandarinkafe.mandarin.favorites.data.sharedprefs.LocalStorage
 import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.favorites.domain.models.FavoriteMeal
 
 class FavoritesRepositoryImpl(private val localStorage: LocalStorage) : FavoritesRepository {
-    override fun addToFavorites(meal: Meal) {
-        localStorage.addToFavorites(meal.id)
+    override fun addToFavorites(meal: FavoriteMeal) {
+        localStorage.addToFavorites(meal)
     }
 
-    override fun removeFromFavorites(meal: Meal) {
+    override fun removeFromFavorites(meal: FavoriteMeal) {
         localStorage.removeFromFavorites(meal.id)
     }
 
-    override fun getFavoriteIds(): List<String> {
-        return localStorage.getSavedFavorites().toList()
+    override fun getFavorites(): List<FavoriteMeal> {
+        return localStorage.getFavorites().toList()
     }
 
     override fun checkIfFavorite(itemId: String): Boolean {
-        return getFavoriteIds().contains(itemId)
+        return getFavorites().any { it.id == itemId }
     }
 }
