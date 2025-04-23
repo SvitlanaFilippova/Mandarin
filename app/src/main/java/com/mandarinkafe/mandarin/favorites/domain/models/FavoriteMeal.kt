@@ -1,8 +1,9 @@
 package com.mandarinkafe.mandarin.favorites.domain.models
 
+import com.mandarinkafe.mandarin.menu.domain.models.EditableType
 import com.mandarinkafe.mandarin.menu.domain.models.Label
+import com.mandarinkafe.mandarin.menu.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.menu.domain.models.Tag
-
 
 data class FavoriteMeal(
     val id: String,
@@ -15,5 +16,6 @@ data class FavoriteMeal(
     val tags: List<Tag>, // Используем классы из другой фичи, т.к. эта фича зависит от меню
     val labels: List<Label>,
     val isHidden: Boolean,
-    val isEditable: Boolean
+    val editableType: EditableType?,
+    val modifiers: List<ModifierGroup>,
 )
