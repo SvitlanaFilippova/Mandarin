@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,9 +36,7 @@ fun OpenCustomizationButton(
         EditableType.PIZZA -> stringResource(id = R.string.add_additionals)
         EditableType.MODIFIABLE -> stringResource(id = R.string.choose)
         EditableType.WOK -> stringResource(id = R.string.create_own_box)
-
     }
-
 
     Button(
         onClick = onClick,
@@ -51,9 +48,9 @@ fun OpenCustomizationButton(
         border = BorderStroke(width = Dimens.ButtonBorder1, color = Colors.White),
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimens.MarginStandard16)
     ) {
-        Row(
+
+    Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
         ) {
