@@ -29,6 +29,7 @@ fun BottomNavigation(
         BottomNavigationItem.Favorites
     )
     BottomAppBar(
+        tonalElevation = Dimens.Elevation2,
         containerColor = Colors.AppBlack,
         modifier = Modifier.height(Dimens.BottomBarHeight64)
     ) {

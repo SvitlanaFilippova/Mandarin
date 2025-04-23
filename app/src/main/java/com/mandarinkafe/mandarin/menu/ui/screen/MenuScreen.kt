@@ -62,7 +62,7 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), navController: NavHos
                     context.startActivity(intent)
                 }
 
-                is MenuContract.Effect.OpenMealCustomization -> {
+                is MenuContract.Effect.OpenMealDetailsBS -> {
                     // Обрабатывается отдельно в HandleBottomSheetEffect
                 }
 
@@ -71,16 +71,17 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), navController: NavHos
     }
 
 
-    HandleBottomSheetEffect<MenuContract.Effect.OpenMealCustomization>(
+    HandleBottomSheetEffect<MenuContract.Effect.OpenMealDetailsBS>(
         effectFlow = effectFlow,
-        cast = { it as? MenuContract.Effect.OpenMealCustomization }
+        cast = { it as? MenuContract.Effect.OpenMealDetailsBS }
     ) { effect, onDismiss ->
         MealDetailsBottomSheet(
             initMeal = effect.meal,
             onDismiss = onDismiss,
             onFavoriteChanged = { id, isFavorite ->
                 viewModel.onEvent(MenuContract.Event.UpdateMealFavorite(id, isFavorite))
-            }
+            },
+            shouldOpenCustomizationInit = effect.shouldOpenCustomization
         )
     }
 }

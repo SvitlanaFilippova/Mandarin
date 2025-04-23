@@ -8,10 +8,10 @@ import com.mandarinkafe.mandarin.menu.data.dto.MealDto
 import com.mandarinkafe.mandarin.menu.data.dto.ModifierGroupDto
 import com.mandarinkafe.mandarin.menu.data.dto.ModifierItemDto
 import com.mandarinkafe.mandarin.menu.data.dto.TagDto
+import com.mandarinkafe.mandarin.menu.domain.models.EditableType
 import com.mandarinkafe.mandarin.menu.domain.models.Label
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
-import com.mandarinkafe.mandarin.menu.domain.models.MealType
 import com.mandarinkafe.mandarin.menu.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.menu.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.menu.domain.models.Tag
@@ -113,20 +113,20 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
             tags = finalMealTags,
             isHidden = isHidden == true,
             modifiers = safeModifiers,
-            type = checkMealType(finalMealTags, safeModifiers),
+            editableType = checkMealType(finalMealTags, safeModifiers),
         )
     }
 
-    private fun checkMealType(tags: List<Tag>, modifiers: List<ModifierGroup>): MealType {
+    private fun checkMealType(tags: List<Tag>, modifiers: List<ModifierGroup>): EditableType? {
         if (tags.any { it.name.equals(TAG_PIZZA_ADDS, ignoreCase = true) }) {
-            return MealType.PIZZA
+            return EditableType.PIZZA
         } else
             if (tags.any { it.name.equals(TAG_WOK_CONSTRUCTOR, ignoreCase = true) }) {
-                return MealType.WOK
+                return EditableType.WOK
             } else if (modifiers.isNotEmpty()) {
-                return MealType.MODIFIABLE
+                return EditableType.MODIFIABLE
             } else
-                return MealType.DEFAULT
+                return null
     }
 
     private fun groupSubcategories(menuDto: List<CategoryDto>): Map<String, List<CategoryDto>> {

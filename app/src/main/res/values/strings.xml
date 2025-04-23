@@ -41,6 +41,12 @@
     <string name="filter_by_label">Фильтровать по тегам</string>
     <string name="clear_text">Очистить текст</string>
 
+
+    <!-- Кастомизация бюлюда -->
+    <string name="add_additionals">Добавить начинку</string>
+    <string name="choose">Выбрать</string>
+    <string name="create_own_box">Собрать свою коробочку</string>
+
     <!-- Шаблоны текста -->
     <string name="default_price_for_button">000 ₽</string>
     <string name="meal_weight_template">%1$d г</string>

@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.menu.domain.models
 
-enum class MealType {
-    DEFAULT,
+enum class EditableType {
     PIZZA,
     MODIFIABLE,
     WOK

@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.menu.ui.components.mealitem
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -38,12 +40,11 @@ fun MenuMealItem(
     var isNameExpanded by remember {
         mutableStateOf(false)
     }
-    var isDescriptionExpanded by remember {
-        mutableStateOf(false)
-    }
     Row(
         verticalAlignment = Alignment.Top,
-        modifier = Modifier.padding(Dimens.MarginSmall8)
+        modifier = Modifier
+            .padding(Dimens.MarginSmall8)
+            .clickable(onClick = { onEvent(Event.OnMealDetailsClick(meal)) })
     ) {
 
         AsyncImage(
@@ -77,12 +78,11 @@ fun MenuMealItem(
                 )
 
                 if (meal.description.isNotEmpty()) {
-                    ExpandableText(
+                    Text(
                         text = meal.description,
                         style = Typography.MealSmallTextStyle,
-                        isExpanded = isDescriptionExpanded,
-                        onClick = { isDescriptionExpanded = !isDescriptionExpanded },
-                        maxLinesCollapsed = 4
+                        maxLines = 4,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
                 if (meal.weight != 0) {

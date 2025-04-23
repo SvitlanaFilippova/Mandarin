@@ -15,7 +15,7 @@ fun AddsList(
     addsItems: List<MealAdditional>?,
     chosenAdds: List<MealAdditional>,
     listState: LazyListState,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     onCheckedChange: (Boolean, MealAdditional) -> Unit
 ) {
     if (!addsItems.isNullOrEmpty())

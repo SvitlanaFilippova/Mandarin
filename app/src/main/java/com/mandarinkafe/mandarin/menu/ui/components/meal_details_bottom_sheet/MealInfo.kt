@@ -20,6 +20,7 @@ fun MealInfo(
     meal: Meal,
 ) {
     Column {
+
         if (meal.description.isNotEmpty()) {
             Text(
                 modifier = Modifier.padding(vertical = Dimens.MarginStandard16),
@@ -32,7 +33,7 @@ fun MealInfo(
             modifier = Modifier
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.End
         ) {
             if (meal.weight != 0) {
                 Text(
@@ -40,10 +41,7 @@ fun MealInfo(
                     style = Typography.RegularTextStyle
                 )
             }
-            Text(
-                text = stringResource(R.string.meal_price_template, meal.price),
-                style = Typography.MealPriceStyle
-            )
+
         }
 
     }

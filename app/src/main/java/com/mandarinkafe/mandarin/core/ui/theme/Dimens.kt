@@ -8,7 +8,8 @@ object Dimens {
     val CornerRadius8 = 8.dp
     val CornerRadius16 = 16.dp
     val BottomBarHeight64 = 64.dp
-    val ButtonRadius16 = 16.dp
+    val Elevation2 = 2.dp
+    val ButtonBorder1 = 1.dp
     val ButtonSmall24 = 24.dp
     val ButtonToCartSmall32 = 32.dp
     val ButtonBox32 = 32.dp

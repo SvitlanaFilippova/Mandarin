@@ -12,7 +12,7 @@ import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.CallPhone
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.OpenFavorites
-import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.OpenMealCustomization
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.OpenSearch
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
@@ -59,7 +59,6 @@ class MenuViewModel @Inject constructor(
             is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is Event.ScrollToTop -> scrollToTop()
             is Event.BannerClick -> findMenuItemIndexByName(event.targetName)
-            is Event.OnMealCustomizationClick -> sendEffect(OpenMealCustomization(event.meal))
             is Event.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
             is Event.SearchMealsByText -> filterMenu(event.searchText)
             is Event.SearchClearInput -> clearSearchInput()
@@ -69,6 +68,20 @@ class MenuViewModel @Inject constructor(
             is Event.UpdateMealFavorite -> updateMealFavorite(
                 id = event.id,
                 isFavorite = event.isFavorite
+            )
+
+            is Event.OnMealCustomizationClick -> sendEffect(
+                OpenMealDetailsBS(
+                    meal = event.meal,
+                    shouldOpenCustomization = true
+                )
+            )
+
+            is Event.OnMealDetailsClick -> sendEffect(
+                OpenMealDetailsBS(
+                    meal = event.meal,
+                    shouldOpenCustomization = false
+                )
             )
         }
     }
@@ -276,7 +289,6 @@ class MenuViewModel @Inject constructor(
                 filteredMenuItems = updatedFilteredMenuItems
             )
         }
-        Log.d("DEBUG updateFavorite", "Вызов вupdateMealFavorite в ВМ")
     }
 
     private fun updateMealItemInList(
