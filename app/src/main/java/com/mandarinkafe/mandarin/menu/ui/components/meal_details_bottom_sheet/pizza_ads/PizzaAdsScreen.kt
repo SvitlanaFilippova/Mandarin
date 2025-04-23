@@ -17,7 +17,6 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.menu.domain.mappers.toMealAdditional
 import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.MealInfo
 import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.ToCartButton
 import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract
@@ -27,11 +26,13 @@ import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsCont
 fun PizzaAdsScreen(
     state: MealDetailsContract.State,
     onEvent: (Event) -> Unit,
+    onClose: () -> Unit
 ) {
     val meal = state.meal ?: return // если meal null — не отображаем ничего
     val adds = state.pizzaAds
     val listState = rememberLazyListState()
     val selectedTabIndex = state.selectedTabIndex
+    val totalPrice = meal.price + meal.adds.sumOf { it.price }
 
     Column(
         modifier = Modifier
@@ -58,15 +59,15 @@ fun PizzaAdsScreen(
             onTabSelected = { index -> onEvent(Event.ChooseCategory(index)) }
         )
         AddsList(
-            addsItems = adds[selectedTabIndex].meals?.map { it.toMealAdditional() },
+            addsItems = adds[selectedTabIndex].mealAdditionals,
             chosenAdds = meal.adds,
             listState = listState,
             modifier = Modifier.weight(1f),
-            onCheckedChange = { isAdded, add ->
+            onCheckedChange = { isChecked, add ->
                 onEvent(
                     Event.ChangeAdds(
                         add = add,
-                        isAdded = isAdded
+                        isChecked = isChecked
                     )
                 )
             },
@@ -86,12 +87,15 @@ fun PizzaAdsScreen(
             )
 
             Text(
-                text = stringResource(R.string.meal_price_template, state.sumPrice),
+                text = stringResource(R.string.meal_price_template, totalPrice),
                 style = Typography.MealPriceStyle
             )
         }
         ToCartButton(
-            onClick = { onEvent(Event.AddToCart) }
+            onClick = {
+                onEvent(Event.AddToCart)
+                onClose()
+            }
         )
 
     }

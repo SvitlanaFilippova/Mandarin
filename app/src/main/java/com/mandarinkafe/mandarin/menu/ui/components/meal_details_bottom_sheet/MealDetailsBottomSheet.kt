@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -24,7 +25,9 @@ fun MealDetailsBottomSheet(
     meal: Meal,
     onDismiss: () -> Unit
 ) {
-    viewModel.onEvent(Event.SetMeal(meal))
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(Event.SetMeal(meal))
+    }
 
     val state by viewModel.state.collectAsState()
     val sheetState = rememberModalBottomSheetState(
@@ -36,7 +39,14 @@ fun MealDetailsBottomSheet(
         sheetState.show()
     }
 
-
+    val onClose: () -> Unit = remember(sheetState, coroutineScope) {
+        {
+            coroutineScope.launch {
+                sheetState.hide()
+                onDismiss()
+            }
+        }
+    }
     when {
         state.isLoading -> LoadingScreen()
 
@@ -51,12 +61,7 @@ fun MealDetailsBottomSheet(
                 BottomSheetHeader(
                     meal = meal,
                     onToggleFavorite = { viewModel.onEvent(Event.ToggleFavorite) },
-                    onClose = {
-                        coroutineScope.launch {
-                            sheetState.hide()
-                            onDismiss()
-                        }
-                    }
+                    onClose = onClose
                 )
 
                 // TODO Тут добавить обработку по тегам и дальше разводить на разные экраны
@@ -64,6 +69,7 @@ fun MealDetailsBottomSheet(
                 PizzaAdsScreen(
                     state = state,
                     onEvent = viewModel::onEvent,
+                    onClose = onClose
                 )
             }
     }

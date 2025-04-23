@@ -4,6 +4,8 @@ import com.mandarinkafe.mandarin.di.Addons
 import com.mandarinkafe.mandarin.di.Recommends
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.menu.domain.mappers.MenuRVItemMapper
+import com.mandarinkafe.mandarin.menu.domain.mappers.toMealAdditionalCategory
+import com.mandarinkafe.mandarin.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.domain.usecase.CategoryFilter
@@ -37,7 +39,8 @@ class MenuInteractorImpl(
             }
         }
 
-    override fun getAddons(): Flow<Pair<List<MealCategory>?, String?>> = repository.getMenu()
+    override fun getAddons(): Flow<Pair<List<MealAdditionalCategory>?, String?>> =
+        repository.getMenu()
         .map { result ->
             when (result) {
                 is Resource.Success -> {
@@ -47,7 +50,7 @@ class MenuInteractorImpl(
                             it.subCategories ?: emptyList()
                         } ?: emptyList()
 
-                    Pair(addonsCategories, null)
+                    Pair(addonsCategories.map { it.toMealAdditionalCategory() }, null)
                 }
 
                 is Resource.Error -> {

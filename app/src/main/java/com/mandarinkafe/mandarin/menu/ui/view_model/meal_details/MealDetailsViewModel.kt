@@ -34,7 +34,7 @@ class MealDetailsViewModel @Inject constructor(
         when (event) {
             is Event.ToggleFavorite -> toggleFavorite()
             is Event.GetAddons -> getAddons()
-            is Event.ChangeAdds -> changeAdds(event.add, event.isAdded)
+            is Event.ChangeAdds -> changeAdds(event.add, event.isChecked)
             is Event.SetMeal -> setMeal(event.meal)
             is Event.AddToCart -> addToCart()
             is Event.ChooseCategory -> chooseCategory(event.newIndex)
@@ -77,22 +77,24 @@ class MealDetailsViewModel @Inject constructor(
     }
 
     private fun setMeal(meal: Meal) {
-        _state.update { it.copy(meal = meal, sumPrice = meal.price) }
+        _state.update { it.copy(meal = meal) }
     }
 
     private fun changeAdds(add: MealAdditional, isAdded: Boolean) {
-        val meal = state.value.meal
-        if (meal != null) {
-            val newAdds = meal.adds.toMutableList()
-            var newSumPrice = state.value.sumPrice
+        _state.update { currentState ->
+            val currentMeal = currentState.meal ?: return
+            val currentAdds = currentMeal.adds.toMutableList()
+
             if (isAdded) {
-                newAdds += add
-                newSumPrice += add.price
+                if (!currentAdds.contains(add)) currentAdds += add
             } else {
-                newAdds -= add
-                newSumPrice -= add.price
+                currentAdds.remove(add)
             }
-            _state.update { it.copy(sumPrice = newSumPrice, meal = meal.copy(adds = newAdds)) }
+
+            currentState.copy(
+                meal = currentMeal.copy(adds = currentAdds)
+            )
+
         }
     }
 
@@ -120,3 +122,4 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 }
+

@@ -24,7 +24,6 @@ fun AddsItem(
     add: MealAdditional,
     onCheckedChange: (Boolean, MealAdditional) -> Unit,
     isAdded: Boolean
-
 ) {
 
     Column {
@@ -36,8 +35,8 @@ fun AddsItem(
         ) {
             Checkbox(
                 checked = isAdded,
-                onCheckedChange = {
-                    onCheckedChange(!isAdded, add)
+                onCheckedChange = { checked ->
+                    onCheckedChange(checked, add)
                 },
                 enabled = true,
                 colors = CheckboxDefaults.colors(checkedColor = Colors.Orange)
@@ -56,5 +55,4 @@ fun AddsItem(
             color = Colors.Grey.copy(alpha = 0.1f)
         )
     }
-
 }
