@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
@@ -28,7 +27,8 @@ fun BottomNavigation(
     val listItems = listOf(
         BottomNavigationItem.Delivery,
         BottomNavigationItem.Menu,
-        BottomNavigationItem.Favorites
+        BottomNavigationItem.Favorites,
+        BottomNavigationItem.Cart
     )
     BottomAppBar(
         tonalElevation = Dimens.Elevation2,
@@ -65,8 +65,8 @@ fun BottomNavigation(
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color(context.getColor(R.color.orange)),
-                    selectedTextColor = Color(context.getColor(R.color.orange)),
+                    selectedIconColor = Colors.Orange,
+                    selectedTextColor = Colors.Orange,
                     unselectedIconColor = Color.White,
                     unselectedTextColor = Color.White,
                     indicatorColor = Color.Transparent

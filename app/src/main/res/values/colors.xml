@@ -1,20 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#000000</color>
-    <color name="app_black_transparent_50">#801D1E1C</color>
-    <color name="app_black">#1d1e1c</color>
-    <color name="app_background_color">#1d1e1c</color>
-    <color name="default_status_bar_color">#1d1e1c</color>
-    <color name="light_status_bar_color">#f5bd47</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="orange">#f5bd47</color>
-    <color name="orange_transparent_50">#80F5BD47</color>
-    <color name="grey">#AEAFB4</color>
-    <color name="grey_transparent_10">#1AAEAFB4</color>
-    <color name="grey_transparent_75">#BFAEAFB4</color>
-    <color name="white_transparent_75">#BFFFFFFF</color>
-    <color name="transparent">#00000000</color>
-
     <!-- Цвета областей доставки -->
     <color name="first_area">#AA0B7B6B</color>
     <color name="second_area">#AA195A42</color>

@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.favorites.data.sharedprefs
 
 import com.mandarinkafe.mandarin.favorites.domain.models.FavoriteMeal
 
-interface LocalStorage {
+interface FavoritesStorage {
 
     fun getFavorites(): Set<FavoriteMeal>
     fun addToFavorites(meal: FavoriteMeal)

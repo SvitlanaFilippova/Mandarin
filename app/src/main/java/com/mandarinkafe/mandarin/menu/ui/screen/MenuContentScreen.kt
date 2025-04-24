@@ -19,6 +19,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.ui.components.BannerCarousel
@@ -36,6 +37,7 @@ import kotlinx.coroutines.launch
 fun MenuContentScreen(
     listState: LazyListState,
     onEvent: (Event) -> Unit,
+    onCartEvent: (CartContract.Event) -> Unit,
     state: MenuContract.State
 ) {
 
@@ -229,6 +231,7 @@ fun MenuContentScreen(
             listState = listState,
             modifier = Modifier.weight(1f),
             onEvent = onEvent,
+            onCartEvent = onCartEvent
         )
     }
 }

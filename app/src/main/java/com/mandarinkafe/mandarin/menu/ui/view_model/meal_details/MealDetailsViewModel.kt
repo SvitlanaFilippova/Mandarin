@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.menu.ui.view_model.meal_details
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
@@ -55,7 +54,6 @@ class MealDetailsViewModel @Inject constructor(
     private fun addToCart() {
         val meal = state.value.meal
         if (meal != null) {
-            Cart.addItem(meal)
             Log.d("DEBUG", "MealDetailsViewModel addToCart for $meal")
         }
     }

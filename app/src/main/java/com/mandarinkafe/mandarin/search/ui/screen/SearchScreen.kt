@@ -5,26 +5,29 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
 import com.mandarinkafe.mandarin.navigation.navigateToMenuScreen
 import com.mandarinkafe.mandarin.search.ui.components.MySearchBar
 
 @Composable
 fun SearchScreen(
-    viewModel: MenuViewModel = hiltViewModel(),
+    menuViewModel: MenuViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel,
     navController: NavController,
     focusSearchBarInput: Boolean
 ) {
 
     val onMealClick = { navController.navigateToMenuScreen() }
-    val state by viewModel.state.collectAsState()
+    val state by menuViewModel.state.collectAsState()
     val filteredMenuItems = state.filteredMenuItems
     val latestSearchText = state.latestSearchText
 
     MySearchBar(
         filteredMenuItems = filteredMenuItems,
         latestSearchText = latestSearchText,
-        onEvent = viewModel::onEvent,
+        onEvent = menuViewModel::onEvent,
+        onCartEvent = cartViewModel::onEvent,
         onMealClick = onMealClick,
         onSearchDismiss = { navController.popBackStack() },
         focusSearchBarInput = focusSearchBarInput,

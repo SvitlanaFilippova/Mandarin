@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
@@ -20,10 +21,14 @@ import com.mandarinkafe.mandarin.util.ui.HandleBottomSheetEffect
 import com.mandarinkafe.mandarin.util.ui.components.PlaceholderScreen
 
 @Composable
-fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), navController: NavHostController) {
+fun MenuScreen(
+    menuViewModel: MenuViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel,
+    navController: NavHostController
+) {
 
-    val state by viewModel.state.collectAsState()
-    val effectFlow = viewModel.effect
+    val state by menuViewModel.state.collectAsState()
+    val effectFlow = menuViewModel.effect
     val listState = rememberLazyListState()
     val context = LocalContext.current
 
@@ -31,12 +36,13 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), navController: NavHos
         state.isLoading -> LoadingScreen()
         state.errorMessage != null -> PlaceholderScreen(
             state.errorMessage!!,
-            onEvent = viewModel::onEvent,
+            onEvent = menuViewModel::onEvent,
         )
 
         else -> MenuContentScreen(
             listState = listState,
-            onEvent = viewModel::onEvent,
+            onEvent = menuViewModel::onEvent,
+            onCartEvent = cartViewModel::onEvent,
             state = state
         )
     }
@@ -79,7 +85,7 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), navController: NavHos
             initMeal = effect.meal,
             onDismiss = onDismiss,
             onFavoriteChanged = { id, isFavorite ->
-                viewModel.onEvent(MenuContract.Event.UpdateMealFavorite(id, isFavorite))
+                menuViewModel.onEvent(MenuContract.Event.UpdateMealFavorite(id, isFavorite))
             },
             shouldOpenCustomizationInit = effect.shouldOpenCustomization
         )

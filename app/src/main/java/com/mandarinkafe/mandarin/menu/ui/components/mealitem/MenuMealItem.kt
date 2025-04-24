@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
@@ -34,7 +35,8 @@ import com.mandarinkafe.mandarin.util.ui.components.ExpandableText
 @Composable
 fun MenuMealItem(
     meal: Meal,
-    onEvent: (Event) -> Unit
+    onEvent: (Event) -> Unit,
+    onCartEvent: (CartContract.Event) -> Unit,
 ) {
     //переменные для отслеживания состояния длинных описаний и названий
     var isNameExpanded by remember {
@@ -96,7 +98,8 @@ fun MenuMealItem(
             Box(contentAlignment = Alignment.BottomStart) {
                 MealButtonsRow(
                     meal = meal,
-                    onEvent = onEvent
+                    onEvent = onEvent,
+                    onCartEvent = onCartEvent,
                 )
             }
         }
