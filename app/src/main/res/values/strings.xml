@@ -20,6 +20,7 @@
     <!-- Детали блюда -->
     <string name="adds">Добавки</string>
     <string name="to_cart">В корзину</string>
+    <string name="remove_from_cart">Убрать из корзины</string>
     <string name="price_with_adds">Цена с добавками</string>
 
 

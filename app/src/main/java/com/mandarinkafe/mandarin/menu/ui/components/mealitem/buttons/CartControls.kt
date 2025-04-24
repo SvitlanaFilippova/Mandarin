@@ -6,9 +6,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,12 +53,27 @@ fun CartControls(
                 onClick = { onEvent(CartContract.Event.RemoveFromCart(meal)) },
                 modifier = Modifier.size(Dimens.ButtonToCartSmall32)
             ) {
-                Text(
-                    stringResource(id = R.string.minus),
-                    style = Typography.ToCartButtonStyle,
-                    color = Color.White
-                )
+                // Если последний экземпляр в корзине, то кнопка меняется на "корзину"
+                if (numberInCart == 1) {
+                    Icon(
+                        modifier = Modifier.padding(Dimens.MarginSmall8),
+                        imageVector = Icons.Default.Delete,
+                        tint = Color.White.copy(alpha = 0.75f),
+                        contentDescription = stringResource(id = R.string.remove_from_cart),
+                    )
+                } else if (numberInCart > 1) {
+                    Text(
+                        stringResource(id = R.string.minus),
+                        style = Typography.ToCartButtonStyle,
+                        color = Color.White
+                    )
+                } else {
+                    // TODO для  возврата удалённого блюда
+                }
+
             }
+
+            // Информация о количестве блюда в корзине и их сумме
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     stringResource(R.string.meal_in_cart_count_template, numberInCart),

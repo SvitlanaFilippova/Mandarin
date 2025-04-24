@@ -50,6 +50,7 @@ fun CartItemRow(
                 .fillMaxWidth()
         ) {
 
+            // Изображение блюда
             AsyncImage(
                 model = meal.imageUrl.ifEmpty { R.drawable.logo_orange_square },
                 contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
@@ -97,7 +98,7 @@ fun CartItemRow(
                 .fillMaxWidth()
         ) {
 
-            // Стоимость с учётом всех добавок и модификаторов
+            // Стоимость 1 шт с учётом всех добавок и модификаторов
             Text(
                 text = stringResource(R.string.meal_price_template, totalPrice),
                 style = Typography.MealPriceStyle,
