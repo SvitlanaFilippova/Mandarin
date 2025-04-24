@@ -15,7 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.ui.components.CartContentScreen
 import com.mandarinkafe.mandarin.cart.ui.components.CartPlaceholder
-import com.mandarinkafe.mandarin.cart.ui.components.CartTopBar
+import com.mandarinkafe.mandarin.cart.ui.components.CartTopBarWithLogo
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
@@ -36,7 +36,9 @@ fun CartScreen(
             .padding(Dimens.MarginSmall8)
 
     ) {
-        CartTopBar()
+
+        CartTopBarWithLogo()
+//        CartTopBar()
 
         if (state.isLoading) {
             LoadingScreen()

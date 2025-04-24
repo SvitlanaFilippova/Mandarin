@@ -40,12 +40,9 @@ fun MealButtonsRow(
         if (isInTheCart) {
             CartControls(
                 numberInCart = numberInCart,
-                price = meal.price,
-                onIncrease = { onCartEvent(CartContract.Event.AddToCart(meal)) },
-                onDecrease = {
-                    onCartEvent(CartContract.Event.RemoveFromCart(meal))
-                    if (numberInCart > 1) numberInCart-- else isInTheCart = false
-                }
+                totalPrice = meal.price,
+                meal = meal,
+                onEvent = onCartEvent,
             )
         } else {
             ToCartButtonWithPrice(meal.price, onClick = {

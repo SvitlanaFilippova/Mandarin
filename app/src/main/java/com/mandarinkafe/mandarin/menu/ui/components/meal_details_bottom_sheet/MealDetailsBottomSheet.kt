@@ -109,13 +109,12 @@ fun MealDetailsBottomSheet(
                                 onClose = onClose
                             )
 
-                            EditableType.MODIFIABLE -> {}
-                            EditableType.WOK -> {}
-                            null -> {}
+                            EditableType.WOK -> {} // Тут будет открываться экран для конструктора вок
+                            EditableType.MODIFIABLE -> {} // Тут будет открываться экран для блюд с модификаторами
+                            null -> {} // Если блюдо не редактируется, не показываем кастомизацию
                         }
 
                     }
-
 
                     if (!shouldOpenCustomization && meal.editableType != null) {
                         OpenCustomizationButton(
