@@ -12,6 +12,7 @@ sealed interface CartContract {
     }
 
     data class State(
+        val isLoading: Boolean = true,
         val cartItems: List<CartItem> = emptyList(),
         val totalCartPrice: Int = 0
     )
