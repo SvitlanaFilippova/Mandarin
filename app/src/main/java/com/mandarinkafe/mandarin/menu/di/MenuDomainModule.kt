@@ -1,8 +1,7 @@
-package com.mandarinkafe.mandarin.di
+package com.mandarinkafe.mandarin.menu.di
 
-import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
-import com.mandarinkafe.mandarin.favorites.domain.impl.FavoritesInteractorImpl
-import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
+import com.mandarinkafe.mandarin.di.Addons
+import com.mandarinkafe.mandarin.di.Recommends
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.menu.domain.impl.MenuInteractorImpl
 import com.mandarinkafe.mandarin.menu.domain.usecase.CategoryFilter
@@ -14,12 +13,7 @@ import dagger.hilt.android.components.ViewModelComponent
 
 @Module
 @InstallIn(ViewModelComponent::class)
-class DomainModule {
-
-    @Provides
-    fun provideFavoritesInteractor(repository: FavoritesRepository): FavoritesInteractor {
-        return FavoritesInteractorImpl(repository)
-    }
+class MenuDomainModule {
 
     @Provides
     fun provideMenuInteractor(
