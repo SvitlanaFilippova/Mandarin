@@ -122,4 +122,8 @@ dependencies {
 
     // Mapkit
     implementation(libs.com.yandex.maps.mobile)
+
+    // Accompanist для управления системными UI
+    implementation(libs.accompanist.systemuicontroller)
+
 }
