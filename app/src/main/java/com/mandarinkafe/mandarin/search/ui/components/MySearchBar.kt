@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import com.mandarinkafe.mandarin.cart.ui.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
@@ -31,6 +32,7 @@ fun MySearchBar(
     filteredMenuItems: List<MenuItem>,
     latestSearchText: String,
     onEvent: (Event) -> Unit,
+    onCartEvent: (CartContract.Event) -> Unit,
     onMealClick: () -> Unit,
     onSearchDismiss: () -> Unit,
     focusSearchBarInput: Boolean
@@ -83,6 +85,7 @@ fun MySearchBar(
                     latestSearchText = latestSearchText,
                     onEvent = onEvent,
                     onMealClick = onMealClick,
+                    onCartEvent = onCartEvent
                 )
             }
         )

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.cart.ui
+package com.mandarinkafe.mandarin.cart.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -35,7 +35,7 @@ import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControl
 @Preview
 @Composable
 fun PreviewItemCart() {
-    ItemCart(
+    CartItem(
         Meal(
             id = "111",
             name = "Маргарита",
@@ -77,13 +77,13 @@ fun PreviewItemCart() {
 }
 
 @Composable
-fun ItemCart(meal: Meal) {
+fun CartItem(meal: Meal) {
     val totalPrice = meal.price + meal.adds.sumOf { it.price }
 
     Column(
         modifier = Modifier
             .background(Colors.AppBlack)
-            .padding(Dimens.MarginStandard16)
+            .padding(horizontal = Dimens.MarginStandard16)
     ) {
 
         Row(
@@ -99,7 +99,6 @@ fun ItemCart(meal: Meal) {
                 modifier = Modifier
                     .size(Dimens.MealSmallImage72)
                     .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                    .padding(end = Dimens.MarginSmall8)
             )
             Column(
                 modifier = Modifier
@@ -109,7 +108,7 @@ fun ItemCart(meal: Meal) {
                     )
                     .fillMaxWidth()
             ) {
-                //Название блюда
+                // Название блюда
                 Text(
                     text = meal.name,
                     style = Typography.RegularTextStyle,
@@ -119,6 +118,7 @@ fun ItemCart(meal: Meal) {
                         .fillMaxWidth()
                 )
 
+                // Выбранные добавки
                 if (meal.adds.isNotEmpty()) {
                     val addsText = meal.adds.joinToString(", ") { it.name }
                     Text(
@@ -160,7 +160,7 @@ fun ItemCart(meal: Meal) {
                 .fillMaxWidth()
                 .padding(vertical = Dimens.MarginSmall8),
             thickness = Dimens.DividerHeight1,
-            color = Colors.Grey.copy(alpha = 0.1f)
+            color = Colors.Grey.copy(alpha = 0.2f)
         )
     }
 }

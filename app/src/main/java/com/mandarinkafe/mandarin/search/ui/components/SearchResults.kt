@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.cart.ui.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
@@ -22,6 +23,7 @@ fun SearchResults(
     latestSearchText: String,
     onEvent: (Event) -> Unit,
     onMealClick: () -> Unit,
+    onCartEvent: (CartContract.Event) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -43,7 +45,8 @@ fun SearchResults(
                     onEvent(Event.SearchOnMealClick(it.id))
                     onMealClick()
                 },
-                onEvent = onEvent
+                onEvent = onEvent,
+                onCartEvent = onCartEvent
             )
         } else if (latestSearchText.isNotEmpty()) {
             Text(

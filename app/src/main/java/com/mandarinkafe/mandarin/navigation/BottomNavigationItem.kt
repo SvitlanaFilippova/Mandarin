@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.navigation
 
 import androidx.annotation.StringRes
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.navigation.NavRoutes.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.FAVORITES_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
@@ -15,5 +16,11 @@ sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val 
             R.string.favorite,
             R.drawable.ic_favorite_inactive,
             FAVORITES_SCREEN_ROUTE
+        )
+    object Cart :
+        BottomNavigationItem(
+            R.string.cart,
+            R.drawable.ic_cart,
+            CART_SCREEN_ROUTE
         )
 }

@@ -22,9 +22,7 @@ sealed interface MenuContract {
         data class ScrollToSubCategory(val newIndex: Int) : Event
         data class BannerClick(val targetName: String) : Event
 
-        // Корзина
-        data class AddToCart(val meal: Meal) : Event
-        data class RemoveFromCart(val meal: Meal) : Event
+        // Детали блюда
         data class OnMealCustomizationClick(val meal: Meal) : Event
         data class OnMealDetailsClick(val meal: Meal) : Event
 

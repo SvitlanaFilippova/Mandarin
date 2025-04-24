@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.cart.ui.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
@@ -31,6 +32,7 @@ fun SearchResultsMealItem(
     meal: Meal,
     onEvent: (Event) -> Unit,
     onItemClick: (Meal) -> Unit,
+    onCartEvent: (CartContract.Event) -> Unit,
 ) {
 
     Row(
@@ -71,6 +73,7 @@ fun SearchResultsMealItem(
             MealButtonsRow(
                 meal = meal,
                 onEvent = onEvent,
+                onCartEvent = onCartEvent,
             )
         }
     }

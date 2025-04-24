@@ -24,7 +24,7 @@ fun AddsList(
             modifier = modifier.padding(vertical = Dimens.MarginSmall8),
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
-            itemsIndexed(addsItems) { index, item ->
+            itemsIndexed(addsItems) { _, item ->
                 AddsItem(
                     add = item,
                     onCheckedChange = onCheckedChange,

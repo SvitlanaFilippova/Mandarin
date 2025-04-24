@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.cart.ui.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.EditableType
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
@@ -25,6 +26,7 @@ import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 fun MealButtonsRow(
     meal: Meal,
     onEvent: (Event) -> Unit,
+    onCartEvent: (CartContract.Event) -> Unit,
 ) {
     var isInTheCart by remember { mutableStateOf(false) }
     var numberInCart by remember { mutableIntStateOf(1) }
@@ -39,16 +41,16 @@ fun MealButtonsRow(
             CartControls(
                 numberInCart = numberInCart,
                 price = meal.price,
-                onIncrease = { onEvent(Event.AddToCart(meal)) },
+                onIncrease = { onCartEvent(CartContract.Event.AddToCart(meal)) },
                 onDecrease = {
-                    onEvent(Event.RemoveFromCart(meal))
+                    onCartEvent(CartContract.Event.RemoveFromCart(meal))
                     if (numberInCart > 1) numberInCart-- else isInTheCart = false
                 }
             )
         } else {
             ToCartButtonWithPrice(meal.price, onClick = {
                 isInTheCart = true
-                onEvent(Event.AddToCart(meal))
+                onCartEvent(CartContract.Event.AddToCart(meal))
             })
         }
 

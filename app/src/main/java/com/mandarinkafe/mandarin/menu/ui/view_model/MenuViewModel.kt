@@ -1,9 +1,7 @@
 package com.mandarinkafe.mandarin.menu.ui.view_model
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toMealItem
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
@@ -55,8 +53,6 @@ class MenuViewModel @Inject constructor(
             is Event.ForceRefreshMenu -> forceRefreshMenu()
             is Event.OnPhoneClick -> sendEffect(CallPhone)
             is Event.ToggleFavorite -> toggleFavorite(event.meal)
-            is Event.AddToCart -> addToCart(event.meal)
-            is Event.RemoveFromCart -> removeFromCart(event.meal)
             is Event.ScrollToCategory -> scrollToCategory(event.newIndex)
             is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is Event.ScrollToTop -> scrollToTop()
@@ -198,17 +194,6 @@ class MenuViewModel @Inject constructor(
                 selectedSubTabIndex = DEFAULT_UNSELECTED_INDEX
             )
         }
-    }
-
-    // Взаимодействие с корзиной
-    private fun addToCart(meal: Meal) {
-        Cart.addItem(meal)
-        Log.d("DEBUG", "MenuViewModel addToCart for $meal")
-    }
-
-    private fun removeFromCart(meal: Meal) {
-        /* Жду реализацию логики корзины */
-        Log.d("DEBUG", "ViewModel removeFromCart for $meal")
     }
 
     // Обработка кликов по баннерам - поиск подходящей категории/блюда в меню и скролл к нему

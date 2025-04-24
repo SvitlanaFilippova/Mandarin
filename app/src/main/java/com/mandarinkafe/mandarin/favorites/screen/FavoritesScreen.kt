@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mandarinkafe.mandarin.cart.ui.CartViewModel
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.menu.ui.components.MenuTopBar
@@ -15,7 +16,8 @@ import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
 
 @Composable
 fun FavoritesScreen(
-    viewModel: MenuViewModel = hiltViewModel()
+    menuViewModel: MenuViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel,
 ) {
     Column(
         modifier = Modifier
@@ -23,14 +25,15 @@ fun FavoritesScreen(
             .background(Colors.AppBlack)
     ) {
         MenuTopBar(
-            onPhoneClick = { viewModel.onEvent(Event.OnPhoneClick) },
+            onPhoneClick = { menuViewModel.onEvent(Event.OnPhoneClick) },
             onLogoCLick = { return@MenuTopBar }
         )
         MenuList(
-            menuItems = viewModel.getFavorites(),
+            menuItems = menuViewModel.getFavorites(),
             listState = rememberLazyListState(),
             modifier = Modifier,
-            onEvent = viewModel::onEvent,
+            onEvent = menuViewModel::onEvent,
+            onCartEvent = cartViewModel::onEvent
         )
     }
 }

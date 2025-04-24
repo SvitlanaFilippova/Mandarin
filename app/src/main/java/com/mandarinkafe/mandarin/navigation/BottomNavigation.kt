@@ -28,7 +28,8 @@ fun BottomNavigation(
     val listItems = listOf(
         BottomNavigationItem.Delivery,
         BottomNavigationItem.Menu,
-        BottomNavigationItem.Favorites
+        BottomNavigationItem.Favorites,
+        BottomNavigationItem.Cart
     )
     BottomAppBar(
         tonalElevation = Dimens.Elevation2,
