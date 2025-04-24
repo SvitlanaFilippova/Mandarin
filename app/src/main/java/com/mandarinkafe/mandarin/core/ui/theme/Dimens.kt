@@ -17,6 +17,7 @@ object Dimens {
     val ButtonToggleFavorite28 = 28.dp
     val ButtonPlaceholderSize200 = 200.dp
     val IconSize24 = 24.dp
+    val BigIconSize36 = 36.dp
     val MarginStandard16 = 16.dp
     val MarginSmall8 = 8.dp
     val MarginSuperSmall4 = 4.dp

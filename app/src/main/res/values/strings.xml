@@ -12,6 +12,7 @@
     <!-- Корзина и избранное -->
     <string name="cart">Корзина</string>
     <string name="add_to_cart">Добавить в корзину</string>
+    <string name="clear_cart">Очистить корзину</string>
     <string name="question_add_to_cart">Добавить в корзину ?</string>
     <string name="add_to_favorite">Добавить в избранное</string>
     <string name="favorite">Избранное</string>

@@ -34,7 +34,7 @@ class CartViewModel @Inject constructor(
             is Event.RemoveFromCart -> removeItem(event.meal)
             Event.ClearCart -> clear()
         }
-        Log.d("DEBUG Cart", "CartViewModel - onEvent, Event: $event")
+        Log.d("DEBUG Cart", "CartViewModel - onEvent, Event: ${event}")
     }
 
     private fun addItem(meal: Meal) {

@@ -18,7 +18,6 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun getCart(): List<CartItem> {
         val rawCart = storage.getCart().toMutableList()
-        Log.d("DEBUG Cart", "CartRepositoryImpl - getCart: $rawCart")
 
         // Ждём, пока меню загрузится
         menuRepository.menu.first { it is Resource.Success }

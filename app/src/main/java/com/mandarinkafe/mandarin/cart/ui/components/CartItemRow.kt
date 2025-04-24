@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
@@ -30,7 +31,10 @@ import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControl
  */
 
 @Composable
-fun CartItem(item: CartItem) {
+fun CartItemRow(
+    item: CartItem,
+    onEvent: (CartContract.Event) -> Unit
+) {
     val meal = item.meal
     val totalPrice = meal.price + meal.adds.sumOf { it.price }
 
