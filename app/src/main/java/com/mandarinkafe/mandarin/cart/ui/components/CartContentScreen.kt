@@ -15,7 +15,7 @@ fun CartContentScreen(
 ) {
 
     Column {
-        CarCleartRow(
+        CarClearRow(
             onClear = { onEvent(Event.ClearCart) }
         )
         CartItemsList(
