@@ -9,8 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.mandarinkafe.mandarin.cart.ui.CartScreen
-import com.mandarinkafe.mandarin.cart.ui.CartViewModel
+import com.mandarinkafe.mandarin.cart.ui.screen.CartScreen
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.delivery.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.favorites.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.menu.ui.screen.MenuScreen

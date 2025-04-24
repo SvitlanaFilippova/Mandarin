@@ -103,8 +103,8 @@ fun CartItem(meal: Meal) {
             Column(
                 modifier = Modifier
                     .padding(
-                        start = Dimens.MarginSuperSmall4,
-                        bottom = Dimens.MarginSuperSmall4
+                        start = Dimens.MarginStandard16,
+                        bottom = Dimens.MarginSmall8
                     )
                     .fillMaxWidth()
             ) {

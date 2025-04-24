@@ -1,7 +1,7 @@
-package com.mandarinkafe.mandarin.cart.ui
+package com.mandarinkafe.mandarin.cart.ui.view_model
 
 import androidx.lifecycle.ViewModel
-import com.mandarinkafe.mandarin.cart.ui.CartContract.Event
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Event
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

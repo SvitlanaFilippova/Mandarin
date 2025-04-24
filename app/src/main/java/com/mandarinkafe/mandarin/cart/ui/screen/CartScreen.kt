@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.cart.ui
+package com.mandarinkafe.mandarin.cart.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -12,6 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.cart.ui.components.CartItemsList
+import com.mandarinkafe.mandarin.cart.ui.components.CartTopBar
+import com.mandarinkafe.mandarin.cart.ui.components.ProcessOrderButton
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 
@@ -24,7 +27,7 @@ fun CartScreen(
     val state by viewModel.state.collectAsState()
     val cartItems = state.cartItems
 
-    cartItems.sumOf { it.price + it.adds.sumOf { it.price } }
+    val totalCartPrice = cartItems.sumOf { it.price + it.adds.sumOf { it.price } }
 
 
     Column(
@@ -34,10 +37,15 @@ fun CartScreen(
             .padding(Dimens.MarginSmall8)
 
     ) {
+        CartTopBar()
         CartItemsList(
             cartItems = cartItems,
             listState = listState,
             modifier = Modifier.weight(1f)
+        )
+        ProcessOrderButton(
+            onClick = {},
+            totalPrice = totalCartPrice,
         )
     }
 }
