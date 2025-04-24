@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.cart.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -46,6 +47,49 @@ fun CartTopBar() {
                 .align(Alignment.Center)
                 .padding(Dimens.MarginSmall8)
 
+        )
+
+        // Иконка звонка
+        Icon(
+            painter = painterResource(R.drawable.ic_call),
+            tint = Colors.White,
+            contentDescription = stringResource(R.string.placeholder_call),
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .fillMaxHeight()
+                .clickable { }
+                .padding(Dimens.MarginStandard16)
+        )
+    }
+}
+
+@Composable
+fun CartTopBarWithLogo() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(Dimens.ToolbarHeadHeight56)
+    ) {
+
+        // Кнопка возврата
+        Icon(
+            painter = painterResource(R.drawable.ic_close),
+            tint = Colors.White,
+            contentDescription = stringResource(R.string.back),
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .fillMaxHeight()
+                .clickable { }
+                .padding(Dimens.MarginStandard16)
+        )
+        // Логотип
+        Image(
+            painter = painterResource(R.drawable.logo_text_mandarin),
+            contentDescription = stringResource(R.string.logo_cafe),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(Dimens.MarginSmall8)
+                .clickable { }
         )
 
         // Иконка звонка

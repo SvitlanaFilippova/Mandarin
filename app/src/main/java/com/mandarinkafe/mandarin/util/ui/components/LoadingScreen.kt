@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.screen
+package com.mandarinkafe.mandarin.util.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,22 +19,17 @@ fun LoadingScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Colors.AppBlack)
+            .background(Colors.AppBlack),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceAround,
     ) {
 
-    Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceAround,
-        ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(Dimens.ProgressBarSize124),
+            color = Colors.Orange,
+            strokeWidth = Dimens.ProgressBarWidth24,
+            trackColor = Colors.GreyTransparent10
+        )
 
-            CircularProgressIndicator(
-                modifier = Modifier.size(Dimens.ProgressBarSize124),
-                color = Colors.Orange,
-                strokeWidth = Dimens.ProgressBarWidth24,
-                trackColor = Colors.GreyTransparent10
-            )
-        }
     }
 }

@@ -67,6 +67,7 @@
     <string name="error_empty_menu">Сервер вернул пустые данные категорий</string>
     <string name="error_server_error">Ошибка сервера</string>
     <string name="error_something_wrong">Что-то пошло не так :(</string>
+    <string name="error_empty_cart">В корзине пока ничего нет :(</string>
 
 
     <!-- Для contentDescription  -->

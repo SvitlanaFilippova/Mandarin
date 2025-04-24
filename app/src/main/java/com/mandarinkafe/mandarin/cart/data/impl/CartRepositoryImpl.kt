@@ -26,7 +26,9 @@ class CartRepositoryImpl @Inject constructor(
         val invalidIds = mutableListOf<String>()
 
         for (cartMeal in rawCart) {
-            val fullMeal = menuRepository.getMealById(cartMeal.id)
+            // Получаем по id полную актуальную информацию о блюде и передаём сохранённые добавки
+            // TODO добавки тоже надо проверять на валидность!!!!!
+            val fullMeal = menuRepository.getMealById(cartMeal.id)?.copy(adds = cartMeal.adds)
             if (fullMeal != null) {
                 validCart.add(CartItem(meal = fullMeal, quantity = cartMeal.quantity))
             } else {

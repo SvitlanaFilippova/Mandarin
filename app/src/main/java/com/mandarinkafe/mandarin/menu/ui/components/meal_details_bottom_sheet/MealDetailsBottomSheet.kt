@@ -16,20 +16,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.EditableType
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.pizza_ads.PizzaAdsScreen
-import com.mandarinkafe.mandarin.menu.ui.screen.LoadingScreen
 import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract.Event
 import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsViewModel
+import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealDetailsBottomSheet(
     viewModel: MealDetailsViewModel = hiltViewModel(),
+    onCartEvent: (CartContract.Event) -> Unit,
     initMeal: Meal,
     shouldOpenCustomizationInit: Boolean,
     onDismiss: () -> Unit,
@@ -103,34 +105,34 @@ fun MealDetailsBottomSheet(
                             EditableType.PIZZA -> PizzaAdsScreen(
                                 state = state,
                                 onEvent = viewModel::onEvent,
+                                onCartEvent = onCartEvent,
                                 onClose = onClose
                             )
 
-                            EditableType.MODIFIABLE -> {}
-                            EditableType.WOK -> {}
-                            null -> {}
+                            EditableType.WOK -> {} // Тут будет открываться экран для конструктора вок
+                            EditableType.MODIFIABLE -> {} // Тут будет открываться экран для блюд с модификаторами
+                            null -> {} // Если блюдо не редактируется, не показываем кастомизацию
                         }
 
                     }
 
+                    if (!shouldOpenCustomization && meal.editableType != null) {
+                        OpenCustomizationButton(
+                            modifier = Modifier.padding(Dimens.MarginSmall8),
+                            editableType = meal.editableType,
+                            onClick = { shouldOpenCustomization = true }
+                        )
+                    }
 
-                if (!shouldOpenCustomization && meal.editableType != null) {
-                    OpenCustomizationButton(
+                    ToCartButton(
                         modifier = Modifier.padding(Dimens.MarginSmall8),
-                        editableType = meal.editableType,
-                        onClick = { shouldOpenCustomization = true }
+                        totalPrice = totalPrice,
+                        onClick = {
+                            onCartEvent(CartContract.Event.AddToCart(meal = meal))
+                            onClose()
+                        }
                     )
                 }
-
-                ToCartButton(
-                    modifier = Modifier.padding(Dimens.MarginSmall8),
-                    totalPrice = totalPrice,
-                    onClick = {
-                        viewModel.onEvent(Event.AddToCart)
-                        onClose()
-                    }
-                )
-            }
             }
     }
 }

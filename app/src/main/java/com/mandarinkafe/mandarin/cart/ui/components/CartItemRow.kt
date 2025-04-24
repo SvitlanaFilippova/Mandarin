@@ -106,10 +106,10 @@ fun CartItemRow(
             Spacer(modifier = Modifier.weight(1f))
 
             CartControls(
-                numberInCart = 1,
-                price = totalPrice,
-                onIncrease = {},
-                onDecrease = { }
+                numberInCart = item.quantity,
+                totalPrice = totalPrice,
+                onEvent = onEvent,
+                meal = meal
             )
         }
 

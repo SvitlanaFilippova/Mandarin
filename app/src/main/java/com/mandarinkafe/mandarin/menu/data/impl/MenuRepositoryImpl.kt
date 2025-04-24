@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.menu.data.impl
 
 import android.content.Context
-import android.util.Log
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
 import com.mandarinkafe.mandarin.menu.data.dto.MenuResponse
@@ -45,16 +44,26 @@ class MenuRepositoryImpl @Inject constructor(
     // Метод для получения актуальной информации о блюде по его id
     override fun getMealById(id: String): Meal? {
         val currentMenu = menu.value
-        var meal: Meal? = null
-        meal = if (currentMenu is Resource.Success) {
-            currentMenu.data
-                ?.flatMap { it.meals.orEmpty() }
-                ?.firstOrNull { it.id == id }
 
-        } else null
+        if (currentMenu is Resource.Success) {
+            currentMenu.data?.forEach { category ->
+                val meal = findMealRecursively(category, id)
+                if (meal != null) return meal
+            }
+        }
+        return null
+    }
 
-        Log.d("DEBUG Cart", "getMealById: $id -> $meal")
-        return meal
+    private fun findMealRecursively(category: MealCategory, id: String): Meal? {
+        // Ищем в текущей категории
+        category.meals?.firstOrNull { it.id == id }?.let { return it }
+
+        // Если не нашли — ищем во вложенных подкатегориях
+        category.subCategories?.forEach { subCategory ->
+            val found = findMealRecursively(subCategory, id)
+            if (found != null) return found
+        }
+        return null
     }
 
     // Метод для принудительного обновления

@@ -18,16 +18,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 @Composable
 fun CartControls(
     numberInCart: Int,
-    price: Int,
-    onIncrease: () -> Unit,
-    onDecrease: () -> Unit
+    totalPrice: Int,
+    meal: Meal,
+    onEvent: (CartContract.Event) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -41,7 +43,12 @@ fun CartControls(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(onClick = onDecrease, modifier = Modifier.size(Dimens.ButtonToCartSmall32)) {
+
+            // Кнопка "-"
+            IconButton(
+                onClick = { onEvent(CartContract.Event.RemoveFromCart(meal)) },
+                modifier = Modifier.size(Dimens.ButtonToCartSmall32)
+            ) {
                 Text(
                     stringResource(id = R.string.minus),
                     style = Typography.ToCartButtonStyle,
@@ -54,12 +61,17 @@ fun CartControls(
                     style = Typography.CartButtonSmallTextStyle
                 )
                 Text(
-                    stringResource(R.string.meal_price_template, numberInCart * price),
+                    stringResource(R.string.meal_price_template, numberInCart * totalPrice),
                     style = Typography.CartButtonSmallTextStyle,
                     color = Colors.WhiteTransparent75
                 )
             }
-            IconButton(onClick = onIncrease, modifier = Modifier.size(Dimens.ButtonToCartSmall32)) {
+
+            // Кнопка "+"
+            IconButton(
+                onClick = { onEvent(CartContract.Event.AddToCart(meal)) },
+                modifier = Modifier.size(Dimens.ButtonToCartSmall32)
+            ) {
                 Text(
                     stringResource(id = R.string.plus),
                     style = Typography.ToCartButtonStyle,

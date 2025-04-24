@@ -34,7 +34,6 @@ class CartViewModel @Inject constructor(
             is Event.RemoveFromCart -> removeItem(event.meal)
             Event.ClearCart -> clear()
         }
-        Log.d("DEBUG Cart", "CartViewModel - onEvent, Event: ${event}")
     }
 
     private fun addItem(meal: Meal) {
@@ -56,7 +55,7 @@ class CartViewModel @Inject constructor(
                 totalCartPrice = calculateTotalPrice(updatedList)
             )
         }
-        Log.d("DEBUG Cart", "CartViewModel - addItem, meal: $meal")
+        Log.d("DEBUG Cart", "CartViewModel - addItem, meal: ${meal.name} + ${meal.adds}")
     }
 
     private fun removeItem(meal: Meal) {
@@ -79,16 +78,17 @@ class CartViewModel @Inject constructor(
                 totalCartPrice = calculateTotalPrice(updatedList)
             )
         }
-
         Log.d("DEBUG Cart", "CartViewModel - removeItem, meal: $meal")
     }
 
     private fun updateCartState() {
         viewModelScope.launch {
-            val cartItems = cartInteractor.getCart()
+            _state.update { it.copy(isLoading = true) }
 
+            val cartItems = cartInteractor.getCart()
             _state.update { currentState ->
                 currentState.copy(
+                    isLoading = false,
                     cartItems = cartItems,
                     totalCartPrice = calculateTotalPrice(cartItems)
                 )

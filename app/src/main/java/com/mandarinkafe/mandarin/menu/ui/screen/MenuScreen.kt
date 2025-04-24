@@ -18,6 +18,7 @@ import com.mandarinkafe.mandarin.navigation.navigateToFavoritesScreen
 import com.mandarinkafe.mandarin.navigation.navigateToSearchScreen
 import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER
 import com.mandarinkafe.mandarin.util.ui.HandleBottomSheetEffect
+import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.ui.components.PlaceholderScreen
 
 @Composable
@@ -87,7 +88,8 @@ fun MenuScreen(
             onFavoriteChanged = { id, isFavorite ->
                 menuViewModel.onEvent(MenuContract.Event.UpdateMealFavorite(id, isFavorite))
             },
-            shouldOpenCustomizationInit = effect.shouldOpenCustomization
+            shouldOpenCustomizationInit = effect.shouldOpenCustomization,
+            onCartEvent = cartViewModel::onEvent
         )
     }
 }
