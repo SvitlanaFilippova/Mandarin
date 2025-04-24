@@ -18,7 +18,6 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun getCart(): List<CartItem> {
         Log.d("DEBUG Cart", "CartRepositoryImpl - getCart: ${storage.getCart()}")
-
         // Ожидание успешной загрузки меню
         menuRepository.menu.first { it is Resource.Success }
 
@@ -27,7 +26,6 @@ class CartRepositoryImpl @Inject constructor(
 
             fullMeal?.let { CartItem(meal = it, quantity = cartMeal.quantity) }
         }
-
         Log.d("DEBUG Cart", "CartRepositoryImpl - Получили cart: $cart")
         return cart
     }

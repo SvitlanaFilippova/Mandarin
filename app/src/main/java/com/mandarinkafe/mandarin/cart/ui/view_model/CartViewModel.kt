@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.cart.ui.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Event
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
@@ -38,28 +39,60 @@ class CartViewModel @Inject constructor(
 
     private fun addItem(meal: Meal) {
         cartInteractor.addToCart(meal)
-        updateCartState()
+
+        _state.update { currentState ->
+            val updatedList = currentState.cartItems.toMutableList()
+            val index = updatedList.indexOfFirst { it.meal.id == meal.id }
+
+            if (index != -1) {
+                val item = updatedList[index]
+                updatedList[index] = item.copy(quantity = item.quantity + 1)
+            } else {
+                updatedList.add(CartItem(meal = meal, quantity = 1))
+            }
+
+            currentState.copy(
+                cartItems = updatedList,
+                totalCartPrice = calculateTotalPrice(updatedList)
+            )
+        }
         Log.d("DEBUG Cart", "CartViewModel - addItem, meal: $meal")
     }
 
     private fun removeItem(meal: Meal) {
         cartInteractor.removeFromCart(meal)
-        updateCartState()
+
+        _state.update { currentState ->
+            val updatedList = currentState.cartItems.toMutableList()
+            val index = updatedList.indexOfFirst { it.meal.id == meal.id }
+
+            if (index != -1) {
+                val item = updatedList[index]
+                if (item.quantity > 1) {
+                    updatedList[index] = item.copy(quantity = item.quantity - 1)
+                } else {
+                    updatedList.removeAt(index)
+                }
+            }
+            currentState.copy(
+                cartItems = updatedList,
+                totalCartPrice = calculateTotalPrice(updatedList)
+            )
+        }
+
+        Log.d("DEBUG Cart", "CartViewModel - removeItem, meal: $meal")
     }
 
     private fun updateCartState() {
         viewModelScope.launch {
             val cartItems = cartInteractor.getCart()
-            val totalCartPrice = cartItems.sumOf {
-                it.meal.price + it.meal.adds.sumOf { it.price }
-            }
 
-        _state.update { currentState ->
-            currentState.copy(
-                cartItems = cartItems,
-                totalCartPrice = totalCartPrice
-            )
-        }
+            _state.update { currentState ->
+                currentState.copy(
+                    cartItems = cartItems,
+                    totalCartPrice = calculateTotalPrice(cartItems)
+                )
+            }
             Log.d("DEBUG Cart", "CartViewModel - updateCartState, cartItems: $cartItems")
         }
     }
@@ -67,8 +100,16 @@ class CartViewModel @Inject constructor(
     private fun clear() {
         cartInteractor.clearCart()
         _state.update {
-            it.copy(cartItems = emptyList())
+            it.copy(cartItems = emptyList(), totalCartPrice = 0)
         }
         Log.d("DEBUG Cart", "CartViewModel - clear")
+    }
+
+    private fun calculateTotalPrice(items: List<CartItem>): Int {
+        return items.sumOf { item ->
+            val basePrice = item.meal.price
+            val addsPrice = item.meal.adds.sumOf { it.price }
+            (basePrice + addsPrice) * item.quantity
+        }
     }
 }
