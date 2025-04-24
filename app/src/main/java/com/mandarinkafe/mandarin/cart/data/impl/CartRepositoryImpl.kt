@@ -17,17 +17,33 @@ class CartRepositoryImpl @Inject constructor(
 ) : CartRepository {
 
     override suspend fun getCart(): List<CartItem> {
-        Log.d("DEBUG Cart", "CartRepositoryImpl - getCart: ${storage.getCart()}")
-        // Ожидание успешной загрузки меню
+        val rawCart = storage.getCart().toMutableList()
+        Log.d("DEBUG Cart", "CartRepositoryImpl - getCart: $rawCart")
+
+        // Ждём, пока меню загрузится
         menuRepository.menu.first { it is Resource.Success }
 
-        val cart = storage.getCart().mapNotNull { cartMeal ->
-            val fullMeal = menuRepository.getMealById(cartMeal.id)
+        val validCart = mutableListOf<CartItem>()
+        val invalidIds = mutableListOf<String>()
 
-            fullMeal?.let { CartItem(meal = it, quantity = cartMeal.quantity) }
+        for (cartMeal in rawCart) {
+            val fullMeal = menuRepository.getMealById(cartMeal.id)
+            if (fullMeal != null) {
+                validCart.add(CartItem(meal = fullMeal, quantity = cartMeal.quantity))
+            } else {
+                invalidIds.add(cartMeal.id)
+            }
         }
-        Log.d("DEBUG Cart", "CartRepositoryImpl - Получили cart: $cart")
-        return cart
+
+        // Удаляем все невалидные элементы из storage
+        if (invalidIds.isNotEmpty()) {
+            val cleanedCart = rawCart.filterNot { it.id in invalidIds }
+            storage.saveCart(cleanedCart)
+            Log.d("DEBUG Cart", "Удалены некорректные элементы из корзины: $invalidIds")
+        }
+
+        Log.d("DEBUG Cart", "CartRepositoryImpl - Получили cart: $validCart")
+        return validCart
     }
 
     override fun addToCart(meal: Meal) {
