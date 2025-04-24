@@ -65,24 +65,14 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
         compose = true
         buildConfig = true
     }
 }
 
 dependencies {
-    // Navigation
-    implementation(libs.androidx.navigation.fragment)
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
+    // Navigation for Compose
     implementation(libs.androidx.navigation.compose)
-
-    // Fragment
-    implementation(libs.androidx.fragment.ktx)
-
-    // ViewPager2
-    implementation(libs.androidx.viewpager2)
 
     // Hilt
     implementation(libs.com.hilt)
@@ -90,16 +80,9 @@ dependencies {
     ksp(libs.com.hilt.ksp)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    // Glide
-    implementation(libs.glide)
-    ksp(libs.compiler)
-
     // Coil
     implementation(libs.coil.compose)
 
-    //Graphics
-    implementation(libs.androidx.ui.graphics.android)
-    
     // Retrofit
     implementation(libs.retrofit)
 
@@ -109,23 +92,11 @@ dependencies {
     // Core
     implementation(libs.androidx.core.ktx)
 
-    // AppCompat
-    implementation(libs.androidx.appcompat)
-
-    // Material
+    // Material Design
     implementation(libs.material)
 
     // Activity
     implementation(libs.androidx.activity)
-
-    // ConstraintLayout
-    implementation(libs.androidx.constraintlayout)
-
-    // CoordinatorLayout
-    implementation(libs.androidx.coordinatorlayout)
-
-    // Legacy
-    implementation(libs.androidx.legacy.support.v4)
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.livedata.ktx)
@@ -149,6 +120,6 @@ dependencies {
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.viewmodel)
 
-    //Mapkit
+    // Mapkit
     implementation(libs.com.yandex.maps.mobile)
 }
