@@ -37,9 +37,11 @@ fun CarClearRow(onClear: () -> Unit) {
 
         ) {
             Text(
+                modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
                 text = stringResource(R.string.clear_cart),
                 style = Typography.SmallTextStyle,
                 color = Colors.Grey
+
             )
 
             Icon(
