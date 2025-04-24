@@ -7,8 +7,8 @@ import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
 import com.mandarinkafe.mandarin.core.data.network.RetrofitNetworkClient
 import com.mandarinkafe.mandarin.favorites.data.impl.FavoritesRepositoryImpl
-import com.mandarinkafe.mandarin.favorites.data.sharedprefs.LocalStorage
-import com.mandarinkafe.mandarin.favorites.data.sharedprefs.LocalStorageImpl
+import com.mandarinkafe.mandarin.favorites.data.sharedprefs.FavoritesStorage
+import com.mandarinkafe.mandarin.favorites.data.sharedprefs.FavoritesStorageImpl
 import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.data.impl.MenuRepositoryImpl
 import com.mandarinkafe.mandarin.menu.data.mapper.DtoToDomainConverter
@@ -62,14 +62,14 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideLocalStorage(sharedPreferences: SharedPreferences): LocalStorage {
-        return LocalStorageImpl(sharedPreferences = sharedPreferences)
+    fun provideLocalStorage(sharedPreferences: SharedPreferences): FavoritesStorage {
+        return FavoritesStorageImpl(sharedPreferences = sharedPreferences)
     }
 
     @Provides
     @Singleton
-    fun provideFavoritesRepository(localStorage: LocalStorage): FavoritesRepository {
-        return FavoritesRepositoryImpl(localStorage = localStorage)
+    fun provideFavoritesRepository(favoritesStorage: FavoritesStorage): FavoritesRepository {
+        return FavoritesRepositoryImpl(favoritesStorage = favoritesStorage)
     }
 
     @Provides

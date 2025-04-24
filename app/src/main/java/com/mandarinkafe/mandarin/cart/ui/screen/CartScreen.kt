@@ -25,10 +25,6 @@ fun CartScreen(
 ) {
     val listState = rememberLazyListState()
     val state by viewModel.state.collectAsState()
-    val cartItems = state.cartItems
-
-    val totalCartPrice = cartItems.sumOf { it.price + it.adds.sumOf { it.price } }
-
 
     Column(
         modifier = Modifier
@@ -39,13 +35,13 @@ fun CartScreen(
     ) {
         CartTopBar()
         CartItemsList(
-            cartItems = cartItems,
+            cartItems = state.cartItems,
             listState = listState,
             modifier = Modifier.weight(1f)
         )
         ProcessOrderButton(
             onClick = {},
-            totalPrice = totalCartPrice,
+            totalPrice = state.totalCartPrice,
         )
     }
 }

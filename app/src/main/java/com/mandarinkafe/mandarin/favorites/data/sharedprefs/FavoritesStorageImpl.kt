@@ -8,8 +8,8 @@ import com.google.gson.reflect.TypeToken
 import com.mandarinkafe.mandarin.favorites.domain.models.FavoriteMeal
 import javax.inject.Inject
 
-class LocalStorageImpl @Inject constructor(private val sharedPreferences: SharedPreferences) :
-    LocalStorage {
+class FavoritesStorageImpl @Inject constructor(private val sharedPreferences: SharedPreferences) :
+    FavoritesStorage {
 
     override fun addToFavorites(meal: FavoriteMeal) {
         val updatedFavorites = getFavorites().toMutableSet().apply { add(meal) }
@@ -35,7 +35,7 @@ class LocalStorageImpl @Inject constructor(private val sharedPreferences: Shared
                 Gson().fromJson(json, listType) ?: mutableSetOf()
             }
         } catch (e: ClassCastException) {
-            sharedPreferences.edit().remove(FAVORITES_KEY).apply()
+            sharedPreferences.edit { remove(FAVORITES_KEY) }
             mutableSetOf()
         }
     }

@@ -7,13 +7,13 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 @Composable
 fun CartItemsList(
-    cartItems: List<Meal>,
+    cartItems: List<CartItem>,
     listState: LazyListState,
     modifier: Modifier,
 ) {

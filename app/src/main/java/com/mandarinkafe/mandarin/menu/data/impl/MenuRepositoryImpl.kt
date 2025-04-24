@@ -1,11 +1,13 @@
 package com.mandarinkafe.mandarin.menu.data.impl
 
 import android.content.Context
+import android.util.Log
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
 import com.mandarinkafe.mandarin.menu.data.dto.MenuResponse
 import com.mandarinkafe.mandarin.menu.data.mapper.DtoToDomainConverter
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Resource
@@ -38,6 +40,21 @@ class MenuRepositoryImpl @Inject constructor(
         // если данных нет, начинаем загрузку
         fetchMenuFromNetwork()
         return menu
+    }
+
+    // Метод для получения актуальной информации о блюде по его id
+    override fun getMealById(id: String): Meal? {
+        val currentMenu = menu.value
+        var meal: Meal? = null
+        meal = if (currentMenu is Resource.Success) {
+            currentMenu.data
+                ?.flatMap { it.meals.orEmpty() }
+                ?.firstOrNull { it.id == id }
+
+        } else null
+
+        Log.d("DEBUG Cart", "getMealById: $id -> $meal")
+        return meal
     }
 
     // Метод для принудительного обновления

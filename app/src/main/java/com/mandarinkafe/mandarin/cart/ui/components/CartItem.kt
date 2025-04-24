@@ -17,67 +17,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.menu.domain.models.EditableType
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControls
 
 /**
  * Компонент, который отвечает за отображение товара, который выбрали в меню
  */
 
-@Preview
 @Composable
-fun PreviewItemCart() {
-    CartItem(
-        Meal(
-            id = "111",
-            name = "Маргарита",
-            weight = 111,
-            price = 990,
-            imageUrl = "https://optim.tildacdn.com/tild6461-3330-4761-b163-616164303634/-/resize/312x/-/format/webp/dolce_vita_new.jpg",
-            isFavorite = false,
-            description = "Моцарелла, сливочно-чесночный соус, шампиньоны, вяленые томаты, соус песто с грецким орехом, укроп, мягкая моцарелла",
-            tags = emptyList(),
-            labels = emptyList(),
-            isHidden = false,
-            editableType = EditableType.PIZZA,
-            modifiers = emptyList(),
-            adds = listOf(
-                MealAdditional(
-                    id = "111",
-                    name = "Моцарелла",
-                    weight = 0,
-                    price = 220,
-                    isHidden = false
-                ),
-                MealAdditional(
-                    id = "111",
-                    name = "Креветки",
-                    weight = 0,
-                    price = 290,
-                    isHidden = false
-                ),
-                MealAdditional(
-                    id = "111",
-                    name = "Грибы",
-                    weight = 0,
-                    price = 192,
-                    isHidden = false
-                ),
-            )
-        )
-    )
-}
-
-@Composable
-fun CartItem(meal: Meal) {
+fun CartItem(item: CartItem) {
+    val meal = item.meal
     val totalPrice = meal.price + meal.adds.sumOf { it.price }
 
     Column(
@@ -97,7 +51,7 @@ fun CartItem(meal: Meal) {
                 contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(Dimens.MealSmallImage72)
+                    .size(Dimens.MealSmallImage64)
                     .clip(RoundedCornerShape(Dimens.CornerRadius8))
             )
             Column(
