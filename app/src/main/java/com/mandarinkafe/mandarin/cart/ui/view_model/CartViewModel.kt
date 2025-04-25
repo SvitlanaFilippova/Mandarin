@@ -48,10 +48,17 @@ class CartViewModel @Inject constructor(
             is Event.AddToCart -> addItem(event.meal)
             is Event.RemoveFromCart -> onReduceItem(event.meal)
             is Event.EditMeal -> sendEffect(OpenEditMealBS(event.meal))
+            is Event.CancelClearingCart -> cancelClearingCart()
             is Event.CancelRemove -> cancelRemove(event.meal)
-            Event.ClearCart -> clear()
+            is Event.ClearCart -> clearCartWithDebounce()
 
         }
+    }
+
+    private fun clearCartWithDebounce() {
+        _state.update { it.copy(isPendingDeletion = true) }
+        startProgressTimer()
+        clearCartDebounce.invoke(Unit)
     }
 
     private fun addItem(meal: Meal) {
@@ -79,7 +86,7 @@ class CartViewModel @Inject constructor(
     private val removeDebounce = debounce<Meal>(
         DELETE_FROM_CART_DEBOUNCE_DELAY,
         viewModelScope,
-        useLastParam = false
+        useLastParam = true
     ) { meal ->
         removeItem(meal)
     }
@@ -92,14 +99,14 @@ class CartViewModel @Inject constructor(
             val currentCartList = currentState.cartItems
             val updatedPendingDeletionItems =
                 currentState.pendingDeletionItems.toMutableList() - meal
-            val updatedDeletionProgress = currentState.deletionProgress.toMutableMap()
+            val updatedDeletionProgress = currentState.mealDeletionProgress.toMutableMap()
 
-            updatedDeletionProgress.entries.removeIf { it.key == meal } // <--- и тут
+            updatedDeletionProgress.entries.removeIf { it.key == meal }
 
             currentState.copy(
                 pendingDeletionItems = updatedPendingDeletionItems,
                 totalCartPrice = calculateTotalPrice(currentCartList),
-                deletionProgress = updatedDeletionProgress,
+                mealDeletionProgress = updatedDeletionProgress,
             )
         }
     }
@@ -151,7 +158,7 @@ class CartViewModel @Inject constructor(
         _state.update { currentState ->
             val updatedCartList = currentState.cartItems.toMutableList()
             val updatedPendingDeletionItems = currentState.pendingDeletionItems.toMutableList()
-            val updatedDeletionProgress = currentState.deletionProgress.toMutableMap()
+            val updatedDeletionProgress = currentState.mealDeletionProgress.toMutableMap()
 
             val index = updatedCartList.indexOfMeal(meal)
 
@@ -165,7 +172,7 @@ class CartViewModel @Inject constructor(
                 cartItems = updatedCartList,
                 pendingDeletionItems = updatedPendingDeletionItems,
                 totalCartPrice = calculateTotalPrice(updatedCartList),
-                deletionProgress = updatedDeletionProgress,
+                mealDeletionProgress = updatedDeletionProgress,
             )
         }
         Log.d("DEBUG Cart", "CartViewModel - removeItem, meal: $meal")
@@ -187,28 +194,66 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private fun startProgressTimer(meal: Meal) {
+    private fun startProgressTimer(meal: Meal? = null) {
         val duration = DELETE_FROM_CART_DEBOUNCE_DELAY
         val interval = INTERVAL_FOR_UPD_PROGRESSBAR
         val steps = (duration / interval).toInt()
 
-        viewModelScope.launch {
-            repeat(steps) { step ->
-                delay(interval)
-                val progress = step / steps.toFloat()
-                _state.update { state ->
-                    state.copy(
-                        deletionProgress = state.deletionProgress + (meal to progress)
-                    )
+        if (meal != null) {
+            viewModelScope.launch {
+                repeat(steps) { step ->
+                    delay(interval)
+                    val progress = step / steps.toFloat()
+                    _state.update { state ->
+                        state.copy(
+                            mealDeletionProgress = state.mealDeletionProgress + (meal to progress)
+                        )
+                    }
                 }
             }
+        } else
+            viewModelScope.launch {
+                _state.update { state ->
+                    state.copy(
+                        cartClearingProgress = null
+                    )
+                }
+                repeat(steps) { step ->
+                    delay(interval)
+                    val progress = step / steps.toFloat()
+                    _state.update { state ->
+                        state.copy(
+                            cartClearingProgress = progress
+                        )
+                    }
+                }
+            }
+    }
+
+    private val clearCartDebounce = debounce<Unit>(
+        DELETE_FROM_CART_DEBOUNCE_DELAY,
+        viewModelScope,
+        useLastParam = true
+    ) { _ ->
+        clear()
+    }
+
+    private fun cancelClearingCart() {
+        clearCartDebounce.cancel()
+        _state.update {
+            it.copy(isPendingDeletion = false, cartClearingProgress = null)
         }
     }
 
     private fun clear() {
         cartInteractor.clearCart()
         _state.update {
-            it.copy(cartItems = emptyList(), totalCartPrice = 0)
+            it.copy(
+                cartItems = emptyList(),
+                totalCartPrice = 0,
+                isPendingDeletion = false,
+                cartClearingProgress = null
+            )
         }
         Log.d("DEBUG Cart", "CartViewModel - clear")
     }

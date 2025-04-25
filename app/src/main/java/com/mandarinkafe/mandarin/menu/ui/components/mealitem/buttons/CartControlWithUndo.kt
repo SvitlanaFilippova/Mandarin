@@ -47,7 +47,7 @@ fun CartControlWithUndo(
 
             UndoIndicator(
                 modifier = Modifier.matchParentSize(),
-                deletionProgress = deletionProgress,
+                progress = deletionProgress,
                 onCancel = { onEvent(CartContract.Event.CancelRemove(meal)) },
             )
 

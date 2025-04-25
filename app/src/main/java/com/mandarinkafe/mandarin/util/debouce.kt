@@ -11,23 +11,26 @@ fun <T> debounce(
     useLastParam: Boolean,
     action: (T) -> Unit
 ): DebounceResult<T> {
-    var debounceJob: Job? = null
+    // Коллекция для хранения активных задач
+    val debounceJobs = mutableMapOf<T, Job>()
 
     val cancel: () -> Unit = {
-        debounceJob?.cancel()
-        debounceJob = null
+        debounceJobs.values.forEach { it.cancel() }
+        debounceJobs.clear()
     }
 
     val invoke: (T) -> Unit = { param: T ->
         if (useLastParam) {
-            debounceJob?.cancel()
+            debounceJobs[param]?.cancel()
         }
-        if (debounceJob?.isCompleted != false || useLastParam) {
-            debounceJob = coroutineScope.launch {
-                delay(delayMillis)
-                action(param)
-            }
+
+        val job = coroutineScope.launch {
+            delay(delayMillis)
+            action(param)
         }
+
+        // Сохраняем новую задачу в коллекции
+        debounceJobs[param] = job
     }
 
     return DebounceResult(cancel, invoke)

@@ -43,7 +43,7 @@ fun MealButtonsRow(
                 meal = meal,
                 onEvent = onCartEvent,
                 mealInPendingDeletion = cartState.pendingDeletionItems.contains(meal),
-                deletionProgress = cartState.deletionProgress[meal] ?: 0f,
+                deletionProgress = cartState.mealDeletionProgress[meal] ?: 0f,
             )
         } else {
             ToCartButtonWithPrice(meal.price, onClick = {

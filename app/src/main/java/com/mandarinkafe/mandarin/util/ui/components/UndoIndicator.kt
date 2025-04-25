@@ -19,7 +19,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Typography
 @Composable
 fun UndoIndicator(
     modifier: Modifier,
-    deletionProgress: Float,
+    progress: Float,
     onCancel: () -> Unit,
 ) {
 
@@ -30,7 +30,7 @@ fun UndoIndicator(
         verticalAlignment = Alignment.CenterVertically
     ) {
         CircularProgressIndicator(
-            progress = { deletionProgress },
+            progress = { progress },
             color = Colors.White,
             strokeWidth = Dimens.Elevation2,
             trackColor = Colors.Transparent,
