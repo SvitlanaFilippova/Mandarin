@@ -28,15 +28,16 @@ fun MenuScreen(
     navController: NavHostController
 ) {
 
-    val state by menuViewModel.state.collectAsState()
+    val menuSate by menuViewModel.state.collectAsState()
+    val cartState by cartViewModel.state.collectAsState()
     val effectFlow = menuViewModel.effect
     val listState = rememberLazyListState()
     val context = LocalContext.current
 
     when {
-        state.isLoading -> LoadingScreen()
-        state.errorMessage != null -> PlaceholderScreen(
-            state.errorMessage!!,
+        menuSate.isLoading -> LoadingScreen()
+        menuSate.errorMessage != null -> PlaceholderScreen(
+            menuSate.errorMessage!!,
             onEvent = menuViewModel::onEvent,
         )
 
@@ -44,7 +45,8 @@ fun MenuScreen(
             listState = listState,
             onEvent = menuViewModel::onEvent,
             onCartEvent = cartViewModel::onEvent,
-            state = state
+            menuSate = menuSate,
+            cartState = cartState
         )
     }
     LaunchedEffect(effectFlow) {

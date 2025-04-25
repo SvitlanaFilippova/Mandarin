@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.cart.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,12 +9,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -24,15 +30,17 @@ import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControls
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControlWithUndo
 
 /**
  * Компонент, который отвечает за отображение товара, который выбрали в меню
  */
 
 @Composable
-fun CartItemRow(
+fun CartItemCard(
     item: CartItem,
+    mealInPendingDeletion: Boolean,
+    deletionProgress: Float,
     onEvent: (CartContract.Event) -> Unit
 ) {
     val meal = item.meal
@@ -50,6 +58,7 @@ fun CartItemRow(
                 .fillMaxWidth()
         ) {
 
+            // Изображение блюда
             AsyncImage(
                 model = meal.imageUrl.ifEmpty { R.drawable.logo_orange_square },
                 contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
@@ -97,7 +106,7 @@ fun CartItemRow(
                 .fillMaxWidth()
         ) {
 
-            // Стоимость с учётом всех добавок и модификаторов
+            // Стоимость 1 шт с учётом всех добавок и модификаторов
             Text(
                 text = stringResource(R.string.meal_price_template, totalPrice),
                 style = Typography.MealPriceStyle,
@@ -105,12 +114,35 @@ fun CartItemRow(
             )
             Spacer(modifier = Modifier.weight(1f))
 
-            CartControls(
+
+            if (meal.editableType != null && !mealInPendingDeletion) {
+                // Кнопка "Редактировать"
+                Box(modifier = Modifier.padding(horizontal = Dimens.MarginStandard16)) {
+                    IconButton(
+                        onClick = { onEvent(CartContract.Event.EditMeal(meal)) },
+                        modifier = Modifier
+                            .size(Dimens.ButtonToCartSmall32)
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(Dimens.MarginSmall8),
+                            imageVector = Icons.Default.Edit,
+                            tint = Color.White,
+                            contentDescription = stringResource(id = R.string.edit_meal),
+                        )
+
+                    }
+                }
+            }
+
+            CartControlWithUndo(
                 numberInCart = item.quantity,
                 totalPrice = totalPrice,
+                meal = meal,
+                mealInPendingDeletion = mealInPendingDeletion,
                 onEvent = onEvent,
-                meal = meal
+                deletionProgress = deletionProgress,
             )
+
         }
 
         HorizontalDivider(
@@ -122,3 +154,4 @@ fun CartItemRow(
         )
     }
 }
+

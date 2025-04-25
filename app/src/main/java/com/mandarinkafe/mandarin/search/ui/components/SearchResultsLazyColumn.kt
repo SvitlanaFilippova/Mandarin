@@ -17,6 +17,7 @@ fun SearchResultsLazyColumn(
     onMealClick: (Meal) -> Unit,
     onEvent: (Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
+    cartState: CartContract.State,
 ) {
     LazyColumn(
         modifier = Modifier.padding(Dimens.MarginStandard16),
@@ -31,6 +32,7 @@ fun SearchResultsLazyColumn(
 
                     },
                     onCartEvent = onCartEvent,
+                    cartState = cartState,
                 )
             }
         }

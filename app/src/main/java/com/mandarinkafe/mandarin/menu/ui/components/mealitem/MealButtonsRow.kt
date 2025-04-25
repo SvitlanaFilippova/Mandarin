@@ -5,18 +5,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.cart.domain.util.isInCarById
+import com.mandarinkafe.mandarin.cart.domain.util.quantityById
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.EditableType
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControls
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControlWithUndo
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.FavoriteButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.PizzaAddsButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.ToCartButtonWithPrice
@@ -27,9 +24,11 @@ fun MealButtonsRow(
     meal: Meal,
     onEvent: (Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
+    cartState: CartContract.State
 ) {
-    var isInTheCart by remember { mutableStateOf(false) }
-    var numberInCart by remember { mutableIntStateOf(1) }
+
+    val isInTheCart = cartState.cartItems.isInCarById(meal.id)
+    val numberInCart = cartState.cartItems.quantityById(meal.id)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -38,15 +37,16 @@ fun MealButtonsRow(
             .fillMaxWidth()
     ) {
         if (isInTheCart) {
-            CartControls(
+            CartControlWithUndo(
                 numberInCart = numberInCart,
                 totalPrice = meal.price,
                 meal = meal,
                 onEvent = onCartEvent,
+                mealInPendingDeletion = cartState.pendingDeletionItems.contains(meal),
+                deletionProgress = cartState.mealDeletionProgress[meal] ?: 0f,
             )
         } else {
             ToCartButtonWithPrice(meal.price, onClick = {
-                isInTheCart = true
                 onCartEvent(CartContract.Event.AddToCart(meal))
             })
         }

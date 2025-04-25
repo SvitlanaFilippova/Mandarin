@@ -38,13 +38,14 @@ fun MenuContentScreen(
     listState: LazyListState,
     onEvent: (Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
-    state: MenuContract.State
+    cartState: CartContract.State,
+    menuSate: MenuContract.State
 ) {
 
-    val menuItems = state.menuItems
-    val selectedTabIndex = state.selectedTabIndex
-    val selectedSubTabIndex = state.selectedSubTabIndex
-    val selectedMenuItemIndex = state.selectedMenuItemIndex
+    val menuItems = menuSate.menuItems
+    val selectedTabIndex = menuSate.selectedTabIndex
+    val selectedSubTabIndex = menuSate.selectedSubTabIndex
+    val selectedMenuItemIndex = menuSate.selectedMenuItemIndex
     val categories = menuItems.filterIsInstance<MenuItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
     val coroutineScope = rememberCoroutineScope()
@@ -231,7 +232,9 @@ fun MenuContentScreen(
             listState = listState,
             modifier = Modifier.weight(1f),
             onEvent = onEvent,
-            onCartEvent = onCartEvent
+            onCartEvent = onCartEvent,
+            cartState = cartState
+
         )
     }
 }

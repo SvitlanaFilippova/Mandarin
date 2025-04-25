@@ -24,6 +24,7 @@ fun SearchResults(
     onEvent: (Event) -> Unit,
     onMealClick: () -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
+    cartState: CartContract.State,
 ) {
     Column(
         modifier = Modifier
@@ -46,7 +47,8 @@ fun SearchResults(
                     onMealClick()
                 },
                 onEvent = onEvent,
-                onCartEvent = onCartEvent
+                onCartEvent = onCartEvent,
+                cartState = cartState
             )
         } else if (latestSearchText.isNotEmpty()) {
             Text(

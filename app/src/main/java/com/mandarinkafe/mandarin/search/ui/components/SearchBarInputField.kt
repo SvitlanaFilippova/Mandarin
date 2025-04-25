@@ -58,8 +58,9 @@ fun SearchBarInputField(
                 tint = Colors.White
             )
         },
+
         trailingIcon = {
-            if (query.isNotEmpty()) {
+            if (query.isNotEmpty()) {  // если в поле есть текст - очистить его
                 IconButton(onClick = { onClear() }) {
                     Icon(
                         Icons.Default.Close,
@@ -68,7 +69,7 @@ fun SearchBarInputField(
                     )
                 }
             } else {
-                IconButton(onClick = { onSearchDismiss() }) {
+                IconButton(onClick = { onSearchDismiss() }) { // если поле пустое - возврат назад
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(id = R.string.back),
