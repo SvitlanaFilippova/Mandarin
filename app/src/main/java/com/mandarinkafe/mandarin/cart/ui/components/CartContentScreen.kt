@@ -22,7 +22,8 @@ fun CartContentScreen(
             cartItems = state.cartItems,
             listState = listState,
             modifier = Modifier.weight(1f),
-            onEvent = onEvent
+            onEvent = onEvent,
+            pendingDeletionItems = state.pendingDeletionItems
         )
         ProcessOrderButton(
             onClick = { },

@@ -33,6 +33,7 @@ fun SearchResultsMealItem(
     onEvent: (Event) -> Unit,
     onItemClick: (Meal) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
+    cartState: CartContract.State,
 ) {
 
     Row(
@@ -74,6 +75,7 @@ fun SearchResultsMealItem(
                 meal = meal,
                 onEvent = onEvent,
                 onCartEvent = onCartEvent,
+                cartState = cartState,
             )
         }
     }

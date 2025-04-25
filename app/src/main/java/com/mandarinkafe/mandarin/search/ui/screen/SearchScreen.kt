@@ -19,9 +19,10 @@ fun SearchScreen(
 ) {
 
     val onMealClick = { navController.navigateToMenuScreen() }
-    val state by menuViewModel.state.collectAsState()
-    val filteredMenuItems = state.filteredMenuItems
-    val latestSearchText = state.latestSearchText
+    val menuState by menuViewModel.state.collectAsState()
+    val cartState by cartViewModel.state.collectAsState()
+    val filteredMenuItems = menuState.filteredMenuItems
+    val latestSearchText = menuState.latestSearchText
 
     MySearchBar(
         filteredMenuItems = filteredMenuItems,
@@ -31,5 +32,6 @@ fun SearchScreen(
         onMealClick = onMealClick,
         onSearchDismiss = { navController.popBackStack() },
         focusSearchBarInput = focusSearchBarInput,
+        cartState = cartState,
     )
 }

@@ -37,6 +37,7 @@ fun MenuMealItem(
     meal: Meal,
     onEvent: (Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
+    cartState: CartContract.State
 ) {
     //переменные для отслеживания состояния длинных описаний и названий
     var isNameExpanded by remember {
@@ -100,6 +101,7 @@ fun MenuMealItem(
                     meal = meal,
                     onEvent = onEvent,
                     onCartEvent = onCartEvent,
+                    cartState = cartState,
                 )
             }
         }

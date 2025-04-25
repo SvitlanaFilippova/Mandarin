@@ -15,14 +15,15 @@
     <string name="clear_cart">Очистить корзину</string>
     <string name="question_add_to_cart">Добавить в корзину ?</string>
     <string name="add_to_favorite">Добавить в избранное</string>
+    <string name="remove_from_cart">Убрать из корзины</string>
+    <string name="cancel_removing">Вернуть</string>
+    <string name="cancel_removing_full_text">Отменить удаление и вернуть в корзину</string>
     <string name="favorite">Избранное</string>
 
     <!-- Детали блюда -->
     <string name="adds">Добавки</string>
     <string name="to_cart">В корзину</string>
-    <string name="remove_from_cart">Убрать из корзины</string>
     <string name="price_with_adds">Цена с добавками</string>
-
 
     <!-- Доставка -->
     <string name="delivery">Доставка</string>

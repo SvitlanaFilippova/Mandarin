@@ -6,9 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect.OpenEditMealBS
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Event
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-
+import com.mandarinkafe.mandarin.util.UndoActionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +33,8 @@ class CartViewModel @Inject constructor(
         MutableSharedFlow<Effect>()
     val effect: SharedFlow<Effect> = _effect.asSharedFlow()
 
+    private val undoManager = UndoActionManager<Meal>(viewModelScope)
+
     init {
         onEvent(Event.GetCart)
     }
@@ -41,8 +44,10 @@ class CartViewModel @Inject constructor(
             Event.GetCart -> updateCartState()
             is Event.AddToCart -> addItem(event.meal)
             is Event.RemoveFromCart -> removeItem(event.meal)
+            is Event.EditMeal -> sendEffect(OpenEditMealBS(event.meal))
+            is Event.CancelRemove -> cancelRemove(event.meal)
             Event.ClearCart -> clear()
-            is Event.EditMeal -> sendEffect(Effect.OpenEditMealBS(event.meal))
+
         }
     }
 
@@ -66,6 +71,19 @@ class CartViewModel @Inject constructor(
             )
         }
         Log.d("DEBUG Cart", "CartViewModel - addItem, meal: ${meal.name} + ${meal.adds}")
+    }
+
+    fun removeWithUndo(meal: Meal) {
+        undoManager.schedule(meal) {
+            cartInteractor.removeFromCart(meal)
+            updateCartState()
+        }
+        // можно отобразить "удалено, отменить?"
+    }
+
+    private fun cancelRemove(meal: Meal) {
+        undoManager.cancel(meal)
+        //  скрыть уведомление
     }
 
     private fun removeItem(meal: Meal) {

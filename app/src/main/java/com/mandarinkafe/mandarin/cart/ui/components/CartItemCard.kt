@@ -30,7 +30,7 @@ import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControls
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControlWithUndo
 
 /**
  * Компонент, который отвечает за отображение товара, который выбрали в меню
@@ -39,6 +39,7 @@ import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControl
 @Composable
 fun CartItemCard(
     item: CartItem,
+    mealInPendingDeletion: Boolean,
     onEvent: (CartContract.Event) -> Unit
 ) {
     val meal = item.meal
@@ -132,13 +133,14 @@ fun CartItemCard(
                 }
             }
 
-
-            CartControls(
+            CartControlWithUndo(
                 numberInCart = item.quantity,
                 totalPrice = totalPrice,
+                meal = meal,
+                mealInPendingDeletion = mealInPendingDeletion,
                 onEvent = onEvent,
-                meal = meal
             )
+
         }
 
         HorizontalDivider(
@@ -150,3 +152,4 @@ fun CartItemCard(
         )
     }
 }
+

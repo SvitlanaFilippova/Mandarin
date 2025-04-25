@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartViewModel
@@ -19,6 +21,7 @@ fun FavoritesScreen(
     menuViewModel: MenuViewModel = hiltViewModel(),
     cartViewModel: CartViewModel,
 ) {
+    val cartState by cartViewModel.state.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -33,7 +36,8 @@ fun FavoritesScreen(
             listState = rememberLazyListState(),
             modifier = Modifier,
             onEvent = menuViewModel::onEvent,
-            onCartEvent = cartViewModel::onEvent
+            onCartEvent = cartViewModel::onEvent,
+            cartState = cartState
         )
     }
 }

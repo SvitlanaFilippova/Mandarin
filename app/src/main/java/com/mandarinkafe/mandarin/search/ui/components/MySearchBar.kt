@@ -39,7 +39,8 @@ fun MySearchBar(
     onCartEvent: (CartContract.Event) -> Unit,
     onMealClick: () -> Unit,
     onSearchDismiss: () -> Unit,
-    focusSearchBarInput: Boolean
+    focusSearchBarInput: Boolean,
+    cartState: CartContract.State,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var isExpanded by remember { mutableStateOf(true) }
@@ -89,7 +90,8 @@ fun MySearchBar(
                     latestSearchText = latestSearchText,
                     onEvent = onEvent,
                     onMealClick = onMealClick,
-                    onCartEvent = onCartEvent
+                    onCartEvent = onCartEvent,
+                    cartState = cartState
                 )
             }
         )

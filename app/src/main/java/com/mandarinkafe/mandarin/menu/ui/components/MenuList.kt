@@ -19,6 +19,7 @@ fun MenuList(
     modifier: Modifier,
     onEvent: (Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
+    cartState: CartContract.State
 ) {
     LazyColumn(
         state = listState,
@@ -39,6 +40,7 @@ fun MenuList(
                     meal = item.meal,
                     onEvent = onEvent,
                     onCartEvent = onCartEvent,
+                    cartState = cartState
                 )
             }
         }

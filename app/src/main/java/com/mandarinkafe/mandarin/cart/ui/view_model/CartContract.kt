@@ -10,6 +10,7 @@ sealed interface CartContract {
         data class AddToCart(val meal: Meal) : Event
         data class RemoveFromCart(val meal: Meal) : Event
         data class EditMeal(val meal: Meal) : Event
+        data class CancelRemove(val meal: Meal) : Event
         data object ClearCart : Event
     }
 
@@ -20,6 +21,7 @@ sealed interface CartContract {
     data class State(
         val isLoading: Boolean = true,
         val cartItems: List<CartItem> = emptyList(),
+        val pendingDeletionItems: List<Meal> = emptyList(),
         val totalCartPrice: Int = 0
     )
 }
