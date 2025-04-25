@@ -1,8 +1,5 @@
 package com.mandarinkafe.mandarin.cart.ui.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +20,7 @@ fun CartItemsList(
     listState: LazyListState,
     onEvent: (Event) -> Unit,
     modifier: Modifier,
+    deletionProgress: Map<Meal, Float>
 ) {
 
     LazyColumn(
@@ -33,17 +31,12 @@ fun CartItemsList(
         itemsIndexed(cartItems) { _, item ->
             val mealInPendingDeletion = pendingDeletionItems.contains(item.meal)
 
-            //при удалении карточка исчезает с задержкой и при отмене возвращается
-            AnimatedVisibility(
-                visible = !mealInPendingDeletion,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                CartItemCard(
-                    item = item, onEvent = onEvent,
-                    mealInPendingDeletion = mealInPendingDeletion
-                )
-            }
+            CartItemCard(
+                item = item, onEvent = onEvent,
+                mealInPendingDeletion = mealInPendingDeletion,
+                deletionProgress = deletionProgress[item.meal] ?: 0f
+            )
+
         }
     }
 }

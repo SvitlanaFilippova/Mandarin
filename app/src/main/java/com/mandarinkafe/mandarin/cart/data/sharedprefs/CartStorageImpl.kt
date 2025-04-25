@@ -35,6 +35,10 @@ class CartStorageImpl @Inject constructor(private val sharedPreferences: SharedP
         } catch (e: ClassCastException) {
             clearCart()
             mutableListOf()
+
+        } catch (e: NullPointerException) {
+            clearCart()
+            mutableListOf()
         }
         Log.d("DEBUG Cart", "CartStorageImpl - getCart")
     }

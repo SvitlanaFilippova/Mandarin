@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.mandarinkafe.mandarin.cart.domain.util.isInCart
-import com.mandarinkafe.mandarin.cart.domain.util.quantityOf
+import com.mandarinkafe.mandarin.cart.domain.util.isInCarById
+import com.mandarinkafe.mandarin.cart.domain.util.quantityById
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.EditableType
@@ -27,8 +27,8 @@ fun MealButtonsRow(
     cartState: CartContract.State
 ) {
 
-    val isInTheCart = cartState.cartItems.isInCart(meal)
-    val numberInCart = cartState.cartItems.quantityOf(meal)
+    val isInTheCart = cartState.cartItems.isInCarById(meal.id)
+    val numberInCart = cartState.cartItems.quantityById(meal.id)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -43,6 +43,7 @@ fun MealButtonsRow(
                 meal = meal,
                 onEvent = onCartEvent,
                 mealInPendingDeletion = cartState.pendingDeletionItems.contains(meal),
+                deletionProgress = cartState.deletionProgress[meal] ?: 0f,
             )
         } else {
             ToCartButtonWithPrice(meal.price, onClick = {

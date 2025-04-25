@@ -40,6 +40,7 @@ import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControl
 fun CartItemCard(
     item: CartItem,
     mealInPendingDeletion: Boolean,
+    deletionProgress: Float,
     onEvent: (CartContract.Event) -> Unit
 ) {
     val meal = item.meal
@@ -114,7 +115,7 @@ fun CartItemCard(
             Spacer(modifier = Modifier.weight(1f))
 
 
-            if (meal.editableType != null) {
+            if (meal.editableType != null && !mealInPendingDeletion) {
                 // Кнопка "Редактировать"
                 Box(modifier = Modifier.padding(horizontal = Dimens.MarginStandard16)) {
                     IconButton(
@@ -139,6 +140,7 @@ fun CartItemCard(
                 meal = meal,
                 mealInPendingDeletion = mealInPendingDeletion,
                 onEvent = onEvent,
+                deletionProgress = deletionProgress,
             )
 
         }

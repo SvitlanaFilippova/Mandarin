@@ -60,10 +60,7 @@ fun CartControls(
                     style = Typography.ToCartButtonBigStyle,
                     color = Color.White
                 )
-            } else {
-                // TODO для  возврата удалённого блюда
             }
-
         }
 
         // Информация о количестве блюда в корзине и их сумме

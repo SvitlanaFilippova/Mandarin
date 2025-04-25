@@ -5,21 +5,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.util.ui.components.UndoIndicator
 
 @Composable
 fun CartControlWithUndo(
@@ -27,14 +20,19 @@ fun CartControlWithUndo(
     totalPrice: Int,
     meal: Meal,
     mealInPendingDeletion: Boolean,
+    deletionProgress: Float,
     onEvent: (CartContract.Event) -> Unit
 ) {
+
+    val backgroundColor =
+        if (mealInPendingDeletion) Colors.GreyTransparent10 else Colors.Orange.copy(alpha = 0.20f)
+
     Box(
         modifier = Modifier
             .height(Dimens.ButtonToCartSmall32)
             .widthIn(min = Dimens.ButtonToCartBig120)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
-            .background(Colors.GreyTransparent10)
+            .background(backgroundColor)
     )
     {
         if (!mealInPendingDeletion) {
@@ -46,18 +44,13 @@ fun CartControlWithUndo(
                 meal = meal,
             )
         } else {
-            IconButton(
-                onClick = { onEvent(CartContract.Event.CancelRemove(meal)) },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = stringResource(R.string.cancel_removing_full_text)
-                )
-                Text(
-                    text = stringResource(R.string.cancel_removing),
-                    style = Typography.ToCartButtonStyle
-                )
-            }
+
+            UndoIndicator(
+                modifier = Modifier.matchParentSize(),
+                deletionProgress = deletionProgress,
+                onCancel = { onEvent(CartContract.Event.CancelRemove(meal)) },
+            )
+
         }
     }
 }

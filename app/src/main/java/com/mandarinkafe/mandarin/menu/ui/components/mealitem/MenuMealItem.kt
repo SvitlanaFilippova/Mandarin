@@ -39,7 +39,7 @@ fun MenuMealItem(
     onCartEvent: (CartContract.Event) -> Unit,
     cartState: CartContract.State
 ) {
-    //переменные для отслеживания состояния длинных описаний и названий
+    // переменная для отслеживания состояния длинных названий
     var isNameExpanded by remember {
         mutableStateOf(false)
     }
@@ -70,7 +70,8 @@ fun MenuMealItem(
                 .padding(start = Dimens.MarginSmall8)
         )
         {
-            // Блок с текстовой информацией
+
+            // Блок с текстовой информацией о блюде
             Column(modifier = Modifier.heightIn(min = Dimens.MealMinDescriptionHeight96)) {
                 ExpandableText(
                     text = meal.name,
