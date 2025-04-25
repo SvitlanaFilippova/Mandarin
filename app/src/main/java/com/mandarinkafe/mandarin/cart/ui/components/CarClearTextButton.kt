@@ -21,7 +21,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 
 @Composable
-fun CarClearRow(onClear: () -> Unit) {
+fun CarClearTextButton(onClear: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()

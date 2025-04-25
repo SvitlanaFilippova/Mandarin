@@ -37,7 +37,7 @@ import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControl
  */
 
 @Composable
-fun CartItemRow(
+fun CartItemCard(
     item: CartItem,
     onEvent: (CartContract.Event) -> Unit
 ) {

@@ -26,7 +26,7 @@ fun CartItemsList(
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
         itemsIndexed(cartItems) { _, item ->
-            CartItemRow(item = item, onEvent = onEvent)
+            CartItemCard(item = item, onEvent = onEvent)
         }
     }
 }
