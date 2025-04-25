@@ -48,6 +48,7 @@
     <string name="add_additionals">Добавить начинку</string>
     <string name="choose">Выбрать</string>
     <string name="create_own_box">Собрать свою коробочку</string>
+    <string name="edit_meal">Редактировать</string>
 
     <!-- Шаблоны текста -->
     <string name="default_price_for_button">000 ₽</string>

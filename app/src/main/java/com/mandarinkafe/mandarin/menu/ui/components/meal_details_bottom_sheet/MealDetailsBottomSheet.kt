@@ -35,7 +35,7 @@ fun MealDetailsBottomSheet(
     initMeal: Meal,
     shouldOpenCustomizationInit: Boolean,
     onDismiss: () -> Unit,
-    onFavoriteChanged: (String, Boolean) -> Unit
+    onFavoriteChanged: (String, Boolean) -> Unit = { _, _ -> }
 ) {
     LaunchedEffect(Unit) {
         viewModel.onEvent(Event.SetMeal(initMeal))

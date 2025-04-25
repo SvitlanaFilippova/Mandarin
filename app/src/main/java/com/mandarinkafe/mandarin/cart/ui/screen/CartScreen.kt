@@ -16,9 +16,12 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.ui.components.CartContentScreen
 import com.mandarinkafe.mandarin.cart.ui.components.CartPlaceholder
 import com.mandarinkafe.mandarin.cart.ui.components.CartTopBar
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect.OpenEditMealBS
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
+import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.MealDetailsBottomSheet
+import com.mandarinkafe.mandarin.util.ui.HandleBottomSheetEffect
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 
 @Preview
@@ -28,6 +31,7 @@ fun CartScreen(
 ) {
     val listState = rememberLazyListState()
     val state by viewModel.state.collectAsState()
+    val effectFlow = viewModel.effect
 
     Column(
         modifier = Modifier
@@ -57,5 +61,17 @@ fun CartScreen(
                 stringResource(R.string.error_empty_cart)
             )
         }
+    }
+
+    HandleBottomSheetEffect<OpenEditMealBS>(
+        effectFlow = effectFlow,
+        cast = { it as? OpenEditMealBS }
+    ) { effect, onDismiss ->
+        MealDetailsBottomSheet(
+            initMeal = effect.meal,
+            onDismiss = onDismiss,
+            shouldOpenCustomizationInit = true,
+            onCartEvent = viewModel::onEvent
+        )
     }
 }

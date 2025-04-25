@@ -5,11 +5,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.cart.domain.usecase.CartInteractor
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Event
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
+
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,6 +28,10 @@ class CartViewModel @Inject constructor(
         MutableStateFlow(CartContract.State())
     val state: StateFlow<CartContract.State> = _state.asStateFlow()
 
+    private val _effect =
+        MutableSharedFlow<Effect>()
+    val effect: SharedFlow<Effect> = _effect.asSharedFlow()
+
     init {
         onEvent(Event.GetCart)
     }
@@ -33,6 +42,7 @@ class CartViewModel @Inject constructor(
             is Event.AddToCart -> addItem(event.meal)
             is Event.RemoveFromCart -> removeItem(event.meal)
             Event.ClearCart -> clear()
+            is Event.EditMeal -> sendEffect(Effect.OpenEditMealBS(event.meal))
         }
     }
 
@@ -112,4 +122,9 @@ class CartViewModel @Inject constructor(
             (basePrice + addsPrice) * item.quantity
         }
     }
+
+    private fun sendEffect(effect: Effect) {
+        viewModelScope.launch { _effect.emit(effect) }
+    }
+
 }

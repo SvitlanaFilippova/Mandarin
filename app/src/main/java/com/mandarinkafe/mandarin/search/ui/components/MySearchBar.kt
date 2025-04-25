@@ -26,6 +26,10 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
+/**
+ * Компонент с SearchBar - полем для полиска и его результами
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MySearchBar(

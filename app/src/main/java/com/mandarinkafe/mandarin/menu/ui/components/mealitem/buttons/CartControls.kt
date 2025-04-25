@@ -28,6 +28,10 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
+/**
+ * Блок должен появляться,когда блюдо в корзне. Кнопки +, -, количество и общая стоимость.
+ */
+
 @Composable
 fun CartControls(
     numberInCart: Int,
