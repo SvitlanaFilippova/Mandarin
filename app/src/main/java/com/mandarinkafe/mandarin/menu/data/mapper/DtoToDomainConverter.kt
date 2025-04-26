@@ -76,7 +76,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
 
         return MealCategory(
             id = id,
-            name = name,
+            name = name.applyTypography(),
             meals = safeItems,
             subCategories = null,
             tabIcon = buttonImageUrl,
@@ -141,7 +141,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     ): MealCategory {
         return MealCategory(
             id = parentDto.id,
-            name = parentDto.name,
+            name = parentDto.name.applyTypography(),
             meals = null,
             subCategories = subCategories?.map { subDto ->
                 subDto.copy(name = subDto.subName()).toDomain(
@@ -149,7 +149,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                 )
             },
             tabIcon = parentDto.buttonImageUrl,
-            description = parentDto.description.orEmpty(),
+            description = parentDto.description.orEmpty().applyTypography(),
             isHidden = parentDto.isHidden == true
         )
     }

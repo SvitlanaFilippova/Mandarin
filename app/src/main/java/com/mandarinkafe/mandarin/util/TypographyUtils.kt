@@ -5,7 +5,7 @@ object TypographyRules {
      * Список коротких слов (предлогов, союзов и частиц), перед которыми нужен неразрывный пробел
      */
     val shortWords = listOf(
-        "и", "в", "во", "не", "на", "за", "из", "от",
+        "и", "в", "во", "не", "на", "за", "из", "от", "см", "г",
         "по", "о", "об", "а", "с", "со", "у", "к", "до", "без", "для"
     )
 }
@@ -19,6 +19,8 @@ fun String.applyTypography(): String {
     )
 
     return this
+        // 0. Нормализация граммов
+        .normalizeWeight()
         // 1. Исправляем дефис без пробела после переноса
         .replace(Regex("""(?<=^|\s)-(?=\S)""")) { "- " }
         // 2. Неразрывный пробел после коротких слов
@@ -40,5 +42,15 @@ fun String.applyTypography(): String {
         .replace(Regex(""",(?=\S)"""), ", ")
         // 9. Удаление пробелов в начале и конце строки
         .trim()
+}
+
+/**
+ * Нормализация записи веса (граммов) в строках
+ */
+private fun String.normalizeWeight(): String {
+    return this.replace(Regex("""(\d+)\s*(г|Г)\.?""")) { matchResult ->
+        val number = matchResult.groupValues[1]
+        "$number г"
+    }
 }
 
