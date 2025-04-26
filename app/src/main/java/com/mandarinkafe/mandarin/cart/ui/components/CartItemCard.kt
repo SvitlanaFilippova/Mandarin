@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.cart.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -50,6 +51,7 @@ fun CartItemCard(
         modifier = Modifier
             .background(Colors.AppBlack)
             .padding(horizontal = Dimens.MarginStandard16)
+            .clickable(onClick = { onEvent(CartContract.Event.OpenMealDetails(meal)) })
     ) {
 
         Row(
@@ -112,6 +114,7 @@ fun CartItemCard(
                 style = Typography.MealPriceStyle,
                 overflow = TextOverflow.Ellipsis,
             )
+
             Spacer(modifier = Modifier.weight(1f))
 
 

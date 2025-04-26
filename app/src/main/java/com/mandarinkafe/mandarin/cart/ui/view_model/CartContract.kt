@@ -9,14 +9,16 @@ sealed interface CartContract {
         data object GetCart : Event
         data class AddToCart(val meal: Meal) : Event
         data class RemoveFromCart(val meal: Meal) : Event
-        data class EditMeal(val meal: Meal) : Event
         data class CancelRemove(val meal: Meal) : Event
         data object ClearCart : Event
         data object CancelClearingCart : Event
+        data class EditMeal(val meal: Meal) : Event
+        data class OpenMealDetails(val meal: Meal) : Event
     }
 
     sealed interface Effect {
-        data class OpenEditMealBS(val meal: Meal) : Effect, BottomSheetEffect
+        data class OpenMealDetailsBS(val meal: Meal, val shouldOpenCustomization: Boolean = false) :
+            Effect, BottomSheetEffect
     }
 
     data class State(

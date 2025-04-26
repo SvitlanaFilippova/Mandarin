@@ -52,7 +52,7 @@ fun CartContentScreen(
                     modifier = Modifier.align(Alignment.BottomCenter)
                 )
 
-                // Дымка для CartItemsList и ProcessOrderButton, если корзина в процессе удалениея
+                // Затемняем и делаем неактивными CartItemsList и ProcessOrderButton, если корзина в процессе удаления
                 if (isPendingClear) {
                     Box(
                         modifier = Modifier

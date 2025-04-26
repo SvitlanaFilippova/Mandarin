@@ -7,7 +7,7 @@ import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.cart.domain.util.indexOfMeal
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect
-import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect.OpenEditMealBS
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Event
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.totalPrice
@@ -49,11 +49,23 @@ class CartViewModel @Inject constructor(
         when (event) {
             Event.GetCart -> updateCartState()
             is Event.AddToCart -> addItem(event.meal)
-            is Event.EditMeal -> sendEffect(OpenEditMealBS(event.meal))
             is Event.RemoveFromCart -> onReduceItem(event.meal)
             is Event.CancelRemove -> cancelRemove(event.meal)
             is Event.ClearCart -> clearCartWithDebounce()
             is Event.CancelClearingCart -> cancelClearingCart()
+            is Event.OpenMealDetails -> sendEffect(
+                OpenMealDetailsBS(
+                    event.meal,
+                    shouldOpenCustomization = false
+                )
+            )
+
+            is Event.EditMeal -> sendEffect(
+                OpenMealDetailsBS(
+                    event.meal,
+                    shouldOpenCustomization = true
+                )
+            )
         }
     }
 
@@ -96,8 +108,6 @@ class CartViewModel @Inject constructor(
         }
         Log.d("DEBUG Cart", "CartViewModel - addItem, meal: ${meal.name} + ${meal.adds}")
     }
-
-
 
     private fun cancelRemove(meal: Meal) {
         removeDebounce.cancel()
