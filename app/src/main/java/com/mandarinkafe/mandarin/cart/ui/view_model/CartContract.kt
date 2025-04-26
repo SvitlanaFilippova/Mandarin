@@ -25,9 +25,13 @@ sealed interface CartContract {
         val isLoading: Boolean = true,
         val isPendingDeletion: Boolean = false,
         val cartItems: List<CartItem> = emptyList(),
-        val pendingDeletionItems: List<Meal> = emptyList(),
+        val pendingDeletionMeals: List<Meal> = emptyList(),
         val mealDeletionProgress: Map<Meal, Float> = emptyMap(),
-        val cartClearingProgress: Float? = null,
-        val totalCartPrice: Int = 0
-    )
+        val cartClearingProgress: Float? = null
+    ) {
+        val totalCartPrice: Int
+            get() = cartItems
+                .filter { it.meal !in pendingDeletionMeals }
+                .sumOf { it.meal.price * it.quantity }
+    }
 }

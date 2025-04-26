@@ -10,7 +10,6 @@ import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Event
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.totalPrice
 import com.mandarinkafe.mandarin.util.Constants.DELETE_FROM_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.INTERVAL_FOR_UPD_PROGRESSBAR
 import com.mandarinkafe.mandarin.util.debounce
@@ -103,7 +102,6 @@ class CartViewModel @Inject constructor(
 
             currentState.copy(
                 cartItems = updatedList,
-                totalCartPrice = calculateTotalPrice(updatedList)
             )
         }
         Log.d("DEBUG Cart", "CartViewModel - addItem, meal: ${meal.name} + ${meal.adds}")
@@ -115,16 +113,15 @@ class CartViewModel @Inject constructor(
         Log.d("Debug UNDO Delete", "CartViewModel, cancelRemove for $meal")
 
         _state.update { currentState ->
-            val currentCartList = currentState.cartItems
+            currentState.cartItems
             val updatedPendingDeletionItems =
-                currentState.pendingDeletionItems.toMutableList() - meal
+                currentState.pendingDeletionMeals.toMutableList() - meal
             val updatedDeletionProgress = currentState.mealDeletionProgress.toMutableMap()
 
             updatedDeletionProgress.entries.removeIf { it.key == meal }
 
             currentState.copy(
-                pendingDeletionItems = updatedPendingDeletionItems,
-                totalCartPrice = calculateTotalPrice(currentCartList),
+                pendingDeletionMeals = updatedPendingDeletionItems,
                 mealDeletionProgress = updatedDeletionProgress,
             )
         }
@@ -137,7 +134,7 @@ class CartViewModel @Inject constructor(
         _state.update { currentState ->
             val currentCartList = currentState.cartItems
             var updatedCartList = currentCartList.toMutableList()
-            val updatedPendingDeletionItems = currentState.pendingDeletionItems.toMutableList()
+            val updatedPendingDeletionItems = currentState.pendingDeletionMeals.toMutableList()
 
             val index = currentCartList.indexOfMeal(meal)
 
@@ -165,8 +162,7 @@ class CartViewModel @Inject constructor(
             }
             currentState.copy(
                 cartItems = updatedCartList,
-                pendingDeletionItems = updatedPendingDeletionItems,
-                totalCartPrice = calculateTotalPrice(updatedCartList, updatedPendingDeletionItems)
+                pendingDeletionMeals = updatedPendingDeletionItems,
             )
         }
         Log.d("DEBUG Cart", "CartViewModel - removeItem, meal: $meal")
@@ -175,7 +171,7 @@ class CartViewModel @Inject constructor(
     private fun removeItem(meal: Meal) {
         _state.update { currentState ->
             val updatedCartList = currentState.cartItems.toMutableList()
-            val updatedPendingDeletionItems = currentState.pendingDeletionItems.toMutableList()
+            val updatedPendingDeletionItems = currentState.pendingDeletionMeals.toMutableList()
             val updatedDeletionProgress = currentState.mealDeletionProgress.toMutableMap()
 
             val index = updatedCartList.indexOfMeal(meal)
@@ -188,8 +184,7 @@ class CartViewModel @Inject constructor(
             cartInteractor.removeFromCart(meal)
             currentState.copy(
                 cartItems = updatedCartList,
-                pendingDeletionItems = updatedPendingDeletionItems,
-                totalCartPrice = calculateTotalPrice(updatedCartList),
+                pendingDeletionMeals = updatedPendingDeletionItems,
                 mealDeletionProgress = updatedDeletionProgress,
             )
         }
@@ -205,7 +200,6 @@ class CartViewModel @Inject constructor(
                 currentState.copy(
                     isLoading = false,
                     cartItems = cartItems,
-                    totalCartPrice = calculateTotalPrice(cartItems)
                 )
             }
             Log.d("DEBUG Cart", "CartViewModel - updateCartState, cartItems: $cartItems")
@@ -234,21 +228,11 @@ class CartViewModel @Inject constructor(
         _state.update {
             it.copy(
                 cartItems = emptyList(),
-                totalCartPrice = 0,
                 isPendingDeletion = false,
                 cartClearingProgress = null
             )
         }
         Log.d("DEBUG Cart", "CartViewModel - clear")
-    }
-
-    private fun calculateTotalPrice(
-        itemsInCart: List<CartItem> = emptyList(),
-        pendingDeletionMeals: List<Meal> = emptyList()
-    ): Int {
-        val itemsPrice = itemsInCart.sumOf { it.meal.totalPrice() * it.quantity }
-        val mealsPrice = pendingDeletionMeals.sumOf { it.totalPrice() }
-        return itemsPrice - mealsPrice
     }
 
 // Для работы с таймерами удаления блюд и очистки корзины

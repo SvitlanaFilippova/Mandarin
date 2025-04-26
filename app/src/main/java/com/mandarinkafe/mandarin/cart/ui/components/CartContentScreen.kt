@@ -36,21 +36,25 @@ fun CartContentScreen(
                     .weight(1f)
                     .fillMaxSize()
             ) {
+
                 CartItemsList(
                     cartItems = state.cartItems,
                     listState = listState,
                     modifier = Modifier.fillMaxSize(),
                     onEvent = onEvent,
-                    pendingDeletionItems = state.pendingDeletionItems,
+                    pendingDeletionItems = state.pendingDeletionMeals,
                     deletionProgress = state.mealDeletionProgress
                 )
+                val ifCartIsEmpty = state.cartItems.none { it.meal !in state.pendingDeletionMeals }
 
                 // Кнопка оформления заказа
+                if (!ifCartIsEmpty) {
                 ProcessOrderButton(
                     onClick = { },
                     totalPrice = state.totalCartPrice,
                     modifier = Modifier.align(Alignment.BottomCenter)
                 )
+                }
 
                 // Затемняем и делаем неактивными CartItemsList и ProcessOrderButton, если корзина в процессе удаления
                 if (isPendingClear) {

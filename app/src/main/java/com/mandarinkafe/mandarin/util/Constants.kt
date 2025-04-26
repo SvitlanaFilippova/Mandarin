@@ -34,6 +34,6 @@ object Constants {
     const val CATEGORY_PIZZA_ADDS = "добавки"
     const val CATEGORY_RECOMMENDS = "рекоменд"
 
-    const val DELETE_FROM_CART_DEBOUNCE_DELAY: Long = 5000L
+    const val DELETE_FROM_CART_DEBOUNCE_DELAY: Long = 3000L
     const val INTERVAL_FOR_UPD_PROGRESSBAR: Long = 100L
 }
