@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.menu.domain.impl
 
-import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
+import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.usecase.CategoryFilter
 import jakarta.inject.Inject
 

@@ -3,10 +3,10 @@ package com.mandarinkafe.mandarin.menu.ui.view_model.meal_details
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract.Event
 import dagger.hilt.android.lifecycle.HiltViewModel

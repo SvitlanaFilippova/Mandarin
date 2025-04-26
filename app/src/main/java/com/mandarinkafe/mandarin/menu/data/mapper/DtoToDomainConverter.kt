@@ -1,6 +1,13 @@
 package com.mandarinkafe.mandarin.menu.data.mapper
 
 import android.util.Log
+import com.mandarinkafe.mandarin.core.domain.models.EditableType
+import com.mandarinkafe.mandarin.core.domain.models.Label
+import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.MealCategory
+import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
+import com.mandarinkafe.mandarin.core.domain.models.Tag
 import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.data.dto.CategoryDto
 import com.mandarinkafe.mandarin.menu.data.dto.LabelDto
@@ -8,13 +15,6 @@ import com.mandarinkafe.mandarin.menu.data.dto.MealDto
 import com.mandarinkafe.mandarin.menu.data.dto.ModifierGroupDto
 import com.mandarinkafe.mandarin.menu.data.dto.ModifierItemDto
 import com.mandarinkafe.mandarin.menu.data.dto.TagDto
-import com.mandarinkafe.mandarin.menu.domain.models.EditableType
-import com.mandarinkafe.mandarin.menu.domain.models.Label
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
-import com.mandarinkafe.mandarin.menu.domain.models.ModifierGroup
-import com.mandarinkafe.mandarin.menu.domain.models.ModifierItem
-import com.mandarinkafe.mandarin.menu.domain.models.Tag
 import com.mandarinkafe.mandarin.util.Constants.TAG_PIZZA_ADDS
 import com.mandarinkafe.mandarin.util.Constants.TAG_WOK_CONSTRUCTOR
 import com.mandarinkafe.mandarin.util.applyTypography

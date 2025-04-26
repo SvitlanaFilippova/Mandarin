@@ -9,7 +9,7 @@ import com.mandarinkafe.mandarin.cart.domain.util.indexOfMeal
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect.OpenEditMealBS
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Event
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.totalPrice
 import com.mandarinkafe.mandarin.util.Constants.DELETE_FROM_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.INTERVAL_FOR_UPD_PROGRESSBAR

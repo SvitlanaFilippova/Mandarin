@@ -17,10 +17,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
+import com.mandarinkafe.mandarin.core.domain.models.EditableType
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.domain.models.EditableType
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.pizza_ads.PizzaAdsScreen
 import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract.Event
 import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsViewModel

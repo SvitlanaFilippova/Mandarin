@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.menu.ui.view_model.meal_details
 
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SELECTED_FIRST_INDEX
 
