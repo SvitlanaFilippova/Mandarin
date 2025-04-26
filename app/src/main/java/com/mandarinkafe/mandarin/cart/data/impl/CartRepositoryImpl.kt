@@ -5,8 +5,8 @@ import com.mandarinkafe.mandarin.cart.data.mapper.CartMapper.toCartMeal
 import com.mandarinkafe.mandarin.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.cart.domain.api.CartRepository
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.util.Resource
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.first

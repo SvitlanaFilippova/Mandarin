@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.menu.domain.mappers
 
-import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
+import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 
 object MenuRVItemMapper {

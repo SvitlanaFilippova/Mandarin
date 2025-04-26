@@ -10,9 +10,9 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.cart.domain.util.isInCarById
 import com.mandarinkafe.mandarin.cart.domain.util.quantityById
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
+import com.mandarinkafe.mandarin.core.domain.models.EditableType
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.domain.models.EditableType
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControlWithUndo
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.FavoriteButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.PizzaAddsButton
@@ -42,7 +42,7 @@ fun MealButtonsRow(
                 totalPrice = meal.price,
                 meal = meal,
                 onEvent = onCartEvent,
-                mealInPendingDeletion = cartState.pendingDeletionItems.contains(meal),
+                mealInPendingDeletion = cartState.pendingDeletionMeals.contains(meal),
                 deletionProgress = cartState.mealDeletionProgress[meal] ?: 0f,
             )
         } else {

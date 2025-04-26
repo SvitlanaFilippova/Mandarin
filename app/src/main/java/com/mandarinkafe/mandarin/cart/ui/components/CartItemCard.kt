@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.cart.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -45,11 +47,13 @@ fun CartItemCard(
 ) {
     val meal = item.meal
     val totalPrice = meal.price + meal.adds.sumOf { it.price }
-
+    val contentColor = if (mealInPendingDeletion) Colors.GreyTransparent75 else Colors.White
+    val imageAlpha = if (mealInPendingDeletion) 0.5f else 1f
     Column(
         modifier = Modifier
             .background(Colors.AppBlack)
             .padding(horizontal = Dimens.MarginStandard16)
+            .clickable(onClick = { onEvent(CartContract.Event.OpenMealDetails(meal)) })
     ) {
 
         Row(
@@ -66,6 +70,7 @@ fun CartItemCard(
                 modifier = Modifier
                     .size(Dimens.MealSmallImage64)
                     .clip(RoundedCornerShape(Dimens.CornerRadius8))
+                    .alpha(imageAlpha)
             )
             Column(
                 modifier = Modifier
@@ -79,6 +84,7 @@ fun CartItemCard(
                 Text(
                     text = meal.name,
                     style = Typography.RegularTextStyle,
+                    color = contentColor,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2,
                     modifier = Modifier
@@ -91,6 +97,7 @@ fun CartItemCard(
                     Text(
                         text = stringResource(R.string.adds_prefix, addsText),
                         style = Typography.MealSmallTextStyle,
+                        color = contentColor,
                         modifier = Modifier
                             .fillMaxWidth()
                     )
@@ -110,8 +117,9 @@ fun CartItemCard(
             Text(
                 text = stringResource(R.string.meal_price_template, totalPrice),
                 style = Typography.MealPriceStyle,
-                overflow = TextOverflow.Ellipsis,
+                color = contentColor
             )
+
             Spacer(modifier = Modifier.weight(1f))
 
 

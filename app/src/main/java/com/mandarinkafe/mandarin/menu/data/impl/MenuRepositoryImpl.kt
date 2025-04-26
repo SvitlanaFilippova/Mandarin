@@ -3,11 +3,11 @@ package com.mandarinkafe.mandarin.menu.data.impl
 import android.content.Context
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
+import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.data.dto.MenuResponse
 import com.mandarinkafe.mandarin.menu.data.mapper.DtoToDomainConverter
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Resource
 import dagger.hilt.android.qualifiers.ApplicationContext

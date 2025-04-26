@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.domain.models
+package com.mandarinkafe.mandarin.core.domain.models
 
 data class MealCategory(
     val id: String,
