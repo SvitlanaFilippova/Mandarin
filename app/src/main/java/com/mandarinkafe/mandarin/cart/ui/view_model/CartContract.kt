@@ -9,6 +9,7 @@ sealed interface CartContract {
         data object GetCart : Event
         data class AddToCart(val meal: Meal) : Event
         data class RemoveFromCart(val meal: Meal) : Event
+        data class ReplaceMealInCart(val newMeal: Meal, val oldMeal: Meal) : Event
         data class CancelRemove(val meal: Meal) : Event
         data object ClearCart : Event
         data object CancelClearingCart : Event

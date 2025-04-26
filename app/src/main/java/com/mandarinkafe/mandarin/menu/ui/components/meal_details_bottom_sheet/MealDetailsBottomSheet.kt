@@ -16,7 +16,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.domain.models.EditableType
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -31,7 +30,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MealDetailsBottomSheet(
     viewModel: MealDetailsViewModel = hiltViewModel(),
-    onCartEvent: (CartContract.Event) -> Unit,
+    onAddToCart: (Meal) -> Unit,
     initMeal: Meal,
     shouldOpenCustomizationInit: Boolean,
     onDismiss: () -> Unit,
@@ -105,7 +104,7 @@ fun MealDetailsBottomSheet(
                             EditableType.PIZZA -> PizzaAdsScreen(
                                 state = state,
                                 onEvent = viewModel::onEvent,
-                                onCartEvent = onCartEvent,
+                                onAddToCart = onAddToCart,
                                 onClose = onClose
                             )
 
@@ -128,7 +127,7 @@ fun MealDetailsBottomSheet(
                         modifier = Modifier.padding(Dimens.MarginSmall8),
                         totalPrice = totalPrice,
                         onClick = {
-                            onCartEvent(CartContract.Event.AddToCart(meal = meal))
+                            onAddToCart(meal)
                             onClose()
                         }
                     )

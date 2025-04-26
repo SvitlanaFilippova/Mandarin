@@ -26,8 +26,10 @@ fun MenuList(
 ) {
     HandleBottomSheetEffects(
         effectFlow = effectFlow,
-        onCartEvent = onCartEvent,
         onMenuEvent = onEvent,
+        onAddToCart = { meal ->
+            onCartEvent(CartContract.Event.AddToCart(meal))
+        }
     )
 
     LazyColumn(

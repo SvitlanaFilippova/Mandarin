@@ -48,6 +48,7 @@ class CartViewModel @Inject constructor(
         when (event) {
             Event.GetCart -> updateCartState()
             is Event.AddToCart -> addItem(event.meal)
+            is Event.ReplaceMealInCart -> replaceMealInCart(event.newMeal, event.oldMeal)
             is Event.RemoveFromCart -> onReduceItem(event.meal)
             is Event.CancelRemove -> cancelRemove(event.meal)
             is Event.ClearCart -> clearCartWithDebounce()
@@ -65,7 +66,34 @@ class CartViewModel @Inject constructor(
                     shouldOpenCustomization = true
                 )
             )
+
         }
+    }
+
+    private fun replaceMealInCart(newMeal: Meal, oldMeal: Meal) {
+        cartInteractor.removeFromCart(oldMeal)
+        cartInteractor.addToCart(newMeal)
+
+        _state.update { currentState ->
+            val updatedList = currentState.cartItems.toMutableList()
+            val index = updatedList.indexOfMeal(oldMeal)
+
+            if (index != -1) {
+                val oldQuantity = updatedList[index].quantity
+                updatedList[index] = CartItem(meal = newMeal, quantity = oldQuantity)
+            } else {
+                // если старого блюда вдруг нет в списке — добавляем новое с quantity = 1
+                updatedList.add(CartItem(meal = newMeal, quantity = 1))
+            }
+
+            currentState.copy(
+                cartItems = updatedList
+            )
+        }
+        Log.d(
+            "DEBUG Cart",
+            "CartViewModel - replaceMealInCart, oldMeal: ${oldMeal.name}, newMeal: ${newMeal.name}"
+        )
     }
 
     private fun sendEffect(effect: Effect) {

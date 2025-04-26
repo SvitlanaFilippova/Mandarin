@@ -16,6 +16,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.ui.components.CartContentScreen
 import com.mandarinkafe.mandarin.cart.ui.components.CartPlaceholder
 import com.mandarinkafe.mandarin.cart.ui.components.CartTopBar
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -71,7 +72,14 @@ fun CartScreen(
             initMeal = effect.meal,
             onDismiss = onDismiss,
             shouldOpenCustomizationInit = effect.shouldOpenCustomization,
-            onCartEvent = viewModel::onEvent
+            onAddToCart = { newMeal ->
+                viewModel.onEvent(
+                    CartContract.Event.ReplaceMealInCart(
+                        newMeal = newMeal,
+                        oldMeal = effect.meal
+                    )
+                )
+            }
         )
     }
 }
