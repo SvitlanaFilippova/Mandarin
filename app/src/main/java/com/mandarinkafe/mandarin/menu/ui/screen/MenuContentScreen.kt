@@ -31,6 +31,7 @@ import com.mandarinkafe.mandarin.menu.ui.components.category_tabs.SubCategoryTab
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 import com.mandarinkafe.mandarin.util.ui.ScrollPosition
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -39,7 +40,8 @@ fun MenuContentScreen(
     onEvent: (Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
     cartState: CartContract.State,
-    menuSate: MenuContract.State
+    menuSate: MenuContract.State,
+    effectFlow: Flow<MenuContract.Effect>,
 ) {
 
     val menuItems = menuSate.menuItems
@@ -233,7 +235,8 @@ fun MenuContentScreen(
             modifier = Modifier.weight(1f),
             onEvent = onEvent,
             onCartEvent = onCartEvent,
-            cartState = cartState
+            cartState = cartState,
+            effectFlow = effectFlow
 
         )
     }

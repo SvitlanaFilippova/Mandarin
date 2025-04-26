@@ -22,6 +22,8 @@ fun FavoritesScreen(
     cartViewModel: CartViewModel,
 ) {
     val cartState by cartViewModel.state.collectAsState()
+    val effectFlow = menuViewModel.effect
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -37,7 +39,8 @@ fun FavoritesScreen(
             modifier = Modifier,
             onEvent = menuViewModel::onEvent,
             onCartEvent = cartViewModel::onEvent,
-            cartState = cartState
+            cartState = cartState,
+            effectFlow = effectFlow
         )
     }
 }

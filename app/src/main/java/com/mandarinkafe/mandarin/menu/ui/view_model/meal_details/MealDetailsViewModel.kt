@@ -26,6 +26,8 @@ class MealDetailsViewModel @Inject constructor(
         MutableStateFlow(MealDetailsContract.State())
     val state: StateFlow<MealDetailsContract.State> = _state.asStateFlow()
 
+    val initMeal: Meal? = null
+
     init {
         onEvent(Event.GetAddons)
     }
@@ -38,6 +40,7 @@ class MealDetailsViewModel @Inject constructor(
             is Event.SetMeal -> setMeal(event.meal)
             is Event.AddToCart -> addToCart()
             is Event.ChooseCategory -> chooseCategory(event.newIndex)
+
         }
     }
 
