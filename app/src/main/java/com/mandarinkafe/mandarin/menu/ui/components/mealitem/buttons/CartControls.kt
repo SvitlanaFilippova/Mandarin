@@ -46,7 +46,7 @@ fun CartControls(
             onClick = { onEvent(CartContract.Event.RemoveFromCart(meal)) },
             modifier = Modifier.size(Dimens.ButtonToCartSmall32)
         ) {
-            // Если последний экземпляр в корзине, то кнопка меняется на "корзину"
+            // Если последний экземпляр в корзине, то кнопка меняется на "урну"
             if (numberInCart == 1) {
                 Icon(
                     modifier = Modifier.padding(Dimens.MarginSmall8),

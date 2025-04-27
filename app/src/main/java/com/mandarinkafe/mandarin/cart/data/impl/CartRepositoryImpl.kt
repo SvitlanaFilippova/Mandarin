@@ -6,14 +6,18 @@ import com.mandarinkafe.mandarin.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.cart.domain.api.CartRepository
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.MealCategory
+import com.mandarinkafe.mandarin.di.Recommends
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
+import com.mandarinkafe.mandarin.menu.domain.usecase.CategoryFilter
 import com.mandarinkafe.mandarin.util.Resource
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.first
 
 class CartRepositoryImpl @Inject constructor(
     private val storage: CartStorage,
-    private val menuRepository: MenuRepository
+    private val menuRepository: MenuRepository,
+    @Recommends private val recommendsFilter: CategoryFilter,
 ) : CartRepository {
 
     override suspend fun getCart(): List<CartItem> {
@@ -43,7 +47,6 @@ class CartRepositoryImpl @Inject constructor(
             Log.d("DEBUG Cart", "Удалены некорректные элементы из корзины: $invalidIds")
         }
 
-        Log.d("DEBUG Cart", "CartRepositoryImpl - Получили cart: $validCart")
         return validCart
     }
 
@@ -79,4 +82,25 @@ class CartRepositoryImpl @Inject constructor(
     override fun clearCart() {
         storage.clearCart()
     }
+
+    override suspend fun getRecommends(): List<Meal> {
+        // TODO Временная реализация
+
+        val rawRecommends = mutableListOf<MealCategory>()
+
+        menuRepository.getMenu().first { result ->
+            if (result is Resource.Success) {
+                val filtered = result.data?.filter { recommendsFilter.isMatch(it) }.orEmpty()
+                rawRecommends.addAll(filtered)
+                true // чтобы завершить first()
+            } else {
+                false
+            }
+        }
+        return rawRecommends.flatMap {
+            it.meals.orEmpty()
+        }
+    }
+
+
 }

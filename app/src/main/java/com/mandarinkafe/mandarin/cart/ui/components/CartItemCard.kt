@@ -68,7 +68,7 @@ fun CartItemCard(
                 contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(Dimens.MealSmallImage64)
+                    .size(Dimens.MealSmallImage80)
                     .clip(RoundedCornerShape(Dimens.CornerRadius8))
                     .alpha(imageAlpha)
             )

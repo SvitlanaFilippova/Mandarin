@@ -9,6 +9,11 @@ object Typography {
         fontWeight = FontWeight.Normal,
         color = Colors.White
     )
+    val ToCartSmallButtonStyle = TextStyle(
+        fontSize = Dimens.TextSizeSmall11,
+        fontWeight = FontWeight.Normal,
+        color = Colors.White
+    )
 
     val ToCartButtonBigStyle = TextStyle(
         fontSize = Dimens.TextSizeRegular16,

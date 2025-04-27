@@ -26,6 +26,7 @@ sealed interface CartContract {
         val isLoading: Boolean = true,
         val isPendingDeletion: Boolean = false,
         val cartItems: List<CartItem> = emptyList(),
+        val recommendsList: List<CartItem> = emptyList(),
         val pendingDeletionMeals: List<Meal> = emptyList(),
         val mealDeletionProgress: Map<Meal, Float> = emptyMap(),
         val cartClearingProgress: Float? = null

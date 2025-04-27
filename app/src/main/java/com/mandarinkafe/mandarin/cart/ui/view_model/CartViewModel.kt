@@ -3,17 +3,19 @@ package com.mandarinkafe.mandarin.cart.ui.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.cart.domain.mapper.toCartItem
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.cart.domain.usecase.CartInteractor
-import com.mandarinkafe.mandarin.cart.domain.util.indexOfMeal
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Event
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.util.Constants.DELETE_FROM_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.INTERVAL_FOR_UPD_PROGRESSBAR
+import com.mandarinkafe.mandarin.util.Constants.UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE
 import com.mandarinkafe.mandarin.util.debounce
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,6 +24,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,6 +46,7 @@ class CartViewModel @Inject constructor(
 
     init {
         onEvent(Event.GetCart)
+        observeCartChanges()
     }
 
     fun onEvent(event: Event) {
@@ -309,7 +314,7 @@ class CartViewModel @Inject constructor(
 
     }
 
-    fun cancelMealDeletionTimer(meal: Meal) {
+    private fun cancelMealDeletionTimer(meal: Meal) {
         mealTimers[meal]?.cancel()
         mealTimers.remove(meal)
 
@@ -320,7 +325,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    fun cancelCartClearingTimer() {
+    private fun cancelCartClearingTimer() {
         clearCartTimerJob?.cancel()
         clearCartTimerJob = null
 
@@ -329,7 +334,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    fun cancelAllMealTimers() {
+    private fun cancelAllMealTimers() {
         mealTimers.values.forEach { it.cancel() }
         mealTimers.clear()
 
@@ -340,4 +345,27 @@ class CartViewModel @Inject constructor(
         }
     }
 
+    @OptIn(FlowPreview::class)
+    private fun observeCartChanges() {
+        viewModelScope.launch {
+            state
+                .debounce(UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE)
+                .distinctUntilChangedBy { it.cartItems }
+                .collect { currentState ->
+                    updateRecommends(currentState.cartItems)
+                }
+        }
+    }
+
+    private suspend fun updateRecommends(cartItems: List<CartItem>) {
+        val recommendsList = cartInteractor.getRecommends().map { it.toCartItem() }
+
+        _state.update { state ->
+            state.copy(
+                recommendsList = recommendsList.filter { recommendItem ->
+                    !cartItems.containsMeal(recommendItem.meal.id)
+                }
+            )
+        }
+    }
 }

@@ -8,4 +8,5 @@ interface CartInteractor {
     fun addToCart(meal: Meal)
     fun removeFromCart(meal: Meal)
     fun clearCart()
+    suspend fun getRecommends(): List<Meal>
 }

@@ -21,4 +21,8 @@ class CartInteractorImpl(private val repository: CartRepository) : CartInteracto
     override fun clearCart() {
         repository.clearCart()
     }
+
+    override suspend fun getRecommends(): List<Meal> {
+        return repository.getRecommends()
+    }
 }

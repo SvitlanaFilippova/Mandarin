@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.cart.domain.util
+package com.mandarinkafe.mandarin.cart.ui.view_model
 
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -21,4 +21,8 @@ fun List<CartItem>.quantityById(mealId: String): Int {
 
 fun List<CartItem>.indexOfMeal(meal: Meal): Int {
     return indexOfFirst { it.meal == meal }
+}
+
+fun List<CartItem>.containsMeal(mealId: String): Boolean {
+    return any { it.meal.id == mealId }
 }
