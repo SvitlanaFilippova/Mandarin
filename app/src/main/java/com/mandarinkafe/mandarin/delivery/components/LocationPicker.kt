@@ -2,9 +2,10 @@ package com.mandarinkafe.mandarin.delivery.components
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.location.Location
+import android.location.LocationManager
 import android.os.Looper
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -26,43 +27,34 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.delivery.Coordinates.eighthArea
-import com.mandarinkafe.mandarin.delivery.Coordinates.eleventhArea
-import com.mandarinkafe.mandarin.delivery.Coordinates.fifthArea
-import com.mandarinkafe.mandarin.delivery.Coordinates.firstArea
-import com.mandarinkafe.mandarin.delivery.Coordinates.fourthArea
-import com.mandarinkafe.mandarin.delivery.Coordinates.ninthArea
-import com.mandarinkafe.mandarin.delivery.Coordinates.secondArea
-import com.mandarinkafe.mandarin.delivery.Coordinates.seventhArea
-import com.mandarinkafe.mandarin.delivery.Coordinates.sixthArea
-import com.mandarinkafe.mandarin.delivery.Coordinates.tenthArea
-import com.mandarinkafe.mandarin.delivery.Coordinates.thirdArea
-import com.mandarinkafe.mandarin.delivery.Coordinates.twelfthArea
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
-import com.yandex.mapkit.geometry.LinearRing
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.geometry.Polygon
+import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.CameraUpdateReason
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
 
 @Composable
 fun LocationPicker() {
     val context = LocalContext.current
     val mapView = remember { mutableStateOf<MapView?>(null) }
+    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    val isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        if (isGranted) {
+        if (isGranted && isLocationEnabled) {
             val fusedLocationProviderClient =
                 LocationServices.getFusedLocationProviderClient(context)
             getUserLocation(fusedLocationProviderClient, mapView.value)
@@ -70,6 +62,7 @@ fun LocationPicker() {
             moveCamera(mapView.value, 55.998040, 38.375328) // Подвинуть карту к Мандарину
         }
     }
+    val placeMarks = remember { mutableListOf<PlacemarkMapObject>() }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     Scaffold(
@@ -92,62 +85,31 @@ fun LocationPicker() {
                 MapKitFactory.getInstance().onStart()
                 it.onStart()
                 locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                it.mapWindow?.map?.addCameraListener(object : CameraListener {
+                    override fun onCameraPositionChanged(
+                        p0: Map,
+                        cameraPosition: CameraPosition,
+                        reason: CameraUpdateReason,
+                        finished: Boolean
+                    ) {
+                        val zoomLevel = cameraPosition.zoom
+                        if (zoomLevel > 12.0f) {
+                            placeMarks.forEach {
+                                it.isVisible = true
+                            }
+                        } else {
+                            placeMarks.forEach {
+                                it.isVisible = false
+                            }
+                        }
+                    }
+                })
             }
         }
     }
-    LaunchedEffect(key1 = "addColoredArea") {
-        snapshotFlow { mapView.value }.collect { mapViewInstance ->
-            mapViewInstance?.let {
-                addColoredArea(
-                    it, firstArea,
-                    ContextCompat.getColor(context, R.color.first_area)
-                )
-                addAreaWithHole(
-                    it, secondArea, firstArea,
-                    ContextCompat.getColor(context, R.color.second_area)
-                )
-                addAreaWithHole(
-                    it, thirdArea, secondArea,
-                    ContextCompat.getColor(context, R.color.third_area)
-                )
-                addAreaWithHole(
-                    it, fourthArea, thirdArea,
-                    ContextCompat.getColor(context, R.color.fourth_area)
-                )
-                addAreaWithHole(
-                    it, fifthArea, fourthArea,
-                    ContextCompat.getColor(context, R.color.fifth_area)
-                )
-                addAreaWithHole(
-                    it, sixthArea, fifthArea,
-                    ContextCompat.getColor(context, R.color.sixth_area)
-                )
-                addAreaWithHole(
-                    it, seventhArea, sixthArea,
-                    ContextCompat.getColor(context, R.color.seventh_area)
-                )
-                addAreaWithHole(
-                    it, eighthArea, seventhArea,
-                    ContextCompat.getColor(context, R.color.eighth_area)
-                )
-                addAreaWithHole(
-                    it, ninthArea, eighthArea,
-                    ContextCompat.getColor(context, R.color.ninth_area)
-                )
-                addAreaWithHole(
-                    it, tenthArea, ninthArea,
-                    ContextCompat.getColor(context, R.color.tenth_area)
-                )
-                addAreaWithHole(
-                    it, eleventhArea, tenthArea,
-                    ContextCompat.getColor(context, R.color.eleventh_area)
-                )
-                addAreaWithHole(
-                    it, twelfthArea, eleventhArea,
-                    ContextCompat.getColor(context, R.color.twelfth_area)
-                )
-            }
-        }
+    mapView.value?.let {
+        MapAreas(it)
+        placeMarks.addAll(mapPlaceMarks(it))
     }
 }
 
@@ -206,18 +168,5 @@ private fun moveCamera(mapView: MapView?, lat: Double, lon: Double) {
     )
 }
 
-fun addColoredArea(mapView: MapView, area: List<Point>, color: Int) {
-    val mapObjects = mapView.mapWindow?.map?.mapObjects ?: return
-    val polygon = Polygon(LinearRing(area), emptyList())
-    val polygonObject = mapObjects.addPolygon(polygon)
-    polygonObject.fillColor = color
-    polygonObject.strokeColor = Color.TRANSPARENT
-}
 
-fun addAreaWithHole(mapView: MapView, outer: List<Point>, hole: List<Point>, color: Int) {
-    val mapObjects = mapView.mapWindow?.map?.mapObjects ?: return
-    val polygon = Polygon(LinearRing(outer), listOf(LinearRing(hole)))
-    val polygonObject = mapObjects.addPolygon(polygon)
-    polygonObject.fillColor = color
-    polygonObject.strokeColor = Color.TRANSPARENT
-}
+
