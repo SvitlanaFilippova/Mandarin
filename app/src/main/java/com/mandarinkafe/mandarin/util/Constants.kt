@@ -36,6 +36,7 @@ object Constants {
 
     // DEBOUNCE для корзины
     const val DELETE_FROM_CART_DEBOUNCE_DELAY: Long = 3000L
+    const val CLEAR_CART_DEBOUNCE_DELAY: Long = 5000L
     const val INTERVAL_FOR_UPD_PROGRESSBAR: Long = 100L
     const val UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE: Long = 500L
 

@@ -38,7 +38,7 @@ fun CartScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Colors.AppBlack)
-            .padding(Dimens.MarginSmall8)
+            .padding(horizontal = Dimens.MarginSmall8)
 
     ) {
 
