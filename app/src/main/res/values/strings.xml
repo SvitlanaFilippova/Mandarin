@@ -27,6 +27,8 @@
     <string name="delivery">Доставка</string>
     <string name="delivery_history">История заказов</string>
     <string name="delivery_price">СТОИМОСТЬ ДОСТАВКИ</string>
+    <string name="delivery_price_from_beregovaya">(по "Береговой" 100 рублей)</string>
+    <string name="free_delivery_at"> Бесплатная доставка при заказе от %1$d рублей;\nдоставка %2$d рублей </string>
     <string name="delivery_price_info">Доставка — БЕСПЛАТНО, при условии заказа на минимальную сумму. Чем дальше от Черноголовки, тем сумма выше. Все суммы указаны на карте ниже.</string>
     <string name="delivery_price_info_other">Стоимость доставки в остальные населенные пункты и СНТ уточняйте у оператора.</string>
     <string name="pickup">САМОВЫВОЗ</string>
