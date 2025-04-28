@@ -15,13 +15,15 @@
     <string name="clear_cart">Очистить корзину</string>
     <string name="question_add_to_cart">Добавить в корзину ?</string>
     <string name="add_to_favorite">Добавить в избранное</string>
+    <string name="remove_from_cart">Убрать из корзины</string>
+    <string name="cancel_removing">Вернуть</string>
+    <string name="cancel_removing_full_text">Отменить удаление и вернуть в корзину</string>
     <string name="favorite">Избранное</string>
 
     <!-- Детали блюда -->
     <string name="adds">Добавки</string>
     <string name="to_cart">В корзину</string>
     <string name="price_with_adds">Цена с добавками</string>
-
 
     <!-- Доставка -->
     <string name="delivery">Доставка</string>
@@ -49,6 +51,7 @@
     <string name="add_additionals">Добавить начинку</string>
     <string name="choose">Выбрать</string>
     <string name="create_own_box">Собрать свою коробочку</string>
+    <string name="edit_meal">Редактировать</string>
 
     <!-- Шаблоны текста -->
     <string name="default_price_for_button">000 ₽</string>
@@ -69,6 +72,7 @@
     <string name="error_empty_menu">Сервер вернул пустые данные категорий</string>
     <string name="error_server_error">Ошибка сервера</string>
     <string name="error_something_wrong">Что-то пошло не так :(</string>
+    <string name="error_empty_cart">В корзине пока ничего нет :(</string>
 
 
     <!-- Для contentDescription  -->

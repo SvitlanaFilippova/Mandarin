@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.cart.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,10 +16,12 @@ import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.core.ui.theme.Typography
 
 @Composable
-fun CartTopBar() {
+fun CartTopBar(
+    onBackClick: () -> Unit,
+    onCallClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -34,18 +36,16 @@ fun CartTopBar() {
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .fillMaxHeight()
-                .clickable { }
+                .clickable(onClick = onBackClick)
                 .padding(Dimens.MarginStandard16)
         )
-
-        // Название экрана
-        Text(
-            text = stringResource(R.string.cart),
-            style = Typography.TitleStyle,
+        // Логотип
+        Image(
+            painter = painterResource(R.drawable.logo_text_mandarin),
+            contentDescription = stringResource(R.string.logo_cafe),
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(Dimens.MarginSmall8)
-
         )
 
         // Иконка звонка
@@ -56,7 +56,7 @@ fun CartTopBar() {
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .fillMaxHeight()
-                .clickable { }
+                .clickable(onClick = onCallClick)
                 .padding(Dimens.MarginStandard16)
         )
     }

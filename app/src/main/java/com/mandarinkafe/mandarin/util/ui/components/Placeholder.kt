@@ -43,7 +43,7 @@ fun PlaceholderScreen(
     ) {
         Image(
             painter = painterResource(R.drawable.logo_orange),
-            contentDescription = null,
+            contentDescription = stringResource(R.string.logo_cafe),
             modifier = Modifier
                 .width(Dimens.PlaceholderImageSize120)
                 .padding(bottom = Dimens.MarginStandard16)

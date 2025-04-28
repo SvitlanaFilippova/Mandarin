@@ -11,9 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
+import com.mandarinkafe.mandarin.menu.domain.models.totalPrice
 import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.ToCartButton
 import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract
 import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract.Event
@@ -22,6 +24,7 @@ import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsCont
 fun PizzaAdsScreen(
     state: MealDetailsContract.State,
     onEvent: (Event) -> Unit,
+    onAddToCart: (Meal) -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -68,9 +71,9 @@ fun PizzaAdsScreen(
         )
 
         ToCartButton(
-            totalPrice = meal.price + meal.adds.sumOf { it.price },
+            totalPrice = meal.totalPrice(),
             onClick = {
-                onEvent(Event.AddToCart)
+                onAddToCart(meal)
                 onClose()
             }
         )

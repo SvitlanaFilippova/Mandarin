@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.favorites.domain.models
 
-import com.mandarinkafe.mandarin.menu.domain.models.EditableType
-import com.mandarinkafe.mandarin.menu.domain.models.Label
-import com.mandarinkafe.mandarin.menu.domain.models.ModifierGroup
-import com.mandarinkafe.mandarin.menu.domain.models.Tag
+import com.mandarinkafe.mandarin.core.domain.models.EditableType
+import com.mandarinkafe.mandarin.core.domain.models.Label
+import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+import com.mandarinkafe.mandarin.core.domain.models.Tag
 
 data class FavoriteMeal(
     val id: String,

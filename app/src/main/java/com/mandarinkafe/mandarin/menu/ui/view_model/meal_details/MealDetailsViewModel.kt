@@ -3,10 +3,10 @@ package com.mandarinkafe.mandarin.menu.ui.view_model.meal_details
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +26,8 @@ class MealDetailsViewModel @Inject constructor(
         MutableStateFlow(MealDetailsContract.State())
     val state: StateFlow<MealDetailsContract.State> = _state.asStateFlow()
 
+    val initMeal: Meal? = null
+
     init {
         onEvent(Event.GetAddons)
     }
@@ -38,6 +40,7 @@ class MealDetailsViewModel @Inject constructor(
             is Event.SetMeal -> setMeal(event.meal)
             is Event.AddToCart -> addToCart()
             is Event.ChooseCategory -> chooseCategory(event.newIndex)
+
         }
     }
 

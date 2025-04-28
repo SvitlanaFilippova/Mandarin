@@ -26,6 +26,10 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
+/**
+ * Компонент с SearchBar - полем для полиска и его результами
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MySearchBar(
@@ -35,7 +39,8 @@ fun MySearchBar(
     onCartEvent: (CartContract.Event) -> Unit,
     onMealClick: () -> Unit,
     onSearchDismiss: () -> Unit,
-    focusSearchBarInput: Boolean
+    focusSearchBarInput: Boolean,
+    cartState: CartContract.State,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var isExpanded by remember { mutableStateOf(true) }
@@ -85,7 +90,8 @@ fun MySearchBar(
                     latestSearchText = latestSearchText,
                     onEvent = onEvent,
                     onMealClick = onMealClick,
-                    onCartEvent = onCartEvent
+                    onCartEvent = onCartEvent,
+                    cartState = cartState
                 )
             }
         )

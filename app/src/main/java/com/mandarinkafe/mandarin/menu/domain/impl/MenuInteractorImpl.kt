@@ -1,12 +1,12 @@
 package com.mandarinkafe.mandarin.menu.domain.impl
 
+import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.di.Addons
 import com.mandarinkafe.mandarin.di.Recommends
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.menu.domain.mappers.MenuRVItemMapper
 import com.mandarinkafe.mandarin.menu.domain.mappers.toMealAdditionalCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MealAdditionalCategory
-import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.domain.usecase.CategoryFilter
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor

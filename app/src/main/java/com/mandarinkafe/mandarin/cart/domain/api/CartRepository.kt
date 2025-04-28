@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.cart.domain.api
 
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 
 interface CartRepository {
     suspend fun getCart(): List<CartItem>

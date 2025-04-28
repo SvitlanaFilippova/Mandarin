@@ -31,6 +31,7 @@ import com.mandarinkafe.mandarin.menu.ui.components.category_tabs.SubCategoryTab
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 import com.mandarinkafe.mandarin.util.ui.ScrollPosition
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -38,13 +39,15 @@ fun MenuContentScreen(
     listState: LazyListState,
     onEvent: (Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
-    state: MenuContract.State
+    cartState: CartContract.State,
+    menuSate: MenuContract.State,
+    effectFlow: Flow<MenuContract.Effect>,
 ) {
 
-    val menuItems = state.menuItems
-    val selectedTabIndex = state.selectedTabIndex
-    val selectedSubTabIndex = state.selectedSubTabIndex
-    val selectedMenuItemIndex = state.selectedMenuItemIndex
+    val menuItems = menuSate.menuItems
+    val selectedTabIndex = menuSate.selectedTabIndex
+    val selectedSubTabIndex = menuSate.selectedSubTabIndex
+    val selectedMenuItemIndex = menuSate.selectedMenuItemIndex
     val categories = menuItems.filterIsInstance<MenuItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
     val coroutineScope = rememberCoroutineScope()
@@ -231,7 +234,10 @@ fun MenuContentScreen(
             listState = listState,
             modifier = Modifier.weight(1f),
             onEvent = onEvent,
-            onCartEvent = onCartEvent
+            onCartEvent = onCartEvent,
+            cartState = cartState,
+            effectFlow = effectFlow
+
         )
     }
 }

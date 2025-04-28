@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.menu.ui.view_model.meal_details
 
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SELECTED_FIRST_INDEX
 
@@ -11,8 +11,8 @@ sealed interface MealDetailsContract {
         data class ChangeAdds(val add: MealAdditional, val isChecked: Boolean) : Event
         data class SetMeal(val meal: Meal?) : Event
         data object ToggleFavorite : Event
-        data object AddToCart : Event
         data class ChooseCategory(val newIndex: Int) : Event
+        data object AddToCart : Event
     }
 
     data class State(

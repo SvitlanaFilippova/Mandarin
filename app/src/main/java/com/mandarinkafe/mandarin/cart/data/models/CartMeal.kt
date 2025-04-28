@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.cart.data.models
 
-import com.mandarinkafe.mandarin.menu.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 
 data class CartMeal(
     val id: String,

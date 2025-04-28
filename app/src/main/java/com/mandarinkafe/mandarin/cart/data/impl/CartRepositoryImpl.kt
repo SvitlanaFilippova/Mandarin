@@ -5,8 +5,8 @@ import com.mandarinkafe.mandarin.cart.data.mapper.CartMapper.toCartMeal
 import com.mandarinkafe.mandarin.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.cart.domain.api.CartRepository
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.util.Resource
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.first
@@ -26,7 +26,9 @@ class CartRepositoryImpl @Inject constructor(
         val invalidIds = mutableListOf<String>()
 
         for (cartMeal in rawCart) {
-            val fullMeal = menuRepository.getMealById(cartMeal.id)
+            // Получаем по id полную актуальную информацию о блюде и передаём сохранённые добавки
+            // TODO добавки тоже надо проверять на валидность!!!!!
+            val fullMeal = menuRepository.getMealById(cartMeal.id)?.copy(adds = cartMeal.adds)
             if (fullMeal != null) {
                 validCart.add(CartItem(meal = fullMeal, quantity = cartMeal.quantity))
             } else {

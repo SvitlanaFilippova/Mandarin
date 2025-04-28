@@ -25,10 +25,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 import com.mandarinkafe.mandarin.util.ui.components.ExpandableText
 
@@ -37,8 +37,9 @@ fun MenuMealItem(
     meal: Meal,
     onEvent: (Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
+    cartState: CartContract.State
 ) {
-    //переменные для отслеживания состояния длинных описаний и названий
+    // переменная для отслеживания состояния длинных названий
     var isNameExpanded by remember {
         mutableStateOf(false)
     }
@@ -69,7 +70,8 @@ fun MenuMealItem(
                 .padding(start = Dimens.MarginSmall8)
         )
         {
-            // Блок с текстовой информацией
+
+            // Блок с текстовой информацией о блюде
             Column(modifier = Modifier.heightIn(min = Dimens.MealMinDescriptionHeight96)) {
                 ExpandableText(
                     text = meal.name,
@@ -100,6 +102,7 @@ fun MenuMealItem(
                     meal = meal,
                     onEvent = onEvent,
                     onCartEvent = onCartEvent,
+                    cartState = cartState,
                 )
             }
         }

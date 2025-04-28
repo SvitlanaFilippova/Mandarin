@@ -1,5 +1,7 @@
 package com.mandarinkafe.mandarin.menu.domain.models
 
+import com.mandarinkafe.mandarin.core.domain.models.Meal
+
 sealed interface MenuItem {
     data class HeaderItem(
         val categoryName: String,
