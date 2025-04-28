@@ -10,6 +10,7 @@ import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Event
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.util.Constants.CLEAR_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.DELETE_FROM_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.INTERVAL_FOR_UPD_PROGRESSBAR
 import com.mandarinkafe.mandarin.util.Constants.UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE
@@ -109,7 +110,7 @@ class CartViewModel @Inject constructor(
 
     private fun clearCartWithDebounce() {
         _state.update { it.copy(isPendingDeletion = true) }
-        startProgressTimer()
+        startProgressTimer(duration = CLEAR_CART_DEBOUNCE_DELAY)
         clearCartDebounce.invoke(Unit)
     }
 
@@ -140,7 +141,7 @@ class CartViewModel @Inject constructor(
                     cartInteractor.removeFromCart(item)
                 } else {
                     removeDebounce.invoke(item)
-                    startProgressTimer(item)
+                    startProgressTimer(item = item, duration = DELETE_FROM_CART_DEBOUNCE_DELAY)
                     pendingDeletionItems.add(item)
                 }
             }
@@ -247,7 +248,7 @@ class CartViewModel @Inject constructor(
     }
 
     private val clearCartDebounce = debounce<Unit>(
-        DELETE_FROM_CART_DEBOUNCE_DELAY,
+        CLEAR_CART_DEBOUNCE_DELAY,
         viewModelScope,
         useLastParam = true
     ) { _ ->
@@ -277,8 +278,7 @@ class CartViewModel @Inject constructor(
 
 // Для работы с таймерами удаления блюд и очистки корзины
 
-    private fun startProgressTimer(item: CartItem? = null) {
-        val duration = DELETE_FROM_CART_DEBOUNCE_DELAY
+    private fun startProgressTimer(item: CartItem? = null, duration: Long) {
         val interval = INTERVAL_FOR_UPD_PROGRESSBAR
         val steps = (duration / interval).toInt()
 
