@@ -8,6 +8,11 @@ fun Map<CartItem, Int>.getTotalQuantityByMealId(mealId: String): Int {
         .sum()
 }
 
+fun Map<CartItem, Int>.getTotalPriceByMealId(mealId: String): Int {
+    return this.filter { it.key.meal.id == mealId }.keys.sumOf { it.totalPrice() }
+    // TODO исправить расчёт с учётом количества в корзине
+}
+
 fun CartItem.totalPrice(): Int {
     return this.meal.price + this.adds.sumOf { it.price }
 }

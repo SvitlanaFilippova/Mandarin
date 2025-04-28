@@ -1,13 +1,15 @@
 package com.mandarinkafe.mandarin.cart.ui.view_model
 
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 
 sealed interface CartContract {
     sealed interface Event {
         data object GetCart : Event
         data class AddToCart(val item: CartItem) : Event
-        data class RemoveFromCart(val item: CartItem) : Event
+        data class RemoveFromCartWithDelay(val item: CartItem) : Event
+        data class RemoveFromCartByMeal(val meal: Meal) : Event
         data class ReplaceMealInCart(val newItem: CartItem, val oldItem: CartItem) : Event
         data class CancelRemove(val item: CartItem) : Event
         data object ClearCart : Event

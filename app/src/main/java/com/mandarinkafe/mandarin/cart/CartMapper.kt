@@ -18,7 +18,12 @@ object CartMapper {
     }
 
     // TODO проверить логику, неравильно сейчас!!!!
-    fun Meal.toRemoveFromCartEvent(): Event.RemoveFromCart {
-        return Event.RemoveFromCart(CartItem(meal = this))
+    fun Meal.toRemoveFromCartNow(): Event.RemoveFromCartByMeal {
+        return Event.RemoveFromCartByMeal(meal = this)
     }
+
+    fun Meal.toCartItem() = CartItem(
+        meal = this,
+        adds = emptyList()
+    )
 }

@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.mandarinkafe.mandarin.cart.domain.mapper.toCartItem
+import com.mandarinkafe.mandarin.cart.CartMapper.toAddToCartEvent
+import com.mandarinkafe.mandarin.cart.CartMapper.toRemoveFromCartNow
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
+import com.mandarinkafe.mandarin.cart.ui.view_model.getTotalPriceByMealId
 import com.mandarinkafe.mandarin.cart.ui.view_model.getTotalQuantityByMealId
 import com.mandarinkafe.mandarin.core.domain.models.EditableType
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -29,6 +31,7 @@ fun MealButtonsRow(
 
     val isInTheCart = cartState.cartItems.keys.any { it.meal.id == meal.id }
     val numberInCart = cartState.cartItems.getTotalQuantityByMealId(meal.id)
+    val totalPrice = cartState.cartItems.getTotalPriceByMealId(meal.id)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -38,15 +41,16 @@ fun MealButtonsRow(
     ) {
         if (isInTheCart) {
             CartControls(
+                totalPrice = totalPrice,
                 numberInCart = numberInCart,
-                totalPrice = meal.price,
-                meal = meal,
-                onEvent = onCartEvent,
+                onIncrease = { onCartEvent(meal.toAddToCartEvent()) },
+                onDecrease = { onCartEvent(meal.toRemoveFromCartNow()) },
             )
         } else {
-            ToCartButtonWithPrice(meal.price, onClick = {
-                onCartEvent(CartContract.Event.AddToCart(meal.toCartItem()))
-            })
+            ToCartButtonWithPrice(
+                meal.price, onClick = {
+                    onCartEvent(meal.toAddToCartEvent())
+                })
         }
 
         if (meal.editableType == EditableType.PIZZA) {

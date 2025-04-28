@@ -3,12 +3,13 @@ package com.mandarinkafe.mandarin.cart.ui.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.cart.domain.mapper.toCartItem
+import com.mandarinkafe.mandarin.cart.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Event
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.util.Constants.DELETE_FROM_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.INTERVAL_FOR_UPD_PROGRESSBAR
 import com.mandarinkafe.mandarin.util.Constants.UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE
@@ -57,7 +58,8 @@ class CartViewModel @Inject constructor(
                 oldItem = event.oldItem
             )
 
-            is Event.RemoveFromCart -> onReduceItem(item = event.item)
+            is Event.RemoveFromCartWithDelay -> onReduceItem(item = event.item)
+            is Event.RemoveFromCartByMeal -> removeFromCartByMeal(meal = event.meal)
             is Event.CancelRemove -> cancelRemove(item = event.item)
             is Event.ClearCart -> clearCartWithDebounce()
             is Event.CancelClearingCart -> cancelClearingCart()
@@ -74,7 +76,6 @@ class CartViewModel @Inject constructor(
                     shouldOpenCustomization = true
                 )
             )
-
         }
     }
 
@@ -126,6 +127,32 @@ class CartViewModel @Inject constructor(
         }
     }
 
+    // Обработка кнопки "-". Если в корзине была 1 шт - запуск отложенного удаления
+    private fun onReduceItem(item: CartItem) {
+        _state.update { currentState ->
+            val pendingDeletionItems = currentState.pendingDeletionMeals.toMutableList()
+            val cartItems = currentState.cartItems
+            val currentQuantity = cartItems[item] ?: 0
+            val updatedCartList = cartItems.toMutableMap().apply {
+                // если в корзине  больше одной штуки item
+                if (currentQuantity > 1) {
+                    put(item, currentQuantity - 1)
+                    cartInteractor.removeFromCart(item)
+                } else {
+                    removeDebounce.invoke(item)
+                    startProgressTimer(item)
+                    pendingDeletionItems.add(item)
+                }
+            }
+
+            currentState.copy(
+                cartItems = updatedCartList,
+                pendingDeletionMeals = pendingDeletionItems,
+            )
+        }
+    }
+
+    // отмена удаления
     private fun cancelRemove(item: CartItem) {
         removeDebounce.cancel()
         cancelMealDeletionTimer(item)
@@ -145,34 +172,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private fun onReduceItem(item: CartItem) {
-        // нужно проработать ситуацию, когда в корзине пицца с добавками, а "-" вызывается с общей карточки а не для конкретной пиццы
-        // В этом случае нужно делать поиск по ID и удалять последнюю добавленную с тем же ID, а не полный дубль meal (его просто не будет)
-
-        _state.update { currentState ->
-            val pendingDeletionItems = currentState.pendingDeletionMeals.toMutableList()
-            val cartItems = currentState.cartItems
-            val currentQuantity = cartItems[item] ?: 0
-            val updatedCartList = cartItems.toMutableMap().apply {
-                // если в корзине  больше одной штуки item
-                if (currentQuantity > 1) {
-                    put(item, currentQuantity - 1)
-                    cartInteractor.removeFromCart(item)
-                } else {
-//                    remove(item)
-                    removeDebounce.invoke(item)
-                    startProgressTimer(item)
-                    pendingDeletionItems.add(item)
-                }
-            }
-
-            currentState.copy(
-                cartItems = updatedCartList,
-                pendingDeletionMeals = pendingDeletionItems,
-            )
-        }
-    }
-
+    // Окончательное удаление из корзины
     private fun removeItem(item: CartItem) {
         _state.update { currentState ->
             val pendingDeletionItems = currentState.pendingDeletionMeals.toMutableList()
@@ -190,6 +190,42 @@ class CartViewModel @Inject constructor(
                 cartItems = updatedCartList,
                 pendingDeletionMeals = pendingDeletionItems,
                 mealDeletionProgress = deletionProgress,
+            )
+        }
+    }
+
+    // метод для удаления блюда прямо из меню, без таймера отмены
+    private fun removeFromCartByMeal(meal: Meal) {
+        _state.update { currentState ->
+            val pendingDeletionItems = currentState.pendingDeletionMeals.toMutableList()
+            val cartItems = currentState.cartItems
+            val deletionProgress = currentState.mealDeletionProgress.toMutableMap()
+
+            // Ищем последний добавленный CartItem с таким же meal.id
+            val item = cartItems.keys.lastOrNull { it.meal.id == meal.id }
+
+            if (item == null) {
+                // Ничего не найдено — возвращаем текущее состояние
+                return@update currentState
+            }
+
+            val currentQuantity = cartItems[item] ?: 0
+
+            val updatedCartList = cartItems.toMutableMap().apply {
+                // если в корзине  больше одной штуки item
+                if (currentQuantity > 1) {
+                    put(item, currentQuantity - 1)
+
+                } else {
+                    remove(item)
+                    pendingDeletionItems.remove(item)
+                    deletionProgress.entries.removeIf { it.key == item }
+                }
+            }
+            cartInteractor.removeFromCart(item)
+            currentState.copy(
+                cartItems = updatedCartList,
+                pendingDeletionMeals = pendingDeletionItems,
             )
         }
     }
@@ -282,7 +318,6 @@ class CartViewModel @Inject constructor(
                 }
             }
         }
-
     }
 
     private fun cancelMealDeletionTimer(item: CartItem) {

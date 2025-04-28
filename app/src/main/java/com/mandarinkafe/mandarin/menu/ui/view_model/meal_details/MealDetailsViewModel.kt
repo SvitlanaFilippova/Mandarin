@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.menu.ui.view_model.meal_details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.cart.domain.mapper.toCartItem
+import com.mandarinkafe.mandarin.cart.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toFavoriteMeal

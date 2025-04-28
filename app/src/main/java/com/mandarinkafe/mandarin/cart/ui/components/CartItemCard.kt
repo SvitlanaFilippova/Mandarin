@@ -33,7 +33,6 @@ import com.mandarinkafe.mandarin.cart.ui.view_model.totalPrice
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControlWithUndo
 
 /**
  * Компонент, который отвечает за отображение товара, который выбрали в меню
@@ -48,7 +47,6 @@ fun CartItemCard(
     onEvent: (CartContract.Event) -> Unit
 ) {
     val meal = item.meal
-    val totalPrice = item.totalPrice()
     val contentColor = if (itemInPendingDeletion) Colors.GreyTransparent75 else Colors.White
     val imageAlpha = if (itemInPendingDeletion) 0.5f else 1f
     Column(
@@ -117,7 +115,7 @@ fun CartItemCard(
 
             // Стоимость 1 шт с учётом всех добавок и модификаторов
             Text(
-                text = stringResource(R.string.meal_price_template, totalPrice),
+                text = stringResource(R.string.meal_price_template, item.totalPrice()),
                 style = Typography.MealPriceStyle,
                 color = contentColor
             )
@@ -139,20 +137,17 @@ fun CartItemCard(
                             tint = Color.White,
                             contentDescription = stringResource(id = R.string.edit_meal),
                         )
-
                     }
                 }
             }
 
             CartControlWithUndo(
                 numberInCart = quantity,
-                totalPrice = totalPrice,
                 item = item,
                 mealInPendingDeletion = itemInPendingDeletion,
                 onEvent = onEvent,
                 deletionProgress = deletionProgress,
             )
-
         }
 
         HorizontalDivider(
