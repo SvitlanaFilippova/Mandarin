@@ -4,7 +4,7 @@ import com.yandex.mapkit.geometry.Point
 
 object Coordinates {
 
-    val firstArea = listOf<Point>(
+    val Area1 = listOf<Point>(
         Point(55.99359738232752, 38.38600724002853),
         Point(55.991764479086584, 38.38437381133724),
         Point(55.99644447035129, 38.37091864962571),
@@ -27,7 +27,7 @@ object Coordinates {
         Point(55.993576415565656, 38.38614135779946),
         Point(55.99330570609476, 38.38599615596232)
     )
-    val secondArea = listOf<Point>(
+    val Area2 = listOf<Point>(
         Point(56.02408209831785, 38.34428953697045),
         Point(55.985577861463696, 38.34769608428962),
         Point(55.98183653083055, 38.35626887579386),
@@ -41,7 +41,7 @@ object Coordinates {
         Point(56.024333064888424, 38.34444037582253)
     )
 
-    val thirdArea = listOf<Point>(
+    val Area3 = listOf<Point>(
         Point(56.02771294784557, 38.34326635322611),
         Point(56.0389352316495, 38.386744369674375),
         Point(56.0370251038708, 38.41290168705842),
@@ -54,7 +54,7 @@ object Coordinates {
         Point(56.02925055452374, 38.314542680286905),
         Point(56.02781277917006, 38.343442442098876)
     )
-    val fourthArea = listOf<Point>(
+    val Area4 = listOf<Point>(
         Point(56.03425974994718, 38.275826182944286),
         Point(56.024846011509254, 38.269085379712806),
         Point(56.012431879360776, 38.27673201056868),
@@ -72,7 +72,7 @@ object Coordinates {
         Point(56.03424054711522, 38.27590397616535)
     )
 
-    val fifthArea = listOf<Point>(
+    val Area5 = listOf<Point>(
         Point(56.057217081607035, 38.37744450215513),
         Point(56.08659091336034, 38.431770362069614),
         Point(56.05972206146947, 38.49390948751429),
@@ -88,7 +88,7 @@ object Coordinates {
         Point(56.05707027188848, 38.377353345634646)
     )
 
-    val sixthArea = listOf<Point>(
+    val Area6 = listOf<Point>(
         Point(56.028464773938, 38.50341596106878),
         Point(55.93613763094203, 38.42023349116096),
         Point(55.91877141758624, 38.42347950016506),
@@ -104,7 +104,7 @@ object Coordinates {
         Point(56.028389053776635, 38.50316815780681)
     )
 
-    val seventhArea = listOf<Point>(
+    val Area7 = listOf<Point>(
         Point(56.13386690663776, 38.38920682869622),
         Point(56.061641023658524, 38.33957941072262),
         Point(56.04126764411603, 38.2749874350782),
@@ -118,7 +118,7 @@ object Coordinates {
         Point(56.13413058011923, 38.38925060905876)
     )
 
-    val eighthArea = listOf<Point>(
+    val Area8 = listOf<Point>(
         Point(56.070786101093404, 38.57359768687661),
         Point(56.13319213937061, 38.47257352469518),
         Point(56.147978066575945, 38.42868098823868),
@@ -134,7 +134,7 @@ object Coordinates {
         Point(56.07069087541359, 38.57364966813162)
     )
 
-    val ninthArea = listOf<Point>(
+    val Area9 = listOf<Point>(
         Point(56.07098247641048, 38.57430235219502),
         Point(56.13337023429747, 38.47338922932437),
         Point(56.14869916266858, 38.42852345203963),
@@ -153,7 +153,7 @@ object Coordinates {
         Point(56.07119723690266, 38.57437017388111)
     )
 
-    val tenthArea = listOf<Point>(
+    val Area10 = listOf<Point>(
         Point(56.00865649053361, 38.590016943101205),
         Point(56.086717849281996, 38.61035056960242),
         Point(56.09209812994834, 38.59093205953209),
@@ -171,7 +171,7 @@ object Coordinates {
         Point(56.008667517733386, 38.58996108065011)
     )
 
-    val eleventhArea = listOf<Point>(
+    val Area11 = listOf<Point>(
         Point(55.82698714212819, 38.45368646024065),
         Point(55.87334634413037, 38.4902345534212),
         Point(55.90992198161814, 38.49587606809828),
@@ -187,7 +187,7 @@ object Coordinates {
         Point(55.82700392509642, 38.45384568816581)
     )
 
-    val twelfthArea = listOf<Point>(
+    val Area12 = listOf<Point>(
         Point(55.82032803471557, 38.45515884621662),
         Point(55.928869979234605, 38.63989924401426),
         Point(56.12382183287008, 38.71081961117514),
@@ -198,4 +198,16 @@ object Coordinates {
         Point(55.81976987726924, 38.24479276037329),
         Point(55.82014927428639, 38.45471868894455)
     )
+    val PlaceMarkArea1 = Point(56.0071, 38.3802)
+    val PlaceMarkArea2 = Point(56.0093, 38.3579)
+    val PlaceMarkArea3 = Point(56.0082, 38.3282)
+    val PlaceMarkArea4 = Point(56.0232, 38.2919)
+    val PlaceMarkArea5 = Point(56.0394, 38.4772)
+    val PlaceMarkArea6 = Point(56.1196, 38.4441)
+    val PlaceMarkArea7 = Point(56.0671, 38.5572)
+    val PlaceMarkArea8 = Point(56.0144, 38.5654)
+    val PlaceMarkArea9 = Point(55.8575, 38.4401)
+    val PlaceMarkArea10 = Point(55.8466, 38.3362)
+    val PlaceMarkArea11 = Point(55.8704, 38.2051)
+    val PlaceMarkArea12 = Point(55.8419, 38.2409)
 }
