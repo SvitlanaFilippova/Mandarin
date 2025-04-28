@@ -4,10 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,77 +27,76 @@ fun CartContentScreen(
     state: CartContract.State
 ) {
     val isPendingClear = state.isPendingDeletion
+    Column(modifier = Modifier.fillMaxSize()) {
+        CartClearTextButton(
+            onClear = { onEvent(Event.ClearCart) },
+            onCancelClear = { onEvent(Event.CancelClearingCart) },
+            isPendingClear = isPendingClear,
+            clearingProgress = state.cartClearingProgress
+        )
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column {
-            // Кнопка очистки корзины,
-            CartClearTextButton(
-                onClear = { onEvent(Event.ClearCart) },
-                onCancelClear = { onEvent(Event.CancelClearingCart) },
-                isPendingClear = isPendingClear,
-                clearingProgress = state.cartClearingProgress
-            )
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize()
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                state = listState
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
 
-                    // Содержимое корзины
-                    CartItemsList(
-                        cartItems = state.cartItems.entries.map { it.toPair() },
-                        listState = listState,
-                        modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
+                // Список элементов корзины
+                itemsIndexed(state.cartItems.entries.map { it.toPair() }) { index, (cartItem, quantity) ->
+                    val itemInPendingDeletion = state.pendingDeletionMeals.contains(cartItem)
+
+                    CartItemCard(
+                        item = cartItem,
+                        quantity = quantity,
                         onEvent = onEvent,
-                        pendingDeletionItems = state.pendingDeletionMeals,
-                        deletionProgress = state.mealDeletionProgress
+                        itemInPendingDeletion = itemInPendingDeletion,
+                        deletionProgress = state.mealDeletionProgress[cartItem] ?: 0f,
                     )
+                }
 
+                // Заголовок рекомендаций
+                item {
                     Text(
-                        modifier = Modifier.padding(Dimens.MarginSmall8),
+                        modifier = Modifier.padding(
+                            horizontal = Dimens.MarginSmall8,
+                            vertical = Dimens.MarginStandard16
+                        ),
                         text = stringResource(R.string.question_add_to_cart),
                         style = Typography.TitleStyle
                     )
+                }
 
-                    // Рекомендованые товары
+                // Горизонтальный список рекомендаций
+                item {
                     CartRecommendsList(
                         recommendsList = state.recommendsList,
-                        listState = listState,
-                        modifier = Modifier,
+                        modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
                         onEvent = onEvent,
                     )
+                }
 
-                    Spacer(modifier = Modifier.weight(1f))
-
+                // Кнопка оформления заказа
+                item {
                     val ifCartIsEmpty =
                         state.cartItems.keys.all { it in state.pendingDeletionMeals }
-                    // Кнопка оформления заказа
                     if (!ifCartIsEmpty) {
                         ProcessOrderButton(
-                            onClick = { },
+                            onClick = { /* обработка нажатия */ },
                             totalPrice = state.totalCartPrice,
+                            modifier = Modifier.padding(vertical = Dimens.MarginStandard16)
                         )
                     }
                 }
+            }
 
-                // Затемняем и делаем неактивными CartItemsList и ProcessOrderButton, если корзина в процессе удаления
-                if (isPendingClear) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clickable(enabled = false, onClick = { })
-                            .background(Colors.AppBackgroundColor.copy(alpha = 0.7f))
-
-                    )
-                }
+            // Затемнение при очистке
+            if (isPendingClear) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable(enabled = false, onClick = {})
+                        .background(Colors.AppBackgroundColor.copy(alpha = 0.7f))
+                )
             }
         }
     }
 }
-
-
