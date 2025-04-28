@@ -19,7 +19,7 @@ fun CartControlWithUndo(
     if (!mealInPendingDeletion) {
         CartControls(
             numberInCart = numberInCart,
-            totalPrice = item.totalPrice(),
+            totalPrice = item.totalPrice() * numberInCart,
             onIncrease = { onEvent(CartContract.Event.AddToCart(item)) },
             onDecrease = { onEvent(CartContract.Event.RemoveFromCartWithDelay(item)) },
         )

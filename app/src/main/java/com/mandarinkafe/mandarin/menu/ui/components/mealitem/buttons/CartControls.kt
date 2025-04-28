@@ -79,7 +79,7 @@ fun CartControls(
                     style = Typography.CartButtonSmallTextStyle
                 )
                 Text(
-                    stringResource(R.string.meal_price_template, numberInCart * totalPrice),
+                    stringResource(R.string.meal_price_template, totalPrice),
                     style = Typography.CartButtonSmallTextStyle,
                     color = Colors.WhiteTransparent75
                 )

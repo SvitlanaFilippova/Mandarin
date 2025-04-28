@@ -36,8 +36,11 @@ sealed interface CartContract {
         val cartClearingProgress: Float? = null
     ) {
         val totalCartPrice: Int
-            get() = cartItems.keys
-                .filter { it !in pendingDeletionMeals }
-                .sumOf { it.totalPrice() } // TODO исправить с учётом количества в корзине
+            get() = cartItems
+                .filter { (item, _) -> item !in pendingDeletionMeals }
+                .entries
+                .sumOf { (item, quantity) ->
+                    item.totalPrice() * quantity
+                }
     }
 }

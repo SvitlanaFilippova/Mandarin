@@ -17,7 +17,6 @@ object CartMapper {
         return Event.AddToCart(CartItem(meal = this))
     }
 
-    // TODO проверить логику, неравильно сейчас!!!!
     fun Meal.toRemoveFromCartNow(): Event.RemoveFromCartByMeal {
         return Event.RemoveFromCartByMeal(meal = this)
     }
