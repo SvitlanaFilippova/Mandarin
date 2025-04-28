@@ -41,45 +41,29 @@ class MenuInteractorImpl(
 
     override fun getAddons(): Flow<Pair<List<MealAdditionalCategory>?, String?>> =
         repository.getMenu()
-        .map { result ->
-            when (result) {
-                is Resource.Success -> {
-                    val addonsParents = result.data?.filter { addonsFilter.isMatch(it) }
-                    val addonsCategories: List<MealCategory> = addonsParents
-                        ?.flatMap {
-                            it.subCategories ?: emptyList()
-                        } ?: emptyList()
+            .map { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        val addonsParents = result.data?.filter { addonsFilter.isMatch(it) }
+                        val addonsCategories: List<MealCategory> = addonsParents
+                            ?.flatMap {
+                                it.subCategories ?: emptyList()
+                            } ?: emptyList()
 
-                    Pair(addonsCategories.map { it.toMealAdditionalCategory() }, null)
-                }
+                        Pair(addonsCategories.map { it.toMealAdditionalCategory() }, null)
+                    }
 
-                is Resource.Error -> {
-                    Pair(null, result.message)
-                }
+                    is Resource.Error -> {
+                        Pair(null, result.message)
+                    }
 
-                is Resource.Loading -> {
-                    Pair(null, null)
-                }
-            }
-        }
-
-    override fun getRecommends(): Flow<Pair<List<MenuItem>?, String?>> = repository.getMenu()
-        .map { result ->
-            when (result) {
-                is Resource.Success -> {
-                    val recommends = result.data?.filter { recommendsFilter.isMatch(it) }
-                    Pair(MenuRVItemMapper.menuToMenuItems(recommends), null)
-                }
-
-                is Resource.Error -> {
-                    Pair(null, result.message)
-                }
-
-                is Resource.Loading -> {
-                    Pair(null, null)
+                    is Resource.Loading -> {
+                        Pair(null, null)
+                    }
                 }
             }
-        }
+
+
 
     // метод, чтобы принудительно перезагрузить меню
     override suspend fun forceRefresh() {

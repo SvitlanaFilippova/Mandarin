@@ -7,6 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface MenuInteractor {
     fun getMenu(): Flow<Pair<List<MenuItem>?, String?>>
     fun getAddons(): Flow<Pair<List<MealAdditionalCategory>?, String?>>
-    fun getRecommends(): Flow<Pair<List<MenuItem>?, String?>>
     suspend fun forceRefresh()
 }

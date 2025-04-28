@@ -7,13 +7,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.mandarinkafe.mandarin.cart.domain.util.isInCarById
-import com.mandarinkafe.mandarin.cart.domain.util.quantityById
+import com.mandarinkafe.mandarin.cart.CartMapper.toAddToCartEvent
+import com.mandarinkafe.mandarin.cart.CartMapper.toRemoveFromCartNow
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
+import com.mandarinkafe.mandarin.cart.ui.view_model.getTotalPriceByMealId
+import com.mandarinkafe.mandarin.cart.ui.view_model.getTotalQuantityByMealId
 import com.mandarinkafe.mandarin.core.domain.models.EditableType
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControlWithUndo
+import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControls
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.FavoriteButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.PizzaAddsButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.ToCartButtonWithPrice
@@ -27,8 +29,9 @@ fun MealButtonsRow(
     cartState: CartContract.State
 ) {
 
-    val isInTheCart = cartState.cartItems.isInCarById(meal.id)
-    val numberInCart = cartState.cartItems.quantityById(meal.id)
+    val isInTheCart = cartState.cartItems.keys.any { it.meal.id == meal.id }
+    val numberInCart = cartState.cartItems.getTotalQuantityByMealId(meal.id)
+    val totalPrice = cartState.cartItems.getTotalPriceByMealId(meal.id)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -37,18 +40,17 @@ fun MealButtonsRow(
             .fillMaxWidth()
     ) {
         if (isInTheCart) {
-            CartControlWithUndo(
+            CartControls(
+                totalPrice = totalPrice,
                 numberInCart = numberInCart,
-                totalPrice = meal.price,
-                meal = meal,
-                onEvent = onCartEvent,
-                mealInPendingDeletion = cartState.pendingDeletionMeals.contains(meal),
-                deletionProgress = cartState.mealDeletionProgress[meal] ?: 0f,
+                onIncrease = { onCartEvent(meal.toAddToCartEvent()) },
+                onDecrease = { onCartEvent(meal.toRemoveFromCartNow()) },
             )
         } else {
-            ToCartButtonWithPrice(meal.price, onClick = {
-                onCartEvent(CartContract.Event.AddToCart(meal))
-            })
+            ToCartButtonWithPrice(
+                meal.price, onClick = {
+                    onCartEvent(meal.toAddToCartEvent())
+                })
         }
 
         if (meal.editableType == EditableType.PIZZA) {

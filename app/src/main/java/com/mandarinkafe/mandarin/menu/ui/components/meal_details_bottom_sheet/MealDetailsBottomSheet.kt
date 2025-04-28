@@ -16,6 +16,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mandarinkafe.mandarin.cart.CartMapper.toCartItem
+import com.mandarinkafe.mandarin.cart.domain.model.CartItem
+import com.mandarinkafe.mandarin.cart.ui.view_model.totalPrice
 import com.mandarinkafe.mandarin.core.domain.models.EditableType
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -30,7 +33,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MealDetailsBottomSheet(
     viewModel: MealDetailsViewModel = hiltViewModel(),
-    onAddToCart: (Meal) -> Unit,
+    onAddToCart: (CartItem) -> Unit,
     initMeal: Meal,
     shouldOpenCustomizationInit: Boolean,
     onDismiss: () -> Unit,
@@ -47,8 +50,7 @@ fun MealDetailsBottomSheet(
 
     val state by viewModel.state.collectAsState()
     val meal = state.meal ?: initMeal
-
-    val totalPrice = meal.price + meal.adds.sumOf { it.price }
+    val customizedMeal = state.customizedMeal ?: initMeal.toCartItem()
 
     LaunchedEffect(Unit) {
         sheetState.show()
@@ -58,7 +60,7 @@ fun MealDetailsBottomSheet(
         {
             coroutineScope.launch {
                 sheetState.hide()
-                state.meal?.let { meal ->
+                meal.let { meal ->
                     onFavoriteChanged(meal.id, meal.isFavorite)
                 }
                 onDismiss()
@@ -125,9 +127,9 @@ fun MealDetailsBottomSheet(
 
                     ToCartButton(
                         modifier = Modifier.padding(Dimens.MarginSmall8),
-                        totalPrice = totalPrice,
+                        totalPrice = customizedMeal.totalPrice(),
                         onClick = {
-                            onAddToCart(meal)
+                            onAddToCart(customizedMeal)
                             onClose()
                         }
                     )

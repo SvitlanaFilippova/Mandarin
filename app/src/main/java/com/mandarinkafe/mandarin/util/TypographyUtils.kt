@@ -27,20 +27,22 @@ fun String.applyTypography(): String {
         .replace(shortWordRegex) { matchResult ->
             matchResult.groupValues[1] + nonBreakingSpace
         }
-        // 3. Многоточие
+        // 3. Неразрывные числа (десятичные дроби типа 0,33 и числа с разрядами типа 12 500)
+        .normalizeNumbers()
+        // 4. Многоточие
         .replace("...", "…")
-        // 4. Тире (только если дефис окружён пробелами)
+        // 5. Тире (если дефис окружён пробелами)
         .replace(Regex("""(?<=\s)-(?=\s)"""), "—")
-        // 5. Кавычки-ёлочки
+        // 6. Кавычки-ёлочки
         .replace("« ", "«")
         .replace(" »", "»")
-        // 6. Удаление лишних пробелов (2 и более)
+        // 7. Удаление лишних пробелов (2 и более)
         .replace(Regex("""\s{2,}"""), " ")
-        // 7. Удаление пробелов перед запятыми
+        // 8. Удаление пробелов перед запятыми
         .replace(Regex("""\s+,"""), ",")
-        // 8. Пробел после запятой (если пропущен)
+        // 9. Пробел после запятой (если пропущен)
         .replace(Regex(""",(?=\S)"""), ", ")
-        // 9. Удаление пробелов в начале и конце строки
+        // 10. Удаление пробелов в начале и конце строки
         .trim()
 }
 
@@ -54,3 +56,22 @@ private fun String.normalizeWeight(): String {
     }
 }
 
+/**
+ * Нормализация чисел: десятичные дроби и числа с разрядами через неразрывный пробел
+ */
+private fun String.normalizeNumbers(): String {
+    val nonBreakingSpace = "\u00A0"
+
+    return this
+        // 1. Неразрывные дроби (0,33)
+        .replace(Regex("""(\d),(\d)""")) { matchResult ->
+            "${matchResult.groupValues[1]},${matchResult.groupValues[2]}"
+                .replace(",", ",\u202F")
+        }
+        // 2. Неразрывные большие числа (12 500)
+        .replace(Regex("""(\d{1,3}) (\d{3})(?!\d)""")) { matchResult ->
+            val part1 = matchResult.groupValues[1]
+            val part2 = matchResult.groupValues[2]
+            "$part1$nonBreakingSpace$part2"
+        }
+}

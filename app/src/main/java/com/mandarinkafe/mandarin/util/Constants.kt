@@ -33,7 +33,7 @@ object Constants {
     // Для обработки особых категорий по их названиям
     const val CATEGORY_PIZZA_ADDS = "добавки"
     const val CATEGORY_RECOMMENDS = "рекоменд"
-  
+
     // DEBOUNCE для корзины
     const val DELETE_FROM_CART_DEBOUNCE_DELAY: Long = 3000L
     const val INTERVAL_FOR_UPD_PROGRESSBAR: Long = 100L
@@ -64,5 +64,5 @@ object Constants {
     const val DELIVERY_PRICE_FREE_AREA10 = 4500
     const val DELIVERY_PRICE_FREE_AREA11 = 5000
     const val DELIVERY_PRICE_FREE_AREA12 = 5500
-    
+
 }

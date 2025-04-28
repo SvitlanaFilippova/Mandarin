@@ -80,4 +80,5 @@
     <string name="icon_of_category">Иконка категории "%1$s"</string>
     <string name="banner_number">Баннер №%1$d</string>
     <string name="search_field_icon">Поле поиска</string>
+    <string name="added_to_cart">Добавлено в корзину</string>
 </resources>
