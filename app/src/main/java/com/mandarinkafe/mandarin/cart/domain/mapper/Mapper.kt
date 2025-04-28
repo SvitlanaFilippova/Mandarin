@@ -5,5 +5,5 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 
 fun Meal.toCartItem() = CartItem(
     meal = this,
-    quantity = 0
+    adds = emptyList()
 )

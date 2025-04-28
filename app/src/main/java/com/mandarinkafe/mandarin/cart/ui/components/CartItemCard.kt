@@ -29,6 +29,7 @@ import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
+import com.mandarinkafe.mandarin.cart.ui.view_model.totalPrice
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
@@ -41,19 +42,20 @@ import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControl
 @Composable
 fun CartItemCard(
     item: CartItem,
-    mealInPendingDeletion: Boolean,
+    quantity: Int,
+    itemInPendingDeletion: Boolean,
     deletionProgress: Float,
     onEvent: (CartContract.Event) -> Unit
 ) {
     val meal = item.meal
-    val totalPrice = meal.price + meal.adds.sumOf { it.price }
-    val contentColor = if (mealInPendingDeletion) Colors.GreyTransparent75 else Colors.White
-    val imageAlpha = if (mealInPendingDeletion) 0.5f else 1f
+    val totalPrice = item.totalPrice()
+    val contentColor = if (itemInPendingDeletion) Colors.GreyTransparent75 else Colors.White
+    val imageAlpha = if (itemInPendingDeletion) 0.5f else 1f
     Column(
         modifier = Modifier
             .background(Colors.AppBlack)
             .padding(horizontal = Dimens.MarginStandard16)
-            .clickable(onClick = { onEvent(CartContract.Event.OpenMealDetails(meal)) })
+            .clickable(onClick = { onEvent(CartContract.Event.OpenMealDetails(item)) })
     ) {
 
         Row(
@@ -92,8 +94,8 @@ fun CartItemCard(
                 )
 
                 // Выбранные добавки
-                if (meal.adds.isNotEmpty()) {
-                    val addsText = meal.adds.joinToString(", ") { it.name }
+                if (item.adds.isNotEmpty()) {
+                    val addsText = item.adds.joinToString(", ") { it.name }
                     Text(
                         text = stringResource(R.string.adds_prefix, addsText),
                         style = Typography.MealSmallTextStyle,
@@ -123,11 +125,11 @@ fun CartItemCard(
             Spacer(modifier = Modifier.weight(1f))
 
 
-            if (meal.editableType != null && !mealInPendingDeletion) {
+            if (meal.editableType != null && !itemInPendingDeletion) {
                 // Кнопка "Редактировать"
                 Box(modifier = Modifier.padding(horizontal = Dimens.MarginStandard16)) {
                     IconButton(
-                        onClick = { onEvent(CartContract.Event.EditMeal(meal)) },
+                        onClick = { onEvent(CartContract.Event.EditMeal(item)) },
                         modifier = Modifier
                             .size(Dimens.ButtonToCartSmall32)
                     ) {
@@ -143,10 +145,10 @@ fun CartItemCard(
             }
 
             CartControlWithUndo(
-                numberInCart = item.quantity,
+                numberInCart = quantity,
                 totalPrice = totalPrice,
-                meal = meal,
-                mealInPendingDeletion = mealInPendingDeletion,
+                item = item,
+                mealInPendingDeletion = itemInPendingDeletion,
                 onEvent = onEvent,
                 deletionProgress = deletionProgress,
             )

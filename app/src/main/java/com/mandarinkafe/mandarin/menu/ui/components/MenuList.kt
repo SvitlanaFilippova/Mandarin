@@ -27,8 +27,8 @@ fun MenuList(
     HandleBottomSheetEffects(
         effectFlow = effectFlow,
         onMenuEvent = onEvent,
-        onAddToCart = { meal ->
-            onCartEvent(CartContract.Event.AddToCart(meal))
+        onAddToCart = { item ->
+            onCartEvent(CartContract.Event.AddToCart(item))
         }
     )
 

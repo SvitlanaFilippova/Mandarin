@@ -49,7 +49,7 @@ fun CartContentScreen(
 
                     // Содержимое корзины
                     CartItemsList(
-                        cartItems = state.cartItems,
+                        cartItems = state.cartItems.entries.map { it.toPair() },
                         listState = listState,
                         modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
                         onEvent = onEvent,
@@ -74,7 +74,7 @@ fun CartContentScreen(
                     Spacer(modifier = Modifier.weight(1f))
 
                     val ifCartIsEmpty =
-                        state.cartItems.none { it.meal !in state.pendingDeletionMeals }
+                        state.cartItems.keys.all { it in state.pendingDeletionMeals }
                     // Кнопка оформления заказа
                     if (!ifCartIsEmpty) {
                         ProcessOrderButton(

@@ -6,16 +6,16 @@ import com.mandarinkafe.mandarin.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 
 class CartInteractorImpl(private val repository: CartRepository) : CartInteractor {
-    override suspend fun getCart(): List<CartItem> {
+    override suspend fun getCart(): Map<CartItem, Int> {
         return repository.getCart()
     }
 
-    override fun addToCart(meal: Meal) {
-        repository.addToCart(meal)
+    override fun addToCart(item: CartItem) {
+        repository.addToCart(item)
     }
 
-    override fun removeFromCart(meal: Meal) {
-        repository.removeFromCart(meal)
+    override fun removeFromCart(item: CartItem) {
+        repository.removeFromCart(item)
     }
 
     override fun clearCart() {

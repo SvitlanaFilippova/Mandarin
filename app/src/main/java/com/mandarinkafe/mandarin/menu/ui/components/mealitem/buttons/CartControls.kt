@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.cart.CartMapper.toAddToCartEvent
+import com.mandarinkafe.mandarin.cart.CartMapper.toRemoveFromCartEvent
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -43,7 +45,7 @@ fun CartControls(
 
         // Кнопка "-"
         IconButton(
-            onClick = { onEvent(CartContract.Event.RemoveFromCart(meal)) },
+            onClick = { onEvent(meal.toRemoveFromCartEvent()) },
             modifier = Modifier.size(Dimens.ButtonToCartSmall32)
         ) {
             // Если последний экземпляр в корзине, то кнопка меняется на "урну"
@@ -78,7 +80,7 @@ fun CartControls(
 
         // Кнопка "+"
         IconButton(
-            onClick = { onEvent(CartContract.Event.AddToCart(meal)) },
+            onClick = { onEvent(meal.toAddToCartEvent()) },
             modifier = Modifier.size(Dimens.ButtonToCartSmall32)
         ) {
             Text(

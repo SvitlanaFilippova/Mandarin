@@ -24,11 +24,12 @@ import com.mandarinkafe.mandarin.core.ui.theme.Typography
 
 @Composable
 fun ToCartSmallButton(
-    isInCart: Boolean,
+    modifier: Modifier = Modifier,
     price: Int,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+    isInCart: Boolean = false,
+
+    ) {
     Button(
         modifier = modifier.height(Dimens.ButtonToCartSmall32),
         onClick = onClick,

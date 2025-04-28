@@ -18,43 +18,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.util.applyTypography
-
-@Preview
-@Composable
-fun PreviewCartRecommendsItemCard() {
-    val mockMeal = Meal(
-        id = "232",
-        name = "Газированный напиток Добрый Cola без сахара, 250 мл".applyTypography(),
-        weight = 0,
-        price = 999,
-        imageUrl = "https://cdn1.ozone.ru/s3/multimedia-1-n/c600/7122445511.jpg",
-        isFavorite = false,
-        description = "",
-        tags = emptyList(),
-        labels = emptyList(),
-        isHidden = false,
-        editableType = null,
-        modifiers = emptyList(),
-        adds = emptyList()
-    )
-    CartRecommendsItemCard(
-        item = CartItem(
-            meal = mockMeal,
-            quantity = 0
-        ),
-        onEvent = { CartContract.Event.AddToCart(mockMeal) }
-    )
-}
 
 @Composable
 fun CartRecommendsItemCard(
@@ -62,12 +32,12 @@ fun CartRecommendsItemCard(
     onEvent: (CartContract.Event) -> Unit
 ) {
     val meal = item.meal
-    val isInCart = item.quantity > 0
+
     Card(
         modifier = Modifier
             .padding(horizontal = Dimens.MarginSmall8)
             .width(Dimens.RecommendsItemWidth96)
-            .clickable(onClick = { onEvent(CartContract.Event.OpenMealDetails(meal)) }),
+            .clickable(onClick = { onEvent(CartContract.Event.OpenMealDetails(item)) }),
         border = BorderStroke(
             width = Dimens.RecommendsCardBorder1,
             color = Colors.GreyTransparent10
@@ -104,10 +74,8 @@ fun CartRecommendsItemCard(
                     .padding(vertical = Dimens.MarginSmall8)
             )
 
-
             ToCartSmallButton(
-                isInCart = isInCart,
-                onClick = { onEvent(CartContract.Event.AddToCart(meal)) },
+                onClick = { onEvent(CartContract.Event.AddToCart(item)) },
                 price = meal.price,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -116,4 +84,3 @@ fun CartRecommendsItemCard(
     }
 
 }
-

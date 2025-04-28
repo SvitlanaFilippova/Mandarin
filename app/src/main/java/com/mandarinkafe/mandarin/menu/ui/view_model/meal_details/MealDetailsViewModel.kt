@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.menu.ui.view_model.meal_details
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.cart.domain.mapper.toCartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
@@ -26,19 +26,15 @@ class MealDetailsViewModel @Inject constructor(
         MutableStateFlow(MealDetailsContract.State())
     val state: StateFlow<MealDetailsContract.State> = _state.asStateFlow()
 
-    val initMeal: Meal? = null
-
     init {
-        onEvent(Event.GetAddons)
+        getAddons()
     }
 
     fun onEvent(event: Event) {
         when (event) {
             is Event.ToggleFavorite -> toggleFavorite()
-            is Event.GetAddons -> getAddons()
             is Event.ChangeAdds -> changeAdds(event.add, event.isChecked)
             is Event.SetMeal -> setMeal(event.meal)
-            is Event.AddToCart -> addToCart()
             is Event.ChooseCategory -> chooseCategory(event.newIndex)
 
         }
@@ -51,13 +47,6 @@ class MealDetailsViewModel @Inject constructor(
                     selectedTabIndex = newIndex,
                 )
             }
-        }
-    }
-
-    private fun addToCart() {
-        val meal = state.value.meal
-        if (meal != null) {
-            Log.d("DEBUG", "MealDetailsViewModel addToCart for $meal")
         }
     }
 
@@ -83,15 +72,15 @@ class MealDetailsViewModel @Inject constructor(
 
     }
 
-    private fun setMeal(meal: Meal?) {
+    private fun setMeal(meal: Meal) {
         _state.update {
-            it.copy(meal = meal)
+            it.copy(meal = meal, customizedMeal = meal.toCartItem())
         }
     }
 
     private fun changeAdds(add: MealAdditional, isAdded: Boolean) {
         _state.update { currentState ->
-            val currentMeal = currentState.meal ?: return
+            val currentMeal = currentState.customizedMeal ?: return
             val currentAdds = currentMeal.adds.toMutableList()
 
             if (isAdded) {
@@ -101,7 +90,7 @@ class MealDetailsViewModel @Inject constructor(
             }
 
             currentState.copy(
-                meal = currentMeal.copy(adds = currentAdds)
+                customizedMeal = currentMeal.copy(adds = currentAdds)
             )
 
         }

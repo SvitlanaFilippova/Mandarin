@@ -9,18 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Event
-import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 
 @Composable
 fun CartItemsList(
-    cartItems: List<CartItem>,
-    pendingDeletionItems: List<Meal>,
+    cartItems: List<Pair<CartItem, Int>>,
+    pendingDeletionItems: List<CartItem>,
     listState: LazyListState,
     onEvent: (Event) -> Unit,
     modifier: Modifier,
-    deletionProgress: Map<Meal, Float>
+    deletionProgress: Map<CartItem, Float>
 ) {
 
     LazyColumn(
@@ -28,15 +27,16 @@ fun CartItemsList(
         modifier = modifier.background(Colors.Transparent),
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
-        itemsIndexed(cartItems) { _, item ->
-            val mealInPendingDeletion = pendingDeletionItems.contains(item.meal)
+        itemsIndexed(cartItems) { _, (cartItem, quantity) ->
+
+            val itemInPendingDeletion = pendingDeletionItems.contains(cartItem)
 
             CartItemCard(
-                item = item, onEvent = onEvent,
-                mealInPendingDeletion = mealInPendingDeletion,
-                deletionProgress = deletionProgress[item.meal] ?: 0f
+                item = cartItem,
+                quantity = quantity, onEvent = onEvent,
+                itemInPendingDeletion = itemInPendingDeletion,
+                deletionProgress = deletionProgress[cartItem] ?: 0f
             )
-
         }
     }
 }

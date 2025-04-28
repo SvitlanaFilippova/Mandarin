@@ -1,39 +1,41 @@
 package com.mandarinkafe.mandarin.cart.ui.view_model
 
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
-import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 
 sealed interface CartContract {
     sealed interface Event {
         data object GetCart : Event
-        data class AddToCart(val meal: Meal) : Event
-        data class RemoveFromCart(val meal: Meal) : Event
-        data class ReplaceMealInCart(val newMeal: Meal, val oldMeal: Meal) : Event
-        data class CancelRemove(val meal: Meal) : Event
+        data class AddToCart(val item: CartItem) : Event
+        data class RemoveFromCart(val item: CartItem) : Event
+        data class ReplaceMealInCart(val newItem: CartItem, val oldItem: CartItem) : Event
+        data class CancelRemove(val item: CartItem) : Event
         data object ClearCart : Event
         data object CancelClearingCart : Event
-        data class EditMeal(val meal: Meal) : Event
-        data class OpenMealDetails(val meal: Meal) : Event
+        data class EditMeal(val item: CartItem) : Event
+        data class OpenMealDetails(val item: CartItem) : Event
     }
 
     sealed interface Effect {
-        data class OpenMealDetailsBS(val meal: Meal, val shouldOpenCustomization: Boolean = false) :
+        data class OpenMealDetailsBS(
+            val item: CartItem,
+            val shouldOpenCustomization: Boolean = false
+        ) :
             Effect, BottomSheetEffect
     }
 
     data class State(
         val isLoading: Boolean = true,
         val isPendingDeletion: Boolean = false,
-        val cartItems: List<CartItem> = emptyList(),
+        val cartItems: Map<CartItem, Int> = emptyMap(),
         val recommendsList: List<CartItem> = emptyList(),
-        val pendingDeletionMeals: List<Meal> = emptyList(),
-        val mealDeletionProgress: Map<Meal, Float> = emptyMap(),
+        val pendingDeletionMeals: List<CartItem> = emptyList(),
+        val mealDeletionProgress: Map<CartItem, Float> = emptyMap(),
         val cartClearingProgress: Float? = null
     ) {
         val totalCartPrice: Int
-            get() = cartItems
-                .filter { it.meal !in pendingDeletionMeals }
-                .sumOf { it.meal.price * it.quantity }
+            get() = cartItems.keys
+                .filter { it !in pendingDeletionMeals }
+                .sumOf { it.totalPrice() } // TODO исправить с учётом количества в корзине
     }
 }

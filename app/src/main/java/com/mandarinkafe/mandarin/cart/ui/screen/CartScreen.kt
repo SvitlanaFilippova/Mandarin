@@ -69,14 +69,14 @@ fun CartScreen(
         cast = { it as? OpenMealDetailsBS }
     ) { effect, onDismiss ->
         MealDetailsBottomSheet(
-            initMeal = effect.meal,
+            initMeal = effect.item.meal,
             onDismiss = onDismiss,
             shouldOpenCustomizationInit = effect.shouldOpenCustomization,
-            onAddToCart = { newMeal ->
+            onAddToCart = { newItem ->
                 viewModel.onEvent(
                     CartContract.Event.ReplaceMealInCart(
-                        newMeal = newMeal,
-                        oldMeal = effect.meal
+                        newItem = newItem,
+                        oldItem = effect.item
                     )
                 )
             }

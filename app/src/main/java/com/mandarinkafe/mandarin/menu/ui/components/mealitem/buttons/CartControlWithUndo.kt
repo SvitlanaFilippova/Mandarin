@@ -8,8 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.util.ui.components.UndoIndicator
@@ -18,12 +18,12 @@ import com.mandarinkafe.mandarin.util.ui.components.UndoIndicator
 fun CartControlWithUndo(
     numberInCart: Int,
     totalPrice: Int,
-    meal: Meal,
+    item: CartItem,
     mealInPendingDeletion: Boolean,
     deletionProgress: Float,
     onEvent: (CartContract.Event) -> Unit
 ) {
-
+    val meal = item.meal
     val backgroundColor =
         if (mealInPendingDeletion) Colors.GreyTransparent10 else Colors.Orange.copy(alpha = 0.20f)
 
@@ -48,7 +48,7 @@ fun CartControlWithUndo(
             UndoIndicator(
                 modifier = Modifier.matchParentSize(),
                 progress = deletionProgress,
-                onCancel = { onEvent(CartContract.Event.CancelRemove(meal)) },
+                onCancel = { onEvent(CartContract.Event.CancelRemove(item)) },
             )
 
         }

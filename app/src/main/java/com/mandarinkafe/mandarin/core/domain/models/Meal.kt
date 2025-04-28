@@ -30,13 +30,7 @@ data class Meal(
     val editableType: EditableType?,
 
     /**
-    Группы модификаторов, применимых для блюда
+    Группы модификаторов, доступных для блюда
      */
     val modifiers: List<ModifierGroup>,
-
-    /**
-    Выбранные добавки для пиццы
-     */
-    val adds: List<MealAdditional> = emptyList<MealAdditional>()
-
 )

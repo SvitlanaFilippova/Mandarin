@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.mandarinkafe.mandarin.cart.data.models.CartMeal
+import com.mandarinkafe.mandarin.cart.data.models.StoredCartItem
 import javax.inject.Inject
 
 class CartStorageImpl @Inject constructor(private val sharedPreferences: SharedPreferences) :
@@ -16,17 +16,17 @@ class CartStorageImpl @Inject constructor(private val sharedPreferences: SharedP
         Log.d("DEBUG Cart", "CartStorageImpl - clearCart")
     }
 
-    override fun saveCart(items: List<CartMeal>) {
+    override fun saveCart(items: List<StoredCartItem>) {
         sharedPreferences.edit {
             putString(CART_KEY, Gson().toJson(items))
         }
         Log.d("DEBUG Cart", "CartStorageImpl - saveCart")
     }
 
-    override fun getCart(): List<CartMeal> {
+    override fun getCart(): List<StoredCartItem> {
         return try {
             val json = sharedPreferences.getString(CART_KEY, null)
-            val listType = object : TypeToken<List<CartMeal>>() {}.type
+            val listType = object : TypeToken<List<StoredCartItem>>() {}.type
             if (json.isNullOrEmpty()) {
                 mutableListOf()
             } else {
