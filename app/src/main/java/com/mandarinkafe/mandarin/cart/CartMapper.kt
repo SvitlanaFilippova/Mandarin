@@ -11,7 +11,15 @@ object CartMapper {
         mealId = meal.id,
         adds = adds,
         quantity = quantity,
+        modifiers = modifiers,
     )
+
+    fun StoredCartItem.toCartItem(meal: Meal) = CartItem(
+        meal = meal,
+        adds = adds ?: emptyList(),
+        modifiers = modifiers ?: emptyList()
+    )
+
 
     fun Meal.toAddToCartEvent(): Event.AddToCart {
         return Event.AddToCart(CartItem(meal = this))

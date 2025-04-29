@@ -124,7 +124,7 @@ fun CartItemCard(
                 // Кнопка "Редактировать"
                 Box(modifier = Modifier.padding(horizontal = Dimens.MarginStandard16)) {
                     IconButton(
-                        onClick = { onEvent(CartContract.Event.EditMeal(item)) },
+                        onClick = { onEvent(CartContract.Event.OpenMealDetails(item)) },
                         modifier = Modifier
                             .size(Dimens.ButtonToCartSmall32)
                     ) {
