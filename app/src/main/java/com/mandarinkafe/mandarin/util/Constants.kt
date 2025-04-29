@@ -66,4 +66,7 @@ object Constants {
     const val DELIVERY_PRICE_FREE_AREA11 = 5000
     const val DELIVERY_PRICE_FREE_AREA12 = 5500
 
+    // Константы для UI
+    const val BLUR_EFFECT_RADIUS = 3f
+
 }

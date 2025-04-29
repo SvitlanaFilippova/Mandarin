@@ -27,9 +27,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.cart.customizedText
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
+import com.mandarinkafe.mandarin.cart.totalPrice
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.cart.ui.view_model.totalPrice
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
@@ -91,20 +92,17 @@ fun CartItemCard(
                         .fillMaxWidth()
                 )
 
-                // Выбранные добавки
-                if (item.adds.isNotEmpty()) {
-                    val addsText = item.adds.joinToString(", ") { it.name }
+                // Выбранные опции кастомизации
+                if (item.adds.isNotEmpty() || item.modifiers.isNotEmpty()) {
                     Text(
-                        text = stringResource(R.string.adds_prefix, addsText),
+                        text = item.customizedText(),
                         style = Typography.MealSmallTextStyle,
                         color = contentColor,
                         modifier = Modifier
                             .fillMaxWidth()
                     )
                 }
-
             }
-
         }
 
         Row(
@@ -121,7 +119,6 @@ fun CartItemCard(
             )
 
             Spacer(modifier = Modifier.weight(1f))
-
 
             if (meal.editableType != null && !itemInPendingDeletion) {
                 // Кнопка "Редактировать"

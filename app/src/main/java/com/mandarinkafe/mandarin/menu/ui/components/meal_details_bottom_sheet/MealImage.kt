@@ -13,18 +13,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 
 @Composable
-fun MealImage(meal: Meal) {
+fun MealImage(mealImg: String, mealName: String) {
     Box(
         contentAlignment = Alignment.Center
     ) {
         AsyncImage(
-            model = meal.imageUrl.ifEmpty { R.drawable.logo_orange_square },
-            contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
+            model = mealImg,
+            contentDescription = stringResource(R.string.picture_of_meal_template, mealName),
             error = painterResource(R.drawable.logo_orange_square),
             placeholder = painterResource(R.drawable.logo_orange_square),
             modifier = Modifier

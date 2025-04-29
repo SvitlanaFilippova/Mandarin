@@ -48,8 +48,10 @@
 
 
     <!-- Кастомизация бюлюда -->
-    <string name="add_additionals">Добавить начинку</string>
-    <string name="choose">Выбрать</string>
+    <string name="add_additionals">Сделать ещё вкуснее</string>
+    <string name="to_choose">Выбрать</string>
+    <string name="choose">Выберите</string>
+    <string name="create_own_box_short">Собрать</string>
     <string name="create_own_box">Собрать свою коробочку</string>
     <string name="edit_meal">Редактировать</string>
 
@@ -58,6 +60,7 @@
     <string name="meal_weight_template">%1$d г</string>
     <string name="meal_price_template">%1$d ₽</string>
     <string name="meal_title_with_weight_template">%1$s, %2$d г</string>
+    <string name="meal_title_with_price_template">%1$s (%2$d ₽)</string>
     <string name="meal_in_cart_count_template">%1$d шт</string>
     <string name="adds_prefix">+ %1$s</string>
     <string name="process_order_price_template">Оформить за %1$d ₽</string>
@@ -81,4 +84,5 @@
     <string name="banner_number">Баннер №%1$d</string>
     <string name="search_field_icon">Поле поиска</string>
     <string name="added_to_cart">Добавлено в корзину</string>
+    <string name="selected">Выбрано</string>
 </resources>

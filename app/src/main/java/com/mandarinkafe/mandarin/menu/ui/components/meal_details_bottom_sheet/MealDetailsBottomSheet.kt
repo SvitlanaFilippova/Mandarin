@@ -1,8 +1,5 @@
 package com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -14,16 +11,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.mandarinkafe.mandarin.cart.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
-import com.mandarinkafe.mandarin.cart.ui.view_model.totalPrice
-import com.mandarinkafe.mandarin.core.domain.models.EditableType
-import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.pizza_ads.PizzaAdsScreen
 import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract.Event
 import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsViewModel
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
@@ -34,28 +25,26 @@ import kotlinx.coroutines.launch
 fun MealDetailsBottomSheet(
     viewModel: MealDetailsViewModel = hiltViewModel(),
     onAddToCart: (CartItem) -> Unit,
-    initMeal: Meal,
+    initItem: CartItem,
     shouldOpenCustomizationInit: Boolean,
     onDismiss: () -> Unit,
     onFavoriteChanged: (String, Boolean) -> Unit = { _, _ -> }
 ) {
     LaunchedEffect(Unit) {
-        viewModel.onEvent(Event.SetMeal(initMeal))
+        viewModel.onEvent(Event.SetItem(initItem))
     }
+    val initMeal = initItem.meal
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
     )
-    var shouldOpenCustomization by remember { mutableStateOf(shouldOpenCustomizationInit) }
 
     val state by viewModel.state.collectAsState()
     val meal = state.meal ?: initMeal
-    val customizedMeal = state.customizedMeal ?: initMeal.toCartItem()
 
     LaunchedEffect(Unit) {
         sheetState.show()
     }
-
     val onClose: () -> Unit = remember(sheetState, coroutineScope) {
         {
             coroutineScope.launch {
@@ -69,7 +58,6 @@ fun MealDetailsBottomSheet(
     }
     when {
         state.isLoading -> LoadingScreen()
-
         else ->
 
             ModalBottomSheet(
@@ -80,60 +68,14 @@ fun MealDetailsBottomSheet(
                 scrimColor = Colors.GreyTransparent75,
 
                 ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(Dimens.MarginSmall8)
-                ) {
-                    BottomSheetHeader(
-                        meal = meal,
-                        onToggleFavorite = { viewModel.onEvent(Event.ToggleFavorite) },
-                        onClose = onClose
-                    )
-                    if (!shouldOpenCustomization) {
-                        MealImage(
-                            meal = meal
-                        )
-                    }
+                MealDetailsContent(
+                    state = state,
+                    onEvent = viewModel::onEvent,
+                    onAddToCart = onAddToCart,
+                    onClose = onClose,
+                    initItem = initItem
+                )
 
-                    MealInfo(
-                        meal = meal
-                    )
-
-
-                    if (shouldOpenCustomization) {
-                        when (meal.editableType) {
-                            EditableType.PIZZA -> PizzaAdsScreen(
-                                state = state,
-                                onEvent = viewModel::onEvent,
-                                onAddToCart = onAddToCart,
-                                onClose = onClose
-                            )
-
-                            EditableType.WOK -> {} // Тут будет открываться экран для конструктора вок
-                            EditableType.MODIFIABLE -> {} // Тут будет открываться экран для блюд с модификаторами
-                            null -> {} // Если блюдо не редактируется, не показываем кастомизацию
-                        }
-
-                    }
-
-                    if (!shouldOpenCustomization && meal.editableType != null) {
-                        OpenCustomizationButton(
-                            modifier = Modifier.padding(Dimens.MarginSmall8),
-                            editableType = meal.editableType,
-                            onClick = { shouldOpenCustomization = true }
-                        )
-                    }
-
-                    ToCartButton(
-                        modifier = Modifier.padding(Dimens.MarginSmall8),
-                        totalPrice = customizedMeal.totalPrice(),
-                        onClick = {
-                            onAddToCart(customizedMeal)
-                            onClose()
-                        }
-                    )
-                }
             }
     }
 }

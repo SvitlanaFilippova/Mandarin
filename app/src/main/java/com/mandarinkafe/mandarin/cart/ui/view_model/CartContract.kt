@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.cart.ui.view_model
 
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
+import com.mandarinkafe.mandarin.cart.totalPrice
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 

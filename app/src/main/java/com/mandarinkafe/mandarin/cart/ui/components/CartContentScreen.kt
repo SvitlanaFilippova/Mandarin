@@ -12,6 +12,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlurEffect
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
@@ -19,6 +21,7 @@ import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Event
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.BLUR_EFFECT_RADIUS
 
 @Composable
 fun CartContentScreen(
@@ -27,6 +30,19 @@ fun CartContentScreen(
     state: CartContract.State
 ) {
     val isPendingClear = state.isPendingDeletion
+    var modifierForLazyColumnBox =
+        if (isPendingClear) {
+            Modifier.graphicsLayer {
+                renderEffect = BlurEffect(
+                    radiusX = BLUR_EFFECT_RADIUS,
+                    radiusY = BLUR_EFFECT_RADIUS,
+                )
+            }
+        } else {
+            Modifier
+        }
+
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             // Кнопка очистки корзины,
@@ -38,16 +54,16 @@ fun CartContentScreen(
             )
 
             Box(
-                modifier = Modifier.weight(1f)
+                modifier = modifierForLazyColumnBox.weight(1f)
             )
             {
-
                 LazyColumn(
                     state = listState
                 ) {
                     // Список элементов корзины
                     itemsIndexed(state.cartItems.entries.map { it.toPair() }) { index, (cartItem, quantity) ->
-                        val itemInPendingDeletion = state.pendingDeletionMeals.contains(cartItem)
+                        val itemInPendingDeletion =
+                            state.pendingDeletionMeals.contains(cartItem)
 
                         CartItemCard(
                             item = cartItem,

@@ -69,7 +69,7 @@ fun CartScreen(
         cast = { it as? OpenMealDetailsBS }
     ) { effect, onDismiss ->
         MealDetailsBottomSheet(
-            initMeal = effect.item.meal,
+            initItem = effect.item,
             onDismiss = onDismiss,
             shouldOpenCustomizationInit = effect.shouldOpenCustomization,
             onAddToCart = { newItem ->

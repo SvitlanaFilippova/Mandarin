@@ -2,8 +2,8 @@ package com.mandarinkafe.mandarin.cart.ui.components
 
 import androidx.compose.runtime.Composable
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
+import com.mandarinkafe.mandarin.cart.totalPrice
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.cart.ui.view_model.totalPrice
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.CartControls
 import com.mandarinkafe.mandarin.util.ui.components.UndoIndicator
 

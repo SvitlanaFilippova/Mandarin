@@ -2,9 +2,9 @@ package com.mandarinkafe.mandarin.menu.ui.view_model.meal_details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.cart.CartMapper.toCartItem
-import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
@@ -33,9 +33,34 @@ class MealDetailsViewModel @Inject constructor(
     fun onEvent(event: Event) {
         when (event) {
             is Event.ToggleFavorite -> toggleFavorite()
-            is Event.ChangeAdds -> changeAdds(event.add, event.isChecked)
-            is Event.SetMeal -> setMeal(event.meal)
-            is Event.ChooseCategory -> chooseCategory(event.newIndex)
+            is Event.ChangeAdds -> changeAdds(add = event.add, isAdded = event.isChecked)
+            is Event.ChooseModifiers -> chooseModifiers(
+                modifierGroup = event.modifierGroup
+            )
+
+            is Event.SetItem -> setMeal(item = event.item)
+            is Event.ChooseCategory -> chooseCategory(newIndex = event.newIndex)
+
+        }
+    }
+
+    private fun chooseModifiers(modifierGroup: ModifierGroup) {
+        _state.update { currentState ->
+            val currentItem = currentState.customizedMeal ?: return
+            val modifiersList = currentItem.modifiers.toMutableList()
+
+            val groupIndex = modifiersList.indexOfFirst { it.id == modifierGroup.id }
+
+            if (groupIndex != -1) {
+                modifiersList.removeAt(groupIndex)
+                modifiersList.add(modifierGroup)
+            } else {
+                modifiersList.add(modifierGroup)
+            }
+
+            currentState.copy(
+                customizedMeal = currentItem.copy(modifiers = modifiersList)
+            )
 
         }
     }
@@ -72,9 +97,11 @@ class MealDetailsViewModel @Inject constructor(
 
     }
 
-    private fun setMeal(meal: Meal) {
+    private fun setMeal(item: CartItem) {
+        val meal = item.meal
+
         _state.update {
-            it.copy(meal = meal, customizedMeal = meal.toCartItem())
+            it.copy(meal = meal, customizedMeal = item)
         }
     }
 
