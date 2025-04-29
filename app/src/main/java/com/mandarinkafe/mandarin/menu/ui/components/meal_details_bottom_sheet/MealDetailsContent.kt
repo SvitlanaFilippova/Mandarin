@@ -144,19 +144,17 @@ fun MealDetailsContent(
             }
 
             // Кнопка "В корзину", закреплённая внизу
-            if (showToCartButton) {
-                ToCartButton(
+            ToCartButton(
                     modifier = Modifier
-                        .padding(Dimens.MarginSmall8)
                         .align(Alignment.BottomCenter),
                     totalPrice = customizedMeal.totalPrice(),
                     onClick = {
                         onAddToCart(customizedMeal)
                         onClose()
-                    }
+                    },
+                shouldBeActive = showToCartButton
                 )
-
             }
-        }
+
     }
-}
+    }

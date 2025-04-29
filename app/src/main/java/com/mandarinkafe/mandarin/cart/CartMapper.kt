@@ -4,22 +4,27 @@ import com.mandarinkafe.mandarin.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Event
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 
 object CartMapper {
 
     fun CartItem.toStoredCartItem(quantity: Int) = StoredCartItem(
         mealId = meal.id,
-        adds = adds,
         quantity = quantity,
-        modifiers = modifiers,
+        addsIds = adds.map { it.id },
+        modifiers = modifiers
     )
 
-    fun StoredCartItem.toCartItem(meal: Meal) = CartItem(
+    fun StoredCartItem.toCartItem(
+        meal: Meal,
+        adds: List<MealAdditional>,
+        modifiers: List<ModifierGroup>
+    ) = CartItem(
         meal = meal,
-        adds = adds ?: emptyList(),
-        modifiers = modifiers ?: emptyList()
+        adds = adds,
+        modifiers = modifiers
     )
-
 
     fun Meal.toAddToCartEvent(): Event.AddToCart {
         return Event.AddToCart(CartItem(meal = this))

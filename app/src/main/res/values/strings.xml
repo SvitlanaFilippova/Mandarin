@@ -50,7 +50,6 @@
     <!-- Кастомизация бюлюда -->
     <string name="add_additionals">Сделать ещё вкуснее</string>
     <string name="to_choose">Выбрать</string>
-    <string name="choose">Выберите</string>
     <string name="create_own_box_short">Собрать</string>
     <string name="create_own_box">Собрать свою коробочку</string>
     <string name="edit_meal">Редактировать</string>

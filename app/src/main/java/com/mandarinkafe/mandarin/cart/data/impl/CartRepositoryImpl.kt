@@ -6,10 +6,12 @@ import com.mandarinkafe.mandarin.cart.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.cart.domain.api.CartRepository
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
+import com.mandarinkafe.mandarin.cart.validateBy
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.di.Recommends
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
+import com.mandarinkafe.mandarin.menu.domain.mappers.toMealAdditional
 import com.mandarinkafe.mandarin.menu.domain.usecase.CategoryFilter
 import com.mandarinkafe.mandarin.util.Resource
 import jakarta.inject.Inject
@@ -30,23 +32,35 @@ class CartRepositoryImpl @Inject constructor(
         val validCart = mutableMapOf<CartItem, Int>()
         val invalidIds = mutableListOf<String>()
 
-        for (cartMeal in rawCart) {
+        for (storedCartItem in rawCart) {
             try {
                 // Получаем по id полную актуальную информацию о блюде
-                val fullMeal = menuRepository.getMealById(cartMeal.mealId)
+                val fullMeal = menuRepository.getMealById(storedCartItem.mealId)
                 if (fullMeal != null) {
-                    val cartItem = cartMeal.toCartItem(fullMeal)
-                    validCart[cartItem] = cartMeal.quantity
+
+                    val validAdds = storedCartItem.addsIds?.mapNotNull { id ->
+                        menuRepository.getMealById(id)?.toMealAdditional()
+                    } ?: emptyList()
+
+                    val validModifiers =
+                        storedCartItem.modifiers?.validateBy(fullMeal.modifiers) ?: emptyList()
+
+                    val cartItem = storedCartItem.toCartItem(
+                        meal = fullMeal,
+                        adds = validAdds,
+                        modifiers = validModifiers
+                    )
+                    validCart[cartItem] = storedCartItem.quantity
                 } else {
-                    invalidIds.add(cartMeal.mealId)
+                    invalidIds.add(storedCartItem.mealId)
                 }
             } catch (e: Exception) {
                 // Если при преобразовании или доступе к данным что-то пошло не так — тоже игнорируем
                 Log.e(
                     "CartMapper",
-                    "Ошибка при преобразовании StoredCartItem с id ${cartMeal.mealId}",
+                    "Ошибка при преобразовании StoredCartItem с id ${storedCartItem.mealId}",
                 )
-                invalidIds.add(cartMeal.mealId)
+                invalidIds.add(storedCartItem.mealId)
             }
         }
 
