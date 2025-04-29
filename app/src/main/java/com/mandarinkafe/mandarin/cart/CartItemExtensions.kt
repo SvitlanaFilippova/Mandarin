@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.cart
 
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
+import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 
 fun Map<CartItem, Int>.getTotalQuantityByMealId(mealId: String): Int {
     return this.filter { it.key.meal.id == mealId }
@@ -44,4 +45,22 @@ fun CartItem.customizedText(): String {
         addsText.takeIf { it.isNotBlank() },
         modifiersText.takeIf { it.isNotBlank() }
     ).joinToString(" • ")
+}
+
+fun List<ModifierGroup>.validateBy(mealModifiers: List<ModifierGroup>): List<ModifierGroup> {
+    return this.mapNotNull { selectedGroup ->
+        val referenceGroup = mealModifiers.find { it.id == selectedGroup.id }
+        if (referenceGroup != null) {
+            val validItems = selectedGroup.items.filter { item ->
+                referenceGroup.items.any { it.id == item.id }
+            }
+            if (validItems.isNotEmpty()) {
+                selectedGroup.copy(items = validItems)
+            } else {
+                null // если нет ни одного валидного модификатора — пропускаем всю группу
+            }
+        } else {
+            null // группа не найдена в текущем меню
+        }
+    }
 }
