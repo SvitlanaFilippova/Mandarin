@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet
 
+
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -7,10 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -26,25 +25,23 @@ fun MealDetailsBottomSheet(
     viewModel: MealDetailsViewModel = hiltViewModel(),
     onAddToCart: (CartItem) -> Unit,
     initItem: CartItem,
-    shouldOpenCustomizationInit: Boolean,
     onDismiss: () -> Unit,
     onFavoriteChanged: (String, Boolean) -> Unit = { _, _ -> }
 ) {
     LaunchedEffect(Unit) {
         viewModel.onEvent(Event.SetItem(initItem))
     }
+    val state by viewModel.state.collectAsState()
     val initMeal = initItem.meal
+    val meal = state.customizedMeal?.meal ?: initMeal
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
     )
-
-    val state by viewModel.state.collectAsState()
-    val meal = state.meal ?: initMeal
-
     LaunchedEffect(Unit) {
         sheetState.show()
     }
+
     val onClose: () -> Unit = remember(sheetState, coroutineScope) {
         {
             coroutineScope.launch {

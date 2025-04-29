@@ -71,7 +71,6 @@ fun CartScreen(
         MealDetailsBottomSheet(
             initItem = effect.item,
             onDismiss = onDismiss,
-            shouldOpenCustomizationInit = effect.shouldOpenCustomization,
             onAddToCart = { newItem ->
                 viewModel.onEvent(
                     CartContract.Event.ReplaceMealInCart(

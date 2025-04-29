@@ -15,14 +15,12 @@ sealed interface CartContract {
         data class CancelRemove(val item: CartItem) : Event
         data object ClearCart : Event
         data object CancelClearingCart : Event
-        data class EditMeal(val item: CartItem) : Event
         data class OpenMealDetails(val item: CartItem) : Event
     }
 
     sealed interface Effect {
         data class OpenMealDetailsBS(
-            val item: CartItem,
-            val shouldOpenCustomization: Boolean = false
+            val item: CartItem
         ) :
             Effect, BottomSheetEffect
     }

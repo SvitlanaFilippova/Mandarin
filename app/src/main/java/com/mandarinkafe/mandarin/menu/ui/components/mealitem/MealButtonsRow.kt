@@ -52,12 +52,12 @@ fun MealButtonsRow(
         } else if (meal.editableType == EditableType.MODIFIABLE) {
             SelectButton(
                 text = stringResource(R.string.to_choose), onClick = {
-                    onEvent(Event.OnMealCustomizationClick(meal))
+                    onEvent(Event.OnMealDetailsClick(meal))
                 })
         } else if (meal.editableType == EditableType.WOK) {
             SelectButton(
                 text = stringResource(R.string.create_own_box_short), onClick = {
-                    onEvent(Event.OnMealCustomizationClick(meal))
+                    onEvent(Event.OnMealDetailsClick(meal))
                 })
         } else {
             ToCartButtonWithPrice(
@@ -70,7 +70,7 @@ fun MealButtonsRow(
             PizzaAddsButton(
                 modifier = Modifier.weight(1f),
                 onClick = {
-                    onEvent(Event.OnMealCustomizationClick(meal))
+                    onEvent(Event.OnMealDetailsClick(meal))
                 }
             )
         } else {

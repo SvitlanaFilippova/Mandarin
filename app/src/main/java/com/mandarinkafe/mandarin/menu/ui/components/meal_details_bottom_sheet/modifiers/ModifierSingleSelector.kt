@@ -49,7 +49,7 @@ fun ModifierSingleSelector(
             onValueChange = {},
             readOnly = true,
             shape = RoundedCornerShape(Dimens.CornerRadius8),
-            label = { Text(stringResource(R.string.choose)) },
+            label = { Text(stringResource(R.string.to_choose)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .menuAnchor()

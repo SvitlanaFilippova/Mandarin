@@ -76,32 +76,36 @@ class MealDetailsViewModel @Inject constructor(
     }
 
     private fun toggleFavorite() {
-        val meal = state.value.meal
-        if (meal != null) {
-            viewModelScope.launch {
-                val isNowFavorite = if (meal.isFavorite) {
-                    favoritesInteractor.removeFromFavorites(meal.toFavoriteMeal())
-                    false
-                } else {
-                    favoritesInteractor.addToFavorites(meal.toFavoriteMeal())
-                    true
-                }
+        val meal = state.value.customizedMeal?.meal ?: return
 
-                _state.update { currentState ->
+        viewModelScope.launch {
+            val isNowFavorite = if (meal.isFavorite) {
+                favoritesInteractor.removeFromFavorites(meal.toFavoriteMeal())
+                false
+            } else {
+                favoritesInteractor.addToFavorites(meal.toFavoriteMeal())
+                true
+            }
+
+            _state.update { currentState ->
+                val customizedMeal = currentState.customizedMeal
+                if (customizedMeal != null) {
                     currentState.copy(
-                        meal = currentState.meal?.copy(isFavorite = isNowFavorite)
+                        customizedMeal = customizedMeal.copy(
+                            meal = customizedMeal.meal.copy(isFavorite = isNowFavorite)
+                        )
                     )
+                } else {
+                    currentState
                 }
             }
         }
-
     }
 
     private fun setMeal(item: CartItem) {
-        val meal = item.meal
 
         _state.update {
-            it.copy(meal = meal, customizedMeal = item)
+            it.copy(customizedMeal = item)
         }
     }
 

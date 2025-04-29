@@ -25,7 +25,6 @@ fun HandleBottomSheetEffects(
             onFavoriteChanged = { id, isFavorite ->
                 onMenuEvent(Event.UpdateMealFavorite(id, isFavorite))
             },
-            shouldOpenCustomizationInit = effect.shouldOpenCustomization,
             onAddToCart = onAddToCart
         )
     }

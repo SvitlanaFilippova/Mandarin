@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.menu.ui.view_model.meal_details
 
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
-import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.menu.domain.models.MealAdditionalCategory
@@ -18,7 +17,6 @@ sealed interface MealDetailsContract {
 
     data class State(
         val isLoading: Boolean = false,
-        val meal: Meal? = null,
         val customizedMeal: CartItem? = null,
         val pizzaAds: List<MealAdditionalCategory> = emptyList(),
         val errorMessage: String? = null,

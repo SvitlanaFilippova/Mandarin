@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +11,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -44,7 +46,6 @@ fun MealDetailsContent(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
             .padding(Dimens.MarginSmall8)
     ) {
         BottomSheetHeader(
@@ -52,103 +53,110 @@ fun MealDetailsContent(
             onToggleFavorite = { onEvent(Event.ToggleFavorite) },
             onClose = onClose
         )
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth(),
-            state = listState
 
-        ) {
-            // Изображение блюда
-            if (meal.imageUrl.isNotEmpty()) {
+        Box {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = Dimens.MarginForCartButton72),
+                state = listState
+
+            ) {
+                // Изображение блюда
+                if (meal.imageUrl.isNotEmpty()) {
+                    item {
+                        MealImage(
+                            mealImg = meal.imageUrl,
+                            mealName = meal.name,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+                // Текстовая информация о блюде
                 item {
-                    MealImage(
-                        mealImg = meal.imageUrl,
-                        mealName = meal.name
-                    )
-                }
-            }
-            // Текстовая информация о блюде
-            item {
-                MealInfo(
-                    meal = meal
-                )
-            }
-
-            // Выбор модификаторов
-            if (meal.modifiers.isNotEmpty()) {
-                itemsIndexed(meal.modifiers) { index, modifierGroup ->
-                    Text(
-                        modifier = Modifier.padding(vertical = Dimens.MarginSmall8),
-                        text = modifierGroup.name,
-                        style = Typography.RegularTextStyle
-                    )
-
-                    ModifierSingleSelector(
-                        items = modifierGroup.items,
-                        selectedItem = chosenModifiers.find { it.id == modifierGroup.id }?.items?.get(
-                            0
-                        ),
-                        onItemSelected = { item ->
-                            onEvent(
-                                Event.ChooseModifiers(modifierGroup.copy(items = listOf(item)))
-                            )
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
-                }
-            }
-
-            // Выбор добавок для пиццы
-            if (meal.editableType == EditableType.PIZZA) {
-                val selectedTabIndex = state.selectedTabIndex
-                item {
-                    Text(
-                        modifier = Modifier
-                            .padding(vertical = Dimens.MarginSmall8)
-                            .fillMaxWidth(),
-                        text = stringResource(R.string.adds),
-                        style = Typography.TitleStyle,
-                        textAlign = TextAlign.Center
-                    )
-                }
-                item {
-                    AddsCategoryTabsRow(
-                        categories = state.pizzaAds.map { it.name },
-                        selectedTabIndex = selectedTabIndex,
-                        onTabSelected = { index -> onEvent(Event.ChooseCategory(index)) }
+                    MealInfo(
+                        meal = meal
                     )
                 }
 
-                val addsItems = state.pizzaAds[selectedTabIndex].mealAdditionals ?: emptyList()
+                // Выбор модификаторов
+                if (meal.modifiers.isNotEmpty()) {
+                    itemsIndexed(meal.modifiers) { index, modifierGroup ->
+                        Text(
+                            modifier = Modifier.padding(vertical = Dimens.MarginSmall8),
+                            text = modifierGroup.name,
+                            style = Typography.RegularTextStyle
+                        )
 
-                itemsIndexed(addsItems) { _, item ->
-                    AddsItem(
-                        add = item,
-                        onCheckedChange = { isChecked, add ->
-                            onEvent(
-                                Event.ChangeAdds(
-                                    add = add,
-                                    isChecked = isChecked
+                        ModifierSingleSelector(
+                            items = modifierGroup.items,
+                            selectedItem = chosenModifiers.find { it.id == modifierGroup.id }?.items?.get(
+                                0
+                            ),
+                            onItemSelected = { item ->
+                                onEvent(
+                                    Event.ChooseModifiers(modifierGroup.copy(items = listOf(item)))
                                 )
-                            )
-                        },
-                        isAdded = customizedMeal.adds.contains(item)
-                    )
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
+                    }
+                }
+
+                // Выбор добавок для пиццы
+                if (meal.editableType == EditableType.PIZZA) {
+                    val selectedTabIndex = state.selectedTabIndex
+                    item {
+                        Text(
+                            modifier = Modifier
+                                .padding(vertical = Dimens.MarginSmall8)
+                                .fillMaxWidth(),
+                            text = stringResource(R.string.adds),
+                            style = Typography.TitleStyle,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    item {
+                        AddsCategoryTabsRow(
+                            categories = state.pizzaAds.map { it.name },
+                            selectedTabIndex = selectedTabIndex,
+                            onTabSelected = { index -> onEvent(Event.ChooseCategory(index)) }
+                        )
+                    }
+
+                    val addsItems = state.pizzaAds[selectedTabIndex].mealAdditionals ?: emptyList()
+
+                    itemsIndexed(addsItems) { _, item ->
+                        AddsItem(
+                            add = item,
+                            onCheckedChange = { isChecked, add ->
+                                onEvent(
+                                    Event.ChangeAdds(
+                                        add = add,
+                                        isChecked = isChecked
+                                    )
+                                )
+                            },
+                            isAdded = customizedMeal.adds.contains(item)
+                        )
+                    }
                 }
             }
-        }
 
-        // Кнопка "В корзину", закреплённая внизу
-        if (showToCartButton) {
-            ToCartButton(
-                modifier = Modifier.padding(Dimens.MarginSmall8),
-                totalPrice = customizedMeal.totalPrice(),
-                onClick = {
-                    onAddToCart(customizedMeal)
-                    onClose()
-                }
-            )
+            // Кнопка "В корзину", закреплённая внизу
+            if (showToCartButton) {
+                ToCartButton(
+                    modifier = Modifier
+                        .padding(Dimens.MarginSmall8)
+                        .align(Alignment.BottomCenter),
+                    totalPrice = customizedMeal.totalPrice(),
+                    onClick = {
+                        onAddToCart(customizedMeal)
+                        onClose()
+                    }
+                )
 
+            }
         }
     }
 }

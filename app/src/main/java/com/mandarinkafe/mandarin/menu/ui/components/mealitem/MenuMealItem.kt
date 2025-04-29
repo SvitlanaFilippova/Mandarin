@@ -11,10 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,7 +26,6 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
-import com.mandarinkafe.mandarin.util.ui.components.ExpandableText
 
 @Composable
 fun MenuMealItem(
@@ -39,10 +34,7 @@ fun MenuMealItem(
     onCartEvent: (CartContract.Event) -> Unit,
     cartState: CartContract.State
 ) {
-    // переменная для отслеживания состояния длинных названий
-    var isNameExpanded by remember {
-        mutableStateOf(false)
-    }
+
     Row(
         verticalAlignment = Alignment.Top,
         modifier = Modifier
@@ -73,12 +65,10 @@ fun MenuMealItem(
 
             // Блок с текстовой информацией о блюде
             Column(modifier = Modifier.heightIn(min = Dimens.MealMinDescriptionHeight96)) {
-                ExpandableText(
+                Text(
                     text = meal.name,
                     style = Typography.MealTitleStyle,
-                    isExpanded = isNameExpanded,
-                    onClick = { isNameExpanded = !isNameExpanded },
-                    maxLinesCollapsed = 3
+                    maxLines = 3
                 )
 
                 if (meal.description.isNotEmpty()) {

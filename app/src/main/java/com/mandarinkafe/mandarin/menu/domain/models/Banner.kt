@@ -8,7 +8,7 @@ data class Banner(
 val mockBannersList = listOf(
     Banner(
         "https://static.tildacdn.com/tild3033-3362-4338-b939-346635366637/banners_pizza.jpg",
-        "Маргарита"
+        "Неаполитано"
     ),
     Banner(
         "https://static.tildacdn.com/tild6135-6436-4033-b364-323832663837/banners_pizza3.jpg",
