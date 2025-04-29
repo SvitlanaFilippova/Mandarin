@@ -9,14 +9,11 @@ import com.mandarinkafe.mandarin.util.applyTypography
 fun Meal.toMealAdditional() = MealAdditional(
     id = id,
     name = name.applyTypography(),
-    weight = weight,
     price = price,
-    isHidden = isHidden
 )
 
 fun MealCategory.toMealAdditionalCategory() = MealAdditionalCategory(
     id = id,
     name = name.applyTypography(),
     mealAdditionals = meals?.map { it.toMealAdditional() } ?: emptyList(),
-    isHidden = isHidden
 )

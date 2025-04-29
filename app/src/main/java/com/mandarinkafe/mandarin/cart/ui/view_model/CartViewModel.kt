@@ -66,15 +66,7 @@ class CartViewModel @Inject constructor(
             is Event.CancelClearingCart -> cancelClearingCart()
             is Event.OpenMealDetails -> sendEffect(
                 OpenMealDetailsBS(
-                    item = event.item,
-                    shouldOpenCustomization = false
-                )
-            )
-
-            is Event.EditMeal -> sendEffect(
-                OpenMealDetailsBS(
-                    item = event.item,
-                    shouldOpenCustomization = true
+                    item = event.item
                 )
             )
         }

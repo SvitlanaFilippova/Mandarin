@@ -23,7 +23,6 @@ sealed interface MenuContract {
         data class BannerClick(val targetName: String) : Event
 
         // Детали блюда
-        data class OnMealCustomizationClick(val meal: Meal) : Event
         data class OnMealDetailsClick(val meal: Meal) : Event
 
         // Позвонить
@@ -44,7 +43,7 @@ sealed interface MenuContract {
         data class OpenSearch(val focusSearch: Boolean) : Effect
         data object OpenFavorites : Effect
         data object CallPhone : Effect
-        data class OpenMealDetailsBS(val meal: Meal, val shouldOpenCustomization: Boolean = false) :
+        data class OpenMealDetailsBS(val meal: Meal) :
             Effect, BottomSheetEffect
     }
 

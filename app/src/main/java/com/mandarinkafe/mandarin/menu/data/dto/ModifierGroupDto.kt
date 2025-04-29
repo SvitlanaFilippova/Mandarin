@@ -1,8 +1,9 @@
 package com.mandarinkafe.mandarin.menu.data.dto
 
 data class ModifierGroupDto(
-    val itemGroupId: String?,
+    val itemGroupId: String,
     val name: String?,
-    val sku: String?,
-    val items: List<ModifierItemDto>?
+    val items: List<ModifierItemDto>?,
+    val description: String?,
+    val restrictions: RestrictionsDto?,
 )

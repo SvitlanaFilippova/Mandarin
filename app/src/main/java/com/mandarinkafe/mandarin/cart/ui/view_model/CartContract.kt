@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.cart.ui.view_model
 
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
+import com.mandarinkafe.mandarin.cart.totalPrice
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 
@@ -14,14 +15,12 @@ sealed interface CartContract {
         data class CancelRemove(val item: CartItem) : Event
         data object ClearCart : Event
         data object CancelClearingCart : Event
-        data class EditMeal(val item: CartItem) : Event
         data class OpenMealDetails(val item: CartItem) : Event
     }
 
     sealed interface Effect {
         data class OpenMealDetailsBS(
-            val item: CartItem,
-            val shouldOpenCustomization: Boolean = false
+            val item: CartItem
         ) :
             Effect, BottomSheetEffect
     }

@@ -179,25 +179,19 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     )
 
     fun ModifierItemDto.toDomain(): ModifierItem {
-
-        val safeWeight = portionWeightGrams?.toInt() ?: 0
         val safePrice = prices?.firstOrNull()?.price?.toInt() ?: 0
 
         return ModifierItem(
-            id = itemId ?: "",
+            id = itemId,
             name = name ?: "",
-            sku = sku ?: "",
-            isHidden = isHidden == true,
-            weight = safeWeight,
-            price = safePrice
+            price = safePrice,
         )
     }
 
     fun ModifierGroupDto.toDomain() = ModifierGroup(
-        id = itemGroupId ?: "",
+        id = itemGroupId,
         name = name ?: "",
-        sku = sku ?: "",
-        items = items?.map { it.toDomain() } ?: emptyList()
+        items = items?.map { it.toDomain() } ?: emptyList(),
     )
 
 }

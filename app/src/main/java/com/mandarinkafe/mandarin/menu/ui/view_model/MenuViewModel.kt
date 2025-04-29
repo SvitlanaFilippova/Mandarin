@@ -67,19 +67,8 @@ class MenuViewModel @Inject constructor(
                 id = event.id,
                 isFavorite = event.isFavorite
             )
-
-            is Event.OnMealCustomizationClick -> sendEffect(
-                OpenMealDetailsBS(
-                    meal = event.meal,
-                    shouldOpenCustomization = true
-                )
-            )
-
             is Event.OnMealDetailsClick -> sendEffect(
-                OpenMealDetailsBS(
-                    meal = event.meal,
-                    shouldOpenCustomization = false
-                )
+                OpenMealDetailsBS(meal = event.meal)
             )
         }
     }

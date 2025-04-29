@@ -22,6 +22,7 @@ import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
+import com.mandarinkafe.mandarin.core.domain.models.EditableType
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
@@ -74,11 +75,18 @@ fun CartRecommendsItemCard(
                     .padding(vertical = Dimens.MarginSmall8)
             )
 
-            ToCartSmallButton(
-                onClick = { onEvent(CartContract.Event.AddToCart(item)) },
-                price = meal.price,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            when (item.meal.editableType) {
+                EditableType.MODIFIABLE, EditableType.WOK -> SelectSmallButton(
+                    onClick = { onEvent(CartContract.Event.OpenMealDetails(item)) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                else -> ToCartSmallButton(
+                    onClick = { onEvent(CartContract.Event.AddToCart(item)) },
+                    price = meal.price,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
 
         }
     }

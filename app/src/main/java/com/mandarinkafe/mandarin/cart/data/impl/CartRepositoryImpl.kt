@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.cart.data.impl
 
 import android.util.Log
+import com.mandarinkafe.mandarin.cart.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.cart.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.cart.domain.api.CartRepository
@@ -30,15 +31,21 @@ class CartRepositoryImpl @Inject constructor(
         val invalidIds = mutableListOf<String>()
 
         for (cartMeal in rawCart) {
-            // Получаем по id полную актуальную информацию о блюде
-            val fullMeal = menuRepository.getMealById(cartMeal.mealId)
-            if (fullMeal != null) {
-                val cartItem = CartItem(
-                    meal = fullMeal,
-                    adds = cartMeal.adds    // TODO добавки тоже надо проверять на валидность!!!!!
+            try {
+                // Получаем по id полную актуальную информацию о блюде
+                val fullMeal = menuRepository.getMealById(cartMeal.mealId)
+                if (fullMeal != null) {
+                    val cartItem = cartMeal.toCartItem(fullMeal)
+                    validCart[cartItem] = cartMeal.quantity
+                } else {
+                    invalidIds.add(cartMeal.mealId)
+                }
+            } catch (e: Exception) {
+                // Если при преобразовании или доступе к данным что-то пошло не так — тоже игнорируем
+                Log.e(
+                    "CartMapper",
+                    "Ошибка при преобразовании StoredCartItem с id ${cartMeal.mealId}",
                 )
-                validCart[cartItem] = cartMeal.quantity
-            } else {
                 invalidIds.add(cartMeal.mealId)
             }
         }
