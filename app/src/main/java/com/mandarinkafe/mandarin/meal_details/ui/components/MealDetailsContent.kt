@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.meal_details.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.cart.totalPrice
 import com.mandarinkafe.mandarin.core.domain.models.EditableType
+import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.meal_details.ui.components.modifiers.ModifierMultiSelectItem
@@ -58,8 +60,7 @@ fun MealDetailsContent(
         Box {
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = Dimens.MarginForCartButton72),
+                    .fillMaxWidth(),
                 state = listState
 
             ) {
@@ -175,11 +176,15 @@ fun MealDetailsContent(
                     }
                 }
 
+                // Отступ для кнопки "в корзину"
+                item { Spacer(modifier = Modifier.height(Dimens.MarginForCartButton72)) }
+
             }
             // Кнопка "В корзину", закреплённая внизу
             ToCartButton(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter),
+                    .align(Alignment.BottomCenter)
+                    .background(Colors.Transparent),
                 totalPrice = customizedMeal.totalPrice(),
                 onClick = {
                     onAddToCart(customizedMeal)
