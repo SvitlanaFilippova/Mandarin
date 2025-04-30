@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet
+package com.mandarinkafe.mandarin.meal_details.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,11 +21,11 @@ import com.mandarinkafe.mandarin.cart.totalPrice
 import com.mandarinkafe.mandarin.core.domain.models.EditableType
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.modifiers.ModifierSingleSelector
-import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.pizza_ads.AddsCategoryTabsRow
-import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.pizza_ads.AddsItem
-import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract
-import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract.Event
+import com.mandarinkafe.mandarin.meal_details.ui.components.modifiers.ModifierSingleSelector
+import com.mandarinkafe.mandarin.meal_details.ui.components.pizza_ads.AddsCategoryTabsRow
+import com.mandarinkafe.mandarin.meal_details.ui.components.pizza_ads.AddsItem
+import com.mandarinkafe.mandarin.meal_details.ui.view_model.MealDetailsContract
+import com.mandarinkafe.mandarin.meal_details.ui.view_model.MealDetailsContract.Event
 
 @Composable
 fun MealDetailsContent(
@@ -80,7 +80,31 @@ fun MealDetailsContent(
                 }
 
                 // Выбор модификаторов
-                if (meal.modifiers.isNotEmpty()) {
+                if (meal.editableType != EditableType.WOK && meal.modifiers.isNotEmpty()) {
+                    itemsIndexed(meal.modifiers) { index, modifierGroup ->
+                        Text(
+                            modifier = Modifier.padding(vertical = Dimens.MarginSmall8),
+                            text = modifierGroup.name,
+                            style = Typography.RegularTextStyle
+                        )
+
+                        ModifierSingleSelector(
+                            items = modifierGroup.items,
+                            selectedItem = chosenModifiers.find { it.id == modifierGroup.id }?.items?.get(
+                                0
+                            ),
+                            onItemSelected = { item ->
+                                onEvent(
+                                    Event.ChooseModifiers(modifierGroup.copy(items = listOf(item)))
+                                )
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
+                    }
+                }
+
+                // Выбор модификаторов
+                if (meal.editableType != EditableType.WOK) {
                     itemsIndexed(meal.modifiers) { index, modifierGroup ->
                         Text(
                             modifier = Modifier.padding(vertical = Dimens.MarginSmall8),
@@ -145,16 +169,16 @@ fun MealDetailsContent(
 
             // Кнопка "В корзину", закреплённая внизу
             ToCartButton(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter),
-                    totalPrice = customizedMeal.totalPrice(),
-                    onClick = {
-                        onAddToCart(customizedMeal)
-                        onClose()
-                    },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter),
+                totalPrice = customizedMeal.totalPrice(),
+                onClick = {
+                    onAddToCart(customizedMeal)
+                    onClose()
+                },
                 shouldBeActive = showToCartButton
-                )
-            }
+            )
+        }
 
     }
-    }
+}

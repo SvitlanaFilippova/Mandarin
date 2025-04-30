@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.view_model.meal_details
+package com.mandarinkafe.mandarin.meal_details.ui.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,7 +8,6 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
-import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,16 +29,20 @@ class MealDetailsViewModel @Inject constructor(
         getAddons()
     }
 
-    fun onEvent(event: Event) {
+    fun onEvent(event: MealDetailsContract.Event) {
         when (event) {
-            is Event.ToggleFavorite -> toggleFavorite()
-            is Event.ChangeAdds -> changeAdds(add = event.add, isAdded = event.isChecked)
-            is Event.ChooseModifiers -> chooseModifiers(
+            is MealDetailsContract.Event.ToggleFavorite -> toggleFavorite()
+            is MealDetailsContract.Event.ChangeAdds -> changeAdds(
+                add = event.add,
+                isAdded = event.isChecked
+            )
+
+            is MealDetailsContract.Event.ChooseModifiers -> chooseModifiers(
                 modifierGroup = event.modifierGroup
             )
 
-            is Event.SetItem -> setMeal(item = event.item)
-            is Event.ChooseCategory -> chooseCategory(newIndex = event.newIndex)
+            is MealDetailsContract.Event.SetItem -> setMeal(item = event.item)
+            is MealDetailsContract.Event.ChooseCategory -> chooseCategory(newIndex = event.newIndex)
 
         }
     }

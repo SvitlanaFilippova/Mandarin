@@ -21,7 +21,7 @@ import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract.Effect.OpenMeal
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.MealDetailsBottomSheet
+import com.mandarinkafe.mandarin.meal_details.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.util.ui.HandleBottomSheetEffect
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 

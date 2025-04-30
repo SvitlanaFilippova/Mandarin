@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.modifiers
+package com.mandarinkafe.mandarin.meal_details.ui.components.modifiers
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape

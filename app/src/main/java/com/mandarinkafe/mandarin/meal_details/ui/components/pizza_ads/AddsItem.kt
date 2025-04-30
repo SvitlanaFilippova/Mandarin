@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet.pizza_ads
+package com.mandarinkafe.mandarin.meal_details.ui.components.pizza_ads
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background

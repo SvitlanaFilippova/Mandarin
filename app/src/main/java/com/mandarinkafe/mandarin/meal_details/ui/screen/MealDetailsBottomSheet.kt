@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet
+package com.mandarinkafe.mandarin.meal_details.ui.screen
 
 
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,8 +14,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsContract.Event
-import com.mandarinkafe.mandarin.menu.ui.view_model.meal_details.MealDetailsViewModel
+import com.mandarinkafe.mandarin.meal_details.ui.components.MealDetailsContent
+import com.mandarinkafe.mandarin.meal_details.ui.view_model.MealDetailsContract.Event
+import com.mandarinkafe.mandarin.meal_details.ui.view_model.MealDetailsViewModel
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 import kotlinx.coroutines.launch
 

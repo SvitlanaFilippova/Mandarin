@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.view_model.meal_details
+package com.mandarinkafe.mandarin.meal_details.ui.view_model
 
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
