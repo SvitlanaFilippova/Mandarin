@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.meal_details.ui.components.pizza_ads
+package com.mandarinkafe.mandarin.meal_details.ui.components.modifiers
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -10,9 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,18 +19,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
+import com.mandarinkafe.mandarin.util.removeLeadingDash
 
 @Composable
-fun AddsItem(
-    add: MealAdditional,
-    onCheckedChange: (Boolean, MealAdditional) -> Unit,
-    isAdded: Boolean
+fun ModifierSingleSelectItem(
+    item: ModifierItem,
+    isAdded: Boolean,
+    onItemSelected: (ModifierItem) -> Unit
 ) {
+
     val backgroundColor by animateColorAsState(
         targetValue = if (isAdded) Colors.Orange.copy(alpha = 0.1f) else Color.Transparent,
         label = "AddHighlight"
@@ -44,30 +46,27 @@ fun AddsItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(Dimens.ModifierRowHeight48)
-                .clickable { onCheckedChange(!isAdded, add) },
+                .clickable { onItemSelected(item) }
+                .height(Dimens.ModifierRowHeight48),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Checkbox(
-                modifier = Modifier.padding(
-                    start = Dimens.Margin12,
-                    end = Dimens.MarginSuperSmall4
-                ),
-                checked = isAdded,
-                onCheckedChange = null, // обработка клика происходит в Row
-                enabled = true,
-                colors = CheckboxDefaults.colors(checkedColor = Colors.Orange)
+
+            RadioButton(
+                modifier = Modifier.padding(0.dp),
+                selected = isAdded,
+                onClick = { }// обработка клика происходит в Row
             )
+
             Text(
-                modifier = Modifier.padding(horizontal = Dimens.MarginStandard16),
-                text = add.name,
+                modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
+                text = item.name.removeLeadingDash(),
                 style = Typography.RegularTextStyle
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                modifier = Modifier.padding(Dimens.MarginSmall8),
-                text = stringResource(R.string.meal_price_template, add.price),
+                modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
+                text = stringResource(R.string.meal_price_template, item.price),
                 style = Typography.MealPriceStyle
             )
 
@@ -79,3 +78,4 @@ fun AddsItem(
         )
     }
 }
+

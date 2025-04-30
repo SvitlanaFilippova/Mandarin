@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.meal_details.ui.components.pizza_ads
+package com.mandarinkafe.mandarin.meal_details.ui.components.modifiers
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -21,17 +21,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
+import com.mandarinkafe.mandarin.util.removeLeadingDash
 
 @Composable
-fun AddsItem(
-    add: MealAdditional,
-    onCheckedChange: (Boolean, MealAdditional) -> Unit,
+fun ModifierMultiSelectItem(
+    item: ModifierItem,
+    onCheckedChange: (Boolean) -> Unit,
     isAdded: Boolean
 ) {
+
     val backgroundColor by animateColorAsState(
         targetValue = if (isAdded) Colors.Orange.copy(alpha = 0.1f) else Color.Transparent,
         label = "AddHighlight"
@@ -45,7 +47,7 @@ fun AddsItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(Dimens.ModifierRowHeight48)
-                .clickable { onCheckedChange(!isAdded, add) },
+                .clickable { onCheckedChange(!isAdded) },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -61,13 +63,13 @@ fun AddsItem(
             )
             Text(
                 modifier = Modifier.padding(horizontal = Dimens.MarginStandard16),
-                text = add.name,
+                text = item.name.removeLeadingDash(),
                 style = Typography.RegularTextStyle
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                modifier = Modifier.padding(Dimens.MarginSmall8),
-                text = stringResource(R.string.meal_price_template, add.price),
+                modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
+                text = stringResource(R.string.meal_price_template, item.price),
                 style = Typography.MealPriceStyle
             )
 

@@ -75,3 +75,7 @@ private fun String.normalizeNumbers(): String {
             "$part1$nonBreakingSpace$part2"
         }
 }
+
+fun String.removeLeadingDash(): String {
+    return this.removePrefix("-").trimStart()
+}

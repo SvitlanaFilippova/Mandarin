@@ -20,12 +20,14 @@ object Dimens {
     val ButtonPlaceholderSize200 = 200.dp
     val IconSize24 = 24.dp
     val MarginStandard16 = 16.dp
+    val Margin12 = 12.dp
     val MarginSmall8 = 8.dp
     val MarginSuperSmall4 = 4.dp
     val MarginBig20 = 20.dp
     val MarginBig24 = 24.dp
     val MarginBig32 = 32.dp
     val MarginForCartButton72 = 72.dp
+    val ModifierRowHeight48 = 48.dp
     val RadiusSearchField8 = 8.dp
     val RadiusImageCorner2 = 2.dp
     val MealImage136 = 136.dp

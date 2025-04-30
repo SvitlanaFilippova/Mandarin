@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
@@ -37,8 +38,13 @@ class MealDetailsViewModel @Inject constructor(
                 isAdded = event.isChecked
             )
 
-            is MealDetailsContract.Event.ChooseModifiers -> chooseModifiers(
+            is MealDetailsContract.Event.ChooseSingleModifier -> chooseSingleModifiers(
                 modifierGroup = event.modifierGroup
+            )
+
+            is MealDetailsContract.Event.ChooseMultiModifiers -> chooseMultiModifiers(
+                group = event.modifierGroup,
+                item = event.modifierItem, isChecked = event.isChecked
             )
 
             is MealDetailsContract.Event.SetItem -> setMeal(item = event.item)
@@ -47,11 +53,45 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun chooseModifiers(modifierGroup: ModifierGroup) {
+    private fun chooseMultiModifiers(
+        group: ModifierGroup,
+        item: ModifierItem,
+        isChecked: Boolean
+    ) {
         _state.update { currentState ->
             val currentItem = currentState.customizedMeal ?: return
             val modifiersList = currentItem.modifiers.toMutableList()
+            val groupIndex = modifiersList.indexOfFirst { it.id == group.id }
 
+            if (groupIndex != -1) {
+                val existingGroup = modifiersList[groupIndex]
+                val updatedItems = existingGroup.items.toMutableList()
+
+                if (isChecked) {
+                    if (item !in updatedItems) updatedItems.add(item)
+                } else {
+                    updatedItems.remove(item)
+                }
+
+                if (updatedItems.isEmpty()) {
+                    modifiersList.removeAt(groupIndex)
+                } else {
+                    modifiersList[groupIndex] = existingGroup.copy(items = updatedItems)
+                }
+            } else {
+                modifiersList.add(group.copy(items = listOf(item)))
+            }
+
+            currentState.copy(
+                customizedMeal = currentItem.copy(modifiers = modifiersList)
+            )
+        }
+    }
+
+    private fun chooseSingleModifiers(modifierGroup: ModifierGroup) {
+        _state.update { currentState ->
+            val currentItem = currentState.customizedMeal ?: return
+            val modifiersList = currentItem.modifiers.toMutableList()
             val groupIndex = modifiersList.indexOfFirst { it.id == modifierGroup.id }
 
             if (groupIndex != -1) {
@@ -106,7 +146,6 @@ class MealDetailsViewModel @Inject constructor(
     }
 
     private fun setMeal(item: CartItem) {
-
         _state.update {
             it.copy(customizedMeal = item)
         }
