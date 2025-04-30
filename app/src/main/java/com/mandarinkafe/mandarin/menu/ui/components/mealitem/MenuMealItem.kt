@@ -81,6 +81,7 @@ fun MenuMealItem(
                 }
                 if (meal.weight != 0) {
                     Text(
+                        modifier = Modifier.padding(vertical = Dimens.MarginSuperSmall4),
                         text = stringResource(R.string.meal_weight_template, meal.weight),
                         style = Typography.MealSmallTextStyle
                     )

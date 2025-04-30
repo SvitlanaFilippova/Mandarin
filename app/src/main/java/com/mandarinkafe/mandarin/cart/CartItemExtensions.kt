@@ -51,16 +51,12 @@ fun List<ModifierGroup>.validateBy(mealModifiers: List<ModifierGroup>): List<Mod
     return this.mapNotNull { selectedGroup ->
         val referenceGroup = mealModifiers.find { it.id == selectedGroup.id }
         if (referenceGroup != null) {
-            val validItems = selectedGroup.items.filter { item ->
-                referenceGroup.items.any { it.id == item.id }
+            val updatedItems = selectedGroup.items.mapNotNull { item ->
+                referenceGroup.items.find { it.id == item.id }
             }
-            if (validItems.isNotEmpty()) {
-                selectedGroup.copy(items = validItems)
-            } else {
-                null // если нет ни одного валидного модификатора — пропускаем всю группу
-            }
-        } else {
-            null // группа не найдена в текущем меню
-        }
+            if (updatedItems.isNotEmpty()) {
+                selectedGroup.copy(items = updatedItems)
+            } else null
+        } else null
     }
 }

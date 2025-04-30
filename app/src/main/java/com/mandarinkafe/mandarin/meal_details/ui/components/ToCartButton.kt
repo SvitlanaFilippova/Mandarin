@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.menu.ui.components.meal_details_bottom_sheet
+package com.mandarinkafe.mandarin.meal_details.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

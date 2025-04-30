@@ -123,7 +123,7 @@ dependencies {
     // Mapkit
     implementation(libs.com.yandex.maps.mobile)
 
-    // Accompanist для управления системными UI
+    // Accompanist для управления системными UI + навигацией с BottomSheet
+    implementation(libs.accompanist.navigation.material)
     implementation(libs.accompanist.systemuicontroller)
-
 }

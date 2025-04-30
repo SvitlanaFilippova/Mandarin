@@ -5,7 +5,7 @@ object TypographyRules {
      * Список коротких слов (предлогов, союзов и частиц), перед которыми нужен неразрывный пробел
      */
     val shortWords = listOf(
-        "и", "в", "во", "не", "на", "за", "из", "от", "см", "г",
+        "и", "в", "во", "не", "на", "за", "из", "от",
         "по", "о", "об", "а", "с", "со", "у", "к", "до", "без", "для"
     )
 }
@@ -19,26 +19,26 @@ fun String.applyTypography(): String {
     )
 
     return this
-        // 0. Нормализация граммов
-        .normalizeWeight()
-        // 1. Исправляем дефис без пробела после переноса
+        // Нормализация граммов и сантиметров
+        .normalizeWeightAndUnits()
+        // Исправляем дефис без пробела после переноса
         .replace(Regex("""(?<=^|\s)-(?=\S)""")) { "- " }
-        // 2. Неразрывный пробел после коротких слов
+        // Неразрывный пробел после коротких слов
         .replace(shortWordRegex) { matchResult ->
             matchResult.groupValues[1] + nonBreakingSpace
         }
-        // 3. Неразрывные числа (десятичные дроби типа 0,33 и числа с разрядами типа 12 500)
+        // Неразрывные числа (десятичные дроби типа 0,33 и числа с разрядами типа 12 500)
         .normalizeNumbers()
-        // 4. Многоточие
+        // Многоточие
         .replace("...", "…")
-        // 5. Тире (если дефис окружён пробелами)
+        // Тире (если дефис окружён пробелами)
         .replace(Regex("""(?<=\s)-(?=\s)"""), "—")
-        // 6. Кавычки-ёлочки
+        // Кавычки-ёлочки
         .replace("« ", "«")
         .replace(" »", "»")
-        // 7. Удаление лишних пробелов (2 и более)
+        // Удаление лишних пробелов (2 и более)
         .replace(Regex("""\s{2,}"""), " ")
-        // 8. Удаление пробелов перед запятыми
+        // Удаление пробелов перед запятыми
         .replace(Regex("""\s+,"""), ",")
         // 9. Пробел после запятой (если пропущен)
         .replace(Regex(""",(?=\S)"""), ", ")
@@ -47,13 +47,19 @@ fun String.applyTypography(): String {
 }
 
 /**
- * Нормализация записи веса (граммов) в строках
+ * Нормализация записи веса (граммов) и размера (в см) в строках
  */
-private fun String.normalizeWeight(): String {
-    return this.replace(Regex("""(\d+)\s*(г|Г)\.?""")) { matchResult ->
-        val number = matchResult.groupValues[1]
-        "$number г"
-    }
+private fun String.normalizeWeightAndUnits(): String {
+    val nonBreakingSpace = "\u00A0"
+    return this
+        // граммы
+        .replace(Regex("""(\d+)\s*(г|Г)\.?""")) {
+            "${it.groupValues[1]}$nonBreakingSpace${it.groupValues[2].lowercase()}"
+        }
+        // сантиметры
+        .replace(Regex("""(\d+)\s*(см|См)\.?""")) {
+            "${it.groupValues[1]}$nonBreakingSpace${it.groupValues[2].lowercase()}"
+        }
 }
 
 /**
@@ -74,4 +80,8 @@ private fun String.normalizeNumbers(): String {
             val part2 = matchResult.groupValues[2]
             "$part1$nonBreakingSpace$part2"
         }
+}
+
+fun String.removeLeadingDash(): String {
+    return this.removePrefix("-").trimStart()
 }

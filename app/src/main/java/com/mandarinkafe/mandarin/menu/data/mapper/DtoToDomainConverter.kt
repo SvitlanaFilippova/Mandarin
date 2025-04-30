@@ -192,6 +192,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
         id = itemGroupId,
         name = name ?: "",
         items = items?.map { it.toDomain() } ?: emptyList(),
+        isSingleChoice = (restrictions?.maxQuantity == 1),
     )
 
 }
