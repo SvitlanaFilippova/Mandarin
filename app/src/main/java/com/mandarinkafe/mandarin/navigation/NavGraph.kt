@@ -28,6 +28,7 @@ import com.mandarinkafe.mandarin.search.ui.screen.SearchScreen
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun NavGraph(navHostController: NavHostController) {
+    val cartViewModel: CartViewModel = hiltViewModel()
     NavHost(
         navController = navHostController,
         startDestination = APP_SCOPE_ROUTE
@@ -40,10 +41,6 @@ fun NavGraph(navHostController: NavHostController) {
 
             // CartViewModel живёт на уровне AppScope
             composable(CART_SCREEN_ROUTE) { backStackEntry ->
-                val parentEntry = remember(backStackEntry) {
-                    navHostController.getBackStackEntry(APP_SCOPE_ROUTE)
-                }
-                val cartViewModel: CartViewModel = hiltViewModel(parentEntry)
                 CartScreen(viewModel = cartViewModel)
             }
 
@@ -52,10 +49,6 @@ fun NavGraph(navHostController: NavHostController) {
             }
 
             composable(FAVORITES_SCREEN_ROUTE) { entry ->
-                val appScopeEntry = remember(entry) {
-                    navHostController.getBackStackEntry(APP_SCOPE_ROUTE)
-                }
-                val cartViewModel: CartViewModel = hiltViewModel(appScopeEntry)
                 val menuViewModel: MenuViewModel = hiltViewModel()
 
                 FavoritesScreen(
@@ -74,12 +67,6 @@ fun NavGraph(navHostController: NavHostController) {
                         navHostController.getBackStackEntry(MENU_SCOPE_ROUTE)
                     }
                     val menuViewModel: MenuViewModel = hiltViewModel(parentEntry)
-
-                    val appScopeEntry = remember(entry) {
-                        navHostController.getBackStackEntry(APP_SCOPE_ROUTE)
-                    }
-                    val cartViewModel: CartViewModel = hiltViewModel(appScopeEntry)
-
                     MenuScreen(
                         menuViewModel = menuViewModel,
                         navController = navHostController,
@@ -98,10 +85,6 @@ fun NavGraph(navHostController: NavHostController) {
                     }
                     val menuViewModel: MenuViewModel = hiltViewModel(parentEntry)
 
-                    val appScopeEntry = remember(entry) {
-                        navHostController.getBackStackEntry(APP_SCOPE_ROUTE)
-                    }
-                    val cartViewModel: CartViewModel = hiltViewModel(appScopeEntry)
 
                     val focusInput = entry.arguments?.getBoolean(SEARCH_SCREEN_ARG_FOCUS) == true
                     SearchScreen(
