@@ -23,9 +23,14 @@ composeViewModel = "2.8.7"
 navigationCompose = "2.8.9"
 mapkit = "4.13.0-lite"
 runtimeLivedata = "1.8.0"
-accompanistVersion = "0.37.2"
+accompanistNavigationMaterialVersion = "0.34.0"
+accompanistSystemuicontrollerVersion = "0.34.0"
+
+
 
 [libraries]
+accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanistNavigationMaterialVersion" }
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontrollerVersion" }
 androidx-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compiler" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
@@ -54,8 +59,8 @@ androidx-compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-v
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 com-yandex-maps-mobile = { group = "com.yandex.android", name = "maps.mobile", version.ref = "mapkit" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
-accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanistVersion" }
-accompanist-navigation-material = { group = "com.google.accompanist", name = "accompanist-navigation-material", version.ref = "accompanistVersion" }
+
+
 
 
 [plugins]
