@@ -10,8 +10,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.ui.components.CartContentScreen
 import com.mandarinkafe.mandarin.cart.ui.components.CartPlaceholder
@@ -25,14 +23,14 @@ import com.mandarinkafe.mandarin.meal_details.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.util.ui.HandleBottomSheetEffect
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 
-@Preview
 @Composable
 fun CartScreen(
-    viewModel: CartViewModel = hiltViewModel(),
+    viewModel: CartViewModel
 ) {
     val listState = rememberLazyListState()
     val state by viewModel.state.collectAsState()
     val effectFlow = viewModel.effect
+
 
     Column(
         modifier = Modifier

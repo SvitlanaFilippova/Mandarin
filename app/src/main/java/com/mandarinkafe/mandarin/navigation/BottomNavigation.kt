@@ -1,6 +1,14 @@
 package com.mandarinkafe.mandarin.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
@@ -21,15 +29,17 @@ import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
 
 @Composable
 fun BottomNavigation(
-    navController: NavController
+    navController: NavController,
+    cartCount: Int
 ) {
     val context = LocalContext.current
     val listItems = listOf(
-        BottomNavigationItem.Delivery,
         BottomNavigationItem.Menu,
+        BottomNavigationItem.Delivery,
         BottomNavigationItem.Favorites,
         BottomNavigationItem.Cart
     )
+
     BottomAppBar(
         tonalElevation = Dimens.Elevation2,
         containerColor = Colors.AppBlack,
@@ -37,12 +47,13 @@ fun BottomNavigation(
     ) {
         val backStackEntry = navController.currentBackStackEntryAsState().value
         val currentRoute = backStackEntry?.destination?.route
-        listItems.forEach {
+
+        listItems.forEach { item ->
             NavigationBarItem(
-                selected = currentRoute == it.route,
+                selected = currentRoute == item.route,
                 onClick = {
                     navController.navigate(
-                        route = it.route,
+                        route = item.route,
                         navOptions = navOptions {
                             launchSingleTop = true
                             popUpTo(MENU_SCREEN_ROUTE) {
@@ -50,17 +61,44 @@ fun BottomNavigation(
                                 saveState = true
                             }
                             restoreState = true
-                        })
+                        }
+                    )
                 },
                 icon = {
-                    Icon(
-                        painter = painterResource(it.icon),
-                        contentDescription = context.getString(it.title)
-                    )
+                    if (item == BottomNavigationItem.Cart) {
+                        BadgedBox(
+                            badge = {
+                                Row {
+                                    AnimatedVisibility(
+                                        visible = cartCount > 0,
+                                        enter = fadeIn() + scaleIn(),
+                                        exit = fadeOut() + scaleOut()
+                                    ) {
+                                        Badge(
+                                            containerColor = Colors.Orange,
+                                            contentColor = Colors.AppBlack
+                                        ) {
+                                            Text(cartCount.toString())
+                                        }
+                                    }
+                                }
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(item.icon),
+                                contentDescription = context.getString(item.title)
+                            )
+                        }
+                    } else {
+                        Icon(
+                            painter = painterResource(item.icon),
+                            contentDescription = context.getString(item.title)
+                        )
+                    }
                 },
                 label = {
                     Text(
-                        text = context.getString(it.title),
+                        text = context.getString(item.title),
                         fontSize = 9.sp
                     )
                 },

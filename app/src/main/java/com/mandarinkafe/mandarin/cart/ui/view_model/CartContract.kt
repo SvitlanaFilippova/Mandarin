@@ -41,5 +41,10 @@ sealed interface CartContract {
                 .sumOf { (item, quantity) ->
                     item.totalPrice() * quantity
                 }
+        val cartItemsCount: Int
+            get() = cartItems
+                .filter { (item, _) -> item !in pendingDeletionMeals }
+                .values
+                .sum()
     }
 }

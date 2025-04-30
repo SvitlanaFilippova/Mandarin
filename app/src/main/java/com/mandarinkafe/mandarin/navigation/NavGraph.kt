@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.mandarinkafe.mandarin.cart.ui.screen.CartScreen
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.delivery.screen.DeliveryScreen
@@ -24,6 +25,7 @@ import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ARG_FOCUS
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.search.ui.screen.SearchScreen
 
+@OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     NavHost(
