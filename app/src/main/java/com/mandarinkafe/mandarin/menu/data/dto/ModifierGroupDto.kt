@@ -4,6 +4,5 @@ data class ModifierGroupDto(
     val itemGroupId: String,
     val name: String?,
     val items: List<ModifierItemDto>?,
-    val description: String?,
     val restrictions: RestrictionsDto?,
 )

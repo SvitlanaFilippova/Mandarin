@@ -4,4 +4,5 @@ data class ModifierGroup(
     val id: String,
     val name: String,
     val items: List<ModifierItem>,
+    val isSingleChoice: Boolean,
 )
