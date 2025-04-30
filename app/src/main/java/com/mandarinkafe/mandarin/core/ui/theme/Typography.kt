@@ -22,6 +22,12 @@ object Typography {
         color = Colors.White
     )
 
+    val RegularLightTextStyle = TextStyle(
+        fontSize = Dimens.TextSizeRegular14,
+        fontWeight = FontWeight.Light,
+        color = Colors.Grey
+    )
+
     val TitleStyle = TextStyle(
         fontSize = Dimens.TextSizeBig20,
         fontWeight = FontWeight(800),
@@ -36,7 +42,7 @@ object Typography {
 
     val MealSmallTextStyle = TextStyle(
         fontSize = Dimens.TextSizeSmall11,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Light,
         color = Colors.Grey
     )
 

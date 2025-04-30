@@ -64,17 +64,8 @@ fun MealDetailsContent(
                 state = listState
 
             ) {
-                // Изображение блюда
-                if (meal.imageUrl.isNotEmpty()) {
-                    item {
-                        MealImage(
-                            mealImg = meal.imageUrl,
-                            mealName = meal.name,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                }
-                // Текстовая информация о блюде
+
+                // Изображение блюда и нформация о нём
                 item {
                     MealInfo(
                         meal = meal

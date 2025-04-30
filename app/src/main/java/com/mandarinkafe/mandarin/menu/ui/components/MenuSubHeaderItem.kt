@@ -9,7 +9,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
@@ -23,7 +22,7 @@ fun MenuSubHeaderItem(item: MenuItem.SubHeaderItem, hasHeaderBefore: Boolean) {
     Column(
         modifier = Modifier.padding(
             start = Dimens.MarginSmall8,
-            top = if (!hasHeaderBefore) Dimens.MarginStandard16 else 0.dp,
+            top = if (!hasHeaderBefore) Dimens.MarginStandard16 else Dimens.MarginSuperSmall4,
             bottom = Dimens.MarginSmall8
         )
     ) {
