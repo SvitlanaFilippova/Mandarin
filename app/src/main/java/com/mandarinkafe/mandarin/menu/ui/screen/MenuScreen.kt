@@ -16,7 +16,7 @@ import com.mandarinkafe.mandarin.util.ui.components.PlaceholderScreen
 @Composable
 fun MenuScreen(
     menuViewModel: MenuViewModel = hiltViewModel(),
-    cartViewModel: CartViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel,
     navController: NavHostController
 ) {
 

@@ -13,7 +13,7 @@ import com.mandarinkafe.mandarin.search.ui.components.MySearchBar
 @Composable
 fun SearchScreen(
     menuViewModel: MenuViewModel = hiltViewModel(),
-    cartViewModel: CartViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel,
     navController: NavController,
     focusSearchBarInput: Boolean
 ) {

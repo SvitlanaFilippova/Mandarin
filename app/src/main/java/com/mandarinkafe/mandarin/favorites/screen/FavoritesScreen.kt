@@ -19,7 +19,7 @@ import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
 @Composable
 fun FavoritesScreen(
     menuViewModel: MenuViewModel = hiltViewModel(),
-    cartViewModel: CartViewModel = hiltViewModel()
+    cartViewModel: CartViewModel
 ) {
     val cartState by cartViewModel.state.collectAsState()
     val effectFlow = menuViewModel.effect

@@ -10,7 +10,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.ui.components.CartContentScreen
 import com.mandarinkafe.mandarin.cart.ui.components.CartPlaceholder
@@ -26,7 +25,7 @@ import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 
 @Composable
 fun CartScreen(
-    viewModel: CartViewModel = hiltViewModel()
+    viewModel: CartViewModel
 ) {
     val listState = rememberLazyListState()
     val state by viewModel.state.collectAsState()
