@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
 import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.data.impl.MenuRepositoryImpl
-import com.mandarinkafe.mandarin.menu.data.mapper.DtoToDomainConverter
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
 import dagger.Module
 import dagger.Provides
@@ -22,27 +21,20 @@ class MenuDataModule {
     @Singleton
     fun provideMenuRepository(
         networkClient: NetworkClient,
-        converter: DtoToDomainConverter,
+        favoritesRepository: FavoritesRepository,
         @ApplicationContext
         context: Context
     ): MenuRepository {
         return MenuRepositoryImpl(
             networkClient = networkClient,
-            converter = converter,
-            context = context
+            context = context,
+            favoritesRepository = favoritesRepository
         )
     }
-
 
     @Provides
     @Singleton
     fun provideGson(): Gson {
         return Gson()
-    }
-
-    @Provides
-    @Singleton
-    fun provideDtoToDomainConverter(favoritesRepository: FavoritesRepository): DtoToDomainConverter {
-        return DtoToDomainConverter(favoritesRepository = favoritesRepository)
     }
 }
