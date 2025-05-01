@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.cart.ui.view_model
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.cart.CartMapper.toCartItem
@@ -58,7 +57,6 @@ class CartViewModel @Inject constructor(
                 newItem = event.newItem,
                 oldItem = event.oldItem
             )
-
             is Event.RemoveFromCartWithDelay -> onReduceItem(item = event.item)
             is Event.RemoveFromCartByMeal -> removeFromCartByMeal(meal = event.meal)
             is Event.CancelRemove -> cancelRemove(item = event.item)
@@ -143,7 +141,6 @@ class CartViewModel @Inject constructor(
                 pendingDeletionMeals = pendingDeletionItems,
             )
         }
-        Log.d("Debug CART", "ViewModel, onReduceItem ${item.meal.id}")
     }
 
     // отмена удаления
@@ -186,7 +183,6 @@ class CartViewModel @Inject constructor(
                 mealDeletionProgress = deletionProgress,
             )
         }
-        Log.d("Debug CART", "ViewModel, removeItem ${item.meal.id}")
     }
 
     // метод для удаления блюда прямо из меню, без таймера отмены
@@ -237,13 +233,6 @@ class CartViewModel @Inject constructor(
                     cartItems = cartItems,
                 )
             }
-            cartItems.forEach { item ->
-                Log.d(
-                    "DEBUG Cart",
-                    "CartViewModel - updateCartState, cartItems: ${item.key.meal.id}"
-                )
-            }
-
         }
     }
 
@@ -273,7 +262,6 @@ class CartViewModel @Inject constructor(
                 cartClearingProgress = null
             )
         }
-        Log.d("DEBUG Cart", "CartViewModel - clear")
     }
 
 // Для работы с таймерами удаления блюд и очистки корзины

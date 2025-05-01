@@ -77,10 +77,6 @@ class CartRepositoryImpl @Inject constructor(
 
     override fun addToCart(item: CartItem) {
         val cart = storage.getCart().toMutableList()
-        cart.forEach { item ->
-            Log.d("DEBUG Cart", "CartRepositoryImpl - addToCart, cart from storage: item: $item ")
-        }
-
         val index = cart.indexOfFirst { it.sameAs(item.toStoredCartItem(0)) }
 
         if (index != -1) {
@@ -90,18 +86,13 @@ class CartRepositoryImpl @Inject constructor(
             cart.add(item.toStoredCartItem(quantity = 1))
         }
         storage.saveCart(cart)
-        cart.forEach { item ->
-            Log.d("DEBUG Cart", "CartRepositoryImpl - addToCart, saveCart: item: $item ")
-        }
 
     }
 
     override fun removeFromCart(item: CartItem) {
         val cart = storage.getCart().toMutableList()
-
         val index = cart.indexOfFirst { it.sameAs(item.toStoredCartItem(0)) }
 
-        Log.d("DEBUG Cart", "CartRepositoryImpl - removeFromCart, cart from storage: item: $item ")
         if (index != -1) {
             val item = cart[index]
             if (item.quantity > 1) {
@@ -111,9 +102,6 @@ class CartRepositoryImpl @Inject constructor(
             }
         }
         storage.saveCart(cart)
-        cart.forEach { item ->
-            Log.d("DEBUG Cart", "CartRepositoryImpl - removeFromCart, saveCart - item: $item ")
-        }
     }
 
     override fun clearCart() {
@@ -122,7 +110,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun getRecommends(): List<Meal> {
         // TODO Временная реализация, нужно будет тянуть из общего хранилища
-        // и потом фильтровать в зависимости от  содержимого корзины
+        // и потом фильтровать в зависимости от содержимого корзины
 
         val rawRecommends = mutableListOf<MealCategory>()
 

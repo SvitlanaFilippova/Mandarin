@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.cart.data.sharedprefs
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -13,15 +12,11 @@ class CartStorageImpl @Inject constructor(private val sharedPreferences: SharedP
 
     override fun clearCart() {
         sharedPreferences.edit { remove(CART_KEY) }
-        Log.d("DEBUG Cart", "CartStorageImpl - clearCart")
     }
 
     override fun saveCart(items: List<StoredCartItem>) {
         sharedPreferences.edit {
             putString(CART_KEY, Gson().toJson(items))
-        }
-        items.forEach { item ->
-            Log.d("DEBUG Cart", "CartStorageImpl - saveCart, item: $item ")
         }
     }
 
@@ -42,7 +37,6 @@ class CartStorageImpl @Inject constructor(private val sharedPreferences: SharedP
             clearCart()
             mutableListOf()
         }
-        Log.d("DEBUG Cart", "CartStorageImpl - getCart")
     }
 
     private companion object {
