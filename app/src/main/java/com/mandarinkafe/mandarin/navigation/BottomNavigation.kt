@@ -86,7 +86,7 @@ fun BottomNavigation(
                                 ) { count ->
                                     if (count > 0) {
                                         Badge(
-                                            containerColor = if (isSelected) Colors.Orange else Colors.White,
+                                            containerColor = if (isSelected) Colors.White else Colors.Orange,
                                             contentColor = Colors.AppBlack
                                         ) {
                                             Text(count.toString())
