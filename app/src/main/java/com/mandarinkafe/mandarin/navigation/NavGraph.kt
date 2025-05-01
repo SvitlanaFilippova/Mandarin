@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.mandarinkafe.mandarin.cart.ui.screen.CartScreen
+import com.mandarinkafe.mandarin.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.delivery.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.favorites.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.menu.ui.screen.MenuScreen
@@ -27,6 +28,7 @@ import com.mandarinkafe.mandarin.search.ui.screen.SearchScreen
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun NavGraph(navHostController: NavHostController) {
+    val cartViewModel: CartViewModel = hiltViewModel()
     NavHost(
         navController = navHostController,
         startDestination = APP_SCOPE_ROUTE
@@ -39,7 +41,8 @@ fun NavGraph(navHostController: NavHostController) {
 
             // CartViewModel живёт на уровне AppScope
             composable(CART_SCREEN_ROUTE) { backStackEntry ->
-                CartScreen()
+                CartScreen(viewModel = cartViewModel)
+
             }
 
             composable(DELIVERY_SCREEN_ROUTE) {
@@ -67,6 +70,7 @@ fun NavGraph(navHostController: NavHostController) {
                     MenuScreen(
                         menuViewModel = menuViewModel,
                         navController = navHostController,
+                        cartViewModel = cartViewModel
                     )
                 }
 
@@ -87,6 +91,7 @@ fun NavGraph(navHostController: NavHostController) {
                         navController = navHostController,
                         focusSearchBarInput = focusInput,
                         menuViewModel = menuViewModel,
+                        cartViewModel = cartViewModel
                     )
                 }
             }
