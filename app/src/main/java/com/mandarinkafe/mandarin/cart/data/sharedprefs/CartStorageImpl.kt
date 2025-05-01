@@ -20,7 +20,9 @@ class CartStorageImpl @Inject constructor(private val sharedPreferences: SharedP
         sharedPreferences.edit {
             putString(CART_KEY, Gson().toJson(items))
         }
-        Log.d("DEBUG Cart", "CartStorageImpl - saveCart")
+        items.forEach { item ->
+            Log.d("DEBUG Cart", "CartStorageImpl - saveCart, item: $item ")
+        }
     }
 
     override fun getCart(): List<StoredCartItem> {

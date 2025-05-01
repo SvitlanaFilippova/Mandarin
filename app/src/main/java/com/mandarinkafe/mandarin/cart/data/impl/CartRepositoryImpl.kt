@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.cart.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.cart.domain.api.CartRepository
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
+import com.mandarinkafe.mandarin.cart.sameAs
 import com.mandarinkafe.mandarin.cart.validateBy
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
@@ -76,7 +77,11 @@ class CartRepositoryImpl @Inject constructor(
 
     override fun addToCart(item: CartItem) {
         val cart = storage.getCart().toMutableList()
-        val index = cart.indexOfFirst { it == item }
+        cart.forEach { item ->
+            Log.d("DEBUG Cart", "CartRepositoryImpl - addToCart, cart from storage: item: $item ")
+        }
+
+        val index = cart.indexOfFirst { it.sameAs(item.toStoredCartItem(0)) }
 
         if (index != -1) {
             val existingItem = cart[index]
@@ -85,13 +90,18 @@ class CartRepositoryImpl @Inject constructor(
             cart.add(item.toStoredCartItem(quantity = 1))
         }
         storage.saveCart(cart)
+        cart.forEach { item ->
+            Log.d("DEBUG Cart", "CartRepositoryImpl - addToCart, saveCart: item: $item ")
+        }
 
     }
 
     override fun removeFromCart(item: CartItem) {
         val cart = storage.getCart().toMutableList()
-        val index = cart.indexOfFirst { it == item }
 
+        val index = cart.indexOfFirst { it.sameAs(item.toStoredCartItem(0)) }
+
+        Log.d("DEBUG Cart", "CartRepositoryImpl - removeFromCart, cart from storage: item: $item ")
         if (index != -1) {
             val item = cart[index]
             if (item.quantity > 1) {
@@ -101,6 +111,9 @@ class CartRepositoryImpl @Inject constructor(
             }
         }
         storage.saveCart(cart)
+        cart.forEach { item ->
+            Log.d("DEBUG Cart", "CartRepositoryImpl - removeFromCart, saveCart - item: $item ")
+        }
     }
 
     override fun clearCart() {

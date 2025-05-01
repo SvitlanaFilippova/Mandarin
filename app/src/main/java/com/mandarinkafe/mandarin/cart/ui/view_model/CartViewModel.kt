@@ -127,7 +127,7 @@ class CartViewModel @Inject constructor(
             val cartItems = currentState.cartItems
             val currentQuantity = cartItems[item] ?: 0
             val updatedCartList = cartItems.toMutableMap().apply {
-                // если в корзине  больше одной штуки item
+                // если в корзине больше одной штуки item
                 if (currentQuantity > 1) {
                     put(item, currentQuantity - 1)
                     cartInteractor.removeFromCart(item)
@@ -143,6 +143,7 @@ class CartViewModel @Inject constructor(
                 pendingDeletionMeals = pendingDeletionItems,
             )
         }
+        Log.d("Debug CART", "ViewModel, onReduceItem ${item.meal.id}")
     }
 
     // отмена удаления
@@ -185,6 +186,7 @@ class CartViewModel @Inject constructor(
                 mealDeletionProgress = deletionProgress,
             )
         }
+        Log.d("Debug CART", "ViewModel, removeItem ${item.meal.id}")
     }
 
     // метод для удаления блюда прямо из меню, без таймера отмены
@@ -235,7 +237,13 @@ class CartViewModel @Inject constructor(
                     cartItems = cartItems,
                 )
             }
-            Log.d("DEBUG Cart", "CartViewModel - updateCartState, cartItems: $cartItems")
+            cartItems.forEach { item ->
+                Log.d(
+                    "DEBUG Cart",
+                    "CartViewModel - updateCartState, cartItems: ${item.key.meal.id}"
+                )
+            }
+
         }
     }
 

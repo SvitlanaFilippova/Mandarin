@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.cart
 
+import com.mandarinkafe.mandarin.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 
@@ -59,4 +60,10 @@ fun List<ModifierGroup>.validateBy(mealModifiers: List<ModifierGroup>): List<Mod
             } else null
         } else null
     }
+}
+
+fun StoredCartItem.sameAs(other: StoredCartItem): Boolean {
+    return mealId == other.mealId &&
+            addsIds.orEmpty() == other.addsIds.orEmpty() &&
+            modifiers.orEmpty() == other.modifiers.orEmpty()
 }
