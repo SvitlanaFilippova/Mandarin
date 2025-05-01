@@ -37,8 +37,8 @@ fun ToCartButton(
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         enabled = shouldBeActive,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Colors.Orange,
-            disabledContainerColor = Colors.GreyTransparent10,
+            containerColor = Colors.Orange.copy(alpha = 0.95f),
+            disabledContainerColor = Colors.Grey.copy(alpha = 0.3f),
             contentColor = contentColor
         )
     ) {
