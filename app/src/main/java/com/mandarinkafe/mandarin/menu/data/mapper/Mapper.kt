@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.menu.data.mapper
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.domain.models.EditableType
 import com.mandarinkafe.mandarin.core.domain.models.Label
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -8,7 +7,6 @@ import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.domain.models.Tag
-import com.mandarinkafe.mandarin.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.data.dto.CategoryDto
 import com.mandarinkafe.mandarin.menu.data.dto.LabelDto
 import com.mandarinkafe.mandarin.menu.data.dto.MealDto
@@ -19,50 +17,7 @@ import com.mandarinkafe.mandarin.util.Constants.TAG_PIZZA_ADDS
 import com.mandarinkafe.mandarin.util.Constants.TAG_WOK_CONSTRUCTOR
 import com.mandarinkafe.mandarin.util.applyTypography
 
-class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
-    private val storedFavoritesIds = favoritesRepository.getFavorites().map { it.id }
-
-    fun menuDtoToDomain(menuDto: List<CategoryDto>?): List<MealCategory> {
-        if (menuDto.isNullOrEmpty()) {
-            Log.e("DEBUG", "menuDto оказался null или пустым")
-            return emptyList()
-        }
-
-        val childCategoriesMap = groupSubcategories(menuDto)
-        val topLevelCategories = menuDto.filter { !it.hasParent() }
-        val topLevelNames = topLevelCategories.map { it.name }.toSet()
-
-        val result = mutableListOf<MealCategory>()
-
-        // 1. Обработка родительских категорий
-        for (parent in topLevelCategories) {
-            val subCategories = childCategoriesMap[parent.name]
-
-            if (subCategories.isNullOrEmpty()) {
-                // Нет подкатегорий — обычная категория с блюдами
-                result.add(
-                    parent.toDomain(
-                        storedFavorites = storedFavoritesIds
-                    )
-                )
-            } else {
-                // Есть подкатегории — собрать как категорию с subCategories
-                result.add(buildParentCategory(parent, subCategories))
-            }
-        }
-
-        // 2. Обработка случайных подкатегорий без родителя
-        for (category in menuDto.filter { it.hasParent() }) {
-            val parentName = category.parentName()
-            if (!topLevelNames.contains(parentName)) {
-                result.add(buildLonelySubcategory(category))
-            }
-        }
-
-        return result
-    }
-
-    private fun CategoryDto.toDomain(storedFavorites: List<String>): MealCategory {
+fun CategoryDto.toDomain(storedFavorites: List<String>): MealCategory {
         val categoryLabels = labels?.map { it.toDomain() } ?: emptyList()
         val categoryTags = tags?.map { it.toDomain() } ?: emptyList()
 
@@ -129,35 +84,6 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                 return null
     }
 
-    private fun groupSubcategories(menuDto: List<CategoryDto>): Map<String, List<CategoryDto>> {
-        return menuDto
-            .filter { it.hasParent() }
-            .groupBy { it.parentName() }
-    }
-
-    private fun buildParentCategory(
-        parentDto: CategoryDto,
-        subCategories: List<CategoryDto>?
-    ): MealCategory {
-        return MealCategory(
-            id = parentDto.id,
-            name = parentDto.name.applyTypography(),
-            meals = null,
-            subCategories = subCategories?.map { subDto ->
-                subDto.copy(name = subDto.subName()).toDomain(
-                    storedFavorites = storedFavoritesIds
-                )
-            },
-            tabIcon = parentDto.buttonImageUrl,
-            description = parentDto.description.orEmpty().applyTypography(),
-            isHidden = parentDto.isHidden == true
-        )
-    }
-
-    private fun buildLonelySubcategory(category: CategoryDto): MealCategory {
-        Log.w("DEBUG", "Подкатегория '${category.name}' без родителя")
-        return category.copy(name = category.subName()).toDomain(storedFavoritesIds)
-    }
 
     fun CategoryDto.hasParent(): Boolean =
         name.contains("/")
@@ -195,4 +121,3 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
         isSingleChoice = (restrictions?.maxQuantity == 1),
     )
 
-}
