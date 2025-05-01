@@ -66,6 +66,7 @@ fun BottomNavigation(
                 },
                 icon = {
                     if (item == BottomNavigationItem.Cart) {
+                        val isSelected = currentRoute == item.route
                         @OptIn(ExperimentalAnimationApi::class)
                         BadgedBox(
                             badge = {
@@ -85,7 +86,7 @@ fun BottomNavigation(
                                 ) { count ->
                                     if (count > 0) {
                                         Badge(
-                                            containerColor = Colors.Orange,
+                                            containerColor = if (isSelected) Colors.Orange else Colors.White,
                                             contentColor = Colors.AppBlack
                                         ) {
                                             Text(count.toString())
