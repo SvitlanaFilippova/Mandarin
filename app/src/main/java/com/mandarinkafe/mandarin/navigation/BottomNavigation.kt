@@ -30,7 +30,7 @@ import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
 @Composable
 fun BottomNavigation(
     navController: NavController,
-    cartCount: Int
+    cartCount: Int, cartIsPendingDeletion: Boolean
 ) {
     val context = LocalContext.current
     val listItems = listOf(
@@ -65,15 +65,13 @@ fun BottomNavigation(
                     )
                 },
                 icon = {
-                    if (item == BottomNavigationItem.Cart) {
-                        val isSelected = currentRoute == item.route
+                    if (item == BottomNavigationItem.Cart && !cartIsPendingDeletion && currentRoute != item.route) {
                         @OptIn(ExperimentalAnimationApi::class)
                         BadgedBox(
                             badge = {
                                 AnimatedContent(
                                     targetState = cartCount,
                                     transitionSpec = {
-                                        // Вход сверху, выход вниз
                                         slideInVertically(
                                             initialOffsetY = { -it },
                                             animationSpec = tween(300)
@@ -86,7 +84,7 @@ fun BottomNavigation(
                                 ) { count ->
                                     if (count > 0) {
                                         Badge(
-                                            containerColor = if (isSelected) Colors.White else Colors.Orange,
+                                            containerColor = Colors.Orange,
                                             contentColor = Colors.AppBlack
                                         ) {
                                             Text(count.toString())
