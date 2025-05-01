@@ -31,10 +31,10 @@ fun MealButtonsRow(
     onCartEvent: (CartContract.Event) -> Unit,
     cartState: CartContract.State
 ) {
-
-    val isInTheCart = cartState.cartItems.keys.any { it.meal.id == meal.id }
-    val numberInCart = cartState.cartItems.getTotalQuantityByMealId(meal.id)
-    val totalPrice = cartState.cartItems.getTotalPriceByMealId(meal.id)
+    val cartItems = cartState.cartItems
+    val isInTheCart = cartItems.keys.any { it.meal.id == meal.id }
+    val numberInCart = cartItems.getTotalQuantityByMealId(meal.id)
+    val totalPrice = cartItems.getTotalPriceByMealId(meal.id)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,

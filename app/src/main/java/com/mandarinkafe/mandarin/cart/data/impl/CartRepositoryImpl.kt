@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.cart.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.cart.domain.api.CartRepository
 import com.mandarinkafe.mandarin.cart.domain.model.CartItem
+import com.mandarinkafe.mandarin.cart.sameAs
 import com.mandarinkafe.mandarin.cart.validateBy
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
@@ -76,7 +77,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override fun addToCart(item: CartItem) {
         val cart = storage.getCart().toMutableList()
-        val index = cart.indexOfFirst { it == item }
+        val index = cart.indexOfFirst { it.sameAs(item.toStoredCartItem(0)) }
 
         if (index != -1) {
             val existingItem = cart[index]
@@ -90,7 +91,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override fun removeFromCart(item: CartItem) {
         val cart = storage.getCart().toMutableList()
-        val index = cart.indexOfFirst { it == item }
+        val index = cart.indexOfFirst { it.sameAs(item.toStoredCartItem(0)) }
 
         if (index != -1) {
             val item = cart[index]
@@ -109,7 +110,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun getRecommends(): List<Meal> {
         // TODO Временная реализация, нужно будет тянуть из общего хранилища
-        // и потом фильтровать в зависимости от  содержимого корзины
+        // и потом фильтровать в зависимости от содержимого корзины
 
         val rawRecommends = mutableListOf<MealCategory>()
 

@@ -35,7 +35,7 @@ fun CartControls(
     numberInCart: Int,
     totalPrice: Int,
     onIncrease: () -> Unit,
-    onDecrease: () -> Unit
+    onDecrease: () -> Unit,
 ) {
     Box(
         modifier = Modifier

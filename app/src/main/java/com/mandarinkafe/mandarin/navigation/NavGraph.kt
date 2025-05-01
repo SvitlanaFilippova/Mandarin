@@ -54,6 +54,7 @@ fun NavGraph(navHostController: NavHostController) {
 
                 FavoritesScreen(
                     menuViewModel = menuViewModel,
+                    cartViewModel = cartViewModel
                 )
             }
 

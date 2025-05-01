@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.cart.ui.view_model
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.cart.CartMapper.toCartItem
@@ -58,7 +57,6 @@ class CartViewModel @Inject constructor(
                 newItem = event.newItem,
                 oldItem = event.oldItem
             )
-
             is Event.RemoveFromCartWithDelay -> onReduceItem(item = event.item)
             is Event.RemoveFromCartByMeal -> removeFromCartByMeal(meal = event.meal)
             is Event.CancelRemove -> cancelRemove(item = event.item)
@@ -127,7 +125,7 @@ class CartViewModel @Inject constructor(
             val cartItems = currentState.cartItems
             val currentQuantity = cartItems[item] ?: 0
             val updatedCartList = cartItems.toMutableMap().apply {
-                // если в корзине  больше одной штуки item
+                // если в корзине больше одной штуки item
                 if (currentQuantity > 1) {
                     put(item, currentQuantity - 1)
                     cartInteractor.removeFromCart(item)
@@ -235,7 +233,6 @@ class CartViewModel @Inject constructor(
                     cartItems = cartItems,
                 )
             }
-            Log.d("DEBUG Cart", "CartViewModel - updateCartState, cartItems: $cartItems")
         }
     }
 
@@ -265,7 +262,6 @@ class CartViewModel @Inject constructor(
                 cartClearingProgress = null
             )
         }
-        Log.d("DEBUG Cart", "CartViewModel - clear")
     }
 
 // Для работы с таймерами удаления блюд и очистки корзины
