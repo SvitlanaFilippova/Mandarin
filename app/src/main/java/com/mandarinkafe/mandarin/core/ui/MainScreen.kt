@@ -30,7 +30,8 @@ fun MainScreen() {
         bottomBar = {
             BottomNavigation(
                 navController = navController,
-                cartCount = cartCount
+                cartCount = cartCount,
+                cartIsPendingDeletion = state.isPendingDeletion,
             )
         }
     ) { innerPadding ->
