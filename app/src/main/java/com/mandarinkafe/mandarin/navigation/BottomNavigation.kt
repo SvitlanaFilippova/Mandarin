@@ -3,9 +3,11 @@ package com.mandarinkafe.mandarin.navigation
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.with
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -72,15 +74,14 @@ fun BottomNavigation(
                                 AnimatedContent(
                                     targetState = cartCount,
                                     transitionSpec = {
-                                        slideInVertically(
-                                            initialOffsetY = { -it },
-                                            animationSpec = tween(300)
-                                        ) with slideOutVertically(
-                                            targetOffsetY = { it },
-                                            animationSpec = tween(300)
+                                        (scaleIn(tween(300)) + fadeIn()).togetherWith(
+                                            scaleOut(
+                                                tween(
+                                                    300
+                                                )
+                                            ) + fadeOut()
                                         )
-                                    },
-                                    label = "Animated Badge"
+                                    }
                                 ) { count ->
                                     if (count > 0) {
                                         Badge(
