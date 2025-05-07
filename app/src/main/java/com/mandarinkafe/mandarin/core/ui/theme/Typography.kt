@@ -40,7 +40,7 @@ object Typography {
         color = Colors.White
     )
 
-    val MealLalesTextStyle = TextStyle(
+    val MealLabelTextStyle = TextStyle(
         fontSize = Dimens.TextSizeSmall12,
         fontWeight = FontWeight.Bold,
         color = Colors.White

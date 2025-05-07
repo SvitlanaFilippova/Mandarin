@@ -23,9 +23,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
-import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
-import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.search.ui.view_model.SearchContract
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -35,19 +33,21 @@ import kotlinx.coroutines.flow.Flow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MySearchBar(
-    filteredMenuItems: List<MenuItem>,
-    latestSearchText: String,
-    onMenuEvent: (Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
+    onSearchEvent: (SearchContract.Event) -> Unit,
     onSearchDismiss: () -> Unit,
     focusSearchBarInput: Boolean,
+    searchState: SearchContract.State,
     cartState: CartContract.State,
-    effectFlow: Flow<MenuContract.Effect>,
+    effectFlow: Flow<SearchContract.Effect>,
 ) {
+
+    val filteredMenuItems = searchState.filteredMenuItems
+    val latestSearchText = searchState.latestSearchText
     val keyboardController = LocalSoftwareKeyboardController.current
     var isExpanded by remember { mutableStateOf(true) }
     val handleOnClear = {
-        onMenuEvent(Event.SearchClearInput)
+        onSearchEvent(SearchContract.Event.ClearSearchInput)
         keyboardController?.show()
         isExpanded = false
     }
@@ -64,7 +64,7 @@ fun MySearchBar(
                         if (text.isEmpty()) {
                             handleOnClear()
                         } else {
-                            onMenuEvent(Event.SearchMealsByText(text))
+                            onSearchEvent(SearchContract.Event.SearchMealsByText(text))
                             isExpanded = true
                         }
                     },
@@ -87,13 +87,25 @@ fun MySearchBar(
                 containerColor = Colors.GreyTransparent10
             ),
             content = {
+                LabelChipsRow(
+                    labels = searchState.allLabels,
+                    checkedLabels = searchState.checkedLabels,
+                    onLabelClick = { label, isChecked ->
+                        onSearchEvent(
+                            SearchContract.Event.OnLabelClick(
+                                labelName = label,
+                                isChecked = isChecked
+                            )
+                        )
+                    },
+                )
                 SearchResults(
                     filteredMenuItems = filteredMenuItems,
                     latestSearchText = latestSearchText,
-                    onMenuEvent = onMenuEvent,
                     onCartEvent = onCartEvent,
                     cartState = cartState,
-                    effectFlow = effectFlow
+                    effectFlow = effectFlow,
+                    onSearchEvent = onSearchEvent
                 )
             }
         )

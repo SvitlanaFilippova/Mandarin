@@ -8,30 +8,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.util.Constants.NEW_LABEL
-import com.mandarinkafe.mandarin.util.Constants.VEG_LABEL
+import com.mandarinkafe.mandarin.search.ui.model.LabelUiModel
 
 @Composable
-fun LabelChip(text: String, backgroundColor: Color? = null) {
-
-    val finalBackgroundColor = when (text.lowercase()) {
-        VEG_LABEL.lowercase() -> Colors.LabelVegGreen
-        NEW_LABEL.lowercase() -> Colors.LabelNewRed
-        else -> backgroundColor ?: Colors.LabelDefault
-    }
-
+fun LabelChip(label: LabelUiModel) {
     Box(
         modifier = Modifier
-            .background(finalBackgroundColor, shape = RoundedCornerShape(Dimens.CornerRadius8))
+            .background(label.backgroundColor, shape = RoundedCornerShape(Dimens.CornerRadius8))
             .padding(horizontal = Dimens.MarginSmall8, vertical = Dimens.MarginSuperSmall4)
     ) {
         Text(
-            text = text,
+            text = label.name,
             color = Color.White,
-            style = Typography.MealLalesTextStyle
+            style = Typography.MealLabelTextStyle
         )
     }
 }

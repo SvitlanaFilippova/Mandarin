@@ -29,8 +29,6 @@ sealed interface MenuContract {
         data object OnPhoneClick : Event
 
         // Поиск и фильтрация
-        data class SearchMealsByText(val searchText: String) : Event
-        data object SearchClearInput : Event
         data object SearchOnOpenSearchClick : Event
         data object OnOpenFavoritesClick : Event
         data object OnLabelsClick : Event
@@ -53,7 +51,5 @@ sealed interface MenuContract {
         val selectedTabIndex: Int = DEFAULT_UNSELECTED_INDEX,
         val selectedSubTabIndex: Int = DEFAULT_UNSELECTED_INDEX,
         val selectedMenuItemIndex: Int = DEFAULT_UNSELECTED_INDEX,
-        val filteredMenuItems: List<MenuItem> = emptyList(),
-        val latestSearchText: String = "",
     )
 }

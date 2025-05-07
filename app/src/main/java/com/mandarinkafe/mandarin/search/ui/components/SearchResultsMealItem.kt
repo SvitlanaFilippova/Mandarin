@@ -25,12 +25,12 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.MealButtonsRow
-import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.search.ui.view_model.SearchContract.Event
 
 @Composable
 fun SearchResultsMealItem(
     meal: Meal,
-    onMenuEvent: (Event) -> Unit,
+    onSearchEvent: (Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
     cartState: CartContract.State,
 ) {
@@ -40,7 +40,7 @@ fun SearchResultsMealItem(
         modifier = Modifier
             .padding(vertical = Dimens.MarginSmall8)
             .fillMaxWidth()
-            .clickable { onMenuEvent(Event.OnMealDetailsClick(meal)) }
+            .clickable { onSearchEvent(Event.OnMealDetailsClick(meal)) }
     ) {
 
         AsyncImage(
@@ -72,9 +72,10 @@ fun SearchResultsMealItem(
 
             MealButtonsRow(
                 meal = meal,
-                onMenuEvent = onMenuEvent,
                 onCartEvent = onCartEvent,
                 cartState = cartState,
+                onToggleFavorite = { meal -> onSearchEvent(Event.ToggleFavorite(meal)) },
+                onMealDetailsClick = { meal -> onSearchEvent(Event.OnMealDetailsClick(meal)) },
             )
         }
     }

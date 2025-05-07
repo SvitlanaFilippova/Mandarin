@@ -22,12 +22,12 @@ import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.FavoriteBut
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.PizzaAddsButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.SelectButton
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.buttons.ToCartButtonWithPrice
-import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 
 @Composable
 fun MealButtonsRow(
     meal: Meal,
-    onMenuEvent: (Event) -> Unit,
+    onToggleFavorite: (Meal) -> Unit,
+    onMealDetailsClick: (Meal) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
     cartState: CartContract.State
 ) {
@@ -51,14 +51,12 @@ fun MealButtonsRow(
             )
         } else if (meal.editableType == EditableType.MODIFIABLE) {
             SelectButton(
-                text = stringResource(R.string.to_choose), onClick = {
-                    onMenuEvent(Event.OnMealDetailsClick(meal))
-                })
+                text = stringResource(R.string.to_choose),
+                onClick = { onMealDetailsClick(meal) })
         } else if (meal.editableType == EditableType.WOK) {
             SelectButton(
-                text = stringResource(R.string.create_own_box_short), onClick = {
-                    onMenuEvent(Event.OnMealDetailsClick(meal))
-                })
+                text = stringResource(R.string.create_own_box_short),
+                onClick = { onMealDetailsClick(meal) })
         } else {
             ToCartButtonWithPrice(
                 price = meal.price, onClick = {
@@ -69,9 +67,7 @@ fun MealButtonsRow(
         if (meal.editableType == EditableType.PIZZA) {
             PizzaAddsButton(
                 modifier = Modifier.weight(1f),
-                onClick = {
-                    onMenuEvent(Event.OnMealDetailsClick(meal))
-                }
+                onClick = { onMealDetailsClick(meal) }
             )
         } else {
             Spacer(modifier = Modifier.weight(1f))
@@ -79,7 +75,7 @@ fun MealButtonsRow(
 
         FavoriteButton(
             isFavorite = meal.isFavorite,
-            onClick = { onMenuEvent(Event.ToggleFavorite(meal)) }
+            onClick = { onToggleFavorite(meal) }
         )
     }
 }

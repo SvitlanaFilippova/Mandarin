@@ -58,14 +58,13 @@ class MenuViewModel @Inject constructor(
             is Event.ScrollToTop -> scrollToTop()
             is Event.BannerClick -> findMenuItemIndexByName(event.targetName)
             is Event.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
-            is Event.SearchMealsByText -> filterMenu(event.searchText)
-            is Event.SearchClearInput -> clearSearchInput()
             is Event.OnOpenFavoritesClick -> sendEffect(OpenFavorites)
             is Event.OnLabelsClick -> sendEffect(OpenSearch(focusSearch = false))
             is Event.UpdateMealFavorite -> updateMealFavorite(
                 id = event.id,
                 isFavorite = event.isFavorite
             )
+
             is Event.OnMealDetailsClick -> sendEffect(
                 OpenMealDetailsBS(meal = event.meal)
             )
@@ -74,32 +73,6 @@ class MenuViewModel @Inject constructor(
 
     private fun sendEffect(effect: Effect) {
         viewModelScope.launch { _effect.emit(effect) }
-    }
-
-    // Поиск по меню
-    private fun filterMenu(searchText: String? = null, filters: Any? = null) {
-        if (!searchText.isNullOrEmpty()) {
-            val filteredMenuItems = _state.value.menuItems.filter {
-                it is MenuItem.MealItem && it.meal.name.contains(searchText, ignoreCase = true)
-            }
-                .sortedWith( // Дополнительная сортировка, чтобы в начале от ображались избранные блюда
-                    compareByDescending<MenuItem> {
-                        (it as MenuItem.MealItem).meal.isFavorite
-                    }
-                )
-            _state.update {
-                it.copy(
-                    filteredMenuItems = filteredMenuItems,
-                    latestSearchText = searchText
-                )
-            }
-        }
-
-    }
-
-    // Очистить поле поиска
-    private fun clearSearchInput() {
-        _state.update { it.copy(filteredMenuItems = emptyList(), latestSearchText = "") }
     }
 
     // Методы для загрузки меню
@@ -205,17 +178,6 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    // Поиск индекса блюда по его названию
-    private fun findMealIndexById(targetId: String) {
-        viewModelScope.launch {
-            var menuItems = state.value.menuItems
-            val targetIndex = menuItems.indexOfFirst {
-                it is MenuItem.MealItem && it.meal.id == targetId
-            }
-            _state.update { it.copy(selectedMenuItemIndex = targetIndex) }
-        }
-    }
-
     // Добавить блюдо в избранное или удалить
     private fun toggleFavorite(meal: Meal) {
         viewModelScope.launch {
@@ -230,15 +192,8 @@ class MenuViewModel @Inject constructor(
             _state.update { state ->
                 val updatedMenuItems =
                     updateMealItemInList(state.menuItems, meal.id, isNowFavorite)
-                val updatedFiltered = if (state.filteredMenuItems.isNotEmpty()) {
-                    updateMealItemInList(state.filteredMenuItems, meal.id, isNowFavorite)
-                } else {
-                    state.filteredMenuItems
-                }
-
                 state.copy(
                     menuItems = updatedMenuItems,
-                    filteredMenuItems = updatedFiltered
                 )
             }
         }
@@ -252,16 +207,8 @@ class MenuViewModel @Inject constructor(
                     item.copy(meal = item.meal.copy(isFavorite = isFavorite))
                 } else item
             }
-
-            val updatedFilteredMenuItems = currentState.filteredMenuItems.map { item ->
-                if (item is MenuItem.MealItem && item.meal.id == id) {
-                    item.copy(meal = item.meal.copy(isFavorite = isFavorite))
-                } else item
-            }
-
             currentState.copy(
                 menuItems = updatedMenuItems,
-                filteredMenuItems = updatedFilteredMenuItems
             )
         }
     }

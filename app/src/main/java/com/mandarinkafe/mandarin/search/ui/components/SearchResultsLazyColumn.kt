@@ -8,12 +8,12 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
-import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.search.ui.view_model.SearchContract
 
 @Composable
 fun SearchResultsLazyColumn(
     filteredMenuItems: List<MenuItem>,
-    onMenuEvent: (Event) -> Unit,
+    onSearchEvent: (SearchContract.Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
     cartState: CartContract.State,
 ) {
@@ -24,9 +24,9 @@ fun SearchResultsLazyColumn(
             if (item is MenuItem.MealItem) {
                 SearchResultsMealItem(
                     meal = item.meal,
-                    onMenuEvent = onMenuEvent,
                     onCartEvent = onCartEvent,
                     cartState = cartState,
+                    onSearchEvent = onSearchEvent,
                 )
             }
         }

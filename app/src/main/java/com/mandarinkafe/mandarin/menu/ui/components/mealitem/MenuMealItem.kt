@@ -28,6 +28,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.search.SearchMapper.toUiModel
 
 @Composable
 fun MenuMealItem(
@@ -70,7 +71,7 @@ fun MenuMealItem(
             ) {
                 meal.labels.forEach {
                     LabelChip(
-                        text = it.name,
+                        label = it.toUiModel(),
                     )
                 }
             }
@@ -110,9 +111,10 @@ fun MenuMealItem(
             Box(contentAlignment = Alignment.BottomStart) {
                 MealButtonsRow(
                     meal = meal,
-                    onMenuEvent = onEvent,
                     onCartEvent = onCartEvent,
                     cartState = cartState,
+                    onToggleFavorite = { meal -> onEvent(Event.ToggleFavorite(meal)) },
+                    onMealDetailsClick = { meal -> onEvent(Event.OnMealDetailsClick(meal)) },
                 )
             }
         }

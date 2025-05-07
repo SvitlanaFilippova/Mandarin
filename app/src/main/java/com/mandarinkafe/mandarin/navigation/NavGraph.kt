@@ -84,14 +84,12 @@ fun NavGraph(navHostController: NavHostController) {
                     val parentEntry = remember(entry) {
                         navHostController.getBackStackEntry(MENU_SCOPE_ROUTE)
                     }
-                    val menuViewModel: MenuViewModel = hiltViewModel(parentEntry)
-
+                    hiltViewModel(parentEntry)
 
                     val focusInput = entry.arguments?.getBoolean(SEARCH_SCREEN_ARG_FOCUS) == true
                     SearchScreen(
                         navController = navHostController,
                         focusSearchBarInput = focusInput,
-                        menuViewModel = menuViewModel,
                         cartViewModel = cartViewModel
                     )
                 }
