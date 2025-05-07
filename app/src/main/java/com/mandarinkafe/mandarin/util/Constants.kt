@@ -12,6 +12,7 @@ object Constants {
     const val DEFAULT_UNSELECTED_INDEX = -1
     const val DEFAULT_SELECTED_FIRST_INDEX = 0
     const val MAX_LINES_FOR_FLOW_ROW = 3
+    const val MAX_LINES_FOR_LABEL_CHIP = 1
 
     // Menu loading
     const val MAX_ATTEMPTS = 3

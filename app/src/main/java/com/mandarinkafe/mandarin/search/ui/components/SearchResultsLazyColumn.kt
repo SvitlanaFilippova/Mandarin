@@ -18,7 +18,7 @@ fun SearchResultsLazyColumn(
     cartState: CartContract.State,
 ) {
     LazyColumn(
-        modifier = Modifier.padding(Dimens.MarginStandard16),
+        modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
     ) {
         itemsIndexed(filteredMenuItems) { index, item ->
             if (item is MenuItem.MealItem) {

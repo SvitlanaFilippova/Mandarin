@@ -29,6 +29,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 import com.mandarinkafe.mandarin.search.SearchMapper.toUiModel
+import com.mandarinkafe.mandarin.util.ui.LabelChip
 
 @Composable
 fun MenuMealItem(

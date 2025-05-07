@@ -36,9 +36,10 @@ fun BottomNavigation(
 ) {
     val context = LocalContext.current
     val listItems = listOf(
+        BottomNavigationItem.Search,
+        BottomNavigationItem.Favorites,
         BottomNavigationItem.Menu,
         BottomNavigationItem.Delivery,
-        BottomNavigationItem.Favorites,
         BottomNavigationItem.Cart
     )
 
@@ -48,7 +49,7 @@ fun BottomNavigation(
         modifier = Modifier.height(Dimens.BottomBarHeight64)
     ) {
         val backStackEntry = navController.currentBackStackEntryAsState().value
-        val currentRoute = backStackEntry?.destination?.route
+        val currentRoute = backStackEntry?.destination?.route?.substringBefore("?")
 
         listItems.forEach { item ->
             NavigationBarItem(

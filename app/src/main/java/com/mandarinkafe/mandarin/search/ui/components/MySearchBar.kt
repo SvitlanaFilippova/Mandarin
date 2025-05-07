@@ -51,6 +51,7 @@ fun MySearchBar(
         keyboardController?.show()
         isExpanded = false
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -105,7 +106,8 @@ fun MySearchBar(
                     onCartEvent = onCartEvent,
                     cartState = cartState,
                     effectFlow = effectFlow,
-                    onSearchEvent = onSearchEvent
+                    onSearchEvent = onSearchEvent,
+                    onSearchDismiss = onSearchDismiss,
                 )
             }
         )

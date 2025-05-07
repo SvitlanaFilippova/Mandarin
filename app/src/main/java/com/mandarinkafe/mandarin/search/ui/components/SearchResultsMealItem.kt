@@ -2,8 +2,11 @@ package com.mandarinkafe.mandarin.search.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,7 +28,9 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.ui.components.mealitem.MealButtonsRow
+import com.mandarinkafe.mandarin.search.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.search.ui.view_model.SearchContract.Event
+import com.mandarinkafe.mandarin.util.ui.LabelChip
 
 @Composable
 fun SearchResultsMealItem(
@@ -43,20 +48,38 @@ fun SearchResultsMealItem(
             .clickable { onSearchEvent(Event.OnMealDetailsClick(meal)) }
     ) {
 
-        AsyncImage(
-            model = meal.imageUrl.ifEmpty { R.drawable.logo_orange_square },
-            contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
-            error = painterResource(R.drawable.logo_orange_square),
-            placeholder = painterResource(R.drawable.logo_orange_square),
-            contentScale = ContentScale.Crop,
+        Box(
             modifier = Modifier
                 .size(Dimens.MealSmallImage80)
-                .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                .background(
-                    color = Colors.AppBlack,
-                    shape = RoundedCornerShape(Dimens.CornerRadius8)
-                )
-        )
+        ) {
+            AsyncImage(
+                model = meal.imageUrl.ifEmpty { R.drawable.logo_orange_square },
+                contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
+                error = painterResource(R.drawable.logo_orange_square),
+                placeholder = painterResource(R.drawable.logo_orange_square),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(Dimens.CornerRadius8))
+                    .background(
+                        color = Colors.AppBlack,
+                        shape = RoundedCornerShape(Dimens.CornerRadius8)
+                    )
+            )
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4),
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(Dimens.MarginSuperSmall4)
+            ) {
+                meal.labels.forEach {
+                    LabelChip(
+                        label = it.toUiModel(),
+                    )
+                }
+            }
+        }
 
         Column(
             modifier = Modifier

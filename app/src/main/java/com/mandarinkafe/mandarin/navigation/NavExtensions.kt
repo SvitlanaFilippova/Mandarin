@@ -3,15 +3,10 @@ package com.mandarinkafe.mandarin.navigation
 import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.navigation.NavRoutes.FAVORITES_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.MEAL_DETAILS_BS_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ROUTE
 
 fun NavController.navigateToSearchScreen(focusInput: Boolean) {
-    this.navigate("$SEARCH_SCREEN_ROUTE/$focusInput")
-}
-
-fun NavController.navigateToMenuScreen() {
-    this.navigate(MENU_SCREEN_ROUTE)
+    this.navigate("$SEARCH_SCREEN_ROUTE?focusInput=$focusInput")
 }
 
 fun NavController.navigateToMealDetailsBS() {

@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.search.ui.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,10 +28,13 @@ fun SearchResults(
     latestSearchText: String,
     onSearchEvent: (SearchContract.Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
+    onSearchDismiss: () -> Unit,
     cartState: CartContract.State,
     effectFlow: Flow<SearchContract.Effect>,
 ) {
-
+    BackHandler {
+        onSearchDismiss()
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()

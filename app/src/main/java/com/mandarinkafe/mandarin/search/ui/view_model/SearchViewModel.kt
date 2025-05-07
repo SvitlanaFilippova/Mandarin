@@ -7,11 +7,15 @@ import com.mandarinkafe.mandarin.favorites.data.mapper.FavoriteMapper.toFavorite
 import com.mandarinkafe.mandarin.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
+import com.mandarinkafe.mandarin.search.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.search.domain.usecase.GetLabelsUseCase
 import com.mandarinkafe.mandarin.search.ui.view_model.SearchContract.Effect
 import com.mandarinkafe.mandarin.search.ui.view_model.SearchContract.Effect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.search.ui.view_model.SearchContract.Event
+import com.mandarinkafe.mandarin.util.Constants.DELAY_BEFORE_NEXT_ATTEMPT
+import com.mandarinkafe.mandarin.util.Constants.MAX_ATTEMPTS
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -37,6 +41,7 @@ class SearchViewModel @Inject constructor(
 
     init {
         getLabels()
+        loadMenu()
     }
 
     fun onEvent(event: Event) {
@@ -63,7 +68,7 @@ class SearchViewModel @Inject constructor(
     private fun getLabels() {
         viewModelScope.launch {
             _state.update {
-                it.copy(allLabels = getLabelsUseCase.execute().map { it.name })
+                it.copy(allLabels = getLabelsUseCase.execute().map { it.toUiModel() })
             }
         }
 
@@ -82,8 +87,8 @@ class SearchViewModel @Inject constructor(
             currentState.copy(
                 checkedLabels = checkedLabels
             )
-
         }
+        filterMenu(_state.value.latestSearchText)
     }
 
     // Очистить поле поиска
@@ -93,23 +98,37 @@ class SearchViewModel @Inject constructor(
 
     // Поиск по меню
     private fun filterMenu(searchText: String? = null) {
-        if (!searchText.isNullOrEmpty()) {
-            val filteredMenuItems = _state.value.menuItems.filter {
-                it is MenuItem.MealItem && it.meal.name.contains(searchText, ignoreCase = true)
-            }
-                .sortedWith( // Дополнительная сортировка, чтобы в начале от ображались избранные блюда
-                    compareByDescending<MenuItem> {
-                        (it as MenuItem.MealItem).meal.isFavorite
-                    }
-                )
-            _state.update {
-                it.copy(
-                    filteredMenuItems = filteredMenuItems,
-                    latestSearchText = searchText
-                )
-            }
-        }
+        val menuItems = _state.value.menuItems
+        val checkedLabels = _state.value.checkedLabels
 
+        val filtered = if (searchText.isNullOrBlank() && checkedLabels.isEmpty()) {
+            // Нет активных фильтров — показываем всё
+            menuItems
+        } else {
+            menuItems.filter { item ->
+                if (item !is MenuItem.MealItem) return@filter false
+
+                val meal = item.meal
+
+                val matchesSearch = searchText.isNullOrBlank() ||
+                        meal.name.contains(searchText, ignoreCase = true)
+
+                val mealLabelNames = meal.labels.map { it.name }
+                val matchesLabels =
+                    checkedLabels.isEmpty() || checkedLabels.all { it in mealLabelNames }
+
+                matchesSearch && matchesLabels
+            }
+        }.sortedWith(compareByDescending<MenuItem> {
+            (it as? MenuItem.MealItem)?.meal?.isFavorite == true
+        })
+
+        _state.update {
+            it.copy(
+                filteredMenuItems = filtered,
+                latestSearchText = searchText.orEmpty()
+            )
+        }
     }
 
     // Добавить блюдо в избранное или удалить
@@ -176,4 +195,56 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch { _effect.emit(effect) }
     }
 
+    // Метод для загрузки меню
+    private fun loadMenu() {
+        _state.update { it.copy(isLoading = true) }
+        viewModelScope.launch {
+            var attempts = 0
+            var success = false
+
+            // Попытки до максимума
+            while (attempts < MAX_ATTEMPTS) {
+                menuInteractor.getMenu()
+                    .collect { (menu, errorMessage) ->
+                        // Если меню в процессе загрузки, пробуем снова
+                        if (menu == null && errorMessage == null) {
+                            attempts++
+                            delay(DELAY_BEFORE_NEXT_ATTEMPT) // Задержка перед повторной попыткой
+                        } else {
+                            // Обработка успешной загрузки данных
+                            if (!menu.isNullOrEmpty()) {
+                                _state.update {
+                                    it.copy(
+                                        isLoading = false,
+                                        menuItems = menu,
+                                        filteredMenuItems = menu.sortedWith(compareByDescending<MenuItem> {
+                                            (it as? MenuItem.MealItem)?.meal?.isFavorite
+                                        })
+                                    )
+                                }
+                                success = true
+                            } else {
+                                // Обработка ошибки
+                                _state.update {
+                                    it.copy(
+                                        isLoading = false,
+                                        errorMessage = errorMessage
+                                    )
+                                }
+                            }
+                            return@collect // Завершаем коллекцию данных после успешной обработки
+                        }
+                    }
+            }
+            // Если после всех попыток данных нет, устанавливаем ошибку
+            if (!success) {
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Не удалось загрузить меню. Попробуйте позже."
+                    )
+                }
+            }
+        }
+    }
 }

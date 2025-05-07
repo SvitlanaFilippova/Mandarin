@@ -14,7 +14,7 @@ fun SearchScreen(
     searchViewModel: SearchViewModel = hiltViewModel(),
     cartViewModel: CartViewModel,
     navController: NavController,
-    focusSearchBarInput: Boolean
+    focusSearchBarInput: Boolean = false
 ) {
     val searchState by searchViewModel.state.collectAsState()
     val cartState by cartViewModel.state.collectAsState()
