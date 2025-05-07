@@ -13,6 +13,7 @@ object Colors {
     val GreyTransparent75 = Color(0xBFAEAFB4)
     val WhiteTransparent75 = Color(0xBFFFFFFF)
     val Transparent = Color(0x00000000)
+    val LabelVegGreen = Color(0xff94c338)
 
     // Цвета областей доставки
     val FirstArea = Color(0xAA0B7B6B)

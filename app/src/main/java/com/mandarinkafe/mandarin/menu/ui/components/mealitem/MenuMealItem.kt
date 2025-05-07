@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -34,28 +35,43 @@ fun MenuMealItem(
     onCartEvent: (CartContract.Event) -> Unit,
     cartState: CartContract.State
 ) {
-
     Row(
         verticalAlignment = Alignment.Top,
         modifier = Modifier
             .padding(Dimens.MarginSmall8)
             .clickable(onClick = { onEvent(Event.OnMealDetailsClick(meal)) })
     ) {
-
-        AsyncImage(
-            model = meal.imageUrl.ifEmpty { R.drawable.logo_orange_square },
-            contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
-            error = painterResource(R.drawable.logo_orange_square),
-            placeholder = painterResource(R.drawable.logo_orange_square),
-            contentScale = ContentScale.Crop,
+        Box(
             modifier = Modifier
                 .size(Dimens.MealImage136)
-                .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                .background(
-                    color = Colors.AppBlack,
-                    shape = RoundedCornerShape(Dimens.CornerRadius8)
-                )
-        )
+        ) {
+            AsyncImage(
+                model = meal.imageUrl.ifEmpty { R.drawable.logo_orange_square },
+                contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
+                error = painterResource(R.drawable.logo_orange_square),
+                placeholder = painterResource(R.drawable.logo_orange_square),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(Dimens.CornerRadius8))
+                    .background(
+                        color = Colors.AppBlack,
+                        shape = RoundedCornerShape(Dimens.CornerRadius8)
+                    )
+            )
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(Dimens.MarginSuperSmall4)
+            ) {
+                meal.labels.forEach {
+                    LabelChip(
+                        text = it.name,
+                    )
+                }
+            }
+        }
 
         Column(
             modifier = Modifier
