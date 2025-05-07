@@ -30,8 +30,7 @@ import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 @Composable
 fun SearchResultsMealItem(
     meal: Meal,
-    onEvent: (Event) -> Unit,
-    onItemClick: (Meal) -> Unit,
+    onMenuEvent: (Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
     cartState: CartContract.State,
 ) {
@@ -41,7 +40,7 @@ fun SearchResultsMealItem(
         modifier = Modifier
             .padding(vertical = Dimens.MarginSmall8)
             .fillMaxWidth()
-            .clickable { onItemClick(meal) }
+            .clickable { onMenuEvent(Event.OnMealDetailsClick(meal)) }
     ) {
 
         AsyncImage(
@@ -73,7 +72,7 @@ fun SearchResultsMealItem(
 
             MealButtonsRow(
                 meal = meal,
-                onEvent = onEvent,
+                onMenuEvent = onMenuEvent,
                 onCartEvent = onCartEvent,
                 cartState = cartState,
             )

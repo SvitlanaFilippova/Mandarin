@@ -24,7 +24,9 @@ import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Компонент с SearchBar - полем для полиска и его результами
@@ -35,17 +37,17 @@ import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 fun MySearchBar(
     filteredMenuItems: List<MenuItem>,
     latestSearchText: String,
-    onEvent: (Event) -> Unit,
+    onMenuEvent: (Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
-    onMealClick: () -> Unit,
     onSearchDismiss: () -> Unit,
     focusSearchBarInput: Boolean,
     cartState: CartContract.State,
+    effectFlow: Flow<MenuContract.Effect>,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var isExpanded by remember { mutableStateOf(true) }
     val handleOnClear = {
-        onEvent(Event.SearchClearInput)
+        onMenuEvent(Event.SearchClearInput)
         keyboardController?.show()
         isExpanded = false
     }
@@ -62,7 +64,7 @@ fun MySearchBar(
                         if (text.isEmpty()) {
                             handleOnClear()
                         } else {
-                            onEvent(Event.SearchMealsByText(text))
+                            onMenuEvent(Event.SearchMealsByText(text))
                             isExpanded = true
                         }
                     },
@@ -88,10 +90,10 @@ fun MySearchBar(
                 SearchResults(
                     filteredMenuItems = filteredMenuItems,
                     latestSearchText = latestSearchText,
-                    onEvent = onEvent,
-                    onMealClick = onMealClick,
+                    onMenuEvent = onMenuEvent,
                     onCartEvent = onCartEvent,
-                    cartState = cartState
+                    cartState = cartState,
+                    effectFlow = effectFlow
                 )
             }
         )

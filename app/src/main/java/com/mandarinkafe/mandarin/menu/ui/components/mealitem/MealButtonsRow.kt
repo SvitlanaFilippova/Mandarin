@@ -27,7 +27,7 @@ import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
 @Composable
 fun MealButtonsRow(
     meal: Meal,
-    onEvent: (Event) -> Unit,
+    onMenuEvent: (Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
     cartState: CartContract.State
 ) {
@@ -52,12 +52,12 @@ fun MealButtonsRow(
         } else if (meal.editableType == EditableType.MODIFIABLE) {
             SelectButton(
                 text = stringResource(R.string.to_choose), onClick = {
-                    onEvent(Event.OnMealDetailsClick(meal))
+                    onMenuEvent(Event.OnMealDetailsClick(meal))
                 })
         } else if (meal.editableType == EditableType.WOK) {
             SelectButton(
                 text = stringResource(R.string.create_own_box_short), onClick = {
-                    onEvent(Event.OnMealDetailsClick(meal))
+                    onMenuEvent(Event.OnMealDetailsClick(meal))
                 })
         } else {
             ToCartButtonWithPrice(
@@ -70,7 +70,7 @@ fun MealButtonsRow(
             PizzaAddsButton(
                 modifier = Modifier.weight(1f),
                 onClick = {
-                    onEvent(Event.OnMealDetailsClick(meal))
+                    onMenuEvent(Event.OnMealDetailsClick(meal))
                 }
             )
         } else {
@@ -79,7 +79,7 @@ fun MealButtonsRow(
 
         FavoriteButton(
             isFavorite = meal.isFavorite,
-            onClick = { onEvent(Event.ToggleFavorite(meal)) }
+            onClick = { onMenuEvent(Event.ToggleFavorite(meal)) }
         )
     }
 }

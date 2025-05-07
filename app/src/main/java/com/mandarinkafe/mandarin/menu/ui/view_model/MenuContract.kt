@@ -30,7 +30,6 @@ sealed interface MenuContract {
 
         // Поиск и фильтрация
         data class SearchMealsByText(val searchText: String) : Event
-        data class SearchOnMealClick(val targetId: String) : Event
         data object SearchClearInput : Event
         data object SearchOnOpenSearchClick : Event
         data object OnOpenFavoritesClick : Event

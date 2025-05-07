@@ -91,7 +91,7 @@ fun MenuMealItem(
             Box(contentAlignment = Alignment.BottomStart) {
                 MealButtonsRow(
                     meal = meal,
-                    onEvent = onEvent,
+                    onMenuEvent = onEvent,
                     onCartEvent = onCartEvent,
                     cartState = cartState,
                 )

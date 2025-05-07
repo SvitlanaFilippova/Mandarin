@@ -60,7 +60,6 @@ class MenuViewModel @Inject constructor(
             is Event.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
             is Event.SearchMealsByText -> filterMenu(event.searchText)
             is Event.SearchClearInput -> clearSearchInput()
-            is Event.SearchOnMealClick -> findMealIndexById(event.targetId)
             is Event.OnOpenFavoritesClick -> sendEffect(OpenFavorites)
             is Event.OnLabelsClick -> sendEffect(OpenSearch(focusSearch = false))
             is Event.UpdateMealFavorite -> updateMealFavorite(
