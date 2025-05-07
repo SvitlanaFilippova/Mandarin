@@ -11,6 +11,8 @@ object Constants {
     const val ANIMATION_DURATION_FAST = 300
     const val DEFAULT_UNSELECTED_INDEX = -1
     const val DEFAULT_SELECTED_FIRST_INDEX = 0
+    const val MAX_LINES_FOR_FLOW_ROW = 3
+    const val MAX_LINES_FOR_LABEL_CHIP = 1
 
     // Menu loading
     const val MAX_ATTEMPTS = 3
@@ -23,8 +25,11 @@ object Constants {
     // API
     const val BEARER_PREFIX = "Bearer "
 
-    // Контакты - вынести в конфиг для возможности изменений извне
+    // Вынести в конфиг для возможности изменений извне
     const val PHONE_NUMBER = "tel:+74951087055"
+    const val VEG_LABEL = "veg"
+    const val HOT_LABEL = "hot"
+    const val NEW_LABEL = "new"
 
     // Внутренние теги для особой логики в меню
     const val TAG_PIZZA_ADDS = "добавки к пицце"
@@ -68,5 +73,4 @@ object Constants {
 
     // Константы для UI
     const val BLUR_EFFECT_RADIUS = 3f
-
 }

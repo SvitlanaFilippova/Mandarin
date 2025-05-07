@@ -8,11 +8,17 @@ object Colors {
     val DefaultStatusBarColor = Color(0xFF1D1E1C)
     val White = Color(0xFFFFFFFF)
     val Orange = Color(0xFFF5BD47)
+    val Blue = Color(0xff1c848c)
     val Grey = Color(0xFFAEAFB4)
     val GreyTransparent10 = Color(0x1AAEAFB4)
     val GreyTransparent75 = Color(0xBFAEAFB4)
     val WhiteTransparent75 = Color(0xBFFFFFFF)
     val Transparent = Color(0x00000000)
+    val LabelVegGreen = Color(0xE694C338)
+    val LabelHotRed = Color(0xFFDE5836)
+    val LabelNewBlue = Color(0xff1c848c)
+    val LabelDefault = Color(0xff756d85)
+
 
     // Цвета областей доставки
     val FirstArea = Color(0xAA0B7B6B)

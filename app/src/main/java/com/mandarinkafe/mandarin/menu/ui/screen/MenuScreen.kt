@@ -47,5 +47,4 @@ fun MenuScreen(
         navController = navController,
         context = context
     )
-
 }

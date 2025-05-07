@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.search.ui.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,21 +12,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.cart.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
+import com.mandarinkafe.mandarin.meal_details.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
-import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.search.ui.view_model.SearchContract
+import com.mandarinkafe.mandarin.util.ui.HandleBottomSheetEffect
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun SearchResults(
     filteredMenuItems: List<MenuItem>,
     latestSearchText: String,
-    onEvent: (Event) -> Unit,
-    onMealClick: () -> Unit,
+    onSearchEvent: (SearchContract.Event) -> Unit,
     onCartEvent: (CartContract.Event) -> Unit,
+    onSearchDismiss: () -> Unit,
     cartState: CartContract.State,
+    effectFlow: Flow<SearchContract.Effect>,
 ) {
+    BackHandler {
+        onSearchDismiss()
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -42,13 +51,9 @@ fun SearchResults(
         if (filteredMenuItems.isNotEmpty()) {
             SearchResultsLazyColumn(
                 filteredMenuItems = filteredMenuItems,
-                onMealClick = {
-                    onEvent(Event.SearchOnMealClick(it.id))
-                    onMealClick()
-                },
-                onEvent = onEvent,
                 onCartEvent = onCartEvent,
-                cartState = cartState
+                cartState = cartState,
+                onSearchEvent = onSearchEvent
             )
         } else if (latestSearchText.isNotEmpty()) {
             Text(
@@ -57,5 +62,19 @@ fun SearchResults(
                 modifier = Modifier.padding(Dimens.MarginStandard16)
             )
         }
+    }
+
+    HandleBottomSheetEffect<SearchContract.Effect.OpenMealDetailsBS>(
+        effectFlow = effectFlow,
+        cast = { it as? SearchContract.Effect.OpenMealDetailsBS }
+    ) { effect, onDismiss ->
+        MealDetailsBottomSheet(
+            initItem = effect.meal.toCartItem(),
+            onDismiss = onDismiss,
+            onFavoriteChanged = { id, isFavorite ->
+                onSearchEvent(SearchContract.Event.UpdateMealFavorite(id, isFavorite))
+            },
+            onAddToCart = { item -> onCartEvent(CartContract.Event.AddToCart(item)) }
+        )
     }
 }
