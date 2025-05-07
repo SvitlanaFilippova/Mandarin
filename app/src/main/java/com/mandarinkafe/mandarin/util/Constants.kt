@@ -26,6 +26,7 @@ object Constants {
     // Вынести в конфиг для возможности изменений извне
     const val PHONE_NUMBER = "tel:+74951087055"
     const val VEG_LABEL = "veg"
+    const val NEW_LABEL = "new"
 
     // Внутренние теги для особой логики в меню
     const val TAG_PIZZA_ADDS = "добавки к пицце"

@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.NEW_LABEL
 import com.mandarinkafe.mandarin.util.Constants.VEG_LABEL
 
 @Composable
@@ -18,7 +19,8 @@ fun LabelChip(text: String, backgroundColor: Color? = null) {
 
     val finalBackgroundColor = when (text.lowercase()) {
         VEG_LABEL.lowercase() -> Colors.LabelVegGreen
-        else -> backgroundColor ?: Colors.Orange
+        NEW_LABEL.lowercase() -> Colors.LabelNewRed
+        else -> backgroundColor ?: Colors.LabelDefault
     }
 
     Box(

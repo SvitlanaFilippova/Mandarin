@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.menu.ui.components.mealitem
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -61,6 +62,8 @@ fun MenuMealItem(
             )
 
             Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4),
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(Dimens.MarginSuperSmall4)
