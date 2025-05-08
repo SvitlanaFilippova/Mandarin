@@ -33,7 +33,6 @@ sealed interface MenuContract {
         data object SearchOnOpenSearchClick : Event
         data object OnOpenFavoritesClick : Event
         data object OnLabelsClick : Event
-
     }
 
     sealed interface Effect {

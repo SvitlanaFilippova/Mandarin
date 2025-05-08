@@ -15,6 +15,7 @@ import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.OpenFavo
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Effect.OpenSearch
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.State
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.Constants.DELAY_BEFORE_NEXT_ATTEMPT
 import com.mandarinkafe.mandarin.util.Constants.MAX_ATTEMPTS
@@ -36,8 +37,8 @@ class MenuViewModel @Inject constructor(
     private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(MenuContract.State()) // для хранения состояния ЮИ
-    val state: StateFlow<MenuContract.State> = _state.asStateFlow()
+    private val _state = MutableStateFlow(State()) // для хранения состояния ЮИ
+    val state: StateFlow<State> = _state.asStateFlow()
 
     private val _effect =
         MutableSharedFlow<Effect>() // для одноразовых событий. Например, показа снекбар
@@ -57,6 +58,7 @@ class MenuViewModel @Inject constructor(
             is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is Event.ScrollToTop -> scrollToTop()
             is Event.BannerClick -> findMenuItemIndexByName(event.targetName)
+            is Event.ResetSelectedMenuItemIndex -> resetSelectedMenuItemIndex()
             is Event.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
             is Event.OnOpenFavoritesClick -> sendEffect(OpenFavorites)
             is Event.OnLabelsClick -> sendEffect(OpenSearch(focusSearch = false))
@@ -69,9 +71,6 @@ class MenuViewModel @Inject constructor(
                 OpenMealDetailsBS(meal = event.meal)
             )
 
-            is Event.ResetSelectedMenuItemIndex -> {
-                _state.update { it.copy(selectedMenuItemIndex = DEFAULT_UNSELECTED_INDEX) }
-            }
         }
     }
 
@@ -181,6 +180,11 @@ class MenuViewModel @Inject constructor(
 
             _state.update { it.copy(selectedMenuItemIndex = targetIndex) }
         }
+    }
+
+    private fun resetSelectedMenuItemIndex() {
+        _state.update { it.copy(selectedMenuItemIndex = DEFAULT_UNSELECTED_INDEX) }
+
     }
 
     // Добавить блюдо в избранное или удалить
