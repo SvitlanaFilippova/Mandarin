@@ -48,6 +48,7 @@ fun MenuContentScreen(
     val selectedTabIndex = menuSate.selectedTabIndex
     val selectedSubTabIndex = menuSate.selectedSubTabIndex
     val selectedMenuItemIndex = menuSate.selectedMenuItemIndex
+
     val categories = menuItems.filterIsInstance<MenuItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
     val coroutineScope = rememberCoroutineScope()
@@ -81,10 +82,11 @@ fun MenuContentScreen(
         }
     }
 
-    // Отслеживание изменения selectedBannerIndex и скролл при обновлении
+    // Отслеживание изменения selectedMenuItemIndex и скролл при обновлении
     LaunchedEffect(selectedMenuItemIndex) {
         if (selectedMenuItemIndex >= 0) {
             listState.scrollToItem(selectedMenuItemIndex, scrollOffset = 1)
+            onEvent(Event.ResetSelectedMenuItemIndex)
         }
     }
 

@@ -10,8 +10,8 @@ import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.menu.ui.components.HandleNavEffects
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuViewModel
+import com.mandarinkafe.mandarin.placeholder.ui.screen.PlaceholderScreen
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
-import com.mandarinkafe.mandarin.util.ui.components.PlaceholderScreen
 
 @Composable
 fun MenuScreen(

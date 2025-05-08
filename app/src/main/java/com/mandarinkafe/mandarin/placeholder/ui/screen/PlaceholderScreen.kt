@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.util.ui.components
+package com.mandarinkafe.mandarin.placeholder.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,17 +21,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.placeholder.ui.view_model.PlaceholderViewModel
 import com.mandarinkafe.mandarin.util.applyTypography
 
 @Composable
 fun PlaceholderScreen(
     errorMessage: String,
     onEvent: (Event) -> Unit,
+    viewModel: PlaceholderViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier

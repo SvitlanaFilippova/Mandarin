@@ -20,6 +20,7 @@ sealed interface MenuContract {
         data object ScrollToTop : Event
         data class ScrollToCategory(val newIndex: Int) : Event
         data class ScrollToSubCategory(val newIndex: Int) : Event
+        data object ResetSelectedMenuItemIndex : Event
         data class BannerClick(val targetName: String) : Event
 
         // Детали блюда
@@ -32,7 +33,6 @@ sealed interface MenuContract {
         data object SearchOnOpenSearchClick : Event
         data object OnOpenFavoritesClick : Event
         data object OnLabelsClick : Event
-
     }
 
     sealed interface Effect {
