@@ -68,6 +68,10 @@ class MenuViewModel @Inject constructor(
             is Event.OnMealDetailsClick -> sendEffect(
                 OpenMealDetailsBS(meal = event.meal)
             )
+
+            is Event.ResetSelectedMenuItemIndex -> {
+                _state.update { it.copy(selectedMenuItemIndex = DEFAULT_UNSELECTED_INDEX) }
+            }
         }
     }
 
@@ -152,7 +156,8 @@ class MenuViewModel @Inject constructor(
         _state.update {
             it.copy(
                 selectedTabIndex = DEFAULT_UNSELECTED_INDEX,
-                selectedSubTabIndex = DEFAULT_UNSELECTED_INDEX
+                selectedSubTabIndex = DEFAULT_UNSELECTED_INDEX,
+                selectedMenuItemIndex = DEFAULT_UNSELECTED_INDEX
             )
         }
     }
