@@ -8,20 +8,7 @@
   <img src="https://contrib.rocks/image?repo=mandarin-kafe/Mandarin&max=6" />
 </a>
 
-## Используемые инструменты и технологии ✨
 
-| Технологии        | 
-|-------------------|
-| MVI               | 
-| StateFlow         | 
-| Jetpack Compose   | 
-| Coroutines        | 
-| Retrofit2         | 
-| Hilt              | 
-| Material3         | 
-| Coil              | 
-| Gson              | 
-| SharedPreferences |
 
 ## Возможности приложения ✨
 
@@ -38,4 +25,20 @@
 | Онлайн-оплата заказа               | 🛠️ В процессе |
 | Авторизация в системе лояльности   | 🛠️ В процессе |
 | Просмотр истории заказов           | 🛠️ В процессе |
+
+
+## Используемые инструменты и технологии 📚
+
+| Технологии            | 
+|-----------------------|
+| MVI                   | 
+| StateFlow             | 
+| Jetpack Compose       | 
+| Coroutines            | 
+| Retrofit2             | 
+| Hilt                  | 
+| Material3             | 
+| Coil                  | 
+| Gson                  | 
+| SharedPreferences     |
 
