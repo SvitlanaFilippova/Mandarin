@@ -18,6 +18,7 @@
 | Coroutines        | 
 | Retrofit2         | 
 | Hilt              | 
+| Material3         | 
 | Coil              | 
 | Gson              | 
 | SharedPreferences |
