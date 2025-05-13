@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.placeholder.ui.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
+import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.placeholder.ui.view_model.PlaceholderContract.Effect
 import com.mandarinkafe.mandarin.placeholder.ui.view_model.PlaceholderContract.Event
 import com.mandarinkafe.mandarin.placeholder.ui.view_model.PlaceholderContract.State

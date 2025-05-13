@@ -9,18 +9,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import com.mandarinkafe.mandarin.cart.ui.screen.CartScreen
-import com.mandarinkafe.mandarin.cart.ui.view_model.CartViewModel
-import com.mandarinkafe.mandarin.delivery.screen.DeliveryScreen
-import com.mandarinkafe.mandarin.favorites.screen.FavoritesScreen
-import com.mandarinkafe.mandarin.menu.ui.screen.MenuScreen
+import com.mandarinkafe.mandarin.features.cart.ui.screen.CartScreen
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
+import com.mandarinkafe.mandarin.features.delivery.screen.DeliveryScreen
+import com.mandarinkafe.mandarin.features.favorites.screen.FavoritesScreen
+import com.mandarinkafe.mandarin.features.menu.ui.screen.MenuScreen
+import com.mandarinkafe.mandarin.features.search.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.navigation.NavRoutes.APP_SCOPE_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.FAVORITES_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.search.ui.screen.SearchScreen
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
