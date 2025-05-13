@@ -17,7 +17,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.MealDetailsContent
-import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.Event
+import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsViewModel
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 import kotlinx.coroutines.launch
@@ -32,7 +32,7 @@ fun MealDetailsBottomSheet(
     onFavoriteChanged: (String, Boolean) -> Unit = { _, _ -> }
 ) {
     LaunchedEffect(Unit) {
-        viewModel.onEvent(Event.SetItem(initItem))
+        viewModel.onEvent(MealDetailsEvent.SetItem(initItem))
     }
     val state by viewModel.state.collectAsState()
     val initMeal = initItem.meal

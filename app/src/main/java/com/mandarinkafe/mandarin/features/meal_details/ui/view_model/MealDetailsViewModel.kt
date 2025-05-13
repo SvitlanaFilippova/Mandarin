@@ -1,19 +1,18 @@
 package com.mandarinkafe.mandarin.features.meal_details.ui.view_model
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInteractor
+import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect
+import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
+import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsState
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,34 +20,32 @@ import javax.inject.Inject
 class MealDetailsViewModel @Inject constructor(
     private val menuInteractor: MenuInteractor,
     private val favoritesInteractor: FavoritesInteractor
-) : ViewModel() {
-    private val _state =
-        MutableStateFlow(MealDetailsContract.State())
-    val state: StateFlow<MealDetailsContract.State> = _state.asStateFlow()
+) : BaseViewModel<MealDetailsEvent, MealDetailsState, MealDetailsEffect>() {
+    override fun setInitialState() = MealDetailsState()
 
     init {
         getAddons()
     }
 
-    fun onEvent(event: MealDetailsContract.Event) {
+    override fun onEvent(event: MealDetailsEvent) {
         when (event) {
-            is MealDetailsContract.Event.ToggleFavorite -> toggleFavorite()
-            is MealDetailsContract.Event.ChangeAdds -> changeAdds(
+            is MealDetailsEvent.ToggleFavorite -> toggleFavorite()
+            is MealDetailsEvent.ChangeAdds -> changeAdds(
                 add = event.add,
                 isAdded = event.isChecked
             )
 
-            is MealDetailsContract.Event.ChooseSingleModifier -> chooseSingleModifiers(
+            is MealDetailsEvent.ChooseSingleModifier -> chooseSingleModifiers(
                 modifierGroup = event.modifierGroup
             )
 
-            is MealDetailsContract.Event.ChooseMultiModifiers -> chooseMultiModifiers(
+            is MealDetailsEvent.ChooseMultiModifiers -> chooseMultiModifiers(
                 group = event.modifierGroup,
                 item = event.modifierItem, isChecked = event.isChecked
             )
 
-            is MealDetailsContract.Event.SetItem -> setMeal(item = event.item)
-            is MealDetailsContract.Event.ChooseCategory -> chooseCategory(newIndex = event.newIndex)
+            is MealDetailsEvent.SetItem -> setMeal(item = event.item)
+            is MealDetailsEvent.ChooseCategory -> chooseCategory(newIndex = event.newIndex)
 
         }
     }
@@ -58,8 +55,8 @@ class MealDetailsViewModel @Inject constructor(
         item: ModifierItem,
         isChecked: Boolean
     ) {
-        _state.update { currentState ->
-            val currentItem = currentState.customizedMeal ?: return
+        setState {
+            val currentItem = customizedMeal ?: return@setState this
             val modifiersList = currentItem.modifiers.toMutableList()
             val groupIndex = modifiersList.indexOfFirst { it.id == group.id }
 
@@ -82,15 +79,15 @@ class MealDetailsViewModel @Inject constructor(
                 modifiersList.add(group.copy(items = listOf(item)))
             }
 
-            currentState.copy(
+            copy(
                 customizedMeal = currentItem.copy(modifiers = modifiersList)
             )
         }
     }
 
     private fun chooseSingleModifiers(modifierGroup: ModifierGroup) {
-        _state.update { currentState ->
-            val currentItem = currentState.customizedMeal ?: return
+        setState {
+            val currentItem = customizedMeal ?: return@setState this
             val modifiersList = currentItem.modifiers.toMutableList()
             val groupIndex = modifiersList.indexOfFirst { it.id == modifierGroup.id }
 
@@ -101,7 +98,7 @@ class MealDetailsViewModel @Inject constructor(
                 modifiersList.add(modifierGroup)
             }
 
-            currentState.copy(
+            copy(
                 customizedMeal = currentItem.copy(modifiers = modifiersList)
             )
 
@@ -110,8 +107,8 @@ class MealDetailsViewModel @Inject constructor(
 
     private fun chooseCategory(newIndex: Int) {
         if (newIndex >= 0) {
-            _state.update {
-                it.copy(
+            setState {
+                copy(
                     selectedTabIndex = newIndex,
                 )
             }
@@ -130,30 +127,30 @@ class MealDetailsViewModel @Inject constructor(
                 true
             }
 
-            _state.update { currentState ->
-                val customizedMeal = currentState.customizedMeal
+            setState {
+                val customizedMeal = customizedMeal
                 if (customizedMeal != null) {
-                    currentState.copy(
+                    copy(
                         customizedMeal = customizedMeal.copy(
                             meal = customizedMeal.meal.copy(isFavorite = isNowFavorite)
                         )
                     )
                 } else {
-                    currentState
+                    this
                 }
             }
         }
     }
 
     private fun setMeal(item: CartItem) {
-        _state.update {
-            it.copy(customizedMeal = item)
+        setState {
+            copy(customizedMeal = item)
         }
     }
 
     private fun changeAdds(add: MealAdditional, isAdded: Boolean) {
-        _state.update { currentState ->
-            val currentMeal = currentState.customizedMeal ?: return
+        setState {
+            val currentMeal = customizedMeal ?: return@setState this
             val currentAdds = currentMeal.adds.toMutableList()
 
             if (isAdded) {
@@ -162,7 +159,7 @@ class MealDetailsViewModel @Inject constructor(
                 currentAdds.remove(add)
             }
 
-            currentState.copy(
+            copy(
                 customizedMeal = currentMeal.copy(adds = currentAdds)
             )
 
@@ -170,19 +167,19 @@ class MealDetailsViewModel @Inject constructor(
     }
 
     private fun getAddons() {
-        _state.update { it.copy(isLoading = true) }
+        setState { copy(isLoading = true) }
 
         if (!state.value.pizzaAds.isEmpty()) {
-            _state.update { it.copy(isLoading = false) }
+            setState { copy(isLoading = false) }
         } else {
             viewModelScope.launch {
                 menuInteractor.getAddons().collect { (adds, errorMessage) ->
                     if (!adds.isNullOrEmpty()) {
-                        _state.update { it.copy(isLoading = false, pizzaAds = adds) }
+                        setState { copy(isLoading = false, pizzaAds = adds) }
                     } else {
                         // Обработка ошибки
-                        _state.update {
-                            it.copy(
+                        setState {
+                            copy(
                                 isLoading = false,
                                 errorMessage = errorMessage
                             )

@@ -28,12 +28,12 @@ import com.mandarinkafe.mandarin.features.meal_details.ui.components.modifiers.M
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.AddsCategoryTabsRow
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.AddsItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract
-import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.Event
+import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 
 @Composable
 fun MealDetailsContent(
-    state: MealDetailsContract.State,
-    onEvent: (Event) -> Unit,
+    state: MealDetailsContract.MealDetailsState,
+    onEvent: (MealDetailsEvent) -> Unit,
     onAddToCart: (CartItem) -> Unit,
     onClose: () -> Unit,
     initItem: CartItem
@@ -53,7 +53,7 @@ fun MealDetailsContent(
     ) {
         BottomSheetHeader(
             meal = meal,
-            onToggleFavorite = { onEvent(Event.ToggleFavorite) },
+            onToggleFavorite = { onEvent(MealDetailsEvent.ToggleFavorite) },
             onClose = onClose
         )
 
@@ -92,7 +92,7 @@ fun MealDetailsContent(
                                     isAdded = item == selectedItem,
                                     onItemSelected = { item ->
                                         onEvent(
-                                            Event.ChooseSingleModifier(
+                                            MealDetailsEvent.ChooseSingleModifier(
                                                 modifierGroup.copy(
                                                     items = listOf(
                                                         item
@@ -110,7 +110,7 @@ fun MealDetailsContent(
                                     item = item,
                                     onCheckedChange = { isChecked ->
                                         onEvent(
-                                            Event.ChooseMultiModifiers(
+                                            MealDetailsEvent.ChooseMultiModifiers(
                                                 modifierGroup = modifierGroup,
                                                 modifierItem = item,
                                                 isChecked = isChecked
@@ -144,7 +144,7 @@ fun MealDetailsContent(
                         AddsCategoryTabsRow(
                             categories = state.pizzaAds.map { it.name },
                             selectedTabIndex = selectedTabIndex,
-                            onTabSelected = { index -> onEvent(Event.ChooseCategory(index)) }
+                            onTabSelected = { index -> onEvent(MealDetailsEvent.ChooseCategory(index)) }
                         )
                     }
 
@@ -156,7 +156,7 @@ fun MealDetailsContent(
                             add = item,
                             onCheckedChange = { isChecked, add ->
                                 onEvent(
-                                    Event.ChangeAdds(
+                                    MealDetailsEvent.ChangeAdds(
                                         add = add,
                                         isChecked = isChecked
                                     )
