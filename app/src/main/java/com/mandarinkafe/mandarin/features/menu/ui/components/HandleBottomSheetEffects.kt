@@ -5,25 +5,25 @@ import com.mandarinkafe.mandarin.features.cart.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.util.ui.HandleBottomSheetEffect
 import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun HandleBottomSheetEffects(
-    effectFlow: Flow<MenuContract.Effect>,
-    onMenuEvent: (Event) -> Unit,
+    effectFlow: Flow<MenuContract.MenuEffect>,
+    onMenuEvent: (MenuEvent) -> Unit,
     onAddToCart: (CartItem) -> Unit,
 ) {
-    HandleBottomSheetEffect<MenuContract.Effect.OpenMealDetailsBS>(
+    HandleBottomSheetEffect<MenuContract.MenuEffect.OpenMealDetailsBS>(
         effectFlow = effectFlow,
-        cast = { it as? MenuContract.Effect.OpenMealDetailsBS }
+        cast = { it as? MenuContract.MenuEffect.OpenMealDetailsBS }
     ) { effect, onDismiss ->
         MealDetailsBottomSheet(
             initItem = effect.meal.toCartItem(),
             onDismiss = onDismiss,
             onFavoriteChanged = { id, isFavorite ->
-                onMenuEvent(Event.UpdateMealFavorite(id, isFavorite))
+                onMenuEvent(MenuEvent.UpdateMealFavorite(id, isFavorite))
             },
             onAddToCart = onAddToCart
         )

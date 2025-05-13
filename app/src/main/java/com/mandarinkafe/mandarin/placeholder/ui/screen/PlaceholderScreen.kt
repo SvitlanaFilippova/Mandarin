@@ -26,14 +26,14 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.placeholder.ui.view_model.PlaceholderViewModel
 import com.mandarinkafe.mandarin.util.applyTypography
 
 @Composable
 fun PlaceholderScreen(
     errorMessage: String,
-    onEvent: (Event) -> Unit,
+    onEvent: (MenuEvent) -> Unit,
     viewModel: PlaceholderViewModel = hiltViewModel()
 ) {
     Column(
@@ -80,7 +80,7 @@ fun PlaceholderScreen(
 
         Box(modifier = Modifier.width(buttonWidth)) {
             Button(
-                onClick = { onEvent(Event.ForceRefreshMenu) },
+                onClick = { onEvent(MenuEvent.ForceRefreshMenu) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Colors.White,
@@ -95,7 +95,7 @@ fun PlaceholderScreen(
 
         Box(modifier = Modifier.width(buttonWidth)) {
             Button(
-                onClick = { onEvent(Event.OnPhoneClick) },
+                onClick = { onEvent(MenuEvent.OnPhoneClick) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Colors.White,

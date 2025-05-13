@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.features.menu.domain.models.MenuItem
+import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_COLLAPSED_EXPANDABLE_TEXT
 import com.mandarinkafe.mandarin.util.ui.components.ExpandableText
 
 @Composable
@@ -36,7 +37,7 @@ fun MenuSubHeaderItem(item: MenuItem.SubHeaderItem, hasHeaderBefore: Boolean) {
                 style = Typography.MealSmallTextStyle,
                 isExpanded = isDescriptionExpanded,
                 onClick = { isDescriptionExpanded = !isDescriptionExpanded },
-                maxLinesCollapsed = 6
+                maxLinesCollapsed = MAX_LINES_FOR_COLLAPSED_EXPANDABLE_TEXT
             )
         }
     }

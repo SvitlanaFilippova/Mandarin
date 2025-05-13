@@ -11,7 +11,7 @@ import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.features.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.MenuMealItem
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -19,8 +19,8 @@ fun MenuList(
     menuItems: List<MenuItem>,
     listState: LazyListState,
     modifier: Modifier,
-    effectFlow: Flow<MenuContract.Effect>,
-    onEvent: (Event) -> Unit,
+    effectFlow: Flow<MenuContract.MenuEffect>,
+    onEvent: (MenuEvent) -> Unit,
     onCartEvent: (CartContract.CartEvent) -> Unit,
     cartState: CartContract.CartState
 ) {

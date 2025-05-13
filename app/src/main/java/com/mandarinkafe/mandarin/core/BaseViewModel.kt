@@ -19,6 +19,7 @@ abstract class BaseViewModel<Event : BaseEvent,
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<State> = _state.asStateFlow()
 
+    // для одноразовых событий. Например, показа снекбар
     private val _effect = MutableSharedFlow<Effect>()
     val effect: SharedFlow<Effect> = _effect.asSharedFlow()
 

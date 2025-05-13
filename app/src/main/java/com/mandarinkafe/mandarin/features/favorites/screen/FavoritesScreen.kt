@@ -13,7 +13,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.features.menu.ui.components.MenuTopBar
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuViewModel
 
 @Composable
@@ -30,7 +30,7 @@ fun FavoritesScreen(
             .background(Colors.AppBlack)
     ) {
         MenuTopBar(
-            onPhoneClick = { menuViewModel.onEvent(Event.OnPhoneClick) },
+            onPhoneClick = { menuViewModel.onEvent(MenuEvent.OnPhoneClick) },
             onLogoCLick = { return@MenuTopBar }
         )
         MenuList(

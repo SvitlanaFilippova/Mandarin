@@ -27,14 +27,14 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.util.ui.components.LabelChip
 
 @Composable
 fun MenuMealItem(
     meal: Meal,
-    onEvent: (Event) -> Unit,
+    onEvent: (MenuEvent) -> Unit,
     onCartEvent: (CartContract.CartEvent) -> Unit,
     cartState: CartContract.CartState
 ) {
@@ -42,7 +42,7 @@ fun MenuMealItem(
         verticalAlignment = Alignment.Top,
         modifier = Modifier
             .padding(Dimens.MarginSmall8)
-            .clickable(onClick = { onEvent(Event.OnMealDetailsClick(meal)) })
+            .clickable(onClick = { onEvent(MenuEvent.OnMealDetailsClick(meal)) })
     ) {
         Box(
             modifier = Modifier
@@ -114,8 +114,8 @@ fun MenuMealItem(
                     meal = meal,
                     onCartEvent = onCartEvent,
                     cartState = cartState,
-                    onToggleFavorite = { meal -> onEvent(Event.ToggleFavorite(meal)) },
-                    onMealDetailsClick = { meal -> onEvent(Event.OnMealDetailsClick(meal)) },
+                    onToggleFavorite = { meal -> onEvent(MenuEvent.ToggleFavorite(meal)) },
+                    onMealDetailsClick = { meal -> onEvent(MenuEvent.OnMealDetailsClick(meal)) },
                 )
             }
         }

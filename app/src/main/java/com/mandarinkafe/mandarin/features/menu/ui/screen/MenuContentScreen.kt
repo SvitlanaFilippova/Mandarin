@@ -29,7 +29,7 @@ import com.mandarinkafe.mandarin.features.menu.ui.components.SearchAndFilterBar
 import com.mandarinkafe.mandarin.features.menu.ui.components.category_tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.features.menu.ui.components.category_tabs.SubCategoryTabsRow
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.Event
+import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.util.ui.ScrollPosition
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -37,11 +37,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun MenuContentScreen(
     listState: LazyListState,
-    onEvent: (Event) -> Unit,
+    onEvent: (MenuEvent) -> Unit,
     onCartEvent: (CartContract.CartEvent) -> Unit,
     cartState: CartContract.CartState,
-    menuSate: MenuContract.State,
-    effectFlow: Flow<MenuContract.Effect>,
+    menuSate: MenuContract.MenuState,
+    effectFlow: Flow<MenuContract.MenuEffect>,
 ) {
 
     val menuItems = menuSate.menuItems
@@ -70,7 +70,7 @@ fun MenuContentScreen(
     val handleBannerClick = { targetName: String ->
         coroutineScope.launch {
             onEvent(
-                Event.BannerClick(targetName)
+                MenuEvent.BannerClick(targetName)
             )
         }
     }
@@ -78,7 +78,7 @@ fun MenuContentScreen(
     val handleLogoClick = {
         coroutineScope.launch {
             listState.scrollToItem(index = 0)
-            onEvent(Event.ScrollToTop)
+            onEvent(MenuEvent.ScrollToTop)
         }
     }
 
@@ -86,7 +86,7 @@ fun MenuContentScreen(
     LaunchedEffect(selectedMenuItemIndex) {
         if (selectedMenuItemIndex >= 0) {
             listState.scrollToItem(selectedMenuItemIndex, scrollOffset = 1)
-            onEvent(Event.ResetSelectedMenuItemIndex)
+            onEvent(MenuEvent.ResetSelectedMenuItemIndex)
         }
     }
 
@@ -122,7 +122,7 @@ fun MenuContentScreen(
                         parentCategory?.let { category ->
                             val newIndex = categoriesNames.indexOf(category.categoryName)
                             if (newIndex != selectedTabIndex) {
-                                onEvent(Event.ScrollToCategory(newIndex))
+                                onEvent(MenuEvent.ScrollToCategory(newIndex))
                             }
                             // Ищем подкатегорию
                             val parentSubCategory = menuItems
@@ -134,7 +134,7 @@ fun MenuContentScreen(
                                     parentCategory.subCategoriesNames?.indexOf(subCategory.categoryName)
                                         ?: -1
                                 if (newSubIndex != selectedSubTabIndex) {
-                                    onEvent(Event.ScrollToSubCategory(newSubIndex))
+                                    onEvent(MenuEvent.ScrollToSubCategory(newSubIndex))
                                 }
                             }
                         }
@@ -156,7 +156,7 @@ fun MenuContentScreen(
             exit = fadeOut() + shrinkVertically()
         ) {
             MenuTopBar(
-                onPhoneClick = { onEvent(Event.OnPhoneClick) },
+                onPhoneClick = { onEvent(MenuEvent.OnPhoneClick) },
                 onLogoCLick = { handleLogoClick() }
             )
         }
@@ -167,9 +167,9 @@ fun MenuContentScreen(
             exit = fadeOut() + shrinkVertically()
         ) {
             SearchAndFilterBar(
-                onSearchClick = { onEvent(Event.SearchOnOpenSearchClick) },
-                onFilterClick = { onEvent(Event.OnLabelsClick) },
-                onFavoriteClick = { onEvent(Event.OnOpenFavoritesClick) }
+                onSearchClick = { onEvent(MenuEvent.SearchOnOpenSearchClick) },
+                onFilterClick = { onEvent(MenuEvent.OnLabelsClick) },
+                onFavoriteClick = { onEvent(MenuEvent.OnOpenFavoritesClick) }
             )
         }
         // Баннеры только если пользователь в самом верху
@@ -185,7 +185,7 @@ fun MenuContentScreen(
             categories = categories,
             selectedTabIndex = selectedTabIndex,
             onTabSelected = { index ->
-                onEvent(Event.ScrollToCategory(index))
+                onEvent(MenuEvent.ScrollToCategory(index))
                 coroutineScope.launch {
                     val targetIndex = menuItems.indexOfFirst {
                         it is MenuItem.HeaderItem && it.categoryName == categories[index].categoryName
@@ -212,7 +212,7 @@ fun MenuContentScreen(
                         categories = currentSubCategories,
                         selectedTabIndex = selectedSubTabIndex,
                         onTabSelected = { index ->
-                            onEvent(Event.ScrollToSubCategory(index))
+                            onEvent(MenuEvent.ScrollToSubCategory(index))
                             coroutineScope.launch {
                                 val targetIndex = menuItems.indexOfFirst {
                                     it is MenuItem.SubHeaderItem && it.categoryName == currentSubCategories[index]

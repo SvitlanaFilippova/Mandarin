@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.menu.ui.view_model
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toMealItem
@@ -9,25 +9,18 @@ import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInte
 import com.mandarinkafe.mandarin.features.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.domain.models.getName
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.Effect
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.Effect.CallPhone
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.Effect.OpenFavorites
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.Effect.OpenMealDetailsBS
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.Effect.OpenSearch
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.Event
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.State
+import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect
+import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.CallPhone
+import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.OpenFavorites
+import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.OpenMealDetailsBS
+import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.OpenSearch
+import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
+import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuState
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.Constants.DELAY_BEFORE_NEXT_ATTEMPT
 import com.mandarinkafe.mandarin.util.Constants.MAX_ATTEMPTS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,52 +28,42 @@ import javax.inject.Inject
 class MenuViewModel @Inject constructor(
     private val menuInteractor: MenuInteractor,
     private val favoritesInteractor: FavoritesInteractor
-) : ViewModel() {
-
-    private val _state = MutableStateFlow(State()) // для хранения состояния ЮИ
-    val state: StateFlow<State> = _state.asStateFlow()
-
-    private val _effect =
-        MutableSharedFlow<Effect>() // для одноразовых событий. Например, показа снекбар
-    val effect: SharedFlow<Effect> = _effect.asSharedFlow()
+) : BaseViewModel<MenuEvent, MenuState, MenuEffect>() {
+    override fun setInitialState() = MenuState()
 
     init {
-        onEvent(Event.LoadMenu)
+        onEvent(MenuEvent.LoadMenu)
     }
 
-    fun onEvent(event: Event) {
+    override fun onEvent(event: MenuEvent) {
         when (event) {
-            is Event.LoadMenu -> loadMenu()
-            is Event.ForceRefreshMenu -> forceRefreshMenu()
-            is Event.OnPhoneClick -> sendEffect(CallPhone)
-            is Event.ToggleFavorite -> toggleFavorite(event.meal)
-            is Event.ScrollToCategory -> scrollToCategory(event.newIndex)
-            is Event.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
-            is Event.ScrollToTop -> scrollToTop()
-            is Event.BannerClick -> findMenuItemIndexByName(event.targetName)
-            is Event.ResetSelectedMenuItemIndex -> resetSelectedMenuItemIndex()
-            is Event.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
-            is Event.OnOpenFavoritesClick -> sendEffect(OpenFavorites)
-            is Event.OnLabelsClick -> sendEffect(OpenSearch(focusSearch = false))
-            is Event.UpdateMealFavorite -> updateMealFavorite(
+            is MenuEvent.LoadMenu -> loadMenu()
+            is MenuEvent.ForceRefreshMenu -> forceRefreshMenu()
+            is MenuEvent.OnPhoneClick -> sendEffect(CallPhone)
+            is MenuEvent.ToggleFavorite -> toggleFavorite(event.meal)
+            is MenuEvent.ScrollToCategory -> scrollToCategory(event.newIndex)
+            is MenuEvent.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
+            is MenuEvent.ScrollToTop -> scrollToTop()
+            is MenuEvent.BannerClick -> findMenuItemIndexByName(event.targetName)
+            is MenuEvent.ResetSelectedMenuItemIndex -> resetSelectedMenuItemIndex()
+            is MenuEvent.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
+            is MenuEvent.OnOpenFavoritesClick -> sendEffect(OpenFavorites)
+            is MenuEvent.OnLabelsClick -> sendEffect(OpenSearch(focusSearch = false))
+            is MenuEvent.UpdateMealFavorite -> updateMealFavorite(
                 id = event.id,
                 isFavorite = event.isFavorite
             )
 
-            is Event.OnMealDetailsClick -> sendEffect(
+            is MenuEvent.OnMealDetailsClick -> sendEffect(
                 OpenMealDetailsBS(meal = event.meal)
             )
 
         }
     }
 
-    private fun sendEffect(effect: Effect) {
-        viewModelScope.launch { _effect.emit(effect) }
-    }
-
     // Методы для загрузки меню
     private fun loadMenu() {
-        _state.update { it.copy(isLoading = true) }
+        setState { copy(isLoading = true) }
         viewModelScope.launch {
             var attempts = 0
             var success = false
@@ -96,14 +79,14 @@ class MenuViewModel @Inject constructor(
                         } else {
                             // Обработка успешной загрузки данных
                             if (!menu.isNullOrEmpty()) {
-                                _state.update {
-                                    it.copy(isLoading = false, menuItems = menu)
+                                setState {
+                                    copy(isLoading = false, menuItems = menu)
                                 }
                                 success = true
                             } else {
                                 // Обработка ошибки
-                                _state.update {
-                                    it.copy(
+                                setState {
+                                    copy(
                                         isLoading = false,
                                         errorMessage = errorMessage
                                     )
@@ -115,8 +98,8 @@ class MenuViewModel @Inject constructor(
             }
             // Если после всех попыток данных нет, устанавливаем ошибку
             if (!success) {
-                _state.update {
-                    it.copy(
+                setState {
+                    copy(
                         isLoading = false,
                         errorMessage = "Не удалось загрузить меню. Попробуйте позже."
                     )
@@ -126,7 +109,7 @@ class MenuViewModel @Inject constructor(
     }
 
     private fun forceRefreshMenu() {
-        _state.update { it.copy(isLoading = true) }
+        setState { copy(isLoading = true) }
         viewModelScope.launch {
             menuInteractor.forceRefresh()
             loadMenu()
@@ -136,8 +119,8 @@ class MenuViewModel @Inject constructor(
     // Методы управлением скроллом
     private fun scrollToCategory(newIndex: Int) {
         if (newIndex >= 0) {
-            _state.update {
-                it.copy(
+            setState {
+                copy(
                     selectedTabIndex = newIndex,
                     selectedSubTabIndex = DEFAULT_UNSELECTED_INDEX
                 )
@@ -147,13 +130,13 @@ class MenuViewModel @Inject constructor(
 
     private fun scrollToSubCategory(newIndex: Int) {
         if (newIndex >= 0) {
-            _state.update { it.copy(selectedSubTabIndex = newIndex) }
+            setState { copy(selectedSubTabIndex = newIndex) }
         }
     }
 
     private fun scrollToTop() {
-        _state.update {
-            it.copy(
+        setState {
+            copy(
                 selectedTabIndex = DEFAULT_UNSELECTED_INDEX,
                 selectedSubTabIndex = DEFAULT_UNSELECTED_INDEX,
                 selectedMenuItemIndex = DEFAULT_UNSELECTED_INDEX
@@ -178,12 +161,12 @@ class MenuViewModel @Inject constructor(
                     .takeIf { it >= 0 }
                 ?: 0
 
-            _state.update { it.copy(selectedMenuItemIndex = targetIndex) }
+            setState { copy(selectedMenuItemIndex = targetIndex) }
         }
     }
 
     private fun resetSelectedMenuItemIndex() {
-        _state.update { it.copy(selectedMenuItemIndex = DEFAULT_UNSELECTED_INDEX) }
+        setState { copy(selectedMenuItemIndex = DEFAULT_UNSELECTED_INDEX) }
 
     }
 
@@ -198,10 +181,10 @@ class MenuViewModel @Inject constructor(
                 true
             }
 
-            _state.update { state ->
+            setState {
                 val updatedMenuItems =
-                    updateMealItemInList(state.menuItems, meal.id, isNowFavorite)
-                state.copy(
+                    updateMealItemInList(menuItems, meal.id, isNowFavorite)
+                copy(
                     menuItems = updatedMenuItems,
                 )
             }
@@ -210,13 +193,13 @@ class MenuViewModel @Inject constructor(
 
     // Если состояние избранного менялось в другом месте (например,в BottomSheet)
     private fun updateMealFavorite(id: String, isFavorite: Boolean) {
-        _state.update { currentState ->
-            val updatedMenuItems = currentState.menuItems.map { item ->
+        setState {
+            val updatedMenuItems = menuItems.map { item ->
                 if (item is MenuItem.MealItem && item.meal.id == id) {
                     item.copy(meal = item.meal.copy(isFavorite = isFavorite))
                 } else item
             }
-            currentState.copy(
+            copy(
                 menuItems = updatedMenuItems,
             )
         }

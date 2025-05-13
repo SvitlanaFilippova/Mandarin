@@ -14,33 +14,33 @@ import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun HandleNavEffects(
-    effectFlow: Flow<MenuContract.Effect>,
+    effectFlow: Flow<MenuContract.MenuEffect>,
     navController: NavHostController,
     context: Context
 ) {
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
             when (effect) {
-                is MenuContract.Effect.ShowSnackbar -> {
+                is MenuContract.MenuEffect.ShowSnackbar -> {
                     // Пока оставляем пустым — сюда можно добавить вызов Snackbar через ScaffoldState
                 }
 
-                is MenuContract.Effect.OpenSearch -> {
+                is MenuContract.MenuEffect.OpenSearch -> {
                     navController.navigateToSearchScreen(effect.focusSearch)
                 }
 
-                is MenuContract.Effect.OpenFavorites -> {
+                is MenuContract.MenuEffect.OpenFavorites -> {
                     navController.navigateToFavoritesScreen()
                 }
 
-                is MenuContract.Effect.CallPhone -> {
+                is MenuContract.MenuEffect.CallPhone -> {
                     val intent = Intent(Intent.ACTION_DIAL).apply {
                         data = PHONE_NUMBER.toUri()
                     }
                     context.startActivity(intent)
                 }
 
-                is MenuContract.Effect.OpenMealDetailsBS -> {
+                is MenuContract.MenuEffect.OpenMealDetailsBS -> {
                     // Игнорируем здесь, обработаем в другом месте
                 }
             }
