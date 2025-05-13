@@ -73,9 +73,7 @@ fun MenuContentScreen(
     }
 
     val showBackToTopFAB by remember {
-        derivedStateOf {
-            !isAtTop && isScrollingUp.value
-        }
+        derivedStateOf { !isAtTop }
     }
 
     val handleBannerClick = { targetName: String ->
