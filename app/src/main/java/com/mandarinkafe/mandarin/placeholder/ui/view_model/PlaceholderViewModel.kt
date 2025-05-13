@@ -1,19 +1,12 @@
 package com.mandarinkafe.mandarin.placeholder.ui.view_model
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.menu.domain.usecase.MenuInteractor
-import com.mandarinkafe.mandarin.placeholder.ui.view_model.PlaceholderContract.Effect
-import com.mandarinkafe.mandarin.placeholder.ui.view_model.PlaceholderContract.Event
-import com.mandarinkafe.mandarin.placeholder.ui.view_model.PlaceholderContract.State
+import com.mandarinkafe.mandarin.core.BaseViewModel
+import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
+import com.mandarinkafe.mandarin.placeholder.ui.view_model.PlaceholderContract.PlaceholderEffect
+import com.mandarinkafe.mandarin.placeholder.ui.view_model.PlaceholderContract.PlaceholderEvent
+import com.mandarinkafe.mandarin.placeholder.ui.view_model.PlaceholderContract.PlaceholderState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,24 +14,18 @@ import javax.inject.Inject
 class PlaceholderViewModel
 @Inject constructor(
     private val menuInteractor: MenuInteractor,
-) : ViewModel() {
-    private val _state = MutableStateFlow(State()) // для хранения состояния ЮИ
-    val state: StateFlow<State> = _state.asStateFlow()
+) : BaseViewModel<PlaceholderEvent, PlaceholderEffect, PlaceholderState>() {
+    override fun setInitialState() = PlaceholderState()
 
-    private val _effect =
-        MutableSharedFlow<Effect>() // для одноразовых событий. Например, показа снекбар
-    val effect: SharedFlow<Effect> = _effect.asSharedFlow()
-
-    fun onEvent(event: Event) {
+    override fun onEvent(event: PlaceholderEvent) {
         when (event) {
-            Event.Retry -> forceRefreshMenu()
-            Event.OnPhoneClick -> TODO()
+            PlaceholderEvent.Retry -> forceRefreshMenu()
+            PlaceholderEvent.OnPhoneClick -> TODO()
         }
-
     }
 
     private fun forceRefreshMenu() {
-        _state.update { it.copy(isLoading = true) }
+        setState { copy(isLoading = true) }
         viewModelScope.launch {
             menuInteractor.forceRefresh()
 
@@ -47,7 +34,4 @@ class PlaceholderViewModel
         }
     }
 
-    private fun sendEffect(effect: Effect) {
-        viewModelScope.launch { _effect.emit(effect) }
-    }
 }
