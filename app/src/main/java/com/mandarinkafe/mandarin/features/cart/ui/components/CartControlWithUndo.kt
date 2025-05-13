@@ -13,20 +13,20 @@ fun CartControlWithUndo(
     item: CartItem,
     mealInPendingDeletion: Boolean,
     deletionProgress: Float,
-    onEvent: (CartContract.Event) -> Unit
+    onEvent: (CartContract.CartEvent) -> Unit
 ) {
 
     if (!mealInPendingDeletion) {
         CartControls(
             numberInCart = numberInCart,
             totalPrice = item.totalPrice() * numberInCart,
-            onIncrease = { onEvent(CartContract.Event.AddToCart(item)) },
-            onDecrease = { onEvent(CartContract.Event.RemoveFromCartWithDelay(item)) },
+            onIncrease = { onEvent(CartContract.CartEvent.AddToCart(item)) },
+            onDecrease = { onEvent(CartContract.CartEvent.RemoveFromCartWithDelay(item)) },
         )
     } else {
         UndoIndicator(
             progress = deletionProgress,
-            onCancel = { onEvent(CartContract.Event.CancelRemove(item)) },
+            onCancel = { onEvent(CartContract.CartEvent.CancelRemove(item)) },
         )
 
     }

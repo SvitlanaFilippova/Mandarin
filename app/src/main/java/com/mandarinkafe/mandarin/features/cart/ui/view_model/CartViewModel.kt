@@ -1,14 +1,14 @@
 package com.mandarinkafe.mandarin.features.cart.ui.view_model
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.cart.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.Effect
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.Effect.OpenMealDetailsBS
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.Event
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect.OpenMealDetailsBS
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
 import com.mandarinkafe.mandarin.util.Constants.CLEAR_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.DELETE_FROM_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.INTERVAL_FOR_UPD_PROGRESSBAR
@@ -18,51 +18,39 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val cartInteractor: CartInteractor
-) : ViewModel() {
-    private val _state =
-        MutableStateFlow(CartContract.State())
-    val state: StateFlow<CartContract.State> = _state.asStateFlow()
-
-    private val _effect =
-        MutableSharedFlow<Effect>()
-    val effect: SharedFlow<Effect> = _effect.asSharedFlow()
+    private val cartInteractor: CartInteractor,
+) : BaseViewModel<CartEvent, CartContract.CartState, CartEffect>() {
+    override fun setInitialState() = CartContract.CartState()
     private val itemTimers = mutableMapOf<CartItem, Job>()
     private var clearCartTimerJob: Job? = null
 
     init {
-        onEvent(Event.GetCart)
+        onEvent(CartEvent.GetCart)
         observeCartChanges()
     }
 
-    fun onEvent(event: Event) {
+    override fun onEvent(event: CartEvent) {
         when (event) {
-            Event.GetCart -> updateCartState()
-            is Event.AddToCart -> addItem(item = event.item)
-            is Event.ReplaceMealInCart -> replaceMealInCart(
+            CartEvent.GetCart -> updateCartState()
+            is CartEvent.AddToCart -> addItem(item = event.item)
+            is CartEvent.ReplaceMealInCart -> replaceMealInCart(
                 newItem = event.newItem,
                 oldItem = event.oldItem
             )
-            is Event.RemoveFromCartWithDelay -> onReduceItem(item = event.item)
-            is Event.RemoveFromCartByMeal -> removeFromCartByMeal(meal = event.meal)
-            is Event.CancelRemove -> cancelRemove(item = event.item)
-            is Event.ClearCart -> clearCartWithDebounce()
-            is Event.CancelClearingCart -> cancelClearingCart()
-            is Event.OpenMealDetails -> sendEffect(
+
+            is CartEvent.RemoveFromCartWithDelay -> onReduceItem(item = event.item)
+            is CartEvent.RemoveFromCartByMeal -> removeFromCartByMeal(meal = event.meal)
+            is CartEvent.CancelRemove -> cancelRemove(item = event.item)
+            is CartEvent.ClearCart -> clearCartWithDebounce()
+            is CartEvent.CancelClearingCart -> cancelClearingCart()
+            is CartEvent.OpenMealDetails -> sendEffect(
                 OpenMealDetailsBS(
                     item = event.item
                 )
@@ -74,20 +62,13 @@ class CartViewModel @Inject constructor(
         cartInteractor.removeFromCart(oldItem)
         cartInteractor.addToCart(newItem)
 
-        _state.update { currentState ->
-            val updatedMap = currentState.cartItems.toMutableMap()
+        setState {
+            val updatedMap = cartItems.toMutableMap()
             val oldQuantity = updatedMap.remove(oldItem) ?: 1
-            // Если старая позиция найдена, переносим её количество в новую
             updatedMap[newItem] = oldQuantity
 
-            currentState.copy(
-                cartItems = updatedMap
-            )
+            copy(cartItems = updatedMap)
         }
-    }
-
-    private fun sendEffect(effect: Effect) {
-        viewModelScope.launch { _effect.emit(effect) }
     }
 
     private val removeDebounce = debounce<CartItem>(
@@ -98,21 +79,22 @@ class CartViewModel @Inject constructor(
         removeItem(item)
     }
 
-    private fun clearCartWithDebounce() {
-        _state.update { it.copy(isPendingDeletion = true) }
+    fun clearCartWithDebounce() {
+        setState { copy(isPendingDeletion = true) }
         startProgressTimer(duration = CLEAR_CART_DEBOUNCE_DELAY)
         clearCartDebounce.invoke(Unit)
     }
 
     private fun addItem(item: CartItem) {
         cartInteractor.addToCart(item)
-        _state.update { currentState ->
-            val cartItems = currentState.cartItems
+
+        setState {
+            val cartItems = cartItems
             val currentQuantity = cartItems[item] ?: 0
             val newCartItems = cartItems.toMutableMap().apply {
                 put(item, currentQuantity + 1)
             }
-            currentState.copy(
+            copy(
                 cartItems = newCartItems
             )
         }
@@ -120,9 +102,9 @@ class CartViewModel @Inject constructor(
 
     // Обработка кнопки "-". Если в корзине была 1 шт - запуск отложенного удаления
     private fun onReduceItem(item: CartItem) {
-        _state.update { currentState ->
-            val pendingDeletionItems = currentState.pendingDeletionMeals.toMutableList()
-            val cartItems = currentState.cartItems
+        setState {
+            val pendingDeletionItems = pendingDeletionMeals.toMutableList()
+            val cartItems = cartItems
             val currentQuantity = cartItems[item] ?: 0
             val updatedCartList = cartItems.toMutableMap().apply {
                 // если в корзине больше одной штуки item
@@ -136,7 +118,7 @@ class CartViewModel @Inject constructor(
                 }
             }
 
-            currentState.copy(
+            copy(
                 cartItems = updatedCartList,
                 pendingDeletionMeals = pendingDeletionItems,
             )
@@ -148,28 +130,28 @@ class CartViewModel @Inject constructor(
         removeDebounce.cancel()
         cancelMealDeletionTimer(item)
 
-        _state.update { currentState ->
-            currentState.cartItems
+        setState {
+            cartItems
             val updatedPendingDeletionItems =
-                currentState.pendingDeletionMeals.toMutableList() - item
-            val updatedDeletionProgress = currentState.mealDeletionProgress.toMutableMap()
+                pendingDeletionMeals.toMutableList() - item
+            val updatedDeletionProgress = mealDeletionProgress.toMutableMap()
 
             updatedDeletionProgress.entries.removeIf { it.key == item }
 
-            currentState.copy(
+            copy(
                 pendingDeletionMeals = updatedPendingDeletionItems,
                 mealDeletionProgress = updatedDeletionProgress,
             )
-        }
+        } as CartContract.CartState.() -> CartContract.CartState
     }
 
     // Окончательное удаление из корзины
     private fun removeItem(item: CartItem) {
-        _state.update { currentState ->
-            val pendingDeletionItems = currentState.pendingDeletionMeals.toMutableList()
-            val deletionProgress = currentState.mealDeletionProgress.toMutableMap()
+        setState {
+            val pendingDeletionItems = pendingDeletionMeals.toMutableList()
+            val deletionProgress = mealDeletionProgress.toMutableMap()
 
-            val updatedCartList = currentState.cartItems.toMutableMap().apply {
+            val updatedCartList = cartItems.toMutableMap().apply {
                 remove(item)
             }
 
@@ -177,7 +159,7 @@ class CartViewModel @Inject constructor(
             deletionProgress.entries.removeIf { it.key == item }
             cartInteractor.removeFromCart(item)
 
-            currentState.copy(
+            copy(
                 cartItems = updatedCartList,
                 pendingDeletionMeals = pendingDeletionItems,
                 mealDeletionProgress = deletionProgress,
@@ -187,48 +169,48 @@ class CartViewModel @Inject constructor(
 
     // метод для удаления блюда прямо из меню, без таймера отмены
     private fun removeFromCartByMeal(meal: Meal) {
-        _state.update { currentState ->
-            val pendingDeletionItems = currentState.pendingDeletionMeals.toMutableList()
-            val cartItems = currentState.cartItems
-            val deletionProgress = currentState.mealDeletionProgress.toMutableMap()
+        setState {
+            val pendingDeletionItems = pendingDeletionMeals.toMutableList()
+            val deletionProgress = mealDeletionProgress.toMutableMap()
 
             // Ищем последний добавленный CartItem с таким же meal.id
             val item = cartItems.keys.lastOrNull { it.meal.id == meal.id }
 
             if (item == null) {
                 // Ничего не найдено — возвращаем текущее состояние
-                return@update currentState
+                return@setState this
             }
 
             val currentQuantity = cartItems[item] ?: 0
 
             val updatedCartList = cartItems.toMutableMap().apply {
-                // если в корзине  больше одной штуки item
                 if (currentQuantity > 1) {
                     put(item, currentQuantity - 1)
-
                 } else {
                     remove(item)
                     pendingDeletionItems.remove(item)
                     deletionProgress.entries.removeIf { it.key == item }
                 }
             }
+
             cartInteractor.removeFromCart(item)
-            currentState.copy(
+
+            copy(
                 cartItems = updatedCartList,
                 pendingDeletionMeals = pendingDeletionItems,
+                mealDeletionProgress = deletionProgress
             )
         }
     }
 
     private fun updateCartState() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            setState { copy(isLoading = true) }
 
             val cartItems = cartInteractor.getCart()
 
-            _state.update { currentState ->
-                currentState.copy(
+            setState {
+                copy(
                     isLoading = false,
                     cartItems = cartItems,
                 )
@@ -247,16 +229,16 @@ class CartViewModel @Inject constructor(
     private fun cancelClearingCart() {
         clearCartDebounce.cancel()
         cancelCartClearingTimer()
-        _state.update {
-            it.copy(isPendingDeletion = false, cartClearingProgress = null)
+        setState {
+            copy(isPendingDeletion = false, cartClearingProgress = null)
         }
     }
 
     private fun clear() {
         cartInteractor.clearCart()
         cancelAllMealTimers()
-        _state.update {
-            it.copy(
+        setState {
+            copy(
                 cartItems = emptyMap(),
                 isPendingDeletion = false,
                 cartClearingProgress = null
@@ -278,9 +260,9 @@ class CartViewModel @Inject constructor(
                 repeat(steps) { step ->
                     delay(interval)
                     val progress = step / steps.toFloat()
-                    _state.update { state ->
-                        state.copy(
-                            mealDeletionProgress = state.mealDeletionProgress + (item to progress)
+                    setState {
+                        copy(
+                            mealDeletionProgress = mealDeletionProgress + (item to progress)
                         )
                     }
                 }
@@ -294,14 +276,14 @@ class CartViewModel @Inject constructor(
             // Общий таймер для очистки корзины
             cancelCartClearingTimer()
             clearCartTimerJob = viewModelScope.launch {
-                _state.update { state ->
-                    state.copy(cartClearingProgress = null)
+                setState {
+                    copy(cartClearingProgress = null)
                 }
                 repeat(steps) { step ->
                     delay(interval)
                     val progress = step / steps.toFloat()
-                    _state.update { state ->
-                        state.copy(cartClearingProgress = progress)
+                    setState {
+                        copy(cartClearingProgress = progress)
                     }
                 }
             }
@@ -312,9 +294,9 @@ class CartViewModel @Inject constructor(
         itemTimers[item]?.cancel()
         itemTimers.remove(item)
 
-        _state.update { state ->
-            state.copy(
-                mealDeletionProgress = state.mealDeletionProgress - item
+        setState {
+            copy(
+                mealDeletionProgress = mealDeletionProgress - item
             )
         }
     }
@@ -322,21 +304,23 @@ class CartViewModel @Inject constructor(
     private fun cancelCartClearingTimer() {
         clearCartTimerJob?.cancel()
         clearCartTimerJob = null
-
-        _state.update { state ->
-            state.copy(cartClearingProgress = null)
+        setState {
+            copy(
+                cartClearingProgress = null
+            )
         }
+
     }
 
     private fun cancelAllMealTimers() {
         itemTimers.values.forEach { it.cancel() }
         itemTimers.clear()
-
-        _state.update { state ->
-            state.copy(
+        setState {
+            copy(
                 mealDeletionProgress = emptyMap()
             )
         }
+
     }
 
     @OptIn(FlowPreview::class)
@@ -354,8 +338,8 @@ class CartViewModel @Inject constructor(
     private suspend fun updateRecommends(cartItems: Set<CartItem>) {
         val recommendsList = cartInteractor.getRecommends().map { it.toCartItem() }
 
-        _state.update { state ->
-            state.copy(
+        setState {
+            copy(
                 recommendsList = recommendsList.filter { recommendItem ->
                     !cartItems.any { it.meal.id == recommendItem.meal.id }
                 }

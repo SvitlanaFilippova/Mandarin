@@ -14,8 +14,8 @@ import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract
 fun SearchResultsLazyColumn(
     filteredMenuItems: List<MenuItem>,
     onSearchEvent: (SearchContract.Event) -> Unit,
-    onCartEvent: (CartContract.Event) -> Unit,
-    cartState: CartContract.State,
+    onCartEvent: (CartContract.CartEvent) -> Unit,
+    cartState: CartContract.CartState,
 ) {
     LazyColumn(
         modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),

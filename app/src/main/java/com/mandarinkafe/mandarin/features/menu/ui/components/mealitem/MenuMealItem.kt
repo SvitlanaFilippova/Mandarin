@@ -35,8 +35,8 @@ import com.mandarinkafe.mandarin.util.ui.components.LabelChip
 fun MenuMealItem(
     meal: Meal,
     onEvent: (Event) -> Unit,
-    onCartEvent: (CartContract.Event) -> Unit,
-    cartState: CartContract.State
+    onCartEvent: (CartContract.CartEvent) -> Unit,
+    cartState: CartContract.CartState
 ) {
     Row(
         verticalAlignment = Alignment.Top,

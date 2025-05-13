@@ -33,12 +33,12 @@ import kotlinx.coroutines.flow.Flow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MySearchBar(
-    onCartEvent: (CartContract.Event) -> Unit,
+    onCartEvent: (CartContract.CartEvent) -> Unit,
     onSearchEvent: (SearchContract.Event) -> Unit,
     onSearchDismiss: () -> Unit,
     focusSearchBarInput: Boolean,
     searchState: SearchContract.State,
-    cartState: CartContract.State,
+    cartState: CartContract.CartState,
     effectFlow: Flow<SearchContract.Effect>,
 ) {
 

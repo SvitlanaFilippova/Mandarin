@@ -21,14 +21,14 @@ fun MenuList(
     modifier: Modifier,
     effectFlow: Flow<MenuContract.Effect>,
     onEvent: (Event) -> Unit,
-    onCartEvent: (CartContract.Event) -> Unit,
-    cartState: CartContract.State
+    onCartEvent: (CartContract.CartEvent) -> Unit,
+    cartState: CartContract.CartState
 ) {
     HandleBottomSheetEffects(
         effectFlow = effectFlow,
         onMenuEvent = onEvent,
         onAddToCart = { item ->
-            onCartEvent(CartContract.Event.AddToCart(item))
+            onCartEvent(CartContract.CartEvent.AddToCart(item))
         }
     )
 

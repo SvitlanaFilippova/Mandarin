@@ -38,8 +38,8 @@ import kotlinx.coroutines.launch
 fun MenuContentScreen(
     listState: LazyListState,
     onEvent: (Event) -> Unit,
-    onCartEvent: (CartContract.Event) -> Unit,
-    cartState: CartContract.State,
+    onCartEvent: (CartContract.CartEvent) -> Unit,
+    cartState: CartContract.CartState,
     menuSate: MenuContract.State,
     effectFlow: Flow<MenuContract.Effect>,
 ) {

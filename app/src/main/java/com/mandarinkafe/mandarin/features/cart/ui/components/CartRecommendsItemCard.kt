@@ -30,7 +30,7 @@ import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 @Composable
 fun CartRecommendsItemCard(
     item: CartItem,
-    onEvent: (CartContract.Event) -> Unit
+    onEvent: (CartContract.CartEvent) -> Unit
 ) {
     val meal = item.meal
 
@@ -38,7 +38,7 @@ fun CartRecommendsItemCard(
         modifier = Modifier
             .padding(horizontal = Dimens.MarginSmall8)
             .width(Dimens.RecommendsItemWidth96)
-            .clickable(onClick = { onEvent(CartContract.Event.OpenMealDetails(item)) }),
+            .clickable(onClick = { onEvent(CartContract.CartEvent.OpenMealDetails(item)) }),
         border = BorderStroke(
             width = Dimens.RecommendsCardBorder1,
             color = Colors.GreyTransparent10
@@ -77,12 +77,12 @@ fun CartRecommendsItemCard(
 
             when (item.meal.editableType) {
                 EditableType.MODIFIABLE, EditableType.WOK -> SelectSmallButton(
-                    onClick = { onEvent(CartContract.Event.OpenMealDetails(item)) },
+                    onClick = { onEvent(CartContract.CartEvent.OpenMealDetails(item)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
 
                 else -> ToCartSmallButton(
-                    onClick = { onEvent(CartContract.Event.AddToCart(item)) },
+                    onClick = { onEvent(CartContract.CartEvent.AddToCart(item)) },
                     price = meal.price,
                     modifier = Modifier.fillMaxWidth(),
                 )

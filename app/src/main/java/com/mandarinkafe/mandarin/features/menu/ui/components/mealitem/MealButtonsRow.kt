@@ -28,8 +28,8 @@ fun MealButtonsRow(
     meal: Meal,
     onToggleFavorite: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
-    onCartEvent: (CartContract.Event) -> Unit,
-    cartState: CartContract.State
+    onCartEvent: (CartContract.CartEvent) -> Unit,
+    cartState: CartContract.CartState
 ) {
     val cartItems = cartState.cartItems
     val isInTheCart = cartItems.keys.any { it.meal.id == meal.id }

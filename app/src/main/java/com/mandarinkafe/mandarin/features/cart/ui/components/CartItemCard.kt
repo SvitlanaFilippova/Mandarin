@@ -49,7 +49,7 @@ fun CartItemCard(
     quantity: Int,
     itemInPendingDeletion: Boolean,
     deletionProgress: Float,
-    onEvent: (CartContract.Event) -> Unit
+    onEvent: (CartContract.CartEvent) -> Unit
 ) {
     val meal = item.meal
     val contentColor = if (itemInPendingDeletion) Colors.GreyTransparent75 else Colors.White
@@ -58,7 +58,7 @@ fun CartItemCard(
         modifier = Modifier
             .background(Colors.AppBlack)
             .padding(horizontal = Dimens.MarginStandard16)
-            .clickable(onClick = { onEvent(CartContract.Event.OpenMealDetails(item)) })
+            .clickable(onClick = { onEvent(CartContract.CartEvent.OpenMealDetails(item)) })
     ) {
 
         Row(
@@ -150,7 +150,7 @@ fun CartItemCard(
                 // Кнопка "Редактировать"
                 Box(modifier = Modifier.padding(horizontal = Dimens.MarginStandard16)) {
                     IconButton(
-                        onClick = { onEvent(CartContract.Event.OpenMealDetails(item)) },
+                        onClick = { onEvent(CartContract.CartEvent.OpenMealDetails(item)) },
                         modifier = Modifier
                             .size(Dimens.ButtonToCartSmall32)
                     ) {

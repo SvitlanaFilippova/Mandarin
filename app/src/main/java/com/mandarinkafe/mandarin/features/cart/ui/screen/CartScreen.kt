@@ -17,7 +17,7 @@ import com.mandarinkafe.mandarin.features.cart.ui.components.CartContentScreen
 import com.mandarinkafe.mandarin.features.cart.ui.components.CartPlaceholder
 import com.mandarinkafe.mandarin.features.cart.ui.components.CartTopBar
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.Effect.OpenMealDetailsBS
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.meal_details.ui.screen.MealDetailsBottomSheet
 
@@ -72,7 +72,7 @@ fun CartScreen(
             onDismiss = onDismiss,
             onAddToCart = { newItem ->
                 viewModel.onEvent(
-                    CartContract.Event.ReplaceMealInCart(
+                    CartContract.CartEvent.ReplaceMealInCart(
                         newItem = newItem,
                         oldItem = effect.item
                     )

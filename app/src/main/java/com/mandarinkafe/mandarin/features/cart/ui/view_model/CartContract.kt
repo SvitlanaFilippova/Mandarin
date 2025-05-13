@@ -1,31 +1,34 @@
 package com.mandarinkafe.mandarin.features.cart.ui.view_model
 
+import com.mandarinkafe.mandarin.core.BaseEffect
+import com.mandarinkafe.mandarin.core.BaseEvent
+import com.mandarinkafe.mandarin.core.BaseState
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.cart.totalPrice
 import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 
 sealed interface CartContract {
-    sealed interface Event {
-        data object GetCart : Event
-        data class AddToCart(val item: CartItem) : Event
-        data class RemoveFromCartWithDelay(val item: CartItem) : Event
-        data class RemoveFromCartByMeal(val meal: Meal) : Event
-        data class ReplaceMealInCart(val newItem: CartItem, val oldItem: CartItem) : Event
-        data class CancelRemove(val item: CartItem) : Event
-        data object ClearCart : Event
-        data object CancelClearingCart : Event
-        data class OpenMealDetails(val item: CartItem) : Event
+    sealed interface CartEvent : BaseEvent {
+        data object GetCart : CartEvent
+        data class AddToCart(val item: CartItem) : CartEvent
+        data class RemoveFromCartWithDelay(val item: CartItem) : CartEvent
+        data class RemoveFromCartByMeal(val meal: Meal) : CartEvent
+        data class ReplaceMealInCart(val newItem: CartItem, val oldItem: CartItem) : CartEvent
+        data class CancelRemove(val item: CartItem) : CartEvent
+        data object ClearCart : CartEvent
+        data object CancelClearingCart : CartEvent
+        data class OpenMealDetails(val item: CartItem) : CartEvent
     }
 
-    sealed interface Effect {
+    sealed interface CartEffect : BaseEffect {
         data class OpenMealDetailsBS(
             val item: CartItem
         ) :
-            Effect, BottomSheetEffect
+            CartEffect, BottomSheetEffect
     }
 
-    data class State(
+    data class CartState(
         val isLoading: Boolean = true,
         val isPendingDeletion: Boolean = false,
         val cartItems: Map<CartItem, Int> = emptyMap(),
@@ -33,7 +36,7 @@ sealed interface CartContract {
         val pendingDeletionMeals: List<CartItem> = emptyList(),
         val mealDeletionProgress: Map<CartItem, Float> = emptyMap(),
         val cartClearingProgress: Float? = null
-    ) {
+    ) : BaseState {
         val totalCartPrice: Int
             get() = cartItems
                 .filter { (item, _) -> item !in pendingDeletionMeals }

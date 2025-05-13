@@ -36,8 +36,8 @@ import com.mandarinkafe.mandarin.util.ui.components.LabelChip
 fun SearchResultsMealItem(
     meal: Meal,
     onSearchEvent: (Event) -> Unit,
-    onCartEvent: (CartContract.Event) -> Unit,
-    cartState: CartContract.State,
+    onCartEvent: (CartContract.CartEvent) -> Unit,
+    cartState: CartContract.CartState,
 ) {
 
     Row(

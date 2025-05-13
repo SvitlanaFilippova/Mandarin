@@ -23,14 +23,14 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.Event
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
 import com.mandarinkafe.mandarin.util.Constants.BLUR_EFFECT_RADIUS
 
 @Composable
 fun CartContentScreen(
     listState: LazyListState,
-    onEvent: (Event) -> Unit,
-    state: CartContract.State
+    onEvent: (CartEvent) -> Unit,
+    state: CartContract.CartState
 ) {
     val isPendingClear = state.isPendingDeletion
     var modifierForLazyColumnBox =
@@ -49,8 +49,8 @@ fun CartContentScreen(
 
         // Кнопка очистки корзины,
         CartClearTextButton(
-            onClear = { onEvent(Event.ClearCart) },
-            onCancelClear = { onEvent(Event.CancelClearingCart) },
+            onClear = { onEvent(CartEvent.ClearCart) },
+            onCancelClear = { onEvent(CartEvent.CancelClearingCart) },
             isPendingClear = isPendingClear,
             clearingProgress = state.cartClearingProgress
         )

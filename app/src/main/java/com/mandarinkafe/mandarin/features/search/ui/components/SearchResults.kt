@@ -27,9 +27,9 @@ fun SearchResults(
     filteredMenuItems: List<MenuItem>,
     latestSearchText: String,
     onSearchEvent: (SearchContract.Event) -> Unit,
-    onCartEvent: (CartContract.Event) -> Unit,
+    onCartEvent: (CartContract.CartEvent) -> Unit,
     onSearchDismiss: () -> Unit,
-    cartState: CartContract.State,
+    cartState: CartContract.CartState,
     effectFlow: Flow<SearchContract.Effect>,
 ) {
     BackHandler {
@@ -74,7 +74,7 @@ fun SearchResults(
             onFavoriteChanged = { id, isFavorite ->
                 onSearchEvent(SearchContract.Event.UpdateMealFavorite(id, isFavorite))
             },
-            onAddToCart = { item -> onCartEvent(CartContract.Event.AddToCart(item)) }
+            onAddToCart = { item -> onCartEvent(CartContract.CartEvent.AddToCart(item)) }
         )
     }
 }
