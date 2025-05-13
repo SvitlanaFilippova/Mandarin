@@ -29,13 +29,13 @@ import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.MealButtonsRow
 import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
-import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.Event
+import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEvent
 import com.mandarinkafe.mandarin.util.ui.components.LabelChip
 
 @Composable
 fun SearchResultsMealItem(
     meal: Meal,
-    onSearchEvent: (Event) -> Unit,
+    onSearchEvent: (SearchEvent) -> Unit,
     onCartEvent: (CartContract.CartEvent) -> Unit,
     cartState: CartContract.CartState,
 ) {
@@ -45,7 +45,7 @@ fun SearchResultsMealItem(
         modifier = Modifier
             .padding(vertical = Dimens.MarginSmall8)
             .fillMaxWidth()
-            .clickable { onSearchEvent(Event.OnMealDetailsClick(meal)) }
+            .clickable { onSearchEvent(SearchEvent.OnMealDetailsClick(meal)) }
     ) {
 
         Box(
@@ -97,8 +97,8 @@ fun SearchResultsMealItem(
                 meal = meal,
                 onCartEvent = onCartEvent,
                 cartState = cartState,
-                onToggleFavorite = { meal -> onSearchEvent(Event.ToggleFavorite(meal)) },
-                onMealDetailsClick = { meal -> onSearchEvent(Event.OnMealDetailsClick(meal)) },
+                onToggleFavorite = { meal -> onSearchEvent(SearchEvent.ToggleFavorite(meal)) },
+                onMealDetailsClick = { meal -> onSearchEvent(SearchEvent.OnMealDetailsClick(meal)) },
             )
         }
     }

@@ -13,7 +13,7 @@ import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract
 @Composable
 fun SearchResultsLazyColumn(
     filteredMenuItems: List<MenuItem>,
-    onSearchEvent: (SearchContract.Event) -> Unit,
+    onSearchEvent: (SearchContract.SearchEvent) -> Unit,
     onCartEvent: (CartContract.CartEvent) -> Unit,
     cartState: CartContract.CartState,
 ) {

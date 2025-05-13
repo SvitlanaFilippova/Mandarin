@@ -28,7 +28,7 @@ import javax.inject.Inject
 class MenuViewModel @Inject constructor(
     private val menuInteractor: MenuInteractor,
     private val favoritesInteractor: FavoritesInteractor
-) : BaseViewModel<MenuEvent, MenuState, MenuEffect>() {
+) : BaseViewModel<MenuEvent, MenuEffect, MenuState>() {
     override fun setInitialState() = MenuState()
 
     init {

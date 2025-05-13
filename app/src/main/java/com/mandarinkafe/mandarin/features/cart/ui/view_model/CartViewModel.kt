@@ -9,6 +9,7 @@ import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants.CLEAR_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.DELETE_FROM_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.INTERVAL_FOR_UPD_PROGRESSBAR
@@ -26,8 +27,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val cartInteractor: CartInteractor,
-) : BaseViewModel<CartEvent, CartContract.CartState, CartEffect>() {
-    override fun setInitialState() = CartContract.CartState()
+) : BaseViewModel<CartEvent, CartEffect, CartState>() {
+    override fun setInitialState() = CartState()
     private val itemTimers = mutableMapOf<CartItem, Job>()
     private var clearCartTimerJob: Job? = null
 
@@ -142,7 +143,7 @@ class CartViewModel @Inject constructor(
                 pendingDeletionMeals = updatedPendingDeletionItems,
                 mealDeletionProgress = updatedDeletionProgress,
             )
-        } as CartContract.CartState.() -> CartContract.CartState
+        } as CartState.() -> CartState
     }
 
     // Окончательное удаление из корзины

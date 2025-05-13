@@ -20,7 +20,7 @@ import javax.inject.Inject
 class MealDetailsViewModel @Inject constructor(
     private val menuInteractor: MenuInteractor,
     private val favoritesInteractor: FavoritesInteractor
-) : BaseViewModel<MealDetailsEvent, MealDetailsState, MealDetailsEffect>() {
+) : BaseViewModel<MealDetailsEvent, MealDetailsEffect, MealDetailsState>() {
     override fun setInitialState() = MealDetailsState()
 
     init {

@@ -34,12 +34,12 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun MySearchBar(
     onCartEvent: (CartContract.CartEvent) -> Unit,
-    onSearchEvent: (SearchContract.Event) -> Unit,
+    onSearchEvent: (SearchContract.SearchEvent) -> Unit,
     onSearchDismiss: () -> Unit,
     focusSearchBarInput: Boolean,
-    searchState: SearchContract.State,
+    searchState: SearchContract.SearchState,
     cartState: CartContract.CartState,
-    effectFlow: Flow<SearchContract.Effect>,
+    effectFlow: Flow<SearchContract.SearchEffect>,
 ) {
 
     val filteredMenuItems = searchState.filteredMenuItems
@@ -47,7 +47,7 @@ fun MySearchBar(
     val keyboardController = LocalSoftwareKeyboardController.current
     var isExpanded by remember { mutableStateOf(true) }
     val handleOnClear = {
-        onSearchEvent(SearchContract.Event.ClearSearchInput)
+        onSearchEvent(SearchContract.SearchEvent.ClearSearchInput)
         keyboardController?.show()
         isExpanded = false
     }
@@ -65,7 +65,7 @@ fun MySearchBar(
                         if (text.isEmpty()) {
                             handleOnClear()
                         } else {
-                            onSearchEvent(SearchContract.Event.SearchMealsByText(text))
+                            onSearchEvent(SearchContract.SearchEvent.SearchMealsByText(text))
                             isExpanded = true
                         }
                     },
@@ -93,7 +93,7 @@ fun MySearchBar(
                     checkedLabels = searchState.checkedLabels,
                     onLabelClick = { label, isChecked ->
                         onSearchEvent(
-                            SearchContract.Event.OnLabelClick(
+                            SearchContract.SearchEvent.OnLabelClick(
                                 labelName = label,
                                 isChecked = isChecked
                             )

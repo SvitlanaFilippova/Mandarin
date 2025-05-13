@@ -26,11 +26,11 @@ import kotlinx.coroutines.flow.Flow
 fun SearchResults(
     filteredMenuItems: List<MenuItem>,
     latestSearchText: String,
-    onSearchEvent: (SearchContract.Event) -> Unit,
+    onSearchEvent: (SearchContract.SearchEvent) -> Unit,
     onCartEvent: (CartContract.CartEvent) -> Unit,
     onSearchDismiss: () -> Unit,
     cartState: CartContract.CartState,
-    effectFlow: Flow<SearchContract.Effect>,
+    effectFlow: Flow<SearchContract.SearchEffect>,
 ) {
     BackHandler {
         onSearchDismiss()
@@ -64,15 +64,15 @@ fun SearchResults(
         }
     }
 
-    HandleBottomSheetEffect<SearchContract.Effect.OpenMealDetailsBS>(
+    HandleBottomSheetEffect<SearchContract.SearchEffect.OpenMealDetailsBS>(
         effectFlow = effectFlow,
-        cast = { it as? SearchContract.Effect.OpenMealDetailsBS }
+        cast = { it as? SearchContract.SearchEffect.OpenMealDetailsBS }
     ) { effect, onDismiss ->
         MealDetailsBottomSheet(
             initItem = effect.meal.toCartItem(),
             onDismiss = onDismiss,
             onFavoriteChanged = { id, isFavorite ->
-                onSearchEvent(SearchContract.Event.UpdateMealFavorite(id, isFavorite))
+                onSearchEvent(SearchContract.SearchEvent.UpdateMealFavorite(id, isFavorite))
             },
             onAddToCart = { item -> onCartEvent(CartContract.CartEvent.AddToCart(item)) }
         )
