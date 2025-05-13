@@ -6,8 +6,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,10 +20,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
+import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.features.menu.domain.models.MenuItem
+import com.mandarinkafe.mandarin.features.menu.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.features.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.features.menu.ui.components.MenuTopBar
@@ -67,6 +72,12 @@ fun MenuContentScreen(
         }
     }
 
+    val showBackToTopFAB by remember {
+        derivedStateOf {
+            !isAtTop && isScrollingUp.value
+        }
+    }
+
     val handleBannerClick = { targetName: String ->
         coroutineScope.launch {
             onEvent(
@@ -75,7 +86,7 @@ fun MenuContentScreen(
         }
     }
 
-    val handleLogoClick = {
+    val handleBackToTopClick = {
         coroutineScope.launch {
             listState.scrollToItem(index = 0)
             onEvent(MenuEvent.ScrollToTop)
@@ -143,103 +154,123 @@ fun MenuContentScreen(
 
             }
     }
-
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Colors.AppBlack)
     ) {
-        // Лого-бар появляется только если пользователь в самом верху
-        AnimatedVisibility(
-            visible = isAtTop,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
-            MenuTopBar(
-                onPhoneClick = { onEvent(MenuEvent.OnPhoneClick) },
-                onLogoCLick = { handleLogoClick() }
-            )
-        }
-        // Бар с поиском и фильтрами появляется всегда, когда пользователь вверху или скроллит вверх
-        AnimatedVisibility(
-            visible = showMenuTopBar,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
-        ) {
-            SearchAndFilterBar(
-                onSearchClick = { onEvent(MenuEvent.SearchOnOpenSearchClick) },
-                onFilterClick = { onEvent(MenuEvent.OnLabelsClick) },
-                onFavoriteClick = { onEvent(MenuEvent.OnOpenFavoritesClick) }
-            )
-        }
-        // Баннеры только если пользователь в самом верху
-        AnimatedVisibility(
-            visible = isAtTop,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
-        ) {
-            BannerCarousel(onBannerClick = handleBannerClick)
-        }
-        // Табы-категории, видно всегда
-        CategoryTabsRow(
-            categories = categories,
-            selectedTabIndex = selectedTabIndex,
-            onTabSelected = { index ->
-                onEvent(MenuEvent.ScrollToCategory(index))
-                coroutineScope.launch {
-                    val targetIndex = menuItems.indexOfFirst {
-                        it is MenuItem.HeaderItem && it.categoryName == categories[index].categoryName
-                    }
-                    if (targetIndex >= 0) {
-                        listState.scrollToItem(index = targetIndex, scrollOffset = 1)
+            // Лого-бар появляется только если пользователь в самом верху
+            AnimatedVisibility(
+                visible = isAtTop,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                MenuTopBar(
+                    onPhoneClick = { onEvent(MenuEvent.OnPhoneClick) },
+                    onLogoCLick = { handleBackToTopClick() }
+                )
+            }
+            // Бар с поиском и фильтрами появляется всегда, когда пользователь вверху или скроллит вверх
+            AnimatedVisibility(
+                visible = showMenuTopBar,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                SearchAndFilterBar(
+                    onSearchClick = { onEvent(MenuEvent.SearchOnOpenSearchClick) },
+                    onFilterClick = { onEvent(MenuEvent.OnLabelsClick) },
+                    onFavoriteClick = { onEvent(MenuEvent.OnOpenFavoritesClick) }
+                )
+
+            }
+
+            // Баннеры только если пользователь в самом верху
+            AnimatedVisibility(
+                visible = isAtTop,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                BannerCarousel(onBannerClick = handleBannerClick)
+            }
+            // Табы-категории, видно всегда
+            CategoryTabsRow(
+                categories = categories,
+                selectedTabIndex = selectedTabIndex,
+                onTabSelected = { index ->
+                    onEvent(MenuEvent.ScrollToCategory(index))
+                    coroutineScope.launch {
+                        val targetIndex = menuItems.indexOfFirst {
+                            it is MenuItem.HeaderItem && it.categoryName == categories[index].categoryName
+                        }
+                        if (targetIndex >= 0) {
+                            listState.scrollToItem(index = targetIndex, scrollOffset = 1)
+                        }
                     }
                 }
-            }
-        )
+            )
 
-        if (selectedTabIndex >= 0) {
-            val currentSubCategories = categories[selectedTabIndex].subCategoriesNames
+            if (selectedTabIndex >= 0) {
+                val currentSubCategories = categories[selectedTabIndex].subCategoriesNames
 
-            if (!currentSubCategories.isNullOrEmpty()) {
-                AnimatedVisibility(
-                    visible = currentSubCategories.isNotEmpty(),
-                    enter = fadeIn() + expandVertically(),
-                    exit = fadeOut() + shrinkVertically()
-                ) {
+                if (!currentSubCategories.isNullOrEmpty()) {
+                    AnimatedVisibility(
+                        visible = currentSubCategories.isNotEmpty(),
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
 
-                    // Табы-подкатегории, появляются при наличии в текущей категории
-                    SubCategoryTabsRow(
-                        categories = currentSubCategories,
-                        selectedTabIndex = selectedSubTabIndex,
-                        onTabSelected = { index ->
-                            onEvent(MenuEvent.ScrollToSubCategory(index))
-                            coroutineScope.launch {
-                                val targetIndex = menuItems.indexOfFirst {
-                                    it is MenuItem.SubHeaderItem && it.categoryName == currentSubCategories[index]
-                                }
-                                if (targetIndex >= 0) {
-                                    listState.scrollToItem(
-                                        index = targetIndex,
-                                        scrollOffset = 1
-                                    )
+                        // Табы-подкатегории, появляются при наличии в текущей категории
+                        SubCategoryTabsRow(
+                            categories = currentSubCategories,
+                            selectedTabIndex = selectedSubTabIndex,
+                            onTabSelected = { index ->
+                                onEvent(MenuEvent.ScrollToSubCategory(index))
+                                coroutineScope.launch {
+                                    val targetIndex = menuItems.indexOfFirst {
+                                        it is MenuItem.SubHeaderItem && it.categoryName == currentSubCategories[index]
+                                    }
+                                    if (targetIndex >= 0) {
+                                        listState.scrollToItem(
+                                            index = targetIndex,
+                                            scrollOffset = 1
+                                        )
+                                    }
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
+
+            // Основное меню
+            MenuList(
+                menuItems = menuItems,
+                listState = listState,
+                modifier = Modifier.weight(1f),
+                onEvent = onEvent,
+                onCartEvent = onCartEvent,
+                cartState = cartState,
+                effectFlow = effectFlow
+
+            )
         }
 
-        // Основное меню
-        MenuList(
-            menuItems = menuItems,
-            listState = listState,
-            modifier = Modifier.weight(1f),
-            onEvent = onEvent,
-            onCartEvent = onCartEvent,
-            cartState = cartState,
-            effectFlow = effectFlow
+        // При скролле вверх появляется FAB для возврата наверх
+        AnimatedVisibility(
+            visible = showBackToTopFAB,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(Dimens.MarginStandard16)
+        ) {
+            BackToTopFAB(
+                onClick = { handleBackToTopClick() }
+            )
+        }
 
-        )
     }
 }
