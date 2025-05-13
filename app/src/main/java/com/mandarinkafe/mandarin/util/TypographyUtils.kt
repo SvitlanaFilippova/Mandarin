@@ -58,9 +58,9 @@ private fun String.normalizeWeightAndUnits(): String {
         .replace(Regex("""(\d+)\s*(г|Г)\.?""")) {
             "${it.groupValues[1]}$nonBreakingSpace${it.groupValues[2].lowercase()}"
         }
-        // сантиметры
-        .replace(Regex("""(\d+)\s*(см|См)\.?""")) {
-            "${it.groupValues[1]}$nonBreakingSpace${it.groupValues[2].lowercase()}"
+        // сантиметры (с сохранением точки, если она есть)
+        .replace(Regex("""(\d+)\s*(см|См)(\.)?""")) {
+            "${it.groupValues[1]}$nonBreakingSpace${it.groupValues[2].lowercase()}${it.groupValues[3]}"
         }
 }
 
