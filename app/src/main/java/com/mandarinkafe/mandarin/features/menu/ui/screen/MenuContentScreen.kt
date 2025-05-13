@@ -262,7 +262,7 @@ fun MenuContentScreen(
             enter = fadeIn(),
             exit = fadeOut(),
             modifier = Modifier
-                .align(Alignment.BottomEnd)
+                .align(Alignment.BottomStart)
                 .padding(Dimens.MarginStandard16)
         ) {
             BackToTopFAB(
