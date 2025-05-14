@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -53,9 +52,9 @@ fun ModifierSingleSelectItem(
         ) {
 
             RadioButton(
-                modifier = Modifier.padding(0.dp),
+                modifier = Modifier.padding(horizontal = Dimens.Margin12),
                 selected = isAdded,
-                onClick = { }// обработка клика происходит в Row
+                onClick = null // обработка клика происходит в Row
             )
 
             Text(

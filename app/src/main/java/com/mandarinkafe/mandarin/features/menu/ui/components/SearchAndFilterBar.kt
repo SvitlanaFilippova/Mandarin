@@ -4,12 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -42,10 +40,10 @@ fun SearchAndFilterBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         FakeSearchBarField(modifier = Modifier.weight(1f), onClick = onSearchClick)
-        Spacer(modifier = Modifier.width(Dimens.MarginSmall8))
-        FilterButton(onClick = onFilterClick)
-        Spacer(modifier = Modifier.width(Dimens.MarginSmall8))
-        FavoriteButton(onClick = onFavoriteClick)
+//        Spacer(modifier = Modifier.width(Dimens.MarginSmall8))
+//        FilterButton(onClick = onFilterClick)
+//        Spacer(modifier = Modifier.width(Dimens.MarginSmall8))
+//        FavoriteButton(onClick = onFavoriteClick)
     }
 }
 

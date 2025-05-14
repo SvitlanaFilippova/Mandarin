@@ -53,8 +53,7 @@ fun ModifierMultiSelectItem(
         ) {
             Checkbox(
                 modifier = Modifier.padding(
-                    start = Dimens.Margin12,
-                    end = Dimens.MarginSuperSmall4
+                    horizontal = Dimens.Margin12,
                 ),
                 checked = isAdded,
                 onCheckedChange = null, // обработка клика происходит в Row

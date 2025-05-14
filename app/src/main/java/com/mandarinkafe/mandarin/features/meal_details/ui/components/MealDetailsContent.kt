@@ -1,20 +1,29 @@
 package com.mandarinkafe.mandarin.features.meal_details.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.EditableType
@@ -29,6 +38,7 @@ import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.A
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.AddsItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
+import kotlinx.coroutines.launch
 
 @Composable
 fun MealDetailsContent(
@@ -42,10 +52,23 @@ fun MealDetailsContent(
     val meal = customizedMeal.meal
     val listState = rememberLazyListState()
     val chosenModifiers = state.customizedMeal?.modifiers ?: emptyList()
-    val showToCartButton = !(meal.editableType in listOf(
-        EditableType.WOK,
-        EditableType.MODIFIABLE
-    ) && customizedMeal.totalPrice() == 0)
+    val showToCartButton =
+        !(meal.editableType == EditableType.REQUIRED_SELECTION && customizedMeal.totalPrice() == 0)
+    val coroutineScope = rememberCoroutineScope()
+    val scrollTargetKey = "scrollTarget"
+    val handleMakeMoreDeliciousClick: () -> Unit = remember(listState) {
+        {
+            coroutineScope.launch {
+                val index = listState.layoutInfo.visibleItemsInfo
+                    .find { it.key == scrollTargetKey }
+                    ?.index
+
+                if (index != null) {
+                    listState.animateScrollToItem(index + 1)
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -72,6 +95,43 @@ fun MealDetailsContent(
                     )
                 }
 
+                // Заголовок для модификаторов/добавок, если блюдо и без них можно закаказать
+                if (meal.editableType == EditableType.ADDABLE || meal.editableType == EditableType.PIZZA) {
+                    item {
+                        Text(
+                            modifier = Modifier
+                                .padding(top = Dimens.MarginSmall8)
+                                .fillMaxWidth()
+                                .clickable(enabled = true, onClick = handleMakeMoreDeliciousClick),
+                            text = stringResource(id = R.string.make_more_delicious_description),
+                            style = Typography.RegularLightTextStyle,
+                            fontWeight = FontWeight.Bold,
+                            color = Colors.White,
+                            textAlign = TextAlign.Center
+                        )
+
+                    }
+                    item(key = scrollTargetKey) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            IconButton(
+                                onClick = handleMakeMoreDeliciousClick,
+                                modifier = Modifier.size(Dimens.ButtonBox32)
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(Dimens.ButtonToggleFavorite28),
+                                    imageVector = Icons.Default.ArrowDropDown,
+                                    contentDescription = stringResource(id = R.string.make_more_delicious),
+                                    tint = Colors.White
+                                )
+                            }
+                        }
+                    }
+
+                }
                 // Выбор модификаторов
                 if (meal.modifiers.isNotEmpty()) {
                     itemsIndexed(meal.modifiers) { index, modifierGroup ->
@@ -82,7 +142,9 @@ fun MealDetailsContent(
                         )
 
                         val selectedItem =
-                            chosenModifiers.find { it.id == modifierGroup.id }?.items?.getOrNull(0)
+                            chosenModifiers.find { it.id == modifierGroup.id }?.items?.getOrNull(
+                                0
+                            )
                         0
 
                         if (modifierGroup.isSingleChoice) {
@@ -131,20 +193,16 @@ fun MealDetailsContent(
                 if (meal.editableType == EditableType.PIZZA) {
                     val selectedTabIndex = state.selectedTabIndex
                     item {
-                        Text(
-                            modifier = Modifier
-                                .padding(vertical = Dimens.MarginSmall8)
-                                .fillMaxWidth(),
-                            text = stringResource(R.string.adds),
-                            style = Typography.TitleStyle,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    item {
                         AddsCategoryTabsRow(
                             categories = state.pizzaAds.map { it.name },
                             selectedTabIndex = selectedTabIndex,
-                            onTabSelected = { index -> onEvent(MealDetailsEvent.ChooseCategory(index)) }
+                            onTabSelected = { index ->
+                                onEvent(
+                                    MealDetailsEvent.ChooseCategory(
+                                        index
+                                    )
+                                )
+                            }
                         )
                     }
 

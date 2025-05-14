@@ -17,6 +17,7 @@ object Colors {
     val LabelVegGreen = Color(0xE694C338)
     val LabelHotRed = Color(0xFFDE5836)
     val LabelNewBlue = Color(0xff1c848c)
+    val LabelHitOrange = Color(0xFFF5BD47)
     val LabelDefault = Color(0xff756d85)
 
 

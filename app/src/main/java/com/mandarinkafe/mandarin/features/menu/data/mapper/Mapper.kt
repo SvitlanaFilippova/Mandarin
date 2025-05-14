@@ -14,8 +14,8 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierItemDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.TagDto
 import com.mandarinkafe.mandarin.util.Constants.TAG_PIZZA_ADDS
-import com.mandarinkafe.mandarin.util.Constants.TAG_WOK_CONSTRUCTOR
 import com.mandarinkafe.mandarin.util.applyTypography
+import com.mandarinkafe.mandarin.util.removeLeadingDash
 
 fun CategoryDto.toDomain(storedFavorites: List<String>): MealCategory {
     val categoryLabels = labels?.map { it.toDomain() } ?: emptyList()
@@ -48,8 +48,12 @@ private fun MealDto.toDomain(
     val firstSize = itemSizes?.firstOrNull()
     val safeWeight = firstSize?.portionWeightGrams?.toInt() ?: 0
     val safePrice = firstSize?.prices?.firstOrNull()?.price?.toInt() ?: 0
-    val safeModifiers = firstSize?.itemModifierGroups?.map { it.toDomain() } ?: emptyList()
     val safeImageUrl = firstSize?.buttonImageUrl ?: ""
+    val safeModifiers = firstSize
+        ?.itemModifierGroups
+        ?.map { it.toDomain() }
+        ?.sortedByDescending { it.isSingleChoice } // сначала isSingleChoice == true
+        ?: emptyList()
 
     val mealLabels = (labels ?: emptyList()).map { it.toDomain() }
     val mealTags = (tags ?: emptyList()).map { it.toDomain() }
@@ -68,20 +72,21 @@ private fun MealDto.toDomain(
         tags = finalMealTags,
         isHidden = isHidden == true,
         modifiers = safeModifiers,
-        editableType = checkMealType(finalMealTags, safeModifiers),
+        editableType = checkMealType(safePrice, finalMealTags, safeModifiers),
     )
 }
 
-private fun checkMealType(tags: List<Tag>, modifiers: List<ModifierGroup>): EditableType? {
-    if (tags.any { it.name.equals(TAG_PIZZA_ADDS, ignoreCase = true) }) {
-        return EditableType.PIZZA
-    } else
-        if (tags.any { it.name.equals(TAG_WOK_CONSTRUCTOR, ignoreCase = true) }) {
-            return EditableType.WOK
-        } else if (modifiers.isNotEmpty()) {
-            return EditableType.MODIFIABLE
-        } else
-            return null
+private fun checkMealType(
+    price: Int,
+    tags: List<Tag>,
+    modifiers: List<ModifierGroup>
+): EditableType? {
+    return when {
+        tags.any { it.name.equals(TAG_PIZZA_ADDS, ignoreCase = true) } -> EditableType.PIZZA
+        modifiers.isNotEmpty() && price == 0 -> EditableType.REQUIRED_SELECTION
+        modifiers.isNotEmpty() && price > 0 -> EditableType.ADDABLE
+        else -> null
+    }
 }
 
 fun CategoryDto.hasParent(): Boolean =
@@ -110,7 +115,7 @@ fun ModifierItemDto.toDomain(): ModifierItem {
 
     return ModifierItem(
         id = itemId,
-        name = name ?: "",
+        name = name?.removeLeadingDash()?.applyTypography() ?: "",
         price = safePrice,
     )
 }
@@ -118,7 +123,10 @@ fun ModifierItemDto.toDomain(): ModifierItem {
 fun ModifierGroupDto.toDomain() = ModifierGroup(
     id = itemGroupId,
     name = name ?: "",
-    items = items?.map { it.toDomain() } ?: emptyList(),
+    items = items
+        ?.map { it.toDomain() }
+        ?.sortedBy { it.price != 0 }
+        ?: emptyList(),
     isSingleChoice = (restrictions?.maxQuantity == 1),
 )
 

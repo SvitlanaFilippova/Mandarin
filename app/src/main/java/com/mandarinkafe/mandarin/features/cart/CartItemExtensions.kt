@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart
 
+import com.mandarinkafe.mandarin.core.domain.models.EditableType
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
@@ -24,28 +25,26 @@ fun CartItem.totalPrice(): Int {
 }
 
 fun CartItem.customizedText(): String {
-    val addsText = if (adds.isNotEmpty()) {
-        "+ " + adds.joinToString(", ") { it.name }
-    } else {
-        ""
-    }
-    val modifiersText = if (modifiers.size > 1) {
-        modifiers.joinToString("; ") { group ->
-            val itemsText = group.items.joinToString(", ") { it.name }
-            "${group.name}: $itemsText"
+    return when (meal.editableType) {
+        EditableType.PIZZA, EditableType.ADDABLE -> {
+            val allItems = buildList {
+                addAll(adds.map { "+ ${it.name}" })
+                addAll(modifiers.flatMap { group ->
+                    group.items.map { "+ ${it.name}" }
+                })
+            }
+            allItems.joinToString(", ")
         }
-    } else {
-        modifiers.joinToString("; ") { group ->
-            val itemsText = group.items.joinToString(", ") { it.name }
-            itemsText
+
+        EditableType.REQUIRED_SELECTION -> {
+            modifiers.joinToString("; ") { group ->
+                val itemsText = group.items.joinToString(", ") { it.name }
+                "${group.name}: $itemsText"
+            }
         }
+
+        else -> ""
     }
-
-
-    return listOfNotNull(
-        addsText.takeIf { it.isNotBlank() },
-        modifiersText.takeIf { it.isNotBlank() }
-    ).joinToString(" • ")
 }
 
 fun List<ModifierGroup>.validateBy(mealModifiers: List<ModifierGroup>): List<ModifierGroup> {

@@ -31,6 +31,7 @@ object Constants {
     const val VEG_LABEL = "veg"
     const val HOT_LABEL = "hot"
     const val NEW_LABEL = "new"
+    const val HIT_LABEL = "hit"
 
     // Внутренние теги для особой логики в меню
     const val TAG_PIZZA_ADDS = "добавки к пицце"
