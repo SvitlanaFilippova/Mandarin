@@ -49,13 +49,9 @@ fun MealButtonsRow(
                 onIncrease = { onCartEvent(meal.toAddToCartEvent()) },
                 onDecrease = { onCartEvent(meal.toRemoveFromCartNow()) },
             )
-        } else if (meal.editableType == EditableType.MODIFIABLE) {
+        } else if (meal.editableType == EditableType.REQUIRED_SELECTION) {
             SelectButton(
                 text = stringResource(R.string.to_choose),
-                onClick = { onMealDetailsClick(meal) })
-        } else if (meal.editableType == EditableType.WOK) {
-            SelectButton(
-                text = stringResource(R.string.create_own_box_short),
                 onClick = { onMealDetailsClick(meal) })
         } else {
             ToCartButtonWithPrice(
@@ -64,7 +60,7 @@ fun MealButtonsRow(
                 })
         }
 
-        if (meal.editableType == EditableType.PIZZA) {
+        if (meal.editableType == EditableType.PIZZA || meal.editableType == EditableType.ADDABLE) {
             PizzaAddsButton(
                 modifier = Modifier.weight(1f),
                 onClick = { onMealDetailsClick(meal) }

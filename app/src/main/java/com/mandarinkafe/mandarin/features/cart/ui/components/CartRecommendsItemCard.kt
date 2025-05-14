@@ -76,7 +76,7 @@ fun CartRecommendsItemCard(
             )
 
             when (item.meal.editableType) {
-                EditableType.MODIFIABLE, EditableType.WOK -> SelectSmallButton(
+                EditableType.REQUIRED_SELECTION -> SelectSmallButton(
                     onClick = { onEvent(CartContract.CartEvent.OpenMealDetails(item)) },
                     modifier = Modifier.fillMaxWidth(),
                 )

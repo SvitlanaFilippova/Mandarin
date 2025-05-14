@@ -25,6 +25,8 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
+import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
+import com.mandarinkafe.mandarin.util.ui.components.LabelChip
 
 @Composable
 fun MealInfo(
@@ -51,6 +53,20 @@ fun MealInfo(
                         .fillMaxSize()
                         .clip(RoundedCornerShape(Dimens.CornerRadius8))
                 )
+
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(Dimens.MarginSuperSmall4)
+                ) {
+                    meal.labels.forEach {
+                        LabelChip(
+                            label = it.toUiModel(),
+                        )
+                    }
+                }
             }
 
         }

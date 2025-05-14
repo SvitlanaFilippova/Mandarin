@@ -33,7 +33,11 @@ fun BottomSheetHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimens.MarginSmall8),
+            .padding(
+                start = Dimens.MarginSmall8,
+                end = Dimens.MarginSmall8,
+                bottom = Dimens.MarginSmall8
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

@@ -11,6 +11,7 @@ object TypographyRules {
 }
 
 fun String.applyTypography(): String {
+
     val nonBreakingSpace = "\u00A0"
 
     val shortWordRegex = Regex(
@@ -85,5 +86,5 @@ private fun String.normalizeNumbers(): String {
 }
 
 fun String.removeLeadingDash(): String {
-    return this.removePrefix("-").trimStart()
+    return this.replaceFirst(Regex("""^\s*-\s*"""), "")
 }
