@@ -42,7 +42,6 @@ fun CartScreen(
     ) {
 
         CartTopBar(
-            onBackClick = { },
             onCallClick = { }
         )
 

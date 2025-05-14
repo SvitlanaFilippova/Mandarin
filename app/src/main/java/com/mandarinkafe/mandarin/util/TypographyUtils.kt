@@ -55,7 +55,11 @@ fun String.applyTypography(): String {
 private fun String.normalizeWeightAndUnits(): String {
     val nonBreakingSpace = "\u00A0"
     return this
-        // граммы
+        // "гр" после числа -> "г" с неразрывным пробелом
+        .replace(Regex("""\b(\d+)\s*(гр|ГР|Гр|гР)\.?\b""")) {
+            "${it.groupValues[1]}$nonBreakingSpace${"г"}"
+        }
+        // "г" после числа -> "г" с неразрывным пробелом
         .replace(Regex("""(\d+)\s*(г|Г)\.?""")) {
             "${it.groupValues[1]}$nonBreakingSpace${it.groupValues[2].lowercase()}"
         }
