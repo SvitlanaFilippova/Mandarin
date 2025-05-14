@@ -57,7 +57,7 @@ fun CartItemCard(
     Column(
         modifier = Modifier
             .background(Colors.AppBlack)
-            .padding(horizontal = Dimens.MarginStandard16)
+            .padding(horizontal = Dimens.MarginSmall8)
             .clickable(onClick = { onEvent(CartContract.CartEvent.OpenMealDetails(item)) })
     ) {
 
@@ -99,6 +99,7 @@ fun CartItemCard(
                     }
                 }
             }
+
             Column(
                 modifier = Modifier
                     .padding(
@@ -130,7 +131,7 @@ fun CartItemCard(
                 }
             }
         }
-    }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -181,5 +182,6 @@ fun CartItemCard(
             color = Colors.Grey.copy(alpha = 0.2f)
         )
     }
+}
 
 

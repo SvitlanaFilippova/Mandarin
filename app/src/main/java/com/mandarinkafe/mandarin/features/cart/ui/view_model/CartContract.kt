@@ -17,7 +17,7 @@ sealed interface CartContract {
         data class ReplaceMealInCart(val newItem: CartItem, val oldItem: CartItem) : CartEvent
         data class CancelRemove(val item: CartItem) : CartEvent
         data object ClearCart : CartEvent
-        data object CancelClearingCart : CartEvent
+        data object ConfirmClearCart : CartEvent
         data class OpenMealDetails(val item: CartItem) : CartEvent
     }
 
@@ -26,16 +26,15 @@ sealed interface CartContract {
             val item: CartItem
         ) :
             CartEffect, BottomSheetEffect
+        data object ShowClearCartConfirmationDialog : CartEffect
     }
 
     data class CartState(
         val isLoading: Boolean = true,
-        val isPendingDeletion: Boolean = false,
         val cartItems: Map<CartItem, Int> = emptyMap(),
         val recommendsList: List<CartItem> = emptyList(),
         val pendingDeletionMeals: List<CartItem> = emptyList(),
         val mealDeletionProgress: Map<CartItem, Float> = emptyMap(),
-        val cartClearingProgress: Float? = null
     ) : BaseState {
         val totalCartPrice: Int
             get() = cartItems

@@ -30,7 +30,6 @@ class CartViewModel @Inject constructor(
 ) : BaseViewModel<CartEvent, CartEffect, CartState>() {
     override fun setInitialState() = CartState()
     private val itemTimers = mutableMapOf<CartItem, Job>()
-    private var clearCartTimerJob: Job? = null
 
     init {
         onEvent(CartEvent.GetCart)
@@ -49,14 +48,18 @@ class CartViewModel @Inject constructor(
             is CartEvent.RemoveFromCartWithDelay -> onReduceItem(item = event.item)
             is CartEvent.RemoveFromCartByMeal -> removeFromCartByMeal(meal = event.meal)
             is CartEvent.CancelRemove -> cancelRemove(item = event.item)
-            is CartEvent.ClearCart -> clearCartWithDebounce()
-            is CartEvent.CancelClearingCart -> cancelClearingCart()
+            is CartEvent.ClearCart -> clearConfirmation()
+            is CartEvent.ConfirmClearCart -> clear()
             is CartEvent.OpenMealDetails -> sendEffect(
                 OpenMealDetailsBS(
                     item = event.item
                 )
             )
         }
+    }
+
+    private fun clearConfirmation() {
+        sendEffect(CartEffect.ShowClearCartConfirmationDialog)
     }
 
     private fun replaceMealInCart(newItem: CartItem, oldItem: CartItem) {
@@ -78,12 +81,6 @@ class CartViewModel @Inject constructor(
         useLastParam = true
     ) { item ->
         removeItem(item)
-    }
-
-    fun clearCartWithDebounce() {
-        setState { copy(isPendingDeletion = true) }
-        startProgressTimer(duration = CLEAR_CART_DEBOUNCE_DELAY)
-        clearCartDebounce.invoke(Unit)
     }
 
     private fun addItem(item: CartItem) {
@@ -132,9 +129,7 @@ class CartViewModel @Inject constructor(
         cancelMealDeletionTimer(item)
 
         setState {
-            cartItems
-            val updatedPendingDeletionItems =
-                pendingDeletionMeals.toMutableList() - item
+            val updatedPendingDeletionItems = pendingDeletionMeals.toMutableList() - item
             val updatedDeletionProgress = mealDeletionProgress.toMutableMap()
 
             updatedDeletionProgress.entries.removeIf { it.key == item }
@@ -143,7 +138,7 @@ class CartViewModel @Inject constructor(
                 pendingDeletionMeals = updatedPendingDeletionItems,
                 mealDeletionProgress = updatedDeletionProgress,
             )
-        } as CartState.() -> CartState
+        }
     }
 
     // Окончательное удаление из корзины
@@ -227,68 +222,41 @@ class CartViewModel @Inject constructor(
         clear()
     }
 
-    private fun cancelClearingCart() {
-        clearCartDebounce.cancel()
-        cancelCartClearingTimer()
-        setState {
-            copy(isPendingDeletion = false, cartClearingProgress = null)
-        }
-    }
-
     private fun clear() {
         cartInteractor.clearCart()
         cancelAllMealTimers()
         setState {
             copy(
                 cartItems = emptyMap(),
-                isPendingDeletion = false,
-                cartClearingProgress = null
             )
         }
     }
 
 // Для работы с таймерами удаления блюд и очистки корзины
 
-    private fun startProgressTimer(item: CartItem? = null, duration: Long) {
+    private fun startProgressTimer(item: CartItem, duration: Long) {
         val interval = INTERVAL_FOR_UPD_PROGRESSBAR
         val steps = (duration / interval).toInt()
 
-        if (item != null) {
-            // Отменяем существующий таймер для этого блюда, если есть
-            cancelMealDeletionTimer(item)
+        // Отменяем существующий таймер для этого блюда, если есть
+        cancelMealDeletionTimer(item)
 
-            val job = viewModelScope.launch {
-                repeat(steps) { step ->
-                    delay(interval)
-                    val progress = step / steps.toFloat()
-                    setState {
-                        copy(
-                            mealDeletionProgress = mealDeletionProgress + (item to progress)
-                        )
-                    }
-                }
-                // По завершении удаляем таймер
-                itemTimers.remove(item)
-            }
-
-            itemTimers[item] = job
-
-        } else {
-            // Общий таймер для очистки корзины
-            cancelCartClearingTimer()
-            clearCartTimerJob = viewModelScope.launch {
+        val job = viewModelScope.launch {
+            repeat(steps) { step ->
+                delay(interval)
+                val progress = step / steps.toFloat()
                 setState {
-                    copy(cartClearingProgress = null)
-                }
-                repeat(steps) { step ->
-                    delay(interval)
-                    val progress = step / steps.toFloat()
-                    setState {
-                        copy(cartClearingProgress = progress)
-                    }
+                    copy(
+                        mealDeletionProgress = mealDeletionProgress + (item to progress)
+                    )
                 }
             }
+            // По завершении удаляем таймер
+            itemTimers.remove(item)
         }
+
+        itemTimers[item] = job
+
     }
 
     private fun cancelMealDeletionTimer(item: CartItem) {
@@ -300,17 +268,6 @@ class CartViewModel @Inject constructor(
                 mealDeletionProgress = mealDeletionProgress - item
             )
         }
-    }
-
-    private fun cancelCartClearingTimer() {
-        clearCartTimerJob?.cancel()
-        clearCartTimerJob = null
-        setState {
-            copy(
-                cartClearingProgress = null
-            )
-        }
-
     }
 
     private fun cancelAllMealTimers() {
