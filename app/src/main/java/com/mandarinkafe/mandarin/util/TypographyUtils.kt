@@ -89,6 +89,9 @@ private fun String.normalizeNumbers(): String {
         }
 }
 
+/**
+ * Для удаления "-" в начале названия модификаторов/добавок
+ */
 fun String.removeLeadingDash(): String {
     return this.replaceFirst(Regex("""^\s*-\s*"""), "")
 }
