@@ -4,10 +4,13 @@
     <string name="logo_cafe">Логотип кафе</string>
     <string name="cafe_phone_number">+7&#160;(495)&#160;108–70–55</string>
 
+
     <!-- Навигация -->
     <string name="back">Назад</string>
     <string name="search">Поиск</string>
     <string name="menu">Меню</string>
+    <string name="yes">Да</string>
+    <string name="cancel">Отмена</string>
 
     <!-- Корзина и избранное -->
     <string name="cart">Корзина</string>
@@ -20,6 +23,8 @@
     <string name="cancel_removing">Вернуть</string>
     <string name="cancel_removing_full_text">Отменить удаление и вернуть в корзину</string>
     <string name="favorite">Избранное</string>
+    <string name="clear_cart_question">Очистить корзину?</string>
+    <string name="clear_cart_confirmation">Вы действительно хотите удалить всё из корзины?</string>
 
     <!-- Детали блюда -->
     <string name="adds">Добавки</string>
@@ -88,4 +93,6 @@
     <string name="search_field_icon">Поле поиска</string>
     <string name="added_to_cart">Добавлено в корзину</string>
     <string name="is_selected">Выбрано</string>
+
+
 </resources>

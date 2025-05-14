@@ -19,14 +19,10 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.util.ui.components.UndoIndicator
 
 @Composable
 fun CartClearTextButton(
     onClear: () -> Unit,
-    onCancelClear: () -> Unit,
-    isPendingClear: Boolean,
-    clearingProgress: Float?
 ) {
     Box(
         modifier = Modifier
@@ -34,38 +30,31 @@ fun CartClearTextButton(
             .padding(vertical = Dimens.MarginSuperSmall4, horizontal = Dimens.MarginSuperSmall4),
         contentAlignment = Alignment.CenterEnd
     ) {
-        if (isPendingClear && clearingProgress != null) {
-            UndoIndicator(
-                modifier = Modifier.padding(horizontal = Dimens.MarginStandard16),
-                progress = clearingProgress,
-                onCancel = onCancelClear
-            )
-        } else {
-            Row(
-                modifier = Modifier
-                    .clickable(onClick = onClear)
-                    .padding(Dimens.MarginSuperSmall4),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
+        Row(
+            modifier = Modifier
+                .clickable(onClick = onClear)
+                .padding(Dimens.MarginSuperSmall4),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
 
-            ) {
-                Text(
-                    modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
-                    text = stringResource(R.string.clear_cart),
-                    style = Typography.SmallTextStyle,
-                    color = Colors.Grey
+        ) {
+            Text(
+                modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
+                text = stringResource(R.string.clear_cart),
+                style = Typography.SmallTextStyle,
+                color = Colors.Grey
+
+            )
+
+            Icon(
+                modifier = Modifier
+                    .size(Dimens.IconSize24),
+                imageVector = Icons.Default.Delete,
+                tint = Colors.Grey,
+                contentDescription = stringResource(R.string.clear_cart),
 
                 )
-
-                Icon(
-                    modifier = Modifier
-                        .size(Dimens.IconSize24),
-                    imageVector = Icons.Default.Delete,
-                    tint = Colors.Grey,
-                    contentDescription = stringResource(R.string.clear_cart),
-
-                    )
-            }
         }
+
     }
 }
