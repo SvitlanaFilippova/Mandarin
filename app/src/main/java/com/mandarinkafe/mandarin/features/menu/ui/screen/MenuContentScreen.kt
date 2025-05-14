@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,7 +36,6 @@ import com.mandarinkafe.mandarin.features.menu.ui.components.category_tabs.Categ
 import com.mandarinkafe.mandarin.features.menu.ui.components.category_tabs.SubCategoryTabsRow
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
-import com.mandarinkafe.mandarin.util.ui.ScrollPosition
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -65,7 +65,9 @@ fun MenuContentScreen(
 
     val isScrollingUp = remember { mutableStateOf(false) }
     val isScrollingDown = remember { mutableStateOf(false) }
-    var previousPosition by remember { mutableStateOf(ScrollPosition(0, 0)) }
+
+    var previousIndex by remember { mutableIntStateOf(0) }
+    var previousOffset by remember { mutableIntStateOf(0) }
 
     val showMenuTopBar by remember {
         derivedStateOf {
@@ -100,22 +102,31 @@ fun MenuContentScreen(
         }
     }
 
-// Отслеживание направления скролла
+    // Отслеживание направления скролла
     LaunchedEffect(listState) {
         snapshotFlow {
-            ScrollPosition(
-                listState.firstVisibleItemIndex,
-                listState.firstVisibleItemScrollOffset
-            )
-        }.collect { currentPosition ->
-            val isScrollingUpNow = when {
-                currentPosition.index < previousPosition.index -> true
-                currentPosition.index > previousPosition.index -> false
-                else -> currentPosition.offset < previousPosition.offset
+            listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
+        }.collect { (index, offset) ->
+            val deltaIndex = index - previousIndex
+            val deltaOffset = offset - previousOffset
+
+            val isScrollingDownNow = when {
+                deltaIndex > 0 -> true
+                deltaIndex < 0 -> false
+                else -> deltaOffset > 0
             }
+
+            val isScrollingUpNow = when {
+                deltaIndex < 0 -> true
+                deltaIndex > 0 -> false
+                else -> deltaOffset < 0
+            }
+
+            isScrollingDown.value = isScrollingDownNow
             isScrollingUp.value = isScrollingUpNow
-            isScrollingDown.value = !isScrollingUpNow && currentPosition != previousPosition
-            previousPosition = currentPosition
+
+            previousIndex = index
+            previousOffset = offset
         }
     }
 
@@ -186,7 +197,7 @@ fun MenuContentScreen(
 
             }
 
-            // Баннеры только если пользователь в самом верху
+            // Баннеры видны только если пользователь в самом верху
             AnimatedVisibility(
                 visible = isAtTop,
                 enter = fadeIn() + expandVertically(),
@@ -194,7 +205,7 @@ fun MenuContentScreen(
             ) {
                 BannerCarousel(onBannerClick = handleBannerClick)
             }
-            // Табы-категории, видно всегда
+            // Табы-категории видны всегда
             CategoryTabsRow(
                 categories = categories,
                 selectedTabIndex = selectedTabIndex,
@@ -214,14 +225,13 @@ fun MenuContentScreen(
             if (selectedTabIndex >= 0) {
                 val currentSubCategories = categories[selectedTabIndex].subCategoriesNames
 
+                // Табы-подкатегории, появляются при наличии в текущей категории
                 if (!currentSubCategories.isNullOrEmpty()) {
                     AnimatedVisibility(
                         visible = currentSubCategories.isNotEmpty(),
                         enter = fadeIn() + expandVertically(),
                         exit = fadeOut() + shrinkVertically()
                     ) {
-
-                        // Табы-подкатегории, появляются при наличии в текущей категории
                         SubCategoryTabsRow(
                             categories = currentSubCategories,
                             selectedTabIndex = selectedSubTabIndex,
@@ -253,11 +263,10 @@ fun MenuContentScreen(
                 onCartEvent = onCartEvent,
                 cartState = cartState,
                 effectFlow = effectFlow
-
             )
         }
 
-        // FAB для возврата наверх, видна когда юзер НЕ скролит вниз и не находится наверху экрана
+        // FAB для возврата наверх, видна когда юзер не скролит вниз и не находится наверху экрана
         AnimatedVisibility(
             visible = showBackToTopFAB,
             enter = fadeIn(),
@@ -270,6 +279,5 @@ fun MenuContentScreen(
                 onClick = { handleBackToTopClick() }
             )
         }
-
     }
 }
