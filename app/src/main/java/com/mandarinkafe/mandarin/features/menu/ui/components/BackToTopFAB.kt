@@ -13,7 +13,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 fun BackToTopFAB(onClick: () -> Unit) {
     SmallFloatingActionButton(
         onClick = { onClick() },
-        containerColor = Colors.Orange.copy(alpha = 0.95f),
+        containerColor = Colors.Orange,
     ) {
         Icon(
             imageVector = Icons.Default.KeyboardArrowUp,
