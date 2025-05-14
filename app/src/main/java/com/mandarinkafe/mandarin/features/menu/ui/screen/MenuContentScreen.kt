@@ -64,6 +64,7 @@ fun MenuContentScreen(
     }
 
     val isScrollingUp = remember { mutableStateOf(false) }
+    val isScrollingDown = remember { mutableStateOf(false) }
     var previousPosition by remember { mutableStateOf(ScrollPosition(0, 0)) }
 
     val showMenuTopBar by remember {
@@ -73,7 +74,7 @@ fun MenuContentScreen(
     }
 
     val showBackToTopFAB by remember {
-        derivedStateOf { !isAtTop }
+        derivedStateOf { !isAtTop && !isScrollingDown.value }
     }
 
     val handleBannerClick = { targetName: String ->
@@ -99,23 +100,23 @@ fun MenuContentScreen(
         }
     }
 
-    //  Отслеживание направления скролла
+// Отслеживание направления скролла
     LaunchedEffect(listState) {
         snapshotFlow {
             ScrollPosition(
                 listState.firstVisibleItemIndex,
                 listState.firstVisibleItemScrollOffset
             )
-        }
-            .collect { currentPosition ->
-                val isScrollingUpNow = when {
-                    currentPosition.index < previousPosition.index -> true
-                    currentPosition.index > previousPosition.index -> false
-                    else -> currentPosition.offset < previousPosition.offset
-                }
-                isScrollingUp.value = isScrollingUpNow
-                previousPosition = currentPosition
+        }.collect { currentPosition ->
+            val isScrollingUpNow = when {
+                currentPosition.index < previousPosition.index -> true
+                currentPosition.index > previousPosition.index -> false
+                else -> currentPosition.offset < previousPosition.offset
             }
+            isScrollingUp.value = isScrollingUpNow
+            isScrollingDown.value = !isScrollingUpNow && currentPosition != previousPosition
+            previousPosition = currentPosition
+        }
     }
 
     // Отслеживание скролла для обновления активного таба
@@ -256,7 +257,7 @@ fun MenuContentScreen(
             )
         }
 
-        // При скролле вверх появляется FAB для возврата наверх
+        // FAB для возврата наверх, видна когда юзер НЕ скролит вниз и не находится наверху экрана
         AnimatedVisibility(
             visible = showBackToTopFAB,
             enter = fadeIn(),
