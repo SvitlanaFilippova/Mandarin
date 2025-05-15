@@ -1,13 +1,14 @@
     # Mandarin
 
 # Приложение для заказа еды из локальной службы доставки Mandarin 🔎
+> 🚀 В будущем приложение планируется как мультиплатформенное (Android / iOS) с использованием Kotlin Multiplatform.
+
 
 ## Над приложением работают 👨🏻‍💻
 
 <a href="https://github.com/mandarin-kafe/Mandarin/graphs/contributors">  
   <img src="https://contrib.rocks/image?repo=mandarin-kafe/Mandarin&max=6" />
 </a>
-
 
 
 ## Возможности приложения ✨
