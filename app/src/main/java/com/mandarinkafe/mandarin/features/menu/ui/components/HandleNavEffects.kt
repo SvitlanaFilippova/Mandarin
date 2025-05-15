@@ -9,7 +9,7 @@ import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.navigation.navigateToFavoritesScreen
 import com.mandarinkafe.mandarin.navigation.navigateToSearchScreen
-import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER
+import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER_DEFAULT
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -35,7 +35,7 @@ fun HandleNavEffects(
 
                 is MenuContract.MenuEffect.CallPhone -> {
                     val intent = Intent(Intent.ACTION_DIAL).apply {
-                        data = PHONE_NUMBER.toUri()
+                        data = PHONE_NUMBER_DEFAULT.toUri()
                     }
                     context.startActivity(intent)
                 }

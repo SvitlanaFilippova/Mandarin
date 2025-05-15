@@ -29,7 +29,6 @@ fun CartContentScreen(
     state: CartContract.CartState
 ) {
 
-
     Column(modifier = Modifier.fillMaxSize()) {
 
         // Кнопка очистки корзины,
@@ -83,8 +82,6 @@ fun CartContentScreen(
                 item { Spacer(modifier = Modifier.height(Dimens.MarginForCartButton72)) }
             }
 
-            // Затемнение поверх LazyColumn содержимого
-
             // Кнопка оформления заказа
             val ifCartIsEmpty =
                 state.cartItems.keys.all { it in state.pendingDeletionMeals }
@@ -94,7 +91,6 @@ fun CartContentScreen(
                     totalPrice = state.totalCartPrice,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(vertical = Dimens.MarginSmall8)
                         .background(color = Colors.Transparent)
                 )
             }

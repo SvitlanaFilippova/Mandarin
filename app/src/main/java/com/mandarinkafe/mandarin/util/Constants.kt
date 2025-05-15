@@ -26,13 +26,6 @@ object Constants {
     // API
     const val BEARER_PREFIX = "Bearer "
 
-    // Вынести в конфиг для возможности изменений извне
-    const val PHONE_NUMBER = "tel:+74951087055"
-    const val VEG_LABEL = "veg"
-    const val HOT_LABEL = "hot"
-    const val NEW_LABEL = "new"
-    const val HIT_LABEL = "hit"
-
     // Внутренние теги для особой логики в меню
     const val TAG_PIZZA_ADDS = "добавки к пицце"
     const val TAG_WOK_CONSTRUCTOR = "конструктор вок"
@@ -73,6 +66,15 @@ object Constants {
     const val DELIVERY_PRICE_FREE_AREA11 = 5000
     const val DELIVERY_PRICE_FREE_AREA12 = 5500
 
-    // Константы для UI
-    const val BLUR_EFFECT_RADIUS = 3f
+    // remoteConfig
+    const val PHONE_NUMBER_DEFAULT = "tel:+74951087055"
+    const val PHONE_NUMBER_KEY = "phone_number_key"
+    const val VEG_LABEL_DEFAULT = "veg"
+    const val VEG_LABEL_KEY = "veg_label_key"
+    const val HOT_LABEL_DEFAULT = "hot"
+    const val HOT_LABEL_KEY = "hot_label_key"
+    const val NEW_LABEL_DEFAULT = "new"
+    const val NEW_LABEL_KEY = "new_label_key"
+    const val HIT_LABEL_DEFAULT = "hit"
+    const val HIT_LABEL_KEY = "hit_label_key"
 }

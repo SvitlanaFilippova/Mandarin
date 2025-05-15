@@ -3,11 +3,12 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.navigation.safeargs.kotlin)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.jetbrains.kotlin.parcelize)
     alias(libs.plugins.jetbrains.kotlin.compose)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
@@ -98,10 +99,6 @@ dependencies {
     // Activity
     implementation(libs.androidx.activity)
 
-    // Lifecycle
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-
     // JUnit
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -126,4 +123,10 @@ dependencies {
     // Accompanist для управления системными UI + навигацией с BottomSheet
     implementation(libs.accompanist.navigation.material)
     implementation(libs.accompanist.systemuicontroller)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics.ktx)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.config.ktx)
 }
