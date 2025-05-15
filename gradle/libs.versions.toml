@@ -2,6 +2,7 @@
 agp = "8.9.2"
 coilCompose = "2.5.0"
 compiler = "1.5.15"
+firebaseBomVersion = "33.13.0"
 kotlin = "2.1.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -10,7 +11,6 @@ espressoCore = "3.6.1"
 material = "1.12.0"
 activity = "1.10.1"
 retrofit = "2.11.0"
-navigationFragment = "2.8.9"
 lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
 hilt = "2.55"
@@ -25,6 +25,8 @@ mapkit = "4.13.0-lite"
 runtimeLivedata = "1.8.0"
 accompanistNavigationMaterialVersion = "0.34.0"
 accompanistSystemuicontrollerVersion = "0.34.0"
+googleService = "4.4.2"
+
 
 
 
@@ -35,6 +37,9 @@ androidx-compiler = { module = "androidx.compose.compiler:compiler", version.ref
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
+firebase-config-ktx = { module = "com.google.firebase:firebase-config-ktx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -62,13 +67,13 @@ androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtim
 
 
 
-
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-navigation-safeargs-kotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref ="navigationFragment" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 jetbrains-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "parcelize" }
 jetbrains-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleService" }
+
 

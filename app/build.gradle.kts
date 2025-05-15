@@ -3,11 +3,11 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.navigation.safeargs.kotlin)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.jetbrains.kotlin.parcelize)
     alias(libs.plugins.jetbrains.kotlin.compose)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -126,4 +126,9 @@ dependencies {
     // Accompanist для управления системными UI + навигацией с BottomSheet
     implementation(libs.accompanist.navigation.material)
     implementation(libs.accompanist.systemuicontroller)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics.ktx)
+    implementation(libs.firebase.config.ktx)
 }
