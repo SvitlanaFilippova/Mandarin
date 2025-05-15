@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.parcelize)
     alias(libs.plugins.jetbrains.kotlin.compose)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
@@ -98,10 +99,6 @@ dependencies {
     // Activity
     implementation(libs.androidx.activity)
 
-    // Lifecycle
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-
     // JUnit
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -130,5 +127,6 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics.ktx)
+    implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.config.ktx)
 }

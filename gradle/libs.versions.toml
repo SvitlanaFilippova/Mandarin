@@ -3,7 +3,8 @@ agp = "8.9.2"
 coilCompose = "2.5.0"
 compiler = "1.5.15"
 firebaseBomVersion = "33.13.0"
-kotlin = "2.1.0"
+firebaseCrashlytics = "3.0.3"
+kotlin = "2.1.21"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -11,18 +12,16 @@ espressoCore = "3.6.1"
 material = "1.12.0"
 activity = "1.10.1"
 retrofit = "2.11.0"
-lifecycleLivedataKtx = "2.8.7"
-lifecycleViewmodelKtx = "2.8.7"
 hilt = "2.55"
 hiltNavigationCompose = "1.2.0"
-ksp = "2.1.10-1.0.31"
-parcelize = "2.1.0-RC2"
-composeBom = "2025.04.01"
+ksp = "2.1.21-2.0.1"
+parcelize = "2.1.20"
+composeBom = "2025.05.00"
 composeActivity = "1.10.1"
-composeViewModel = "2.8.7"
-navigationCompose = "2.8.9"
+composeViewModel = "2.9.0"
+navigationCompose = "2.9.0"
 mapkit = "4.13.0-lite"
-runtimeLivedata = "1.8.0"
+runtimeLivedata = "1.8.1"
 accompanistNavigationMaterialVersion = "0.34.0"
 accompanistSystemuicontrollerVersion = "0.34.0"
 googleService = "4.4.2"
@@ -40,14 +39,13 @@ converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
 firebase-config-ktx = { module = "com.google.firebase:firebase-config-ktx" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
-androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 com-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 com-hilt-ksp = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
@@ -75,5 +73,7 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 jetbrains-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "parcelize" }
 jetbrains-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleService" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
+
 
 
