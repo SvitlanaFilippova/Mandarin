@@ -1,19 +1,25 @@
 package com.mandarinkafe.mandarin.features.search.ui.components
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
+import com.mandarinkafe.mandarin.core.ui.theme.Typography.PlaceholderTitleStyle
 import com.mandarinkafe.mandarin.features.cart.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.features.meal_details.ui.screen.MealDetailsBottomSheet
@@ -56,11 +62,28 @@ fun SearchResults(
                 onSearchEvent = onSearchEvent
             )
         } else if (latestSearchText.isNotEmpty()) {
-            Text(
-                text = stringResource(id = R.string.nothing_found),
-                color = Colors.White,
-                modifier = Modifier.padding(Dimens.MarginStandard16)
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Colors.Transparent),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.placeholder_nothing_found),
+                    contentDescription = stringResource(id = R.string.nothing_found),
+                    modifier = Modifier
+                        .width(Dimens.PlaceholderImageSize200)
+                        .padding(vertical = Dimens.MarginStandard16)
+                )
+                Text(
+                    text = stringResource(id = R.string.nothing_found),
+                    color = Colors.White,
+                    modifier = Modifier.padding(Dimens.MarginBig24),
+                    style = PlaceholderTitleStyle
+                )
+            }
         }
     }
 

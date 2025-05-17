@@ -73,4 +73,10 @@ object Typography {
         fontSize = Dimens.TextSizeRegular16,
         color = Colors.White
     )
+
+    val PlaceholderTitleStyle = TextStyle(
+        fontSize = Dimens.TextSizeBig20,
+        fontWeight = FontWeight.Medium,
+        color = Colors.White
+    )
 }
