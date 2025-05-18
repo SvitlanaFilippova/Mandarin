@@ -53,10 +53,10 @@ fun SearchResultsMealItem(
                 .size(Dimens.MealSmallImage80)
         ) {
             AsyncImage(
-                model = meal.imageUrl.ifEmpty { R.drawable.logo_orange_square },
+                model = meal.imageUrl.ifEmpty { R.drawable.placeholder_meal_no_photo },
                 contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
-                error = painterResource(R.drawable.logo_orange_square),
-                placeholder = painterResource(R.drawable.logo_orange_square),
+                error = painterResource(R.drawable.placeholder_meal_no_photo),
+                placeholder = painterResource(R.drawable.placeholder_meal_no_photo),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()

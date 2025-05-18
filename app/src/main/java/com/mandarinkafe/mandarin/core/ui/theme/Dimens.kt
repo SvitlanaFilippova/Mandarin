@@ -34,7 +34,7 @@ object Dimens {
     val MealImage136 = 136.dp
     val MealSmallImage80 = 80.dp
     val MealMinDescriptionHeight96 = 96.dp
-    val PlaceholderImageSize120 = 120.dp
+    val PlaceholderImageSize200 = 200.dp
     val ProgressBarSize124 = 124.dp
     val ProgressBarWidth24 = 24.dp
     val FakeSearchBarHeight48 = 48.dp

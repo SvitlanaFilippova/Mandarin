@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
@@ -30,17 +29,17 @@ fun CartPlaceholder(errorMessage: String) {
     ) {
 
         Image(
-            painter = painterResource(R.drawable.logo_orange),
-            contentDescription = stringResource(R.string.logo_cafe),
+            painter = painterResource(R.drawable.placeholder_empty_cart),
+            contentDescription = errorMessage,
             modifier = Modifier
-                .width(Dimens.PlaceholderImageSize120)
+                .width(Dimens.PlaceholderImageSize200)
                 .padding(bottom = Dimens.MarginBig24)
         )
 
         Text(
             text = errorMessage.applyTypography(),
             color = Colors.White,
-            style = Typography.RegularTextStyle
+            style = Typography.PlaceholderTitleStyle
         )
 
     }

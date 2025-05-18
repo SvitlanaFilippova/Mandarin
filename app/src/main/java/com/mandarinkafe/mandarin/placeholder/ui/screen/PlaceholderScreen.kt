@@ -45,16 +45,16 @@ fun PlaceholderScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(R.drawable.logo_orange),
-            contentDescription = stringResource(R.string.logo_cafe),
+            painter = painterResource(R.drawable.placeholder_no_internet),
+            contentDescription = stringResource(id = R.string.error_something_wrong),
             modifier = Modifier
-                .width(Dimens.PlaceholderImageSize120)
+                .width(Dimens.PlaceholderImageSize200)
                 .padding(bottom = Dimens.MarginStandard16)
         )
 
         Text(
             text = stringResource(id = R.string.error_something_wrong).applyTypography(),
-            style = Typography.RegularTextStyle,
+            style = Typography.PlaceholderTitleStyle,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(Dimens.MarginSmall8)
         )
@@ -66,22 +66,14 @@ fun PlaceholderScreen(
             modifier = Modifier.padding(Dimens.MarginStandard16)
         )
 
-        Text(
-            text = stringResource(
-                R.string.placeholder_message_call_us,
-                stringResource(R.string.cafe_phone_number)
-            ).applyTypography(),
-            style = Typography.RegularTextStyle,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(Dimens.MarginBig24)
-        )
-
         val buttonWidth = Dimens.ButtonPlaceholderSize200
 
         Box(modifier = Modifier.width(buttonWidth)) {
             Button(
                 onClick = { onEvent(MenuEvent.ForceRefreshMenu) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Dimens.MarginSmall8),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Colors.White,
                     containerColor = Colors.Orange
