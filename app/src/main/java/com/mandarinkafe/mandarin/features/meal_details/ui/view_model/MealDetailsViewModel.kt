@@ -173,19 +173,21 @@ class MealDetailsViewModel @Inject constructor(
             setState { copy(isLoading = false) }
         } else {
             viewModelScope.launch {
-                menuInteractor.getAddons().collect { (adds, errorMessage) ->
-                    if (!adds.isNullOrEmpty()) {
-                        setState { copy(isLoading = false, pizzaAds = adds) }
-                    } else {
-                        // Обработка ошибки
-                        setState {
-                            copy(
-                                isLoading = false,
-                                errorMessage = errorMessage
-                            )
-                        }
-                    }
-                }
+                //TODO
+
+//                menuInteractor.getAddons().collect { (adds, errorMessage) ->
+//                    if (!adds.isNullOrEmpty()) {
+//                        setState { copy(isLoading = false, pizzaAds = adds) }
+//                    } else {
+//                        // Обработка ошибки
+//                        setState {
+//                            copy(
+//                                isLoading = false,
+//                                errorMessage = errorMessage
+//                            )
+//                        }
+//                    }
+//                }
             }
         }
     }

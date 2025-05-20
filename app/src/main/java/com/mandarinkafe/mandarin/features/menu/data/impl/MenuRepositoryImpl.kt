@@ -19,6 +19,7 @@ import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,12 +37,20 @@ class MenuRepositoryImpl @Inject constructor(
     override val menu: StateFlow<Resource<List<MealCategory>>> = _menu.asStateFlow()
 
     override fun getMenu(): Flow<Resource<List<MealCategory>>> {
-        // если данные уже есть, возвращаем их
-        if (_menu.value is Resource.Success) return menu
+        when (_menu.value) {
+            is Resource.Error -> {
+                Log.d("DEBUG  MenuRepository", "getMenu - Resource.Error")
+            }
 
-        // если данных нет, начинаем загрузку
-        fetchMenuFromNetwork()
-        //TODO
+            is Resource.Loading -> {
+                Log.d("DEBUG  MenuRepository", "getMenu - Resource.Loading")
+                fetchMenuWithRetries()
+            }
+
+            is Resource.Success -> {
+                Log.d("DEBUG  MenuRepository", "getMenu - Данные уже есть, возвращаю кэш menu")
+            }
+        }
         return menu
     }
 
@@ -72,41 +81,46 @@ class MenuRepositoryImpl @Inject constructor(
 
     // Метод для принудительного обновления
     override suspend fun forceRefresh() {
-        fetchMenuFromNetwork(true)
+        Log.d("DEBUG  MenuRepository", "forceRefresh")
+        fetchMenuWithRetries()
     }
 
-    private fun fetchMenuFromNetwork(force: Boolean = false) {
-        // Если данных нет или нужно принудительное обновление
-        if (_menu.value !is Resource.Success || force) {
-            CoroutineScope(Dispatchers.IO).launch {
+    private fun fetchMenuWithRetries(maxAttempts: Int = 3, delayMs: Long = 500) {
+        Log.d("DEBUG  MenuRepository", "запуск fetchMenuWithRetries")
+        CoroutineScope(Dispatchers.IO).launch {
+            var attempts = 0
+            while (attempts < maxAttempts) {
                 _menu.value = Resource.Loading()
                 try {
-                    // Загружаем меню
                     val response = networkClient.getMenu()
-                    when (response.resultCode) {
-                        -1 -> _menu.value =
-                            Resource.Error("Проверьте подключение к интернету") //TODO заменить обработку ошибок
-
-                        HTTP_SUCCESS -> {
-                            val categories = (response as MenuResponse).itemCategories
-                            if (categories.isNullOrEmpty()) {
-                                _menu.value =
-                                    Resource.Error("Сервер вернул пустые данные категорий") //TODO заменить обработку ошибок
-
-                            } else {
-                                _menu.value =
-                                    Resource.Success(buildMenuStructure(categories))
-                            }
-                        }
-
-                        else -> _menu.value =
-                            Resource.Error("Ошибка сервера") //TODO заменить обработку ошибок
+                    if (response.resultCode == -1) {
+                        _menu.value =
+                            Resource.Error("Проверьте подключение к интернету")
+                    }
+                    if (response.resultCode == HTTP_SUCCESS && (response as MenuResponse).itemCategories != null) {
+                        val categories = response.itemCategories
+                        val data = buildMenuStructure(categories)
+                        _menu.value = Resource.Success(data)
+                        return@launch
+                    } else {
+                        _menu.value = Resource.Error("Ошибка сервера или пустой ответ")
                     }
                 } catch (e: Exception) {
-                    _menu.value =
-                        Resource.Error("Что-то пошло не так. Ошибка: " + e.message) //TODO заменить обработку ошибок
+                    _menu.value = Resource.Error("Что-то пошло не так. Ошибка: ${e.message}")
                 }
+                attempts++
+                delay(delayMs)
             }
+            // Если не удалось после всех попыток
+            if (_menu.value !is Resource.Success) {
+                _menu.value = Resource.Error("Не удалось загрузить меню после $maxAttempts попыток")
+            }
+        }
+    }
+
+    override fun fetchMenuIfNeeded() {
+        if (_menu.value !is Resource.Success && _menu.value !is Resource.Loading) {
+            fetchMenuWithRetries()
         }
     }
 

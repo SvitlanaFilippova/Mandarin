@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.menu.ui.view_model
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toMealItem
 import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInteractor
@@ -19,10 +20,9 @@ import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEf
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuState
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
-import com.mandarinkafe.mandarin.util.Constants.DELAY_BEFORE_NEXT_ATTEMPT
-import com.mandarinkafe.mandarin.util.Constants.MAX_ATTEMPTS
+import com.mandarinkafe.mandarin.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -65,46 +65,13 @@ class MenuViewModel @Inject constructor(
 
     // Методы для загрузки меню
     private fun loadMenu() {
-        setState { copy(isLoading = true) }
         viewModelScope.launch {
-            var attempts = 0
-            var success = false
-
-            // Попытки до максимума
-            while (attempts < MAX_ATTEMPTS) {
-                menuInteractor.getMenu()
-                    .collect { (menu, errorMessage) ->
-                        // Если меню в процессе загрузки, пробуем снова
-                        if (menu == null && errorMessage == null) {
-                            attempts++
-                            delay(DELAY_BEFORE_NEXT_ATTEMPT) // Задержка перед повторной попыткой
-                        } else {
-                            // Обработка успешной загрузки данных
-                            if (!menu.isNullOrEmpty()) {
-                                setState {
-                                    copy(isLoading = false, menuItems = menuToMenuItems(menu))
-                                }
-                                success = true
-                            } else {
-                                // Обработка ошибки
-                                setState {
-                                    copy(
-                                        isLoading = false,
-                                        errorMessage = errorMessage
-                                    )
-                                }
-                            }
-                            return@collect // Завершаем коллекцию данных после успешной обработки
-                        }
-                    }
-            }
-            // Если после всех попыток данных нет, устанавливаем ошибку
-            if (!success) {
-                setState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = "Не удалось загрузить меню. Попробуйте позже."
-                    )
+            menuInteractor.getMenu().collectLatest { resource ->
+                setLoading(resource is Resource.Loading)
+                when (resource) {
+                    is Resource.Success -> setData(resource.data)
+                    is Resource.Error -> setError(resource.message)
+                    is Resource.Loading -> {}
                 }
             }
         }
@@ -116,6 +83,26 @@ class MenuViewModel @Inject constructor(
             menuInteractor.forceRefresh()
             loadMenu()
         }
+    }
+
+    private fun setData(data: List<MealCategory>?) {
+        if (!data.isNullOrEmpty()) {
+            setState {
+                copy(
+                    menuItems = menuToMenuItems(data),
+                    isLoading = false,
+                    errorMessage = null
+                )
+            }
+        }
+    }
+
+    private fun setError(errorMessage: String?) {
+        setState { copy(errorMessage = errorMessage) }
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        setState { copy(isLoading = true) }
     }
 
     // Методы управлением скроллом

@@ -16,48 +16,43 @@ class MenuInteractorImpl(
     @Addons private val addonsFilter: CategoryFilter
 ) : MenuInteractor {
 
-    override fun getMenu(): Flow<Pair<List<MealCategory>?, String?>> = repository.getMenu()
-        .map { result ->
+    override fun getMenu(): Flow<Resource<List<MealCategory>>> {
+        repository.getMenu()
+        return repository.menu.map { result ->
             when (result) {
                 is Resource.Success -> {
-                    // Фильтруем все категории, которые не должны отображаться в общем меню (флаг isHidden)
-                    val visibleMenu = result.data?.filterNot { it.isHidden }
-                    Pair(visibleMenu, null)
+                    val filtered = result.data?.filterNot { it.isHidden }
+                    Resource.Success(filtered ?: emptyList())
+                }
+
+                is Resource.Error -> result
+                is Resource.Loading -> result
+            }
+        }
+    }
+
+    override fun getAddons(): Flow<Resource<List<MealAdditionalCategory>>> {
+        return repository.menu.map { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val addonsParents = result.data?.filter { addonsFilter.isMatch(it) }
+                    val addonsCategories: List<MealCategory> = addonsParents
+                        ?.flatMap {
+                            it.subCategories ?: emptyList()
+                        } ?: emptyList()
+                    Resource.Success(addonsCategories.map { it.toMealAdditionalCategory() })
                 }
 
                 is Resource.Error -> {
-                    Pair(null, result.message)
+                    Resource.Error(result.message.toString())
                 }
 
                 is Resource.Loading -> {
-                    Pair(null, null)
+                    Resource.Loading()
                 }
             }
         }
-
-    override fun getAddons(): Flow<Pair<List<MealAdditionalCategory>?, String?>> =
-        repository.getMenu()
-            .map { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        val addonsParents = result.data?.filter { addonsFilter.isMatch(it) }
-                        val addonsCategories: List<MealCategory> = addonsParents
-                            ?.flatMap {
-                                it.subCategories ?: emptyList()
-                            } ?: emptyList()
-
-                        Pair(addonsCategories.map { it.toMealAdditionalCategory() }, null)
-                    }
-
-                    is Resource.Error -> {
-                        Pair(null, result.message)
-                    }
-
-                    is Resource.Loading -> {
-                        Pair(null, null)
-                    }
-                }
-            }
+    }
 
     // метод, чтобы принудительно перезагрузить меню
     override suspend fun forceRefresh() {
