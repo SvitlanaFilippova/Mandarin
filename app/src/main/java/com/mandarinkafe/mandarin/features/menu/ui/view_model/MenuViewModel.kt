@@ -6,9 +6,11 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toMealItem
 import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInteractor
-import com.mandarinkafe.mandarin.features.menu.domain.models.MenuItem
-import com.mandarinkafe.mandarin.features.menu.domain.models.getName
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
+import com.mandarinkafe.mandarin.features.menu.ui.mappers.MenuItemMapper.menuToMenuItems
+import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
+import com.mandarinkafe.mandarin.features.menu.ui.models.getName
+import com.mandarinkafe.mandarin.features.menu.ui.models.updateMeal
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.CallPhone
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.OpenFavorites
@@ -80,7 +82,7 @@ class MenuViewModel @Inject constructor(
                             // Обработка успешной загрузки данных
                             if (!menu.isNullOrEmpty()) {
                                 setState {
-                                    copy(isLoading = false, menuItems = menu)
+                                    copy(isLoading = false, menuItems = menuToMenuItems(menu))
                                 }
                                 success = true
                             } else {
@@ -182,10 +184,10 @@ class MenuViewModel @Inject constructor(
             }
 
             setState {
-                val updatedMenuItems =
-                    updateMealItemInList(menuItems, meal.id, isNowFavorite)
                 copy(
-                    menuItems = updatedMenuItems,
+                    menuItems = menuItems.updateMeal(meal.id) { meal ->
+                        meal.copy(isFavorite = isNowFavorite)
+                    }
                 )
             }
         }
@@ -194,13 +196,10 @@ class MenuViewModel @Inject constructor(
     // Если состояние избранного менялось в другом месте (например,в BottomSheet)
     private fun updateMealFavorite(id: String, isFavorite: Boolean) {
         setState {
-            val updatedMenuItems = menuItems.map { item ->
-                if (item is MenuItem.MealItem && item.meal.id == id) {
-                    item.copy(meal = item.meal.copy(isFavorite = isFavorite))
-                } else item
-            }
             copy(
-                menuItems = updatedMenuItems,
+                menuItems = menuItems.updateMeal(id) { meal ->
+                    meal.copy(isFavorite = isFavorite)
+                }
             )
         }
     }
@@ -210,21 +209,4 @@ class MenuViewModel @Inject constructor(
         return favoritesInteractor.getFavorites().map { it.toMealItem() }
     }
 
-    private fun updateMealItemInList(
-        list: List<MenuItem>,
-        mealId: String,
-        isFavorite: Boolean
-    ): List<MenuItem> {
-        val index = list.indexOfFirst {
-            it is MenuItem.MealItem && it.meal.id == mealId
-        }
-        if (index == -1) return list
-
-        val updatedList = list.toMutableList()
-        val mealItem = updatedList[index] as MenuItem.MealItem
-        updatedList[index] = mealItem.copy(
-            meal = mealItem.meal.copy(isFavorite = isFavorite)
-        )
-        return updatedList
-    }
 }

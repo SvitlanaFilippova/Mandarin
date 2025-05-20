@@ -2,12 +2,13 @@ package com.mandarinkafe.mandarin.features.menu.ui.components.mealitem
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,11 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import coil.compose.AsyncImage
+import androidx.compose.ui.unit.Dp
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -28,93 +27,74 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
-import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
-import com.mandarinkafe.mandarin.util.ui.components.LabelChip
+import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU
+import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_TITLE_IN_MENU
+import com.mandarinkafe.mandarin.util.ui.components.MealItemImageBox
+import com.mandarinkafe.mandarin.util.ui.components.buttons.MealButtonsRow
 
 @Composable
 fun MenuMealItem(
     meal: Meal,
     onEvent: (MenuEvent) -> Unit,
     onCartEvent: (CartContract.CartEvent) -> Unit,
-    cartState: CartContract.CartState
+    cartState: CartContract.CartState,
+    imageSize: Dp,
+    modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.Top,
-        modifier = Modifier
-            .padding(Dimens.MarginSmall8)
+        modifier = modifier
+            .padding(horizontal = Dimens.MarginSmall8)
+            .height(IntrinsicSize.Min)
+            .clip(RoundedCornerShape(Dimens.CornerRadius8))
+            .background(Colors.GreyTransparent10)
             .clickable(onClick = { onEvent(MenuEvent.OnMealDetailsClick(meal)) })
     ) {
-        Box(
+        MealItemImageBox(
             modifier = Modifier
-                .size(Dimens.MealImage136)
-        ) {
-            AsyncImage(
-                model = meal.imageUrl.ifEmpty { R.drawable.placeholder_meal_no_photo },
-                contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
-                error = painterResource(R.drawable.placeholder_meal_no_photo),
-                placeholder = painterResource(R.drawable.placeholder_meal_no_photo),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                    .background(
-                        color = Colors.AppBlack,
-                        shape = RoundedCornerShape(Dimens.CornerRadius8)
-                    )
-            )
+                .size(imageSize)
+                .padding(Dimens.MarginSmall8),
+            meal = meal,
+            onToggleFavorite = { meal -> onEvent(MenuEvent.ToggleFavorite(meal)) },
+        )
 
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4),
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(Dimens.MarginSuperSmall4)
-            ) {
-                meal.labels.forEach {
-                    LabelChip(
-                        label = it.toUiModel(),
-                    )
-                }
-            }
-        }
-
+        // Блок с текстовой информацией о блюде
         Column(
             modifier = Modifier
-                .padding(start = Dimens.MarginSmall8)
-        )
-        {
+                .fillMaxSize()
+                .padding(Dimens.MarginSmall8)
+        ) {
+            Text(
+                text = meal.name,
+                style = Typography.MealTitleStyle,
+                maxLines = MAX_LINES_FOR_MEAL_TITLE_IN_MENU,
+                overflow = TextOverflow.Ellipsis
+            )
 
-            // Блок с текстовой информацией о блюде
-            Column(modifier = Modifier.heightIn(min = Dimens.MealMinDescriptionHeight96)) {
+            if (meal.description.isNotEmpty()) {
                 Text(
-                    text = meal.name,
-                    style = Typography.MealTitleStyle,
-                    maxLines = 3
+                    text = meal.description,
+                    style = Typography.MealSmallTextStyle,
+                    maxLines = MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU,
+                    overflow = TextOverflow.Ellipsis
                 )
-
-                if (meal.description.isNotEmpty()) {
-                    Text(
-                        text = meal.description,
-                        style = Typography.MealSmallTextStyle,
-                        maxLines = 4,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                if (meal.weight != 0) {
-                    Text(
-                        modifier = Modifier.padding(vertical = Dimens.MarginSuperSmall4),
-                        text = stringResource(R.string.meal_weight_template, meal.weight),
-                        style = Typography.MealSmallTextStyle
-                    )
-                }
             }
+            if (meal.weight != 0) {
+                Text(
+                    modifier = Modifier.padding(vertical = Dimens.MarginSuperSmall4),
+                    text = stringResource(R.string.meal_weight_template, meal.weight),
+                    style = Typography.MealSmallTextStyle
+                )
+            }
+            Spacer(
+                modifier = Modifier.weight(1f)
+            )
             // Контейнер для кнопок
             Box(contentAlignment = Alignment.BottomStart) {
                 MealButtonsRow(
                     meal = meal,
                     onCartEvent = onCartEvent,
                     cartState = cartState,
-                    onToggleFavorite = { meal -> onEvent(MenuEvent.ToggleFavorite(meal)) },
                     onMealDetailsClick = { meal -> onEvent(MenuEvent.OnMealDetailsClick(meal)) },
                 )
             }

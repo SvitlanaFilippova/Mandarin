@@ -5,9 +5,8 @@ import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInteractor
-import com.mandarinkafe.mandarin.features.menu.domain.models.MenuItem
-import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
+import com.mandarinkafe.mandarin.features.search.domain.usecase.GetFullMealListUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetLabelsUseCase
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEffect
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEffect.OpenMealDetailsBS
@@ -24,7 +23,7 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val getLabelsUseCase: GetLabelsUseCase,
     private val favoritesInteractor: FavoritesInteractor,
-    private val menuInteractor: MenuInteractor,
+    private val getFullMealListUseCase: GetFullMealListUseCase,
 ) : BaseViewModel<SearchEvent, SearchEffect, SearchState>() {
     override fun setInitialState() = SearchState()
 
@@ -85,7 +84,7 @@ class SearchViewModel @Inject constructor(
 
     // Очистить поле поиска
     private fun clearSearchInput() {
-        setState { copy(filteredMenuItems = emptyList(), latestSearchText = "") }
+        setState { copy(filteredMealList = emptyList(), latestSearchText = "") }
         filterMenu()
     }
 
@@ -100,13 +99,9 @@ class SearchViewModel @Inject constructor(
         setState {
             val filtered = if (latestSearchText.isBlank() && checkedLabels.isEmpty()) {
                 // Нет активных фильтров — показываем всё
-                menuItems
+                fullMealList
             } else {
-                menuItems.filter { item ->
-                    if (item !is MenuItem.MealItem) return@filter false
-
-                    val meal = item.meal
-
+                fullMealList.filter { meal ->
                     val matchesSearch = latestSearchText.isBlank() ||
                             meal.name.contains(latestSearchText, ignoreCase = true)
 
@@ -116,12 +111,10 @@ class SearchViewModel @Inject constructor(
 
                     matchesSearch && matchesLabels
                 }
-            }.sortedWith(compareByDescending<MenuItem> {
-                (it as? MenuItem.MealItem)?.meal?.isFavorite == true
-            })
+            }.sortedWith(compareByDescending { it.isFavorite })
 
             copy(
-                filteredMenuItems = filtered,
+                filteredMealList = filtered,
             )
         }
     }
@@ -138,16 +131,25 @@ class SearchViewModel @Inject constructor(
             }
 
             setState {
-                val updatedMenuItems =
-                    updateMealItemInList(menuItems, meal.id, isNowFavorite)
-                val updatedFiltered = if (filteredMenuItems.isNotEmpty()) {
-                    updateMealItemInList(filteredMenuItems, meal.id, isNowFavorite)
-                } else {
-                    filteredMenuItems
+                val updatedFullList = fullMealList.map { currentMeal ->
+                    if (currentMeal.id == meal.id) {
+                        currentMeal.copy(isFavorite = isNowFavorite)
+                    } else {
+                        currentMeal
+                    }
                 }
+
+                val updatedFilteredList = filteredMealList.map { currentMeal ->
+                    if (currentMeal.id == meal.id) {
+                        currentMeal.copy(isFavorite = isNowFavorite)
+                    } else {
+                        currentMeal
+                    }
+                }
+
                 copy(
-                    menuItems = updatedMenuItems,
-                    filteredMenuItems = updatedFiltered
+                    fullMealList = updatedFullList,
+                    filteredMealList = updatedFilteredList
                 )
             }
         }
@@ -155,34 +157,20 @@ class SearchViewModel @Inject constructor(
 
     // Если состояние избранного менялось в другом месте (например,в BottomSheet)
     private fun updateMealFavorite(id: String, isFavorite: Boolean) {
-        setState { ->
-            val updatedMenuItems = menuItems.map { item ->
-                if (item is MenuItem.MealItem && item.meal.id == id) {
-                    item.copy(meal = item.meal.copy(isFavorite = isFavorite))
-                } else item
+        setState {
+            val updatedFullList = fullMealList.map { meal ->
+                if (meal.id == id) meal.copy(isFavorite = isFavorite) else meal
             }
+
+            val updatedFilteredList = filteredMealList.map { meal ->
+                if (meal.id == id) meal.copy(isFavorite = isFavorite) else meal
+            }
+
             copy(
-                menuItems = updatedMenuItems,
+                fullMealList = updatedFullList,
+                filteredMealList = updatedFilteredList
             )
         }
-    }
-
-    private fun updateMealItemInList(
-        list: List<MenuItem>,
-        mealId: String,
-        isFavorite: Boolean
-    ): List<MenuItem> {
-        val index = list.indexOfFirst {
-            it is MenuItem.MealItem && it.meal.id == mealId
-        }
-        if (index == -1) return list
-
-        val updatedList = list.toMutableList()
-        val mealItem = updatedList[index] as MenuItem.MealItem
-        updatedList[index] = mealItem.copy(
-            meal = mealItem.meal.copy(isFavorite = isFavorite)
-        )
-        return updatedList
     }
 
     // Метод для загрузки меню
@@ -194,7 +182,7 @@ class SearchViewModel @Inject constructor(
 
             // Попытки до максимума
             while (attempts < MAX_ATTEMPTS) {
-                menuInteractor.getMenu()
+                getFullMealListUseCase.execute()
                     .collect { (menu, errorMessage) ->
                         // Если меню в процессе загрузки, пробуем снова
                         if (menu == null && errorMessage == null) {
@@ -206,10 +194,8 @@ class SearchViewModel @Inject constructor(
                                 setState {
                                     copy(
                                         isLoading = false,
-                                        menuItems = menu,
-                                        filteredMenuItems = menu.sortedWith(compareByDescending<MenuItem> {
-                                            (it as? MenuItem.MealItem)?.meal?.isFavorite
-                                        })
+                                        fullMealList = menu,
+                                        filteredMealList = menu.sortedWith(compareByDescending { it.isFavorite })
                                     )
                                 }
                                 success = true

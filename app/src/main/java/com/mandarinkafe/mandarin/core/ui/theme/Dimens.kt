@@ -15,8 +15,6 @@ object Dimens {
     val ButtonToCartSmall32 = 32.dp
     val ButtonBox32 = 32.dp
     val ButtonToCartBig120 = 120.dp
-    val ButtonEditMeal32 = 32.dp
-    val ButtonToggleFavorite28 = 28.dp
     val ButtonPlaceholderSize200 = 200.dp
     val IconSize24 = 24.dp
     val MarginStandard16 = 16.dp
@@ -34,6 +32,7 @@ object Dimens {
     val MealImage136 = 136.dp
     val MealSmallImage80 = 80.dp
     val MealMinDescriptionHeight96 = 96.dp
+    val PhotoPlaceholderStrokeWidth4 = 4.dp
     val PlaceholderImageSize200 = 200.dp
     val ProgressBarSize124 = 124.dp
     val ProgressBarWidth24 = 24.dp

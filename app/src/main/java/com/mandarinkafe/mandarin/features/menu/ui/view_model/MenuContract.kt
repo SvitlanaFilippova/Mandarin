@@ -4,7 +4,7 @@ import com.mandarinkafe.mandarin.core.BaseEffect
 import com.mandarinkafe.mandarin.core.BaseEvent
 import com.mandarinkafe.mandarin.core.BaseState
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.features.menu.domain.models.MenuItem
+import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 

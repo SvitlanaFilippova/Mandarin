@@ -4,7 +4,6 @@ import com.mandarinkafe.mandarin.core.BaseEffect
 import com.mandarinkafe.mandarin.core.BaseEvent
 import com.mandarinkafe.mandarin.core.BaseState
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.features.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.features.search.ui.model.LabelUiModel
 import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 
@@ -27,8 +26,8 @@ interface SearchContract {
     }
 
     data class SearchState(
-        val menuItems: List<MenuItem> = emptyList(),
-        val filteredMenuItems: List<MenuItem> = emptyList(),
+        val fullMealList: List<Meal> = emptyList(),
+        val filteredMealList: List<Meal> = emptyList(),
         val allLabels: List<LabelUiModel> = emptyList(),
         val checkedLabels: List<String> = emptyList(),
         val latestSearchText: String = "",

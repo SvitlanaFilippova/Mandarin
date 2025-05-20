@@ -122,7 +122,7 @@ fun MealDetailsContent(
                                 modifier = Modifier.size(Dimens.ButtonBox32)
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(Dimens.ButtonToggleFavorite28),
+                                    modifier = Modifier.size(Dimens.IconSize24),
                                     imageVector = Icons.Default.ArrowDropDown,
                                     contentDescription = stringResource(id = R.string.make_more_delicious),
                                     tint = Colors.White

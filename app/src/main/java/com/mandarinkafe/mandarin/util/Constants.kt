@@ -11,8 +11,10 @@ object Constants {
     const val ANIMATION_DURATION_FAST = 300
     const val DEFAULT_UNSELECTED_INDEX = -1
     const val DEFAULT_SELECTED_FIRST_INDEX = 0
-    const val MAX_LINES_FOR_FLOW_ROW = 3
+    const val MAX_LINES_FOR_LABEL_FLOW_ROW = 3
     const val MAX_LINES_FOR_LABEL_CHIP = 1
+    const val MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU = 5
+    const val MAX_LINES_FOR_MEAL_TITLE_IN_MENU = 3
     const val MAX_LINES_FOR_COLLAPSED_EXPANDABLE_TEXT = 6
 
     // Menu loading

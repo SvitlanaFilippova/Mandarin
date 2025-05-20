@@ -13,7 +13,7 @@ import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.menu.domain.models.MenuItem
+import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
 
 @Composable
 fun CategoryTabItem(category: MenuItem.HeaderItem, isSelected: Boolean, onClick: () -> Unit) {

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -40,6 +41,7 @@ fun ToCartButtonWithPrice(price: Int, onClick: () -> Unit, modifier: Modifier = 
             horizontalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
             Icon(
+                modifier = Modifier.size(Dimens.IconSize24),
                 painter = painterResource(R.drawable.ic_cart),
                 contentDescription = stringResource(id = R.string.add_to_cart),
                 tint = Color.White
