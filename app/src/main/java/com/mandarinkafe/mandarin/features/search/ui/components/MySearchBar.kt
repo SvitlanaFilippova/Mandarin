@@ -42,7 +42,7 @@ fun MySearchBar(
     effectFlow: Flow<SearchContract.SearchEffect>,
 ) {
 
-    val filteredMenuItems = searchState.filteredMenuItems
+    val filteredMenuItems = searchState.filteredMealList
     val latestSearchText = searchState.latestSearchText
     val keyboardController = LocalSoftwareKeyboardController.current
     var isExpanded by remember { mutableStateOf(true) }

@@ -38,6 +38,6 @@ class CoreDataModule {
         context: Context,
         ikkoService: IikoApiService
     ): NetworkClient {
-        return RetrofitNetworkClient(context = context, ikkoService = ikkoService)
+        return RetrofitNetworkClient(context = context, iikoService = ikkoService)
     }
 }

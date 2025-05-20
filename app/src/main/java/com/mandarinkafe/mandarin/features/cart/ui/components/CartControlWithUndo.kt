@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.cart.totalPrice
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.buttons.CartControls
 import com.mandarinkafe.mandarin.util.ui.components.UndoIndicator
+import com.mandarinkafe.mandarin.util.ui.components.buttons.CartControls
 
 @Composable
 fun CartControlWithUndo(

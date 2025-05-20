@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.features.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.features.menu.ui.components.MenuList
@@ -34,6 +33,8 @@ import com.mandarinkafe.mandarin.features.menu.ui.components.MenuTopBar
 import com.mandarinkafe.mandarin.features.menu.ui.components.SearchAndFilterBar
 import com.mandarinkafe.mandarin.features.menu.ui.components.category_tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.features.menu.ui.components.category_tabs.SubCategoryTabsRow
+import com.mandarinkafe.mandarin.features.menu.ui.components.getVisibleCategoryIndexes
+import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
 import kotlinx.coroutines.flow.Flow
@@ -134,36 +135,21 @@ fun MenuContentScreen(
     LaunchedEffect(listState) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo }
             .collect { visibleItems ->
-                visibleItems.firstOrNull { it.offset >= 0 }?.index?.let { index ->
-                    (menuItems.getOrNull(index) as? MenuItem.MealItem)?.let { mealItem ->
-                        val parentCategory = menuItems
-                            .takeWhile { it !== mealItem }
-                            .lastOrNull { it is MenuItem.HeaderItem } as? MenuItem.HeaderItem
+                val (newCategoryIndex, newSubIndex) = getVisibleCategoryIndexes(
+                    visibleItems = visibleItems,
+                    menuItems = menuItems,
+                    categoriesNames = categoriesNames
+                )
 
-                        parentCategory?.let { category ->
-                            val newIndex = categoriesNames.indexOf(category.categoryName)
-                            if (newIndex != selectedTabIndex) {
-                                onEvent(MenuEvent.ScrollToCategory(newIndex))
-                            }
-                            // Ищем подкатегорию
-                            val parentSubCategory = menuItems
-                                .takeWhile { it !== mealItem }
-                                .lastOrNull { it is MenuItem.SubHeaderItem } as? MenuItem.SubHeaderItem
-
-                            parentSubCategory?.let { subCategory ->
-                                val newSubIndex =
-                                    parentCategory.subCategoriesNames?.indexOf(subCategory.categoryName)
-                                        ?: -1
-                                if (newSubIndex != selectedSubTabIndex) {
-                                    onEvent(MenuEvent.ScrollToSubCategory(newSubIndex))
-                                }
-                            }
-                        }
-                    }
+                if (newCategoryIndex != null && newCategoryIndex != selectedTabIndex) {
+                    onEvent(MenuEvent.ScrollToCategory(newCategoryIndex))
                 }
-
+                if (newSubIndex != null && newSubIndex != selectedSubTabIndex) {
+                    onEvent(MenuEvent.ScrollToSubCategory(newSubIndex))
+                }
             }
     }
+
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -1,8 +1,6 @@
 package com.mandarinkafe.mandarin.features.menu.data.impl
 
-import android.content.Context
 import android.util.Log
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
@@ -17,7 +15,6 @@ import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.applyTypography
-import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
@@ -31,12 +28,11 @@ import kotlinx.coroutines.launch
 @Singleton
 class MenuRepositoryImpl @Inject constructor(
     private val networkClient: NetworkClient,
-    private val favoritesRepository: FavoritesRepository,
-    @ApplicationContext private val context: Context
+    private val favoritesRepository: FavoritesRepository
 ) : MenuRepository {
 
     private val _menu =
-        MutableStateFlow<Resource<List<MealCategory>>>(Resource.Loading()) // Состояние загрузки
+        MutableStateFlow<Resource<List<MealCategory>>>(Resource.Loading())
     override val menu: StateFlow<Resource<List<MealCategory>>> = _menu.asStateFlow()
 
     override fun getMenu(): Flow<Resource<List<MealCategory>>> {
@@ -45,6 +41,7 @@ class MenuRepositoryImpl @Inject constructor(
 
         // если данных нет, начинаем загрузку
         fetchMenuFromNetwork()
+        //TODO
         return menu
     }
 
@@ -88,31 +85,32 @@ class MenuRepositoryImpl @Inject constructor(
                     val response = networkClient.getMenu()
                     when (response.resultCode) {
                         -1 -> _menu.value =
-                            Resource.Error(context.getString(R.string.error_no_internet))
+                            Resource.Error("Проверьте подключение к интернету") //TODO заменить обработку ошибок
 
                         HTTP_SUCCESS -> {
                             val categories = (response as MenuResponse).itemCategories
-                            if (categories != null) {
+                            if (categories.isNullOrEmpty()) {
                                 _menu.value =
-                                    Resource.Success(menuDtoToDomain(categories))
+                                    Resource.Error("Сервер вернул пустые данные категорий") //TODO заменить обработку ошибок
+
                             } else {
                                 _menu.value =
-                                    Resource.Error(context.getString(R.string.error_empty_menu))
+                                    Resource.Success(buildMenuStructure(categories))
                             }
                         }
 
                         else -> _menu.value =
-                            Resource.Error(context.getString(R.string.error_server_error))
+                            Resource.Error("Ошибка сервера") //TODO заменить обработку ошибок
                     }
                 } catch (e: Exception) {
                     _menu.value =
-                        Resource.Error(context.getString(R.string.error_something_wrong, e.message))
+                        Resource.Error("Что-то пошло не так. Ошибка: " + e.message) //TODO заменить обработку ошибок
                 }
             }
         }
     }
 
-    private fun menuDtoToDomain(menuDto: List<CategoryDto>?): List<MealCategory> {
+    private fun buildMenuStructure(menuDto: List<CategoryDto>?): List<MealCategory> {
         if (menuDto.isNullOrEmpty()) {
             Log.e("DEBUG", "menuDto оказался null или пустым")
             return emptyList()

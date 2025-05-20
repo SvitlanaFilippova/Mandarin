@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.menu.domain.models.MenuItem
+import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
 
 @Composable
 fun CategoryTabsRow(

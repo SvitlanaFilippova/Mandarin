@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.favorites.data.mapper
 
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.favorites.domain.models.FavoriteMeal
-import com.mandarinkafe.mandarin.features.menu.domain.models.MenuItem.MealItem
+import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem.MealItem.SingleMealItem
 
 object FavoriteMapper {
     fun Meal.toFavoriteMeal() = FavoriteMeal(
@@ -20,7 +20,7 @@ object FavoriteMapper {
         modifiers = modifiers
     )
 
-    fun FavoriteMeal.toMealItem() = MealItem(
+    fun FavoriteMeal.toMealItem() = SingleMealItem(
         Meal(
             id = id,
             name = name,

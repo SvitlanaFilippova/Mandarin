@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.buttons
+package com.mandarinkafe.mandarin.util.ui.components.buttons
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

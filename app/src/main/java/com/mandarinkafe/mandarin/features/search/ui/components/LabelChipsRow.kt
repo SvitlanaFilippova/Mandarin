@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.features.search.ui.model.LabelUiModel
-import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_FLOW_ROW
+import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_LABEL_FLOW_ROW
 
 @Composable
 fun LabelChipsRow(
@@ -16,7 +16,7 @@ fun LabelChipsRow(
 
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        maxLines = MAX_LINES_FOR_FLOW_ROW
+        maxLines = MAX_LINES_FOR_LABEL_FLOW_ROW
     ) {
         labels.forEach {
             MenuFilterChip(

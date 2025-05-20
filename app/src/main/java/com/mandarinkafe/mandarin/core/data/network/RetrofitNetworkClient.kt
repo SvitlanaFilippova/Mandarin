@@ -14,7 +14,7 @@ import com.mandarinkafe.mandarin.util.NetworkMonitor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class RetrofitNetworkClient(private val context: Context, private val ikkoService: IikoApiService) :
+class RetrofitNetworkClient(private val context: Context, private val iikoService: IikoApiService) :
     NetworkClient {
 
     private var token = ""
@@ -28,12 +28,12 @@ class RetrofitNetworkClient(private val context: Context, private val ikkoServic
         return withContext(Dispatchers.IO) {
             authenticate()
             try {
-                val menuIdResponse = ikkoService.getMenuId(token)
+                val menuIdResponse = iikoService.getMenuId(token)
                 externalMenuId = menuIdResponse.externalMenus.firstOrNull()?.id
                     ?: throw IllegalStateException("Menu ID not found")
-                Log.d("DEBUG IKKO API", "Menu ID получено: $externalMenuId")
+                Log.d("DEBUG IIKO API", "Menu ID получено: $externalMenuId")
 
-                val menuResponse = ikkoService.getMenuById(
+                val menuResponse = iikoService.getMenuById(
                     token = token,
                     body = MenuRequest(
                         externalMenuId = externalMenuId,
@@ -43,7 +43,7 @@ class RetrofitNetworkClient(private val context: Context, private val ikkoServic
                 menuResponse.apply { resultCode = HTTP_SUCCESS }
 
             } catch (e: Throwable) {
-                Log.d("DEBUG IKKO API", "Ошибка: ${e.message}")
+                Log.d("DEBUG IIKO API", "Ошибка: ${e.message}")
                 Response().apply { resultCode = HTTP_SERVER_ERROR }
             }
         }
@@ -51,17 +51,17 @@ class RetrofitNetworkClient(private val context: Context, private val ikkoServic
 
     private suspend fun authenticate() {
         try {
-            val authResponse = ikkoService.authenticate(AuthRequest(BuildConfig.IIKO_API_KEY))
+            val authResponse = iikoService.authenticate(AuthRequest(BuildConfig.IIKO_API_KEY))
             token = BEARER_PREFIX + authResponse.token
 
-            val organizationsResponse = ikkoService.getOrganizations(
+            val organizationsResponse = iikoService.getOrganizations(
                 token = token,
                 body = OrganizationsRequest()
             )
             organizationId = organizationsResponse.organizations.firstOrNull()?.id
                 ?: throw IllegalStateException("No organization found")
         } catch (e: Throwable) {
-            Log.d("DEBUG IKKO API", "Ошибка в методе authenticate: ${e.message}")
+            Log.d("DEBUG IIKO API", "Ошибка в методе authenticate: ${e.message}")
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

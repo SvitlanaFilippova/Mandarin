@@ -17,20 +17,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography.PlaceholderTitleStyle
 import com.mandarinkafe.mandarin.features.cart.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.features.meal_details.ui.screen.MealDetailsBottomSheet
-import com.mandarinkafe.mandarin.features.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract
 import com.mandarinkafe.mandarin.util.ui.HandleBottomSheetEffect
 import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun SearchResults(
-    filteredMenuItems: List<MenuItem>,
+    filteredMenuItems: List<Meal>,
     latestSearchText: String,
     onSearchEvent: (SearchContract.SearchEvent) -> Unit,
     onCartEvent: (CartContract.CartEvent) -> Unit,

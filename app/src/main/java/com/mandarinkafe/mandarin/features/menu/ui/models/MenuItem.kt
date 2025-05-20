@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.menu.domain.models
+package com.mandarinkafe.mandarin.features.menu.ui.models
 
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 
@@ -14,5 +14,8 @@ sealed interface MenuItem {
     data class SubHeaderItem(val categoryName: String, val description: String, val id: String) :
         MenuItem
 
-    data class MealItem(val meal: Meal) : MenuItem
+    sealed interface MealItem : MenuItem {
+        data class SingleMealItem(val meal: Meal) : MealItem
+        data class MealRow(val left: Meal, val right: Meal) : MealItem
+    }
 }

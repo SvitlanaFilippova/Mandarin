@@ -22,7 +22,7 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.buttons.FavoriteButton
+import com.mandarinkafe.mandarin.util.ui.components.buttons.FavoriteButton
 
 @Composable
 fun BottomSheetHeader(
@@ -48,7 +48,7 @@ fun BottomSheetHeader(
         ) {
 
             Icon(
-                modifier = Modifier.size(Dimens.ButtonToggleFavorite28),
+                modifier = Modifier.size(Dimens.IconSize24),
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(id = R.string.back),
                 tint = Colors.White
