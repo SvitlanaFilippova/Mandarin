@@ -42,6 +42,7 @@
 | Coil                  | 
 | Gson                  | 
 | SharedPreferences     |
+|Yandex MapKit  |
 
 ## Общие требования 🗒️
 
