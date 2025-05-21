@@ -17,9 +17,6 @@ import com.mandarinkafe.mandarin.features.cart.CartMapper.toRemoveFromCartNow
 import com.mandarinkafe.mandarin.features.cart.getTotalPriceByMealId
 import com.mandarinkafe.mandarin.features.cart.getTotalQuantityByMealId
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.buttons.PizzaAddsButton
-import com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.buttons.SelectButton
-import com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.buttons.ToCartButtonWithPrice
 
 @Composable
 fun MealButtonsRow(
