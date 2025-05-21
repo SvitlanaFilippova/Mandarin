@@ -7,4 +7,5 @@ object NavRoutes {
     const val DELIVERY_SCREEN_ROUTE = "delivery"
     const val FAVORITES_SCREEN_ROUTE = "favorites"
     const val CART_SCREEN_ROUTE = "cart"
+    const val SPLASH_SCREEN_ROUTE = "splash"
 }

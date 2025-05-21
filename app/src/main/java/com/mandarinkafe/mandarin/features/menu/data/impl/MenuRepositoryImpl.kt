@@ -12,7 +12,9 @@ import com.mandarinkafe.mandarin.features.menu.data.mapper.parentName
 import com.mandarinkafe.mandarin.features.menu.data.mapper.subName
 import com.mandarinkafe.mandarin.features.menu.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
+import com.mandarinkafe.mandarin.util.Constants.DELAY_BEFORE_NEXT_ATTEMPT
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
+import com.mandarinkafe.mandarin.util.Constants.MAX_ATTEMPTS
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.applyTypography
 import jakarta.inject.Inject
@@ -85,17 +87,18 @@ class MenuRepositoryImpl @Inject constructor(
         fetchMenuWithRetries()
     }
 
-    private fun fetchMenuWithRetries(maxAttempts: Int = 3, delayMs: Long = 500) {
+    private fun fetchMenuWithRetries() {
         Log.d("DEBUG  MenuRepository", "запуск fetchMenuWithRetries")
         CoroutineScope(Dispatchers.IO).launch {
             var attempts = 0
-            while (attempts < maxAttempts) {
+            while (attempts < MAX_ATTEMPTS) {
                 _menu.value = Resource.Loading()
                 try {
                     val response = networkClient.getMenu()
                     if (response.resultCode == -1) {
                         _menu.value =
                             Resource.Error("Проверьте подключение к интернету")
+                        return@launch
                     }
                     if (response.resultCode == HTTP_SUCCESS && (response as MenuResponse).itemCategories != null) {
                         val categories = response.itemCategories
@@ -109,11 +112,11 @@ class MenuRepositoryImpl @Inject constructor(
                     _menu.value = Resource.Error("Что-то пошло не так. Ошибка: ${e.message}")
                 }
                 attempts++
-                delay(delayMs)
+                delay(DELAY_BEFORE_NEXT_ATTEMPT)
             }
             // Если не удалось после всех попыток
             if (_menu.value !is Resource.Success) {
-                _menu.value = Resource.Error("Не удалось загрузить меню после $maxAttempts попыток")
+                _menu.value = Resource.Error("Не удалось загрузить меню после $attempts попыток")
             }
         }
     }

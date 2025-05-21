@@ -14,11 +14,13 @@ import com.mandarinkafe.mandarin.features.delivery.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.features.favorites.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.features.menu.ui.screen.MenuScreen
 import com.mandarinkafe.mandarin.features.search.ui.screen.SearchScreen
+import com.mandarinkafe.mandarin.features.splash.ui.SplashScreen
 import com.mandarinkafe.mandarin.navigation.NavRoutes.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.FAVORITES_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavRoutes.SPLASH_SCREEN_ROUTE
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
@@ -26,7 +28,7 @@ fun NavGraph(navHostController: NavHostController) {
     val cartViewModel: CartViewModel = hiltViewModel()
     NavHost(
         navController = navHostController,
-        startDestination = MENU_SCREEN_ROUTE
+        startDestination = SPLASH_SCREEN_ROUTE
     ) {
         // CartViewModel живёт на уровне AppScope
         composable(CART_SCREEN_ROUTE) {
@@ -47,6 +49,16 @@ fun NavGraph(navHostController: NavHostController) {
             MenuScreen(
                 navController = navHostController,
                 cartViewModel = cartViewModel
+            )
+        }
+
+        composable(SPLASH_SCREEN_ROUTE) {
+            SplashScreen(
+                onFinished = {
+                    navHostController.navigate(MENU_SCREEN_ROUTE) {
+                        popUpTo(SPLASH_SCREEN_ROUTE) { inclusive = true }
+                    }
+                }
             )
         }
 
