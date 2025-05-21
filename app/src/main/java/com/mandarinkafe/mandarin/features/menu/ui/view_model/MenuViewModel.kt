@@ -59,7 +59,6 @@ class MenuViewModel @Inject constructor(
             is MenuEvent.OnMealDetailsClick -> sendEffect(
                 OpenMealDetailsBS(meal = event.meal)
             )
-
         }
     }
 
@@ -90,7 +89,6 @@ class MenuViewModel @Inject constructor(
             setState {
                 copy(
                     menuItems = menuToMenuItems(data),
-                    isLoading = false,
                     errorMessage = null
                 )
             }
@@ -102,7 +100,7 @@ class MenuViewModel @Inject constructor(
     }
 
     private fun setLoading(isLoading: Boolean) {
-        setState { copy(isLoading = true) }
+        setState { copy(isLoading = isLoading) }
     }
 
     // Методы управлением скроллом

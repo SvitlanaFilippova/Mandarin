@@ -45,7 +45,7 @@ fun SearchResultsMealItem(
 
         Column(
             modifier = Modifier
-                .padding(start = Dimens.MarginSmall8)
+                .padding(horizontal = Dimens.MarginSmall8)
                 .fillMaxSize()
         )
         {

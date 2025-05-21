@@ -191,6 +191,7 @@ fun MenuContentScreen(
             ) {
                 BannerCarousel(onBannerClick = handleBannerClick)
             }
+
             // Табы-категории видны всегда
             CategoryTabsRow(
                 categories = categories,
@@ -244,7 +245,9 @@ fun MenuContentScreen(
             MenuList(
                 menuItems = menuItems,
                 listState = listState,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(bottom = Dimens.MarginStandard16),
                 onEvent = onEvent,
                 onCartEvent = onCartEvent,
                 cartState = cartState,

@@ -3,9 +3,7 @@ package com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.buttons
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,8 +31,6 @@ fun ToCartButtonWithPrice(price: Int, onClick: () -> Unit, modifier: Modifier = 
             contentColor = Color.White
         ),
         modifier = modifier
-            .widthIn(min = Dimens.ButtonToCartBig120)
-            .height(Dimens.ButtonToCartSmall32)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -36,11 +34,10 @@ fun CartControls(
     totalPrice: Int,
     onIncrease: () -> Unit,
     onDecrease: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier
-            .height(Dimens.ButtonToCartSmall32)
-            .widthIn(min = Dimens.ButtonToCartBig120)
+        modifier = modifier
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
             .background(Colors.Orange.copy(alpha = 0.20f))
     ) {

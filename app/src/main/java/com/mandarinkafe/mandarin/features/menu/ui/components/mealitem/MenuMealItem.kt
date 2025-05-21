@@ -62,7 +62,11 @@ fun MenuMealItem(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(Dimens.MarginSmall8)
+                .padding(
+                    top = Dimens.MarginSmall8,
+                    end = Dimens.MarginSmall8,
+                    bottom = Dimens.MarginSmall8
+                )
         ) {
             Text(
                 text = meal.name,
@@ -81,7 +85,7 @@ fun MenuMealItem(
             }
             if (meal.weight != 0) {
                 Text(
-                    modifier = Modifier.padding(vertical = Dimens.MarginSuperSmall4),
+                    modifier = Modifier.padding(vertical = Dimens.MarginSmall8),
                     text = stringResource(R.string.meal_weight_template, meal.weight),
                     style = Typography.MealSmallTextStyle
                 )

@@ -15,9 +15,11 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 
 @Composable
 fun PizzaAddsButton(
+    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     Box(
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
         IconButton(

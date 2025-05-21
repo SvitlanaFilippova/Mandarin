@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.buttons
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +22,11 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 
 @Composable
-fun SelectButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun SelectButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
@@ -31,6 +36,7 @@ fun SelectButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifie
             contentColor = Color.White
         ),
         modifier = modifier
+            .fillMaxWidth()
             .widthIn(min = Dimens.ButtonToCartBig120)
             .height(Dimens.ButtonToCartSmall32)
     ) {
