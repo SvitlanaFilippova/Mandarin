@@ -69,7 +69,7 @@ fun SplashScreen(
         Icon(
             painter = painterResource(id = R.drawable.logo_orange),
             contentDescription = stringResource(R.string.logo_cafe),
-            modifier = Modifier.size(Dimens.ButtonPlaceholderSize200),
+            modifier = Modifier.size(Dimens.SplashScreenLogoSize200),
             tint = Colors.Orange
         )
     }

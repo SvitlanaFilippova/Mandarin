@@ -29,7 +29,7 @@
     <!-- Детали блюда -->
     <string name="adds">Добавки</string>
     <string name="make_more_delicious">Cделать ещё вкуснее</string>
-    <string name="make_more_delicious_description">Выбери любые добавки по своему вкусу!</string>
+    <string name="make_more_delicious_description">Можно сделать ещё вкуснее!</string>
     <string name="to_cart">В корзину</string>
     <string name="price_with_adds">Цена с добавками</string>
 
