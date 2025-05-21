@@ -1,14 +1,10 @@
-package com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.buttons
+package com.mandarinkafe.mandarin.util.ui.components.buttons
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -17,13 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 
 @Composable
-fun SelectButton(
-    text: String,
+fun ToCartButtonWithPrice(
+    price: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -36,21 +35,19 @@ fun SelectButton(
             contentColor = Color.White
         ),
         modifier = modifier
-            .fillMaxWidth()
-            .widthIn(min = Dimens.ButtonToCartBig120)
-            .height(Dimens.ButtonToCartSmall32)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
             Icon(
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = text,
+                modifier = Modifier.size(Dimens.IconSize24),
+                painter = painterResource(R.drawable.ic_cart),
+                contentDescription = stringResource(id = R.string.add_to_cart),
                 tint = Color.White
             )
             Text(
-                text = text,
+                text = stringResource(id = R.string.meal_price_template, price),
                 style = Typography.ToCartButtonStyle
             )
         }
