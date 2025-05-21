@@ -73,7 +73,7 @@ fun ModifierSingleSelectItem(
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = Dimens.DividerHeight1,
-            color = Colors.Grey.copy(alpha = 0.1f)
+            color = Colors.LightGrey.copy(alpha = 0.1f)
         )
     }
 }

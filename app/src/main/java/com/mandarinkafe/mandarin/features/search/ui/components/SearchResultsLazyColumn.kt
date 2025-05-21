@@ -21,7 +21,7 @@ fun SearchResultsLazyColumn(
         modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
     ) {
         itemsIndexed(filteredMenuItems) { index, meal ->
-            SearchResultsMealItem(
+            SmallHorizontalMealItemCard(
                 meal = meal,
                 onCartEvent = onCartEvent,
                 cartState = cartState,

@@ -1,31 +1,21 @@
 package com.mandarinkafe.mandarin.features.meal_details.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.EditableType
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
@@ -38,6 +28,7 @@ import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.A
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.AddsItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
+import com.mandarinkafe.mandarin.features.menu.ui.components.AnimatedMakeMoreDeliciousBlock
 import kotlinx.coroutines.launch
 
 @Composable
@@ -97,41 +88,11 @@ fun MealDetailsContent(
 
                 // Заголовок для модификаторов/добавок, если блюдо и без них можно закаказать
                 if (meal.editableType == EditableType.ADDABLE || meal.editableType == EditableType.PIZZA) {
-                    item {
-                        Text(
-                            modifier = Modifier
-                                .padding(top = Dimens.MarginSmall8)
-                                .fillMaxWidth()
-                                .clickable(enabled = true, onClick = handleMakeMoreDeliciousClick),
-                            text = stringResource(id = R.string.make_more_delicious_description),
-                            style = Typography.RegularLightTextStyle,
-                            fontWeight = FontWeight.Bold,
-                            color = Colors.White,
-                            textAlign = TextAlign.Center
-                        )
-
-                    }
                     item(key = scrollTargetKey) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            IconButton(
-                                onClick = handleMakeMoreDeliciousClick,
-                                modifier = Modifier.size(Dimens.ButtonBox32)
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(Dimens.IconSize24),
-                                    imageVector = Icons.Default.ArrowDropDown,
-                                    contentDescription = stringResource(id = R.string.make_more_delicious),
-                                    tint = Colors.White
-                                )
-                            }
-                        }
+                        AnimatedMakeMoreDeliciousBlock(onClick = handleMakeMoreDeliciousClick)
                     }
-
                 }
+
                 // Выбор модификаторов
                 if (meal.modifiers.isNotEmpty()) {
                     itemsIndexed(meal.modifiers) { index, modifierGroup ->

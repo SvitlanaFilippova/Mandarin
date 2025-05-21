@@ -57,7 +57,7 @@ fun FakeSearchBarField(
         horizontalArrangement = Arrangement.Start,
         modifier = modifier
             .clip(RoundedCornerShape(Dimens.RadiusSearchField8))
-            .background(Colors.GreyTransparent10)
+            .background(Colors.DarkGrey)
             .clickable { onClick() }
             .height(Dimens.FakeSearchBarHeight48),
 
@@ -86,7 +86,7 @@ fun FilterButton(
         onClick = onClick,
         modifier = modifier
             .clip(RoundedCornerShape(Dimens.RadiusSearchField8))
-            .background(Colors.GreyTransparent10)
+            .background(Colors.DarkGrey)
             .size(Dimens.FakeSearchBarHeight48)
     ) {
         Icon(
@@ -108,7 +108,7 @@ fun FavoriteButton(
             .clip(
                 RoundedCornerShape(Dimens.RadiusSearchField8)
             )
-            .background(Colors.GreyTransparent10)
+            .background(Colors.DarkGrey)
             .size(Dimens.FakeSearchBarHeight48)
 
     ) {

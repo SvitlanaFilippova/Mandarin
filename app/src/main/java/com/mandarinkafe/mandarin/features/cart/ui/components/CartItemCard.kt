@@ -2,16 +2,13 @@ package com.mandarinkafe.mandarin.features.cart.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.HorizontalDivider
@@ -22,12 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
@@ -36,8 +30,7 @@ import com.mandarinkafe.mandarin.features.cart.customizedText
 import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.cart.totalPrice
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
-import com.mandarinkafe.mandarin.util.ui.components.LabelChip
+import com.mandarinkafe.mandarin.util.ui.components.MealItemImageBox
 
 /**
  * Компонент, который отвечает за отображение товара, который выбрали в меню
@@ -67,38 +60,13 @@ fun CartItemCard(
                 .fillMaxWidth()
         ) {
 
-            Box(
+            MealItemImageBox(
                 modifier = Modifier
                     .size(Dimens.MealSmallImage80)
-            ) {
-                // Изображение блюда
-                AsyncImage(
-                    model = meal.imageUrl.ifEmpty { R.drawable.placeholder_meal_no_photo },
-                    contentDescription = stringResource(
-                        R.string.picture_of_meal_template,
-                        meal.name
-                    ),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                        .alpha(imageAlpha)
-                )
-
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4),
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(Dimens.MarginSuperSmall4)
-                ) {
-                    meal.labels.forEach {
-                        LabelChip(
-                            label = it.toUiModel(),
-                        )
-                    }
-                }
-            }
+                    .alpha(imageAlpha),
+                meal = meal,
+                onToggleFavorite = { }, //TODO
+            )
 
             Column(
                 modifier = Modifier
@@ -179,7 +147,7 @@ fun CartItemCard(
                 .fillMaxWidth()
                 .padding(vertical = Dimens.MarginSmall8),
             thickness = Dimens.DividerHeight1,
-            color = Colors.Grey.copy(alpha = 0.2f)
+            color = Colors.LightGrey.copy(alpha = 0.2f)
         )
     }
 }

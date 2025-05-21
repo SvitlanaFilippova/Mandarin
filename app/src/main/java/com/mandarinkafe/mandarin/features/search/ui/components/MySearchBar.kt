@@ -18,7 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
@@ -49,7 +48,6 @@ fun MySearchBar(
     val handleOnClear = {
         onSearchEvent(SearchContract.SearchEvent.ClearSearchInput)
         keyboardController?.show()
-        isExpanded = false
     }
 
     Column(
@@ -79,13 +77,10 @@ fun MySearchBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .clip(
-                    RoundedCornerShape(Dimens.RadiusSearchField8)
-                )
                 .padding(Dimens.MarginSmall8),
             shape = RoundedCornerShape(Dimens.RadiusSearchField8),
             colors = SearchBarDefaults.colors(
-                containerColor = Colors.GreyTransparent10
+                containerColor = Colors.DarkGrey
             ),
             content = {
                 LabelChipsRow(

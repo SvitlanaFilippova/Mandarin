@@ -89,7 +89,7 @@ fun ExpandableText(
                         .size(16.dp)
                         .align(Alignment.BottomCenter)
                         .offset(y = (8).dp),
-                    tint = Colors.Grey
+                    tint = Colors.LightGrey
                 )
             }
         }

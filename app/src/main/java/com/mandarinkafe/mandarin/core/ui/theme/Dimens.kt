@@ -15,6 +15,7 @@ object Dimens {
     val ButtonToCartSmall32 = 32.dp
     val ButtonBox32 = 32.dp
     val ButtonToCartBig120 = 120.dp
+    val ButtonsRowWidth164 = 164.dp
     val ButtonPlaceholderSize200 = 200.dp
     val IconSize24 = 24.dp
     val MarginStandard16 = 16.dp

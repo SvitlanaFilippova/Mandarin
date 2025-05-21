@@ -11,8 +11,11 @@ import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInte
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsState
+import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
+import com.mandarinkafe.mandarin.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -173,21 +176,51 @@ class MealDetailsViewModel @Inject constructor(
             setState { copy(isLoading = false) }
         } else {
             viewModelScope.launch {
-                menuInteractor.getAddons().collect { (adds, errorMessage) ->
-                    if (!adds.isNullOrEmpty()) {
-                        setState { copy(isLoading = false, pizzaAds = adds) }
-                    } else {
-                        // Обработка ошибки
-                        setState {
-                            copy(
-                                isLoading = false,
-                                errorMessage = errorMessage
-                            )
-                        }
+                menuInteractor.getAddons().collectLatest { result ->
+                    setLoading(result is Resource.Loading)
+                    when (result) {
+                        is Resource.Success -> setData(result.data)
+                        is Resource.Error -> setError(result.message)
+                        is Resource.Loading -> {}
                     }
                 }
             }
         }
     }
+
+    private fun setData(data: List<MealAdditionalCategory>?) {
+        if (!data.isNullOrEmpty()) {
+            setState {
+                copy(
+                    pizzaAds = data,
+                    errorMessage = null
+                )
+            }
+        }
+    }
+
+    private fun setError(errorMessage: String?) {
+        setState { copy(errorMessage = errorMessage) }
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        setState { copy(isLoading = isLoading) }
+    }
+
+    //                (adds, errorMessage) ->
+//                    if (!adds.isNullOrEmpty()) {
+//                        setState { copy(isLoading = false, pizzaAds = adds) }
+//                    } else {
+//                        // Обработка ошибки
+//                        setState {
+//                            copy(
+//                                isLoading = false,
+//                                errorMessage = errorMessage
+//                            )
+//                        }
+//                    }
+//                }
+
 }
+
 

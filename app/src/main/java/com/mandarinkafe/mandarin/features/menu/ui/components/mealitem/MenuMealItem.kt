@@ -2,7 +2,6 @@ package com.mandarinkafe.mandarin.features.menu.ui.components.mealitem
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -47,7 +46,7 @@ fun MenuMealItem(
             .padding(horizontal = Dimens.MarginSmall8)
             .height(IntrinsicSize.Min)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
-            .background(Colors.GreyTransparent10)
+            .background(Colors.DarkGrey)
             .clickable(onClick = { onEvent(MenuEvent.OnMealDetailsClick(meal)) })
     ) {
         MealItemImageBox(
@@ -62,7 +61,11 @@ fun MenuMealItem(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(Dimens.MarginSmall8)
+                .padding(
+                    top = Dimens.MarginSmall8,
+                    end = Dimens.MarginSmall8,
+                    bottom = Dimens.MarginSmall8
+                )
         ) {
             Text(
                 text = meal.name,
@@ -81,23 +84,24 @@ fun MenuMealItem(
             }
             if (meal.weight != 0) {
                 Text(
-                    modifier = Modifier.padding(vertical = Dimens.MarginSuperSmall4),
+                    modifier = Modifier.padding(vertical = Dimens.MarginSmall8),
                     text = stringResource(R.string.meal_weight_template, meal.weight),
                     style = Typography.MealSmallTextStyle
                 )
             }
+            // Для выравнивания кнопок
             Spacer(
                 modifier = Modifier.weight(1f)
             )
-            // Контейнер для кнопок
-            Box(contentAlignment = Alignment.BottomStart) {
-                MealButtonsRow(
-                    meal = meal,
-                    onCartEvent = onCartEvent,
-                    cartState = cartState,
-                    onMealDetailsClick = { meal -> onEvent(MenuEvent.OnMealDetailsClick(meal)) },
-                )
-            }
+
+            // Кнопки
+            MealButtonsRow(
+                meal = meal,
+                onCartEvent = onCartEvent,
+                cartState = cartState,
+                onMealDetailsClick = { meal -> onEvent(MenuEvent.OnMealDetailsClick(meal)) },
+            )
+
         }
     }
 }

@@ -33,7 +33,7 @@ fun UndoIndicator(
             .height(Dimens.ButtonToCartSmall32)
             .widthIn(min = Dimens.ButtonToCartBig120)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
-            .background(Colors.GreyTransparent10)
+            .background(Colors.DarkGrey)
     ) {
         Row(
             modifier = Modifier
