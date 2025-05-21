@@ -35,6 +35,7 @@ class MenuViewModel @Inject constructor(
 
     init {
         onEvent(MenuEvent.LoadMenu)
+
     }
 
     override fun onEvent(event: MenuEvent) {
