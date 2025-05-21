@@ -21,7 +21,11 @@ import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 
 @Composable
-fun ToCartButtonWithPrice(price: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun ToCartButtonWithPrice(
+    price: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.CornerRadius8),

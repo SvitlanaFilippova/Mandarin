@@ -76,7 +76,7 @@ fun MealInfo(
                 text = meal.description,
                 style = Typography.RegularLightTextStyle,
                 fontWeight = FontWeight.Light,
-                color = Colors.Grey
+                color = Colors.LightGrey
             )
         } else {
             Spacer(modifier = Modifier.height(Dimens.MarginStandard16))

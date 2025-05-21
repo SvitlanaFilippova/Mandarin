@@ -118,7 +118,7 @@ fun BannerCarousel(
 
         ) {
             banners.forEachIndexed { index, _ ->
-                val color = if (pagerState.currentPage == index) Colors.Orange else Colors.Grey
+                val color = if (pagerState.currentPage == index) Colors.Orange else Colors.LightGrey
                 Box(
                     modifier = Modifier
                         .width(Dimens.BannerIndicatorWidth24)

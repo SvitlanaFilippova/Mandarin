@@ -38,7 +38,7 @@ fun ToCartButton(
         enabled = shouldBeActive,
         colors = ButtonDefaults.buttonColors(
             containerColor = Colors.Orange.copy(alpha = 0.95f),
-            disabledContainerColor = Colors.Grey.copy(alpha = 0.3f),
+            disabledContainerColor = Colors.LightGrey.copy(alpha = 0.3f),
             contentColor = contentColor
         )
     ) {

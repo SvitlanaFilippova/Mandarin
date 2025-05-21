@@ -37,7 +37,7 @@ fun MenuCompactMealItem(
         modifier = modifier
             .clickable { onEvent(MenuEvent.OnMealDetailsClick(meal)) }
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
-            .background(Colors.GreyTransparent10)
+            .background(Colors.DarkGrey)
             .padding(Dimens.MarginSmall8)
     ) {
         Column(

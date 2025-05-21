@@ -12,18 +12,18 @@ fun MandarinTheme(
     val colorScheme =
         darkColorScheme(
             primary = Colors.Orange,
-            background = Colors.AppBackgroundColor,
+            background = Colors.AppBlack,
             onPrimary = Colors.White
         )
 
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setStatusBarColor(
-            color = Colors.DefaultStatusBarColor,
+            color = Colors.AppBlack,
             darkIcons = false
         )
         systemUiController.setNavigationBarColor(
-            color = Colors.AppBackgroundColor,
+            color = Colors.AppBlack,
             darkIcons = false
         )
     }

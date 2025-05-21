@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.util.ui.components.buttons
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -27,26 +26,32 @@ fun MealButtonsRow(
     meal: Meal,
     onMealDetailsClick: (Meal) -> Unit,
     onCartEvent: (CartContract.CartEvent) -> Unit,
-    cartState: CartContract.CartState
+    cartState: CartContract.CartState,
+    modifier: Modifier = Modifier
 ) {
     val cartItems = cartState.cartItems
     val isInTheCart = cartItems.keys.any { it.meal.id == meal.id }
-    val numberInCart = cartItems.getTotalQuantityByMealId(meal.id)
-    val totalPrice = cartItems.getTotalPriceByMealId(meal.id)
-
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(top = Dimens.MarginSmall8)
-            .fillMaxWidth()
+        modifier = modifier
     ) {
         val modifier = Modifier
             .widthIn(min = Dimens.ButtonToCartBig120)
             .height(Dimens.ButtonToCartSmall32)
             .weight(1f)
 
+        if (meal.editableType == EditableType.PIZZA || meal.editableType == EditableType.ADDABLE) {
+            PizzaAddsButton(
+                modifier = Modifier.padding(end = Dimens.MarginSmall8),
+                onClick = { onMealDetailsClick(meal) }
+            )
+        }
+
         if (isInTheCart) {
+            val totalPrice = cartItems.getTotalPriceByMealId(meal.id)
+            val numberInCart = cartItems.getTotalQuantityByMealId(meal.id)
+
             CartControls(
                 totalPrice = totalPrice,
                 numberInCart = numberInCart,
@@ -66,13 +71,6 @@ fun MealButtonsRow(
                     onCartEvent(meal.toAddToCartEvent())
                 },
                 modifier = modifier
-            )
-        }
-
-        if (meal.editableType == EditableType.PIZZA || meal.editableType == EditableType.ADDABLE) {
-            PizzaAddsButton(
-                modifier = Modifier.padding(Dimens.MarginSmall8),
-                onClick = { onMealDetailsClick(meal) }
             )
         }
     }

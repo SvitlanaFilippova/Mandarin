@@ -42,7 +42,7 @@ fun CartClearTextButton(
                 modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
                 text = stringResource(R.string.clear_cart),
                 style = Typography.SmallTextStyle,
-                color = Colors.Grey
+                color = Colors.LightGrey
 
             )
 
@@ -50,7 +50,7 @@ fun CartClearTextButton(
                 modifier = Modifier
                     .size(Dimens.IconSize24),
                 imageVector = Icons.Default.Delete,
-                tint = Colors.Grey,
+                tint = Colors.LightGrey,
                 contentDescription = stringResource(R.string.clear_cart),
 
                 )

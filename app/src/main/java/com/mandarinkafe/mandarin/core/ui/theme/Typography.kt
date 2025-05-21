@@ -25,7 +25,7 @@ object Typography {
     val RegularLightTextStyle = TextStyle(
         fontSize = Dimens.TextSizeRegular14,
         fontWeight = FontWeight.Light,
-        color = Colors.Grey
+        color = Colors.LightGrey
     )
 
     val TitleStyle = TextStyle(
@@ -49,7 +49,7 @@ object Typography {
     val MealSmallTextStyle = TextStyle(
         fontSize = Dimens.TextSizeSmall11,
         fontWeight = FontWeight.Light,
-        color = Colors.Grey
+        color = Colors.LightGrey
     )
 
     val CartButtonSmallTextStyle = TextStyle(

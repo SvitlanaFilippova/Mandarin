@@ -2,7 +2,6 @@ package com.mandarinkafe.mandarin.features.menu.ui.components.mealitem
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -47,7 +46,7 @@ fun MenuMealItem(
             .padding(horizontal = Dimens.MarginSmall8)
             .height(IntrinsicSize.Min)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
-            .background(Colors.GreyTransparent10)
+            .background(Colors.DarkGrey)
             .clickable(onClick = { onEvent(MenuEvent.OnMealDetailsClick(meal)) })
     ) {
         MealItemImageBox(
@@ -90,18 +89,19 @@ fun MenuMealItem(
                     style = Typography.MealSmallTextStyle
                 )
             }
+            // Для выравнивания кнопок
             Spacer(
                 modifier = Modifier.weight(1f)
             )
-            // Контейнер для кнопок
-            Box(contentAlignment = Alignment.BottomStart) {
-                MealButtonsRow(
-                    meal = meal,
-                    onCartEvent = onCartEvent,
-                    cartState = cartState,
-                    onMealDetailsClick = { meal -> onEvent(MenuEvent.OnMealDetailsClick(meal)) },
-                )
-            }
+
+            // Кнопки
+            MealButtonsRow(
+                meal = meal,
+                onCartEvent = onCartEvent,
+                cartState = cartState,
+                onMealDetailsClick = { meal -> onEvent(MenuEvent.OnMealDetailsClick(meal)) },
+            )
+
         }
     }
 }

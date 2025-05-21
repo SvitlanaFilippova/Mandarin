@@ -32,7 +32,7 @@ fun FavoriteButton(
             modifier = Modifier
                 .size(Dimens.IconSize24)
                 .background(
-                    color = if (isFavorite) Colors.Orange else Colors.Grey,
+                    color = if (isFavorite) Colors.Orange else Colors.LightGrey,
                     shape = CircleShape
                 )
                 .clip(CircleShape),

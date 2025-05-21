@@ -37,7 +37,7 @@ fun MainScreen() {
         Box(
             modifier = Modifier
                 .padding(innerPadding)
-                .background(Colors.AppBackgroundColor)
+                .background(Colors.AppBlack)
         ) {
             NavGraph(
                 navHostController = navController

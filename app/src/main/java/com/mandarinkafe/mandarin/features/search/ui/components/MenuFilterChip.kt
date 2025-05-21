@@ -23,7 +23,7 @@ fun MenuFilterChip(
     selected: Boolean,
     onLabelClick: (String, Boolean) -> Unit
 ) {
-    val textColor = if (selected) Colors.White else Colors.Grey
+    val textColor = if (selected) Colors.White else Colors.LightGrey
     Box(modifier = Modifier.padding(horizontal = Dimens.MarginSuperSmall4)) {
         FilterChip(
             onClick = { onLabelClick(label.name, !selected) },

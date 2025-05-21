@@ -84,7 +84,12 @@ class SearchViewModel @Inject constructor(
 
     // Очистить поле поиска
     private fun clearSearchInput() {
-        setState { copy(filteredMealList = emptyList(), latestSearchText = "") }
+        setState {
+            copy(
+                filteredMealList = fullMealList.sortedWith(compareByDescending { it.isFavorite }),
+                latestSearchText = ""
+            )
+        }
         filterMenu()
     }
 
