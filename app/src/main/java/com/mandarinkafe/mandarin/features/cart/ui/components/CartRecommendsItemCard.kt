@@ -20,15 +20,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 
 @Composable
 fun CartRecommendsItemCard(
-    item: CartItem,
+    item: CustomizedMeal,
     onEvent: (CartContract.CartEvent) -> Unit
 ) {
     val meal = item.meal

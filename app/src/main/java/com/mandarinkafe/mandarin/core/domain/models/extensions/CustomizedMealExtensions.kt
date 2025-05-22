@@ -1,44 +1,33 @@
-package com.mandarinkafe.mandarin.features.cart.domain.model.extensions
+package com.mandarinkafe.mandarin.core.domain.models.extensions
 
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 
-fun Map<CartItem, Int>.getTotalQuantityByMealId(mealId: String): Int {
+fun Map<CustomizedMeal, Int>.getTotalQuantityByMealId(mealId: String): Int {
     return this.filter { it.key.meal.id == mealId }
         .values
         .sum()
 }
 
-fun Map<CartItem, Int>.getTotalPriceByMealId(mealId: String): Int {
+fun Map<CustomizedMeal, Int>.getTotalPriceByMealId(mealId: String): Int {
     return this.filter { it.key.meal.id == mealId }.entries
         .sumOf { (item, quantity) ->
             item.totalPrice() * quantity
         }
 }
 
-fun CartItem.totalPrice(): Int {
+fun CustomizedMeal.totalPrice(): Int {
     val addsTotal = adds.sumOf { it.price }
     val modifiersTotal = modifiers.sumOf { group -> group.items.sumOf { it.price } }
     return meal.price + addsTotal + modifiersTotal
 }
 
-fun CartItem.isCustomized(): Boolean {
+fun CustomizedMeal.isCustomized(): Boolean {
     return modifiers.isNotEmpty() || adds.isNotEmpty()
 }
 
-fun CartItem.customizedText(): String {
-//    return when (meal.editableType) {
-//        EditableType.ADDABLE -> {
-//            val allItems = buildList {
-//                addAll(modifiers.flatMap { group ->
-//                    group.items.map { "+ ${it.name}" }
-//                })
-//                addAll(adds.map { "+ ${it.name}" })
-//            }
-//            allItems.joinToString(", ")
-//        }
-
+fun CustomizedMeal.customizedText(): String {
     return if (meal.requireSelection) {
         modifiers.joinToString("; ") { group ->
             val itemsText = group.items.joinToString(", ") { it.name }
@@ -77,4 +66,13 @@ fun StoredCartItem.sameAs(other: StoredCartItem): Boolean {
     return mealId == other.mealId &&
             addsIds.orEmpty() == other.addsIds.orEmpty() &&
             modifiers.orEmpty() == other.modifiers.orEmpty()
+}
+
+fun CustomizedMeal.hasSelectedAllRequiredModifiers(): Boolean {
+    return meal.modifiers
+        .filter { it.isRequired }
+        .all { group ->
+            val selectedGroup = modifiers.find { it.id == group.id }
+            selectedGroup != null && selectedGroup.items.isNotEmpty()
+        }
 }

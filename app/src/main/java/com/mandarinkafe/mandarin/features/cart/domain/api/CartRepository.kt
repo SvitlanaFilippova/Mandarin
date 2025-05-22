@@ -1,12 +1,12 @@
 package com.mandarinkafe.mandarin.features.cart.domain.api
 
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 
 interface CartRepository {
-    suspend fun getCart(): Map<CartItem, Int>
-    fun addToCart(item: CartItem)
-    fun removeFromCart(item: CartItem)
+    suspend fun getCart(): Map<CustomizedMeal, Int>
+    fun addToCart(item: CustomizedMeal)
+    fun removeFromCart(item: CustomizedMeal)
     fun clearCart()
     suspend fun getRecommends(): List<Meal>
 }

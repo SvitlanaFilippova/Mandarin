@@ -75,7 +75,7 @@ private fun MealDto.toDomain(
         isHidden = isHidden == true,
         modifiers = safeModifiers,
         isAddable = finalMealTags.any { it.name.equals(TAG_ADDS, ignoreCase = true) },
-        requireSelection = safeModifiers.isNotEmpty() && safePrice == 0,
+        requireSelection = safeModifiers.any { it.isRequired },
         isModifiable = safeModifiers.isNotEmpty() && safePrice > 0,
         discountable = !finalMealTags.any { it.name.equals(TAG_NO_DISCOUNT, ignoreCase = true) },
         parentCategoryName = parentCategoryName,
@@ -121,5 +121,5 @@ fun ModifierGroupDto.toDomain() = ModifierGroup(
         ?.sortedBy { it.price != 0 }
         ?: emptyList(),
     isSingleChoice = (restrictions?.maxQuantity == 1),
+    isRequired = (restrictions?.minQuantity ?: 0) > 0,
 )
-

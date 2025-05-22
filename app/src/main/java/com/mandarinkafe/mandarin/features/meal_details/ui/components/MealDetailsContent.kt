@@ -19,13 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.extensions.hasSelectedAllRequiredModifiers
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
-import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.isCustomized
-import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.totalPrice
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.modifiers.ModifierMultiSelectItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.modifiers.ModifierSingleSelectItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.AddsCategoryTabsRow
@@ -40,17 +41,16 @@ import kotlinx.coroutines.launch
 fun MealDetailsContent(
     state: MealDetailsContract.MealDetailsState,
     onEvent: (MealDetailsEvent) -> Unit,
-    onAddToCart: (CartItem) -> Unit,
+    onAddToCart: (CustomizedMeal) -> Unit,
     onClose: () -> Unit,
-    initItem: CartItem
+    initItem: CustomizedMeal
 ) {
     val customizedMeal = state.customizedMeal ?: initItem
     val meal = customizedMeal.meal
     val mealIsSingleChoice = meal.modifiers.size == 1 && meal.modifiers[0].isSingleChoice
     val listState = rememberLazyListState()
     val chosenModifiers = state.customizedMeal?.modifiers ?: emptyList()
-    val showToCartButton =
-        !(meal.requireSelection && customizedMeal.totalPrice() == 0)
+    val showToCartButton = customizedMeal.hasSelectedAllRequiredModifiers()
     val coroutineScope = rememberCoroutineScope()
     val scrollTargetKey = "scrollTarget"
     val handleMakeMoreDeliciousClick: () -> Unit = remember(listState) {

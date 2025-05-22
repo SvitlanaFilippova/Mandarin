@@ -5,13 +5,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
 
 @Composable
 fun CartRecommendsList(
-    recommendsList: List<CartItem>,
+    recommendsList: List<CustomizedMeal>,
     onEvent: (CartEvent) -> Unit,
     modifier: Modifier,
 ) {

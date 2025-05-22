@@ -22,14 +22,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.extensions.customizedText
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
-import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.customizedText
-import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.isCustomized
-import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.totalPrice
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.util.ui.components.MealItemImageBox
 import com.mandarinkafe.mandarin.util.ui.components.buttons.CustomizeButtonWithText
@@ -40,7 +40,7 @@ import com.mandarinkafe.mandarin.util.ui.components.buttons.CustomizeButtonWithT
 
 @Composable
 fun CartItemCard(
-    item: CartItem,
+    item: CustomizedMeal,
     quantity: Int,
     itemInPendingDeletion: Boolean,
     deletionProgress: Float,

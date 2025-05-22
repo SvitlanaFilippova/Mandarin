@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.features.menu.ui.components
 
 import androidx.compose.runtime.Composable
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.features.cart.CartMapper.toCartItem
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 fun HandleBottomSheetEffects(
     effectFlow: Flow<MenuContract.MenuEffect>,
     onMenuEvent: (MenuEvent) -> Unit,
-    onAddToCart: (CartItem) -> Unit,
+    onAddToCart: (CustomizedMeal) -> Unit,
 ) {
     HandleBottomSheetEffect<MenuContract.MenuEffect.OpenMealDetailsBS>(
         effectFlow = effectFlow,

@@ -10,12 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalPriceByMealId
+import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalQuantityByMealId
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.CartMapper.toAddToCartEvent
 import com.mandarinkafe.mandarin.features.cart.CartMapper.toRemoveFromCartNow
-import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.getTotalPriceByMealId
-import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.getTotalQuantityByMealId
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 
 @Composable
