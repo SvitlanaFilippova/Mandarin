@@ -82,6 +82,8 @@ class MealDetailsViewModel @Inject constructor(
                 modifiersList.add(group.copy(items = listOf(item)))
             }
 
+            // Сортировка: сначала SingleChoice группы
+            modifiersList.sortByDescending { it.isSingleChoice }
             copy(
                 customizedMeal = currentItem.copy(modifiers = modifiersList)
             )
@@ -101,6 +103,8 @@ class MealDetailsViewModel @Inject constructor(
                 modifiersList.add(modifierGroup)
             }
 
+            // Сортировка: сначала SingleChoice группы
+            modifiersList.sortByDescending { it.isSingleChoice }
             copy(
                 customizedMeal = currentItem.copy(modifiers = modifiersList)
             )
@@ -206,21 +210,4 @@ class MealDetailsViewModel @Inject constructor(
     private fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
     }
-
-    //                (adds, errorMessage) ->
-//                    if (!adds.isNullOrEmpty()) {
-//                        setState { copy(isLoading = false, pizzaAds = adds) }
-//                    } else {
-//                        // Обработка ошибки
-//                        setState {
-//                            copy(
-//                                isLoading = false,
-//                                errorMessage = errorMessage
-//                            )
-//                        }
-//                    }
-//                }
-
 }
-
-

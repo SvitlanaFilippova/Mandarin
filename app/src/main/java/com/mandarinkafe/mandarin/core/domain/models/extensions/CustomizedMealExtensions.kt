@@ -38,9 +38,8 @@ fun CustomizedMeal.isCustomized(): Boolean {
  * - Если ничего не выбрано — возвращаем пустую строку.
  */
 fun CustomizedMeal.customizedText(): String {
-    val sortedModifiers = modifiers.sortedByDescending { it.isSingleChoice }
-    val requiredGroups = sortedModifiers.filter { it.isRequired }
-    val optionalGroups = sortedModifiers.filterNot { it.isRequired }
+    val requiredGroups = modifiers.filter { it.isRequired }
+    val optionalGroups = modifiers.filterNot { it.isRequired }
 
     val requiredText = if (meal.requireSelection && requiredGroups.isNotEmpty()) {
         requiredGroups.joinToString("; ") { group ->
