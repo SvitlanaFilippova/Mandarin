@@ -15,7 +15,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 
 @Composable
-fun PizzaAddsButton(
+fun CustomizeButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -25,7 +25,7 @@ fun PizzaAddsButton(
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         contentPadding = PaddingValues(Dimens.MarginSuperSmall4),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Colors.White,
+            containerColor = Colors.White.copy(alpha = 0.9f),
         ),
 
         ) {
@@ -37,3 +37,5 @@ fun PizzaAddsButton(
         )
     }
 }
+
+

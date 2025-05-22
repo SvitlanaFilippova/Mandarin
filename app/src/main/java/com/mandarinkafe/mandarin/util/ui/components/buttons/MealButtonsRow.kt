@@ -39,7 +39,7 @@ fun MealButtonsRow(
             .weight(1f)
 
         if (meal.editableType == EditableType.PIZZA || meal.editableType == EditableType.ADDABLE) {
-            PizzaAddsButton(
+            CustomizeButton(
                 modifier = Modifier.padding(end = Dimens.MarginSmall8),
                 onClick = { onMealDetailsClick(meal) }
             )
