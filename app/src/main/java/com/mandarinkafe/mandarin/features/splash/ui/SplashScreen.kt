@@ -23,54 +23,93 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.splash.ui.view_model.SplashViewModel
+import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
+import com.mandarinkafe.mandarin.util.Constants.SPLASH_ANIMATION_DURATION
+import kotlinx.coroutines.launch
 
 @Composable
 fun SplashScreen(
     viewModel: SplashViewModel = hiltViewModel(),
     onFinished: () -> Unit
 ) {
-    val scale = remember { Animatable(0.8f) }
-    val alpha = remember { Animatable(0f) }
+
     val state by viewModel.state.collectAsState()
+    val bgScale = remember { Animatable(2.0f) }
+    val bgAlpha = remember { Animatable(0f) }
+    val bgRotation = remember { Animatable(0f) }
+    val logoAlpha = remember { Animatable(1f) }
 
-
-    LaunchedEffect(state) {
+    // Анимация появления (фон крутится и уменьшается)
+    LaunchedEffect(Unit) {
+        launch {
+            bgScale.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(
+                    durationMillis = SPLASH_ANIMATION_DURATION,
+                    easing = FastOutSlowInEasing
+                )
+            )
+        }
+        launch {
+            bgAlpha.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(durationMillis = SPLASH_ANIMATION_DURATION)
+            )
+        }
+        launch {
+            bgRotation.animateTo(
+                targetValue = 360 * 2f,
+                animationSpec = tween(
+                    durationMillis = SPLASH_ANIMATION_DURATION,
+                    easing = FastOutSlowInEasing
+                )
+            )
+        }
+    }
+    // Анимация исчезновения логотипа перед завершением
+    LaunchedEffect(state.isVisible) {
         if (!state.isVisible) {
+            bgAlpha.animateTo(
+                targetValue = 0f,
+                animationSpec = tween(durationMillis = ANIMATION_DURATION_FAST)
+            )
             onFinished()
         }
     }
 
-    LaunchedEffect(Unit) {
-        scale.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(
-                durationMillis = 700,
-                easing = FastOutSlowInEasing
-            )
-        )
-        alpha.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(durationMillis = 700)
-        )
-    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Colors.AppBlack)
-            .graphicsLayer {
-                scaleX = scale.value
-                scaleY = scale.value
-                this.alpha = alpha.value
-            },
-        contentAlignment = Alignment.Center
     ) {
+        // Фон
+        Icon(
+            painter = painterResource(id = R.drawable.background_for_logo),
+            contentDescription = stringResource(R.string.logo_cafe),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(Dimens.SplashScreenBackSize240)
+                .graphicsLayer {
+                    scaleX = bgScale.value
+                    scaleY = bgScale.value
+                    rotationZ = bgRotation.value
+                    alpha = bgAlpha.value
+                },
+            tint = Colors.Orange
+        )
 
+        // Логотип
         Icon(
             painter = painterResource(id = R.drawable.logo_orange),
             contentDescription = stringResource(R.string.logo_cafe),
-            modifier = Modifier.size(Dimens.SplashScreenLogoSize200),
-            tint = Colors.Orange
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(Dimens.SplashScreenLogoSize180)
+                .graphicsLayer {
+                    alpha = logoAlpha.value
+                },
+            tint = Colors.AppBlack
         )
     }
 }

@@ -65,7 +65,7 @@ fun BottomSheetHeader(
             Text(
                 text = meal.name,
                 style = Typography.TitleStyle,
-                maxLines = 2,
+                maxLines = 31,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center
             )
