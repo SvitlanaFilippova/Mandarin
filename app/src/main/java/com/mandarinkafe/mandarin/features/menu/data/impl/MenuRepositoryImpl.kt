@@ -110,6 +110,8 @@ class MenuRepositoryImpl @Inject constructor(
                     }
                 } catch (e: Exception) {
                     _menu.value = Resource.Error("Что-то пошло не так. Ошибка: ${e.message}")
+                    Log.d("DEBUG  MenuRepository", "e: Exception, ${e.message}")
+                    Log.d("DEBUG  MenuRepository", Log.getStackTraceString(e))
                 }
                 attempts++
                 delay(DELAY_BEFORE_NEXT_ATTEMPT)
