@@ -1,6 +1,5 @@
-package com.mandarinkafe.mandarin.features.cart
+package com.mandarinkafe.mandarin.features.cart.domain.model.extensions
 
-import com.mandarinkafe.mandarin.core.domain.models.EditableType
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
@@ -24,27 +23,40 @@ fun CartItem.totalPrice(): Int {
     return meal.price + addsTotal + modifiersTotal
 }
 
+fun CartItem.isCustomized(): Boolean {
+    return modifiers.isNotEmpty() || adds.isNotEmpty()
+}
+
 fun CartItem.customizedText(): String {
-    return when (meal.editableType) {
-        EditableType.PIZZA, EditableType.ADDABLE -> {
-            val allItems = buildList {
-                addAll(adds.map { "+ ${it.name}" })
-                addAll(modifiers.flatMap { group ->
-                    group.items.map { "+ ${it.name}" }
-                })
-            }
-            allItems.joinToString(", ")
-        }
+//    return when (meal.editableType) {
+//        EditableType.ADDABLE -> {
+//            val allItems = buildList {
+//                addAll(modifiers.flatMap { group ->
+//                    group.items.map { "+ ${it.name}" }
+//                })
+//                addAll(adds.map { "+ ${it.name}" })
+//            }
+//            allItems.joinToString(", ")
+//        }
 
-        EditableType.REQUIRED_SELECTION -> {
-            modifiers.joinToString("; ") { group ->
-                val itemsText = group.items.joinToString(", ") { it.name }
-                "${group.name}: $itemsText"
-            }
+    return if (meal.requireSelection) {
+        modifiers.joinToString("; ") { group ->
+            val itemsText = group.items.joinToString(", ") { it.name }
+            "${group.name}: $itemsText"
         }
+    } else if (meal.isAddable || meal.isModifiable) {
 
-        else -> ""
+        val allItems = buildList {
+            addAll(modifiers.flatMap { group ->
+                group.items.map { "+ ${it.name}" }
+            })
+            addAll(adds.map { "+ ${it.name}" })
+        }
+        allItems.joinToString(", ")
+    } else {
+        ""
     }
+
 }
 
 fun List<ModifierGroup>.validateBy(mealModifiers: List<ModifierGroup>): List<ModifierGroup> {

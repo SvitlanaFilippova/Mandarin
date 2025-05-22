@@ -9,13 +9,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.domain.models.EditableType
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.CartMapper.toAddToCartEvent
 import com.mandarinkafe.mandarin.features.cart.CartMapper.toRemoveFromCartNow
-import com.mandarinkafe.mandarin.features.cart.getTotalPriceByMealId
-import com.mandarinkafe.mandarin.features.cart.getTotalQuantityByMealId
+import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.getTotalPriceByMealId
+import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.getTotalQuantityByMealId
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 
 @Composable
@@ -38,7 +38,7 @@ fun MealButtonsRow(
             .height(Dimens.ButtonToCartSmall32)
             .weight(1f)
 
-        if (meal.editableType == EditableType.PIZZA || meal.editableType == EditableType.ADDABLE) {
+        if (meal.isCustomizable()) {
             CustomizeButton(
                 modifier = Modifier.padding(end = Dimens.MarginSmall8),
                 onClick = { onMealDetailsClick(meal) }
@@ -56,7 +56,7 @@ fun MealButtonsRow(
                 onDecrease = { onCartEvent(meal.toRemoveFromCartNow()) },
                 modifier = modifier
             )
-        } else if (meal.editableType == EditableType.REQUIRED_SELECTION) {
+        } else if (meal.requireSelection) {
             SelectButton(
                 text = stringResource(R.string.to_choose),
                 onClick = { onMealDetailsClick(meal) },

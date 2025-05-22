@@ -10,8 +10,8 @@ import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInte
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.features.menu.ui.mappers.MenuItemMapper.menuToMenuItems
 import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
-import com.mandarinkafe.mandarin.features.menu.ui.models.getName
-import com.mandarinkafe.mandarin.features.menu.ui.models.updateMeal
+import com.mandarinkafe.mandarin.features.menu.ui.models.extensions.getName
+import com.mandarinkafe.mandarin.features.menu.ui.models.extensions.updateMeal
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.CallPhone
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.OpenFavorites

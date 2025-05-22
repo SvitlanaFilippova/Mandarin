@@ -16,16 +16,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.mandarinkafe.mandarin.core.domain.models.EditableType
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
-import com.mandarinkafe.mandarin.features.cart.totalPrice
+import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.isCustomized
+import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.totalPrice
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.modifiers.ModifierMultiSelectItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.modifiers.ModifierSingleSelectItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.AddsCategoryTabsRow
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.AddsItem
+import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.ChosenOptionsChipsRow
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.menu.ui.components.AnimatedMakeMoreDeliciousBlock
@@ -41,10 +46,11 @@ fun MealDetailsContent(
 ) {
     val customizedMeal = state.customizedMeal ?: initItem
     val meal = customizedMeal.meal
+    val mealIsSingleChoice = meal.modifiers.size == 1 && meal.modifiers[0].isSingleChoice
     val listState = rememberLazyListState()
     val chosenModifiers = state.customizedMeal?.modifiers ?: emptyList()
     val showToCartButton =
-        !(meal.editableType == EditableType.REQUIRED_SELECTION && customizedMeal.totalPrice() == 0)
+        !(meal.requireSelection && customizedMeal.totalPrice() == 0)
     val coroutineScope = rememberCoroutineScope()
     val scrollTargetKey = "scrollTarget"
     val handleMakeMoreDeliciousClick: () -> Unit = remember(listState) {
@@ -87,7 +93,7 @@ fun MealDetailsContent(
                 }
 
                 // Заголовок для модификаторов/добавок, если блюдо и без них можно закаказать
-                if (meal.editableType == EditableType.ADDABLE || meal.editableType == EditableType.PIZZA) {
+                if (meal.isCustomizable()) {
                     item(key = scrollTargetKey) {
                         AnimatedMakeMoreDeliciousBlock(onClick = handleMakeMoreDeliciousClick)
                     }
@@ -150,8 +156,19 @@ fun MealDetailsContent(
                         }
                     }
                 }
-                // Выбор добавок для пиццы
-                if (meal.editableType == EditableType.PIZZA) {
+                // Выбор добавок
+                if (meal.isAddable) {
+                    item {
+                        Text(
+                            text = stringResource(id = R.string.adds),
+                            modifier = Modifier.padding(
+                                top = Dimens.MarginStandard16,
+                                bottom = Dimens.MarginSmall8
+                            ),
+                            style = Typography.TitleStyle
+                        )
+                    }
+
                     val selectedTabIndex = state.selectedTabIndex
                     item {
                         AddsCategoryTabsRow(
@@ -182,6 +199,45 @@ fun MealDetailsContent(
                                 )
                             },
                             isAdded = customizedMeal.adds.contains(item)
+                        )
+                    }
+                }
+                // Показываем перечень выбранных опций, если они есть, и если это не позиция, где должна быть выбрана всего одная опция
+                if (customizedMeal.isCustomized() && !mealIsSingleChoice) {
+                    item {
+                        Text(
+                            modifier = Modifier.padding(
+                                top = Dimens.MarginBig24,
+                                bottom = Dimens.MarginSmall8
+                            ),
+                            text = stringResource(id = R.string.chosen),
+                            style = Typography.RegularLightTextStyle,
+                            fontWeight = FontWeight.Light,
+                            color = Colors.LightGrey
+                        )
+                    }
+
+                    item {
+                        ChosenOptionsChipsRow(
+                            adds = customizedMeal.adds,
+                            onAddClick = { add ->
+                                onEvent(
+                                    MealDetailsEvent.ChangeAdds(
+                                        add = add,
+                                        isChecked = false
+                                    )
+                                )
+                            },
+                            modifiers = customizedMeal.modifiers,
+                            onModifierClick = { group, item ->
+                                onEvent(
+                                    MealDetailsEvent.ChooseMultiModifiers(
+                                        modifierGroup = group,
+                                        modifierItem = item,
+                                        isChecked = false
+                                    )
+                                )
+                            }
                         )
                     }
                 }

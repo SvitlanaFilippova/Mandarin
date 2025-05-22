@@ -35,7 +35,7 @@ fun ToCartSmallButton(
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         contentPadding = PaddingValues(Dimens.MarginSuperSmall4),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Colors.Orange.copy(alpha = 0.20f),
+            containerColor = Colors.OrangeTransparent20,
             contentColor = Color.White
         ),
     ) {

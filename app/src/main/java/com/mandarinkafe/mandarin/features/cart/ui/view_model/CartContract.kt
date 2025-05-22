@@ -5,7 +5,7 @@ import com.mandarinkafe.mandarin.core.BaseEvent
 import com.mandarinkafe.mandarin.core.BaseState
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
-import com.mandarinkafe.mandarin.features.cart.totalPrice
+import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.totalPrice
 import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 
 sealed interface CartContract {

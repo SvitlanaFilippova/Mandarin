@@ -16,8 +16,12 @@ object FavoriteMapper {
         tags = tags,
         labels = labels,
         isHidden = isHidden,
-        editableType = editableType,
-        modifiers = modifiers
+        modifiers = modifiers,
+        isAddable = isAddable,
+        requireSelection = requireSelection,
+        isModifiable = isModifiable,
+        discountable = discountable,
+        parentCategoryName = parentCategoryName
     )
 
     fun FavoriteMeal.toMealItem() = SingleMealItem(
@@ -32,8 +36,12 @@ object FavoriteMapper {
             tags = tags,
             labels = labels,
             isHidden = isHidden,
-            editableType = editableType,
-            modifiers = modifiers
+            modifiers = modifiers,
+            isAddable = isAddable,
+            requireSelection = requireSelection,
+            isModifiable = isModifiable,
+            discountable = discountable,
+            parentCategoryName = parentCategoryName
         )
     )
 }

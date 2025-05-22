@@ -8,8 +8,8 @@ import com.mandarinkafe.mandarin.features.cart.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartRepository
 import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
-import com.mandarinkafe.mandarin.features.cart.sameAs
-import com.mandarinkafe.mandarin.features.cart.validateBy
+import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.sameAs
+import com.mandarinkafe.mandarin.features.cart.domain.model.extensions.validateBy
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.CategoryFilter

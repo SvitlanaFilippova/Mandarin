@@ -39,7 +39,7 @@ fun CartControls(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
-            .background(Colors.Orange.copy(alpha = 0.20f))
+            .background(Colors.OrangeTransparent20)
     ) {
         Row(
             modifier = Modifier.matchParentSize(),

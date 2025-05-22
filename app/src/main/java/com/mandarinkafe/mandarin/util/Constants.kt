@@ -31,11 +31,11 @@ object Constants {
     const val BEARER_PREFIX = "Bearer "
 
     // Внутренние теги для особой логики в меню
-    const val TAG_PIZZA_ADDS = "добавки к пицце"
-    const val TAG_WOK_CONSTRUCTOR = "конструктор вок"
+    const val TAG_ADDS = "добавки"
+    const val TAG_NO_DISCOUNT = "скидки не действуют"
 
     // Для обработки особых категорий по их названиям
-    const val CATEGORY_PIZZA_ADDS = "добавки"
+    const val CATEGORY_ADDS = "добавки"
     const val CATEGORY_RECOMMENDS = "рекоменд"
 
     // DEBOUNCE для корзины

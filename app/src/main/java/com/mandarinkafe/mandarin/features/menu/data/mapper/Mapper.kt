@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.menu.data.mapper
 
-import com.mandarinkafe.mandarin.core.domain.models.EditableType
 import com.mandarinkafe.mandarin.core.domain.models.Label
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
@@ -13,7 +12,8 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.MealDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierItemDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.TagDto
-import com.mandarinkafe.mandarin.util.Constants.TAG_PIZZA_ADDS
+import com.mandarinkafe.mandarin.util.Constants.TAG_ADDS
+import com.mandarinkafe.mandarin.util.Constants.TAG_NO_DISCOUNT
 import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.removeLeadingDash
 
@@ -25,7 +25,8 @@ fun CategoryDto.toDomain(storedFavorites: List<String>): MealCategory {
         it.toDomain(
             storedFavorites = storedFavorites,
             categoryLabels = categoryLabels,
-            categoryTags = categoryTags
+            categoryTags = categoryTags,
+            parentCategoryName = name
         )
     } ?: emptyList()
 
@@ -43,7 +44,8 @@ fun CategoryDto.toDomain(storedFavorites: List<String>): MealCategory {
 private fun MealDto.toDomain(
     storedFavorites: List<String>,
     categoryLabels: List<Label>,
-    categoryTags: List<Tag>
+    categoryTags: List<Tag>,
+    parentCategoryName: String
 ): Meal? {
     val firstSize = itemSizes?.firstOrNull()
     val safeWeight = firstSize?.portionWeightGrams?.toInt() ?: 0
@@ -52,7 +54,7 @@ private fun MealDto.toDomain(
     val safeModifiers = firstSize
         ?.itemModifierGroups
         ?.map { it.toDomain() }
-        ?.sortedByDescending { it.isSingleChoice } // сначала isSingleChoice == true
+        ?.sortedByDescending { it.isSingleChoice } // сначала выводим SingleChoice-модификаторы
         ?: emptyList()
 
     val mealLabels = (labels ?: emptyList()).map { it.toDomain() }
@@ -72,21 +74,12 @@ private fun MealDto.toDomain(
         tags = finalMealTags,
         isHidden = isHidden == true,
         modifiers = safeModifiers,
-        editableType = checkMealType(safePrice, finalMealTags, safeModifiers),
+        isAddable = finalMealTags.any { it.name.equals(TAG_ADDS, ignoreCase = true) },
+        requireSelection = safeModifiers.isNotEmpty() && safePrice == 0,
+        isModifiable = safeModifiers.isNotEmpty() && safePrice > 0,
+        discountable = !finalMealTags.any { it.name.equals(TAG_NO_DISCOUNT, ignoreCase = true) },
+        parentCategoryName = parentCategoryName,
     )
-}
-
-private fun checkMealType(
-    price: Int,
-    tags: List<Tag>,
-    modifiers: List<ModifierGroup>
-): EditableType? {
-    return when {
-        tags.any { it.name.equals(TAG_PIZZA_ADDS, ignoreCase = true) } -> EditableType.PIZZA
-        modifiers.isNotEmpty() && price == 0 -> EditableType.REQUIRED_SELECTION
-        modifiers.isNotEmpty() && price > 0 -> EditableType.ADDABLE
-        else -> null
-    }
 }
 
 fun CategoryDto.hasParent(): Boolean =
