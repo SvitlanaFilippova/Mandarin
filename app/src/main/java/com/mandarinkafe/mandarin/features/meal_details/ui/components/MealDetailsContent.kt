@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.meal_details.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.extensions.hasSelectedAllRequiredModifiers
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isOnlySingleRequiredChoice
 import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
@@ -35,6 +37,7 @@ import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.C
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.menu.ui.components.AnimatedMakeMoreDeliciousBlock
+import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
 import kotlinx.coroutines.launch
 
 @Composable
@@ -47,12 +50,11 @@ fun MealDetailsContent(
 ) {
     val customizedMeal = state.customizedMeal ?: initItem
     val meal = customizedMeal.meal
-    val mealIsSingleChoice = meal.modifiers.size == 1 && meal.modifiers[0].isSingleChoice
     val listState = rememberLazyListState()
     val chosenModifiers = state.customizedMeal?.modifiers ?: emptyList()
     val showToCartButton = customizedMeal.hasSelectedAllRequiredModifiers()
     val coroutineScope = rememberCoroutineScope()
-    val scrollTargetKey = "scrollTarget"
+    val scrollTargetKey = SCROLL_TARGET_KEY
     val handleMakeMoreDeliciousClick: () -> Unit = remember(listState) {
         {
             coroutineScope.launch {
@@ -107,7 +109,11 @@ fun MealDetailsContent(
                             text = modifierGroup.name,
                             style = Typography.TitleStyle
                         )
-
+                        Log.d(
+                            "DEBUG MealDetailsBottomSheet",
+                            "modifier ${modifierGroup.name} isRequired ${modifierGroup.isRequired}, maxQ: " +
+                                    "${modifierGroup.maxQuantity}"
+                        )
                         val selectedItem =
                             chosenModifiers.find { it.id == modifierGroup.id }?.items?.getOrNull(
                                 0
@@ -202,8 +208,8 @@ fun MealDetailsContent(
                         )
                     }
                 }
-                // Показываем перечень выбранных опций, если они есть, и если это не позиция, где должна быть выбрана всего одная опция
-                if (customizedMeal.isCustomized() && !mealIsSingleChoice) {
+                // Если это не позиция, где должна быть выбрана всего одная опция - показываем перечень выбранных опций
+                if (!meal.isOnlySingleRequiredChoice() && customizedMeal.isCustomized()) {
                     item {
                         Text(
                             modifier = Modifier.padding(

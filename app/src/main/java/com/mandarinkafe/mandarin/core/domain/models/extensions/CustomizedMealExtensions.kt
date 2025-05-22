@@ -23,29 +23,48 @@ fun CustomizedMeal.totalPrice(): Int {
     return meal.price + addsTotal + modifiersTotal
 }
 
+/**
+ * Проверяет, выбраны ли какие-либо опции у блюда
+ */
 fun CustomizedMeal.isCustomized(): Boolean {
     return modifiers.isNotEmpty() || adds.isNotEmpty()
 }
 
+/**
+ * Генерирует текстовое описание выбранных опций блюда.
+ *
+ * - Если у блюда обязательный выбор (`requireSelection`), показываем модификаторы с их выбранными значениями.
+ * - Если у блюда есть дополнительные модификаторы или добавки (isCustomizable), отображаем их с новой строки и префиксом "+".
+ * - Если ничего не выбрано — возвращаем пустую строку.
+ */
 fun CustomizedMeal.customizedText(): String {
-    return if (meal.requireSelection) {
-        modifiers.joinToString("; ") { group ->
+    val sortedModifiers = modifiers.sortedByDescending { it.isSingleChoice }
+    val requiredGroups = sortedModifiers.filter { it.isRequired }
+    val optionalGroups = sortedModifiers.filterNot { it.isRequired }
+
+    val requiredText = if (meal.requireSelection && requiredGroups.isNotEmpty()) {
+        requiredGroups.joinToString("; ") { group ->
             val itemsText = group.items.joinToString(", ") { it.name }
             "${group.name}: $itemsText"
         }
-    } else if (meal.isAddable || meal.isModifiable) {
+    } else null
 
-        val allItems = buildList {
-            addAll(modifiers.flatMap { group ->
-                group.items.map { "+ ${it.name}" }
-            })
-            addAll(adds.map { "+ ${it.name}" })
+    val optionalItems = buildList {
+        optionalGroups.forEach { group ->
+            addAll(group.items.map { "+ ${it.name}" })
         }
-        allItems.joinToString(", ")
-    } else {
-        ""
+        adds.forEach { add ->
+            add("+ ${add.name}")
+        }
     }
 
+    return buildString {
+        if (!requiredText.isNullOrBlank()) append(requiredText)
+        if (optionalItems.isNotEmpty()) {
+            if (!requiredText.isNullOrBlank()) append("\n")
+            append(optionalItems.joinToString(", "))
+        }
+    }
 }
 
 fun List<ModifierGroup>.validateBy(mealModifiers: List<ModifierGroup>): List<ModifierGroup> {

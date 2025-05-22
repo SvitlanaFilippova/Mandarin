@@ -122,4 +122,5 @@ fun ModifierGroupDto.toDomain() = ModifierGroup(
         ?: emptyList(),
     isSingleChoice = (restrictions?.maxQuantity == 1),
     isRequired = (restrictions?.minQuantity ?: 0) > 0,
+    maxQuantity = restrictions?.maxQuantity ?: Int.MAX_VALUE
 )
