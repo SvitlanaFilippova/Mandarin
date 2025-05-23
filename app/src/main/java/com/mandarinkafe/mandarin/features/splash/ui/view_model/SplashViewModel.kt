@@ -34,6 +34,7 @@ class SplashViewModel @Inject constructor(
                     copy(isVisible = false)
                 }
             }
+
             // Параллельно начинаем загрузку меню
             menuInteractor.getMenu().collectLatest { resource ->
                 if (resource is Resource.Success) {

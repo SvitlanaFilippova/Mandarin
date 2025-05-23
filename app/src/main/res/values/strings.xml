@@ -36,6 +36,7 @@
     <string name="create_own_box_short">Собрать</string>
     <string name="create_own_box">Собрать свою коробочку</string>
     <string name="edit_meal">Редактировать</string>
+    <string name="mandatory">(обязательно)</string>
     <string name="chosen">Выбрано:</string>
     <string name="cancel_choice">Отменить выбор</string>
 

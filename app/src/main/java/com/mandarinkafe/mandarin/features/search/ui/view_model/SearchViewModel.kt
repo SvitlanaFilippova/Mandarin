@@ -13,10 +13,9 @@ import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.Se
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEvent
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchState
-import com.mandarinkafe.mandarin.util.Constants.DELAY_BEFORE_NEXT_ATTEMPT
-import com.mandarinkafe.mandarin.util.Constants.MAX_ATTEMPTS
+import com.mandarinkafe.mandarin.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -156,7 +155,6 @@ class SearchViewModel @Inject constructor(
             val updatedFullList = fullMealList.map { meal ->
                 if (meal.id == id) meal.copy(isFavorite = isFavorite) else meal
             }
-
             val updatedFilteredList = filteredMealList.map { meal ->
                 if (meal.id == id) meal.copy(isFavorite = isFavorite) else meal
             }
@@ -168,54 +166,33 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    // Метод для загрузки меню
+    // Методы для загрузки меню
     private fun loadMenu() {
-        setState { copy(isLoading = true) }
         viewModelScope.launch {
-            var attempts = 0
-            var success = false
-
-            // Попытки до максимума
-            while (attempts < MAX_ATTEMPTS) {
-                getFullMealListUseCase()
-                    .collect { (menu, errorMessage) ->
-                        // Если меню в процессе загрузки, пробуем снова
-                        if (menu == null && errorMessage == null) {
-                            attempts++
-                            delay(DELAY_BEFORE_NEXT_ATTEMPT) // Задержка перед повторной попыткой
-                        } else {
-                            // Обработка успешной загрузки данных
-                            if (!menu.isNullOrEmpty()) {
-                                setState {
-                                    copy(
-                                        isLoading = false,
-                                        fullMealList = menu,
-                                        filteredMealList = menu.sortedWith(compareByDescending { it.isFavorite })
-                                    )
-                                }
-                                success = true
-                            } else {
-                                // Обработка ошибки
-                                setState {
-                                    copy(
-                                        isLoading = false,
-                                        errorMessage = errorMessage
-                                    )
-                                }
-                            }
-                            return@collect // Завершаем коллекцию данных после успешной обработки
-                        }
+            getFullMealListUseCase().collectLatest { resource ->
+                setLoading(resource is Resource.Loading)
+                when (resource) {
+                    is Resource.Success -> setState {
+                        copy(
+                            isLoading = false,
+                            fullMealList = resource.data ?: emptyList(),
+                            filteredMealList = resource.data?.sortedWith(compareByDescending { it.isFavorite })
+                                ?: emptyList()
+                        )
                     }
-            }
-            // Если после всех попыток данных нет, устанавливаем ошибку
-            if (!success) {
-                setState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = "Не удалось загрузить меню. Попробуйте позже."
-                    )
+
+                    is Resource.Error -> setError(resource.message)
+                    is Resource.Loading -> {}
                 }
             }
         }
+    }
+
+    private fun setError(errorMessage: String?) {
+        setState { copy(errorMessage = errorMessage) }
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        setState { copy(isLoading = isLoading) }
     }
 }

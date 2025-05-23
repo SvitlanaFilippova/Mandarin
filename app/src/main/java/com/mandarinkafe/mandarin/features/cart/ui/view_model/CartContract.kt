@@ -10,7 +10,6 @@ import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 
 sealed interface CartContract {
     sealed interface CartEvent : BaseEvent {
-        data object GetCart : CartEvent
         data class AddToCart(val item: CustomizedMeal) : CartEvent
         data class RemoveFromCartWithDelay(val item: CustomizedMeal) : CartEvent
         data class RemoveFromCartByMeal(val meal: Meal) : CartEvent
@@ -28,6 +27,7 @@ sealed interface CartContract {
             val item: CustomizedMeal
         ) :
             CartEffect, BottomSheetEffect
+
         data object ShowClearCartConfirmationDialog : CartEffect
     }
 

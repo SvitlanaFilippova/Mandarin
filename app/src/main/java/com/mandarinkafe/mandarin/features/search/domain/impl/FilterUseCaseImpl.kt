@@ -13,6 +13,13 @@ class FilterUseCaseImpl : FilterUseCase {
         searchText: String,
         checkedLabels: List<String>
     ): List<Meal> {
+        if (searchText.isBlank()) {
+            return meals.filter { meal ->
+                val labelNames = meal.labels.map { it.name }
+                checkedLabels.isEmpty() || checkedLabels.all { it in labelNames }
+            }.sortedByDescending { it.isFavorite }
+        }
+
         val searchVariants = searchText.toTranslitVariants()
 
         return meals

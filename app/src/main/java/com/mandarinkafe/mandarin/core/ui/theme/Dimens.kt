@@ -16,7 +16,8 @@ object Dimens {
     val ButtonToCartBig120 = 120.dp
     val ButtonsRowWidth164 = 164.dp
     val ButtonPlaceholderSize200 = 200.dp
-    val SplashScreenLogoSize150 = 150.dp
+    val SplashScreenLogoSize180 = 180.dp
+    val SplashScreenBackgroundSize220 = 220.dp
     val IconSize24 = 24.dp
     val MarginStandard16 = 16.dp
     val Margin12 = 12.dp

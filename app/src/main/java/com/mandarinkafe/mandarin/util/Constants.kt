@@ -7,7 +7,8 @@ object Constants {
 
     // Menu UI
     const val AUTO_SCROLL_INTERVAL: Long = 5000L
-    const val SPLASH_SCREEN_DURATION = 3000L
+    const val SPLASH_SCREEN_DURATION = 5000L
+    const val SPLASH_APPEARING_DURATION = 1000
     const val SPLASH_ANIMATION_DURATION = 2000
     const val ANIMATION_DURATION_SLOW = 1000
     const val ANIMATION_DURATION_FAST = 300

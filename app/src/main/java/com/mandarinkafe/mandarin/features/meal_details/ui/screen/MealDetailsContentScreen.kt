@@ -1,9 +1,10 @@
-package com.mandarinkafe.mandarin.features.meal_details.ui.components
+package com.mandarinkafe.mandarin.features.meal_details.ui.screen
 
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,6 +30,10 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
+import com.mandarinkafe.mandarin.features.meal_details.ui.components.BottomSheetHeader
+import com.mandarinkafe.mandarin.features.meal_details.ui.components.MakeMoreDeliciousBlock
+import com.mandarinkafe.mandarin.features.meal_details.ui.components.MealInfo
+import com.mandarinkafe.mandarin.features.meal_details.ui.components.ToCartButton
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.modifiers.ModifierMultiSelectItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.modifiers.ModifierSingleSelectItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.AddsCategoryTabsRow
@@ -36,12 +41,11 @@ import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.A
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.ChosenOptionsChipsRow
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
-import com.mandarinkafe.mandarin.features.menu.ui.components.AnimatedMakeMoreDeliciousBlock
 import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
 import kotlinx.coroutines.launch
 
 @Composable
-fun MealDetailsContent(
+fun MealDetailsContentScreen(
     state: MealDetailsContract.MealDetailsState,
     onEvent: (MealDetailsEvent) -> Unit,
     onAddToCart: (CustomizedMeal) -> Unit,
@@ -80,6 +84,7 @@ fun MealDetailsContent(
         )
 
         Box {
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -97,23 +102,34 @@ fun MealDetailsContent(
                 // Заголовок для модификаторов/добавок, если блюдо и без них можно закаказать
                 if (meal.isCustomizable()) {
                     item(key = scrollTargetKey) {
-                        AnimatedMakeMoreDeliciousBlock(onClick = handleMakeMoreDeliciousClick)
+                        MakeMoreDeliciousBlock(onClick = handleMakeMoreDeliciousClick)
                     }
                 }
 
                 // Выбор модификаторов
                 if (meal.modifiers.isNotEmpty()) {
                     itemsIndexed(meal.modifiers) { index, modifierGroup ->
-                        Text(
-                            modifier = Modifier.padding(vertical = Dimens.MarginSmall8),
-                            text = modifierGroup.name,
-                            style = Typography.TitleStyle
-                        )
                         Log.d(
-                            "DEBUG MealDetailsBottomSheet",
-                            "modifier ${modifierGroup.name} isRequired ${modifierGroup.isRequired}, maxQ: " +
-                                    "${modifierGroup.maxQuantity}"
+                            "DEBUG MODIFIER",
+                            "modifierGroup ${modifierGroup.name} isRequired:${modifierGroup.isRequired}"
                         )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(vertical = Dimens.MarginSmall8)
+                        ) {
+                            Text(
+                                text = modifierGroup.name,
+                                style = Typography.TitleStyle
+                            )
+                            if (modifierGroup.isRequired) {
+                                Text(
+                                    modifier = Modifier.padding(start = Dimens.MarginSmall8),
+                                    text = stringResource(R.string.mandatory),
+                                    style = Typography.RegularTextStyle,
+                                    fontWeight = FontWeight.Light
+                                )
+                            }
+                        }
                         val selectedItem =
                             chosenModifiers.find { it.id == modifierGroup.id }?.items?.getOrNull(
                                 0
@@ -157,8 +173,7 @@ fun MealDetailsContent(
                                     ) == true
                                 )
                             }
-
-                            Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
+                            Spacer(modifier = Modifier.height(Dimens.MarginBig24))
                         }
                     }
                 }
@@ -168,7 +183,7 @@ fun MealDetailsContent(
                         Text(
                             text = stringResource(id = R.string.adds),
                             modifier = Modifier.padding(
-                                top = Dimens.MarginStandard16,
+                                top = Dimens.MarginBig24,
                                 bottom = Dimens.MarginSmall8
                             ),
                             style = Typography.TitleStyle
@@ -266,4 +281,5 @@ fun MealDetailsContent(
             )
         }
     }
+
 }

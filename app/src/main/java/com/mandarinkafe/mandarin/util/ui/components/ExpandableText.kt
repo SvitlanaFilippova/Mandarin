@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,12 +22,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 
 @Composable
@@ -83,7 +83,7 @@ fun ExpandableText(
                     .matchParentSize()
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_arrow_down),
+                    imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = "Раскрыть текст",
                     modifier = Modifier
                         .size(16.dp)

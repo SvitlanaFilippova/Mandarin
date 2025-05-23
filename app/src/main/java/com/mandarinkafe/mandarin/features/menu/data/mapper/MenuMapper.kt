@@ -118,14 +118,16 @@ fun ModifierItemDto.toDomain(): ModifierItem {
     )
 }
 
-fun ModifierGroupDto.toDomain() = ModifierGroup(
-    id = itemGroupId,
-    name = name ?: "",
-    items = items
-        ?.map { it.toDomain() }
-        ?.sortedBy { it.price != 0 }
-        ?: emptyList(),
-    isSingleChoice = (restrictions?.maxQuantity == 1),
-    isRequired = (restrictions?.minQuantity ?: 0) > 0,
-    maxQuantity = restrictions?.maxQuantity ?: Int.MAX_VALUE
-)
+fun ModifierGroupDto.toDomain(): ModifierGroup {
+    return ModifierGroup(
+        id = itemGroupId,
+        name = name ?: "",
+        items = items
+            ?.map { it.toDomain() }
+            ?.sortedBy { it.price != 0 }
+            ?: emptyList(),
+        isSingleChoice = (restrictions?.maxQuantity == 1),
+        isRequired = (restrictions?.minQuantity ?: 0) > 0,
+        maxQuantity = restrictions?.maxQuantity ?: Int.MAX_VALUE
+    )
+}
