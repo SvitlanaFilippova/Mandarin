@@ -15,7 +15,7 @@ object SplashElementsProvider {
         ),
 
         SplashElement(
-            R.drawable.splash_pizza1, Alignment.TopEnd, offsetX = 300f, offsetY = 900f,
+            R.drawable.splash_pizza1, Alignment.TopEnd, offsetX = 800f, offsetY = 900f,
             targetOffsetX = 160f, targetOffsetY = 200f
         ),
 

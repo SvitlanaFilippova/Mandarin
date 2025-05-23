@@ -26,6 +26,7 @@ import com.mandarinkafe.mandarin.features.splash.ui.model.SplashElementsProvider
 import com.mandarinkafe.mandarin.features.splash.ui.view_model.SplashViewModel
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_ANIMATION_DURATION
+import com.mandarinkafe.mandarin.util.Constants.SPLASH_APPEARING_DURATION
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -35,14 +36,19 @@ fun SplashScreen(
     onFinished: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
-    val globalAlpha = remember { Animatable(1f) }
-    val logoAlpha = remember { Animatable(1f) }
-    // Анимация появления лого
+    val globalAlpha = remember { Animatable(0.1f) }
+    val logoAlpha = remember { Animatable(0.5f) }
+
+    // Анимация появления элементов
     LaunchedEffect(Unit) {
         launch {
             logoAlpha.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(durationMillis = SPLASH_ANIMATION_DURATION)
+                animationSpec = tween(durationMillis = SPLASH_APPEARING_DURATION)
+            )
+            globalAlpha.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(durationMillis = SPLASH_APPEARING_DURATION)
             )
         }
     }

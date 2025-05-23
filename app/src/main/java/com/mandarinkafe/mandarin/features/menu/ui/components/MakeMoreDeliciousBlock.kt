@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -31,7 +31,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import kotlinx.coroutines.launch
 
 @Composable
-fun AnimatedMakeMoreDeliciousBlock(
+fun MakeMoreDeliciousBlock(
     onClick: () -> Unit
 ) {
     val offsetY = remember { Animatable(initialValue = 40f) }
@@ -64,8 +64,8 @@ fun AnimatedMakeMoreDeliciousBlock(
     ) {
         Text(
             text = stringResource(id = R.string.make_more_delicious_description),
-            style = Typography.RegularLightTextStyle,
-            fontWeight = FontWeight.Bold,
+            style = Typography.TitleStyle,
+            fontWeight = FontWeight.Medium,
             color = Colors.White,
             textAlign = TextAlign.Center
         )
@@ -84,7 +84,7 @@ fun AnimatedMakeMoreDeliciousBlock(
             ) {
                 Icon(
                     modifier = Modifier.size(Dimens.IconSize24),
-                    imageVector = Icons.Default.ArrowDropDown,
+                    imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = stringResource(id = R.string.make_more_delicious),
                     tint = Colors.White
                 )

@@ -245,7 +245,7 @@ fun MenuContentScreen(
                 listState = listState,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(bottom = Dimens.MarginStandard16),
+                    .padding(bottom = Dimens.MarginBig32),
                 onEvent = onEvent,
                 onCartEvent = onCartEvent,
                 cartState = cartState,
