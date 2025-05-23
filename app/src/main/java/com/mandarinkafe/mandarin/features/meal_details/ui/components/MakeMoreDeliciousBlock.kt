@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.menu.ui.components
+package com.mandarinkafe.mandarin.features.meal_details.ui.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing

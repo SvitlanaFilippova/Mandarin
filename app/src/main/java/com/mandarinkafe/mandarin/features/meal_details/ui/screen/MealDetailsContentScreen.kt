@@ -30,6 +30,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.BottomSheetHeader
+import com.mandarinkafe.mandarin.features.meal_details.ui.components.MakeMoreDeliciousBlock
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.MealInfo
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.ToCartButton
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.modifiers.ModifierMultiSelectItem
@@ -39,7 +40,6 @@ import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.A
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.ChosenOptionsChipsRow
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
-import com.mandarinkafe.mandarin.features.menu.ui.components.MakeMoreDeliciousBlock
 import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
 import kotlinx.coroutines.launch
 
