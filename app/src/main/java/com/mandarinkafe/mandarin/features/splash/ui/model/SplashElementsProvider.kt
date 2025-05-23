@@ -93,7 +93,7 @@ object SplashElementsProvider {
             targetOffsetX = 0f, targetOffsetY = 300f
         ),
         SplashElement(
-            R.drawable.splash_cheese4, Alignment.TopStart, offsetX = -400f, offsetY = -300f,
+            R.drawable.splash_cheese, Alignment.TopStart, offsetX = -400f, offsetY = -300f,
             targetOffsetX = -50f, targetOffsetY = -50f
         ),
     )
