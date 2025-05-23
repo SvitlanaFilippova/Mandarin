@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
-import com.mandarinkafe.mandarin.features.cart.totalPrice
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.util.ui.components.UndoIndicator
 import com.mandarinkafe.mandarin.util.ui.components.buttons.CartControls
@@ -14,7 +14,7 @@ import com.mandarinkafe.mandarin.util.ui.components.buttons.CartControls
 @Composable
 fun CartControlWithUndo(
     numberInCart: Int,
-    item: CartItem,
+    item: CustomizedMeal,
     mealInPendingDeletion: Boolean,
     deletionProgress: Float,
     onEvent: (CartContract.CartEvent) -> Unit

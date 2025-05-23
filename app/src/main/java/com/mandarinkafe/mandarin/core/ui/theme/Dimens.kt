@@ -11,14 +11,12 @@ object Dimens {
     val CornerRadius16 = 16.dp
     val BottomBarHeight64 = 64.dp
     val Elevation2 = 2.dp
-    val ButtonBorder1 = 1.dp
     val ButtonToCartSmall32 = 32.dp
     val ButtonBox32 = 32.dp
     val ButtonToCartBig120 = 120.dp
     val ButtonsRowWidth164 = 164.dp
     val ButtonPlaceholderSize200 = 200.dp
-    val SplashScreenLogoSize180 = 180.dp
-    val SplashScreenBackSize240 = 240.dp
+    val SplashScreenLogoSize150 = 150.dp
     val IconSize24 = 24.dp
     val MarginStandard16 = 16.dp
     val Margin12 = 12.dp
@@ -32,9 +30,8 @@ object Dimens {
     val ModifierRowHeight48 = 48.dp
     val RadiusSearchField8 = 8.dp
     val RadiusImageCorner2 = 2.dp
-    val MealImage136 = 136.dp
+    val MealItemInSearchResults96 = 96.dp
     val MealSmallImage80 = 80.dp
-    val MealMinDescriptionHeight96 = 96.dp
     val PhotoPlaceholderStrokeWidth4 = 4.dp
     val PlaceholderImageSize200 = 200.dp
     val ProgressBarSize124 = 124.dp

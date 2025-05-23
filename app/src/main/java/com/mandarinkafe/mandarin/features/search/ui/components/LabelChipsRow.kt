@@ -16,7 +16,7 @@ fun LabelChipsRow(
 
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        maxLines = MAX_LINES_FOR_LABEL_FLOW_ROW
+        maxLines = MAX_LINES_FOR_LABEL_FLOW_ROW,
     ) {
         labels.forEach {
             MenuFilterChip(

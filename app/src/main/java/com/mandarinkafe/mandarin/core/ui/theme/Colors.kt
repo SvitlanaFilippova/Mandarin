@@ -6,6 +6,7 @@ object Colors {
     val AppBlack = Color(0xFF1D1E1C)
     val White = Color(0xFFFFFFFF)
     val Orange = Color(0xFFF5BD47)
+    val OrangeTransparent20 = Color(0x33F5BD47)
     val LightGrey = Color(0xFFAEAFB4)
     val DarkGrey = Color(0xFF2c2d2b)
     val GreyTransparent75 = Color(0xBFAEAFB4)

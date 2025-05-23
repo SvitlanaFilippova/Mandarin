@@ -25,15 +25,15 @@ fun CustomizeButton(
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         contentPadding = PaddingValues(Dimens.MarginSuperSmall4),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Colors.White.copy(alpha = 0.9f),
+            containerColor = Colors.OrangeTransparent20,
         ),
 
         ) {
         Icon(
             painter = painterResource(R.drawable.ic_additionals),
-            contentDescription = stringResource(R.string.customize_meal),
+            contentDescription = stringResource(R.string.add_additionals),
             modifier = Modifier.size(Dimens.IconSize24),
-            tint = Colors.DarkGrey.copy(alpha = 0.9f)
+            tint = Colors.White
         )
     }
 }

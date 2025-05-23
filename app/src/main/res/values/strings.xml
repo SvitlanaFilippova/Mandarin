@@ -4,7 +4,6 @@
     <string name="logo_cafe">Логотип кафе</string>
     <string name="cafe_phone_number">+7&#160;(495)&#160;108–70–55</string>
 
-
     <!-- Навигация -->
     <string name="back">Назад</string>
     <string name="search">Поиск</string>
@@ -26,12 +25,20 @@
     <string name="clear_cart_question">Очистить корзину?</string>
     <string name="clear_cart_confirmation">Вы действительно хотите удалить всё из корзины?</string>
 
-    <!-- Детали блюда -->
+    <!-- Кастомизация бюлюда -->
     <string name="adds">Добавки</string>
     <string name="make_more_delicious">Cделать ещё вкуснее</string>
     <string name="make_more_delicious_description">Можно сделать ещё вкуснее!</string>
     <string name="to_cart">В корзину</string>
     <string name="price_with_adds">Цена с добавками</string>
+    <string name="add_additionals">Сделать вкуснее</string>
+    <string name="to_choose">Выбрать</string>
+    <string name="create_own_box_short">Собрать</string>
+    <string name="create_own_box">Собрать свою коробочку</string>
+    <string name="edit_meal">Редактировать</string>
+    <string name="chosen">Выбрано:</string>
+    <string name="cancel_choice">Отменить выбор</string>
+
 
     <!-- Доставка -->
     <string name="delivery">Доставка</string>
@@ -51,16 +58,8 @@
     <string name="plus">+</string>
     <string name="customize_meal">Редактировать блюдо</string>
     <string name="search_in_menu">Поиск по меню</string>
-    <string name="filter_by_label">Фильтровать по тегам</string>
+    <string name="filter_by_label">"Фильтр по тегам: "</string>
     <string name="clear_text">Очистить текст</string>
-
-
-    <!-- Кастомизация бюлюда -->
-    <string name="add_additionals">Сделать ещё вкуснее</string>
-    <string name="to_choose">Выбрать</string>
-    <string name="create_own_box_short">Собрать</string>
-    <string name="create_own_box">Собрать свою коробочку</string>
-    <string name="edit_meal">Редактировать</string>
 
     <!-- Шаблоны текста -->
     <string name="default_price_for_button">000 ₽</string>
@@ -84,7 +83,6 @@
     <string name="error_server_error">Ошибка сервера</string>
     <string name="error_something_wrong">Что-то пошло не так :(</string>
     <string name="error_empty_cart">В корзине пока ничего нет :(</string>
-
 
     <!-- Для contentDescription  -->
     <string name="picture_of_meal_template">Изображение %1$s</string>

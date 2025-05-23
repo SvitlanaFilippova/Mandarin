@@ -1,15 +1,15 @@
 package com.mandarinkafe.mandarin.features.cart.data.impl
 
 import android.util.Log
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
+import com.mandarinkafe.mandarin.core.domain.models.extensions.sameAs
+import com.mandarinkafe.mandarin.core.domain.models.extensions.validateBy
 import com.mandarinkafe.mandarin.features.cart.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartRepository
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
-import com.mandarinkafe.mandarin.features.cart.sameAs
-import com.mandarinkafe.mandarin.features.cart.validateBy
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.CategoryFilter
@@ -24,13 +24,13 @@ class CartRepositoryImpl @Inject constructor(
     @Recommends private val recommendsFilter: CategoryFilter,
 ) : CartRepository {
 
-    override suspend fun getCart(): Map<CartItem, Int> {
+    override suspend fun getCart(): Map<CustomizedMeal, Int> {
 
         val rawCart = storage.getCart().toMutableList()
         // Ждём, пока меню загрузится
         menuRepository.menu.first { it is Resource.Success }
 
-        val validCart = mutableMapOf<CartItem, Int>()
+        val validCart = mutableMapOf<CustomizedMeal, Int>()
         val invalidIds = mutableListOf<String>()
 
         for (storedCartItem in rawCart) {
@@ -75,7 +75,7 @@ class CartRepositoryImpl @Inject constructor(
         return validCart
     }
 
-    override fun addToCart(item: CartItem) {
+    override fun addToCart(item: CustomizedMeal) {
         val cart = storage.getCart().toMutableList()
         val index = cart.indexOfFirst { it.sameAs(item.toStoredCartItem(0)) }
 
@@ -89,7 +89,7 @@ class CartRepositoryImpl @Inject constructor(
 
     }
 
-    override fun removeFromCart(item: CartItem) {
+    override fun removeFromCart(item: CustomizedMeal) {
         val cart = storage.getCart().toMutableList()
         val index = cart.indexOfFirst { it.sameAs(item.toStoredCartItem(0)) }
 

@@ -12,7 +12,7 @@ class GetFullMealListUseCaseImpl(
     private val repository: MenuRepository
 ) : GetFullMealListUseCase {
 
-    override fun execute(): Flow<Pair<List<Meal>?, String?>> {
+    override fun invoke(): Flow<Pair<List<Meal>?, String?>> {
         return repository.getMenu().map { result ->
             when (result) {
                 is Resource.Success -> {

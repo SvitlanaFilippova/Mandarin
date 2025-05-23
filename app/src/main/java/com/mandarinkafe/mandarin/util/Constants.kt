@@ -19,6 +19,9 @@ object Constants {
     const val MAX_LINES_FOR_MEAL_TITLE_IN_MENU = 3
     const val MAX_LINES_FOR_COLLAPSED_EXPANDABLE_TEXT = 6
 
+    // MealDetails UI
+    const val SCROLL_TARGET_KEY = "scrollTarget"
+
     // Menu loading
     const val MAX_ATTEMPTS = 3
     const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 100L
@@ -31,11 +34,11 @@ object Constants {
     const val BEARER_PREFIX = "Bearer "
 
     // Внутренние теги для особой логики в меню
-    const val TAG_PIZZA_ADDS = "добавки к пицце"
-    const val TAG_WOK_CONSTRUCTOR = "конструктор вок"
+    const val TAG_ADDS = "добавки"
+    const val TAG_NO_DISCOUNT = "скидки не действуют"
 
     // Для обработки особых категорий по их названиям
-    const val CATEGORY_PIZZA_ADDS = "добавки"
+    const val CATEGORY_ADDS = "добавки"
     const val CATEGORY_RECOMMENDS = "рекоменд"
 
     // DEBOUNCE для корзины

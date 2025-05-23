@@ -20,17 +20,38 @@ data class Meal(
     val labels: List<Label>,
 
     /**
+    Группы модификаторов, доступных для блюда
+     */
+    val modifiers: List<ModifierGroup>,
+
+    /**
     Показывает, должно ли блюдо отображаться в общем меню
      */
     val isHidden: Boolean,
 
     /**
-    Тип дополнительного экрана, который должен открываться при клике на блюдо
+    Применимы ли добавки
      */
-    val editableType: EditableType?,
+    val isAddable: Boolean,
 
     /**
-    Группы модификаторов, доступных для блюда
+    Выбор опции обязателен
      */
-    val modifiers: List<ModifierGroup>,
-)
+    val requireSelection: Boolean,
+
+    /**
+    Модификаторы опциональны
+     */
+    val isModifiable: Boolean,
+
+    /**
+    Применимы ли скидки
+     */
+    val discountable: Boolean,
+
+    /**
+    Название родительской категории
+     */
+    val parentCategoryName: String,
+
+    )

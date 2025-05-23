@@ -34,14 +34,10 @@ sealed interface MenuContract {
 
         // Поиск и фильтрация
         data object SearchOnOpenSearchClick : MenuEvent
-        data object OnOpenFavoritesClick : MenuEvent
-        data object OnLabelsClick : MenuEvent
     }
 
     sealed interface MenuEffect : BaseEffect {
-        data class ShowSnackbar(val message: String) : MenuEffect
         data class OpenSearch(val focusSearch: Boolean) : MenuEffect
-        data object OpenFavorites : MenuEffect
         data object CallPhone : MenuEffect
         data class OpenMealDetailsBS(val meal: Meal) :
             MenuEffect, BottomSheetEffect

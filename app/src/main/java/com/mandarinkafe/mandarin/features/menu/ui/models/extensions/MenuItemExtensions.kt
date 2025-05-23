@@ -1,6 +1,7 @@
-package com.mandarinkafe.mandarin.features.menu.ui.models
+package com.mandarinkafe.mandarin.features.menu.ui.models.extensions
 
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
 
 // Функция для получения имени в зависимости от типа элемента
 fun MenuItem.getName(): String? = when (this) {

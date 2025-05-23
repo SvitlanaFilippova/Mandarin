@@ -3,27 +3,29 @@ package com.mandarinkafe.mandarin.features.cart.ui.view_model
 import com.mandarinkafe.mandarin.core.BaseEffect
 import com.mandarinkafe.mandarin.core.BaseEvent
 import com.mandarinkafe.mandarin.core.BaseState
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
-import com.mandarinkafe.mandarin.features.cart.totalPrice
+import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 
 sealed interface CartContract {
     sealed interface CartEvent : BaseEvent {
         data object GetCart : CartEvent
-        data class AddToCart(val item: CartItem) : CartEvent
-        data class RemoveFromCartWithDelay(val item: CartItem) : CartEvent
+        data class AddToCart(val item: CustomizedMeal) : CartEvent
+        data class RemoveFromCartWithDelay(val item: CustomizedMeal) : CartEvent
         data class RemoveFromCartByMeal(val meal: Meal) : CartEvent
-        data class ReplaceMealInCart(val newItem: CartItem, val oldItem: CartItem) : CartEvent
-        data class CancelRemove(val item: CartItem) : CartEvent
+        data class ReplaceMealInCart(val newItem: CustomizedMeal, val oldItem: CustomizedMeal) :
+            CartEvent
+
+        data class CancelRemove(val item: CustomizedMeal) : CartEvent
         data object ClearCart : CartEvent
         data object ConfirmClearCart : CartEvent
-        data class OpenMealDetails(val item: CartItem) : CartEvent
+        data class OpenMealDetails(val item: CustomizedMeal) : CartEvent
     }
 
     sealed interface CartEffect : BaseEffect {
         data class OpenMealDetailsBS(
-            val item: CartItem
+            val item: CustomizedMeal
         ) :
             CartEffect, BottomSheetEffect
         data object ShowClearCartConfirmationDialog : CartEffect
@@ -31,10 +33,10 @@ sealed interface CartContract {
 
     data class CartState(
         val isLoading: Boolean = true,
-        val cartItems: Map<CartItem, Int> = emptyMap(),
-        val recommendsList: List<CartItem> = emptyList(),
-        val pendingDeletionMeals: List<CartItem> = emptyList(),
-        val mealDeletionProgress: Map<CartItem, Float> = emptyMap(),
+        val cartItems: Map<CustomizedMeal, Int> = emptyMap(),
+        val recommendsList: List<CustomizedMeal> = emptyList(),
+        val pendingDeletionMeals: List<CustomizedMeal> = emptyList(),
+        val mealDeletionProgress: Map<CustomizedMeal, Float> = emptyMap(),
     ) : BaseState {
         val totalCartPrice: Int
             get() = cartItems

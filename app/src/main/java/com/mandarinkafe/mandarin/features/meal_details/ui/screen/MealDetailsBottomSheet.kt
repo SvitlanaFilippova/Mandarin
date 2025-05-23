@@ -13,9 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.MealDetailsContent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsViewModel
@@ -26,8 +26,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun MealDetailsBottomSheet(
     viewModel: MealDetailsViewModel = hiltViewModel(),
-    onAddToCart: (CartItem) -> Unit,
-    initItem: CartItem,
+    onAddToCart: (CustomizedMeal) -> Unit,
+    initItem: CustomizedMeal,
     onDismiss: () -> Unit,
     onFavoriteChanged: (String, Boolean) -> Unit = { _, _ -> }
 ) {

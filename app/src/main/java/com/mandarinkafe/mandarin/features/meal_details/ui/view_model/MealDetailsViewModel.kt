@@ -2,10 +2,10 @@ package com.mandarinkafe.mandarin.features.meal_details.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect
@@ -82,6 +82,8 @@ class MealDetailsViewModel @Inject constructor(
                 modifiersList.add(group.copy(items = listOf(item)))
             }
 
+            // Сортировка: сначала SingleChoice группы
+            modifiersList.sortByDescending { it.isSingleChoice }
             copy(
                 customizedMeal = currentItem.copy(modifiers = modifiersList)
             )
@@ -101,6 +103,8 @@ class MealDetailsViewModel @Inject constructor(
                 modifiersList.add(modifierGroup)
             }
 
+            // Сортировка: сначала SingleChoice группы
+            modifiersList.sortByDescending { it.isSingleChoice }
             copy(
                 customizedMeal = currentItem.copy(modifiers = modifiersList)
             )
@@ -145,7 +149,7 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun setMeal(item: CartItem) {
+    private fun setMeal(item: CustomizedMeal) {
         setState {
             copy(customizedMeal = item)
         }
@@ -206,21 +210,4 @@ class MealDetailsViewModel @Inject constructor(
     private fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
     }
-
-    //                (adds, errorMessage) ->
-//                    if (!adds.isNullOrEmpty()) {
-//                        setState { copy(isLoading = false, pizzaAds = adds) }
-//                    } else {
-//                        // Обработка ошибки
-//                        setState {
-//                            copy(
-//                                isLoading = false,
-//                                errorMessage = errorMessage
-//                            )
-//                        }
-//                    }
-//                }
-
 }
-
-

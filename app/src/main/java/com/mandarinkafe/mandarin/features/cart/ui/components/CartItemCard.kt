@@ -2,7 +2,6 @@ package com.mandarinkafe.mandarin.features.cart.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,14 +22,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.extensions.customizedText
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.customizedText
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
-import com.mandarinkafe.mandarin.features.cart.totalPrice
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.util.ui.components.MealItemImageBox
+import com.mandarinkafe.mandarin.util.ui.components.buttons.CustomizeButtonWithText
 
 /**
  * Компонент, который отвечает за отображение товара, который выбрали в меню
@@ -38,7 +40,7 @@ import com.mandarinkafe.mandarin.util.ui.components.MealItemImageBox
 
 @Composable
 fun CartItemCard(
-    item: CartItem,
+    item: CustomizedMeal,
     quantity: Int,
     itemInPendingDeletion: Boolean,
     deletionProgress: Float,
@@ -88,7 +90,7 @@ fun CartItemCard(
                 )
 
                 // Выбранные опции кастомизации
-                if (item.adds.isNotEmpty() || item.modifiers.isNotEmpty()) {
+                if (item.isCustomized()) {
                     Text(
                         text = item.customizedText(),
                         style = Typography.MealSmallTextStyle,
@@ -115,19 +117,30 @@ fun CartItemCard(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            if (meal.editableType != null && !itemInPendingDeletion) {
-                // Кнопка "Редактировать"
-                Box(modifier = Modifier.padding(horizontal = Dimens.MarginStandard16)) {
-                    IconButton(
-                        onClick = { onEvent(CartContract.CartEvent.OpenMealDetails(item)) },
-                        modifier = Modifier
-                            .size(Dimens.ButtonToCartSmall32)
-                    ) {
-                        Icon(
-                            modifier = Modifier.padding(Dimens.MarginSmall8),
-                            imageVector = Icons.Default.Edit,
-                            tint = Color.White,
-                            contentDescription = stringResource(id = R.string.edit_meal),
+            if ((meal.isCustomizable() || meal.requireSelection) && !itemInPendingDeletion) {
+                when {
+                    item.isCustomized() -> {
+                        // Кнопка "Редактировать"
+                        IconButton(
+                            onClick = { onEvent(CartContract.CartEvent.OpenMealDetails(item)) },
+                            modifier = Modifier
+                                .padding(horizontal = Dimens.MarginSmall8)
+                                .size(Dimens.ButtonToCartSmall32)
+                        ) {
+                            Icon(
+                                modifier = Modifier.padding(Dimens.MarginSmall8),
+                                imageVector = Icons.Default.Edit,
+                                tint = Color.White,
+                                contentDescription = stringResource(id = R.string.edit_meal),
+                            )
+                        }
+                    }
+
+                    else -> {
+                        // Кнопка "Сделать вкуснее"
+                        CustomizeButtonWithText(
+                            onClick = { onEvent(CartContract.CartEvent.OpenMealDetails(item)) },
+                            modifier = Modifier.padding(horizontal = Dimens.MarginSmall8)
                         )
                     }
                 }

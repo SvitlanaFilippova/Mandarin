@@ -34,42 +34,40 @@ fun MealInfo(
 ) {
     Column {
         // Изображение блюда
-        if (meal.imageUrl.isNotEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                AsyncImage(
-                    model = meal.imageUrl,
-                    contentDescription = stringResource(
-                        R.string.picture_of_meal_template,
-                        meal.name
-                    ),
-                    error = painterResource(R.drawable.logo_orange_square),
-                    placeholder = painterResource(R.drawable.logo_orange_square),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .padding(vertical = Dimens.MarginSmall8)
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                )
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            AsyncImage(
+                model = meal.imageUrl,
+                contentDescription = stringResource(
+                    R.string.picture_of_meal_template,
+                    meal.name
+                ),
+                error = painterResource(R.drawable.placeholder_meal_no_photo),
+                placeholder = painterResource(R.drawable.placeholder_meal_no_photo),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .padding(vertical = Dimens.MarginSmall8)
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(Dimens.CornerRadius8))
+            )
 
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4),
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(Dimens.MarginSuperSmall4)
-                ) {
-                    meal.labels.forEach {
-                        LabelChip(
-                            label = it.toUiModel(),
-                        )
-                    }
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4),
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(Dimens.MarginSuperSmall4)
+            ) {
+                meal.labels.forEach {
+                    LabelChip(
+                        label = it.toUiModel(),
+                    )
                 }
             }
-
         }
+
         if (meal.description.isNotEmpty()) {
             Text(
                 modifier = Modifier.padding(vertical = Dimens.MarginSmall8),

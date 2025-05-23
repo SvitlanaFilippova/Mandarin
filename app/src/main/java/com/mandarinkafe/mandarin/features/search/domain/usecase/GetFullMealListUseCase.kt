@@ -4,5 +4,5 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import kotlinx.coroutines.flow.Flow
 
 interface GetFullMealListUseCase {
-    fun execute(): Flow<Pair<List<Meal>?, String?>>
+    operator fun invoke(): Flow<Pair<List<Meal>?, String?>>
 }

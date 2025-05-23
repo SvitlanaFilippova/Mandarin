@@ -2,9 +2,9 @@ package com.mandarinkafe.mandarin.features.cart.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.cart.CartMapper.toCartItem
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect.OpenMealDetailsBS
@@ -29,7 +29,7 @@ class CartViewModel @Inject constructor(
     private val cartInteractor: CartInteractor,
 ) : BaseViewModel<CartEvent, CartEffect, CartState>() {
     override fun setInitialState() = CartState()
-    private val itemTimers = mutableMapOf<CartItem, Job>()
+    private val itemTimers = mutableMapOf<CustomizedMeal, Job>()
 
     init {
         onEvent(CartEvent.GetCart)
@@ -62,7 +62,7 @@ class CartViewModel @Inject constructor(
         sendEffect(CartEffect.ShowClearCartConfirmationDialog)
     }
 
-    private fun replaceMealInCart(newItem: CartItem, oldItem: CartItem) {
+    private fun replaceMealInCart(newItem: CustomizedMeal, oldItem: CustomizedMeal) {
         cartInteractor.removeFromCart(oldItem)
         cartInteractor.addToCart(newItem)
 
@@ -75,7 +75,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private val removeDebounce = debounce<CartItem>(
+    private val removeDebounce = debounce<CustomizedMeal>(
         DELETE_FROM_CART_DEBOUNCE_DELAY,
         viewModelScope,
         useLastParam = true
@@ -83,7 +83,7 @@ class CartViewModel @Inject constructor(
         removeItem(item)
     }
 
-    private fun addItem(item: CartItem) {
+    private fun addItem(item: CustomizedMeal) {
         cartInteractor.addToCart(item)
 
         setState {
@@ -99,7 +99,7 @@ class CartViewModel @Inject constructor(
     }
 
     // Обработка кнопки "-". Если в корзине была 1 шт - запуск отложенного удаления
-    private fun onReduceItem(item: CartItem) {
+    private fun onReduceItem(item: CustomizedMeal) {
         setState {
             val pendingDeletionItems = pendingDeletionMeals.toMutableList()
             val cartItems = cartItems
@@ -124,7 +124,7 @@ class CartViewModel @Inject constructor(
     }
 
     // отмена удаления
-    private fun cancelRemove(item: CartItem) {
+    private fun cancelRemove(item: CustomizedMeal) {
         removeDebounce.cancel()
         cancelMealDeletionTimer(item)
 
@@ -142,7 +142,7 @@ class CartViewModel @Inject constructor(
     }
 
     // Окончательное удаление из корзины
-    private fun removeItem(item: CartItem) {
+    private fun removeItem(item: CustomizedMeal) {
         setState {
             val pendingDeletionItems = pendingDeletionMeals.toMutableList()
             val deletionProgress = mealDeletionProgress.toMutableMap()
@@ -234,7 +234,7 @@ class CartViewModel @Inject constructor(
 
 // Для работы с таймерами удаления блюд и очистки корзины
 
-    private fun startProgressTimer(item: CartItem, duration: Long) {
+    private fun startProgressTimer(item: CustomizedMeal, duration: Long) {
         val interval = INTERVAL_FOR_UPD_PROGRESSBAR
         val steps = (duration / interval).toInt()
 
@@ -259,7 +259,7 @@ class CartViewModel @Inject constructor(
 
     }
 
-    private fun cancelMealDeletionTimer(item: CartItem) {
+    private fun cancelMealDeletionTimer(item: CustomizedMeal) {
         itemTimers[item]?.cancel()
         itemTimers.remove(item)
 
@@ -293,7 +293,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateRecommends(cartItems: Set<CartItem>) {
+    private suspend fun updateRecommends(cartItems: Set<CustomizedMeal>) {
         val recommendsList = cartInteractor.getRecommends().map { it.toCartItem() }
 
         setState {

@@ -80,10 +80,11 @@ fun MySearchBar(
                 .padding(Dimens.MarginSmall8),
             shape = RoundedCornerShape(Dimens.RadiusSearchField8),
             colors = SearchBarDefaults.colors(
-                containerColor = Colors.DarkGrey
+                containerColor = Colors.AppBlack
             ),
             content = {
-                LabelChipsRow(
+
+            LabelChipsRow(
                     labels = searchState.allLabels,
                     checkedLabels = searchState.checkedLabels,
                     onLabelClick = { label, isChecked ->

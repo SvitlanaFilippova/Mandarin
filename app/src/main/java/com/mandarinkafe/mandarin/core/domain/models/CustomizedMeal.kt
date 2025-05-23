@@ -1,10 +1,6 @@
-package com.mandarinkafe.mandarin.features.cart.domain.model
+package com.mandarinkafe.mandarin.core.domain.models
 
-import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
-import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
-
-data class CartItem(
+data class CustomizedMeal(
     val meal: Meal,
 
     /**

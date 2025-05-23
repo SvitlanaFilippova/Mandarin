@@ -34,7 +34,9 @@ class FavoritesStorageImpl @Inject constructor(private val sharedPreferences: Sh
             } else {
                 Gson().fromJson(json, listType) ?: mutableSetOf()
             }
-        } catch (e: ClassCastException) {
+        } catch (e: Exception) {
+            Log.e("FavoritesStorage", "Ошибка чтения избранного: ${e.message}")
+            e.printStackTrace()
             sharedPreferences.edit { remove(FAVORITES_KEY) }
             mutableSetOf()
         }

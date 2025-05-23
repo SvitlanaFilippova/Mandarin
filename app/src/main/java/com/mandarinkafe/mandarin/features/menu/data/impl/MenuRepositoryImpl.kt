@@ -110,6 +110,8 @@ class MenuRepositoryImpl @Inject constructor(
                     }
                 } catch (e: Exception) {
                     _menu.value = Resource.Error("Что-то пошло не так. Ошибка: ${e.message}")
+                    Log.d("DEBUG  MenuRepository", "e: Exception, ${e.message}")
+                    Log.d("DEBUG  MenuRepository", Log.getStackTraceString(e))
                 }
                 attempts++
                 delay(DELAY_BEFORE_NEXT_ATTEMPT)
@@ -177,13 +179,15 @@ class MenuRepositoryImpl @Inject constructor(
         subCategories: List<CategoryDto>?,
         storedFavorites: List<String>,
     ): MealCategory {
+        val name = parentDto.name.applyTypography()
         return MealCategory(
             id = parentDto.id,
-            name = parentDto.name.applyTypography(),
+            name = name,
             meals = null,
             subCategories = subCategories?.map { subDto ->
                 subDto.copy(name = subDto.subName()).toDomain(
-                    storedFavorites = storedFavorites
+                    storedFavorites = storedFavorites,
+                    topCategoryName = name
                 )
             },
             tabIcon = parentDto.buttonImageUrl,

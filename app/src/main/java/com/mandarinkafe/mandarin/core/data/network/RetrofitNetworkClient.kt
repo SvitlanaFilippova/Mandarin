@@ -26,12 +26,18 @@ class RetrofitNetworkClient(private val context: Context, private val iikoServic
             return Response().apply { resultCode = -1 }
         }
         return withContext(Dispatchers.IO) {
-            authenticate()
+            // если нет токена или Id организации - авторизуемся
+            if (token.isEmpty() || organizationId.isEmpty()) {
+                authenticate()
+            }
             try {
-                val menuIdResponse = iikoService.getMenuId(token)
-                externalMenuId = menuIdResponse.externalMenus.firstOrNull()?.id
-                    ?: throw IllegalStateException("Menu ID not found")
-                Log.d("DEBUG IIKO API", "Menu ID получено: $externalMenuId")
+                // если нет externalMenuId - запрашиваем
+                if (externalMenuId.isEmpty()) {
+                    val menuIdResponse = iikoService.getMenuId(token)
+                    externalMenuId = menuIdResponse.externalMenus.firstOrNull()?.id
+                        ?: throw IllegalStateException("Menu ID not found")
+                    Log.d("DEBUG IIKO API", "Menu ID получено: $externalMenuId")
+                }
 
                 val menuResponse = iikoService.getMenuById(
                     token = token,
@@ -50,6 +56,11 @@ class RetrofitNetworkClient(private val context: Context, private val iikoServic
     }
 
     private suspend fun authenticate() {
+        if (token.isNotEmpty() && organizationId.isNotEmpty()) {
+            // Уже авторизованы
+            return
+        }
+
         try {
             val authResponse = iikoService.authenticate(AuthRequest(BuildConfig.IIKO_API_KEY))
             token = BEARER_PREFIX + authResponse.token

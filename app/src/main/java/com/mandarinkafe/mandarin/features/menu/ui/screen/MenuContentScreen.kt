@@ -30,7 +30,7 @@ import com.mandarinkafe.mandarin.features.menu.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.features.menu.ui.components.MenuList
 import com.mandarinkafe.mandarin.features.menu.ui.components.MenuTopBar
-import com.mandarinkafe.mandarin.features.menu.ui.components.SearchAndFilterBar
+import com.mandarinkafe.mandarin.features.menu.ui.components.SearchBar
 import com.mandarinkafe.mandarin.features.menu.ui.components.category_tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.features.menu.ui.components.category_tabs.SubCategoryTabsRow
 import com.mandarinkafe.mandarin.features.menu.ui.components.getVisibleCategoryIndexes
@@ -175,10 +175,8 @@ fun MenuContentScreen(
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically()
             ) {
-                SearchAndFilterBar(
+                SearchBar(
                     onSearchClick = { onEvent(MenuEvent.SearchOnOpenSearchClick) },
-                    onFilterClick = { onEvent(MenuEvent.OnLabelsClick) },
-                    onFavoriteClick = { onEvent(MenuEvent.OnOpenFavoritesClick) }
                 )
 
             }

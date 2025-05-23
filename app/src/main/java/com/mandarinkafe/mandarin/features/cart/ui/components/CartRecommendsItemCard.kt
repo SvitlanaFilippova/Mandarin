@@ -20,16 +20,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.domain.models.EditableType
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.domain.model.CartItem
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 
 @Composable
 fun CartRecommendsItemCard(
-    item: CartItem,
+    item: CustomizedMeal,
     onEvent: (CartContract.CartEvent) -> Unit
 ) {
     val meal = item.meal
@@ -75,20 +74,19 @@ fun CartRecommendsItemCard(
                     .padding(vertical = Dimens.MarginSmall8)
             )
 
-            when (item.meal.editableType) {
-                EditableType.REQUIRED_SELECTION -> SelectSmallButton(
+            if (item.meal.requireSelection) {
+                SelectSmallButton(
                     onClick = { onEvent(CartContract.CartEvent.OpenMealDetails(item)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
-
-                else -> ToCartSmallButton(
+            } else {
+                ToCartSmallButton(
                     onClick = { onEvent(CartContract.CartEvent.AddToCart(item)) },
                     price = meal.price,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
-
         }
-    }
 
+    }
 }
