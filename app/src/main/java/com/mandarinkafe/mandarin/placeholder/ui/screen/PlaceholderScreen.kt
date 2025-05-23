@@ -65,7 +65,7 @@ fun PlaceholderScreen(
             modifier = Modifier.padding(Dimens.MarginStandard16)
         )
 
-        val buttonWidth = Dimens.ButtonPlaceholderSize240
+        val buttonWidth = Dimens.ButtonPlaceholderSize200
 
 
         Button(
