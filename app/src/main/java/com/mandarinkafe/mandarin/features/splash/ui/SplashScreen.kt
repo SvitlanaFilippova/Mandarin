@@ -23,7 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.splash.ui.model.SplashElement
+import com.mandarinkafe.mandarin.features.splash.ui.model.SplashElementsProvider
 import com.mandarinkafe.mandarin.features.splash.ui.view_model.SplashViewModel
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_ANIMATION_DURATION
@@ -63,73 +63,7 @@ fun SplashScreen(
         }
     }
 
-    val elements = listOf(
-        SplashElement(
-            R.drawable.splash_wave2, Alignment.TopEnd, offsetX = 200f, offsetY = 500f,
-            targetOffsetX = 0f, targetOffsetY = 400f
-        ),
-        SplashElement(
-            R.drawable.splash_pizza, Alignment.TopEnd, offsetX = 400f, offsetY = 300f,
-            targetOffsetX = 100f, targetOffsetY = -100f
-        ),
-
-        SplashElement(
-            R.drawable.splash_wave2, Alignment.BottomStart, offsetX = 200f, offsetY = 300f,
-            targetOffsetX = -100f, targetOffsetY = 100f
-        ),
-
-        SplashElement(
-            R.drawable.splash_pizza3, Alignment.BottomStart, offsetX = 100f, offsetY = 000f,
-            targetOffsetX = 100f, targetOffsetY = -100f
-        ),
-
-        SplashElement(
-            R.drawable.splash_wave3, Alignment.TopStart, offsetX = -400f, offsetY = -600f,
-            targetOffsetX = 00f, targetOffsetY = 300f
-        ),
-
-        SplashElement(
-            R.drawable.splash_olives, Alignment.CenterStart, offsetX = -400f, offsetY = -600f,
-            targetOffsetX = -150f, targetOffsetY = -400f
-        ),
-
-        SplashElement(
-            R.drawable.splash_mushroom, Alignment.CenterStart, offsetX = -200f, offsetY = -400f,
-            targetOffsetX = 0f, targetOffsetY = 200f
-        ),
-
-        SplashElement(
-            R.drawable.splash_wave3, Alignment.BottomEnd, offsetX = 200f, offsetY = 500f,
-            targetOffsetX = 150f, targetOffsetY = 200f
-        ),
-
-        SplashElement(
-            R.drawable.splash_board, Alignment.BottomEnd, offsetX = 200f, offsetY = -300f,
-            targetOffsetX = 100f, targetOffsetY = 0f
-        ),
-        SplashElement(
-            R.drawable.splash_fork, Alignment.BottomEnd, offsetX = -100f, offsetY = 200f,
-            targetOffsetX = 0f, targetOffsetY = 100f
-        ),
-
-        SplashElement(
-            R.drawable.splash_tomato, Alignment.CenterEnd, offsetX = 200f, offsetY = 500f,
-            targetOffsetX = 0f, targetOffsetY = -200f
-        ),
-
-        SplashElement(
-            R.drawable.splash_wave4, Alignment.CenterEnd, offsetX = 500f, offsetY = 200f,
-            targetOffsetX = 100f, targetOffsetY = 0f
-        ),
-        SplashElement(
-            R.drawable.splash_pepper, Alignment.CenterEnd, offsetX = 200f, offsetY = 500f,
-            targetOffsetX = -80f, targetOffsetY = 300f
-        ),
-        SplashElement(
-            R.drawable.splash_cheese4, Alignment.TopStart, offsetX = -400f, offsetY = -300f,
-            targetOffsetX = -50f, targetOffsetY = -50f
-        )
-    )
+    val elements = remember { SplashElementsProvider.getSplashElements() }
 
     Box(
         modifier = Modifier
@@ -187,8 +121,9 @@ fun SplashScreen(
             contentDescription = stringResource(R.string.logo_cafe),
             modifier = Modifier
                 .align(Alignment.Center)
-                .size(Dimens.SplashScreenLogoSize150)
+                .size(Dimens.SplashScreenLogoSize180)
                 .graphicsLayer { alpha = logoAlpha.value }
         )
     }
 }
+
