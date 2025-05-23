@@ -5,7 +5,7 @@ import com.mandarinkafe.mandarin.features.search.domain.api.LabelsRepository
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetLabelsUseCase
 
 class GetLabelsUseCaseImpl(private val repository: LabelsRepository) : GetLabelsUseCase {
-    override suspend fun execute(): List<Label> {
+    override suspend fun invoke(): List<Label> {
         return repository.getLabels()
     }
 }

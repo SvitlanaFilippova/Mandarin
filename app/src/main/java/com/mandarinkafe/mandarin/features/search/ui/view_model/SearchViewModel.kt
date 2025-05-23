@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
+import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetFullMealListUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetLabelsUseCase
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEffect
@@ -22,8 +23,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val getLabelsUseCase: GetLabelsUseCase,
-    private val favoritesInteractor: FavoritesInteractor,
     private val getFullMealListUseCase: GetFullMealListUseCase,
+    private val favoritesInteractor: FavoritesInteractor,
+    private val filterUseCase: FilterUseCase
 ) : BaseViewModel<SearchEvent, SearchEffect, SearchState>() {
     override fun setInitialState() = SearchState()
 
@@ -55,7 +57,7 @@ class SearchViewModel @Inject constructor(
 
     private fun getLabels() {
         viewModelScope.launch {
-            val allLabels = getLabelsUseCase.execute().map {
+            val allLabels = getLabelsUseCase().map {
                 it.toUiModel()
             }
             setState {
@@ -102,25 +104,13 @@ class SearchViewModel @Inject constructor(
     // Поиск по меню
     private fun filterMenu() {
         setState {
-            val filtered = if (latestSearchText.isBlank() && checkedLabels.isEmpty()) {
-                // Нет активных фильтров — показываем всё
-                fullMealList
-            } else {
-                fullMealList.filter { meal ->
-                    val matchesSearch = latestSearchText.isBlank() ||
-                            meal.name.contains(latestSearchText, ignoreCase = true)
-
-                    val mealLabelNames = meal.labels.map { it.name }
-                    val matchesLabels =
-                        checkedLabels.isEmpty() || checkedLabels.all { it in mealLabelNames }
-
-                    matchesSearch && matchesLabels
-                }
-            }.sortedWith(compareByDescending { it.isFavorite })
-
-            copy(
-                filteredMealList = filtered,
+            val filtered = filterUseCase(
+                fullMealList,
+                latestSearchText,
+                checkedLabels
             )
+
+            copy(filteredMealList = filtered)
         }
     }
 
@@ -187,7 +177,7 @@ class SearchViewModel @Inject constructor(
 
             // Попытки до максимума
             while (attempts < MAX_ATTEMPTS) {
-                getFullMealListUseCase.execute()
+                getFullMealListUseCase()
                     .collect { (menu, errorMessage) ->
                         // Если меню в процессе загрузки, пробуем снова
                         if (menu == null && errorMessage == null) {

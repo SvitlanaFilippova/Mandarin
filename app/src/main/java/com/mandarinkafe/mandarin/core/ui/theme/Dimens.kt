@@ -32,9 +32,8 @@ object Dimens {
     val ModifierRowHeight48 = 48.dp
     val RadiusSearchField8 = 8.dp
     val RadiusImageCorner2 = 2.dp
-    val MealImage136 = 136.dp
+    val MealItemInSearchResults96 = 96.dp
     val MealSmallImage80 = 80.dp
-    val MealMinDescriptionHeight96 = 96.dp
     val PhotoPlaceholderStrokeWidth4 = 4.dp
     val PlaceholderImageSize200 = 200.dp
     val ProgressBarSize124 = 124.dp

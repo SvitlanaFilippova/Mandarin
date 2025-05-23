@@ -17,16 +17,21 @@ import com.mandarinkafe.mandarin.util.Constants.TAG_NO_DISCOUNT
 import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.removeLeadingDash
 
-fun CategoryDto.toDomain(storedFavorites: List<String>): MealCategory {
+fun CategoryDto.toDomain(
+    storedFavorites: List<String>,
+    topCategoryName: String? = null
+): MealCategory {
     val categoryLabels = labels?.map { it.toDomain() } ?: emptyList()
     val categoryTags = tags?.map { it.toDomain() } ?: emptyList()
+
+    val nameForMeal = if (!topCategoryName.isNullOrEmpty()) "$topCategoryName / $name" else name
 
     val safeItems = items?.mapNotNull {
         it.toDomain(
             storedFavorites = storedFavorites,
             categoryLabels = categoryLabels,
             categoryTags = categoryTags,
-            parentCategoryName = name
+            parentCategoryName = nameForMeal
         )
     } ?: emptyList()
 
