@@ -10,7 +10,6 @@ import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEf
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartState
-import com.mandarinkafe.mandarin.util.Constants.CLEAR_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.DELETE_FROM_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.INTERVAL_FOR_UPD_PROGRESSBAR
 import com.mandarinkafe.mandarin.util.Constants.UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE
@@ -32,24 +31,23 @@ class CartViewModel @Inject constructor(
     private val itemTimers = mutableMapOf<CustomizedMeal, Job>()
 
     init {
-        onEvent(CartEvent.GetCart)
+        updateCartState()
         observeCartChanges()
     }
 
     override fun onEvent(event: CartEvent) {
         when (event) {
-            CartEvent.GetCart -> updateCartState()
             is CartEvent.AddToCart -> addItem(item = event.item)
-            is CartEvent.ReplaceMealInCart -> replaceMealInCart(
-                newItem = event.newItem,
-                oldItem = event.oldItem
-            )
-
             is CartEvent.RemoveFromCartWithDelay -> onReduceItem(item = event.item)
             is CartEvent.RemoveFromCartByMeal -> removeFromCartByMeal(meal = event.meal)
             is CartEvent.CancelRemove -> cancelRemove(item = event.item)
             is CartEvent.ClearCart -> clearConfirmation()
             is CartEvent.ConfirmClearCart -> clear()
+            is CartEvent.ReplaceMealInCart -> replaceMealInCart(
+                newItem = event.newItem,
+                oldItem = event.oldItem
+            )
+
             is CartEvent.OpenMealDetails -> sendEffect(
                 OpenMealDetailsBS(
                     item = event.item
@@ -212,14 +210,6 @@ class CartViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    private val clearCartDebounce = debounce<Unit>(
-        CLEAR_CART_DEBOUNCE_DELAY,
-        viewModelScope,
-        useLastParam = true
-    ) { _ ->
-        clear()
     }
 
     private fun clear() {

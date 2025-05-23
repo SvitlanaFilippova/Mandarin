@@ -18,6 +18,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsViewModel
+import com.mandarinkafe.mandarin.placeholder.ui.screen.PlaceholderScreen
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 import kotlinx.coroutines.launch
 
@@ -58,8 +59,8 @@ fun MealDetailsBottomSheet(
     }
     when {
         state.isLoading -> LoadingScreen()
+        state.errorMessage != null -> PlaceholderScreen(errorMessage = state.errorMessage!!)
         else ->
-
             ModalBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()

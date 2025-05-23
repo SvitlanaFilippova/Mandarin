@@ -30,7 +30,6 @@ fun MenuScreen(
         menuSate.isLoading -> LoadingScreen()
         menuSate.errorMessage != null -> PlaceholderScreen(
             menuSate.errorMessage!!,
-            onEvent = menuViewModel::onEvent,
         )
 
         else -> MenuContentScreen(

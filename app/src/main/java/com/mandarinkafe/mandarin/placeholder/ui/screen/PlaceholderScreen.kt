@@ -25,16 +25,16 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
+import com.mandarinkafe.mandarin.placeholder.ui.view_model.PlaceholderContract.PlaceholderEvent
 import com.mandarinkafe.mandarin.placeholder.ui.view_model.PlaceholderViewModel
 import com.mandarinkafe.mandarin.util.applyTypography
 
 @Composable
 fun PlaceholderScreen(
     errorMessage: String,
-    onEvent: (MenuEvent) -> Unit,
     viewModel: PlaceholderViewModel = hiltViewModel()
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,9 +67,9 @@ fun PlaceholderScreen(
 
         val buttonWidth = Dimens.ButtonPlaceholderSize200
 
-
+        // Кнопка "Обновить"
         Button(
-            onClick = { onEvent(MenuEvent.ForceRefreshMenu) },
+            onClick = { viewModel.onEvent(PlaceholderEvent.Retry) },
             shape = RoundedCornerShape(Dimens.CornerRadius8),
             modifier = Modifier
                 .width(buttonWidth),
@@ -84,8 +84,9 @@ fun PlaceholderScreen(
 
         Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
 
+        // Кнопка "Позвонить"
         Button(
-            onClick = { onEvent(MenuEvent.OnPhoneClick) },
+            onClick = { viewModel.onEvent(PlaceholderEvent.OnPhoneClick) },
             shape = RoundedCornerShape(Dimens.CornerRadius8),
             modifier = Modifier.width(buttonWidth),
             colors = ButtonDefaults.buttonColors(
