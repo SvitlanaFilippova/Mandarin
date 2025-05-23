@@ -7,7 +7,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
-import com.mandarinkafe.mandarin.navigation.navigateToFavoritesScreen
 import com.mandarinkafe.mandarin.navigation.navigateToSearchScreen
 import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER_DEFAULT
 import kotlinx.coroutines.flow.Flow
@@ -21,16 +20,8 @@ fun HandleNavEffects(
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
             when (effect) {
-                is MenuContract.MenuEffect.ShowSnackbar -> {
-                    // Пока оставляем пустым — сюда можно добавить вызов Snackbar через ScaffoldState
-                }
-
                 is MenuContract.MenuEffect.OpenSearch -> {
                     navController.navigateToSearchScreen(effect.focusSearch)
-                }
-
-                is MenuContract.MenuEffect.OpenFavorites -> {
-                    navController.navigateToFavoritesScreen()
                 }
 
                 is MenuContract.MenuEffect.CallPhone -> {

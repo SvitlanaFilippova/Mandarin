@@ -14,7 +14,6 @@ import com.mandarinkafe.mandarin.features.menu.ui.models.extensions.getName
 import com.mandarinkafe.mandarin.features.menu.ui.models.extensions.updateMeal
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.CallPhone
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.OpenFavorites
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.OpenSearch
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
@@ -50,8 +49,6 @@ class MenuViewModel @Inject constructor(
             is MenuEvent.BannerClick -> findMenuItemIndexByName(event.targetName)
             is MenuEvent.ResetSelectedMenuItemIndex -> resetSelectedMenuItemIndex()
             is MenuEvent.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
-            is MenuEvent.OnOpenFavoritesClick -> sendEffect(OpenFavorites)
-            is MenuEvent.OnLabelsClick -> sendEffect(OpenSearch(focusSearch = false))
             is MenuEvent.UpdateMealFavorite -> updateMealFavorite(
                 id = event.id,
                 isFavorite = event.isFavorite
