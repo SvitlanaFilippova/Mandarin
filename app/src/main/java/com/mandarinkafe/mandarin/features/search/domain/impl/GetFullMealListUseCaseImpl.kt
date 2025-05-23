@@ -12,19 +12,20 @@ class GetFullMealListUseCaseImpl(
     private val repository: MenuRepository
 ) : GetFullMealListUseCase {
 
-    override fun invoke(): Flow<Pair<List<Meal>?, String?>> {
-        return repository.getMenu().map { result ->
+    override fun invoke(): Flow<Resource<List<Meal>>> {
+        repository.getMenu()
+        return repository.menu.map { result ->
             when (result) {
                 is Resource.Success -> {
                     val visibleMenu = result.data?.filterNot { it.isHidden }.orEmpty()
                     val allMeals = visibleMenu
                         .flatMap { collectMealsFromCategory(it) }
                         .distinctBy { it.id } // если нужно убрать дубликаты
-                    Pair(allMeals, null)
+                    Resource.Success(allMeals)
                 }
 
-                is Resource.Error -> Pair(null, result.message)
-                is Resource.Loading -> Pair(null, null)
+                is Resource.Error -> Resource.Error(result.message.toString())
+                is Resource.Loading -> Resource.Loading()
             }
         }
     }
