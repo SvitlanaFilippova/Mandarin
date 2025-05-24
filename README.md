@@ -46,8 +46,9 @@ Multiplatform.
 
 ## Скриншоты приложения 📱
 
-<img src="https://github.com/mandarin-kafe/Mandarin/blob/main/5.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/main/2.jpg?raw=true" width="30%" height="30%">
-<img src="https://github.com/mandarin-kafe/Mandarinblob/main/1.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/main/4.jpg?raw=true" width="30%" height="30%">
+<img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/4.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/2.jpg?raw=true" width="30%" height="30%">
+
+<img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/1.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/4.jpg?raw=true" width="30%" height="30%">
 
 ## Общие требования 🗒️
 
