@@ -7,6 +7,8 @@ import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toMealItem
 import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInteractor
+import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
+import com.mandarinkafe.mandarin.features.menu.domain.usecase.GetBannersUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.features.menu.ui.mappers.MenuItemMapper.menuToMenuItems
 import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
@@ -28,25 +30,25 @@ import javax.inject.Inject
 @HiltViewModel
 class MenuViewModel @Inject constructor(
     private val menuInteractor: MenuInteractor,
-    private val favoritesInteractor: FavoritesInteractor
+    private val favoritesInteractor: FavoritesInteractor,
+    private val getBannersUseCase: GetBannersUseCase
 ) : BaseViewModel<MenuEvent, MenuEffect, MenuState>() {
     override fun setInitialState() = MenuState()
 
     init {
-        onEvent(MenuEvent.LoadMenu)
+        loadMenu()
+        getBanners()
 
     }
 
     override fun onEvent(event: MenuEvent) {
         when (event) {
-            is MenuEvent.LoadMenu -> loadMenu()
-            is MenuEvent.ForceRefreshMenu -> forceRefreshMenu()
             is MenuEvent.OnPhoneClick -> sendEffect(CallPhone)
             is MenuEvent.ToggleFavorite -> toggleFavorite(event.meal)
             is MenuEvent.ScrollToCategory -> scrollToCategory(event.newIndex)
             is MenuEvent.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is MenuEvent.ScrollToTop -> scrollToTop()
-            is MenuEvent.BannerClick -> findMenuItemIndexByName(event.targetName)
+            is MenuEvent.BannerClick -> findMenuItemByBanner(event.banner)
             is MenuEvent.ResetSelectedMenuItemIndex -> resetSelectedMenuItemIndex()
             is MenuEvent.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
             is MenuEvent.UpdateMealFavorite -> updateMealFavorite(
@@ -71,14 +73,6 @@ class MenuViewModel @Inject constructor(
                     is Resource.Loading -> {}
                 }
             }
-        }
-    }
-
-    private fun forceRefreshMenu() {
-        setState { copy(isLoading = true) }
-        viewModelScope.launch {
-            menuInteractor.forceRefresh()
-            loadMenu()
         }
     }
 
@@ -130,24 +124,27 @@ class MenuViewModel @Inject constructor(
     }
 
     // Обработка кликов по баннерам - поиск подходящей категории/блюда в меню и скролл к нему
-    private fun findMenuItemIndexByName(targetName: String) {
+    private fun findMenuItemByBanner(banner: Banner) {
         viewModelScope.launch {
-            var menuItems = state.value.menuItems
-
-            // Ищем сначала точное совпадение, затем частичное
-            val targetIndex = menuItems
-                .indexOfFirst { item ->
-                    item.getName()?.equals(targetName, ignoreCase = true) == true
-                }
-                .takeIf { it >= 0 }
-                ?: menuItems.indexOfFirst { item ->
-                    item.getName()?.contains(targetName, ignoreCase = true) == true
-                }
-                    .takeIf { it >= 0 }
-                ?: 0
-
+            val menuItems = state.value.menuItems
+            val targetIndex = findMenuItemIndex(banner, menuItems)
             setState { copy(selectedMenuItemIndex = targetIndex) }
         }
+    }
+
+    private fun findMenuItemIndex(banner: Banner, menuItems: List<MenuItem>): Int {
+        val name = banner.targetName.trim()
+
+        // Поиск по имени (точное совпадение)
+        menuItems.indexOfFirst { it.getName()?.equals(name, ignoreCase = true) == true }
+            .takeIf { it >= 0 }?.let { return it }
+
+        // Поиск по имени (частичное совпадение)
+        menuItems.indexOfFirst { it.getName()?.contains(name, ignoreCase = true) == true }
+            .takeIf { it >= 0 }?.let { return it }
+
+        // По умолчанию
+        return 0
     }
 
     private fun resetSelectedMenuItemIndex() {
@@ -187,7 +184,18 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    // Получить список избранных блюд
+    private fun getBanners() {
+        viewModelScope.launch {
+            setState { copy(bannersAreLoading = true) }
+            val result = getBannersUseCase()
+            if (result is Resource.Success) {
+                val banners = result.data ?: emptyList()
+                setState { copy(banners = banners, bannersAreLoading = false) }
+            }
+        }
+    }
+
+    //TODO убрать отсюда эту функцию!
     fun getFavorites(): List<MenuItem> {
         return favoritesInteractor.getFavorites().map { it.toMealItem() }
     }

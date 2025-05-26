@@ -30,6 +30,5 @@ fun LoadingScreen() {
             strokeWidth = Dimens.ProgressBarWidth24,
             trackColor = Colors.DarkGrey
         )
-
     }
 }

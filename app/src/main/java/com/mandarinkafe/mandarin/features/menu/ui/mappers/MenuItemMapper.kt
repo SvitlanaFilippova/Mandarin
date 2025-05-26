@@ -18,7 +18,7 @@ object MenuItemMapper {
                             .map { it.name },
                         tabIcon = category.tabIcon,
                         description = category.description,
-                        id = category.id
+                        sku = category.id
                     )
 
                     // Обработка подкатегорий
@@ -27,7 +27,7 @@ object MenuItemMapper {
                             this += MenuItem.SubHeaderItem(
                                 categoryName = subCategory.name,
                                 description = subCategory.description,
-                                id = subCategory.id
+                                sku = subCategory.id
                             )
                             this += groupMealsToItems(subCategory.meals)
                         }
@@ -40,7 +40,7 @@ object MenuItemMapper {
                             subCategoriesNames = null,
                             tabIcon = category.tabIcon,
                             description = category.description,
-                            id = category.id
+                            sku = category.id
                         )
                         this += groupMealsToItems(category.meals)
                     }

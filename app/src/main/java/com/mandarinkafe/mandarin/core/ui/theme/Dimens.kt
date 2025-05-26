@@ -36,6 +36,7 @@ object Dimens {
     val PhotoPlaceholderStrokeWidth4 = 4.dp
     val PlaceholderImageSize200 = 200.dp
     val ProgressBarSize124 = 124.dp
+    val ProgressBarSmallWidth8 = 8.dp
     val ProgressBarWidth24 = 24.dp
     val FakeSearchBarHeight48 = 48.dp
     val DividerHeight1 = 1.dp

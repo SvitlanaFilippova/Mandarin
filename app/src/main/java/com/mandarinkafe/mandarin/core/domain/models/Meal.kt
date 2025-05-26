@@ -8,6 +8,7 @@ data class Meal(
     val imageUrl: String,
     var isFavorite: Boolean,
     val description: String,
+    val sku: String,
 
     /**
     Внутренние теги для особой обработки блюда в меню
@@ -54,4 +55,8 @@ data class Meal(
      */
     val parentCategoryName: String,
 
-    )
+    /**
+    Название прародительской категории, если есть
+     */
+    val grandParentCategoryName: String?
+)

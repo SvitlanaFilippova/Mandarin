@@ -34,7 +34,7 @@ sealed interface CartContract {
     data class CartState(
         val isLoading: Boolean = true,
         val cartItems: Map<CustomizedMeal, Int> = emptyMap(),
-        val recommendsList: List<CustomizedMeal> = emptyList(),
+        val recommends: List<CustomizedMeal> = emptyList(),
         val pendingDeletionMeals: List<CustomizedMeal> = emptyList(),
         val mealDeletionProgress: Map<CustomizedMeal, Float> = emptyMap(),
     ) : BaseState {

@@ -6,12 +6,14 @@ import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.domain.models.Tag
+import com.mandarinkafe.mandarin.features.menu.data.dto.BannerDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.CategoryDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.LabelDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.MealDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierItemDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.TagDto
+import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.util.Constants.TAG_ADDS
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_DISCOUNT
 import com.mandarinkafe.mandarin.util.applyTypography
@@ -24,14 +26,13 @@ fun CategoryDto.toDomain(
     val categoryLabels = labels?.map { it.toDomain() } ?: emptyList()
     val categoryTags = tags?.map { it.toDomain() } ?: emptyList()
 
-    val nameForMeal = if (!topCategoryName.isNullOrEmpty()) "$topCategoryName / $name" else name
-
     val safeItems = items?.mapNotNull {
         it.toDomain(
             storedFavorites = storedFavorites,
             categoryLabels = categoryLabels,
             categoryTags = categoryTags,
-            parentCategoryName = nameForMeal
+            parentCategoryName = name,
+            grandParentCategoryName = topCategoryName
         )
     } ?: emptyList()
 
@@ -50,7 +51,8 @@ private fun MealDto.toDomain(
     storedFavorites: List<String>,
     categoryLabels: List<Label>,
     categoryTags: List<Tag>,
-    parentCategoryName: String
+    parentCategoryName: String,
+    grandParentCategoryName: String?
 ): Meal? {
     val firstSize = itemSizes?.firstOrNull()
     val safeWeight = firstSize?.portionWeightGrams?.toInt() ?: 0
@@ -71,6 +73,7 @@ private fun MealDto.toDomain(
         id = itemId,
         name = name.applyTypography(),
         description = (description ?: "").applyTypography(),
+        sku = sku ?: "",
         weight = safeWeight,
         price = safePrice,
         imageUrl = safeImageUrl,
@@ -84,6 +87,7 @@ private fun MealDto.toDomain(
         isModifiable = safeModifiers.isNotEmpty() && safePrice > 0,
         discountable = !finalMealTags.any { it.name.equals(TAG_NO_DISCOUNT, ignoreCase = true) },
         parentCategoryName = parentCategoryName,
+        grandParentCategoryName = grandParentCategoryName,
     )
 }
 
@@ -130,4 +134,10 @@ fun ModifierGroupDto.toDomain(): ModifierGroup {
         isRequired = (restrictions?.minQuantity ?: 0) > 0,
         maxQuantity = restrictions?.maxQuantity ?: Int.MAX_VALUE
     )
+
 }
+
+fun BannerDto.toDomain() = Banner(
+    imageUrl = imageUrl ?: "",
+    targetName = targetName ?: "",
+)

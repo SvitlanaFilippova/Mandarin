@@ -22,7 +22,8 @@ class CartInteractorImpl(private val repository: CartRepository) : CartInteracto
         repository.clearCart()
     }
 
-    override suspend fun getRecommends(): List<Meal> {
-        return repository.getRecommends()
+    // TODO убрать отсюда! нарушение SRP
+    override suspend fun getCommonRecommends(): List<Meal> {
+        return repository.getCommonRecommends()
     }
 }

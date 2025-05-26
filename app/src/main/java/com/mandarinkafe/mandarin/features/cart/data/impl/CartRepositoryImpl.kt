@@ -108,7 +108,7 @@ class CartRepositoryImpl @Inject constructor(
         storage.clearCart()
     }
 
-    override suspend fun getRecommends(): List<Meal> {
+    override suspend fun getCommonRecommends(): List<Meal> {
         // TODO Временная реализация, нужно будет тянуть из общего хранилища
         // и потом фильтровать в зависимости от содержимого корзины
 

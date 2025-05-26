@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.cart.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
@@ -26,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val cartInteractor: CartInteractor,
+    private val getRecommendsUseCase: GetRecommendsUseCase
 ) : BaseViewModel<CartEvent, CartEffect, CartState>() {
     override fun setInitialState() = CartState()
     private val itemTimers = mutableMapOf<CustomizedMeal, Job>()
@@ -284,14 +286,32 @@ class CartViewModel @Inject constructor(
     }
 
     private suspend fun updateRecommends(cartItems: Set<CustomizedMeal>) {
-        val recommendsList = cartInteractor.getRecommends().map { it.toCartItem() }
+        // Общие рекомендации
+        val commonRecommends: Set<Meal> = cartInteractor
+            .getCommonRecommends()
+            .toSet()
+
+        // Текущие блюда в корзине
+        val currentCartMeals: Set<Meal> = cartItems
+            .map { it.meal }
+            .toSet()
+
+        // Рекомендации по корзине
+        val cartRecommends = getRecommendsUseCase(currentCartMeals)
+
+        // Объединяем оба сета (union — без дубликатов)
+        val allRecommends = cartRecommends union commonRecommends
+
+        //  Фильтруем, убирая те, что уже в корзине
+        val filteredRecommends: Set<Meal> = allRecommends
+            .filter { recommend ->
+                currentCartMeals.none { it.id == recommend.id }
+            }
+            .toSet()
 
         setState {
-            copy(
-                recommendsList = recommendsList.filter { recommendItem ->
-                    !cartItems.any { it.meal.id == recommendItem.meal.id }
-                }
-            )
+            copy(recommends = filteredRecommends.toList().map { it.toCartItem() })
         }
     }
+
 }

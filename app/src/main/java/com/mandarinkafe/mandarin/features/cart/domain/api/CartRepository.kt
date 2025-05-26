@@ -8,5 +8,5 @@ interface CartRepository {
     fun addToCart(item: CustomizedMeal)
     fun removeFromCart(item: CustomizedMeal)
     fun clearCart()
-    suspend fun getRecommends(): List<Meal>
+    suspend fun getCommonRecommends(): List<Meal>
 }
