@@ -27,18 +27,15 @@
 
     <!-- Кастомизация бюлюда -->
     <string name="adds">Добавки</string>
-    <string name="make_more_delicious">Cделать ещё вкуснее</string>
+    <string name="add_additionals">Сделать вкуснее</string>
     <string name="make_more_delicious_description">Можно сделать ещё вкуснее!</string>
     <string name="to_cart">В корзину</string>
     <string name="price_with_adds">Цена с добавками</string>
-    <string name="add_additionals">Сделать вкуснее</string>
     <string name="to_choose">Выбрать</string>
-    <string name="create_own_box_short">Собрать</string>
-    <string name="create_own_box">Собрать свою коробочку</string>
-    <string name="edit_meal">Редактировать</string>
-    <string name="mandatory">(обязательно)</string>
     <string name="chosen">Выбрано:</string>
     <string name="cancel_choice">Отменить выбор</string>
+    <string name="edit_meal">Редактировать</string>
+    <string name="mandatory">(обязательно)</string>
 
 
     <!-- Доставка -->

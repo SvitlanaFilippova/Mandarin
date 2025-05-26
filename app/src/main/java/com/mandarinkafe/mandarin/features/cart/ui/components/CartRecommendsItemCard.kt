@@ -39,7 +39,7 @@ fun CartRecommendsItemCard(
             .width(Dimens.RecommendsItemWidth96)
             .clickable(onClick = { onEvent(CartContract.CartEvent.OpenMealDetails(item)) }),
         border = BorderStroke(
-            width = Dimens.RecommendsCardBorder1,
+            width = Dimens.Border1,
             color = Colors.DarkGrey
         )
     ) {

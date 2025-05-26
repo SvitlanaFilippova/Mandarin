@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.sp
 object Dimens {
     val ToolbarHeadHeight56 = 56.dp
     val RecommendsItemWidth96 = 96.dp
-    val RecommendsCardBorder1 = 1.dp
+    val Border1 = 1.dp
     val CornerRadius8 = 8.dp
     val CornerRadius16 = 16.dp
     val BottomBarHeight64 = 64.dp
