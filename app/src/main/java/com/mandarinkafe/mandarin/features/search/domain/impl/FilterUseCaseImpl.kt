@@ -2,9 +2,9 @@ package com.mandarinkafe.mandarin.features.search.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
-import com.mandarinkafe.mandarin.features.search.fuzzyContains
-import com.mandarinkafe.mandarin.features.search.levenshteinDistance
-import com.mandarinkafe.mandarin.features.search.toTranslitVariants
+import com.mandarinkafe.mandarin.util.fuzzyContains
+import com.mandarinkafe.mandarin.util.levenshteinDistance
+import com.mandarinkafe.mandarin.util.toTranslitVariants
 
 class FilterUseCaseImpl : FilterUseCase {
 

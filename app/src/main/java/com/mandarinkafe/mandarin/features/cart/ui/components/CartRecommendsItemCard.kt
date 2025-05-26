@@ -54,7 +54,7 @@ fun CartRecommendsItemCard(
 
             // Изображение блюда
             AsyncImage(
-                model = meal.imageUrl.ifEmpty { R.drawable.logo_orange_square },
+                model = meal.imageUrl.ifEmpty { R.drawable.placeholder_meal_no_photo },
                 contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

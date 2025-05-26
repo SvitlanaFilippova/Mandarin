@@ -4,17 +4,24 @@ import android.content.Context
 import android.util.Log
 import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
+import com.mandarinkafe.mandarin.core.data.dto.CsvResponse
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
+import com.mandarinkafe.mandarin.util.Constants.BANNERS_GOOGLE_DOCS_URL
 import com.mandarinkafe.mandarin.util.Constants.BEARER_PREFIX
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
+import com.mandarinkafe.mandarin.util.Constants.RECOMMENDATIONS_GOOGLE_DOCS_URL
 import com.mandarinkafe.mandarin.util.NetworkMonitor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class RetrofitNetworkClient(private val context: Context, private val iikoService: IikoApiService) :
+class RetrofitNetworkClient(
+    private val context: Context,
+    private val iikoService: IikoApiService,
+    private val googleDocsApi: GoogleDocsApiService
+) :
     NetworkClient {
 
     private var token = ""
@@ -80,4 +87,27 @@ class RetrofitNetworkClient(private val context: Context, private val iikoServic
     private fun isConnected(): Boolean {
         return NetworkMonitor.isNetworkAvailable(context)
     }
+
+    private suspend fun getSheet(url: String): Response {
+        return if (!isConnected()) {
+            Response().apply { resultCode = -1 }
+        } else try {
+            val csvString = googleDocsApi.getCsv(url)
+            Log.d("DEBUG googleDocsApi", "Успех! csvString: $csvString")
+            return CsvResponse(csv = csvString)
+
+        } catch (e: Throwable) {
+            Log.d("DEBUG googleDocsApi", "Ошибка: ${e.message}")
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    override suspend fun getBanners(): Response {
+        return getSheet(BANNERS_GOOGLE_DOCS_URL)
+    }
+
+    override suspend fun getRecommendations(): Response {
+        return getSheet(RECOMMENDATIONS_GOOGLE_DOCS_URL)
+    }
+
 }

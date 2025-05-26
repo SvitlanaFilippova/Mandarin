@@ -14,8 +14,8 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalPriceByMe
 import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalQuantityByMealId
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.CartMapper.toAddToCartEvent
-import com.mandarinkafe.mandarin.features.cart.CartMapper.toRemoveFromCartNow
+import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toAddToCartEvent
+import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toRemoveFromCartNow
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 
 @Composable

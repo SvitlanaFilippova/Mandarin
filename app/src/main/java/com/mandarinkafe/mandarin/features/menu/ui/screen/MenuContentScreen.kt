@@ -8,9 +8,12 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -26,6 +29,7 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
+import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.features.menu.ui.components.MenuList
@@ -37,6 +41,8 @@ import com.mandarinkafe.mandarin.features.menu.ui.components.getVisibleCategoryI
 import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
+import com.mandarinkafe.mandarin.util.Constants.FORCE_SHOW_FAB_DURATION_MS
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -76,15 +82,19 @@ fun MenuContentScreen(
         }
     }
 
+    val forceShowBackToTopFAB = remember { mutableStateOf(false) }
     val showBackToTopFAB by remember {
-        derivedStateOf { !isAtTop && !isScrollingDown.value }
+        derivedStateOf {
+            forceShowBackToTopFAB.value || (!isAtTop && !isScrollingDown.value)
+        }
     }
 
-    val handleBannerClick = { targetName: String ->
+    val handleBannerClick = { banner: Banner ->
         coroutineScope.launch {
-            onEvent(
-                MenuEvent.BannerClick(targetName)
-            )
+            onEvent(MenuEvent.BannerClick(banner))
+            forceShowBackToTopFAB.value = true
+            delay(FORCE_SHOW_FAB_DURATION_MS)
+            forceShowBackToTopFAB.value = false
         }
     }
 
@@ -187,7 +197,29 @@ fun MenuContentScreen(
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically()
             ) {
-                BannerCarousel(onBannerClick = handleBannerClick)
+
+                if (menuSate.bannersAreLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(Dimens.MarginStandard16)
+                            .aspectRatio(2.91f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = Colors.LightGrey,
+                            strokeWidth = Dimens.ProgressBarSmallWidth8,
+                            trackColor = Colors.DarkGrey
+                        )
+                    }
+
+                } else
+                    if (!menuSate.banners.isEmpty()) {
+                        BannerCarousel(
+                            banners = menuSate.banners,
+                            onBannerClick = handleBannerClick
+                        )
+                    }
             }
 
             // Табы-категории видны всегда

@@ -72,7 +72,7 @@ fun CartContentScreen(
                 // Горизонтальный список рекомендаций
                 item {
                     CartRecommendsList(
-                        recommendsList = state.recommendsList,
+                        recommendsList = state.recommends,
                         modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
                         onEvent = onEvent,
                     )

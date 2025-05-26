@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.core.domain.models.Tag
 data class FavoriteMeal(
     val id: String,
     val name: String,
+    val sku: String,
     val description: String,
     val weight: Int,
     val price: Int,
@@ -21,4 +22,5 @@ data class FavoriteMeal(
     val requireSelection: Boolean,
     val isModifiable: Boolean,
     val parentCategoryName: String,
+    val grandParentCategoryName: String?
 )

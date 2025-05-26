@@ -4,12 +4,14 @@ object Constants {
     // Network constants
     const val HTTP_SUCCESS = 200
     const val HTTP_SERVER_ERROR = 500
+    const val IMAGE_VALIDATOR_TIMEOUT = 1000
 
     // Menu UI
     const val AUTO_SCROLL_INTERVAL: Long = 5000L
     const val SPLASH_SCREEN_DURATION = 5000L
     const val SPLASH_APPEARING_DURATION = 1000
     const val SPLASH_ANIMATION_DURATION = 2000
+    const val FORCE_SHOW_FAB_DURATION_MS = 1000L
     const val ANIMATION_DURATION_SLOW = 1000
     const val ANIMATION_DURATION_FAST = 300
     const val DEFAULT_UNSELECTED_INDEX = -1
@@ -30,6 +32,11 @@ object Constants {
     // DI
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
     const val LOCAL_STORAGE_NAME = "local_storage"
+    const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/"
+    const val BANNERS_GOOGLE_DOCS_URL =
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3-6HvveASGgkJk7RppqB25IlbRSGJGvdEnN_0_XTtIKtRcR6H-R4KS0L_39ifx1cnGWRUiCA2zPQZ/pub?gid=0&single=true&output=csv"
+    const val RECOMMENDATIONS_GOOGLE_DOCS_URL =
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3-6HvveASGgkJk7RppqB25IlbRSGJGvdEnN_0_XTtIKtRcR6H-R4KS0L_39ifx1cnGWRUiCA2zPQZ/pub?gid=1629216186&single=true&output=csv"
 
     // API
     const val BEARER_PREFIX = "Bearer "
@@ -40,11 +47,10 @@ object Constants {
 
     // Для обработки особых категорий по их названиям
     const val CATEGORY_ADDS = "добавки"
-    const val CATEGORY_RECOMMENDS = "рекоменд"
+    const val CATEGORY_RECOMMENDS = "Рекомендованные (общие)"
 
     // DEBOUNCE для корзины
     const val DELETE_FROM_CART_DEBOUNCE_DELAY: Long = 3000L
-    const val CLEAR_CART_DEBOUNCE_DELAY: Long = 3000L
     const val INTERVAL_FOR_UPD_PROGRESSBAR: Long = 100L
     const val UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE: Long = 500L
 

@@ -72,10 +72,12 @@ fun SmallHorizontalMealItemCard(
                 modifier = Modifier
                     .fillMaxWidth()
             )
+            val parentCategoryName =
+                with(meal) { if (!grandParentCategoryName.isNullOrEmpty()) "$grandParentCategoryName / $parentCategoryName" else parentCategoryName }
 
             // Родительская категория
             Text(
-                text = meal.parentCategoryName,
+                text = parentCategoryName,
                 style = Typography.MealSmallTextStyle,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,

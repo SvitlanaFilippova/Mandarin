@@ -10,6 +10,7 @@ interface MenuRepository {
     val menu: StateFlow<Resource<List<MealCategory>>>
     fun getMenu(): Flow<Resource<List<MealCategory>>>
     fun getMealById(id: String): Meal?
+    fun getMealsBySku(sku: String): List<Meal>
     fun fetchMenuIfNeeded()
     suspend fun forceRefresh()
 }

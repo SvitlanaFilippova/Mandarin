@@ -86,6 +86,7 @@ dependencies {
 
     // Retrofit
     implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.scalars)
 
     // Gson
     implementation(libs.converter.gson)

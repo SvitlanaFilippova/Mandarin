@@ -24,13 +24,11 @@ interface IikoApiService {
     @POST("api/2/menu")
     suspend fun getMenuId(
         @Header("Authorization") token: String,
-         ): MenuIdResponse //TODO
+    ): MenuIdResponse
 
     @POST("api/2/menu/by_id")
     suspend  fun getMenuById(
         @Header("Authorization") token: String,
         @Body body: MenuRequest
     ): MenuResponse
-
 }
-

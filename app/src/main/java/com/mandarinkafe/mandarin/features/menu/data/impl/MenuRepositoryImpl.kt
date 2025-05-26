@@ -62,20 +62,58 @@ class MenuRepositoryImpl @Inject constructor(
 
         if (currentMenu is Resource.Success) {
             currentMenu.data?.forEach { category ->
-                val meal = findMealRecursively(category, id)
+                val meal = findMealByIDRecursively(category, id)
                 if (meal != null) return meal
             }
         }
         return null
     }
 
-    private fun findMealRecursively(category: MealCategory, id: String): Meal? {
+    override fun getMealsBySku(sku: String): List<Meal> {
+        val currentMenu = menu.value
+        if (currentMenu is Resource.Success) {
+            val result = mutableListOf<Meal>()
+            currentMenu.data?.forEach { category ->
+                findMealsBySkuRecursively(category, sku, result)
+            }
+            return result
+        }
+        return emptyList()
+    }
+
+    private fun findMealsBySkuRecursively(
+        category: MealCategory,
+        sku: String,
+        result: MutableList<Meal>
+    ) {
+        // Ищем совпадение по блюду
+        category.meals?.firstOrNull { it.sku.equals(sku, ignoreCase = true) }?.let {
+            result.add(it)
+            return
+        }
+        // Рекурсивно по подкатегориям
+        category.subCategories?.forEach { sub ->
+            findMealsBySkuRecursively(sub, sku, result)
+        }
+    }
+
+    private fun collectAllMeals(category: MealCategory, result: MutableList<Meal>) {
+        // Добавляем блюда из этой категории
+        category.meals?.let { result.addAll(it) }
+
+        // Рекурсивно добавляем блюда из подкатегорий
+        category.subCategories?.forEach { subCategory ->
+            collectAllMeals(subCategory, result)
+        }
+    }
+
+    private fun findMealByIDRecursively(category: MealCategory, id: String): Meal? {
         // Ищем в текущей категории
         category.meals?.firstOrNull { it.id == id }?.let { return it }
 
         // Если не нашли — ищем во вложенных подкатегориях
         category.subCategories?.forEach { subCategory ->
-            val found = findMealRecursively(subCategory, id)
+            val found = findMealByIDRecursively(subCategory, id)
             if (found != null) return found
         }
         return null
@@ -192,7 +230,7 @@ class MenuRepositoryImpl @Inject constructor(
             },
             tabIcon = parentDto.buttonImageUrl,
             description = parentDto.description.orEmpty().applyTypography(),
-            isHidden = parentDto.isHidden == true
+            isHidden = parentDto.isHidden == true,
         )
     }
 

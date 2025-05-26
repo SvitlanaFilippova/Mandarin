@@ -3,7 +3,11 @@ package com.mandarinkafe.mandarin.features.menu.di
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
 import com.mandarinkafe.mandarin.features.favorites.domain.api.FavoritesRepository
+import com.mandarinkafe.mandarin.features.menu.data.api.ImageValidator
+import com.mandarinkafe.mandarin.features.menu.data.impl.BannersRepositoryImpl
+import com.mandarinkafe.mandarin.features.menu.data.impl.ImageValidatorImpl
 import com.mandarinkafe.mandarin.features.menu.data.impl.MenuRepositoryImpl
+import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import dagger.Module
 import dagger.Provides
@@ -29,7 +33,26 @@ class MenuDataModule {
 
     @Provides
     @Singleton
+    fun provideBannersRepository(
+        networkClient: NetworkClient,
+        imageValidator: ImageValidator
+    ): BannersRepository {
+        return BannersRepositoryImpl(
+            networkClient = networkClient,
+            imageValidator = imageValidator
+        )
+    }
+
+    @Provides
+    @Singleton
     fun provideGson(): Gson {
         return Gson()
     }
+
+    @Provides
+    @Singleton
+    fun provideImageValidator(): ImageValidator {
+        return ImageValidatorImpl()
+    }
+
 }

@@ -1,4 +1,14 @@
-package com.mandarinkafe.mandarin.features.search
+package com.mandarinkafe.mandarin.util
+
+fun String?.equalsIgnoreCaseSafe(other: String?): Boolean {
+    return this != null && other != null && this.trim().equals(other.trim(), ignoreCase = true)
+}
+
+fun String.normalize(): String =
+    this
+        .replace(Regex("\\u00A0"), " ")   // неразрывный
+        .replace(Regex("\\s+"), " ")      // любые пробелы/табы → один
+        .trim()
 
 fun String.toTranslitVariants(): List<String> {
     val original = this

@@ -33,7 +33,6 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
-import com.mandarinkafe.mandarin.features.menu.domain.models.mockBannersList
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_SLOW
 import com.mandarinkafe.mandarin.util.Constants.AUTO_SCROLL_INTERVAL
@@ -43,10 +42,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun BannerCarousel(
-    banners: List<Banner> = mockBannersList,
+    banners: List<Banner>,
     autoScrollInterval: Long = AUTO_SCROLL_INTERVAL,
     easing: Easing = LinearEasing,
-    onBannerClick: (String) -> Job
+    onBannerClick: (Banner) -> Job
 ) {
     val pagerState = rememberPagerState { banners.size }
     val coroutineScope = rememberCoroutineScope()
@@ -99,7 +98,7 @@ fun BannerCarousel(
                     .fillMaxWidth()
                     .aspectRatio(2.91f)
                     .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                    .clickable { onBannerClick(banners[page].goToNameOnClick) }
+                    .clickable { onBannerClick(banners[page]) }
             )
         }
 

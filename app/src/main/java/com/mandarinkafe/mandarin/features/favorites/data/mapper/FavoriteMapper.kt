@@ -8,6 +8,7 @@ object FavoriteMapper {
     fun Meal.toFavoriteMeal() = FavoriteMeal(
         id = id,
         name = name,
+        sku = sku,
         description = description,
         weight = weight,
         price = price,
@@ -21,13 +22,16 @@ object FavoriteMapper {
         requireSelection = requireSelection,
         isModifiable = isModifiable,
         discountable = discountable,
-        parentCategoryName = parentCategoryName
+        parentCategoryName = parentCategoryName,
+        grandParentCategoryName = grandParentCategoryName,
+
     )
 
     fun FavoriteMeal.toMealItem() = SingleMealItem(
         Meal(
             id = id,
             name = name,
+            sku = sku,
             description = description,
             weight = weight,
             price = price,
@@ -41,7 +45,8 @@ object FavoriteMapper {
             requireSelection = requireSelection,
             isModifiable = isModifiable,
             discountable = discountable,
-            parentCategoryName = parentCategoryName
+            parentCategoryName = parentCategoryName,
+            grandParentCategoryName = grandParentCategoryName,
         )
     )
 }
