@@ -6,9 +6,9 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.core.domain.models.extensions.sameAs
 import com.mandarinkafe.mandarin.core.domain.models.extensions.validateBy
-import com.mandarinkafe.mandarin.features.cart.CartMapper.toCartItem
-import com.mandarinkafe.mandarin.features.cart.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.sharedprefs.CartStorage
+import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCartItem
+import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional

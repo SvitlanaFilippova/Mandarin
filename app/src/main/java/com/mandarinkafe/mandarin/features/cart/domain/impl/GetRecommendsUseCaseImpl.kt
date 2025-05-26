@@ -13,60 +13,57 @@ class GetRecommendsUseCaseImpl(
 ) :
     GetRecommendsUseCase {
     override suspend fun invoke(cartItems: Set<Meal>): Set<Meal> {
-        // Получаем правила из репозитория
+        // 1. Получаем правила из репозитория
         val schemaResult = schemaRepository.getRecommendsSchema()
         if (schemaResult !is Resource.Success) return emptySet()
         val rules = schemaResult.data ?: return emptySet()
 
-        // Собираем сеты для быстрого поиска
-        val cartSkus: Set<String> = cartItems.map { it.sku }.toSet()
-        val cartNames: Set<String> = cartItems
-            .flatMap { listOfNotNull(it.name, it.parentCategoryName, it.grandParentCategoryName) }
-            .map { raw ->
-                val norm = raw.normalize()
-                norm
-            }
-            .toSet()
+        // 2. Нормализуем названия из корзины сразу в поле Meal
+        val cartItemsWithNorm = cartItems.map { meal ->
+            meal.copy(  // копируем, чтобы удобнее хранить нормализованные имена
+                name = meal.name.normalize(),
+                parentCategoryName = meal.parentCategoryName.normalize(),
+                grandParentCategoryName = meal.grandParentCategoryName?.normalize().orEmpty()
+            )
+        }
 
-        //  Фильтруем правила по названию (sourceName) и исключениям
+        // 3. Фильтруем правила
         val matchingRules = rules.filter { rule ->
             val rawRuleName = rule.sourceName
-            if (rawRuleName.isEmpty()) return@filter false
-
-            // Нормализуем имя правила
+            if (rawRuleName.isBlank()) return@filter false
             val ruleName = rawRuleName.normalize()
 
-            // Проверяем исключения по SKU
-            val isExcluded = rule.excludeSku
-                .any { exclude -> cartSkus.any { it.equals(exclude, ignoreCase = true) } }
-            if (isExcluded) {
+            // 3.1. Находим все элементы корзины, у которых совпало имя правила
+            val matchingCartMeals = cartItemsWithNorm.filter { meal ->
+                listOfNotNull(meal.name, meal.parentCategoryName, meal.grandParentCategoryName)
+                    .any { it.equals(ruleName, ignoreCase = true) }
+            }
+
+            if (matchingCartMeals.isEmpty()) {
+                // Ничто не подходит по имени
                 return@filter false
             }
 
-            // Правило срабатывает, если имя правила совпадает с любым именем из корзины
-            val nameMatches = cartNames.any { cartName ->
-                val match = cartName.equals(ruleName, ignoreCase = true)
-                match
+            // 3.2. Отбрасываем те, у которых SKU есть в excludeSku
+            val allowedMeals = matchingCartMeals.filter { meal ->
+                rule.excludeSku.none { ex -> meal.sku.equals(ex.trim(), ignoreCase = true) }
             }
-            nameMatches
+
+            // Если после исключений остался хоть один — правило годится
+            allowedMeals.isNotEmpty()
         }
 
-        //  Собираем сет рекомендованных артикулов
+        // 4. Собираем сет рекомендованных артикулов
         val recommendedSkus: Set<String> = matchingRules
-            .flatMap { rule ->
-
-                rule.recommendedSku
-            }
+            .flatMap { it.recommendedSku }
             .map { it.trim() }
             .filter { it.isNotEmpty() }
             .toSet()
 
-//  По каждому рекомендованному артикулу получаем блюда и убираем дубли по id
+        // 5. По каждому артикулу получаем блюда и убираем дубликаты по id
         return recommendedSkus
             .flatMap { sku -> menuRepository.getMealsBySku(sku) }
             .distinctBy { it.id }
             .toSet()
-
     }
 }
-

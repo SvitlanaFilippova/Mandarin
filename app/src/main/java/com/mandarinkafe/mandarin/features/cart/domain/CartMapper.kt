@@ -1,12 +1,11 @@
-package com.mandarinkafe.mandarin.features.cart
-
+package com.mandarinkafe.mandarin.features.cart.domain
 
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 
 object CartMapper {
 
@@ -27,12 +26,12 @@ object CartMapper {
         modifiers = modifiers
     )
 
-    fun Meal.toAddToCartEvent(): CartEvent.AddToCart {
-        return CartEvent.AddToCart(CustomizedMeal(meal = this))
+    fun Meal.toAddToCartEvent(): CartContract.CartEvent.AddToCart {
+        return CartContract.CartEvent.AddToCart(CustomizedMeal(meal = this))
     }
 
-    fun Meal.toRemoveFromCartNow(): CartEvent.RemoveFromCartByMeal {
-        return CartEvent.RemoveFromCartByMeal(meal = this)
+    fun Meal.toRemoveFromCartNow(): CartContract.CartEvent.RemoveFromCartByMeal {
+        return CartContract.CartEvent.RemoveFromCartByMeal(meal = this)
     }
 
     fun Meal.toCartItem() = CustomizedMeal(

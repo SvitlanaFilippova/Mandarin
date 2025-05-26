@@ -9,8 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
@@ -18,6 +16,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Typography
 @Composable
 fun CustomizeButtonWithText(
     onClick: () -> Unit,
+    text: String,
     modifier: Modifier = Modifier
 ) {
     Button(
@@ -25,14 +24,15 @@ fun CustomizeButtonWithText(
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         contentPadding = PaddingValues(Dimens.MarginSmall8),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Colors.Orange,
-            contentColor = Color.White
+            containerColor = Color.Transparent,
+            contentColor = Colors.Orange
         ),
         modifier = modifier.height(Dimens.ButtonToCartSmall32)
     ) {
         Text(
-            text = stringResource(R.string.add_additionals),
+            text = text,
             style = Typography.CartButtonSmallTextStyle,
+            color = Colors.Orange
         )
     }
 }
