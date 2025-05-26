@@ -42,8 +42,9 @@ object Constants {
     const val BEARER_PREFIX = "Bearer "
 
     // Внутренние теги для особой логики в меню
-    const val TAG_ADDS = "добавки"
-    const val TAG_NO_DISCOUNT = "скидки не действуют"
+    const val TAG_ADDS = "SHOW_ADDS"
+    const val TAG_NO_ADDS = "NO_ADDS"
+    const val TAG_NO_DISCOUNT = "NO_DISCOUNT"
 
     // Для обработки особых категорий по их названиям
     const val CATEGORY_ADDS = "добавки"

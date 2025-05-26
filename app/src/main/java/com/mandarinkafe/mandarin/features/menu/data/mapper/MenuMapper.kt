@@ -15,6 +15,7 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierItemDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.TagDto
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.util.Constants.TAG_ADDS
+import com.mandarinkafe.mandarin.util.Constants.TAG_NO_ADDS
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_DISCOUNT
 import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.removeLeadingDash
@@ -61,12 +62,20 @@ private fun MealDto.toDomain(
     val safeModifiers = firstSize
         ?.itemModifierGroups
         ?.map { it.toDomain() }
-        ?.sortedByDescending { it.isSingleChoice } // сначала выводим SingleChoice-модификаторы
+        ?.sortedByDescending { it.isSingleChoice }
         ?: emptyList()
 
     val mealLabels = (labels ?: emptyList()).map { it.toDomain() }
     val mealTags = (tags ?: emptyList()).map { it.toDomain() }
-    val finalMealTags = (mealTags + categoryTags).distinctBy { it.name }
+
+    val hasNoAddsTag = mealTags.any { it.name.equals(TAG_NO_ADDS, ignoreCase = true) }
+    val finalMealTags = if (hasNoAddsTag) {
+        // Игнорируем TAG_ADDS из категории
+        mealTags
+    } else {
+        (mealTags + categoryTags).distinctBy { it.name }
+    }
+
     val finalMealLabels = (mealLabels + categoryLabels).distinctBy { it.name }
 
     return Meal(
@@ -82,7 +91,12 @@ private fun MealDto.toDomain(
         tags = finalMealTags,
         isHidden = isHidden == true,
         modifiers = safeModifiers,
-        isAddable = finalMealTags.any { it.name.equals(TAG_ADDS, ignoreCase = true) },
+        isAddable = !hasNoAddsTag && finalMealTags.any {
+            it.name.equals(
+                TAG_ADDS,
+                ignoreCase = true
+            )
+        },
         requireSelection = safeModifiers.any { it.isRequired },
         isModifiable = safeModifiers.isNotEmpty() && safePrice > 0,
         discountable = !finalMealTags.any { it.name.equals(TAG_NO_DISCOUNT, ignoreCase = true) },
