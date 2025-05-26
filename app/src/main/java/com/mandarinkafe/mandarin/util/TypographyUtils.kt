@@ -10,6 +10,9 @@ object TypographyRules {
     )
 }
 
+/**
+ * Функция для применения базовых правил типографики к строке
+ */
 fun String.applyTypography(): String {
 
     val nonBreakingSpace = "\u00A0"

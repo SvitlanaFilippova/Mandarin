@@ -38,7 +38,6 @@ class MenuViewModel @Inject constructor(
     init {
         loadMenu()
         getBanners()
-
     }
 
     override fun onEvent(event: MenuEvent) {
