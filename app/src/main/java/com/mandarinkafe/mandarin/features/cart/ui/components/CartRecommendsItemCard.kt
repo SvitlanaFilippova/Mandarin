@@ -35,7 +35,7 @@ fun CartRecommendsItemCard(
 
     Card(
         modifier = Modifier
-            .padding(horizontal = Dimens.MarginSmall8)
+            .padding(horizontal = Dimens.MarginSuperSmall4)
             .width(Dimens.RecommendsItemWidth96)
             .clickable(onClick = { onEvent(CartContract.CartEvent.OpenMealDetails(item)) }),
         border = BorderStroke(
