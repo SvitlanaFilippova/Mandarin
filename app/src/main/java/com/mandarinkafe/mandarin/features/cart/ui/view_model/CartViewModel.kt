@@ -246,7 +246,6 @@ class CartViewModel @Inject constructor(
             // По завершении удаляем таймер
             itemTimers.remove(item)
         }
-
         itemTimers[item] = job
 
     }

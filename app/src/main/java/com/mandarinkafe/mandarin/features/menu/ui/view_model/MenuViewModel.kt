@@ -125,12 +125,18 @@ class MenuViewModel @Inject constructor(
 
     // Обработка кликов по баннерам - поиск подходящей категории/блюда в меню и скролл к нему
     private fun findMenuItemByBanner(banner: Banner) {
+        // Если нет цели — сбрасываем и выходим
+        if (banner.targetName.isBlank()) {
+            resetSelectedMenuItemIndex()
+            return
+        }
         viewModelScope.launch {
             val menuItems = state.value.menuItems
             val targetIndex = findMenuItemIndex(banner, menuItems)
             setState { copy(selectedMenuItemIndex = targetIndex) }
         }
     }
+
 
     private fun findMenuItemIndex(banner: Banner, menuItems: List<MenuItem>): Int {
         val name = banner.targetName.trim()
@@ -144,7 +150,7 @@ class MenuViewModel @Inject constructor(
             .takeIf { it >= 0 }?.let { return it }
 
         // По умолчанию
-        return 0
+        return DEFAULT_UNSELECTED_INDEX
     }
 
     private fun resetSelectedMenuItemIndex() {
