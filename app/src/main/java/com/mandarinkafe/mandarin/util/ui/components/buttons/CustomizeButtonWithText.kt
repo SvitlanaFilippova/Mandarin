@@ -23,6 +23,7 @@ fun CustomizeButtonWithText(
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         contentPadding = PaddingValues(Dimens.MarginSmall8),
+//        border =  BorderStroke(Dimens.Border1, Colors.OrangeTransparent20),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
             contentColor = Colors.Orange

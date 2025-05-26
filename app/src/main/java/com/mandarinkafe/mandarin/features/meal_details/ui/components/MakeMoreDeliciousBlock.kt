@@ -85,7 +85,7 @@ fun MakeMoreDeliciousBlock(
                 Icon(
                     modifier = Modifier.size(Dimens.IconSize24),
                     imageVector = Icons.Default.KeyboardArrowDown,
-                    contentDescription = stringResource(id = R.string.make_more_delicious),
+                    contentDescription = stringResource(id = R.string.make_more_delicious_description),
                     tint = Colors.White
                 )
             }
