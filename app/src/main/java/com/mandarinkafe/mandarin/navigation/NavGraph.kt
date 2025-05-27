@@ -14,13 +14,13 @@ import com.mandarinkafe.mandarin.features.delivery.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.features.favorites.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.features.menu.ui.screen.MenuScreen
 import com.mandarinkafe.mandarin.features.search.ui.screen.SearchScreen
-import com.mandarinkafe.mandarin.features.splash.ui.SplashScreen
 import com.mandarinkafe.mandarin.navigation.NavRoutes.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.FAVORITES_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SPLASH_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.splash.ui.SplashScreen
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable

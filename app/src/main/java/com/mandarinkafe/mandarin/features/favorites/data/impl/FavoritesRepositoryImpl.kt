@@ -1,24 +1,29 @@
 package com.mandarinkafe.mandarin.features.favorites.data.impl
 
+import com.mandarinkafe.mandarin.core.data.api.FavoritesReader
 import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorage
 import com.mandarinkafe.mandarin.features.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.features.favorites.domain.models.FavoriteMeal
 
 class FavoritesRepositoryImpl(private val favoritesStorage: FavoritesStorage) :
-    FavoritesRepository {
-    override fun addToFavorites(meal: FavoriteMeal) {
+    FavoritesRepository, FavoritesReader {
+    override suspend fun addFavorite(meal: FavoriteMeal) {
         favoritesStorage.addToFavorites(meal)
     }
 
-    override fun removeFromFavorites(meal: FavoriteMeal) {
+    override suspend fun removeFavorite(meal: FavoriteMeal) {
         favoritesStorage.removeFromFavorites(meal.id)
     }
 
-    override fun getFavorites(): List<FavoriteMeal> {
+    override suspend fun getFavoritesIds(): Set<String> {
+        return favoritesStorage.getFavorites().map { it.id }.toSet()
+    }
+
+    override suspend fun getFavorites(): List<FavoriteMeal> {
         return favoritesStorage.getFavorites().toList()
     }
 
-    override fun checkIfFavorite(itemId: String): Boolean {
+    override suspend fun checkIfFavorite(itemId: String): Boolean {
         return getFavorites().any { it.id == itemId }
     }
 }

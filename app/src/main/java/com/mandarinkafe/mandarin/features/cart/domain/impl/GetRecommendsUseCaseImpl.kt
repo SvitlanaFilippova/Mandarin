@@ -1,15 +1,15 @@
 package com.mandarinkafe.mandarin.features.cart.domain.impl
 
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
-import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.normalize
 
 class GetRecommendsUseCaseImpl(
     private val schemaRepository: RecommendsSchemaRepository,
-    private val menuRepository: MenuRepository,
+    private val menuCache: MenuCache,
 ) :
     GetRecommendsUseCase {
     override suspend fun invoke(cartItems: Set<Meal>): Set<Meal> {
@@ -62,7 +62,7 @@ class GetRecommendsUseCaseImpl(
 
         // 5. По каждому артикулу получаем блюда и убираем дубликаты по id
         return recommendedSkus
-            .flatMap { sku -> menuRepository.getMealsBySku(sku) }
+            .flatMap { sku -> menuCache.getMealsBySku(sku) }
             .distinctBy { it.id }
             .toSet()
     }

@@ -2,18 +2,21 @@ package com.mandarinkafe.mandarin.features.meal_details.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
+import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
-import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInteractor
+import com.mandarinkafe.mandarin.features.meal_details.domain.usecase.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsState
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
-import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
-import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.Resource.Error
+import com.mandarinkafe.mandarin.util.Resource.Idle
+import com.mandarinkafe.mandarin.util.Resource.Loading
+import com.mandarinkafe.mandarin.util.Resource.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -21,8 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MealDetailsViewModel @Inject constructor(
-    private val menuInteractor: MenuInteractor,
-    private val favoritesInteractor: FavoritesInteractor
+    private val getAddonsUseCase: GetAddonsUseCase,
+    private val favoritesApi: FavoritesApi
 ) : BaseViewModel<MealDetailsEvent, MealDetailsEffect, MealDetailsState>() {
     override fun setInitialState() = MealDetailsState()
 
@@ -127,10 +130,10 @@ class MealDetailsViewModel @Inject constructor(
 
         viewModelScope.launch {
             val isNowFavorite = if (meal.isFavorite) {
-                favoritesInteractor.removeFromFavorites(meal.toFavoriteMeal())
+                favoritesApi.removeFavorite(meal.toFavoriteMeal())
                 false
             } else {
-                favoritesInteractor.addToFavorites(meal.toFavoriteMeal())
+                favoritesApi.addFavorite(meal.toFavoriteMeal())
                 true
             }
 
@@ -180,12 +183,13 @@ class MealDetailsViewModel @Inject constructor(
             setState { copy(isLoading = false) }
         } else {
             viewModelScope.launch {
-                menuInteractor.getAddons().collectLatest { result ->
-                    setLoading(result is Resource.Loading)
+                getAddonsUseCase().collectLatest { result ->
+                    setLoading(result is Loading)
                     when (result) {
-                        is Resource.Success -> setData(result.data)
-                        is Resource.Error -> setError(result.message)
-                        is Resource.Loading -> {}
+                        is Success -> setData(result.data)
+                        is Error -> setError(result.message)
+                        is Loading -> {}
+                        is Idle -> {}
                     }
                 }
             }

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.splash.ui.view_model
+package com.mandarinkafe.mandarin.splash.ui.view_model
 
 import com.mandarinkafe.mandarin.core.BaseEffect
 import com.mandarinkafe.mandarin.core.BaseEvent

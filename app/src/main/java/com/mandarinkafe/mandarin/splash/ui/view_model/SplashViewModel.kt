@@ -1,11 +1,11 @@
-package com.mandarinkafe.mandarin.features.splash.ui.view_model
+package com.mandarinkafe.mandarin.splash.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
-import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
-import com.mandarinkafe.mandarin.features.splash.ui.view_model.SplashContract.SplashEffect
-import com.mandarinkafe.mandarin.features.splash.ui.view_model.SplashContract.SplashEvent
-import com.mandarinkafe.mandarin.features.splash.ui.view_model.SplashContract.SplashState
+import com.mandarinkafe.mandarin.splash.domain.usecase.GetInitialDataUseCase
+import com.mandarinkafe.mandarin.splash.ui.view_model.SplashContract.SplashEffect
+import com.mandarinkafe.mandarin.splash.ui.view_model.SplashContract.SplashEvent
+import com.mandarinkafe.mandarin.splash.ui.view_model.SplashContract.SplashState
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_SCREEN_DURATION
 import com.mandarinkafe.mandarin.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val menuInteractor: MenuInteractor
+    private val getInitialDataUseCase: GetInitialDataUseCase
 ) : BaseViewModel<SplashEvent, SplashEffect, SplashState>() {
     init {
         loadInitialData()
@@ -36,7 +36,7 @@ class SplashViewModel @Inject constructor(
             }
 
             // Параллельно начинаем загрузку меню
-            menuInteractor.getMenu().collectLatest { resource ->
+            getInitialDataUseCase().collectLatest { resource ->
                 if (resource is Resource.Success) {
                     setState { copy(isVisible = false) }
                     // Если Success прилетит раньше таймера SPLASH_SCREEN_DURATION - закрываем экран

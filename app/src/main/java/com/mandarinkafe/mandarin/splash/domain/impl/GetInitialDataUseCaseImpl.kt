@@ -1,27 +1,21 @@
-package com.mandarinkafe.mandarin.features.menu.domain.impl
+package com.mandarinkafe.mandarin.splash.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
-import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
-import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
+import com.mandarinkafe.mandarin.splash.domain.usecase.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.Error
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 
-class MenuInteractorImpl(
-    private val repository: MenuRepository,
-    private val cache: MenuCache
-) : MenuInteractor {
-    override val menu: StateFlow<Resource<List<MealCategory>>> get() = cache.menu
+class GetInitialDataUseCaseImpl(private val menuCache: MenuCache) : GetInitialDataUseCase {
+    override suspend operator fun invoke(): Flow<Resource<List<MealCategory>>> {
+        menuCache.fetchMenuIfNeeded()
 
-    override fun getMenu(): Flow<Resource<List<MealCategory>>> {
-        cache.fetchMenuIfNeeded()
-        return cache.menu.map { result ->
+        return menuCache.menu.map { result ->
             when (result) {
                 is Success -> {
                     val filtered = result.data?.filterNot { it.isHidden }
@@ -33,10 +27,5 @@ class MenuInteractorImpl(
                 is Idle -> result
             }
         }
-    }
-
-    // метод, чтобы принудительно перезагрузить меню
-    override suspend fun forceRefresh() {
-        cache.forceRefresh { repository.fetchMenu() }
     }
 }
