@@ -7,7 +7,6 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
-import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.features.meal_details.domain.usecase.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
@@ -126,28 +125,20 @@ class MealDetailsViewModel @Inject constructor(
     }
 
     private fun toggleFavorite() {
-        val meal = state.value.customizedMeal?.meal ?: return
+        // Сначала забираем текущий CustomizedMeal из стейта
+        val current = state.value.customizedMeal ?: return
 
+        // Запускаем корутину, чтобы вызвать suspend-функцию
         viewModelScope.launch {
-            val isNowFavorite = if (meal.isFavorite) {
-                favoritesApi.removeFavorite(meal.toFavoriteMeal())
-                false
-            } else {
-                favoritesApi.addFavorite(meal.toFavoriteMeal())
-                true
-            }
+            val isNowFavorite = favoritesApi.toggleFavorite(current)
 
+            // После того как мы получили результат, обновляем стейт
             setState {
-                val customizedMeal = customizedMeal
-                if (customizedMeal != null) {
-                    copy(
-                        customizedMeal = customizedMeal.copy(
-                            meal = customizedMeal.meal.copy(isFavorite = isNowFavorite)
-                        )
+                copy(
+                    customizedMeal = current.copy(
+                        meal = current.meal.copy(isFavorite = isNowFavorite)
                     )
-                } else {
-                    this
-                }
+                )
             }
         }
     }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.mandarinkafe.mandarin.core.data.api.FavoritesReader
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.favorites.data.impl.FavoritesRepositoryImpl
 import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorage
 import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorageImpl
@@ -38,9 +39,13 @@ class FavoritesModule {
     @Provides
     @Singleton
     fun provideFavoritesRepository(
-        storage: FavoritesStorage
+        storage: FavoritesStorage,
+        menuCache: MenuCache
     ): FavoritesRepositoryImpl =
-        FavoritesRepositoryImpl(storage)
+        FavoritesRepositoryImpl(
+            storage = storage,
+            menuCache = menuCache
+        )
 
     @Provides
     @Singleton

@@ -5,12 +5,12 @@ import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
-import com.mandarinkafe.mandarin.core.domain.models.extensions.sameAs
-import com.mandarinkafe.mandarin.core.domain.models.extensions.validateBy
 import com.mandarinkafe.mandarin.features.cart.data.sharedprefs.CartStorage
-import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCartItem
+import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartRepository
+import com.mandarinkafe.mandarin.features.cart.sameAs
+import com.mandarinkafe.mandarin.features.cart.validateBy
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.CategoryFilter
 import com.mandarinkafe.mandarin.util.Resource
@@ -26,7 +26,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun getCart(): Map<CustomizedMeal, Int> {
 
-        val rawCart = storage.getCart().toMutableList()
+        val rawCart = storage.getCart()
         // Ждём, пока меню загрузится
         menuCache.menu.first { it is Resource.Success }
 
@@ -46,7 +46,7 @@ class CartRepositoryImpl @Inject constructor(
                     val validModifiers =
                         storedCartItem.modifiers?.validateBy(fullMeal.modifiers) ?: emptyList()
 
-                    val cartItem = storedCartItem.toCartItem(
+                    val cartItem = storedCartItem.toCustomizedMeal(
                         meal = fullMeal,
                         adds = validAdds,
                         modifiers = validModifiers

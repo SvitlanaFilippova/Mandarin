@@ -1,24 +1,34 @@
 package com.mandarinkafe.mandarin.features.favorites.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteRecord
 import com.mandarinkafe.mandarin.features.favorites.domain.api.FavoritesRepository
-import com.mandarinkafe.mandarin.features.favorites.domain.models.FavoriteMeal
+import com.mandarinkafe.mandarin.features.favorites.domain.models.FavoriteRecord
 import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInteractor
 
 class FavoritesInteractorImpl(private val repository: FavoritesRepository) : FavoritesInteractor,
     FavoritesApi {
-    override suspend fun getFavorites(): List<FavoriteMeal> = repository.getFavorites()
-
-    override suspend fun addFavorite(meal: FavoriteMeal) {
-        repository.addFavorite(meal)
+    override suspend fun getFavorites(): List<FavoriteRecord> {
+        return repository.getFavorites().toList()
     }
 
-    override suspend fun removeFavorite(meal: FavoriteMeal) {
-        repository.removeFavorite(meal)
+    override suspend fun toggleFavorite(meal: CustomizedMeal): Boolean {
+        return repository.toggleFavorite(meal.toFavoriteRecord(timestamp = getTimeStamp()))
     }
 
-    override suspend fun checkIfFavorite(itemId: String): Boolean {
-        return repository.checkIfFavorite(itemId)
+    override suspend fun toggleFavorite(id: String): Boolean {
+        return repository.toggleFavorite(
+            FavoriteRecord.Base(
+                mealId = id,
+                timestamp = getTimeStamp()
+            )
+        )
     }
 
+    override suspend fun checkIfFavorite(meal: CustomizedMeal): Boolean {
+        return repository.checkIfFavorite(meal.toFavoriteRecord(timestamp = getTimeStamp()))
+    }
+
+    private fun getTimeStamp() = System.currentTimeMillis()
 }

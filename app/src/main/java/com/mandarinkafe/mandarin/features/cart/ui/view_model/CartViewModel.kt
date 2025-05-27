@@ -2,10 +2,10 @@ package com.mandarinkafe.mandarin.features.cart.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
+import com.mandarinkafe.mandarin.core.domain.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect
@@ -57,6 +57,8 @@ class CartViewModel @Inject constructor(
                     item = event.item
                 )
             )
+
+            is CartEvent.ToggleFavorite -> toggleFavorite(event.item)
         }
     }
 
@@ -311,8 +313,24 @@ class CartViewModel @Inject constructor(
             .toSet()
 
         setState {
-            copy(recommends = filteredRecommends.toList().map { it.toCartItem() })
+            copy(recommends = filteredRecommends.toList().map { it.toCustomizedMeal() })
         }
     }
 
+    private fun toggleFavorite(item: CustomizedMeal) {
+        viewModelScope.launch {
+            val isNowFavorite = favoritesApi.toggleFavorite(item)
+            setState {
+                // Создаём новую мапу: для каждого entry, если это наш item — заменяем ключ с updated isFavorite
+                val updatedCart: Map<CustomizedMeal, Int> = cartItems.mapKeys { (key, _) ->
+                    if (key == item) {
+                        key.copy(meal = key.meal.copy(isFavorite = isNowFavorite))
+                    } else {
+                        key
+                    }
+                }
+                copy(cartItems = updatedCart)
+            }
+        }
+    }
 }

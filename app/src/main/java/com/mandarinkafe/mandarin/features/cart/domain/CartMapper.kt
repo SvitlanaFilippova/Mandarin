@@ -4,7 +4,9 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendsSchemaDto
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
+import com.mandarinkafe.mandarin.features.cart.domain.model.RecommendsSchemaRule
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 
 object CartMapper {
@@ -16,7 +18,7 @@ object CartMapper {
         modifiers = modifiers
     )
 
-    fun StoredCartItem.toCartItem(
+    fun StoredCartItem.toCustomizedMeal(
         meal: Meal,
         adds: List<MealAdditional>,
         modifiers: List<ModifierGroup>
@@ -34,8 +36,9 @@ object CartMapper {
         return CartContract.CartEvent.RemoveFromCartByMeal(meal = this)
     }
 
-    fun Meal.toCartItem() = CustomizedMeal(
-        meal = this,
-        adds = emptyList()
+    fun RecommendsSchemaDto.toDomain() = RecommendsSchemaRule(
+        sourceName = sourceName ?: "",
+        excludeSku = excludeSku ?: emptyList<String>(),
+        recommendedSku = recommendedSku ?: emptyList()
     )
 }

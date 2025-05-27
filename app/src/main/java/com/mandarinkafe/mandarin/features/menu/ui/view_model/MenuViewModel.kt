@@ -5,7 +5,6 @@ import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
-import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.GetBannersUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
@@ -20,7 +19,6 @@ import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEf
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuState
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
-import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.Error
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
@@ -164,10 +162,10 @@ class MenuViewModel @Inject constructor(
     private fun toggleFavorite(meal: Meal) {
         viewModelScope.launch {
             val isNowFavorite = if (meal.isFavorite) {
-                favoritesApi.removeFavorite(meal.toFavoriteMeal())
+                favoritesApi.removeFavorite(meal.id)
                 false
             } else {
-                favoritesApi.addFavorite(meal.toFavoriteMeal())
+                favoritesApi.addFavorite(meal.id)
                 true
             }
 
@@ -201,12 +199,6 @@ class MenuViewModel @Inject constructor(
                 setState { copy(banners = banners, bannersAreLoading = false) }
             }
         }
-    }
-
-    //TODO убрать отсюда эту функцию!
-    fun getFavorites(): List<MenuItem> {
-//TODO ()
-        return emptyList()
     }
 
 }

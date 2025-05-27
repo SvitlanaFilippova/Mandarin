@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
 import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetFullMealListUseCase
@@ -120,10 +119,10 @@ class SearchViewModel @Inject constructor(
     private fun toggleFavorite(meal: Meal) {
         viewModelScope.launch {
             val isNowFavorite = if (meal.isFavorite) {
-                favoritesApi.removeFavorite(meal.toFavoriteMeal())
+                favoritesApi.removeFavorite(meal.id)
                 false
             } else {
-                favoritesApi.addFavorite(meal.toFavoriteMeal())
+                favoritesApi.addFavorite(meal.id)
                 true
             }
 

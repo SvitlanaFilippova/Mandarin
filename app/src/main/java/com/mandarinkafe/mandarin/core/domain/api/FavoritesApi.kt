@@ -1,11 +1,8 @@
 package com.mandarinkafe.mandarin.core.domain.api
 
-import com.mandarinkafe.mandarin.features.favorites.domain.models.FavoriteMeal
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 
 interface FavoritesApi {
-    /** Пометить блюдо избранным. */
-    suspend fun addFavorite(meal: FavoriteMeal)
-
-    /** Убрать из избранного. */
-    suspend fun removeFavorite(meal: FavoriteMeal)
+    suspend fun toggleFavorite(id: String): Boolean
+    suspend fun toggleFavorite(meal: CustomizedMeal): Boolean
 }

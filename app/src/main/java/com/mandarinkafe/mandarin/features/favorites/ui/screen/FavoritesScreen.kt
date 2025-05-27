@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.favorites.screen
+package com.mandarinkafe.mandarin.features.favorites.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -34,7 +34,7 @@ fun FavoritesScreen(
             onLogoCLick = { return@MenuTopBar }
         )
         MenuList(
-            menuItems = menuViewModel.getFavorites(),
+            menuItems = emptyList(),
             listState = rememberLazyListState(),
             modifier = Modifier,
             onEvent = menuViewModel::onEvent,

@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.menu.ui.components
 
 import androidx.compose.runtime.Composable
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCartItem
+import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.features.meal_details.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
@@ -20,7 +20,7 @@ fun HandleBottomSheetEffects(
         cast = { it as? MenuContract.MenuEffect.OpenMealDetailsBS }
     ) { effect, onDismiss ->
         MealDetailsBottomSheet(
-            initItem = effect.meal.toCartItem(),
+            initItem = effect.meal.toCustomizedMeal(),
             onDismiss = onDismiss,
             onFavoriteChanged = { id, isFavorite ->
                 onMenuEvent(MenuEvent.UpdateMealFavorite(id, isFavorite))

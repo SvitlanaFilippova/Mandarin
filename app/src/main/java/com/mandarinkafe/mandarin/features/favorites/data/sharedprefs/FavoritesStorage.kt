@@ -1,10 +1,9 @@
 package com.mandarinkafe.mandarin.features.favorites.data.sharedprefs
 
-import com.mandarinkafe.mandarin.features.favorites.domain.models.FavoriteMeal
+import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
 
 interface FavoritesStorage {
-
-    fun getFavorites(): Set<FavoriteMeal>
-    fun addToFavorites(meal: FavoriteMeal)
-    fun removeFromFavorites(mealId: String)
+    suspend fun toggleFavorite(meal: StoredFavoriteMeal): Boolean
+    suspend fun getFavorites(): Set<StoredFavoriteMeal>
+    fun saveFavorites(updatedFavorites: Set<StoredFavoriteMeal>)
 }

@@ -47,7 +47,8 @@ class MenuRepositoryImpl @Inject constructor(
             Log.e("DEBUG", "menuDto оказался null или пустым")
             return emptyList()
         }
-        val storedFavorites = favoritesReader.getFavoritesIds()
+        val baseFavIds = favoritesReader.getBaseFavoritesIds()
+
         val childCategoriesMap = groupSubcategories(menuDto)
         val topLevelCategories = menuDto.filter { !it.hasParent() }
         val topLevelNames = topLevelCategories.map { it.name }.toSet()
@@ -62,12 +63,12 @@ class MenuRepositoryImpl @Inject constructor(
                 // Нет подкатегорий — обычная категория с блюдами
                 result.add(
                     parent.toDomain(
-                        storedFavorites = storedFavorites
+                        storedFavorites = baseFavIds
                     )
                 )
             } else {
                 // Есть подкатегории — собрать как категорию с subCategories
-                result.add(buildParentCategory(parent, subCategories, storedFavorites))
+                result.add(buildParentCategory(parent, subCategories, baseFavIds))
             }
         }
 
@@ -75,7 +76,7 @@ class MenuRepositoryImpl @Inject constructor(
         for (category in menuDto.filter { it.hasParent() }) {
             val parentName = category.parentName()
             if (!topLevelNames.contains(parentName)) {
-                result.add(buildLonelySubcategory(category, storedFavorites))
+                result.add(buildLonelySubcategory(category, baseFavIds))
             }
         }
         return result

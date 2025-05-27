@@ -11,7 +11,7 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.mandarinkafe.mandarin.features.cart.ui.screen.CartScreen
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.delivery.screen.DeliveryScreen
-import com.mandarinkafe.mandarin.features.favorites.screen.FavoritesScreen
+import com.mandarinkafe.mandarin.features.favorites.ui.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.features.menu.ui.screen.MenuScreen
 import com.mandarinkafe.mandarin.features.search.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.navigation.NavRoutes.CART_SCREEN_ROUTE

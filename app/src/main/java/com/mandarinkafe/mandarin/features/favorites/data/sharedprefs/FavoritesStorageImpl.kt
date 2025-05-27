@@ -5,40 +5,73 @@ import android.util.Log
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.mandarinkafe.mandarin.features.favorites.domain.models.FavoriteMeal
+import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
+import com.mandarinkafe.mandarin.features.favorites.data.models.isBase
+import com.mandarinkafe.mandarin.features.favorites.data.models.sameAs
 import javax.inject.Inject
 
 class FavoritesStorageImpl @Inject constructor(private val sharedPreferences: SharedPreferences) :
     FavoritesStorage {
 
-    override fun addToFavorites(meal: FavoriteMeal) {
-        val updatedFavorites = getFavorites().toMutableSet().apply { add(meal) }
-        sharedPreferences.edit { putString(FAVORITES_KEY, Gson().toJson(updatedFavorites)) }
-        Log.d("DEBUG LocalStorage", "Added to Favorites: $meal")
-    }
+    override suspend fun toggleFavorite(meal: StoredFavoriteMeal): Boolean {
+        // Получаем текущее множество избранного
+        val currentSet = getFavorites().toMutableSet()
 
-    override fun removeFromFavorites(mealId: String) {
-        val updatedFavorites = getFavorites().filter { it.id != mealId }
-        sharedPreferences.edit {
-            putString(FAVORITES_KEY, Gson().toJson(updatedFavorites))
+        // Определяем, базовая это запись или кастомная
+        val isBase = meal.isBase()
+
+        // Проверяем, есть ли уже запись в текущем множестве
+        val alreadyExists = if (isBase) {
+            // для базового — ищем именно Base по mealId
+            currentSet.any { it.mealId == meal.mealId && it.isBase() }
+        } else {
+            // для кастомного — полное совпадение всех полей, кроме timestamp
+            currentSet.any { it.sameAs(meal) }
         }
-        Log.d("DEBUG LocalStorage", "Removed from Favorites: $mealId")
+
+        val isNowFavorite = if (alreadyExists) {
+            // Если уже есть — удаляем
+            if (isBase) {
+                currentSet.removeAll { it.mealId == meal.mealId && it.isBase() }
+            } else {
+                currentSet.removeAll { it.sameAs(meal) }
+            }
+            false
+        } else {
+            // Если нет — добавляем
+            currentSet.add(meal)
+            true
+        }
+
+        // Сохраняем обновлённый сет
+        saveFavorites(currentSet)
+        Log.d(
+            "FavoritesStorage", if (isNowFavorite)
+                "Added to favorites: ${meal.mealId}"
+            else
+                "Removed from favorites: ${meal.mealId}"
+        )
+
+        return isNowFavorite
     }
 
-    override fun getFavorites(): Set<FavoriteMeal> {
+    override fun saveFavorites(favorites: Set<StoredFavoriteMeal>) {
+        sharedPreferences.edit {
+            putString(FAVORITES_KEY, Gson().toJson(favorites))
+        }
+    }
+
+    override suspend fun getFavorites(): Set<StoredFavoriteMeal> {
+        val json = sharedPreferences.getString(FAVORITES_KEY, null)
         return try {
-            val json = sharedPreferences.getString(FAVORITES_KEY, null)
-            val listType = object : TypeToken<Set<FavoriteMeal>>() {}.type
-            if (json.isNullOrEmpty()) {
-                mutableSetOf()
-            } else {
-                Gson().fromJson(json, listType) ?: mutableSetOf()
-            }
+            val listType = object : TypeToken<Set<StoredFavoriteMeal>>() {}.type
+            Gson().fromJson(json, listType) ?: emptySet()
+
         } catch (e: Exception) {
             Log.e("FavoritesStorage", "Ошибка чтения избранного: ${e.message}")
             e.printStackTrace()
             sharedPreferences.edit { remove(FAVORITES_KEY) }
-            mutableSetOf()
+            emptySet()
         }
     }
 

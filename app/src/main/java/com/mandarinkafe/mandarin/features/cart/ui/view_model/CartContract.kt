@@ -15,7 +15,7 @@ sealed interface CartContract {
         data class RemoveFromCartByMeal(val meal: Meal) : CartEvent
         data class ReplaceMealInCart(val newItem: CustomizedMeal, val oldItem: CustomizedMeal) :
             CartEvent
-
+        data class ToggleFavorite(val item: CustomizedMeal) : CartEvent
         data class CancelRemove(val item: CustomizedMeal) : CartEvent
         data object ClearCart : CartEvent
         data object ConfirmClearCart : CartEvent

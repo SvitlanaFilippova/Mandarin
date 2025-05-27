@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.cart.data.impl
 import com.mandarinkafe.mandarin.core.data.dto.CsvResponse
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
 import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendsSchemaDto
-import com.mandarinkafe.mandarin.features.cart.data.mapper.toDomain
+import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toDomain
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
 import com.mandarinkafe.mandarin.features.cart.domain.model.RecommendsSchemaRule
 import com.mandarinkafe.mandarin.util.Resource

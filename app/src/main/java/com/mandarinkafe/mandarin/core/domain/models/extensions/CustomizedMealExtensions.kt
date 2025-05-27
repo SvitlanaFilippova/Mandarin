@@ -1,8 +1,6 @@
 package com.mandarinkafe.mandarin.core.domain.models.extensions
 
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
-import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 
 fun Map<CustomizedMeal, Int>.getTotalQuantityByMealId(mealId: String): Int {
     return this.filter { it.key.meal.id == mealId }
@@ -64,26 +62,6 @@ fun CustomizedMeal.customizedText(): String {
             append(optionalItems.joinToString(", "))
         }
     }
-}
-
-fun List<ModifierGroup>.validateBy(mealModifiers: List<ModifierGroup>): List<ModifierGroup> {
-    return this.mapNotNull { selectedGroup ->
-        val referenceGroup = mealModifiers.find { it.id == selectedGroup.id }
-        if (referenceGroup != null) {
-            val updatedItems = selectedGroup.items.mapNotNull { item ->
-                referenceGroup.items.find { it.id == item.id }
-            }
-            if (updatedItems.isNotEmpty()) {
-                selectedGroup.copy(items = updatedItems)
-            } else null
-        } else null
-    }
-}
-
-fun StoredCartItem.sameAs(other: StoredCartItem): Boolean {
-    return mealId == other.mealId &&
-            addsIds.orEmpty() == other.addsIds.orEmpty() &&
-            modifiers.orEmpty() == other.modifiers.orEmpty()
 }
 
 fun CustomizedMeal.hasSelectedAllRequiredModifiers(): Boolean {

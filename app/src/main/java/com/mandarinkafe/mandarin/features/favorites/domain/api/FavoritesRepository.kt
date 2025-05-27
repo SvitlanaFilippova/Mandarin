@@ -1,11 +1,9 @@
 package com.mandarinkafe.mandarin.features.favorites.domain.api
 
-import com.mandarinkafe.mandarin.features.favorites.domain.models.FavoriteMeal
+import com.mandarinkafe.mandarin.features.favorites.domain.models.FavoriteRecord
 
 interface FavoritesRepository {
-    suspend fun addFavorite(meal: FavoriteMeal)
-    suspend fun removeFavorite(meal: FavoriteMeal)
-    suspend fun getFavoritesIds(): Set<String>
-    suspend fun getFavorites(): List<FavoriteMeal>
-    suspend fun checkIfFavorite(itemId: String): Boolean
+    suspend fun toggleFavorite(item: FavoriteRecord): Boolean
+    suspend fun getFavorites(): Set<FavoriteRecord>
+    suspend fun checkIfFavorite(item: FavoriteRecord): Boolean
 }
