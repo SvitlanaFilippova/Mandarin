@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.splash.ui.model
+package com.mandarinkafe.mandarin.splash.ui.model
 
 import androidx.compose.ui.Alignment
 

@@ -1,12 +1,12 @@
 package com.mandarinkafe.mandarin.features.menu.domain.usecase
 
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
-import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface MenuInteractor {
+    val menu: StateFlow<Resource<List<MealCategory>>>
     fun getMenu(): Flow<Resource<List<MealCategory>>>
-    fun getAddons(): Flow<Resource<List<MealAdditionalCategory>>>
     suspend fun forceRefresh()
 }

@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.cart.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
+import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCartItem
@@ -27,7 +28,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val cartInteractor: CartInteractor,
-    private val getRecommendsUseCase: GetRecommendsUseCase
+    private val getRecommendsUseCase: GetRecommendsUseCase,
+    private val favoritesApi: FavoritesApi
 ) : BaseViewModel<CartEvent, CartEffect, CartState>() {
     override fun setInitialState() = CartState()
     private val itemTimers = mutableMapOf<CustomizedMeal, Job>()

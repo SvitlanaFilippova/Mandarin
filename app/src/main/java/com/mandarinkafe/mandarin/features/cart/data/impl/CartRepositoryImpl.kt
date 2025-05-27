@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.cart.data.impl
 
 import android.util.Log
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
@@ -10,7 +11,6 @@ import com.mandarinkafe.mandarin.features.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartRepository
-import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.CategoryFilter
 import com.mandarinkafe.mandarin.util.Resource
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.first
 
 class CartRepositoryImpl @Inject constructor(
     private val storage: CartStorage,
-    private val menuRepository: MenuRepository,
+    private val menuCache: MenuCache,
     @Recommends private val recommendsFilter: CategoryFilter,
 ) : CartRepository {
 
@@ -28,7 +28,7 @@ class CartRepositoryImpl @Inject constructor(
 
         val rawCart = storage.getCart().toMutableList()
         // Ждём, пока меню загрузится
-        menuRepository.menu.first { it is Resource.Success }
+        menuCache.menu.first { it is Resource.Success }
 
         val validCart = mutableMapOf<CustomizedMeal, Int>()
         val invalidIds = mutableListOf<String>()
@@ -36,11 +36,11 @@ class CartRepositoryImpl @Inject constructor(
         for (storedCartItem in rawCart) {
             try {
                 // Получаем по id полную актуальную информацию о блюде
-                val fullMeal = menuRepository.getMealById(storedCartItem.mealId)
+                val fullMeal = menuCache.getMealById(storedCartItem.mealId)
                 if (fullMeal != null) {
 
                     val validAdds = storedCartItem.addsIds?.mapNotNull { id ->
-                        menuRepository.getMealById(id)?.toMealAdditional()
+                        menuCache.getMealById(id)?.toMealAdditional()
                     } ?: emptyList()
 
                     val validModifiers =
@@ -109,12 +109,8 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCommonRecommends(): List<Meal> {
-        // TODO Временная реализация, нужно будет тянуть из общего хранилища
-        // и потом фильтровать в зависимости от содержимого корзины
-
         val rawRecommends = mutableListOf<MealCategory>()
-
-        menuRepository.getMenu().first { result ->
+        menuCache.menu.first { result ->
             if (result is Resource.Success) {
                 val filtered = result.data?.filter { recommendsFilter.isMatch(it) }.orEmpty()
                 rawRecommends.addAll(filtered)

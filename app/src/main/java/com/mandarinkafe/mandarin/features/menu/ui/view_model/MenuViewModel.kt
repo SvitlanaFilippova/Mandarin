@@ -2,11 +2,10 @@ package com.mandarinkafe.mandarin.features.menu.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
+import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
-import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toMealItem
-import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.GetBannersUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
@@ -22,6 +21,10 @@ import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEv
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuState
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.Resource.Error
+import com.mandarinkafe.mandarin.util.Resource.Idle
+import com.mandarinkafe.mandarin.util.Resource.Loading
+import com.mandarinkafe.mandarin.util.Resource.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -30,7 +33,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MenuViewModel @Inject constructor(
     private val menuInteractor: MenuInteractor,
-    private val favoritesInteractor: FavoritesInteractor,
+    private val favoritesApi: FavoritesApi,
     private val getBannersUseCase: GetBannersUseCase
 ) : BaseViewModel<MenuEvent, MenuEffect, MenuState>() {
     override fun setInitialState() = MenuState()
@@ -38,7 +41,6 @@ class MenuViewModel @Inject constructor(
     init {
         loadMenu()
         getBanners()
-
     }
 
     override fun onEvent(event: MenuEvent) {
@@ -66,11 +68,12 @@ class MenuViewModel @Inject constructor(
     private fun loadMenu() {
         viewModelScope.launch {
             menuInteractor.getMenu().collectLatest { resource ->
-                setLoading(resource is Resource.Loading)
+                setLoading(resource is Loading)
                 when (resource) {
-                    is Resource.Success -> setData(resource.data)
-                    is Resource.Error -> setError(resource.message)
-                    is Resource.Loading -> {}
+                    is Success -> setData(resource.data)
+                    is Error -> setError(resource.message)
+                    is Loading -> {}
+                    is Idle -> {}
                 }
             }
         }
@@ -137,7 +140,6 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-
     private fun findMenuItemIndex(banner: Banner, menuItems: List<MenuItem>): Int {
         val name = banner.targetName.trim()
 
@@ -162,10 +164,10 @@ class MenuViewModel @Inject constructor(
     private fun toggleFavorite(meal: Meal) {
         viewModelScope.launch {
             val isNowFavorite = if (meal.isFavorite) {
-                favoritesInteractor.removeFromFavorites(meal.toFavoriteMeal())
+                favoritesApi.removeFavorite(meal.toFavoriteMeal())
                 false
             } else {
-                favoritesInteractor.addToFavorites(meal.toFavoriteMeal())
+                favoritesApi.addFavorite(meal.toFavoriteMeal())
                 true
             }
 
@@ -194,7 +196,7 @@ class MenuViewModel @Inject constructor(
         viewModelScope.launch {
             setState { copy(bannersAreLoading = true) }
             val result = getBannersUseCase()
-            if (result is Resource.Success) {
+            if (result is Success) {
                 val banners = result.data ?: emptyList()
                 setState { copy(banners = banners, bannersAreLoading = false) }
             }
@@ -203,7 +205,8 @@ class MenuViewModel @Inject constructor(
 
     //TODO убрать отсюда эту функцию!
     fun getFavorites(): List<MenuItem> {
-        return favoritesInteractor.getFavorites().map { it.toMealItem() }
+//TODO ()
+        return emptyList()
     }
 
 }

@@ -1,8 +1,9 @@
 package com.mandarinkafe.mandarin.features.menu.di
 
 import com.google.gson.Gson
+import com.mandarinkafe.mandarin.core.data.api.FavoritesReader
+import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
-import com.mandarinkafe.mandarin.features.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.features.menu.data.api.ImageValidator
 import com.mandarinkafe.mandarin.features.menu.data.impl.BannersRepositoryImpl
 import com.mandarinkafe.mandarin.features.menu.data.impl.ImageValidatorImpl
@@ -23,13 +24,26 @@ class MenuDataModule {
     @Singleton
     fun provideMenuRepository(
         networkClient: NetworkClient,
-        favoritesRepository: FavoritesRepository,
-    ): MenuRepository {
+        favoritesReader: FavoritesReader,
+    ): MenuRepositoryImpl {
         return MenuRepositoryImpl(
             networkClient = networkClient,
-            favoritesRepository = favoritesRepository
+            favoritesReader = favoritesReader
         )
     }
+
+    @Provides
+    @Singleton
+    fun provideMenuRepositoryInterface(
+        impl: MenuRepositoryImpl
+    ): MenuRepository = impl
+
+    @Provides
+    @Singleton
+    fun provideMenuFetcherInterface(
+        impl: MenuRepositoryImpl
+    ): MenuFetcher = impl
+
 
     @Provides
     @Singleton

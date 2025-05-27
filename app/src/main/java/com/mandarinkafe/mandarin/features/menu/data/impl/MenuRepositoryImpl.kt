@@ -1,10 +1,11 @@
 package com.mandarinkafe.mandarin.features.menu.data.impl
 
 import android.util.Log
+import com.mandarinkafe.mandarin.core.data.api.FavoritesReader
+import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
-import com.mandarinkafe.mandarin.features.favorites.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.features.menu.data.dto.CategoryDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.MenuResponse
 import com.mandarinkafe.mandarin.features.menu.data.mapper.hasParent
@@ -12,167 +13,41 @@ import com.mandarinkafe.mandarin.features.menu.data.mapper.parentName
 import com.mandarinkafe.mandarin.features.menu.data.mapper.subName
 import com.mandarinkafe.mandarin.features.menu.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
-import com.mandarinkafe.mandarin.util.Constants.DELAY_BEFORE_NEXT_ATTEMPT
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
-import com.mandarinkafe.mandarin.util.Constants.MAX_ATTEMPTS
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.applyTypography
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 @Singleton
 class MenuRepositoryImpl @Inject constructor(
     private val networkClient: NetworkClient,
-    private val favoritesRepository: FavoritesRepository
-) : MenuRepository {
+    private val favoritesReader: FavoritesReader
+) : MenuRepository, MenuFetcher {
 
-    private val _menu =
-        MutableStateFlow<Resource<List<MealCategory>>>(Resource.Loading())
-    override val menu: StateFlow<Resource<List<MealCategory>>> = _menu.asStateFlow()
+    override suspend fun fetchMenu(): Resource<List<MealCategory>> {
+        try {
+            val response = networkClient.getMenu()
 
-    override fun getMenu(): Flow<Resource<List<MealCategory>>> {
-        when (_menu.value) {
-            is Resource.Error -> {
-                Log.d("DEBUG  MenuRepository", "getMenu - Resource.Error")
+            if (response.resultCode == HTTP_SUCCESS && (response as MenuResponse).itemCategories != null) {
+                val categories = response.itemCategories
+                val data = buildMenuStructure(categories)
+                return Resource.Success(data)
+            } else {
+                return Resource.Error("Ошибка сервера или пустой ответ")
             }
+        } catch (e: Exception) {
 
-            is Resource.Loading -> {
-                Log.d("DEBUG  MenuRepository", "getMenu - Resource.Loading")
-                fetchMenuWithRetries()
-            }
-
-            is Resource.Success -> {
-                Log.d("DEBUG  MenuRepository", "getMenu - Данные уже есть, возвращаю кэш menu")
-            }
-        }
-        return menu
-    }
-
-    // Метод для получения актуальной информации о блюде по его id
-    override fun getMealById(id: String): Meal? {
-        val currentMenu = menu.value
-
-        if (currentMenu is Resource.Success) {
-            currentMenu.data?.forEach { category ->
-                val meal = findMealByIDRecursively(category, id)
-                if (meal != null) return meal
-            }
-        }
-        return null
-    }
-
-    override fun getMealsBySku(sku: String): List<Meal> {
-        val currentMenu = menu.value
-        if (currentMenu is Resource.Success) {
-            val result = mutableListOf<Meal>()
-            currentMenu.data?.forEach { category ->
-                findMealsBySkuRecursively(category, sku, result)
-            }
-            return result
-        }
-        return emptyList()
-    }
-
-    private fun findMealsBySkuRecursively(
-        category: MealCategory,
-        sku: String,
-        result: MutableList<Meal>
-    ) {
-        // Ищем совпадение по блюду
-        category.meals?.firstOrNull { it.sku.equals(sku, ignoreCase = true) }?.let {
-            result.add(it)
-            return
-        }
-        // Рекурсивно по подкатегориям
-        category.subCategories?.forEach { sub ->
-            findMealsBySkuRecursively(sub, sku, result)
+            return Resource.Error("Ошибка: ${e.message}")
         }
     }
 
-    private fun collectAllMeals(category: MealCategory, result: MutableList<Meal>) {
-        // Добавляем блюда из этой категории
-        category.meals?.let { result.addAll(it) }
-
-        // Рекурсивно добавляем блюда из подкатегорий
-        category.subCategories?.forEach { subCategory ->
-            collectAllMeals(subCategory, result)
-        }
-    }
-
-    private fun findMealByIDRecursively(category: MealCategory, id: String): Meal? {
-        // Ищем в текущей категории
-        category.meals?.firstOrNull { it.id == id }?.let { return it }
-
-        // Если не нашли — ищем во вложенных подкатегориях
-        category.subCategories?.forEach { subCategory ->
-            val found = findMealByIDRecursively(subCategory, id)
-            if (found != null) return found
-        }
-        return null
-    }
-
-    // Метод для принудительного обновления
-    override suspend fun forceRefresh() {
-        Log.d("DEBUG  MenuRepository", "forceRefresh")
-        fetchMenuWithRetries()
-    }
-
-    private fun fetchMenuWithRetries() {
-        Log.d("DEBUG  MenuRepository", "запуск fetchMenuWithRetries")
-        CoroutineScope(Dispatchers.IO).launch {
-            var attempts = 0
-            while (attempts < MAX_ATTEMPTS) {
-                _menu.value = Resource.Loading()
-                try {
-                    val response = networkClient.getMenu()
-                    if (response.resultCode == -1) {
-                        _menu.value =
-                            Resource.Error("Проверьте подключение к интернету")
-                        return@launch
-                    }
-                    if (response.resultCode == HTTP_SUCCESS && (response as MenuResponse).itemCategories != null) {
-                        val categories = response.itemCategories
-                        val data = buildMenuStructure(categories)
-                        _menu.value = Resource.Success(data)
-                        return@launch
-                    } else {
-                        _menu.value = Resource.Error("Ошибка сервера или пустой ответ")
-                    }
-                } catch (e: Exception) {
-                    _menu.value = Resource.Error("Что-то пошло не так. Ошибка: ${e.message}")
-                    Log.d("DEBUG  MenuRepository", "e: Exception, ${e.message}")
-                    Log.d("DEBUG  MenuRepository", Log.getStackTraceString(e))
-                }
-                attempts++
-                delay(DELAY_BEFORE_NEXT_ATTEMPT)
-            }
-            // Если не удалось после всех попыток
-            if (_menu.value !is Resource.Success) {
-                _menu.value = Resource.Error("Не удалось загрузить меню после $attempts попыток")
-            }
-        }
-    }
-
-    override fun fetchMenuIfNeeded() {
-        if (_menu.value !is Resource.Success && _menu.value !is Resource.Loading) {
-            fetchMenuWithRetries()
-        }
-    }
-
-    private fun buildMenuStructure(menuDto: List<CategoryDto>?): List<MealCategory> {
+    private suspend fun buildMenuStructure(menuDto: List<CategoryDto>?): List<MealCategory> {
         if (menuDto.isNullOrEmpty()) {
             Log.e("DEBUG", "menuDto оказался null или пустым")
             return emptyList()
         }
-        val storedFavorites = favoritesRepository.getFavorites().map { it.id }
+        val storedFavorites = favoritesReader.getFavoritesIds()
         val childCategoriesMap = groupSubcategories(menuDto)
         val topLevelCategories = menuDto.filter { !it.hasParent() }
         val topLevelNames = topLevelCategories.map { it.name }.toSet()
@@ -215,7 +90,7 @@ class MenuRepositoryImpl @Inject constructor(
     private fun buildParentCategory(
         parentDto: CategoryDto,
         subCategories: List<CategoryDto>?,
-        storedFavorites: List<String>,
+        storedFavorites: Set<String>,
     ): MealCategory {
         val name = parentDto.name.applyTypography()
         return MealCategory(
@@ -236,9 +111,19 @@ class MenuRepositoryImpl @Inject constructor(
 
     private fun buildLonelySubcategory(
         category: CategoryDto,
-        storedFavorites: List<String>
+        storedFavorites: Set<String>
     ): MealCategory {
         Log.w("DEBUG", "Подкатегория '${category.name}' без родителя")
         return category.copy(name = category.subName()).toDomain(storedFavorites)
+    }
+
+    private fun collectAllMeals(category: MealCategory, result: MutableList<Meal>) {
+        // Добавляем блюда из этой категории
+        category.meals?.let { result.addAll(it) }
+
+        // Рекурсивно добавляем блюда из подкатегорий
+        category.subCategories?.forEach { subCategory ->
+            collectAllMeals(subCategory, result)
+        }
     }
 }

@@ -1,10 +1,15 @@
 package com.mandarinkafe.mandarin.core.di
 
 import android.content.Context
+import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
+import com.mandarinkafe.mandarin.core.data.impl.MenuCacheImpl
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
 import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
 import com.mandarinkafe.mandarin.core.data.network.RetrofitNetworkClient
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
+import com.mandarinkafe.mandarin.splash.domain.impl.GetInitialDataUseCaseImpl
+import com.mandarinkafe.mandarin.splash.domain.usecase.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.util.Constants.GOOGLE_DOCS_BASE_URL
 import com.mandarinkafe.mandarin.util.Constants.IIKO_BASE_URL
 import dagger.Module
@@ -55,6 +60,22 @@ class CoreDataModule {
         return RetrofitNetworkClient(
             context = context, iikoService = ikkoService,
             googleDocsApi = googleDocsApi
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideMenuCache(fetcher: MenuFetcher): MenuCache {
+        return MenuCacheImpl(
+            fetcher = fetcher
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetInitialDataUseCase(menuCache: MenuCache): GetInitialDataUseCase {
+        return GetInitialDataUseCaseImpl(
+            menuCache = menuCache
         )
     }
 }

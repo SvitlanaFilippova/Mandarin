@@ -1,14 +1,14 @@
 package com.mandarinkafe.mandarin.features.search.data.impl
 
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Label
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
-import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.features.search.domain.api.LabelsRepository
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.first
 
 class LabelsRepositoryImpl(
-    private val menuRepository: MenuRepository
+    private val menuCache: MenuCache,
 ) : LabelsRepository {
 
     private var cachedLabels: List<Label>? = null
@@ -16,10 +16,10 @@ class LabelsRepositoryImpl(
 
     override suspend fun getLabels(): List<Label> {
         // Ждём, пока меню загрузится
-        menuRepository.menu.first { it is Resource.Success }
+        menuCache.menu.first { it is Resource.Success }
 
         val currentMenu =
-            (menuRepository.menu.value as? Resource.Success)?.data ?: return emptyList()
+            (menuCache.menu.value as? Resource.Success)?.data ?: return emptyList()
 
         val currentHash = currentMenu.hashCode()
 

@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.features.search.di
 
-import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.search.data.impl.LabelsRepositoryImpl
 import com.mandarinkafe.mandarin.features.search.domain.api.LabelsRepository
 import com.mandarinkafe.mandarin.features.search.domain.impl.FilterUseCaseImpl
@@ -21,9 +21,9 @@ class SearchModule {
 
     @Provides
     @Singleton
-    fun provideLabelsRepository(menuRepository: MenuRepository): LabelsRepository {
+    fun provideLabelsRepository(menuCache: MenuCache): LabelsRepository {
         return LabelsRepositoryImpl(
-            menuRepository = menuRepository
+            menuCache = menuCache
         )
     }
 
@@ -36,9 +36,9 @@ class SearchModule {
 
     @Provides
     @Singleton
-    fun provideGetFullMealListUseCase(repository: MenuRepository): GetFullMealListUseCase =
+    fun provideGetFullMealListUseCase(menuCache: MenuCache): GetFullMealListUseCase =
         GetFullMealListUseCaseImpl(
-            repository = repository
+            menuCache = menuCache
         )
 
     @Provides

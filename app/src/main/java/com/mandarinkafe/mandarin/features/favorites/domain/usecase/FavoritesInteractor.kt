@@ -3,8 +3,8 @@ package com.mandarinkafe.mandarin.features.favorites.domain.usecase
 import com.mandarinkafe.mandarin.features.favorites.domain.models.FavoriteMeal
 
 interface FavoritesInteractor {
-    fun getFavorites(): List<FavoriteMeal>
-    fun addToFavorites(meal: FavoriteMeal)
-    fun removeFromFavorites(meal: FavoriteMeal)
-    fun checkIfFavorite(itemId: String): Boolean
+    suspend fun getFavorites(): List<FavoriteMeal>
+    suspend fun addFavorite(meal: FavoriteMeal)
+    suspend fun removeFavorite(meal: FavoriteMeal)
+    suspend fun checkIfFavorite(itemId: String): Boolean
 }

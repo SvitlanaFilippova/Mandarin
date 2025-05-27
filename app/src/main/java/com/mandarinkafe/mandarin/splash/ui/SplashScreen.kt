@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.splash.ui
+package com.mandarinkafe.mandarin.splash.ui
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -22,8 +22,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.splash.ui.model.SplashElementsProvider
-import com.mandarinkafe.mandarin.features.splash.ui.view_model.SplashViewModel
+import com.mandarinkafe.mandarin.splash.ui.model.SplashElementsProvider
+import com.mandarinkafe.mandarin.splash.ui.view_model.SplashViewModel
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_ANIMATION_DURATION
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_APPEARING_DURATION

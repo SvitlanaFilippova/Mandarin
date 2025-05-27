@@ -2,9 +2,9 @@ package com.mandarinkafe.mandarin.features.search.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
+import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
-import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetFullMealListUseCase
@@ -13,7 +13,10 @@ import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.Se
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEvent
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchState
-import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.Resource.Error
+import com.mandarinkafe.mandarin.util.Resource.Idle
+import com.mandarinkafe.mandarin.util.Resource.Loading
+import com.mandarinkafe.mandarin.util.Resource.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,7 +26,7 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val getLabelsUseCase: GetLabelsUseCase,
     private val getFullMealListUseCase: GetFullMealListUseCase,
-    private val favoritesInteractor: FavoritesInteractor,
+    private val favoritesApi: FavoritesApi,
     private val filterUseCase: FilterUseCase
 ) : BaseViewModel<SearchEvent, SearchEffect, SearchState>() {
     override fun setInitialState() = SearchState()
@@ -117,10 +120,10 @@ class SearchViewModel @Inject constructor(
     private fun toggleFavorite(meal: Meal) {
         viewModelScope.launch {
             val isNowFavorite = if (meal.isFavorite) {
-                favoritesInteractor.removeFromFavorites(meal.toFavoriteMeal())
+                favoritesApi.removeFavorite(meal.toFavoriteMeal())
                 false
             } else {
-                favoritesInteractor.addToFavorites(meal.toFavoriteMeal())
+                favoritesApi.addFavorite(meal.toFavoriteMeal())
                 true
             }
 
@@ -170,9 +173,9 @@ class SearchViewModel @Inject constructor(
     private fun loadMenu() {
         viewModelScope.launch {
             getFullMealListUseCase().collectLatest { resource ->
-                setLoading(resource is Resource.Loading)
+                setLoading(resource is Loading)
                 when (resource) {
-                    is Resource.Success -> setState {
+                    is Success -> setState {
                         copy(
                             isLoading = false,
                             fullMealList = resource.data ?: emptyList(),
@@ -181,8 +184,9 @@ class SearchViewModel @Inject constructor(
                         )
                     }
 
-                    is Resource.Error -> setError(resource.message)
-                    is Resource.Loading -> {}
+                    is Error -> setError(resource.message)
+                    is Loading -> {}
+                    is Idle -> {}
                 }
             }
         }
