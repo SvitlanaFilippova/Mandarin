@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.features.menu.di
 
 import com.google.gson.Gson
-import com.mandarinkafe.mandarin.core.data.api.FavoritesReader
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
+import com.mandarinkafe.mandarin.core.domain.api.FavoritesReader
 import com.mandarinkafe.mandarin.features.menu.data.api.ImageValidator
 import com.mandarinkafe.mandarin.features.menu.data.impl.BannersRepositoryImpl
 import com.mandarinkafe.mandarin.features.menu.data.impl.ImageValidatorImpl

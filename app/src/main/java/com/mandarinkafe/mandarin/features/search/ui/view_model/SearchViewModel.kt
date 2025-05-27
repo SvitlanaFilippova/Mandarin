@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.search.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
-import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
+import com.mandarinkafe.mandarin.core.domain.api.FavoritesWriter
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
@@ -25,7 +25,7 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val getLabelsUseCase: GetLabelsUseCase,
     private val getFullMealListUseCase: GetFullMealListUseCase,
-    private val favoritesApi: FavoritesApi,
+    private val favoritesWriter: FavoritesWriter,
     private val filterUseCase: FilterUseCase
 ) : BaseViewModel<SearchEvent, SearchEffect, SearchState>() {
     override fun setInitialState() = SearchState()
@@ -118,14 +118,7 @@ class SearchViewModel @Inject constructor(
     // Добавить блюдо в избранное или удалить
     private fun toggleFavorite(meal: Meal) {
         viewModelScope.launch {
-            val isNowFavorite = if (meal.isFavorite) {
-                favoritesApi.removeFavorite(meal.id)
-                false
-            } else {
-                favoritesApi.addFavorite(meal.id)
-                true
-            }
-
+            val isNowFavorite = favoritesWriter.toggleFavorite(meal.id)
             setState {
                 val updatedFullList = fullMealList.map { currentMeal ->
                     if (currentMeal.id == meal.id) {

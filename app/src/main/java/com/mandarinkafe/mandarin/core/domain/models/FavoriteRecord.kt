@@ -1,6 +1,4 @@
-package com.mandarinkafe.mandarin.features.favorites.domain.models
-
-import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+package com.mandarinkafe.mandarin.core.domain.models
 
 sealed class FavoriteRecord {
     abstract val mealId: String

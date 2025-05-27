@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.features.menu.data.impl
 
 import android.util.Log
-import com.mandarinkafe.mandarin.core.data.api.FavoritesReader
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
+import com.mandarinkafe.mandarin.core.domain.api.FavoritesReader
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.menu.data.dto.CategoryDto

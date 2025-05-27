@@ -1,8 +1,9 @@
 package com.mandarinkafe.mandarin.features.menu.ui.components
 
 import androidx.compose.runtime.Composable
+import com.mandarinkafe.mandarin.core.domain.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCustomizedMeal
+
 import com.mandarinkafe.mandarin.features.meal_details.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent

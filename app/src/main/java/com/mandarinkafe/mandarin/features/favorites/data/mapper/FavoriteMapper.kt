@@ -1,13 +1,14 @@
 package com.mandarinkafe.mandarin.features.favorites.data.mapper
 
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.FavoriteRecord
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
 import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
-import com.mandarinkafe.mandarin.features.favorites.domain.models.FavoriteRecord
 
 object FavoriteMapper {
 
-    fun FavoriteRecord.toStoredFavoriteMeal(): StoredFavoriteMeal {
+    fun FavoriteRecord.toStored(): StoredFavoriteMeal {
         return when (this) {
             is FavoriteRecord.Base -> StoredFavoriteMeal(mealId = mealId, timestamp = timestamp)
             is FavoriteRecord.Custom -> StoredFavoriteMeal(
@@ -51,4 +52,12 @@ object FavoriteMapper {
             )
         }
     }
+
+    fun Meal.toFavoriteRecord(timestamp: Long): FavoriteRecord {
+        return FavoriteRecord.Base(
+            mealId = id,
+            timestamp = timestamp
+        )
+    }
 }
+
