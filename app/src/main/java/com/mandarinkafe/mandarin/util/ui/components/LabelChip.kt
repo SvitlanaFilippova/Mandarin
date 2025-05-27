@@ -20,7 +20,14 @@ import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_LABEL_CHIP
 fun LabelChip(label: LabelUiModel) {
     Box(
         modifier = Modifier
-            .background(label.backgroundColor, shape = RoundedCornerShape(Dimens.CornerRadius8))
+            .background(
+                label.backgroundColor, shape = RoundedCornerShape(
+                    topStart = Dimens.CornerRadius8,
+                    bottomStart = Dimens.CornerRadius8,
+                    topEnd = Dimens.ZeroDp0,
+                    bottomEnd = Dimens.ZeroDp0
+                )
+            )
             .padding(Dimens.MarginSuperSmall4),
         contentAlignment = Alignment.CenterEnd
     ) {

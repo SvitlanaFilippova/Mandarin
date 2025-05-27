@@ -80,7 +80,7 @@ fun MealItemImageBox(
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4),
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(Dimens.MarginSuperSmall4)
+                .padding(vertical = Dimens.MarginSuperSmall4)
         ) {
             meal.labels.forEach {
                 LabelChip(
