@@ -60,7 +60,7 @@ fun MenuCompactMealItem(
             Spacer(modifier = Modifier.weight(1f))
 
             MealButtonsRow(
-                meal = meal,
+                baseMeal = meal,
                 onCartEvent = onCartEvent,
                 cartState = cartState,
                 onMealDetailsClick = { onEvent(MenuEvent.OnMealDetailsClick(meal)) }

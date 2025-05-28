@@ -12,6 +12,7 @@ sealed interface CartContract {
     sealed interface CartEvent : BaseEvent {
         data class AddToCart(val item: CustomizedMeal) : CartEvent
         data class RemoveFromCartWithDelay(val item: CustomizedMeal) : CartEvent
+        data class RemoveFromCartByItem(val item: CustomizedMeal) : CartEvent
         data class RemoveFromCartByMeal(val meal: Meal) : CartEvent
         data class ReplaceMealInCart(val newItem: CustomizedMeal, val oldItem: CustomizedMeal) :
             CartEvent

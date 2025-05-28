@@ -57,20 +57,23 @@ class FavoritesModule {
 
     @Provides
     @Singleton
+    fun provideFavoritesWriter(
+        repoImpl: FavoritesRepositoryImpl
+    ): FavoritesWriter =
+        repoImpl
+
+
+    @Provides
+    @Singleton
     fun provideFavoritesApi(
         reader: FavoritesReader,
         writer: FavoritesWriter,
         validator: ValidateFavoritesUseCase
     ): FavoritesApi {
-        return FavoritesInteractorImpl(reader, writer, validator)
+        return FavoritesInteractorImpl(
+            reader = reader, writer = writer, validator = validator
+        )
     }
-
-    @Provides
-    @Singleton
-    fun provideFavoritesWriter(
-        writer: FavoritesRepositoryImpl
-    ): FavoritesWriter =
-        writer
 
     @Provides
     @Singleton

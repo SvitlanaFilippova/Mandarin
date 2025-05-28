@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.features.favorites.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -11,18 +10,20 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
-import com.mandarinkafe.mandarin.features.menu.ui.components.MenuList
+import com.mandarinkafe.mandarin.features.favorites.ui.components.FavoritesContent
+import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesViewModel
 import com.mandarinkafe.mandarin.features.menu.ui.components.MenuTopBar
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuViewModel
+import com.mandarinkafe.mandarin.shared.placeholder.ui.screen.PlaceholderScreen
+import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 
 @Composable
 fun FavoritesScreen(
-    menuViewModel: MenuViewModel = hiltViewModel(),
+    favoritesViewModel: FavoritesViewModel = hiltViewModel(),
     cartViewModel: CartViewModel
 ) {
+    val state by favoritesViewModel.state.collectAsState()
     val cartState by cartViewModel.state.collectAsState()
-    val effectFlow = menuViewModel.effect
+    val effectFlow = favoritesViewModel.effect
 
     Column(
         modifier = Modifier
@@ -30,17 +31,24 @@ fun FavoritesScreen(
             .background(Colors.AppBlack)
     ) {
         MenuTopBar(
-            onPhoneClick = { menuViewModel.onEvent(MenuEvent.OnPhoneClick) },
+            onPhoneClick = { }, //TODO
             onLogoCLick = { return@MenuTopBar }
         )
-        MenuList(
-            menuItems = emptyList(),
-            listState = rememberLazyListState(),
-            modifier = Modifier,
-            onEvent = menuViewModel::onEvent,
-            onCartEvent = cartViewModel::onEvent,
-            cartState = cartState,
-            effectFlow = effectFlow
-        )
+
+        when {
+            state.isLoading -> LoadingScreen()
+            state.errorMessage != null -> PlaceholderScreen(
+                state.errorMessage!!,
+            )
+
+            else -> FavoritesContent(
+                data = state.data,
+                onEvent = favoritesViewModel::onEvent,
+                onCartEvent = cartViewModel::onEvent,
+                cartState = cartState,
+                effectFlow = effectFlow
+            )
+
+        }
     }
 }

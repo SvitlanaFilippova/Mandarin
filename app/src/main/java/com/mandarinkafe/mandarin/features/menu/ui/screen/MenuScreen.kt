@@ -8,9 +8,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
-import com.mandarinkafe.mandarin.features.menu.ui.components.HandleNavEffects
+import com.mandarinkafe.mandarin.features.menu.ui.components.HandleEffects
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuViewModel
-import com.mandarinkafe.mandarin.placeholder.ui.screen.PlaceholderScreen
+import com.mandarinkafe.mandarin.shared.placeholder.ui.screen.PlaceholderScreen
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 
 @Composable
@@ -41,7 +41,7 @@ fun MenuScreen(
             effectFlow = effectFlow
         )
     }
-    HandleNavEffects(
+    HandleEffects(
         effectFlow = effectFlow,
         navController = navController,
         context = context

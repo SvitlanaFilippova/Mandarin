@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.menu.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
-import com.mandarinkafe.mandarin.core.domain.api.FavoritesWriter
+import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
@@ -31,7 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MenuViewModel @Inject constructor(
     private val menuInteractor: MenuInteractor,
-    private val favoritesWriter: FavoritesWriter,
+    private val favoritesApi: FavoritesApi,
     private val getBannersUseCase: GetBannersUseCase
 ) : BaseViewModel<MenuEvent, MenuEffect, MenuState>() {
     override fun setInitialState() = MenuState()
@@ -161,7 +161,7 @@ class MenuViewModel @Inject constructor(
     // Добавить блюдо в избранное или удалить
     private fun toggleFavorite(meal: Meal) {
         viewModelScope.launch {
-            val isNowFavorite = favoritesWriter.toggleFavorite(meal.id)
+            val isNowFavorite = favoritesApi.toggleFavorite(meal)
 
             setState {
                 copy(

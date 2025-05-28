@@ -96,7 +96,7 @@ fun MenuMealItem(
 
             // Кнопки
             MealButtonsRow(
-                meal = meal,
+                baseMeal = meal,
                 onCartEvent = onCartEvent,
                 cartState = cartState,
                 onMealDetailsClick = { meal -> onEvent(MenuEvent.OnMealDetailsClick(meal)) },

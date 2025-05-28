@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.meal_details.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
-import com.mandarinkafe.mandarin.core.domain.api.FavoritesWriter
+import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MealDetailsViewModel @Inject constructor(
     private val getAddonsUseCase: GetAddonsUseCase,
-    private val favoritesWriter: FavoritesWriter
+    private val favoritesApi: FavoritesApi,
 ) : BaseViewModel<MealDetailsEvent, MealDetailsEffect, MealDetailsState>() {
     override fun setInitialState() = MealDetailsState()
 
@@ -130,7 +130,7 @@ class MealDetailsViewModel @Inject constructor(
 
         // Запускаем корутину, чтобы вызвать suspend-функцию
         viewModelScope.launch {
-            val isNowFavorite = favoritesWriter.toggleFavorite(current)
+            val isNowFavorite = favoritesApi.toggleFavorite(current)
 
             // После того как мы получили результат, обновляем стейт
             setState {

@@ -12,7 +12,7 @@ import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER_DEFAULT
 import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun HandleNavEffects(
+fun HandleEffects(
     effectFlow: Flow<MenuContract.MenuEffect>,
     navController: NavHostController,
     context: Context

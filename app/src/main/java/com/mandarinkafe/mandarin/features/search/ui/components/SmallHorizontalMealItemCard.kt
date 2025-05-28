@@ -94,7 +94,7 @@ fun SmallHorizontalMealItemCard(
                 Spacer(modifier = Modifier.weight(1f))
 
                 MealButtonsRow(
-                    meal = meal,
+                    baseMeal = meal,
                     onCartEvent = onCartEvent,
                     cartState = cartState,
                     onMealDetailsClick = { meal ->

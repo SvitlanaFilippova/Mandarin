@@ -3,8 +3,8 @@ package com.mandarinkafe.mandarin.features.favorites.data.impl
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesReader
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesWriter
 import com.mandarinkafe.mandarin.core.domain.models.FavoriteRecord
+import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteRecords
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toStored
-import com.mandarinkafe.mandarin.features.favorites.data.mapper.toFavoriteRecords
 import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorage
 
@@ -17,8 +17,8 @@ class FavoritesRepositoryImpl(
         return rawStored.toFavoriteRecords()
     }
 
-    override suspend fun getBaseFavoritesIds(): Set<FavoriteRecord> {
-        return getRawFavorites().filterIsInstance<FavoriteRecord.Base>().toSet()
+    override suspend fun getBaseFavoritesIds(): Set<String> {
+        return getRawFavorites().filterIsInstance<FavoriteRecord.Base>().map { it.mealId }.toSet()
     }
 
     override suspend fun checkIfFavorite(item: FavoriteRecord): Boolean {

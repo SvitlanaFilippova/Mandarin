@@ -2,53 +2,56 @@ package com.mandarinkafe.mandarin.features.favorites.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
+import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.features.favorites.domain.usecase.FavoritesInteractor
 import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesContract.FavoritesEffect
 import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesContract.FavoritesEvent
 import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesContract.FavoritesState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FavoritesViewModel(private val favoritesInteractor: FavoritesInteractor) :
+@HiltViewModel
+class FavoritesViewModel @Inject constructor(private val favoritesApi: FavoritesApi) :
     BaseViewModel<FavoritesEvent, FavoritesEffect, FavoritesState>() {
     override fun setInitialState() = FavoritesState()
 
     init {
-        getFavorites()
+        observeFavorites()
     }
 
     override fun onEvent(event: FavoritesEvent) {
         when (event) {
-            is FavoritesEvent.ToggleFavorite -> toggleFavorite(event.meal)
+            is FavoritesEvent.ToggleFavorite -> toggleFavorite(event.item)
+            is FavoritesEvent.OpenMealDetails -> sendEffect(
+                FavoritesEffect.OpenMealDetailsBS(event.item)
+            )
         }
     }
 
-    private fun getFavorites(): List<CustomizedMeal> {
-        val favorites = mutableListOf<CustomizedMeal>()
+    private fun observeFavorites() {
+        setState { copy(isLoading = true) }
         viewModelScope.launch {
-            favoritesInteractor.getFavorites()
+            favoritesApi.observeFavorites()
+                .collect { favList ->
+                    if (favList.isEmpty()) {
+                        setState {
+                            copy(
+                                error =,
+                                isLoading = false
+                            )
+                        }
+                    } else {
+                        setState { copy(data = favList, isLoading = false, error = null) }
+                    }
+                }
         }
-        return favorites
     }
 
     // Добавить блюдо в избранное или удалить
     private fun toggleFavorite(meal: CustomizedMeal) {
         viewModelScope.launch {
-            favoritesInteractor.toggleFavorite(meal)
+            favoritesApi.toggleFavorite(meal)
         }
-//            setState {
-////                val updatedData = data.map { currentMeal ->
-////                    if (currentMeal == meal) {
-////                        currentMeal.copy(isFavorite = isNowFavorite)
-////                    } else {
-////                        currentMeal
-////                    }
-////                }
-////
-////                copy(
-////                    data = updatedData,
-////                )
-////            }
-//        }
     }
 }

@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.core.domain.api
 
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import kotlinx.coroutines.flow.Flow
 
 interface FavoritesApi {
 
@@ -21,4 +22,7 @@ interface FavoritesApi {
 
     /** Проверяет наличие кастомизированное блюда в списке избранных.*/
     suspend fun checkIfFavorite(meal: Meal): Boolean
+
+    /** Эмитит новый список при каждом изменении избранных.*/
+    fun observeFavorites(): Flow<List<CustomizedMeal>>
 }
