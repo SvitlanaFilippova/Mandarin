@@ -13,8 +13,8 @@ import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.favorites.ui.components.FavoritesContent
 import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesViewModel
 import com.mandarinkafe.mandarin.features.menu.ui.components.MenuTopBar
-import com.mandarinkafe.mandarin.shared.placeholder.ui.screen.PlaceholderScreen
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
+import com.mandarinkafe.mandarin.util.ui.screen.PlaceholderScreen
 
 @Composable
 fun FavoritesScreen(
@@ -34,11 +34,12 @@ fun FavoritesScreen(
             onPhoneClick = { }, //TODO
             onLogoCLick = { return@MenuTopBar }
         )
+        val error = state.error
 
         when {
             state.isLoading -> LoadingScreen()
-            state.errorMessage != null -> PlaceholderScreen(
-                state.errorMessage!!,
+            error != null -> PlaceholderScreen(
+                error
             )
 
             else -> FavoritesContent(
