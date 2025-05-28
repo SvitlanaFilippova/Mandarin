@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.util
 
 object Constants {
     // Network constants
+    const val NO_CONNECTION = -1
     const val HTTP_SUCCESS = 200
     const val HTTP_SERVER_ERROR = 500
     const val IMAGE_VALIDATOR_TIMEOUT = 1000

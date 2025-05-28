@@ -39,14 +39,14 @@ import com.mandarinkafe.mandarin.features.meal_details.ui.components.modifiers.M
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.AddsCategoryTabsRow
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.AddsItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.ChosenOptionsChipsRow
-import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
+import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsState
 import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
 import kotlinx.coroutines.launch
 
 @Composable
 fun MealDetailsContentScreen(
-    state: MealDetailsContract.MealDetailsState,
+    state: MealDetailsState,
     onEvent: (MealDetailsEvent) -> Unit,
     onAddToCart: (CustomizedMeal) -> Unit,
     onClose: () -> Unit,
@@ -80,7 +80,8 @@ fun MealDetailsContentScreen(
         BottomSheetHeader(
             meal = meal,
             onToggleFavorite = { onEvent(MealDetailsEvent.ToggleFavorite) },
-            onClose = onClose
+            onClose = onClose,
+            isFavorite = state.isFavorite
         )
 
         Box {

@@ -5,7 +5,9 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetFullMealListUseCase
 import com.mandarinkafe.mandarin.util.Resource
-import com.mandarinkafe.mandarin.util.Resource.Error
+import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
+import com.mandarinkafe.mandarin.util.Resource.ErrorNoInternet
+import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
@@ -26,10 +28,11 @@ class GetFullMealListUseCaseImpl(
                         .distinctBy { it.id } // если нужно убрать дубликаты
                     Success(allMeals)
                 }
-
-                is Error -> Error(result.message.toString())
                 is Loading -> Loading()
                 is Idle -> Loading()
+                is ErrorOther -> ErrorOther(result.message.toString())
+                is ErrorEmptyData -> ErrorEmptyData()
+                is ErrorNoInternet -> ErrorNoInternet()
             }
         }
     }

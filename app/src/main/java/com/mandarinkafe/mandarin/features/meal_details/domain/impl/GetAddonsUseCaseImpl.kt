@@ -7,7 +7,9 @@ import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditionalCa
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.CategoryFilter
 import com.mandarinkafe.mandarin.util.Resource
-import com.mandarinkafe.mandarin.util.Resource.Error
+import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
+import com.mandarinkafe.mandarin.util.Resource.ErrorNoInternet
+import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
@@ -32,15 +34,20 @@ class GetAddonsUseCaseImpl(
                     Success(addonsCategories.map { it.toMealAdditionalCategory() })
                 }
 
-                is Error -> {
-                    Error(result.message.toString())
+                is ErrorOther -> {
+                    ErrorOther(result.message.toString())
                 }
 
                 is Loading -> {
                     Loading()
                 }
 
-                is Idle -> Loading()
+                is Idle -> {
+                    Loading()
+                }
+
+                is ErrorEmptyData -> ErrorEmptyData()
+                is ErrorNoInternet -> ErrorNoInternet()
             }
         }
     }

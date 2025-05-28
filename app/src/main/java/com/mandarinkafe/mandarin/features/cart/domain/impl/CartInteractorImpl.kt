@@ -1,12 +1,12 @@
 package com.mandarinkafe.mandarin.features.cart.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartRepository
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
+import com.mandarinkafe.mandarin.util.Resource
 
 class CartInteractorImpl(private val repository: CartRepository) : CartInteractor {
-    override suspend fun getCart(): Map<CustomizedMeal, Int> {
+    override suspend fun getCart(): Resource<Map<CustomizedMeal, Int>> {
         return repository.getCart()
     }
 
@@ -22,8 +22,4 @@ class CartInteractorImpl(private val repository: CartRepository) : CartInteracto
         repository.clearCart()
     }
 
-    // TODO убрать отсюда! нарушение SRP
-    override suspend fun getCommonRecommends(): List<Meal> {
-        return repository.getCommonRecommends()
-    }
 }

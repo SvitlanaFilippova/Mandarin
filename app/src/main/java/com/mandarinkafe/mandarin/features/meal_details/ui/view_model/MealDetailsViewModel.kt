@@ -7,12 +7,14 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
+import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.features.meal_details.domain.usecase.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsState
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
-import com.mandarinkafe.mandarin.util.Resource.Error
+import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
@@ -125,27 +127,24 @@ class MealDetailsViewModel @Inject constructor(
     }
 
     private fun toggleFavorite() {
-        // Сначала забираем текущий CustomizedMeal из стейта
         val current = state.value.customizedMeal ?: return
 
-        // Запускаем корутину, чтобы вызвать suspend-функцию
         viewModelScope.launch {
             val isNowFavorite = favoritesApi.toggleFavorite(current)
-
-            // После того как мы получили результат, обновляем стейт
             setState {
                 copy(
-                    customizedMeal = current.copy(
-                        meal = current.meal.copy(isFavorite = isNowFavorite)
-                    )
+                    isFavorite = isNowFavorite
                 )
             }
         }
     }
 
     private fun setMeal(item: CustomizedMeal) {
-        setState {
-            copy(customizedMeal = item)
+        viewModelScope.launch {
+            val isFavorite = favoritesApi.checkIfFavorite(item)
+            setState {
+                copy(customizedMeal = item, isFavorite = isFavorite)
+            }
         }
     }
 
@@ -178,9 +177,9 @@ class MealDetailsViewModel @Inject constructor(
                     setLoading(result is Loading)
                     when (result) {
                         is Success -> setData(result.data)
-                        is Error -> setError(result.message)
                         is Loading -> {}
                         is Idle -> {}
+                        else -> setError(result)
                     }
                 }
             }
@@ -198,8 +197,14 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun setError(errorMessage: String?) {
-        setState { copy(errorMessage = errorMessage) }
+    private fun setError(resource: Resource<*>) {
+        val error = when (resource) {
+            is Resource.ErrorNoInternet<*> -> UiError.NoInternet
+            is Resource.ErrorEmptyData<*> -> UiError.AddonsEmpty
+            is ErrorOther<*> -> UiError.OtherError
+            else -> return
+        }
+        setState { copy(error = error) }
     }
 
     private fun setLoading(isLoading: Boolean) {

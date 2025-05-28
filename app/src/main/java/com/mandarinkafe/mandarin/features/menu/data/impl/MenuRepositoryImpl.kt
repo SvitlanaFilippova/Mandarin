@@ -14,6 +14,7 @@ import com.mandarinkafe.mandarin.features.menu.data.mapper.subName
 import com.mandarinkafe.mandarin.features.menu.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
+import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.applyTypography
 import jakarta.inject.Inject
@@ -26,19 +27,24 @@ class MenuRepositoryImpl @Inject constructor(
 ) : MenuRepository, MenuFetcher {
 
     override suspend fun fetchMenu(): Resource<List<MealCategory>> {
-        try {
+        return try {
             val response = networkClient.getMenu()
 
-            if (response.resultCode == HTTP_SUCCESS && (response as MenuResponse).itemCategories != null) {
-                val categories = response.itemCategories
-                val data = buildMenuStructure(categories)
-                return Resource.Success(data)
-            } else {
-                return Resource.Error("Ошибка сервера или пустой ответ")
+            when (response.resultCode) {
+                NO_CONNECTION -> Resource.ErrorNoInternet()
+                HTTP_SUCCESS -> {
+                    val categories = (response as MenuResponse).itemCategories
+                    if (!categories.isNullOrEmpty()) {
+                        Resource.Success(buildMenuStructure(categories))
+                    } else {
+                        Resource.ErrorEmptyData()
+                    }
+                }
+
+                else -> Resource.ErrorOther("Ошибка сервера или пустой ответ")
             }
         } catch (e: Exception) {
-
-            return Resource.Error("Ошибка: ${e.message}")
+            Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
 

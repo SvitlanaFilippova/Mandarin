@@ -75,12 +75,16 @@
     <string name="placeholder_retry">Обновить</string>
     <string name="placeholder_call">Позвонить</string>
     <string name="nothing_found">Ничего не найдено :(</string>
-    <string name="error_no_menu_data">Не удалось загрузить меню. Попробуйте позже</string>
+    <string name="nothing_found_extra">Попробуйте написать по-другому или просто полистайте наше меню. Там точно найдутся нужные вкусности! </string>
     <string name="error_no_internet">Проверьте подключение к интернету</string>
-    <string name="error_empty_menu">Сервер вернул пустые данные категорий</string>
+    <string name="error_empty_menu">Сервер вернул пустые данные меню</string>
+    <string name="error_empty_addons">Не удалось загрузить добавки</string>
     <string name="error_server_error">Ошибка сервера</string>
     <string name="error_something_wrong">Что-то пошло не так :(</string>
     <string name="error_empty_cart">В корзине пока ничего нет :(</string>
+    <string name="error_empty_favorites">В избранных пока ничего нет.</string>
+    <string name="error_empty_favorites_extra">Скорее добавь свои любимые
+    блюда, чтобы заказывать их было ещё удобнее!</string>
 
     <!-- Для contentDescription  -->
     <string name="picture_of_meal_template">Изображение %1$s</string>

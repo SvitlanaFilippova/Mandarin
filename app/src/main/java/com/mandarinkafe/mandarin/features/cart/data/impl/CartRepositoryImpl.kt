@@ -3,8 +3,6 @@ package com.mandarinkafe.mandarin.features.cart.data.impl
 import android.util.Log
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toStoredCartItem
@@ -12,19 +10,16 @@ import com.mandarinkafe.mandarin.features.cart.domain.api.CartRepository
 import com.mandarinkafe.mandarin.features.cart.sameAs
 import com.mandarinkafe.mandarin.features.cart.validateBy
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
-import com.mandarinkafe.mandarin.features.menu.domain.usecase.CategoryFilter
 import com.mandarinkafe.mandarin.util.Resource
-import com.mandarinkafe.mandarin.util.di.Recommends
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.first
 
 class CartRepositoryImpl @Inject constructor(
     private val storage: CartStorage,
     private val menuCache: MenuCache,
-    @Recommends private val recommendsFilter: CategoryFilter,
 ) : CartRepository {
 
-    override suspend fun getCart(): Map<CustomizedMeal, Int> {
+    override suspend fun getCart(): Resource<Map<CustomizedMeal, Int>> {
 
         val rawCart = storage.getCart()
         // Ждём, пока меню загрузится
@@ -108,20 +103,5 @@ class CartRepositoryImpl @Inject constructor(
         storage.clearCart()
     }
 
-    override suspend fun getCommonRecommends(): List<Meal> {
-        val rawRecommends = mutableListOf<MealCategory>()
-        menuCache.menu.first { result ->
-            if (result is Resource.Success) {
-                val filtered = result.data?.filter { recommendsFilter.isMatch(it) }.orEmpty()
-                rawRecommends.addAll(filtered)
-                true // чтобы завершить first()
-            } else {
-                false
-            }
-        }
-        return rawRecommends.flatMap {
-            it.meals.orEmpty()
-        }
-    }
 
 }

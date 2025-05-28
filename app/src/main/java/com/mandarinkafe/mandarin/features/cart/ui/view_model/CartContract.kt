@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.core.BaseState
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
+import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 
 sealed interface CartContract {
@@ -34,6 +35,7 @@ sealed interface CartContract {
 
     data class CartState(
         val isLoading: Boolean = true,
+        val error: UiError? = null,
         val cartItems: Map<CustomizedMeal, Int> = emptyMap(),
         val recommends: List<CustomizedMeal> = emptyList(),
         val pendingDeletionMeals: List<CustomizedMeal> = emptyList(),

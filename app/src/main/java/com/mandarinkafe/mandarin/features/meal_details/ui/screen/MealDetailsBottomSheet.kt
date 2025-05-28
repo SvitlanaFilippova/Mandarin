@@ -18,8 +18,8 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsViewModel
-import com.mandarinkafe.mandarin.shared.placeholder.ui.screen.PlaceholderScreen
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
+import com.mandarinkafe.mandarin.util.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,9 +57,10 @@ fun MealDetailsBottomSheet(
             }
         }
     }
+    val error = state.error
     when {
         state.isLoading -> LoadingScreen()
-        state.errorMessage != null -> PlaceholderScreen(errorMessage = state.errorMessage!!)
+        error != null -> PlaceholderScreen(error = error)
         else ->
             ModalBottomSheet(
                 modifier = Modifier
@@ -79,7 +80,6 @@ fun MealDetailsBottomSheet(
                     onClose = onClose,
                     initItem = initItem
                 )
-
             }
     }
 }

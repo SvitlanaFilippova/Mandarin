@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
+import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.GetBannersUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
@@ -19,7 +20,8 @@ import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEf
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuState
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
-import com.mandarinkafe.mandarin.util.Resource.Error
+import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
@@ -43,7 +45,6 @@ class MenuViewModel @Inject constructor(
 
     override fun onEvent(event: MenuEvent) {
         when (event) {
-            is MenuEvent.OnPhoneClick -> sendEffect(CallPhone)
             is MenuEvent.ToggleFavorite -> toggleFavorite(event.meal)
             is MenuEvent.ScrollToCategory -> scrollToCategory(event.newIndex)
             is MenuEvent.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
@@ -59,6 +60,8 @@ class MenuViewModel @Inject constructor(
             is MenuEvent.OnMealDetailsClick -> sendEffect(
                 OpenMealDetailsBS(meal = event.meal)
             )
+
+            is MenuEvent.OnPhoneClick -> sendEffect(CallPhone)
         }
     }
 
@@ -69,9 +72,9 @@ class MenuViewModel @Inject constructor(
                 setLoading(resource is Loading)
                 when (resource) {
                     is Success -> setData(resource.data)
-                    is Error -> setError(resource.message)
                     is Loading -> {}
                     is Idle -> {}
+                    else -> setError(resource)
                 }
             }
         }
@@ -82,14 +85,20 @@ class MenuViewModel @Inject constructor(
             setState {
                 copy(
                     menuItems = menuToMenuItems(data),
-                    errorMessage = null
+                    error = null
                 )
             }
         }
     }
 
-    private fun setError(errorMessage: String?) {
-        setState { copy(errorMessage = errorMessage) }
+    private fun setError(resource: Resource<*>) {
+        val error = when (resource) {
+            is Resource.ErrorEmptyData<*> -> UiError.MenuEmpty
+            is Resource.ErrorNoInternet<*> -> UiError.NoInternet
+            is ErrorOther<*> -> UiError.OtherError
+            else -> return
+        }
+        setState { copy(error = error) }
     }
 
     private fun setLoading(isLoading: Boolean) {
@@ -194,5 +203,4 @@ class MenuViewModel @Inject constructor(
             }
         }
     }
-
 }

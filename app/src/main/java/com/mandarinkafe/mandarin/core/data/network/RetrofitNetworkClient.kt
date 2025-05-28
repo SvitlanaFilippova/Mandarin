@@ -12,6 +12,7 @@ import com.mandarinkafe.mandarin.util.Constants.BANNERS_GOOGLE_DOCS_URL
 import com.mandarinkafe.mandarin.util.Constants.BEARER_PREFIX
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
+import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Constants.RECOMMENDATIONS_GOOGLE_DOCS_URL
 import com.mandarinkafe.mandarin.util.NetworkMonitor
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +31,7 @@ class RetrofitNetworkClient(
 
     override suspend fun getMenu(): Response {
         if (!isConnected()) {
-            return Response().apply { resultCode = -1 }
+            return Response().apply { resultCode = NO_CONNECTION }
         }
         return withContext(Dispatchers.IO) {
             // если нет токена или Id организации - авторизуемся

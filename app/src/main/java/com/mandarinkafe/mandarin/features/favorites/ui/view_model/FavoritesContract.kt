@@ -4,7 +4,7 @@ import com.mandarinkafe.mandarin.core.BaseEffect
 import com.mandarinkafe.mandarin.core.BaseEvent
 import com.mandarinkafe.mandarin.core.BaseState
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.shared.placeholder.ui.models.UiError
+import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 
 sealed interface FavoritesContract {

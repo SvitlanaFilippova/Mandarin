@@ -10,8 +10,8 @@ import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.menu.ui.components.HandleEffects
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuViewModel
-import com.mandarinkafe.mandarin.shared.placeholder.ui.screen.PlaceholderScreen
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
+import com.mandarinkafe.mandarin.util.ui.screen.PlaceholderScreen
 
 @Composable
 fun MenuScreen(
@@ -25,11 +25,12 @@ fun MenuScreen(
     val effectFlow = menuViewModel.effect
     val listState = rememberLazyListState()
     val context = LocalContext.current
+    val error = menuSate.error
 
     when {
         menuSate.isLoading -> LoadingScreen()
-        menuSate.errorMessage != null -> PlaceholderScreen(
-            menuSate.errorMessage!!,
+        error != null -> PlaceholderScreen(
+            error = error,
         )
 
         else -> MenuContentScreen(

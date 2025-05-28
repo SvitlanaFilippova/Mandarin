@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetFullMealListUseCase
@@ -12,7 +13,8 @@ import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.Se
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEvent
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchState
-import com.mandarinkafe.mandarin.util.Resource.Error
+import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
@@ -177,16 +179,22 @@ class SearchViewModel @Inject constructor(
                         )
                     }
 
-                    is Error -> setError(resource.message)
                     is Loading -> {}
                     is Idle -> {}
+                    else -> setError(resource)
                 }
             }
         }
     }
 
-    private fun setError(errorMessage: String?) {
-        setState { copy(errorMessage = errorMessage) }
+    private fun setError(resource: Resource<*>) {
+        val error = when (resource) {
+            is Resource.ErrorEmptyData<*> -> UiError.MenuEmpty
+            is Resource.ErrorNoInternet<*> -> UiError.NoInternet
+            is ErrorOther<*> -> UiError.OtherError
+            else -> return
+        }
+        setState { copy(error = error) }
     }
 
     private fun setLoading(isLoading: Boolean) {

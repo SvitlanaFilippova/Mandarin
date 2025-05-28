@@ -13,13 +13,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.ui.components.CartClearingConfirmationDialog
 import com.mandarinkafe.mandarin.features.cart.ui.components.CartContentScreen
-import com.mandarinkafe.mandarin.features.cart.ui.components.CartPlaceholder
 import com.mandarinkafe.mandarin.features.cart.ui.components.CartTopBar
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect.OpenMealDetailsBS
@@ -28,6 +25,7 @@ import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.meal_details.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.util.ui.HandleBottomSheetEffect
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
+import com.mandarinkafe.mandarin.util.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -62,53 +60,48 @@ fun CartScreen(
         CartTopBar(
             onCallClick = { }
         )
-
-        if (state.isLoading) {
-            LoadingScreen()
-            return
-        }
-        if (state.cartItems.isNotEmpty()) {
-            CartContentScreen(
-                listState = listState,
-                onEvent = viewModel::onEvent,
-                state = state
-            )
-        } else {
-            CartPlaceholder(
-                stringResource(R.string.error_empty_cart)
-            )
-        }
-    }
-
-    if (showClearCartDialog) {
-        CartClearingConfirmationDialog(
-            onConfirm = {
-                showClearCartDialog = false
-                viewModel.onEvent(CartEvent.ConfirmClearCart)
-            },
-            onDismiss = {
-                showClearCartDialog = false
-            }
-        )
-    }
-
-    HandleBottomSheetEffect<OpenMealDetailsBS>(
-        effectFlow = effectFlow,
-        cast = { it as? OpenMealDetailsBS }
-    ) { effect, onDismiss ->
-        MealDetailsBottomSheet(
-            initItem = effect.item,
-            onDismiss = onDismiss,
-            onAddToCart = { newItem ->
-                viewModel.onEvent(
-                    CartEvent.ReplaceMealInCart(
-                        newItem = newItem,
-                        oldItem = effect.item
-                    )
+        val error = state.error
+        when {
+            state.isLoading -> LoadingScreen()
+            error != null -> PlaceholderScreen(error = error)
+            state.cartItems.isNotEmpty() -> {
+                CartContentScreen(
+                    listState = listState,
+                    onEvent = viewModel::onEvent,
+                    state = state
                 )
+
             }
-        )
+        }
+
+        if (showClearCartDialog) {
+            CartClearingConfirmationDialog(
+                onConfirm = {
+                    showClearCartDialog = false
+                    viewModel.onEvent(CartEvent.ConfirmClearCart)
+                },
+                onDismiss = {
+                    showClearCartDialog = false
+                }
+            )
+        }
+
+        HandleBottomSheetEffect<OpenMealDetailsBS>(
+            effectFlow = effectFlow,
+            cast = { it as? OpenMealDetailsBS }
+        ) { effect, onDismiss ->
+            MealDetailsBottomSheet(
+                initItem = effect.item,
+                onDismiss = onDismiss,
+                onAddToCart = { newItem ->
+                    viewModel.onEvent(
+                        CartEvent.ReplaceMealInCart(
+                            newItem = newItem,
+                            oldItem = effect.item
+                        )
+                    )
+                }
+            )
+        }
     }
 }
-
-

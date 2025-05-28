@@ -17,7 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.domain.Mapper.toCustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens

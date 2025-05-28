@@ -4,6 +4,7 @@ import com.mandarinkafe.mandarin.core.BaseEffect
 import com.mandarinkafe.mandarin.core.BaseEvent
 import com.mandarinkafe.mandarin.core.BaseState
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
@@ -43,9 +44,9 @@ sealed interface MenuContract {
     data class MenuState(
         val isLoading: Boolean = false,
         val menuItems: List<MenuItem> = emptyList(),
+        val error: UiError? = null,
         val banners: List<Banner> = emptyList(),
         val bannersAreLoading: Boolean = false,
-        val errorMessage: String? = null,
         val selectedTabIndex: Int = DEFAULT_UNSELECTED_INDEX,
         val selectedSubTabIndex: Int = DEFAULT_UNSELECTED_INDEX,
         val selectedMenuItemIndex: Int = DEFAULT_UNSELECTED_INDEX,

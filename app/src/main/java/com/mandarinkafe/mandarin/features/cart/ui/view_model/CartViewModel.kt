@@ -2,12 +2,12 @@ package com.mandarinkafe.mandarin.features.cart.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.BaseViewModel
-import com.mandarinkafe.mandarin.core.domain.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
-import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetAllRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
@@ -28,7 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val cartInteractor: CartInteractor,
-    private val getRecommendsUseCase: GetRecommendsUseCase,
+    private val recommendsUseCase: GetAllRecommendsUseCase,
     private val favoritesApi: FavoritesApi
 ) : BaseViewModel<CartEvent, CartEffect, CartState>() {
     override fun setInitialState() = CartState()
@@ -225,8 +225,9 @@ class CartViewModel @Inject constructor(
     private fun updateCartState() {
         viewModelScope.launch {
             setState { copy(isLoading = true) }
-
+            // TODO добавить тут обработку ошибок через Resource
             val cartItems = cartInteractor.getCart()
+
             setState {
                 copy(
                     isLoading = false,
@@ -309,28 +310,18 @@ class CartViewModel @Inject constructor(
      * Собирает рекомендации из точечных, которые зависят от состава корзины, + общие
      */
     private suspend fun updateRecommends(cartItems: Set<CustomizedMeal>) {
-        // Общие рекомендации
-        val commonRecommends: Set<Meal> = cartInteractor
-            .getCommonRecommends()
-            .toSet()
-
-        // Текущие блюда в корзине
         val currentCartMeals: Set<Meal> = cartItems
             .map { it.meal }
             .toSet()
 
-        // Рекомендации по корзине
-        val cartRecommends = getRecommendsUseCase(currentCartMeals)
-
-        // Объединяем оба сета (union — без дубликатов)
-        val allRecommends = cartRecommends union commonRecommends
+        recommendsUseCase(currentCartMeals)
+        //  TODO Обработать обёртку Ресурс
 
         //  Фильтруем, убирая те, что уже в корзине
-        val filteredRecommends: Set<Meal> = allRecommends
-            .filter { recommend ->
-                currentCartMeals.none { it.id == recommend.id }
-            }
-            .toSet()
+        val filteredRecommends = allRecommends.filter { recommend ->
+            currentCartMeals.none { it.id == recommend.id }
+        }
+
 
         setState {
             copy(recommends = filteredRecommends.toList().map { it.toCustomizedMeal() })

@@ -5,9 +5,6 @@ import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.util.Resource
-import com.mandarinkafe.mandarin.util.Resource.Error
-import com.mandarinkafe.mandarin.util.Resource.Idle
-import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,10 +24,7 @@ class MenuInteractorImpl(
                     val filtered = result.data?.filterNot { it.isHidden }
                     Success(filtered ?: emptyList())
                 }
-
-                is Error -> result
-                is Loading -> result
-                is Idle -> result
+                else -> result
             }
         }
     }

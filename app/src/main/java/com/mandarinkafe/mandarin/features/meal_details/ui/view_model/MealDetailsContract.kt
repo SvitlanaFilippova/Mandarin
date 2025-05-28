@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
+import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SELECTED_FIRST_INDEX
 
@@ -28,6 +29,8 @@ sealed interface MealDetailsContract {
 
     data class MealDetailsState(
         val isLoading: Boolean = false,
+        val isFavorite: Boolean? = null,
+        val error: UiError? = null,
         val customizedMeal: CustomizedMeal? = null,
         val pizzaAds: List<MealAdditionalCategory> = emptyList(),
         val errorMessage: String? = null,
