@@ -23,7 +23,7 @@ class GetRecommendsUseCaseImpl(
         return when (schemaResult) {
             is ErrorEmptyData -> ErrorEmptyData()
             is ErrorNoInternet -> ErrorNoInternet()
-            is ErrorOther -> ErrorOther(schemaResult.message!!)
+            is ErrorOther -> ErrorOther(schemaResult.message.orEmpty())
             is Idle -> Idle<List<Meal>>()
             is Loading -> Loading()
             is Resource.Success<*> -> {

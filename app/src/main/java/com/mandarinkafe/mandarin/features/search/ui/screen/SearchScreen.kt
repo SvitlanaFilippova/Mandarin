@@ -22,6 +22,7 @@ fun SearchScreen(
     val effectFlow = searchViewModel.effect
 
     MySearchBar(
+
         onCartEvent = cartViewModel::onEvent,
         onSearchEvent = searchViewModel::onEvent,
         onSearchDismiss = {

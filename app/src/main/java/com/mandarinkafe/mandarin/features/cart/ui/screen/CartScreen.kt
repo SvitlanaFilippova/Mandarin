@@ -13,11 +13,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.ui.components.CartClearingConfirmationDialog
 import com.mandarinkafe.mandarin.features.cart.ui.components.CartContentScreen
-import com.mandarinkafe.mandarin.features.cart.ui.components.CartTopBar
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
@@ -37,17 +37,7 @@ fun CartScreen(
     val effectFlow = viewModel.effect
     var showClearCartDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        effectFlow.collectLatest { effect ->
-            when (effect) {
-                is CartEffect.ShowClearCartConfirmationDialog -> {
-                    showClearCartDialog = true
-                }
 
-                else -> {}
-            }
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -56,21 +46,17 @@ fun CartScreen(
             .padding(horizontal = Dimens.MarginSmall8)
 
     ) {
-
-        CartTopBar(
-            onCallClick = { }
-        )
         val error = state.error
         when {
             state.isLoading -> LoadingScreen()
             error != null -> PlaceholderScreen(error = error)
-            state.cartItems.isNotEmpty() -> {
+            state.cartItems.isEmpty() -> PlaceholderScreen(UiError.CartEmpty)
+            else -> {
                 CartContentScreen(
                     listState = listState,
                     onEvent = viewModel::onEvent,
                     state = state
                 )
-
             }
         }
 
@@ -86,6 +72,18 @@ fun CartScreen(
             )
         }
 
+
+        LaunchedEffect(Unit) {
+            effectFlow.collectLatest { effect ->
+                when (effect) {
+                    is CartEffect.ShowClearCartConfirmationDialog -> {
+                        showClearCartDialog = true
+                    }
+
+                    else -> {}
+                }
+            }
+        }
         HandleBottomSheetEffect<OpenMealDetailsBS>(
             effectFlow = effectFlow,
             cast = { it as? OpenMealDetailsBS }

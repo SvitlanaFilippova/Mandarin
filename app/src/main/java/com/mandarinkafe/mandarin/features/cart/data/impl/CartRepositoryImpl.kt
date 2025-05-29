@@ -3,6 +3,8 @@ package com.mandarinkafe.mandarin.features.cart.data.impl
 import android.util.Log
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.MealCategory
+import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toStoredCartItem
@@ -12,6 +14,7 @@ import com.mandarinkafe.mandarin.features.cart.validateBy
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
 import com.mandarinkafe.mandarin.util.Resource
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 
 class CartRepositoryImpl @Inject constructor(
@@ -20,54 +23,104 @@ class CartRepositoryImpl @Inject constructor(
 ) : CartRepository {
 
     override suspend fun getCart(): Resource<Map<CustomizedMeal, Int>> {
-
-        val rawCart = storage.getCart()
-        // Ждём, пока меню загрузится
-        menuCache.menu.first { it is Resource.Success }
-
-        val validCart = mutableMapOf<CustomizedMeal, Int>()
-        val invalidIds = mutableListOf<String>()
-
-        for (storedCartItem in rawCart) {
-            try {
-                // Получаем по id полную актуальную информацию о блюде
-                val fullMeal = menuCache.getMealById(storedCartItem.mealId)
-                if (fullMeal != null) {
-
-                    val validAdds = storedCartItem.addsIds?.mapNotNull { id ->
-                        menuCache.getMealById(id)?.toMealAdditional()
-                    } ?: emptyList()
-
-                    val validModifiers =
-                        storedCartItem.modifiers?.validateBy(fullMeal.modifiers) ?: emptyList()
-
-                    val cartItem = storedCartItem.toCustomizedMeal(
-                        meal = fullMeal,
-                        adds = validAdds,
-                        modifiers = validModifiers
-                    )
-                    validCart[cartItem] = storedCartItem.quantity
-                } else {
-                    invalidIds.add(storedCartItem.mealId)
-                }
-            } catch (e: Exception) {
-                // Если при преобразовании или доступе к данным что-то пошло не так — тоже игнорируем
-                Log.e(
-                    "CartMapper",
-                    "Ошибка при преобразовании StoredCartItem с id ${storedCartItem.mealId}",
-                )
-                invalidIds.add(storedCartItem.mealId)
+        // 1) дождёмся меню (или сразу вернём его ошибку)
+        val menuResult = awaitMenu()
+        if (menuResult !is Resource.Success) {
+            Log.d("DEBUG EMPTY CART", "menuResult !is Resource.Success")
+            // Resource.ErrorNoInternet, ErrorEmptyData или ErrorOther
+            return when (menuResult) {
+                is Resource.ErrorNoInternet -> Resource.ErrorNoInternet()
+                is Resource.ErrorEmptyData -> Resource.ErrorEmptyData()
+                is Resource.ErrorOther -> Resource.ErrorOther(menuResult.message.orEmpty())
+                else -> Resource.ErrorOther("Unexpected state")
             }
         }
+        val categories = menuResult.data.orEmpty()
 
-        // Удаляем все невалидные элементы из storage
-        if (invalidIds.isNotEmpty()) {
-            val cleanedCart = rawCart.filterNot { it.mealId in invalidIds }
-            storage.saveCart(cleanedCart)
-            Log.d("DEBUG Cart", "Удалены некорректные элементы из корзины: $invalidIds")
+        // 2) загрузим сырую корзину (или ErrorOther при исключении)
+        val rawCart = loadRawCart()
+            ?: return Resource.ErrorOther("Ошибка чтения корзины")
+
+        // 3) замапим и проверим каждый элемент
+        val (validCart, invalidIds) = mapAndValidate(rawCart, categories)
+
+        // 4) почистим storage от невалидных
+        cleanupInvalid(invalidIds, rawCart)
+
+        // 5) вернём результат
+        return if (validCart.isEmpty()) {
+            Log.d("DEBUG EMPTY CART", "CartRepositoryImpl. validCart is Empty")
+            Resource.ErrorEmptyData()
+        } else {
+            Resource.Success(validCart)
         }
+    }
 
-        return validCart
+    private suspend fun awaitMenu(): Resource<List<MealCategory>> {
+        // ждём первого финального состояния
+        val final = menuCache.menu
+            .filter { it !is Resource.Loading && it !is Resource.Idle }
+            .first()
+
+        return when (final) {
+            is Resource.Success -> Resource.Success(final.data.orEmpty())
+            is Resource.ErrorNoInternet -> Resource.ErrorNoInternet()
+            is Resource.ErrorEmptyData -> Resource.ErrorEmptyData()
+            is Resource.ErrorOther -> Resource.ErrorOther(final.message.orEmpty())
+            else -> Resource.ErrorOther("Unknown menu state")
+        }
+    }
+
+    private fun loadRawCart(): List<StoredCartItem>? = try {
+        storage.getCart()
+    } catch (e: Exception) {
+        Log.e("GetCartUseCase", "loadRawCart failed", e)
+        null
+    }
+
+    private fun mapAndValidate(
+        raw: List<StoredCartItem>,
+        menu: List<MealCategory>
+    ): Pair<Map<CustomizedMeal, Int>, List<String>> {
+        val valid = mutableMapOf<CustomizedMeal, Int>()
+        val invalid = mutableListOf<String>()
+
+        // ускорим lookup по id
+        val allMeals = menu
+            .flatMap { cat ->
+                (cat.meals.orEmpty() + cat.subCategories.orEmpty().flatMap { it.meals.orEmpty() })
+            }
+            .associateBy { it.id }
+
+        raw.forEach { item ->
+            val meal = allMeals[item.mealId]
+            if (meal == null) {
+                invalid += item.mealId
+                return@forEach
+            }
+            try {
+                val adds = item.addsIds
+                    ?.mapNotNull { allMeals[it]?.toMealAdditional() }
+                    .orEmpty()
+                val mods = item.modifiers
+                    ?.validateBy(meal.modifiers)
+                    .orEmpty()
+
+                val cm = item.toCustomizedMeal(meal, adds, mods)
+                valid[cm] = item.quantity
+            } catch (e: Exception) {
+                Log.e("GetCartUseCase", "map failed for ${item.mealId}", e)
+                invalid += item.mealId
+            }
+        }
+        return valid to invalid
+    }
+
+    private fun cleanupInvalid(invalid: List<String>, raw: List<StoredCartItem>) {
+        if (invalid.isEmpty()) return
+        val cleaned = raw.filterNot { it.mealId in invalid }
+        storage.saveCart(cleaned)
+        Log.d("GetCartUseCase", "Removed invalid items: $invalid")
     }
 
     override fun addToCart(item: CustomizedMeal) {
@@ -102,6 +155,5 @@ class CartRepositoryImpl @Inject constructor(
     override fun clearCart() {
         storage.clearCart()
     }
-
 
 }

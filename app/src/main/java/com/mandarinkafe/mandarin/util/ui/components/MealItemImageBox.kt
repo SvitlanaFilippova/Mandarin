@@ -74,13 +74,13 @@ fun MealItemImageBox(
                 }
             }
         }
-
+        // Тэги блюда
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4),
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(vertical = Dimens.MarginSuperSmall4)
+                .padding(top = Dimens.MarginSmall8)
         ) {
             meal.labels.forEach {
                 LabelChip(

@@ -197,7 +197,7 @@ class SearchViewModel @Inject constructor(
         setState { copy(error = error) }
     }
 
-    private fun setLoading(isLoading: Boolean) {
+    override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
     }
 }

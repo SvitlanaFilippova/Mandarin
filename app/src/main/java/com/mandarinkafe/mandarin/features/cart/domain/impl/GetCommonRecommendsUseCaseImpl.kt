@@ -12,7 +12,8 @@ import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
 import com.mandarinkafe.mandarin.util.di.Recommends
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 
 class GetCommonRecommendsUseCaseImpl(
     private val cache: MenuCache,
@@ -20,24 +21,29 @@ class GetCommonRecommendsUseCaseImpl(
 ) : GetCommonRecommendsUseCase {
 
     override suspend operator fun invoke(): Resource<List<Meal>> {
-        return cache.menu.map { result ->
-            when (result) {
-                is Success -> {
-                    val filtered = result.data?.filter { recommendsFilter.isMatch(it) }.orEmpty()
-                    Success(filtered.flatMap {
-                        it.meals.orEmpty()
-                    })
-                }
+        // Запрашиваем меню (если нужно)
+        cache.fetchMenuIfNeeded()
 
-                is ErrorEmptyData -> ErrorEmptyData()
-                is ErrorNoInternet -> ErrorNoInternet()
-                is ErrorOther -> ErrorOther(
-                    message = result.message!!
-                )
+        // Ждём первого «не-Loading/Idle» состояния
+        val result = cache.menu
+            .filter { it !is Loading && it !is Idle }
+            .first()
 
-                is Idle -> Idle()
-                is Loading -> Loading()
+        // Мапим на Resource<List<Meal>>
+        return when (result) {
+            is Success -> {
+                // фильтруем категории, разворачиваем все meals
+                val meals = result.data
+                    .orEmpty()
+                    .filter { recommendsFilter.isMatch(it) }
+                    .flatMap { it.meals.orEmpty() }
+                Success(meals)
             }
+
+            is ErrorEmptyData -> ErrorEmptyData()
+            is ErrorNoInternet -> ErrorNoInternet()
+            is ErrorOther -> ErrorOther(result.message.orEmpty())
+            else -> ErrorOther("Неизвестная ошибка")
         }
     }
 }

@@ -77,7 +77,7 @@ fun MySearchBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(Dimens.MarginSmall8),
+                .padding(horizontal = Dimens.MarginSmall8),
             shape = RoundedCornerShape(Dimens.RadiusSearchField8),
             colors = SearchBarDefaults.colors(
                 containerColor = Colors.AppBlack

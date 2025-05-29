@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.core.data.network
 
-import android.content.Context
+
 import android.util.Log
 import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
@@ -19,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClient(
-    private val context: Context,
+    private val networkMonitor: NetworkMonitor,
     private val iikoService: IikoApiService,
     private val googleDocsApi: GoogleDocsApiService
 ) :
@@ -86,7 +86,7 @@ class RetrofitNetworkClient(
     }
 
     private fun isConnected(): Boolean {
-        return NetworkMonitor.isNetworkAvailable(context)
+        return networkMonitor.isNetworkAvailable()
     }
 
     private suspend fun getSheet(url: String): Response {
@@ -94,11 +94,9 @@ class RetrofitNetworkClient(
             Response().apply { resultCode = -1 }
         } else try {
             val csvString = googleDocsApi.getCsv(url)
-            Log.d("DEBUG googleDocsApi", "Успех! csvString: $csvString")
             return CsvResponse(csv = csvString)
 
         } catch (e: Throwable) {
-            Log.d("DEBUG googleDocsApi", "Ошибка: ${e.message}")
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

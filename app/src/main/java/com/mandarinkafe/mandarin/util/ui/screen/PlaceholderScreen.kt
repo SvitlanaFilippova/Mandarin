@@ -32,7 +32,6 @@ fun PlaceholderScreen(
     onRetryClick: () -> Unit = { },
     onCallClick: () -> Unit = { }
 ) {
-
     Column(
         modifier = Modifier
             .fillMaxSize()

@@ -128,14 +128,8 @@ class MealDetailsViewModel @Inject constructor(
 
     private fun toggleFavorite() {
         val current = state.value.customizedMeal ?: return
-
         viewModelScope.launch {
-            val isNowFavorite = favoritesApi.toggleFavorite(current)
-            setState {
-                copy(
-                    isFavorite = isNowFavorite
-                )
-            }
+            favoritesApi.toggleFavorite(current)
         }
     }
 
@@ -207,7 +201,7 @@ class MealDetailsViewModel @Inject constructor(
         setState { copy(error = error) }
     }
 
-    private fun setLoading(isLoading: Boolean) {
+    override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
     }
 }

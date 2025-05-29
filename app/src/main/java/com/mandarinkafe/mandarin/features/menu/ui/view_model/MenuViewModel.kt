@@ -65,6 +65,10 @@ class MenuViewModel @Inject constructor(
         }
     }
 
+    override fun setLoading(isLoading: Boolean) {
+        setState { copy(isLoading = isLoading) }
+    }
+
     // Методы для загрузки меню
     private fun loadMenu() {
         viewModelScope.launch {
@@ -99,10 +103,6 @@ class MenuViewModel @Inject constructor(
             else -> return
         }
         setState { copy(error = error) }
-    }
-
-    private fun setLoading(isLoading: Boolean) {
-        setState { copy(isLoading = isLoading) }
     }
 
     // Методы управлением скроллом

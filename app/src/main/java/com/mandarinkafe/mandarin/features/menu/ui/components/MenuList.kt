@@ -19,16 +19,13 @@ import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.MenuCompactMealItem
 import com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.MenuMealItem
 import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun MenuList(
     menuItems: List<MenuItem>,
     listState: LazyListState,
     modifier: Modifier,
-    effectFlow: Flow<MenuContract.MenuEffect>,
     onEvent: (MenuEvent) -> Unit,
     onCartEvent: (CartContract.CartEvent) -> Unit,
     cartState: CartContract.CartState
@@ -40,14 +37,6 @@ fun MenuList(
     val imageSize = remember(screenWidth) {
         (screenWidth - horizontalPadding * 3) / 2
     }
-
-    HandleBottomSheetEffects(
-        effectFlow = effectFlow,
-        onMenuEvent = onEvent,
-        onAddToCart = { item ->
-            onCartEvent(CartContract.CartEvent.AddToCart(item))
-        }
-    )
 
     LazyColumn(
         state = listState,

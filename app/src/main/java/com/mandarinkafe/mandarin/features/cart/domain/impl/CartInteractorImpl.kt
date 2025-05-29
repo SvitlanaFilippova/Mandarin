@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.util.Resource
 
 class CartInteractorImpl(private val repository: CartRepository) : CartInteractor {
     override suspend fun getCart(): Resource<Map<CustomizedMeal, Int>> {
+
         return repository.getCart()
     }
 
@@ -21,5 +22,4 @@ class CartInteractorImpl(private val repository: CartRepository) : CartInteracto
     override fun clearCart() {
         repository.clearCart()
     }
-
 }

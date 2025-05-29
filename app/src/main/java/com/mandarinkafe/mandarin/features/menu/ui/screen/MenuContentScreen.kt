@@ -33,7 +33,6 @@ import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.features.menu.ui.components.MenuList
-import com.mandarinkafe.mandarin.features.menu.ui.components.MenuTopBar
 import com.mandarinkafe.mandarin.features.menu.ui.components.SearchBar
 import com.mandarinkafe.mandarin.features.menu.ui.components.category_tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.features.menu.ui.components.category_tabs.SubCategoryTabsRow
@@ -41,9 +40,9 @@ import com.mandarinkafe.mandarin.features.menu.ui.components.getVisibleCategoryI
 import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.util.Constants.FORCE_SHOW_FAB_DURATION_MS
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,9 +50,9 @@ fun MenuContentScreen(
     listState: LazyListState,
     onEvent: (MenuEvent) -> Unit,
     onCartEvent: (CartContract.CartEvent) -> Unit,
+    onSharedEvent: (SharedEvent) -> Unit,
     cartState: CartContract.CartState,
     menuSate: MenuContract.MenuState,
-    effectFlow: Flow<MenuContract.MenuEffect>,
 ) {
 
     val menuItems = menuSate.menuItems
@@ -64,17 +63,18 @@ fun MenuContentScreen(
     val categories = menuItems.filterIsInstance<MenuItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
     val coroutineScope = rememberCoroutineScope()
-    val isAtTop by remember {
-        derivedStateOf {
-            listState.firstVisibleItemScrollOffset == 0
-        }
-    }
 
     val isScrollingUp = remember { mutableStateOf(false) }
     val isScrollingDown = remember { mutableStateOf(false) }
 
     var previousIndex by remember { mutableIntStateOf(0) }
     var previousOffset by remember { mutableIntStateOf(0) }
+
+    val isAtTop by remember {
+        derivedStateOf {
+            listState.firstVisibleItemScrollOffset == 0
+        }
+    }
 
     val showMenuTopBar by remember {
         derivedStateOf {
@@ -102,6 +102,14 @@ fun MenuContentScreen(
         coroutineScope.launch {
             listState.scrollToItem(index = 0)
             onEvent(MenuEvent.ScrollToTop)
+        }
+    }
+    // Скрыть/показать TopBar в зависимости от видимой части экрана
+    LaunchedEffect(isAtTop) {
+        if (isAtTop) {
+            onSharedEvent(SharedEvent.ShowTopBar)
+        } else {
+            onSharedEvent(SharedEvent.HideTopBar)
         }
     }
 
@@ -168,17 +176,7 @@ fun MenuContentScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Лого-бар появляется только если пользователь в самом верху
-            AnimatedVisibility(
-                visible = isAtTop,
-                enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically()
-            ) {
-                MenuTopBar(
-                    onPhoneClick = { onEvent(MenuEvent.OnPhoneClick) },
-                    onLogoCLick = { handleBackToTopClick() }
-                )
-            }
+
             // Бар с поиском и фильтрами появляется всегда, когда пользователь вверху или скроллит вверх
             AnimatedVisibility(
                 visible = showMenuTopBar,
@@ -188,7 +186,6 @@ fun MenuContentScreen(
                 SearchBar(
                     onSearchClick = { onEvent(MenuEvent.SearchOnOpenSearchClick) },
                 )
-
             }
 
             // Баннеры видны только если пользователь в самом верху
@@ -276,12 +273,10 @@ fun MenuContentScreen(
                 menuItems = menuItems,
                 listState = listState,
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(bottom = Dimens.MarginBig32),
+                    .weight(1f),
                 onEvent = onEvent,
                 onCartEvent = onCartEvent,
                 cartState = cartState,
-                effectFlow = effectFlow
             )
         }
 

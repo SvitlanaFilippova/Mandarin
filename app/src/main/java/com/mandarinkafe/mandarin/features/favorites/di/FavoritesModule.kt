@@ -13,6 +13,7 @@ import com.mandarinkafe.mandarin.features.favorites.domain.impl.FavoritesInterac
 import com.mandarinkafe.mandarin.features.favorites.domain.impl.ValidateFavoritesUseCaseImpl
 import com.mandarinkafe.mandarin.features.favorites.domain.usecase.ValidateFavoritesUseCase
 import com.mandarinkafe.mandarin.util.Constants.LOCAL_STORAGE_NAME
+import com.mandarinkafe.mandarin.util.NetworkMonitor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,10 +43,12 @@ class FavoritesModule {
     @Provides
     @Singleton
     fun provideFavoritesRepository(
-        storage: FavoritesStorage,
+        networkMonitor: NetworkMonitor,
+        storage: FavoritesStorage
     ): FavoritesRepositoryImpl =
         FavoritesRepositoryImpl(
             storage = storage,
+            networkMonitor = networkMonitor
         )
 
     @Provides
@@ -61,7 +64,6 @@ class FavoritesModule {
         repoImpl: FavoritesRepositoryImpl
     ): FavoritesWriter =
         repoImpl
-
 
     @Provides
     @Singleton

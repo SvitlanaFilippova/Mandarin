@@ -20,17 +20,18 @@ import com.mandarinkafe.mandarin.navigation.NavRoutes.FAVORITES_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SPLASH_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
 import com.mandarinkafe.mandarin.splash.ui.SplashScreen
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     val cartViewModel: CartViewModel = hiltViewModel()
+    val sharedViewModel: SharedViewModel = hiltViewModel()
     NavHost(
         navController = navHostController,
         startDestination = SPLASH_SCREEN_ROUTE
     ) {
-        // CartViewModel живёт на уровне AppScope
         composable(CART_SCREEN_ROUTE) {
             CartScreen(viewModel = cartViewModel)
         }
@@ -48,7 +49,8 @@ fun NavGraph(navHostController: NavHostController) {
         composable(MENU_SCREEN_ROUTE) {
             MenuScreen(
                 navController = navHostController,
-                cartViewModel = cartViewModel
+                cartViewModel = cartViewModel,
+                sharedViewModel = sharedViewModel
             )
         }
 

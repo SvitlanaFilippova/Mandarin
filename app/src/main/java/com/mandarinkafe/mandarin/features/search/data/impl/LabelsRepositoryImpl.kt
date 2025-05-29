@@ -50,6 +50,6 @@ class LabelsRepositoryImpl(
 
         lastMenuHash = currentHash
 
-        return cachedLabels!!
+        return cachedLabels.orEmpty()
     }
 }

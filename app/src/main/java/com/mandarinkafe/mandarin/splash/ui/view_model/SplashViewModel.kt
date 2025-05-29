@@ -21,9 +21,9 @@ class SplashViewModel @Inject constructor(
     init {
         loadInitialData()
     }
-
     override fun setInitialState() = SplashState()
     override fun onEvent(event: SplashEvent) {}
+    override fun setLoading(isLoading: Boolean) {}
 
     private fun loadInitialData() {
         viewModelScope.launch {

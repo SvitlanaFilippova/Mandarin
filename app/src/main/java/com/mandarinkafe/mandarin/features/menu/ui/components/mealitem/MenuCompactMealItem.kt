@@ -50,7 +50,7 @@ fun MenuCompactMealItem(
             )
 
             Text(
-                modifier = Modifier.padding(Dimens.MarginSmall8),
+                modifier = Modifier.padding(vertical = Dimens.MarginSmall8),
                 text = meal.name,
                 style = Typography.MealTitleStyle,
                 maxLines = 3,

@@ -50,4 +50,9 @@ abstract class BaseViewModel<
     protected fun setState(reducer: State.() -> State) {
         _state.value = _state.value.reducer()
     }
+
+    /**
+    Устанавливает флаг загрузки.
+     */
+    abstract fun setLoading(isLoading: Boolean)
 }

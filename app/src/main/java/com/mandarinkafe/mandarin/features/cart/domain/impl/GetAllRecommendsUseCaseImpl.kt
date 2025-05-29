@@ -12,24 +12,33 @@ class GetAllRecommendsUseCaseImpl(
     private val common: GetCommonRecommendsUseCase,
     private val cartBased: GetRecommendsUseCase
 ) : GetAllRecommendsUseCase {
-    override suspend fun invoke(cartItems: Set<Meal>): Resource<List<Meal>> {
+
+    override suspend fun invoke(cartItems: Set<Meal>): Resource<List<Meal>> = coroutineScope {
         // Запрашиваем оба набора параллельно
-        val commonResDeferred = coroutineScope { async { common() } }
-        val cartResDeferred = coroutineScope { async { cartBased(cartItems) } }
+        val commonResDeferred = async { common() }
+        val cartResDeferred = async { cartBased(cartItems) }
+
         val commonRes = commonResDeferred.await()
         val cartRes = cartResDeferred.await()
 
-        // Если хотя бы один из них – ErrorNoInternet, возвращаем NoInternet
+        // Если хоть один – NoInternet → возвращаем NoInternet
         if (commonRes is Resource.ErrorNoInternet || cartRes is Resource.ErrorNoInternet) {
-            return Resource.ErrorNoInternet()
+            return@coroutineScope Resource.ErrorNoInternet()
         }
-        // Если оба набора пусты – можно вернуть EmptyData
+
+        // Получаем списки (успешные или пустые)
         val commonList = (commonRes as? Resource.Success)?.data.orEmpty()
         val cartList = (cartRes as? Resource.Success)?.data.orEmpty()
-        val merged = (commonList + cartList)
-            .distinctBy { it.id }     // удаляем дубликаты
-            .toList()
-        return if (merged.isEmpty()) {
+
+        // ids элементов в корзине
+        val inCartIds = cartItems.map { it.id }.toSet()
+
+        // Объединяем, удаляем дубликаты, фильтруем уже в корзине
+        val merged = (cartList + commonList)
+            .distinctBy { it.id }
+            .filterNot { it.id in inCartIds }
+
+        return@coroutineScope if (merged.isEmpty()) {
             Resource.ErrorEmptyData()
         } else {
             Resource.Success(merged)

@@ -27,10 +27,11 @@ import kotlinx.coroutines.launch
 fun MealDetailsBottomSheet(
     viewModel: MealDetailsViewModel = hiltViewModel(),
     onAddToCart: (CustomizedMeal) -> Unit,
-    initItem: CustomizedMeal,
+    initItem: CustomizedMeal?,
     onDismiss: () -> Unit,
     onFavoriteChanged: (String, Boolean) -> Unit = { _, _ -> }
 ) {
+    if (initItem == null) return
     LaunchedEffect(Unit) {
         viewModel.onEvent(MealDetailsEvent.SetItem(initItem))
     }
