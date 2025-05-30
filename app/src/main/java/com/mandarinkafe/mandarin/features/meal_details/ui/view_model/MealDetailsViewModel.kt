@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.meal_details.ui.view_model
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
@@ -13,6 +12,7 @@ import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetails
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsState
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
+import com.mandarinkafe.mandarin.util.BaseViewModel
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
@@ -36,7 +36,6 @@ class MealDetailsViewModel @Inject constructor(
 
     override fun onEvent(event: MealDetailsEvent) {
         when (event) {
-            is MealDetailsEvent.ToggleFavorite -> toggleFavorite()
             is MealDetailsEvent.ChangeAdds -> changeAdds(
                 add = event.add,
                 isAdded = event.isChecked

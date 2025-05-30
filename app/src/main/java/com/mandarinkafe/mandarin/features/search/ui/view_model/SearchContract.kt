@@ -1,12 +1,11 @@
 package com.mandarinkafe.mandarin.features.search.ui.view_model
 
-import com.mandarinkafe.mandarin.core.BaseEffect
-import com.mandarinkafe.mandarin.core.BaseEvent
-import com.mandarinkafe.mandarin.core.BaseState
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.features.search.ui.model.LabelUiModel
-import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
+import com.mandarinkafe.mandarin.util.BaseEffect
+import com.mandarinkafe.mandarin.util.BaseEvent
+import com.mandarinkafe.mandarin.util.BaseState
 
 interface SearchContract {
 
@@ -16,15 +15,9 @@ interface SearchContract {
 
         data class SearchMealsByText(val searchText: String) : SearchEvent
         data object ClearSearchInput : SearchEvent
-        data class ToggleFavorite(val meal: Meal) : SearchEvent
-        data class UpdateMealFavorite(val id: String, val isFavorite: Boolean) : SearchEvent
-        data class OnMealDetailsClick(val meal: Meal) : SearchEvent
     }
 
-    sealed interface SearchEffect : BaseEffect {
-        data class OpenMealDetailsBS(val meal: Meal) :
-            SearchEffect, BottomSheetEffect
-    }
+    sealed interface SearchEffect : BaseEffect
 
     data class SearchState(
         val fullMealList: List<Meal> = emptyList(),

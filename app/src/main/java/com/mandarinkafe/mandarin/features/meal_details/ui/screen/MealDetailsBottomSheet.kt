@@ -76,10 +76,11 @@ fun MealDetailsBottomSheet(
                 ) {
                 MealDetailsContentScreen(
                     state = state,
+                    initItem = initItem,
                     onEvent = viewModel::onEvent,
                     onAddToCart = onAddToCart,
                     onClose = onClose,
-                    initItem = initItem
+                    onToggleFavorite = { }, //TODO передавать сюда SharedViewModel и обрабаывать клик через неё
                 )
             }
     }

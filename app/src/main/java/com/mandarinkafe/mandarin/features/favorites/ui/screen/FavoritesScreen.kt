@@ -9,28 +9,32 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.favorites.ui.components.FavoritesContent
 import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesViewModel
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartViewModel
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.ui.screen.PlaceholderScreen
 
 @Composable
 fun FavoritesScreen(
     favoritesViewModel: FavoritesViewModel = hiltViewModel(),
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    sharedViewModel: SharedViewModel,
 ) {
     val state by favoritesViewModel.state.collectAsState()
     val cartState by cartViewModel.state.collectAsState()
-    val effectFlow = favoritesViewModel.effect
-
+    val onSharedEvent = sharedViewModel::onEvent
+    val onCartEvent = cartViewModel::onEvent
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Colors.AppBlack)
     ) {
 
-    val error = state.error
+        val error = state.error
 
         when {
             state.isLoading -> LoadingScreen()
@@ -40,12 +44,12 @@ fun FavoritesScreen(
 
             else -> FavoritesContent(
                 data = state.data,
-                onEvent = favoritesViewModel::onEvent,
-                onCartEvent = cartViewModel::onEvent,
                 cartState = cartState,
-                effectFlow = effectFlow
+                onAddToCart = { item -> onCartEvent(CartEvent.AddToCart(item)) },
+                onRemoveFromCart = { item -> onCartEvent(CartEvent.RemoveFromCartByItem(item)) },
+                onMealDetailsClick = { item -> onSharedEvent(SharedEvent.OnMealDetailsClick(item = item)) },
+                onToggleFavorite = { item -> onSharedEvent(SharedEvent.ToggleFavorite(item = item)) },
             )
-
         }
     }
 }

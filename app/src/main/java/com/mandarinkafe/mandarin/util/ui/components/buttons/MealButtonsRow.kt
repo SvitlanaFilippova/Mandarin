@@ -14,16 +14,15 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalPriceByMe
 import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalQuantityByMealId
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toAddToCartEvent
-import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toRemoveFromCartNow
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 
 @Composable
 fun MealButtonsRow(
     modifier: Modifier = Modifier,
     baseMeal: Meal,
-    onMealDetailsClick: (Meal) -> Unit,
-    onCartEvent: (CartContract.CartEvent) -> Unit,
+    onMealDetailsClick: () -> Unit,
+    onAddToCart: () -> Unit,
+    onRemoveFromCart: () -> Unit,
     cartState: CartContract.CartState,
 ) {
     val cartItems = cartState.cartItems
@@ -41,7 +40,7 @@ fun MealButtonsRow(
         if (baseMeal.isCustomizable()) {
             CustomizeButton(
                 modifier = Modifier.padding(end = Dimens.MarginSmall8),
-                onClick = { onMealDetailsClick(baseMeal) }
+                onClick = onMealDetailsClick
             )
         }
 
@@ -52,21 +51,20 @@ fun MealButtonsRow(
             CartControls(
                 totalPrice = totalPrice,
                 numberInCart = numberInCart,
-                onIncrease = { onCartEvent(baseMeal.toAddToCartEvent()) },
-                onDecrease = { onCartEvent(baseMeal.toRemoveFromCartNow()) },
+                onIncrease = onAddToCart,
+                onDecrease = onRemoveFromCart,
                 modifier = modifier
             )
         } else if (baseMeal.requireSelection) {
             SelectButton(
                 text = stringResource(R.string.to_choose),
-                onClick = { onMealDetailsClick(baseMeal) },
+                onClick = onMealDetailsClick,
                 modifier = modifier
             )
         } else {
             ToCartButtonWithPrice(
-                price = baseMeal.price, onClick = {
-                    onCartEvent(baseMeal.toAddToCartEvent())
-                },
+                price = baseMeal.price,
+                onClick = onAddToCart,
                 modifier = modifier
             )
         }

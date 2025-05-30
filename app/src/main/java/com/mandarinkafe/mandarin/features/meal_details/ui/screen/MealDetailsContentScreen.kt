@@ -47,11 +47,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun MealDetailsContentScreen(
     state: MealDetailsState,
+    initItem: CustomizedMeal,
+    onClose: () -> Unit,
     onEvent: (MealDetailsEvent) -> Unit,
     onAddToCart: (CustomizedMeal) -> Unit,
-    onClose: () -> Unit,
-    initItem: CustomizedMeal
-) {
+    onToggleFavorite: (CustomizedMeal) -> Unit,
+
+    ) {
     val customizedMeal = state.customizedMeal ?: initItem
     val meal = customizedMeal.meal
     val listState = rememberLazyListState()
@@ -79,7 +81,7 @@ fun MealDetailsContentScreen(
     ) {
         BottomSheetHeader(
             meal = meal,
-            onToggleFavorite = { onEvent(MealDetailsEvent.ToggleFavorite) },
+            onToggleFavorite = { onToggleFavorite(customizedMeal) },
             onClose = onClose,
             isFavorite = state.isFavorite
         )

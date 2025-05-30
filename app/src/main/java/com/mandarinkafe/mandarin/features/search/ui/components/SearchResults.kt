@@ -17,26 +17,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.domain.models.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography.PlaceholderTitleStyle
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.features.meal_details.ui.screen.MealDetailsBottomSheet
-import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract
-import com.mandarinkafe.mandarin.util.ui.HandleBottomSheetEffect
-import kotlinx.coroutines.flow.Flow
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 
 @Composable
 fun SearchResults(
     filteredMenuItems: List<Meal>,
     latestSearchText: String,
-    onSearchEvent: (SearchContract.SearchEvent) -> Unit,
-    onCartEvent: (CartContract.CartEvent) -> Unit,
     onSearchDismiss: () -> Unit,
     cartState: CartContract.CartState,
-    effectFlow: Flow<SearchContract.SearchEffect>,
+    onToggleFavorite: (Meal) -> Unit,
+    onAddToCart: (Meal) -> Unit,
+    onRemoveFromCart: (Meal) -> Unit,
+    onMealDetailsClick: (Meal) -> Unit,
+
 ) {
     BackHandler {
         onSearchDismiss()
@@ -57,9 +54,11 @@ fun SearchResults(
         if (filteredMenuItems.isNotEmpty()) {
             SearchResultsLazyColumn(
                 filteredMenuItems = filteredMenuItems,
-                onCartEvent = onCartEvent,
                 cartState = cartState,
-                onSearchEvent = onSearchEvent
+                onToggleFavorite = onToggleFavorite,
+                onAddToCart = onAddToCart,
+                onRemoveFromCart = onRemoveFromCart,
+                onMealDetailsClick = onMealDetailsClick,
             )
         } else if (latestSearchText.isNotEmpty()) {
             Column(
@@ -87,17 +86,4 @@ fun SearchResults(
         }
     }
 
-    HandleBottomSheetEffect<SearchContract.SearchEffect.OpenMealDetailsBS>(
-        effectFlow = effectFlow,
-        cast = { it as? SearchContract.SearchEffect.OpenMealDetailsBS }
-    ) { effect, onDismiss ->
-        MealDetailsBottomSheet(
-            initItem = effect.meal.toCustomizedMeal(),
-            onDismiss = onDismiss,
-            onFavoriteChanged = { id, isFavorite ->
-                onSearchEvent(SearchContract.SearchEvent.UpdateMealFavorite(id, isFavorite))
-            },
-            onAddToCart = { item -> onCartEvent(CartContract.CartEvent.AddToCart(item)) }
-        )
-    }
 }

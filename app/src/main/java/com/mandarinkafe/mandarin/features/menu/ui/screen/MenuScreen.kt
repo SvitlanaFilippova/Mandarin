@@ -7,10 +7,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuViewModel
 import com.mandarinkafe.mandarin.navigation.navigateToSearchScreen
+import com.mandarinkafe.mandarin.shared.cart.domain.CartMapper.toAddToCartEvent
+import com.mandarinkafe.mandarin.shared.cart.domain.CartMapper.toRemoveFromCartNow
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartViewModel
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.ui.screen.PlaceholderScreen
@@ -28,6 +31,9 @@ fun MenuScreen(
     val listState = rememberLazyListState()
 
     val error = menuSate.error
+    val onSharedEvent = sharedViewModel::onEvent
+    val onMenuEvent = menuViewModel::onEvent
+    val onCartEvent = cartViewModel::onEvent
 
     when {
         menuSate.isLoading -> LoadingScreen()
@@ -37,11 +43,14 @@ fun MenuScreen(
 
         else -> MenuContentScreen(
             listState = listState,
-            onEvent = menuViewModel::onEvent,
-            onCartEvent = cartViewModel::onEvent,
-            onSharedEvent = sharedViewModel::onEvent,
+            onMenuEvent = onMenuEvent,
+            onSharedEvent = onSharedEvent,
             menuSate = menuSate,
             cartState = cartState,
+            onMealDetailsClick = { meal -> onSharedEvent(SharedEvent.OnMealDetailsClick(meal)) },
+            onToggleFavorite = { meal -> onSharedEvent(SharedEvent.ToggleFavorite(meal)) },
+            onAddToCart = { meal -> onCartEvent(meal.toAddToCartEvent()) },
+            onRemoveFromCart = { meal -> onCartEvent(meal.toRemoveFromCartNow()) },
         )
     }
 

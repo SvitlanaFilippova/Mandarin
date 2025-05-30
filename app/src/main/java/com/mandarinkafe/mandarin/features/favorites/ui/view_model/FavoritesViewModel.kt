@@ -1,13 +1,13 @@
 package com.mandarinkafe.mandarin.features.favorites.ui.view_model
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesContract.FavoritesEffect
 import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesContract.FavoritesEvent
 import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesContract.FavoritesState
+import com.mandarinkafe.mandarin.util.BaseViewModel
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
 import com.mandarinkafe.mandarin.util.Resource.ErrorNoInternet
@@ -31,9 +31,6 @@ class FavoritesViewModel @Inject constructor(private val favoritesApi: Favorites
     override fun onEvent(event: FavoritesEvent) {
         when (event) {
             is FavoritesEvent.ToggleFavorite -> toggleFavorite(event.item)
-            is FavoritesEvent.OpenMealDetails -> sendEffect(
-                FavoritesEffect.OpenMealDetailsBS(event.item)
-            )
         }
     }
 

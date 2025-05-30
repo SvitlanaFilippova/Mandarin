@@ -19,11 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract
-import kotlinx.coroutines.flow.Flow
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 
 /**
  * Компонент с SearchBar - полем для полиска и его результами
@@ -32,13 +32,15 @@ import kotlinx.coroutines.flow.Flow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MySearchBar(
-    onCartEvent: (CartContract.CartEvent) -> Unit,
-    onSearchEvent: (SearchContract.SearchEvent) -> Unit,
-    onSearchDismiss: () -> Unit,
     focusSearchBarInput: Boolean,
     searchState: SearchContract.SearchState,
     cartState: CartContract.CartState,
-    effectFlow: Flow<SearchContract.SearchEffect>,
+    onSearchEvent: (SearchContract.SearchEvent) -> Unit,
+    onSearchDismiss: () -> Unit,
+    onAddToCart: (Meal) -> Unit,
+    onRemoveFromCart: (Meal) -> Unit,
+    onMealDetailsClick: (Meal) -> Unit,
+    onToggleFavorite: (Meal) -> Unit,
 ) {
 
     val filteredMenuItems = searchState.filteredMealList
@@ -84,7 +86,7 @@ fun MySearchBar(
             ),
             content = {
 
-            LabelChipsRow(
+                LabelChipsRow(
                     labels = searchState.allLabels,
                     checkedLabels = searchState.checkedLabels,
                     onLabelClick = { label, isChecked ->
@@ -99,11 +101,12 @@ fun MySearchBar(
                 SearchResults(
                     filteredMenuItems = filteredMenuItems,
                     latestSearchText = latestSearchText,
-                    onCartEvent = onCartEvent,
                     cartState = cartState,
-                    effectFlow = effectFlow,
-                    onSearchEvent = onSearchEvent,
                     onSearchDismiss = onSearchDismiss,
+                    onToggleFavorite = onToggleFavorite,
+                    onAddToCart = onAddToCart,
+                    onRemoveFromCart = onRemoveFromCart,
+                    onMealDetailsClick = onMealDetailsClick,
                 )
             }
         )

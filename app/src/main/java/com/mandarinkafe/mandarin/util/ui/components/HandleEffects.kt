@@ -35,6 +35,7 @@ fun HandleEffects(
 
     }
 
+    //TODO с Customized не открывается - проверять
     HandleBottomSheetEffect<SharedEffect.OpenMealDetailsBS>(
         effectFlow = effectFlow,
         cast = { it as? SharedEffect.OpenMealDetailsBS }

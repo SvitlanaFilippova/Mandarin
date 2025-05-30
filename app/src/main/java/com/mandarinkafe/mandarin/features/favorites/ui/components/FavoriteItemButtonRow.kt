@@ -14,9 +14,7 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartState
-import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesContract.FavoritesEvent
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartState
 import com.mandarinkafe.mandarin.util.ui.components.buttons.CartControls
 import com.mandarinkafe.mandarin.util.ui.components.buttons.CustomizeButton
 import com.mandarinkafe.mandarin.util.ui.components.buttons.SelectButton
@@ -26,8 +24,9 @@ import com.mandarinkafe.mandarin.util.ui.components.buttons.ToCartButtonWithPric
 fun FavoriteItemButtonRow(
     modifier: Modifier = Modifier,
     item: CustomizedMeal,
-    onFavoritesEvent: (FavoritesEvent) -> Unit,
-    onCartEvent: (CartEvent) -> Unit,
+    onAddToCart: (CustomizedMeal) -> Unit,
+    onRemoveFromCart: (CustomizedMeal) -> Unit,
+    onMealDetailsClick: (CustomizedMeal) -> Unit,
     cartState: CartState,
 ) {
     val cartItems = cartState.cartItems
@@ -48,7 +47,7 @@ fun FavoriteItemButtonRow(
         if (item.meal.isCustomizable()) {
             CustomizeButton(
                 modifier = Modifier.padding(end = Dimens.MarginSmall8),
-                onClick = { onFavoritesEvent(FavoritesEvent.OpenMealDetails(item)) }
+                onClick = { onMealDetailsClick(item) }
             )
         }
 
@@ -57,21 +56,21 @@ fun FavoriteItemButtonRow(
             CartControls(
                 totalPrice = totalPrice * numberInCart,
                 numberInCart = numberInCart,
-                onIncrease = { onCartEvent(CartEvent.AddToCart(item)) },
-                onDecrease = { onCartEvent(CartEvent.RemoveFromCartByItem(item)) },
+                onIncrease = { onAddToCart(item) },
+                onDecrease = { onRemoveFromCart(item) },
                 modifier = modifier
             )
 
         } else if (item.meal.requireSelection && !isCustomized) {
             SelectButton(
                 text = stringResource(R.string.to_choose),
-                onClick = { onFavoritesEvent(FavoritesEvent.OpenMealDetails(item)) },
+                onClick = { onMealDetailsClick(item) },
                 modifier = modifier
             )
         } else {
             ToCartButtonWithPrice(
                 price = totalPrice, onClick = {
-                    onCartEvent(CartEvent.AddToCart(item))
+                    onAddToCart(item)
                 },
                 modifier = modifier
             )

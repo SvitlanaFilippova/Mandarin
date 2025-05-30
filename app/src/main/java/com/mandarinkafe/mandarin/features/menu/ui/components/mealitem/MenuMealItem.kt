@@ -24,8 +24,7 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_TITLE_IN_MENU
 import com.mandarinkafe.mandarin.util.ui.components.MealItemImageBox
@@ -34,8 +33,10 @@ import com.mandarinkafe.mandarin.util.ui.components.buttons.MealButtonsRow
 @Composable
 fun MenuMealItem(
     meal: Meal,
-    onEvent: (MenuEvent) -> Unit,
-    onCartEvent: (CartContract.CartEvent) -> Unit,
+    onToggleFavorite: (Meal) -> Unit,
+    onAddToCart: (Meal) -> Unit,
+    onRemoveFromCart: (Meal) -> Unit,
+    onMealDetailsClick: (Meal) -> Unit,
     cartState: CartContract.CartState,
     imageSize: Dp,
     modifier: Modifier = Modifier
@@ -47,14 +48,14 @@ fun MenuMealItem(
             .height(IntrinsicSize.Min)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
             .background(Colors.DarkGrey)
-            .clickable(onClick = { onEvent(MenuEvent.OnMealDetailsClick(meal)) })
+            .clickable(onClick = { onMealDetailsClick(meal) })
     ) {
         MealItemImageBox(
             modifier = Modifier
                 .size(imageSize)
                 .padding(Dimens.MarginSmall8),
             meal = meal,
-            onToggleFavorite = { meal -> onEvent(MenuEvent.ToggleFavorite(meal)) },
+            onToggleFavorite = { onToggleFavorite(meal) },
         )
 
         // Блок с текстовой информацией о блюде
@@ -97,9 +98,10 @@ fun MenuMealItem(
             // Кнопки
             MealButtonsRow(
                 baseMeal = meal,
-                onCartEvent = onCartEvent,
+                onAddToCart = { onAddToCart(meal) },
+                onRemoveFromCart = { onRemoveFromCart(meal) },
                 cartState = cartState,
-                onMealDetailsClick = { meal -> onEvent(MenuEvent.OnMealDetailsClick(meal)) },
+                onMealDetailsClick = { onMealDetailsClick(meal) },
             )
 
         }

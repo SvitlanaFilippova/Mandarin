@@ -23,16 +23,17 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEvent
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.util.ui.components.MealItemImageBox
 import com.mandarinkafe.mandarin.util.ui.components.buttons.MealButtonsRow
 
 @Composable
 fun SmallHorizontalMealItemCard(
     meal: Meal,
-    onSearchEvent: (SearchEvent) -> Unit,
-    onCartEvent: (CartContract.CartEvent) -> Unit,
+    onToggleFavorite: (Meal) -> Unit,
+    onAddToCart: (Meal) -> Unit,
+    onRemoveFromCart: (Meal) -> Unit,
+    onMealDetailsClick: (Meal) -> Unit,
     cartState: CartContract.CartState,
     modifier: Modifier = Modifier
 ) {
@@ -44,14 +45,14 @@ fun SmallHorizontalMealItemCard(
             .height(IntrinsicSize.Min)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
             .background(Colors.DarkGrey)
-            .clickable { onSearchEvent(SearchEvent.OnMealDetailsClick(meal)) }
+            .clickable { onMealDetailsClick(meal) }
     ) {
         MealItemImageBox(
             modifier = Modifier
                 .size(Dimens.MealItemInSearchResults96)
                 .padding(Dimens.MarginSmall8),
             meal = meal,
-            onToggleFavorite = { onSearchEvent(SearchEvent.ToggleFavorite(meal)) },
+            onToggleFavorite = { onToggleFavorite(meal) },
         )
 
         Column(
@@ -94,23 +95,17 @@ fun SmallHorizontalMealItemCard(
                 Spacer(modifier = Modifier.weight(1f))
 
                 MealButtonsRow(
-                    baseMeal = meal,
-                    onCartEvent = onCartEvent,
-                    cartState = cartState,
-                    onMealDetailsClick = { meal ->
-                        onSearchEvent(
-                            SearchEvent.OnMealDetailsClick(
-                                meal
-                            )
-                        )
-                    },
                     modifier = Modifier
                         .width(Dimens.ButtonsRowWidth164)
-                        .padding(top = Dimens.MarginSmall8)
-                )
+                        .padding(top = Dimens.MarginSmall8),
+                    baseMeal = meal,
+                    cartState = cartState,
+                    onAddToCart = { onAddToCart(meal) },
+                    onRemoveFromCart = { onRemoveFromCart(meal) },
+                    onMealDetailsClick = { onMealDetailsClick(meal) },
 
+                    )
             }
-
         }
     }
 }

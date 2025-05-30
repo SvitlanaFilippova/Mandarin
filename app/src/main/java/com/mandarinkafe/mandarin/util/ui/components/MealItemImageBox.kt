@@ -30,7 +30,7 @@ import com.mandarinkafe.mandarin.util.ui.components.buttons.FavoriteButton
 fun MealItemImageBox(
     modifier: Modifier = Modifier,
     meal: Meal,
-    onToggleFavorite: (Meal) -> Unit,
+    onToggleFavorite: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -93,7 +93,7 @@ fun MealItemImageBox(
             modifier = Modifier
                 .align(Alignment.TopStart),
             isFavorite = meal.isFavorite,
-            onClick = { onToggleFavorite(meal) }
+            onClick = onToggleFavorite
         )
     }
 }

@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.search.ui.view_model
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.models.UiError
@@ -10,9 +9,9 @@ import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetFullMealListUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetLabelsUseCase
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEffect
-import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEvent
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchState
+import com.mandarinkafe.mandarin.util.BaseViewModel
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
@@ -42,19 +41,9 @@ class SearchViewModel @Inject constructor(
         when (event) {
             is SearchEvent.ClearSearchInput -> clearSearchInput()
             is SearchEvent.SearchMealsByText -> searchByText(event.searchText)
-            is SearchEvent.ToggleFavorite -> toggleFavorite(event.meal)
-            is SearchEvent.UpdateMealFavorite -> updateMealFavorite(
-                id = event.id,
-                isFavorite = event.isFavorite
-            )
-
             is SearchEvent.OnLabelClick -> setLabels(
                 label = event.labelName,
                 isChecked = event.isChecked
-            )
-
-            is SearchEvent.OnMealDetailsClick -> sendEffect(
-                OpenMealDetailsBS(meal = event.meal)
             )
         }
     }

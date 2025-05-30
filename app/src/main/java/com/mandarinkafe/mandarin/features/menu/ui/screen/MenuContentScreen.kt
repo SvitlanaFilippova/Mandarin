@@ -26,9 +26,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.ui.components.BannerCarousel
@@ -40,6 +40,7 @@ import com.mandarinkafe.mandarin.features.menu.ui.components.getVisibleCategoryI
 import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.util.Constants.FORCE_SHOW_FAB_DURATION_MS
 import kotlinx.coroutines.delay
@@ -48,11 +49,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun MenuContentScreen(
     listState: LazyListState,
-    onEvent: (MenuEvent) -> Unit,
-    onCartEvent: (CartContract.CartEvent) -> Unit,
-    onSharedEvent: (SharedEvent) -> Unit,
     cartState: CartContract.CartState,
     menuSate: MenuContract.MenuState,
+    onMenuEvent: (MenuEvent) -> Unit,
+    onSharedEvent: (SharedEvent) -> Unit,
+    onToggleFavorite: (Meal) -> Unit,
+    onAddToCart: (Meal) -> Unit,
+    onRemoveFromCart: (Meal) -> Unit,
+    onMealDetailsClick: (Meal) -> Unit,
 ) {
 
     val menuItems = menuSate.menuItems
@@ -91,7 +95,7 @@ fun MenuContentScreen(
 
     val handleBannerClick = { banner: Banner ->
         coroutineScope.launch {
-            onEvent(MenuEvent.BannerClick(banner))
+            onMenuEvent(MenuEvent.BannerClick(banner))
             forceShowBackToTopFAB.value = true
             delay(FORCE_SHOW_FAB_DURATION_MS)
             forceShowBackToTopFAB.value = false
@@ -101,7 +105,7 @@ fun MenuContentScreen(
     val handleBackToTopClick = {
         coroutineScope.launch {
             listState.scrollToItem(index = 0)
-            onEvent(MenuEvent.ScrollToTop)
+            onMenuEvent(MenuEvent.ScrollToTop)
         }
     }
     // Скрыть/показать TopBar в зависимости от видимой части экрана
@@ -117,7 +121,7 @@ fun MenuContentScreen(
     LaunchedEffect(selectedMenuItemIndex) {
         if (selectedMenuItemIndex >= 0) {
             listState.scrollToItem(selectedMenuItemIndex, scrollOffset = 1)
-            onEvent(MenuEvent.ResetSelectedMenuItemIndex)
+            onMenuEvent(MenuEvent.ResetSelectedMenuItemIndex)
         }
     }
 
@@ -160,10 +164,10 @@ fun MenuContentScreen(
                 )
 
                 if (newCategoryIndex != null && newCategoryIndex != selectedTabIndex) {
-                    onEvent(MenuEvent.ScrollToCategory(newCategoryIndex))
+                    onMenuEvent(MenuEvent.ScrollToCategory(newCategoryIndex))
                 }
                 if (newSubIndex != null && newSubIndex != selectedSubTabIndex) {
-                    onEvent(MenuEvent.ScrollToSubCategory(newSubIndex))
+                    onMenuEvent(MenuEvent.ScrollToSubCategory(newSubIndex))
                 }
             }
     }
@@ -184,7 +188,7 @@ fun MenuContentScreen(
                 exit = fadeOut() + shrinkVertically()
             ) {
                 SearchBar(
-                    onSearchClick = { onEvent(MenuEvent.SearchOnOpenSearchClick) },
+                    onSearchClick = { onMenuEvent(MenuEvent.SearchOnOpenSearchClick) },
                 )
             }
 
@@ -224,7 +228,7 @@ fun MenuContentScreen(
                 categories = categories,
                 selectedTabIndex = selectedTabIndex,
                 onTabSelected = { index ->
-                    onEvent(MenuEvent.ScrollToCategory(index))
+                    onMenuEvent(MenuEvent.ScrollToCategory(index))
                     coroutineScope.launch {
                         val targetIndex = menuItems.indexOfFirst {
                             it is MenuItem.HeaderItem && it.categoryName == categories[index].categoryName
@@ -250,7 +254,7 @@ fun MenuContentScreen(
                             categories = currentSubCategories,
                             selectedTabIndex = selectedSubTabIndex,
                             onTabSelected = { index ->
-                                onEvent(MenuEvent.ScrollToSubCategory(index))
+                                onMenuEvent(MenuEvent.ScrollToSubCategory(index))
                                 coroutineScope.launch {
                                     val targetIndex = menuItems.indexOfFirst {
                                         it is MenuItem.SubHeaderItem && it.categoryName == currentSubCategories[index]
@@ -270,13 +274,15 @@ fun MenuContentScreen(
 
             // Основное меню
             MenuList(
-                menuItems = menuItems,
-                listState = listState,
                 modifier = Modifier
                     .weight(1f),
-                onEvent = onEvent,
-                onCartEvent = onCartEvent,
+                menuItems = menuItems,
+                listState = listState,
                 cartState = cartState,
+                onMealDetailsClick = onMealDetailsClick,
+                onToggleFavorite = onToggleFavorite,
+                onAddToCart = onAddToCart,
+                onRemoveFromCart = onRemoveFromCart,
             )
         }
 

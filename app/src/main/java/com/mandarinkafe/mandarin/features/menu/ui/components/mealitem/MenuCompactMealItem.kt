@@ -19,23 +19,24 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.util.ui.components.MealItemImageBox
 import com.mandarinkafe.mandarin.util.ui.components.buttons.MealButtonsRow
 
 @Composable
 fun MenuCompactMealItem(
     meal: Meal,
-    onEvent: (MenuEvent) -> Unit,
-    onCartEvent: (CartContract.CartEvent) -> Unit,
+    onToggleFavorite: (Meal) -> Unit,
+    onAddToCart: (Meal) -> Unit,
+    onRemoveFromCart: (Meal) -> Unit,
+    onMealDetailsClick: (Meal) -> Unit,
     cartState: CartContract.CartState,
     imageSize: Dp,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
-            .clickable { onEvent(MenuEvent.OnMealDetailsClick(meal)) }
+            .clickable { onMealDetailsClick(meal) }
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
             .background(Colors.DarkGrey)
             .padding(Dimens.MarginSmall8)
@@ -46,7 +47,7 @@ fun MenuCompactMealItem(
             MealItemImageBox(
                 modifier = Modifier.size(imageSize),
                 meal = meal,
-                onToggleFavorite = { onEvent(MenuEvent.ToggleFavorite(meal)) },
+                onToggleFavorite = { onToggleFavorite(meal) },
             )
 
             Text(
@@ -61,9 +62,10 @@ fun MenuCompactMealItem(
 
             MealButtonsRow(
                 baseMeal = meal,
-                onCartEvent = onCartEvent,
+                onAddToCart = { onAddToCart(meal) },
+                onRemoveFromCart = { onRemoveFromCart(meal) },
                 cartState = cartState,
-                onMealDetailsClick = { onEvent(MenuEvent.OnMealDetailsClick(meal)) }
+                onMealDetailsClick = { onMealDetailsClick(meal) }
             )
         }
     }

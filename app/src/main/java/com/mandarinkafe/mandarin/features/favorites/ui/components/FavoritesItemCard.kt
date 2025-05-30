@@ -25,10 +25,7 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartState
-import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesContract.FavoritesEvent
-import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesContract.FavoritesEvent.OpenMealDetails
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_TITLE_IN_MENU
 import com.mandarinkafe.mandarin.util.ui.components.MealItemImageBox
@@ -40,11 +37,14 @@ import com.mandarinkafe.mandarin.util.ui.components.MealItemImageBox
 @Composable
 fun FavoritesItemCard(
     item: CustomizedMeal,
-    onEvent: (FavoritesEvent) -> Unit,
-    onCartEvent: (CartEvent) -> Unit,
     cartState: CartState,
     imageSize: Dp,
-) {
+    onToggleFavorite: (CustomizedMeal) -> Unit,
+    onAddToCart: (CustomizedMeal) -> Unit,
+    onRemoveFromCart: (CustomizedMeal) -> Unit,
+    onMealDetailsClick: (CustomizedMeal) -> Unit,
+
+    ) {
     val meal = item.meal
 
     Row(
@@ -55,7 +55,7 @@ fun FavoritesItemCard(
             .padding(horizontal = Dimens.MarginSmall8)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
             .background(Colors.DarkGrey)
-            .clickable(onClick = { onEvent(OpenMealDetails(item)) })
+            .clickable(onClick = { onMealDetailsClick(item) })
     ) {
 
         MealItemImageBox(
@@ -63,7 +63,7 @@ fun FavoritesItemCard(
                 .size(imageSize)
                 .padding(Dimens.MarginSmall8),
             meal = meal,
-            onToggleFavorite = { onEvent(FavoritesEvent.ToggleFavorite(item)) },
+            onToggleFavorite = { onToggleFavorite(item) },
         )
 
         Column(
@@ -109,9 +109,10 @@ fun FavoritesItemCard(
             // Кнопки
             FavoriteItemButtonRow(
                 item = item,
-                onCartEvent = onCartEvent,
                 cartState = cartState,
-                onFavoritesEvent = onEvent,
+                onAddToCart = { onAddToCart(item) },
+                onRemoveFromCart = { onRemoveFromCart(item) },
+                onMealDetailsClick = { onMealDetailsClick(item) },
             )
         }
     }

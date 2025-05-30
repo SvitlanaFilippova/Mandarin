@@ -14,29 +14,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.MenuCompactMealItem
 import com.mandarinkafe.mandarin.features.menu.ui.components.mealitem.MenuMealItem
 import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 
 @Composable
 fun MenuList(
     menuItems: List<MenuItem>,
     listState: LazyListState,
     modifier: Modifier,
-    onEvent: (MenuEvent) -> Unit,
-    onCartEvent: (CartContract.CartEvent) -> Unit,
-    cartState: CartContract.CartState
-) {
+    cartState: CartContract.CartState,
+    onToggleFavorite: (Meal) -> Unit,
+    onAddToCart: (Meal) -> Unit,
+    onRemoveFromCart: (Meal) -> Unit,
+    onMealDetailsClick: (Meal) -> Unit,
 
+    ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val horizontalPadding = Dimens.MarginSmall8
     val imageSize = remember(screenWidth) {
         (screenWidth - horizontalPadding * 3) / 2
     }
+
 
     LazyColumn(
         state = listState,
@@ -57,10 +60,12 @@ fun MenuList(
                     // Одинарный формат
                     MenuMealItem(
                         meal = item.meal,
-                        onEvent = onEvent,
-                        onCartEvent = onCartEvent,
+                        onToggleFavorite = onToggleFavorite,
+                        onAddToCart = onAddToCart,
+                        onRemoveFromCart = onRemoveFromCart,
                         cartState = cartState,
                         imageSize = imageSize,
+                        onMealDetailsClick = onMealDetailsClick,
                     )
                 }
 
@@ -76,21 +81,23 @@ fun MenuList(
                     ) {
                         MenuCompactMealItem(
                             meal = item.left,
-                            onEvent = onEvent,
-                            onCartEvent = onCartEvent,
+                            onToggleFavorite = onToggleFavorite,
+                            onAddToCart = onAddToCart,
+                            onRemoveFromCart = onRemoveFromCart,
                             cartState = cartState,
                             imageSize = imageSize,
-                            modifier = Modifier.weight(1f)
-
+                            modifier = Modifier.weight(1f),
+                            onMealDetailsClick = onMealDetailsClick
                         )
                         MenuCompactMealItem(
                             meal = item.right,
-                            onEvent = onEvent,
-                            onCartEvent = onCartEvent,
+                            onToggleFavorite = onToggleFavorite,
+                            onAddToCart = onAddToCart,
+                            onRemoveFromCart = onRemoveFromCart,
                             cartState = cartState,
                             imageSize = imageSize,
-                            modifier = Modifier.weight(1f)
-
+                            modifier = Modifier.weight(1f),
+                            onMealDetailsClick = onMealDetailsClick
                         )
                     }
 

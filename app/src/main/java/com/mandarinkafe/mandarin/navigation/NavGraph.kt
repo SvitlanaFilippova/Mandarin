@@ -8,8 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import com.mandarinkafe.mandarin.features.cart.ui.screen.CartScreen
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.delivery.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.features.favorites.ui.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.features.menu.ui.screen.MenuScreen
@@ -20,6 +18,8 @@ import com.mandarinkafe.mandarin.navigation.NavRoutes.FAVORITES_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SPLASH_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.shared.cart.ui.screen.CartScreen
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
 import com.mandarinkafe.mandarin.splash.ui.SplashScreen
 
@@ -33,7 +33,10 @@ fun NavGraph(navHostController: NavHostController) {
         startDestination = SPLASH_SCREEN_ROUTE
     ) {
         composable(CART_SCREEN_ROUTE) {
-            CartScreen(viewModel = cartViewModel)
+            CartScreen(
+                cartViewModel = cartViewModel,
+                sharedViewModel = sharedViewModel
+            )
         }
 
         composable(DELIVERY_SCREEN_ROUTE) {
@@ -42,7 +45,8 @@ fun NavGraph(navHostController: NavHostController) {
 
         composable(FAVORITES_SCREEN_ROUTE) {
             FavoritesScreen(
-                cartViewModel = cartViewModel
+                cartViewModel = cartViewModel,
+                sharedViewModel = sharedViewModel
             )
         }
 
@@ -76,9 +80,10 @@ fun NavGraph(navHostController: NavHostController) {
             val focusInput = entry.arguments?.getBoolean("focusInput") == true
 
             SearchScreen(
+                focusSearchBarInput = focusInput,
                 navController = navHostController,
                 cartViewModel = cartViewModel,
-                focusSearchBarInput = focusInput
+                sharedViewModel = sharedViewModel
             )
         }
     }

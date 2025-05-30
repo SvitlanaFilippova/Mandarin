@@ -9,19 +9,16 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartState
-import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesContract.FavoritesEffect
-import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesContract.FavoritesEvent
-import kotlinx.coroutines.flow.Flow
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartState
 
 @Composable
 fun FavoritesContent(
     data: List<CustomizedMeal>,
-    onEvent: (FavoritesEvent) -> Unit,
-    onCartEvent: (CartEvent) -> Unit,
     cartState: CartState,
-    effectFlow: Flow<FavoritesEffect>,
+    onToggleFavorite: (CustomizedMeal) -> Unit,
+    onAddToCart: (CustomizedMeal) -> Unit,
+    onRemoveFromCart: (CustomizedMeal) -> Unit,
+    onMealDetailsClick: (CustomizedMeal) -> Unit,
 ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
@@ -36,10 +33,12 @@ fun FavoritesContent(
         itemsIndexed(data) { index, item ->
             FavoritesItemCard(
                 item = item,
-                onEvent = onEvent,
-                onCartEvent = onCartEvent,
                 cartState = cartState,
-                imageSize = imageSize
+                imageSize = imageSize,
+                onToggleFavorite = onToggleFavorite,
+                onAddToCart = onAddToCart,
+                onRemoveFromCart = onRemoveFromCart,
+                onMealDetailsClick = onMealDetailsClick,
             )
         }
     }

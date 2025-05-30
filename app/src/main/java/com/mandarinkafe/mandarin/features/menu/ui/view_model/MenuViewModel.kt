@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.menu.ui.view_model
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
@@ -14,11 +13,10 @@ import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.ui.models.extensions.getName
 import com.mandarinkafe.mandarin.features.menu.ui.models.extensions.updateMeal
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.CallPhone
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.OpenSearch
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuState
+import com.mandarinkafe.mandarin.util.BaseViewModel
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
@@ -45,23 +43,13 @@ class MenuViewModel @Inject constructor(
 
     override fun onEvent(event: MenuEvent) {
         when (event) {
-            is MenuEvent.ToggleFavorite -> toggleFavorite(event.meal)
             is MenuEvent.ScrollToCategory -> scrollToCategory(event.newIndex)
             is MenuEvent.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is MenuEvent.ScrollToTop -> scrollToTop()
             is MenuEvent.BannerClick -> findMenuItemByBanner(event.banner)
             is MenuEvent.ResetSelectedMenuItemIndex -> resetSelectedMenuItemIndex()
             is MenuEvent.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
-            is MenuEvent.UpdateMealFavorite -> updateMealFavorite(
-                id = event.id,
-                isFavorite = event.isFavorite
-            )
 
-            is MenuEvent.OnMealDetailsClick -> sendEffect(
-                OpenMealDetailsBS(meal = event.meal)
-            )
-
-            is MenuEvent.OnPhoneClick -> sendEffect(CallPhone)
         }
     }
 
