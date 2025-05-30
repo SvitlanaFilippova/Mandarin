@@ -39,9 +39,8 @@ class ValidateFavoritesUseCaseImpl(
                 when (record) {
                     is FavoriteRecord.Base -> {
                         // Базовый случай
-                        val mealWithFlag = fullMeal.copy(isFavorite = true)
                         val customized = CustomizedMeal(
-                            meal = mealWithFlag,
+                            meal = fullMeal,
                             adds = emptyList(),
                             modifiers = emptyList()
                         )
@@ -66,9 +65,8 @@ class ValidateFavoritesUseCaseImpl(
                             modifiers = validMods
                         )
                         // Собираем CustomizedMeal
-                        val mealWithFlag = fullMeal.copy(isFavorite = true)
                         val customized = CustomizedMeal(
-                            meal = mealWithFlag,
+                            meal = fullMeal,
                             adds = validAdds,
                             modifiers = validMods
                         )

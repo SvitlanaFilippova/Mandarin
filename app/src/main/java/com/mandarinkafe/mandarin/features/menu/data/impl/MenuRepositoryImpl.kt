@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.features.menu.data.impl
 import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.network.NetworkClient
-import com.mandarinkafe.mandarin.core.domain.api.FavoritesReader
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.menu.data.dto.CategoryDto
@@ -23,7 +22,6 @@ import jakarta.inject.Singleton
 @Singleton
 class MenuRepositoryImpl @Inject constructor(
     private val networkClient: NetworkClient,
-    private val favoritesReader: FavoritesReader
 ) : MenuRepository, MenuFetcher {
 
     override suspend fun fetchMenu(): Resource<List<MealCategory>> {
@@ -48,12 +46,11 @@ class MenuRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun buildMenuStructure(menuDto: List<CategoryDto>?): List<MealCategory> {
+    private fun buildMenuStructure(menuDto: List<CategoryDto>?): List<MealCategory> {
         if (menuDto.isNullOrEmpty()) {
             Log.e("DEBUG", "menuDto оказался null или пустым")
             return emptyList()
         }
-        val baseFavIds = favoritesReader.getBaseFavoritesIds()
 
         val childCategoriesMap = groupSubcategories(menuDto)
         val topLevelCategories = menuDto.filter { !it.hasParent() }
@@ -68,13 +65,11 @@ class MenuRepositoryImpl @Inject constructor(
             if (subCategories.isNullOrEmpty()) {
                 // Нет подкатегорий — обычная категория с блюдами
                 result.add(
-                    parent.toDomain(
-                        storedFavorites = baseFavIds
-                    )
+                    parent.toDomain()
                 )
             } else {
                 // Есть подкатегории — собрать как категорию с subCategories
-                result.add(buildParentCategory(parent, subCategories, baseFavIds))
+                result.add(buildParentCategory(parent, subCategories))
             }
         }
 
@@ -82,7 +77,7 @@ class MenuRepositoryImpl @Inject constructor(
         for (category in menuDto.filter { it.hasParent() }) {
             val parentName = category.parentName()
             if (!topLevelNames.contains(parentName)) {
-                result.add(buildLonelySubcategory(category, baseFavIds))
+                result.add(buildLonelySubcategory(category))
             }
         }
         return result
@@ -97,7 +92,6 @@ class MenuRepositoryImpl @Inject constructor(
     private fun buildParentCategory(
         parentDto: CategoryDto,
         subCategories: List<CategoryDto>?,
-        storedFavorites: Set<String>,
     ): MealCategory {
         val name = parentDto.name.applyTypography()
         return MealCategory(
@@ -106,7 +100,6 @@ class MenuRepositoryImpl @Inject constructor(
             meals = null,
             subCategories = subCategories?.map { subDto ->
                 subDto.copy(name = subDto.subName()).toDomain(
-                    storedFavorites = storedFavorites,
                     topCategoryName = name
                 )
             },
@@ -117,11 +110,10 @@ class MenuRepositoryImpl @Inject constructor(
     }
 
     private fun buildLonelySubcategory(
-        category: CategoryDto,
-        storedFavorites: Set<String>
+        category: CategoryDto
     ): MealCategory {
         Log.w("DEBUG", "Подкатегория '${category.name}' без родителя")
-        return category.copy(name = category.subName()).toDomain(storedFavorites)
+        return category.copy(name = category.subName()).toDomain()
     }
 
     private fun collectAllMeals(category: MealCategory, result: MutableList<Meal>) {

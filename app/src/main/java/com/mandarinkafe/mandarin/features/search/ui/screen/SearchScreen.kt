@@ -26,11 +26,12 @@ fun SearchScreen(
     val cartState by cartViewModel.state.collectAsState()
     val onSharedEvent = sharedViewModel::onEvent
     val onCartEvent = cartViewModel::onEvent
-
+    val favoriteIds by sharedViewModel.favoritesIDs.collectAsState()
 
     MySearchBar(
         focusSearchBarInput = focusSearchBarInput,
         cartState = cartState,
+        favoriteIds = favoriteIds,
         onSearchEvent = searchViewModel::onEvent,
         onSearchDismiss = {
             if (!navController.popBackStack()) {

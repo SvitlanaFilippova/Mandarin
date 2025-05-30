@@ -9,11 +9,11 @@ interface FavoritesApi {
 
     /** Добавить или убрать из избранного «чистое» блюдо.
      *  Возвращает актуальный статус isFavorite для блюда после выполнения операции*/
-    suspend fun toggleFavorite(meal: Meal): Boolean
+    suspend fun toggleFavorite(meal: Meal)
 
     /** Добавить или убрать из избранного кастомизированное блюдо.
      *  Возвращает актуальный статус isFavorite для блюда после выполнения операции*/
-    suspend fun toggleFavorite(custom: CustomizedMeal): Boolean
+    suspend fun toggleFavorite(custom: CustomizedMeal)
 
     /** Получить уже **валидный**, очищенный от пропавших или устаревших, список. */
     suspend fun getFavorites(): Resource<List<CustomizedMeal>>

@@ -1,22 +1,26 @@
 package com.mandarinkafe.mandarin.util.ui.components
 
-import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
+import androidx.navigation.NavController
+import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.Mapper.toCustomizedMeal
-import com.mandarinkafe.mandarin.features.meal_details.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER_DEFAULT
-import com.mandarinkafe.mandarin.util.ui.HandleBottomSheetEffect
 import kotlinx.coroutines.flow.Flow
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun HandleEffects(
     effectFlow: Flow<SharedEffect>,
-    context: Context
+    navController: NavController
 ) {
+    val context = LocalContext.current
+
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
             when (effect) {
@@ -28,23 +32,18 @@ fun HandleEffects(
                 }
 
                 is SharedEffect.OpenMealDetailsBS -> {
-                    // Игнорируем здесь, обработаем в HandleBottomSheetEffect
+                    val meal = effect.item
+                        ?: effect.meal?.toCustomizedMeal()
+                        ?: return@collect
+
+                    val isEditMode = effect.isEditMode
+
+                    val gson = Gson()
+                    val json =
+                        URLEncoder.encode(gson.toJson(meal), StandardCharsets.UTF_8.toString())
+                    navController.navigate("meal_details/$json/$isEditMode")
                 }
             }
         }
-
-    }
-
-    //TODO с Customized не открывается - проверять
-    HandleBottomSheetEffect<SharedEffect.OpenMealDetailsBS>(
-        effectFlow = effectFlow,
-        cast = { it as? SharedEffect.OpenMealDetailsBS }
-    ) { effect, onDismiss ->
-        MealDetailsBottomSheet(
-            initItem = effect.meal?.toCustomizedMeal(),
-            onDismiss = onDismiss,
-            onFavoriteChanged = { string, boolean -> },
-            onAddToCart = { }
-        )
     }
 }

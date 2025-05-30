@@ -10,7 +10,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -39,7 +38,6 @@ fun MainScreen() {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val context = LocalContext.current
 
     val shouldShowBottomBar = currentRoute?.let {
         it != SPLASH_SCREEN_ROUTE
@@ -83,6 +81,6 @@ fun MainScreen() {
     }
     HandleEffects(
         effectFlow = effectFlow,
-        context = context
+        navController = navController,
     )
 }

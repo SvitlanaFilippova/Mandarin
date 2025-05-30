@@ -2,7 +2,6 @@ package com.mandarinkafe.mandarin.features.menu.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
-import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
@@ -11,7 +10,6 @@ import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.features.menu.ui.mappers.MenuItemMapper.menuToMenuItems
 import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.ui.models.extensions.getName
-import com.mandarinkafe.mandarin.features.menu.ui.models.extensions.updateMeal
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.OpenSearch
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
@@ -39,6 +37,7 @@ class MenuViewModel @Inject constructor(
     init {
         loadMenu()
         getBanners()
+        observeFavorites()
     }
 
     override fun onEvent(event: MenuEvent) {
@@ -68,6 +67,18 @@ class MenuViewModel @Inject constructor(
                     is Idle -> {}
                     else -> setError(resource)
                 }
+            }
+        }
+    }
+
+    private fun observeFavorites() {
+        viewModelScope.launch {
+            val favoriteIdsFromStorage = mutableSetOf<String>()
+            favoritesApi.observeFavoritesBaseMealIDs().collect { favoriteIdsFromStorage.addAll(it) }
+            setState {
+                copy(
+                    favoriteIds = favoriteIdsFromStorage
+                )
             }
         }
     }
@@ -153,32 +164,6 @@ class MenuViewModel @Inject constructor(
     private fun resetSelectedMenuItemIndex() {
         setState { copy(selectedMenuItemIndex = DEFAULT_UNSELECTED_INDEX) }
 
-    }
-
-    // Добавить блюдо в избранное или удалить
-    private fun toggleFavorite(meal: Meal) {
-        viewModelScope.launch {
-            val isNowFavorite = favoritesApi.toggleFavorite(meal)
-
-            setState {
-                copy(
-                    menuItems = menuItems.updateMeal(meal.id) { meal ->
-                        meal.copy(isFavorite = isNowFavorite)
-                    }
-                )
-            }
-        }
-    }
-
-    // Если состояние избранного менялось в другом месте (например,в BottomSheet)
-    private fun updateMealFavorite(id: String, isFavorite: Boolean) {
-        setState {
-            copy(
-                menuItems = menuItems.updateMeal(id) { meal ->
-                    meal.copy(isFavorite = isFavorite)
-                }
-            )
-        }
     }
 
     private fun getBanners() {

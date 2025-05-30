@@ -1,9 +1,9 @@
-package com.mandarinkafe.mandarin.features.remoteconfig.data
+package com.mandarinkafe.mandarin.shared.remoteconfig.data
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
-import com.mandarinkafe.mandarin.features.remoteconfig.domain.RemoteConfigRepository
-import com.mandarinkafe.mandarin.features.remoteconfig.domain.model.FeatureToggle
+import com.mandarinkafe.mandarin.shared.remoteconfig.domain.RemoteConfigRepository
+import com.mandarinkafe.mandarin.shared.remoteconfig.domain.model.FeatureToggle
 import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER_DEFAULT
 import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER_KEY
 import kotlinx.coroutines.tasks.await

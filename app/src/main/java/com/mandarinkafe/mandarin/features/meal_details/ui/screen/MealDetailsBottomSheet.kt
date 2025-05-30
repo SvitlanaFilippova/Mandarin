@@ -18,6 +18,11 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsViewModel
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.AddToCart
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.ReplaceMealInCart
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartViewModel
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.launch
@@ -26,22 +31,25 @@ import kotlinx.coroutines.launch
 @Composable
 fun MealDetailsBottomSheet(
     viewModel: MealDetailsViewModel = hiltViewModel(),
-    onAddToCart: (CustomizedMeal) -> Unit,
+    sharedViewModel: SharedViewModel,
+    cartViewModel: CartViewModel,
     initItem: CustomizedMeal?,
-    onDismiss: () -> Unit,
-    onFavoriteChanged: (String, Boolean) -> Unit = { _, _ -> }
+    onClose: () -> Unit,
+    isEditMode: Boolean,
 ) {
     if (initItem == null) return
     LaunchedEffect(Unit) {
         viewModel.onEvent(MealDetailsEvent.SetItem(initItem))
     }
     val state by viewModel.state.collectAsState()
-    val initMeal = initItem.meal
-    val meal = state.customizedMeal?.meal ?: initMeal
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
     )
+    val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
+
+    val onSharedEvent = sharedViewModel::onEvent
+    val onCartEvent = cartViewModel::onEvent
 
     LaunchedEffect(Unit) {
         sheetState.show()
@@ -51,10 +59,7 @@ fun MealDetailsBottomSheet(
         {
             coroutineScope.launch {
                 sheetState.hide()
-                meal.let { meal ->
-                    onFavoriteChanged(meal.id, meal.isFavorite)
-                }
-                onDismiss()
+                onClose()
             }
         }
     }
@@ -77,10 +82,26 @@ fun MealDetailsBottomSheet(
                 MealDetailsContentScreen(
                     state = state,
                     initItem = initItem,
+                    favorites = favorites,
                     onEvent = viewModel::onEvent,
-                    onAddToCart = onAddToCart,
+                    onAddToCart = { item -> onCartEvent(AddToCart(item)) },
                     onClose = onClose,
-                    onToggleFavorite = { }, //TODO передавать сюда SharedViewModel и обрабаывать клик через неё
+                    onToggleFavorite = { item ->
+                        onSharedEvent(
+                            SharedEvent.ToggleFavorite(
+                                item = item
+                            )
+                        )
+                    },
+                    isEditMode = isEditMode,
+                    onEdit = { item ->
+                        onCartEvent(
+                            ReplaceMealInCart(
+                                newItem = item,
+                                oldItem = initItem
+                            )
+                        )
+                    },
                 )
             }
     }

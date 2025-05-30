@@ -29,6 +29,7 @@ sealed interface MenuContract {
     data class MenuState(
         val isLoading: Boolean = false,
         val menuItems: List<MenuItem> = emptyList(),
+        val favoriteIds: Set<String> = emptySet(),
         val error: UiError? = null,
         val banners: List<Banner> = emptyList(),
         val bannersAreLoading: Boolean = false,

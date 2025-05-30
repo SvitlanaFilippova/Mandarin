@@ -30,6 +30,7 @@ fun MenuScreen(
     val effectFlow = menuViewModel.effect
     val listState = rememberLazyListState()
 
+    val favoriteIds by sharedViewModel.favoritesIDs.collectAsState()
     val error = menuSate.error
     val onSharedEvent = sharedViewModel::onEvent
     val onMenuEvent = menuViewModel::onEvent
@@ -47,6 +48,7 @@ fun MenuScreen(
             onSharedEvent = onSharedEvent,
             menuSate = menuSate,
             cartState = cartState,
+            favoriteIds = favoriteIds,
             onMealDetailsClick = { meal -> onSharedEvent(SharedEvent.OnMealDetailsClick(meal)) },
             onToggleFavorite = { meal -> onSharedEvent(SharedEvent.ToggleFavorite(meal)) },
             onAddToCart = { meal -> onCartEvent(meal.toAddToCartEvent()) },

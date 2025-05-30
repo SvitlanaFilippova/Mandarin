@@ -43,7 +43,7 @@ class FavoritesRepositoryImpl(
         }
     }
 
-    override suspend fun getBaseFavoritesIds(): Set<String> {
+    override fun getBaseFavoritesIds(): Set<String> {
         return _baseIdsFlow.value
     }
 
@@ -55,17 +55,15 @@ class FavoritesRepositoryImpl(
         }
     }
 
-    override suspend fun toggleFavorite(record: FavoriteRecord): Boolean {
+    override suspend fun toggleFavorite(record: FavoriteRecord) {
         val currentSet = when (val current = _favoritesFlow.value) {
             is Resource.Success -> current.data?.toMutableSet() ?: mutableSetOf()
             else -> mutableSetOf()
         }
         if (currentSet.contains(record)) {
             currentSet.remove(record)
-            return false
         } else {
             currentSet.add(record)
-            return true
         }
 
         // Сохраняем изменения

@@ -7,9 +7,7 @@ import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
 
 sealed interface FavoritesContract {
-    sealed interface FavoritesEvent : BaseEvent {
-        data class ToggleFavorite(val item: CustomizedMeal) : FavoritesEvent
-    }
+    sealed interface FavoritesEvent : BaseEvent
 
     sealed interface FavoritesEffect : BaseEffect
 

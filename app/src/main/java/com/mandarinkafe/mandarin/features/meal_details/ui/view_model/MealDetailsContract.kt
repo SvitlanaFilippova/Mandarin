@@ -28,7 +28,6 @@ sealed interface MealDetailsContract {
 
     data class MealDetailsState(
         val isLoading: Boolean = false,
-        val isFavorite: Boolean? = null,
         val error: UiError? = null,
         val customizedMeal: CustomizedMeal? = null,
         val pizzaAds: List<MealAdditionalCategory> = emptyList(),

@@ -5,7 +5,6 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
-import com.mandarinkafe.mandarin.util.ui.BottomSheetEffect
 
 sealed interface SharedContract {
 
@@ -14,16 +13,28 @@ sealed interface SharedContract {
         data object HideTopBar : SharedEvent
         data object ShowTopBar : SharedEvent
         data object ResetTopBar : SharedEvent
-        data class OnMealDetailsClick(val meal: Meal? = null, val item: CustomizedMeal? = null) :
-            SharedEvent
-
         data class ToggleFavorite(val meal: Meal? = null, val item: CustomizedMeal? = null) :
             SharedEvent
+
+        data class OnMealDetailsClick(
+            val meal: Meal? = null,
+            val item: CustomizedMeal? = null,
+            val isEditMode: Boolean = false
+        ) : SharedEvent
+
+        data class OnEditMealClick(
+            val item: CustomizedMeal
+        ) : SharedEvent
+
+
     }
 
     sealed interface SharedEffect : BaseEffect {
-        data class OpenMealDetailsBS(val meal: Meal? = null, val item: CustomizedMeal? = null) :
-            BottomSheetEffect, SharedEffect
+        data class OpenMealDetailsBS(
+            val meal: Meal? = null,
+            val item: CustomizedMeal? = null,
+            val isEditMode: Boolean = false
+        ) : SharedEffect
 
         data object OnPhoneClick : SharedEffect
     }

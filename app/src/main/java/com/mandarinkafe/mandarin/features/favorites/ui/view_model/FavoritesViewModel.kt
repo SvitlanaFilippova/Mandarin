@@ -29,9 +29,6 @@ class FavoritesViewModel @Inject constructor(private val favoritesApi: Favorites
     }
 
     override fun onEvent(event: FavoritesEvent) {
-        when (event) {
-            is FavoritesEvent.ToggleFavorite -> toggleFavorite(event.item)
-        }
     }
 
     override fun setLoading(isLoading: Boolean) {
@@ -51,13 +48,6 @@ class FavoritesViewModel @Inject constructor(private val favoritesApi: Favorites
                         else -> setError(resource)
                     }
                 }
-        }
-    }
-
-    // Добавить блюдо в избранное или удалить
-    private fun toggleFavorite(meal: CustomizedMeal) {
-        viewModelScope.launch {
-            favoritesApi.toggleFavorite(meal)
         }
     }
 

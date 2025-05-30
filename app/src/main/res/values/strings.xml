@@ -69,6 +69,7 @@
     <string name="meal_in_cart_count_plus_template">%1$d шт +</string>
     <string name="adds_prefix">+ %1$s</string>
     <string name="process_order_price_template">Оформить за %1$d ₽</string>
+    <string name="save_meal">Сохранить (%1$d ₽)</string>
 
     <!-- Ошибки и сообщения -->
     <string name="placeholder_message_call_us">Попробуйте ещё&#160;раз или просто позвоните нам по&#160;телефону %1$s, чтобы сделать заказ.</string>

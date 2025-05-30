@@ -10,6 +10,7 @@ import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 fun SearchResultsLazyColumn(
     filteredMenuItems: List<Meal>,
     cartState: CartContract.CartState,
+    favoriteIds: Set<String>,
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
@@ -20,6 +21,7 @@ fun SearchResultsLazyColumn(
             SmallHorizontalMealItemCard(
                 meal = meal,
                 cartState = cartState,
+                favoriteIds = favoriteIds,
                 onToggleFavorite = onToggleFavorite,
                 onAddToCart = onAddToCart,
                 onRemoveFromCart = onRemoveFromCart,

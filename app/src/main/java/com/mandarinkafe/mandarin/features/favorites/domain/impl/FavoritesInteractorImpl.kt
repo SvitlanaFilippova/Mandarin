@@ -54,14 +54,14 @@ class FavoritesInteractorImpl(
         return reader.checkIfFavorite(meal.toFavoriteRecord(getTimeStamp()))
     }
 
-    override suspend fun toggleFavorite(custom: CustomizedMeal): Boolean {
+    override suspend fun toggleFavorite(custom: CustomizedMeal) {
         val record = custom.toFavoriteRecord(getTimeStamp())
-        return writer.toggleFavorite(record)
+        writer.toggleFavorite(record)
     }
 
-    override suspend fun toggleFavorite(meal: Meal): Boolean {
+    override suspend fun toggleFavorite(meal: Meal) {
         val record = meal.toFavoriteRecord(getTimeStamp())
-        return writer.toggleFavorite(record)
+        writer.toggleFavorite(record)
 
     }
 

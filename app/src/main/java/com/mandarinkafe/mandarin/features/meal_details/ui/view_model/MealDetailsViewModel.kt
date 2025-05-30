@@ -51,7 +51,7 @@ class MealDetailsViewModel @Inject constructor(
             )
 
             is MealDetailsEvent.SetItem -> setMeal(item = event.item)
-            is MealDetailsEvent.ChooseCategory -> chooseCategory(newIndex = event.newIndex)
+            is MealDetailsEvent.ChooseCategory -> chooseAdsCategory(newIndex = event.newIndex)
 
         }
     }
@@ -115,7 +115,7 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun chooseCategory(newIndex: Int) {
+    private fun chooseAdsCategory(newIndex: Int) {
         if (newIndex >= 0) {
             setState {
                 copy(
@@ -125,18 +125,10 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun toggleFavorite() {
-        val current = state.value.customizedMeal ?: return
-        viewModelScope.launch {
-            favoritesApi.toggleFavorite(current)
-        }
-    }
-
     private fun setMeal(item: CustomizedMeal) {
         viewModelScope.launch {
-            val isFavorite = favoritesApi.checkIfFavorite(item)
             setState {
-                copy(customizedMeal = item, isFavorite = isFavorite)
+                copy(customizedMeal = item)
             }
         }
     }

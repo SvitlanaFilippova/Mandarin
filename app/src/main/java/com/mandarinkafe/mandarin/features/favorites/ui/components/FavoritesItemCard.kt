@@ -43,9 +43,11 @@ fun FavoritesItemCard(
     onAddToCart: (CustomizedMeal) -> Unit,
     onRemoveFromCart: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
+) {
 
-    ) {
     val meal = item.meal
+    val isFavorite =
+        true // нет смысла дополнительно проверять, поскольку в этот только избранные попадают
 
     Row(
         verticalAlignment = Alignment.Top,
@@ -63,8 +65,10 @@ fun FavoritesItemCard(
                 .size(imageSize)
                 .padding(Dimens.MarginSmall8),
             meal = meal,
+            isFavorite = isFavorite,
             onToggleFavorite = { onToggleFavorite(item) },
-        )
+
+            )
 
         Column(
             modifier = Modifier

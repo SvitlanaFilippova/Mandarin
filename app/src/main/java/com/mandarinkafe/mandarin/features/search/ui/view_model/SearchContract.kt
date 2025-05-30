@@ -22,6 +22,7 @@ interface SearchContract {
     data class SearchState(
         val fullMealList: List<Meal> = emptyList(),
         val filteredMealList: List<Meal> = emptyList(),
+        val favoritesIds: Set<String> = emptySet(),
         val allLabels: List<LabelUiModel> = emptyList(),
         val checkedLabels: List<String> = emptyList(),
         val latestSearchText: String = "",

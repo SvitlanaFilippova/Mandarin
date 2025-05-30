@@ -27,6 +27,7 @@ import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 fun SearchResults(
     filteredMenuItems: List<Meal>,
     latestSearchText: String,
+    favoriteIds: Set<String>,
     onSearchDismiss: () -> Unit,
     cartState: CartContract.CartState,
     onToggleFavorite: (Meal) -> Unit,
@@ -55,6 +56,7 @@ fun SearchResults(
             SearchResultsLazyColumn(
                 filteredMenuItems = filteredMenuItems,
                 cartState = cartState,
+                favoriteIds = favoriteIds,
                 onToggleFavorite = onToggleFavorite,
                 onAddToCart = onAddToCart,
                 onRemoveFromCart = onRemoveFromCart,

@@ -71,4 +71,9 @@ fun CustomizedMeal.hasSelectedAllRequiredModifiers(): Boolean {
             val selectedGroup = modifiers.find { it.id == group.id }
             selectedGroup != null && selectedGroup.items.isNotEmpty()
         }
+
+}
+
+fun CustomizedMeal.isFavorite(favorites: List<CustomizedMeal>): Boolean {
+    return favorites.any { it == this }
 }

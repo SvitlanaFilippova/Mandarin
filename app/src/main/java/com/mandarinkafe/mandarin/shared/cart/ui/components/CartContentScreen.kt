@@ -26,12 +26,15 @@ import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartStat
 fun CartContentScreen(
     state: CartState,
     listState: LazyListState,
+    favorites: List<CustomizedMeal>,
     onClearCart: () -> Unit,
     onToggleFavorite: (CustomizedMeal) -> Unit,
     onAddToCart: (CustomizedMeal) -> Unit,
     onRemoveFromCart: (CustomizedMeal) -> Unit,
     onDeletionCancel: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
+    onEditMealClick: (CustomizedMeal) -> Unit,
+    
 ) {
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -56,6 +59,7 @@ fun CartContentScreen(
                     CartItemCard(
                         item = cartItem,
                         quantity = quantity,
+                        favorites = favorites,
                         itemInPendingDeletion = itemInPendingDeletion,
                         deletionProgress = state.mealDeletionProgress[cartItem] ?: 0f,
                         onToggleFavorite = onToggleFavorite,
@@ -63,6 +67,7 @@ fun CartContentScreen(
                         onRemoveFromCart = onRemoveFromCart,
                         onDeletionCancel = onDeletionCancel,
                         onMealDetailsClick = onMealDetailsClick,
+                        onEditMealClick = onEditMealClick,
                     )
                 }
 

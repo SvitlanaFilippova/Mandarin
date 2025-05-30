@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -25,6 +27,7 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.extensions.hasSelectedAllRequiredModifiers
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isOnlySingleRequiredChoice
 import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -48,12 +51,14 @@ import kotlinx.coroutines.launch
 fun MealDetailsContentScreen(
     state: MealDetailsState,
     initItem: CustomizedMeal,
+    favorites: List<CustomizedMeal>,
+    isEditMode: Boolean,
     onClose: () -> Unit,
     onEvent: (MealDetailsEvent) -> Unit,
     onAddToCart: (CustomizedMeal) -> Unit,
+    onEdit: (CustomizedMeal) -> Unit,
     onToggleFavorite: (CustomizedMeal) -> Unit,
-
-    ) {
+) {
     val customizedMeal = state.customizedMeal ?: initItem
     val meal = customizedMeal.meal
     val listState = rememberLazyListState()
@@ -75,6 +80,10 @@ fun MealDetailsContentScreen(
         }
     }
 
+    val isFavorite by remember(favorites) {
+        derivedStateOf { customizedMeal.isFavorite(favorites) }
+    }
+
     Column(
         modifier = Modifier
             .padding(Dimens.MarginSmall8)
@@ -83,7 +92,7 @@ fun MealDetailsContentScreen(
             meal = meal,
             onToggleFavorite = { onToggleFavorite(customizedMeal) },
             onClose = onClose,
-            isFavorite = state.isFavorite
+            isFavorite = isFavorite
         )
 
         Box {
@@ -276,13 +285,17 @@ fun MealDetailsContentScreen(
                     .align(Alignment.BottomCenter)
                     .background(Colors.Transparent),
                 totalPrice = customizedMeal.totalPrice(),
-                onClick = {
+                onAddToCart = {
                     onAddToCart(customizedMeal)
                     onClose()
                 },
-                shouldBeActive = showToCartButton
+                shouldBeActive = showToCartButton,
+                isEditMode = isEditMode,
+                onEdit = {
+                    onEdit(customizedMeal)
+                    onClose()
+                }
             )
         }
     }
-
 }

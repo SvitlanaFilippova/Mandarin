@@ -6,6 +6,7 @@ interface FilterUseCase {
     operator fun invoke(
         meals: List<Meal>,
         searchText: String,
-        checkedLabels: List<String>
+        checkedLabels: List<String>,
+        favoritesIds: Set<String>
     ): List<Meal>
 }

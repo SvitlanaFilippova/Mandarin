@@ -13,7 +13,12 @@ import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.ShowTopBar
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedState
 import com.mandarinkafe.mandarin.util.BaseViewModel
+import com.mandarinkafe.mandarin.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,19 +27,46 @@ class SharedViewModel @Inject constructor(private val favoritesApi: FavoritesApi
     BaseViewModel<SharedEvent, SharedEffect, SharedState>() {
     override fun setInitialState() = SharedState()
 
+    val favoritesItemsFlow: StateFlow<List<CustomizedMeal>> =
+        favoritesApi.observeFavoritesItems()
+            .map { resource ->
+                when (resource) {
+                    is Resource.Success -> resource.data ?: emptyList()
+                    else -> emptyList()
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = emptyList()
+            )
+
+    val favoritesIDs: StateFlow<Set<String>> =
+        favoritesApi.observeFavoritesBaseMealIDs().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptySet()
+        )
+
     override fun onEvent(event: SharedEvent) {
         when (event) {
             is HideTopBar -> setState { copy(shouldShowTopBar = false) }
             is ShowTopBar -> setState { copy(shouldShowTopBar = true) }
             is SharedEvent.ResetTopBar -> setState { copy(shouldShowTopBar = true) }
             is OnPhoneClick -> sendEffect(SharedEffect.OnPhoneClick)
-            is OnMealDetailsClick -> sendEffect(
-                OpenMealDetailsBS(
-                    event.meal,
-                    event.item
+            is OnMealDetailsClick -> {
+                sendEffect(
+                    OpenMealDetailsBS(
+                        event.meal,
+                        event.item,
+                    )
                 )
-            )
+            }
+
             is SharedEvent.ToggleFavorite -> toggleFavorite(event.meal, event.item)
+            is SharedEvent.OnEditMealClick -> {
+                sendEffect(OpenMealDetailsBS(item = event.item, isEditMode = true))
+            }
         }
     }
 

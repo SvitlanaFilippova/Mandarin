@@ -10,6 +10,7 @@ import com.mandarinkafe.mandarin.util.BaseState
 
 sealed interface CartContract {
     sealed interface CartEvent : BaseEvent {
+        data object Init : CartEvent
         data class AddToCart(val item: CustomizedMeal) : CartEvent
         data class RemoveFromCartWithDelay(val item: CustomizedMeal) : CartEvent
         data class RemoveFromCartByItem(val item: CustomizedMeal) : CartEvent

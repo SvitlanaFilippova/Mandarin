@@ -51,6 +51,7 @@ fun MenuContentScreen(
     listState: LazyListState,
     cartState: CartContract.CartState,
     menuSate: MenuContract.MenuState,
+    favoriteIds: Set<String>,
     onMenuEvent: (MenuEvent) -> Unit,
     onSharedEvent: (SharedEvent) -> Unit,
     onToggleFavorite: (Meal) -> Unit,
@@ -283,6 +284,7 @@ fun MenuContentScreen(
                 onToggleFavorite = onToggleFavorite,
                 onAddToCart = onAddToCart,
                 onRemoveFromCart = onRemoveFromCart,
+                favoriteIds = favoriteIds,
             )
         }
 

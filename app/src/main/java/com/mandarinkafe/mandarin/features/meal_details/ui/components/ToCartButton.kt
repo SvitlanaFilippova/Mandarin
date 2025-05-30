@@ -21,9 +21,12 @@ import com.mandarinkafe.mandarin.core.ui.theme.Typography
 
 @Composable
 fun ToCartButton(
-    onClick: () -> Unit, totalPrice: Int,
     modifier: Modifier = Modifier,
-    shouldBeActive: Boolean
+    isEditMode: Boolean,
+    shouldBeActive: Boolean,
+    totalPrice: Int,
+    onAddToCart: () -> Unit,
+    onEdit: () -> Unit,
 ) {
     val contentColor = if (shouldBeActive) {
         Color.White
@@ -33,7 +36,7 @@ fun ToCartButton(
     Button(
         modifier = modifier
             .fillMaxWidth(),
-        onClick = onClick,
+        onClick = if (isEditMode) onEdit else onAddToCart,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         enabled = shouldBeActive,
         colors = ButtonDefaults.buttonColors(
@@ -52,7 +55,10 @@ fun ToCartButton(
                 tint = contentColor
             )
             Text(
-                text = stringResource(R.string.meal_price_template, totalPrice),
+                text = if (isEditMode) stringResource(
+                    R.string.save_meal,
+                    totalPrice
+                ) else stringResource(R.string.meal_price_template, totalPrice),
                 style = Typography.ToCartButtonBigStyle,
                 color = contentColor
 

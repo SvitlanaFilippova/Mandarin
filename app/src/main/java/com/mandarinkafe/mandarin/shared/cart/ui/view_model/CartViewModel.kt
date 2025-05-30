@@ -2,7 +2,6 @@ package com.mandarinkafe.mandarin.shared.cart.ui.view_model
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -11,6 +10,15 @@ import com.mandarinkafe.mandarin.shared.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.shared.cart.domain.usecase.GetAllRecommendsUseCase
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEffect
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.AddToCart
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.CancelRemove
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.ClearCart
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.ConfirmClearCart
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.Init
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.RemoveFromCartByItem
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.RemoveFromCartByMeal
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.RemoveFromCartWithDelay
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.ReplaceMealInCart
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartState
 import com.mandarinkafe.mandarin.util.BaseViewModel
 import com.mandarinkafe.mandarin.util.Constants.DELETE_FROM_CART_DEBOUNCE_DELAY
@@ -32,29 +40,29 @@ import javax.inject.Inject
 class CartViewModel @Inject constructor(
     private val cartInteractor: CartInteractor,
     private val recommendsUseCase: GetAllRecommendsUseCase,
-    private val favoritesApi: FavoritesApi
 ) : BaseViewModel<CartEvent, CartEffect, CartState>() {
     override fun setInitialState() = CartState()
     private val itemTimers = mutableMapOf<CustomizedMeal, Job>()
 
-    init {
-        updateCartState()
-        observeCartChanges()
-    }
-
     override fun onEvent(event: CartEvent) {
         when (event) {
-            is CartEvent.AddToCart -> addItem(item = event.item)
-            is CartEvent.RemoveFromCartWithDelay -> onReduceItem(item = event.item)
-            is CartEvent.RemoveFromCartByItem -> removeItem(item = event.item)
-            is CartEvent.RemoveFromCartByMeal -> removeFromCartByMeal(meal = event.meal)
-            is CartEvent.CancelRemove -> cancelRemove(item = event.item)
-            is CartEvent.ClearCart -> clearConfirmation()
-            is CartEvent.ConfirmClearCart -> clear()
-            is CartEvent.ReplaceMealInCart -> replaceMealInCart(
+            is Init -> {
+                updateCartState()
+                observeCartChanges()
+            }
+
+            is AddToCart -> addItem(item = event.item)
+            is RemoveFromCartWithDelay -> onReduceItem(item = event.item)
+            is RemoveFromCartByItem -> removeItem(item = event.item)
+            is RemoveFromCartByMeal -> removeFromCartByMeal(meal = event.meal)
+            is CancelRemove -> cancelRemove(item = event.item)
+            is ClearCart -> clearConfirmation()
+            is ConfirmClearCart -> clear()
+            is ReplaceMealInCart -> replaceMealInCart(
                 newItem = event.newItem,
                 oldItem = event.oldItem
             )
+
         }
     }
 

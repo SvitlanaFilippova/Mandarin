@@ -9,7 +9,7 @@ interface FavoritesReader {
     suspend fun getRawFavorites(): Resource<Set<FavoriteRecord>>
 
     /** Возвращает ID только "базовых" блюд из storage. */
-    suspend fun getBaseFavoritesIds(): Set<String>
+    fun getBaseFavoritesIds(): Set<String>
 
     /** Проверяет, добавлена ли item в список избранных в storage */
     suspend fun checkIfFavorite(item: FavoriteRecord): Boolean

@@ -9,7 +9,7 @@ data class CustomizedMeal(
     val adds: List<MealAdditional> = emptyList<MealAdditional>(),
 
     /**
-    Выбранные модификаторы (по группаам)
+    Выбранные модификаторы (по группам)
      */
     val modifiers: List<ModifierGroup> = emptyList<ModifierGroup>()
 )

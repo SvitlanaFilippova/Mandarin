@@ -24,6 +24,7 @@ import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 @Composable
 fun MenuList(
     menuItems: List<MenuItem>,
+    favoriteIds: Set<String>,
     listState: LazyListState,
     modifier: Modifier,
     cartState: CartContract.CartState,
@@ -66,6 +67,7 @@ fun MenuList(
                         cartState = cartState,
                         imageSize = imageSize,
                         onMealDetailsClick = onMealDetailsClick,
+                        favoriteIds = favoriteIds,
                     )
                 }
 
@@ -87,7 +89,8 @@ fun MenuList(
                             cartState = cartState,
                             imageSize = imageSize,
                             modifier = Modifier.weight(1f),
-                            onMealDetailsClick = onMealDetailsClick
+                            onMealDetailsClick = onMealDetailsClick,
+                            favoriteIds = favoriteIds
                         )
                         MenuCompactMealItem(
                             meal = item.right,
@@ -97,7 +100,8 @@ fun MenuList(
                             cartState = cartState,
                             imageSize = imageSize,
                             modifier = Modifier.weight(1f),
-                            onMealDetailsClick = onMealDetailsClick
+                            onMealDetailsClick = onMealDetailsClick,
+                            favoriteIds = favoriteIds
                         )
                     }
 

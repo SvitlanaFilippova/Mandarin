@@ -11,11 +11,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
@@ -25,15 +29,19 @@ import com.mandarinkafe.mandarin.util.ui.components.buttons.MealButtonsRow
 
 @Composable
 fun MenuCompactMealItem(
+    modifier: Modifier = Modifier,
     meal: Meal,
+    favoriteIds: Set<String>,
+    cartState: CartContract.CartState,
+    imageSize: Dp,
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
-    cartState: CartContract.CartState,
-    imageSize: Dp,
-    modifier: Modifier = Modifier
 ) {
+
+    val isFavorite by remember(favoriteIds) { derivedStateOf { meal.isFavorite(favoriteIds) } }
+
     Box(
         modifier = modifier
             .clickable { onMealDetailsClick(meal) }
@@ -48,6 +56,7 @@ fun MenuCompactMealItem(
                 modifier = Modifier.size(imageSize),
                 meal = meal,
                 onToggleFavorite = { onToggleFavorite(meal) },
+                isFavorite = isFavorite,
             )
 
             Text(

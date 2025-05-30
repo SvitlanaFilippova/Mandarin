@@ -26,8 +26,10 @@ fun FavoritesScreen(
 ) {
     val state by favoritesViewModel.state.collectAsState()
     val cartState by cartViewModel.state.collectAsState()
+
     val onSharedEvent = sharedViewModel::onEvent
     val onCartEvent = cartViewModel::onEvent
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,7 +50,7 @@ fun FavoritesScreen(
                 onAddToCart = { item -> onCartEvent(CartEvent.AddToCart(item)) },
                 onRemoveFromCart = { item -> onCartEvent(CartEvent.RemoveFromCartByItem(item)) },
                 onMealDetailsClick = { item -> onSharedEvent(SharedEvent.OnMealDetailsClick(item = item)) },
-                onToggleFavorite = { item -> onSharedEvent(SharedEvent.ToggleFavorite(item = item)) },
+                onToggleFavorite = { item -> onSharedEvent(SharedEvent.ToggleFavorite(item = item)) }
             )
         }
     }
