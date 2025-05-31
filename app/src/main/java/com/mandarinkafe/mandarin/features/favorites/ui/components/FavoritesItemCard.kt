@@ -94,17 +94,17 @@ fun FavoritesItemCard(
                 style = Typography.MealSmallTextStyle,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU,
-
-                )
+            )
+            Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
 
             // Выбранные опции кастомизации
             if (item.isCustomized()) {
-                Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
-
                 Text(
                     text = item.customizedText(),
                     style = Typography.MealSmallTextStyle,
                 )
+
+                Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
             }
 
             // Для выравнивания кнопок

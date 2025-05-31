@@ -42,7 +42,9 @@ class FavoritesViewModel @Inject constructor(private val favoritesApi: Favorites
                 .collect { resource ->
                     setLoading(resource is Loading)
                     when (resource) {
-                        is Success -> setData(resource.data)
+                        is Success -> {
+                            setData(resource.data)
+                        }
                         is Loading -> {}
                         is Idle -> {}
                         else -> setError(resource)
@@ -52,7 +54,7 @@ class FavoritesViewModel @Inject constructor(private val favoritesApi: Favorites
     }
 
     private fun setData(data: List<CustomizedMeal>?) {
-        if (!data.isNullOrEmpty()) {
+        if (data != null) {
             setState {
                 copy(
                     data = data,

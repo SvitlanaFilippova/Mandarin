@@ -67,7 +67,7 @@ fun CartItemCard(
         modifier = Modifier
             .background(Colors.AppBlack)
             .padding(horizontal = Dimens.MarginSmall8)
-            .clickable { onItemClick }
+            .clickable { onItemClick() }
 
     ) {
 

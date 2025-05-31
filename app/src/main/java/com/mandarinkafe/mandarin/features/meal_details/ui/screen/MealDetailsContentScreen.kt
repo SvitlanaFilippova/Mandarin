@@ -127,7 +127,7 @@ fun MealDetailsContentScreen(
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(vertical = Dimens.MarginSmall8)
+                            modifier = Modifier.padding(Dimens.MarginSmall8)
                         ) {
                             Text(
                                 text = modifierGroup.name,
@@ -195,6 +195,7 @@ fun MealDetailsContentScreen(
                         Text(
                             text = stringResource(id = R.string.adds),
                             modifier = Modifier.padding(
+                                start = Dimens.MarginSmall8,
                                 top = Dimens.MarginBig24,
                                 bottom = Dimens.MarginSmall8
                             ),
