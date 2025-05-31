@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.features.favorites.ui.components.FavoritesContent
 import com.mandarinkafe.mandarin.features.favorites.ui.view_model.FavoritesViewModel
@@ -43,6 +44,8 @@ fun FavoritesScreen(
             error != null -> PlaceholderScreen(
                 error
             )
+
+            state.data.isEmpty() -> PlaceholderScreen(UiError.FavoritesEmpty)
 
             else -> FavoritesContent(
                 data = state.data,

@@ -3,12 +3,16 @@ package com.mandarinkafe.mandarin.features.favorites.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
+import com.mandarinkafe.mandarin.core.ui.theme.Typography
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartState
 
 @Composable
@@ -27,6 +31,10 @@ fun FavoritesContent(
         (screenWidth - horizontalPadding * 3) / 2
     }
 
+    Text(
+        text = stringResource(R.string.favorite),
+        style = Typography.MenuSubCategoryStyle
+    )
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
