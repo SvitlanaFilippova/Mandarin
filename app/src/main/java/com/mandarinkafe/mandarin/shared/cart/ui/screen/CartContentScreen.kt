@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.shared.cart.ui.components
+package com.mandarinkafe.mandarin.shared.cart.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,7 +20,12 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
+import com.mandarinkafe.mandarin.shared.cart.ui.components.CartClearTextButton
+import com.mandarinkafe.mandarin.shared.cart.ui.components.CartItemCard
+import com.mandarinkafe.mandarin.shared.cart.ui.components.CartRecommendsList
+import com.mandarinkafe.mandarin.shared.cart.ui.components.ProcessOrderButton
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartState
+import com.mandarinkafe.mandarin.util.ui.components.buttons.MyCircularProgressIndicator
 
 @Composable
 fun CartContentScreen(
@@ -34,9 +39,8 @@ fun CartContentScreen(
     onDeletionCancel: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
     onEditMealClick: (CustomizedMeal) -> Unit,
-    
-) {
 
+    ) {
     Column(modifier = Modifier.fillMaxSize()) {
 
         // Кнопка очистки корзины,
@@ -85,12 +89,18 @@ fun CartContentScreen(
 
                 // Горизонтальный список рекомендаций
                 item {
-                    CartRecommendsList(
-                        recommendsList = state.recommends,
-                        modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
-                        onAddToCart = onAddToCart,
-                        onMealDetailsClick = onMealDetailsClick,
-                    )
+                    if (state.recommendsAreLoading) {
+                        MyCircularProgressIndicator(
+                            strokeWidth = Dimens.ProgressBarSmallWidth8,
+                        )
+                    } else {
+                        CartRecommendsList(
+                            recommendsList = state.recommends,
+                            modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
+                            onAddToCart = onAddToCart,
+                            onMealDetailsClick = onMealDetailsClick,
+                        )
+                    }
                 }
 
                 // Отступ для кнопки "Оформить заказ"

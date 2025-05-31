@@ -33,6 +33,7 @@ sealed interface CartContract {
         val cartItems: Map<CustomizedMeal, Int> = emptyMap(),
         val favoritesItems: Set<CustomizedMeal> = emptySet(),
         val recommends: List<CustomizedMeal> = emptyList(),
+        val recommendsAreLoading: Boolean = true,
         val pendingDeletionMeals: List<CustomizedMeal> = emptyList(),
         val mealDeletionProgress: Map<CustomizedMeal, Float> = emptyMap(),
     ) : BaseState {

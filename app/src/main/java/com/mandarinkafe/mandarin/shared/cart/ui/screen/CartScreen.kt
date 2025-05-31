@@ -17,7 +17,6 @@ import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.shared.cart.ui.components.CartClearingConfirmationDialog
-import com.mandarinkafe.mandarin.shared.cart.ui.components.CartContentScreen
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEffect
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartViewModel

@@ -16,7 +16,7 @@ abstract class BaseViewModel<
         State : BaseState,
         > : ViewModel() {
 
-    abstract fun setInitialState(): State
+    protected abstract fun setInitialState(): State
     private val initialState: State by lazy { setInitialState() }
 
     /**
@@ -54,5 +54,5 @@ abstract class BaseViewModel<
     /**
     Устанавливает флаг загрузки.
      */
-    abstract fun setLoading(isLoading: Boolean)
+    protected abstract fun setLoading(isLoading: Boolean)
 }

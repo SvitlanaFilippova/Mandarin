@@ -26,6 +26,7 @@ import com.mandarinkafe.mandarin.util.Constants.INTERVAL_FOR_UPD_PROGRESSBAR
 import com.mandarinkafe.mandarin.util.Constants.UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
+import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.debounce
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -232,7 +233,7 @@ class CartViewModel @Inject constructor(
     private fun updateCartState() {
         viewModelScope.launch {
             val cartResource = cartInteractor.getCart()
-            setLoading(cartResource is Resource.Loading)
+            setLoading(cartResource is Loading)
             Log.e(
                 "DEBUG EMPTY CART",
                 "CartViewModel, updateCartState cartResource: ${cartResource}",
@@ -240,7 +241,7 @@ class CartViewModel @Inject constructor(
             when (cartResource) {
                 is Resource.Success -> setData(cartResource.data)
                 is Resource.Idle -> {}
-                is Resource.Loading -> {}
+                is Loading -> {}
                 else -> setError(cartResource)
             }
         }
@@ -315,6 +316,7 @@ class CartViewModel @Inject constructor(
     private suspend fun updateRecommends(cartItems: Set<CustomizedMeal>) {
         val currentCartMeals: Set<Meal> = cartItems.map { it.meal }.toSet()
         val resource = recommendsUseCase(currentCartMeals)
+        setRecommendsLoading(resource is Loading)
         val filteredRecommends =
             when (resource) {
                 is Resource.Success -> resource.data ?: emptyList()
@@ -339,6 +341,10 @@ class CartViewModel @Inject constructor(
 
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
+    }
+
+    private fun setRecommendsLoading(isLoading: Boolean) {
+        setState { copy(recommendsAreLoading = isLoading) }
     }
 
     private fun setError(resource: Resource<*>) {

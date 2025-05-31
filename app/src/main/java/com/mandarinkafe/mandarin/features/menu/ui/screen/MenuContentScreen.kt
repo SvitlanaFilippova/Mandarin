@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -43,6 +42,7 @@ import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEv
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.util.Constants.FORCE_SHOW_FAB_DURATION_MS
+import com.mandarinkafe.mandarin.util.ui.components.buttons.MyCircularProgressIndicator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -208,13 +208,10 @@ fun MenuContentScreen(
                             .aspectRatio(2.91f),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(
-                            color = Colors.LightGrey,
+                        MyCircularProgressIndicator(
                             strokeWidth = Dimens.ProgressBarSmallWidth8,
-                            trackColor = Colors.DarkGrey
                         )
                     }
-
                 } else
                     if (!menuSate.banners.isEmpty()) {
                         BannerCarousel(
