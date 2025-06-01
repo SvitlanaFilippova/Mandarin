@@ -8,14 +8,22 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
+import com.mandarinkafe.mandarin.features.meal_details.ui.components.FavoriteVariantChoiceDialog
+import com.mandarinkafe.mandarin.features.meal_details.ui.components.RequiredModifiersDialog
+import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsViewModel
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.AddToCart
@@ -38,23 +46,23 @@ fun MealDetailsBottomSheet(
     isEditMode: Boolean,
 ) {
     if (initItem == null) return
-    LaunchedEffect(Unit) {
-        viewModel.onEvent(MealDetailsEvent.SetItem(initItem))
-    }
+
     val state by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
     )
     val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
-
     val onSharedEvent = sharedViewModel::onEvent
     val onCartEvent = cartViewModel::onEvent
-
-    LaunchedEffect(Unit) {
-        sheetState.show()
+    val effectFlow = viewModel.effect
+    val onToggleFavorite = { item: CustomizedMeal ->
+        onSharedEvent(SharedEvent.ToggleFavorite(item = item))
     }
-
+    val customizedMeal = state.customizedMeal ?: initItem
+    var showFavoriteVariantChoiceDialog by remember { mutableStateOf(false) }
+    var showRequiredModifiersDialog by remember { mutableStateOf(false) }
+    val error = state.error
     val onClose: () -> Unit = remember(sheetState, coroutineScope) {
         {
             coroutineScope.launch {
@@ -63,7 +71,52 @@ fun MealDetailsBottomSheet(
             }
         }
     }
-    val error = state.error
+    val isFavorite by remember(customizedMeal, favorites) {
+        derivedStateOf { customizedMeal.isFavorite(favorites) }
+    }
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(MealDetailsEvent.SetItem(initItem))
+    }
+
+    LaunchedEffect(Unit) {
+        sheetState.show()
+    }
+
+    LaunchedEffect(effectFlow) {
+        effectFlow.collect { effect ->
+            when (effect) {
+                is MealDetailsEffect.ShowRequiredModifiersDialog -> {
+                    showRequiredModifiersDialog = true
+                }
+
+                is MealDetailsEffect.ShowFavoriteVariantChoiceDialog -> {
+                    showFavoriteVariantChoiceDialog = true
+                }
+            }
+        }
+
+    }
+
+
+    if (showRequiredModifiersDialog) {
+        RequiredModifiersDialog(onDismiss = {
+            showRequiredModifiersDialog = false
+        })
+    }
+    if (showFavoriteVariantChoiceDialog) {
+        FavoriteVariantChoiceDialog(
+            onBaseSelected = {
+                onSharedEvent(SharedEvent.ToggleFavorite(meal = customizedMeal.meal))
+                showFavoriteVariantChoiceDialog = false
+            },
+            onCustomSelected = {
+                onToggleFavorite(customizedMeal)
+                showFavoriteVariantChoiceDialog = false
+            },
+            onDismiss = { showFavoriteVariantChoiceDialog = false }
+        )
+    }
+
     when {
         state.isLoading -> LoadingScreen()
         error != null -> PlaceholderScreen(error = error)
@@ -76,28 +129,27 @@ fun MealDetailsBottomSheet(
                 sheetState = sheetState,
                 containerColor = Colors.AppBlack,
                 tonalElevation = Dimens.Elevation2,
-                scrimColor = Colors.GreyTransparent75,
-
+                scrimColor = Colors.LightGreyTransparent75,
                 ) {
                 MealDetailsContentScreen(
                     state = state,
                     initItem = initItem,
-                    favorites = favorites,
                     onEvent = viewModel::onEvent,
-                    onAddToCart = { item -> onCartEvent(AddToCart(item)) },
+                    onAddToCart = { onCartEvent(AddToCart(customizedMeal)) },
                     onClose = onClose,
-                    onToggleFavorite = { item ->
-                        onSharedEvent(
-                            SharedEvent.ToggleFavorite(
-                                item = item
-                            )
-                        )
+                    onToggleFavorite = {
+                        if (!isFavorite && customizedMeal.isCustomized()) {
+                            viewModel.onEvent(MealDetailsEvent.OnFavoriteClick)
+                        } else {
+                            onToggleFavorite(customizedMeal)
+                        }
                     },
+                    isFavorite = isFavorite,
                     isEditMode = isEditMode,
-                    onEdit = { item ->
+                    onEdit = {
                         onCartEvent(
                             ReplaceMealInCart(
-                                newItem = item,
+                                newItem = customizedMeal,
                                 oldItem = initItem
                             )
                         )
@@ -105,4 +157,9 @@ fun MealDetailsBottomSheet(
                 )
             }
     }
+
 }
+
+
+
+

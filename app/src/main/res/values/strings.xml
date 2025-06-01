@@ -9,21 +9,26 @@
     <string name="search">Поиск</string>
     <string name="menu">Меню</string>
     <string name="yes">Да</string>
+    <string name="ok">Ок</string>
     <string name="cancel">Отмена</string>
 
-    <!-- Корзина и избранное -->
+    <!-- Корзина -->
     <string name="cart">Корзина</string>
     <string name="add_to_cart">Добавить в корзину</string>
     <string name="clear_cart">Очистить корзину</string>
     <string name="question_add_to_cart">Добавить в корзину ?</string>
     <string name="add_to_favorite">Добавить в избранное</string>
-    <string name="back_to_top">Вернуться в начало</string>
     <string name="remove_from_cart">Убрать из корзины</string>
     <string name="cancel_removing">Вернуть</string>
-    <string name="cancel_removing_full_text">Отменить удаление и вернуть в корзину</string>
-    <string name="favorite">Избранное</string>
     <string name="clear_cart_question">Очистить корзину?</string>
     <string name="clear_cart_confirmation">Вы действительно хотите удалить всё из корзины?</string>
+
+    <!-- Избранное -->
+    <string name="favorite">Избранное</string>
+    <string name="favorite_variant_dialog_title">Что именно добавить в&#160;избранное?</string>
+    <string name="favorite_variant_dialog_message">Добавить в&#160;избранное базовое блюдо или&#160;сразу с&#160;выбранными опциями?</string>
+    <string name="favorite_variant_base_button">Базовое блюдо</string>
+    <string name="favorite_variant_custom_button">С выбранными опциями</string>
 
     <!-- Кастомизация бюлюда -->
     <string name="adds">Добавки</string>
@@ -36,6 +41,7 @@
     <string name="cancel_choice">Отменить выбор</string>
     <string name="edit_meal">Редактировать</string>
     <string name="mandatory">(обязательно)</string>
+    <string name="make_mandatory_choice_before_cart">Выбери нужные опции в обязательных модификаторах — только после этого можно добавить блюдо в корзину</string>
 
 
     <!-- Доставка -->
@@ -93,6 +99,7 @@
     <string name="banner_number">Баннер №%1$d</string>
     <string name="search_field_icon">Поле поиска</string>
     <string name="added_to_cart">Добавлено в корзину</string>
+    <string name="back_to_top">Вернуться в начало</string>
     <string name="is_selected">Выбрано</string>
 
 

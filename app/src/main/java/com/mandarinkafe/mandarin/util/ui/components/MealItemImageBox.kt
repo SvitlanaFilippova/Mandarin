@@ -55,7 +55,7 @@ fun MealItemImageBox(
                             .align(Alignment.Center)
                             .fillMaxSize()
                             .padding(Dimens.MarginSmall8),
-                        color = Colors.GreyTransparent75,
+                        color = Colors.LightGreyTransparent75,
                         strokeWidth = Dimens.PhotoPlaceholderStrokeWidth4
                     )
                 }

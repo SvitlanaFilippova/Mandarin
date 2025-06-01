@@ -51,10 +51,10 @@ fun CartItemCard(
     onEditMealClick: (CustomizedMeal) -> Unit,
 ) {
     val meal = item.meal
-    val contentColor = if (itemInPendingDeletion) Colors.GreyTransparent75 else Colors.White
+    val contentColor = if (itemInPendingDeletion) Colors.LightGreyTransparent75 else Colors.White
     val imageAlpha = if (itemInPendingDeletion) 0.5f else 1f
 
-    val isFavorite by remember(favorites) {
+    val isFavorite by remember(item, favorites) {
         derivedStateOf { item.isFavorite(favorites) }
     }
     val onItemClick = if (item.isCustomized()) {

@@ -25,6 +25,7 @@ fun ToCartButton(
     isEditMode: Boolean,
     shouldBeActive: Boolean,
     totalPrice: Int,
+    onMissingRequiredOptions: () -> Unit,
     onAddToCart: () -> Unit,
     onEdit: () -> Unit,
 ) {
@@ -33,15 +34,25 @@ fun ToCartButton(
     } else {
         Color.White.copy(alpha = 0.5f)
     }
+    val containerColor = if (shouldBeActive) {
+        Colors.Orange.copy(alpha = 0.95f)
+    } else {
+        Colors.LightGrey.copy(alpha = 0.4f)
+    }
+
+    val onClickAction = when {
+        !shouldBeActive -> onMissingRequiredOptions
+        isEditMode -> onEdit
+        else -> onAddToCart
+    }
+
     Button(
         modifier = modifier
             .fillMaxWidth(),
-        onClick = if (isEditMode) onEdit else onAddToCart,
+        onClick = onClickAction,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
-        enabled = shouldBeActive,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Colors.Orange.copy(alpha = 0.95f),
-            disabledContainerColor = Colors.LightGrey.copy(alpha = 0.4f),
+            containerColor = containerColor,
             contentColor = contentColor
         )
     ) {

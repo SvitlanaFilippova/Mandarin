@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.meal_details.ui.view_model
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
@@ -9,6 +8,8 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.features.meal_details.domain.usecase.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect
+import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect.ShowFavoriteVariantChoiceDialog
+import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect.ShowRequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsState
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
@@ -26,7 +27,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MealDetailsViewModel @Inject constructor(
     private val getAddonsUseCase: GetAddonsUseCase,
-    private val favoritesApi: FavoritesApi,
 ) : BaseViewModel<MealDetailsEvent, MealDetailsEffect, MealDetailsState>() {
     override fun setInitialState() = MealDetailsState()
 
@@ -52,7 +52,10 @@ class MealDetailsViewModel @Inject constructor(
 
             is MealDetailsEvent.SetItem -> setMeal(item = event.item)
             is MealDetailsEvent.ChooseCategory -> chooseAdsCategory(newIndex = event.newIndex)
-
+            is MealDetailsEvent.OnFavoriteClick -> sendEffect(ShowFavoriteVariantChoiceDialog)
+            is MealDetailsEvent.OnToCartClickBeforeMandatoryChoice -> sendEffect(
+                ShowRequiredModifiersDialog
+            )
         }
     }
 

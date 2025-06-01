@@ -22,9 +22,14 @@ sealed interface MealDetailsContract {
 
         data class SetItem(val item: CustomizedMeal) : MealDetailsEvent
         data class ChooseCategory(val newIndex: Int) : MealDetailsEvent
+        data object OnToCartClickBeforeMandatoryChoice : MealDetailsEvent
+        data object OnFavoriteClick : MealDetailsEvent
     }
 
-    sealed interface MealDetailsEffect : BaseEffect
+    sealed interface MealDetailsEffect : BaseEffect {
+        data object ShowRequiredModifiersDialog : MealDetailsEffect
+        data object ShowFavoriteVariantChoiceDialog : MealDetailsEffect
+    }
 
     data class MealDetailsState(
         val isLoading: Boolean = false,
