@@ -7,9 +7,12 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.DismissFavoriteDialog
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.HideTopBar
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.OnMealDetailsClick
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.OnPhoneClick
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.ResetTopBar
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.ShowFavoriteDialog
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.ShowTopBar
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedState
 import com.mandarinkafe.mandarin.util.BaseViewModel
@@ -52,7 +55,7 @@ class SharedViewModel @Inject constructor(private val favoritesApi: FavoritesApi
         when (event) {
             is HideTopBar -> setState { copy(shouldShowTopBar = false) }
             is ShowTopBar -> setState { copy(shouldShowTopBar = true) }
-            is SharedEvent.ResetTopBar -> setState { copy(shouldShowTopBar = true) }
+            is ResetTopBar -> setState { copy(shouldShowTopBar = true) }
             is OnPhoneClick -> sendEffect(SharedEffect.OnPhoneClick)
             is OnMealDetailsClick -> {
                 sendEffect(
@@ -63,10 +66,26 @@ class SharedViewModel @Inject constructor(private val favoritesApi: FavoritesApi
                 )
             }
 
-            is SharedEvent.ToggleFavorite -> toggleFavorite(event.meal, event.item)
             is SharedEvent.OnEditMealClick -> {
                 sendEffect(OpenMealDetailsBS(item = event.item, isEditMode = true))
             }
+
+            is SharedEvent.ToggleFavorite -> toggleFavorite(event.meal, event.item)
+
+            is DismissFavoriteDialog -> setState {
+                copy(
+                    showFavoriteDialog = false,
+                    selectedMealForFavoriteChoice = null
+                )
+            }
+
+            is ShowFavoriteDialog -> setState {
+                copy(
+                    showFavoriteDialog = true,
+                    selectedMealForFavoriteChoice = event.item
+                )
+            }
+
         }
     }
 

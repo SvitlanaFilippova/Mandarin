@@ -8,7 +8,6 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.features.meal_details.domain.usecase.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect
-import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect.ShowFavoriteVariantChoiceDialog
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect.ShowRequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsState
@@ -52,7 +51,6 @@ class MealDetailsViewModel @Inject constructor(
 
             is MealDetailsEvent.SetItem -> setMeal(item = event.item)
             is MealDetailsEvent.ChooseCategory -> chooseAdsCategory(newIndex = event.newIndex)
-            is MealDetailsEvent.OnFavoriteClick -> sendEffect(ShowFavoriteVariantChoiceDialog)
             is MealDetailsEvent.OnToCartClickBeforeMandatoryChoice -> sendEffect(
                 ShowRequiredModifiersDialog
             )

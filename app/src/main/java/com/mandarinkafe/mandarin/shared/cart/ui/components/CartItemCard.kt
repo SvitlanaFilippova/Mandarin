@@ -45,6 +45,7 @@ fun CartItemCard(
     favorites: List<CustomizedMeal>,
     deletionProgress: Float,
     onToggleFavorite: (CustomizedMeal) -> Unit,
+    onShowFavoriteDialog: (CustomizedMeal) -> Unit,
     onAddToCart: (CustomizedMeal) -> Unit,
     onRemoveFromCart: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
@@ -84,7 +85,13 @@ fun CartItemCard(
                     .alpha(imageAlpha),
                 meal = meal,
                 isFavorite = isFavorite,
-                onToggleFavorite = { onToggleFavorite(item) },
+                onToggleFavorite = {
+                    if (!isFavorite && item.isCustomized()) {
+                        onShowFavoriteDialog(item)
+                    } else {
+                        onToggleFavorite(item)
+                    }
+                },
             )
 
             Column(

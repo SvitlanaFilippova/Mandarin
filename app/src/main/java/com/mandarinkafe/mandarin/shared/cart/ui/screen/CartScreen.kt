@@ -34,10 +34,10 @@ fun CartScreen(
     val listState = rememberLazyListState()
     val state by cartViewModel.state.collectAsState()
     val effectFlow = cartViewModel.effect
-    var showClearCartDialog by remember { mutableStateOf(false) }
     val onSharedEvent = sharedViewModel::onEvent
     val onCartEvent = cartViewModel::onEvent
     val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
+    var showClearCartDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         onCartEvent(CartEvent.Init)
@@ -65,6 +65,13 @@ fun CartScreen(
                     onRemoveFromCart = { item -> onCartEvent(CartEvent.RemoveFromCartWithDelay(item)) },
                     onDeletionCancel = { item -> onCartEvent(CartEvent.CancelRemove(item)) },
                     onToggleFavorite = { item -> onSharedEvent(SharedEvent.ToggleFavorite(item = item)) },
+                    onShowFavoriteDialog = { item ->
+                        onSharedEvent(
+                            SharedEvent.ShowFavoriteDialog(
+                                item = item
+                            )
+                        )
+                    },
                     onMealDetailsClick = { item -> onSharedEvent(SharedEvent.OnMealDetailsClick(item = item)) },
                     onEditMealClick = { item -> onSharedEvent(SharedEvent.OnEditMealClick(item = item)) },
                 )

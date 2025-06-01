@@ -13,9 +13,10 @@ sealed interface SharedContract {
         data object HideTopBar : SharedEvent
         data object ShowTopBar : SharedEvent
         data object ResetTopBar : SharedEvent
+        data class ShowFavoriteDialog(val item: CustomizedMeal) : SharedEvent
+        data object DismissFavoriteDialog : SharedEvent
         data class ToggleFavorite(val meal: Meal? = null, val item: CustomizedMeal? = null) :
             SharedEvent
-
         data class OnMealDetailsClick(
             val meal: Meal? = null,
             val item: CustomizedMeal? = null,
@@ -26,20 +27,21 @@ sealed interface SharedContract {
             val item: CustomizedMeal
         ) : SharedEvent
 
-
     }
 
     sealed interface SharedEffect : BaseEffect {
+        data object OnPhoneClick : SharedEffect
         data class OpenMealDetailsBS(
             val meal: Meal? = null,
             val item: CustomizedMeal? = null,
             val isEditMode: Boolean = false
         ) : SharedEffect
 
-        data object OnPhoneClick : SharedEffect
     }
 
     data class SharedState(
         val shouldShowTopBar: Boolean = true,
+        val showFavoriteDialog: Boolean = false,
+        val selectedMealForFavoriteChoice: CustomizedMeal? = null,
     ) : BaseState
 }

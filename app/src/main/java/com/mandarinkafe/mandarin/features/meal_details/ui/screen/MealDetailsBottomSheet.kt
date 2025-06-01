@@ -21,11 +21,11 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.meal_details.ui.components.FavoriteVariantChoiceDialog
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.RequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsViewModel
+import com.mandarinkafe.mandarin.shared.cart.ui.components.FavoriteVariantChoiceDialog
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.AddToCart
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.ReplaceMealInCart
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartViewModel
@@ -82,20 +82,7 @@ fun MealDetailsBottomSheet(
         sheetState.show()
     }
 
-    LaunchedEffect(effectFlow) {
-        effectFlow.collect { effect ->
-            when (effect) {
-                is MealDetailsEffect.ShowRequiredModifiersDialog -> {
-                    showRequiredModifiersDialog = true
-                }
 
-                is MealDetailsEffect.ShowFavoriteVariantChoiceDialog -> {
-                    showFavoriteVariantChoiceDialog = true
-                }
-            }
-        }
-
-    }
 
 
     if (showRequiredModifiersDialog) {
@@ -139,7 +126,7 @@ fun MealDetailsBottomSheet(
                     onClose = onClose,
                     onToggleFavorite = {
                         if (!isFavorite && customizedMeal.isCustomized()) {
-                            viewModel.onEvent(MealDetailsEvent.OnFavoriteClick)
+                            onSharedEvent(SharedEvent.ShowFavoriteDialog(customizedMeal))
                         } else {
                             onToggleFavorite(customizedMeal)
                         }
@@ -158,6 +145,15 @@ fun MealDetailsBottomSheet(
             }
     }
 
+    LaunchedEffect(effectFlow) {
+        effectFlow.collect { effect ->
+            when (effect) {
+                is MealDetailsEffect.ShowRequiredModifiersDialog -> {
+                    showRequiredModifiersDialog = true
+                }
+            }
+        }
+    }
 }
 
 

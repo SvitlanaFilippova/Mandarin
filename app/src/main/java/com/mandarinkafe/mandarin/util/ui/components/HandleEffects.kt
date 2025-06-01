@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets
 @Composable
 fun HandleEffects(
     effectFlow: Flow<SharedEffect>,
-    navController: NavController
+    navController: NavController,
 ) {
     val context = LocalContext.current
 

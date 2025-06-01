@@ -17,6 +17,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.navigation.BottomNavigation
 import com.mandarinkafe.mandarin.navigation.NavGraph
 import com.mandarinkafe.mandarin.navigation.NavRoutes.SPLASH_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.shared.cart.ui.components.FavoriteVariantChoiceDialog
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
@@ -31,31 +32,28 @@ fun MainScreen() {
     val cartViewModel: CartViewModel = hiltViewModel()
     val cartState by cartViewModel.state.collectAsState()
     val cartCount = cartState.cartItemsCount
-
     val sharedViewModel: SharedViewModel = hiltViewModel()
     val sharedState by sharedViewModel.state.collectAsState()
     val effectFlow = sharedViewModel.effect
-
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val isSplash = currentRoute == SPLASH_SCREEN_ROUTE
+    val showBottomBar = !isSplash
+    val showTopBar = !isSplash && sharedState.shouldShowTopBar
+    val onEvent = sharedViewModel::onEvent
+    val selectedMeal = sharedState.selectedMealForFavoriteChoice
 
-    val shouldShowBottomBar = currentRoute?.let {
-        it != SPLASH_SCREEN_ROUTE
-    } == true
-    val shouldShowTopBar = currentRoute?.let {
-        it != SPLASH_SCREEN_ROUTE && sharedState.shouldShowTopBar
-    } == true
 
     Scaffold(
         topBar = {
             AppTopBar(
-                visible = shouldShowTopBar,
-                onEvent = sharedViewModel::onEvent
+                visible = showTopBar,
+                onEvent = onEvent
             )
         },
         bottomBar = {
             BottomNavigation(
-                visible = shouldShowBottomBar,
+                visible = showBottomBar,
                 navController = navController,
                 cartCount = cartCount,
             )
@@ -72,6 +70,23 @@ fun MainScreen() {
             )
         }
     }
+
+    if (sharedState.showFavoriteDialog && selectedMeal != null) {
+        FavoriteVariantChoiceDialog(
+            onBaseSelected = {
+                onEvent(SharedEvent.ToggleFavorite(meal = selectedMeal.meal))
+                onEvent(SharedEvent.DismissFavoriteDialog)
+            },
+            onCustomSelected = {
+                onEvent(SharedEvent.ToggleFavorite(item = selectedMeal))
+                onEvent(SharedEvent.DismissFavoriteDialog)
+            },
+            onDismiss = {
+                onEvent(SharedEvent.DismissFavoriteDialog)
+            }
+        )
+    }
+
 
     LaunchedEffect(currentRoute) {
         // Сбрасываем состояние топбара при изменении маршрута

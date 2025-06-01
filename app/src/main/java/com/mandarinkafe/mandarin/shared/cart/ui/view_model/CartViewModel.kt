@@ -63,7 +63,6 @@ class CartViewModel @Inject constructor(
                 newItem = event.newItem,
                 oldItem = event.oldItem
             )
-
         }
     }
 

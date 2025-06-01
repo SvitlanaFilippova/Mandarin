@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.meal_details.ui.components
+package com.mandarinkafe.mandarin.shared.cart.ui.components
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
