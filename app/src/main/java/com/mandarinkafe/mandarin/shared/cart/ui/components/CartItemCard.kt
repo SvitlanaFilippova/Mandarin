@@ -38,6 +38,7 @@ import com.mandarinkafe.mandarin.util.ui.components.buttons.CustomizeButtonWithT
 
 @Composable
 fun CartItemCard(
+    modifier: Modifier,
     item: CustomizedMeal,
     quantity: Int,
     itemInPendingDeletion: Boolean,
@@ -64,7 +65,7 @@ fun CartItemCard(
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .background(Colors.AppBlack)
             .padding(horizontal = Dimens.MarginSmall8)
             .clickable { onItemClick() }

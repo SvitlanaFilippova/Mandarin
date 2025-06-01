@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.shared.cart.ui.screen
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,6 +27,7 @@ import com.mandarinkafe.mandarin.shared.cart.ui.components.CartItemCard
 import com.mandarinkafe.mandarin.shared.cart.ui.components.CartRecommendsList
 import com.mandarinkafe.mandarin.shared.cart.ui.components.ProcessOrderButton
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartState
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.ui.components.buttons.MyCircularProgressIndicator
 
 @Composable
@@ -39,8 +42,12 @@ fun CartContentScreen(
     onDeletionCancel: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
     onEditMealClick: (CustomizedMeal) -> Unit,
-
     ) {
+
+    val cartItemsList: List<Pair<CustomizedMeal, Int>> = remember(state.cartItems) {
+        state.cartItems.entries.map { it.toPair() }
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
 
         // Кнопка очистки корзины,
@@ -56,13 +63,18 @@ fun CartContentScreen(
                 state = listState
             ) {
                 // Список элементов корзины
-                itemsIndexed(state.cartItems.entries.map { it.toPair() }) { index, (cartItem, quantity) ->
+                itemsIndexed(
+                    items = cartItemsList,
+                    key = { _, pair -> pair.first.id }
+                ) { index, pair ->
+                    val cartItem = pair.first
                     val itemInPendingDeletion =
                         state.pendingDeletionMeals.contains(cartItem)
 
                     CartItemCard(
+                        modifier = Modifier.animateItem(tween(Constants.ANIMATION_DURATION_FAST)),
                         item = cartItem,
-                        quantity = quantity,
+                        quantity = pair.second,
                         favorites = favorites,
                         itemInPendingDeletion = itemInPendingDeletion,
                         deletionProgress = state.mealDeletionProgress[cartItem] ?: 0f,

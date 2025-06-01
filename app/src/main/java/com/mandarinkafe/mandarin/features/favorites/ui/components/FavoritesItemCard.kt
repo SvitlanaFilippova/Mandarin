@@ -36,6 +36,7 @@ import com.mandarinkafe.mandarin.util.ui.components.MealItemImageBox
 
 @Composable
 fun FavoritesItemCard(
+    modifier: Modifier,
     item: CustomizedMeal,
     cartState: CartState,
     imageSize: Dp,
@@ -51,7 +52,7 @@ fun FavoritesItemCard(
 
     Row(
         verticalAlignment = Alignment.Top,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
             .padding(horizontal = Dimens.MarginSmall8)

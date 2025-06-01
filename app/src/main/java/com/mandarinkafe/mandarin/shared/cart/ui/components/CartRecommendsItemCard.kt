@@ -27,6 +27,7 @@ import com.mandarinkafe.mandarin.core.ui.theme.Typography
 
 @Composable
 fun CartRecommendsItemCard(
+    modifier: Modifier,
     item: CustomizedMeal,
     onAddToCart: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
@@ -34,7 +35,7 @@ fun CartRecommendsItemCard(
     val meal = item.meal
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .padding(horizontal = Dimens.MarginSuperSmall4)
             .width(Dimens.RecommendsItemWidth96)
             .clickable(onClick = { onMealDetailsClick(item) }),
