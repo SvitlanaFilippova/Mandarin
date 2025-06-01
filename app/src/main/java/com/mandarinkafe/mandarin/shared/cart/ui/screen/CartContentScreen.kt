@@ -42,7 +42,7 @@ fun CartContentScreen(
     onDeletionCancel: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
     onEditMealClick: (CustomizedMeal) -> Unit,
-    ) {
+) {
 
     val cartItemsList: List<Pair<CustomizedMeal, Int>> = remember(state.cartItems) {
         state.cartItems.entries.map { it.toPair() }
@@ -88,17 +88,18 @@ fun CartContentScreen(
                 }
 
                 // Заголовок рекомендаций
-                item {
-                    Text(
-                        modifier = Modifier.padding(
-                            horizontal = Dimens.MarginSmall8,
-                            vertical = Dimens.MarginStandard16
-                        ),
-                        text = stringResource(R.string.question_add_to_cart),
-                        style = Typography.TitleStyle
-                    )
+                if (state.recommends.isNotEmpty()) {
+                    item {
+                        Text(
+                            modifier = Modifier.padding(
+                                horizontal = Dimens.MarginSmall8,
+                                vertical = Dimens.MarginStandard16
+                            ),
+                            text = stringResource(R.string.question_add_to_cart),
+                            style = Typography.TitleStyle
+                        )
+                    }
                 }
-
                 // Горизонтальный список рекомендаций
                 item {
                     if (state.recommendsAreLoading) {
@@ -106,12 +107,14 @@ fun CartContentScreen(
                             strokeWidth = Dimens.ProgressBarSmallWidth8,
                         )
                     } else {
+
                         CartRecommendsList(
                             recommendsList = state.recommends,
                             modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
                             onAddToCart = onAddToCart,
                             onMealDetailsClick = onMealDetailsClick,
                         )
+
                     }
                 }
 

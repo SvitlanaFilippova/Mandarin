@@ -33,6 +33,7 @@ import com.mandarinkafe.mandarin.util.ui.components.buttons.MealButtonsRow
 
 @Composable
 fun SmallHorizontalMealItemCard(
+    modifier: Modifier = Modifier,
     meal: Meal,
     favoriteIds: Set<String>,
     onToggleFavorite: (Meal) -> Unit,
@@ -40,7 +41,6 @@ fun SmallHorizontalMealItemCard(
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
     cartState: CartContract.CartState,
-    modifier: Modifier = Modifier
 ) {
     val isFavorite by remember(favoriteIds) {
         derivedStateOf { meal.isFavorite(favoriteIds) }
