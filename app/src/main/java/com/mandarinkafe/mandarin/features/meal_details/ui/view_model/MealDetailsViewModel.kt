@@ -1,19 +1,20 @@
 package com.mandarinkafe.mandarin.features.meal_details.ui.view_model
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.core.BaseViewModel
-import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
-import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
+import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.features.meal_details.domain.usecase.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect
+import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect.ShowRequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsState
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
-import com.mandarinkafe.mandarin.util.Resource.Error
+import com.mandarinkafe.mandarin.util.BaseViewModel
+import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
@@ -25,7 +26,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MealDetailsViewModel @Inject constructor(
     private val getAddonsUseCase: GetAddonsUseCase,
-    private val favoritesApi: FavoritesApi
 ) : BaseViewModel<MealDetailsEvent, MealDetailsEffect, MealDetailsState>() {
     override fun setInitialState() = MealDetailsState()
 
@@ -35,7 +35,6 @@ class MealDetailsViewModel @Inject constructor(
 
     override fun onEvent(event: MealDetailsEvent) {
         when (event) {
-            is MealDetailsEvent.ToggleFavorite -> toggleFavorite()
             is MealDetailsEvent.ChangeAdds -> changeAdds(
                 add = event.add,
                 isAdded = event.isChecked
@@ -51,8 +50,10 @@ class MealDetailsViewModel @Inject constructor(
             )
 
             is MealDetailsEvent.SetItem -> setMeal(item = event.item)
-            is MealDetailsEvent.ChooseCategory -> chooseCategory(newIndex = event.newIndex)
-
+            is MealDetailsEvent.ChooseCategory -> chooseAdsCategory(newIndex = event.newIndex)
+            is MealDetailsEvent.OnToCartClickBeforeMandatoryChoice -> sendEffect(
+                ShowRequiredModifiersDialog
+            )
         }
     }
 
@@ -115,7 +116,7 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun chooseCategory(newIndex: Int) {
+    private fun chooseAdsCategory(newIndex: Int) {
         if (newIndex >= 0) {
             setState {
                 copy(
@@ -125,36 +126,11 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun toggleFavorite() {
-        val meal = state.value.customizedMeal?.meal ?: return
-
-        viewModelScope.launch {
-            val isNowFavorite = if (meal.isFavorite) {
-                favoritesApi.removeFavorite(meal.toFavoriteMeal())
-                false
-            } else {
-                favoritesApi.addFavorite(meal.toFavoriteMeal())
-                true
-            }
-
-            setState {
-                val customizedMeal = customizedMeal
-                if (customizedMeal != null) {
-                    copy(
-                        customizedMeal = customizedMeal.copy(
-                            meal = customizedMeal.meal.copy(isFavorite = isNowFavorite)
-                        )
-                    )
-                } else {
-                    this
-                }
-            }
-        }
-    }
-
     private fun setMeal(item: CustomizedMeal) {
-        setState {
-            copy(customizedMeal = item)
+        viewModelScope.launch {
+            setState {
+                copy(customizedMeal = item)
+            }
         }
     }
 
@@ -187,9 +163,9 @@ class MealDetailsViewModel @Inject constructor(
                     setLoading(result is Loading)
                     when (result) {
                         is Success -> setData(result.data)
-                        is Error -> setError(result.message)
                         is Loading -> {}
                         is Idle -> {}
+                        else -> setError(result)
                     }
                 }
             }
@@ -207,11 +183,17 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun setError(errorMessage: String?) {
-        setState { copy(errorMessage = errorMessage) }
+    private fun setError(resource: Resource<*>) {
+        val error = when (resource) {
+            is Resource.ErrorNoInternet<*> -> UiError.NoInternet
+            is Resource.ErrorEmptyData<*> -> UiError.AddonsEmpty
+            is ErrorOther<*> -> UiError.OtherError
+            else -> return
+        }
+        setState { copy(error = error) }
     }
 
-    private fun setLoading(isLoading: Boolean) {
+    override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
     }
 }

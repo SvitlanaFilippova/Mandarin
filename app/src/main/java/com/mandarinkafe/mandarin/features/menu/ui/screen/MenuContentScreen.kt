@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -26,14 +25,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.features.menu.ui.components.MenuList
-import com.mandarinkafe.mandarin.features.menu.ui.components.MenuTopBar
 import com.mandarinkafe.mandarin.features.menu.ui.components.SearchBar
 import com.mandarinkafe.mandarin.features.menu.ui.components.category_tabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.features.menu.ui.components.category_tabs.SubCategoryTabsRow
@@ -41,19 +39,25 @@ import com.mandarinkafe.mandarin.features.menu.ui.components.getVisibleCategoryI
 import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.util.Constants.FORCE_SHOW_FAB_DURATION_MS
+import com.mandarinkafe.mandarin.util.ui.components.buttons.MyCircularProgressIndicator
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 @Composable
 fun MenuContentScreen(
     listState: LazyListState,
-    onEvent: (MenuEvent) -> Unit,
-    onCartEvent: (CartContract.CartEvent) -> Unit,
     cartState: CartContract.CartState,
     menuSate: MenuContract.MenuState,
-    effectFlow: Flow<MenuContract.MenuEffect>,
+    favoriteIds: Set<String>,
+    onMenuEvent: (MenuEvent) -> Unit,
+    onSharedEvent: (SharedEvent) -> Unit,
+    onToggleFavorite: (Meal) -> Unit,
+    onAddToCart: (Meal) -> Unit,
+    onRemoveFromCart: (Meal) -> Unit,
+    onMealDetailsClick: (Meal) -> Unit,
 ) {
 
     val menuItems = menuSate.menuItems
@@ -64,17 +68,18 @@ fun MenuContentScreen(
     val categories = menuItems.filterIsInstance<MenuItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
     val coroutineScope = rememberCoroutineScope()
-    val isAtTop by remember {
-        derivedStateOf {
-            listState.firstVisibleItemScrollOffset == 0
-        }
-    }
 
     val isScrollingUp = remember { mutableStateOf(false) }
     val isScrollingDown = remember { mutableStateOf(false) }
 
     var previousIndex by remember { mutableIntStateOf(0) }
     var previousOffset by remember { mutableIntStateOf(0) }
+
+    val isAtTop by remember {
+        derivedStateOf {
+            listState.firstVisibleItemScrollOffset == 0
+        }
+    }
 
     val showMenuTopBar by remember {
         derivedStateOf {
@@ -91,7 +96,7 @@ fun MenuContentScreen(
 
     val handleBannerClick = { banner: Banner ->
         coroutineScope.launch {
-            onEvent(MenuEvent.BannerClick(banner))
+            onMenuEvent(MenuEvent.BannerClick(banner))
             forceShowBackToTopFAB.value = true
             delay(FORCE_SHOW_FAB_DURATION_MS)
             forceShowBackToTopFAB.value = false
@@ -101,7 +106,15 @@ fun MenuContentScreen(
     val handleBackToTopClick = {
         coroutineScope.launch {
             listState.scrollToItem(index = 0)
-            onEvent(MenuEvent.ScrollToTop)
+            onMenuEvent(MenuEvent.ScrollToTop)
+        }
+    }
+    // Скрыть/показать TopBar в зависимости от видимой части экрана
+    LaunchedEffect(isAtTop) {
+        if (isAtTop) {
+            onSharedEvent(SharedEvent.ShowTopBar)
+        } else {
+            onSharedEvent(SharedEvent.HideTopBar)
         }
     }
 
@@ -109,7 +122,7 @@ fun MenuContentScreen(
     LaunchedEffect(selectedMenuItemIndex) {
         if (selectedMenuItemIndex >= 0) {
             listState.scrollToItem(selectedMenuItemIndex, scrollOffset = 1)
-            onEvent(MenuEvent.ResetSelectedMenuItemIndex)
+            onMenuEvent(MenuEvent.ResetSelectedMenuItemIndex)
         }
     }
 
@@ -152,10 +165,10 @@ fun MenuContentScreen(
                 )
 
                 if (newCategoryIndex != null && newCategoryIndex != selectedTabIndex) {
-                    onEvent(MenuEvent.ScrollToCategory(newCategoryIndex))
+                    onMenuEvent(MenuEvent.ScrollToCategory(newCategoryIndex))
                 }
                 if (newSubIndex != null && newSubIndex != selectedSubTabIndex) {
-                    onEvent(MenuEvent.ScrollToSubCategory(newSubIndex))
+                    onMenuEvent(MenuEvent.ScrollToSubCategory(newSubIndex))
                 }
             }
     }
@@ -168,17 +181,7 @@ fun MenuContentScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Лого-бар появляется только если пользователь в самом верху
-            AnimatedVisibility(
-                visible = isAtTop,
-                enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically()
-            ) {
-                MenuTopBar(
-                    onPhoneClick = { onEvent(MenuEvent.OnPhoneClick) },
-                    onLogoCLick = { handleBackToTopClick() }
-                )
-            }
+
             // Бар с поиском и фильтрами появляется всегда, когда пользователь вверху или скроллит вверх
             AnimatedVisibility(
                 visible = showMenuTopBar,
@@ -186,9 +189,8 @@ fun MenuContentScreen(
                 exit = fadeOut() + shrinkVertically()
             ) {
                 SearchBar(
-                    onSearchClick = { onEvent(MenuEvent.SearchOnOpenSearchClick) },
+                    onSearchClick = { onMenuEvent(MenuEvent.SearchOnOpenSearchClick) },
                 )
-
             }
 
             // Баннеры видны только если пользователь в самом верху
@@ -206,13 +208,10 @@ fun MenuContentScreen(
                             .aspectRatio(2.91f),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(
-                            color = Colors.LightGrey,
+                        MyCircularProgressIndicator(
                             strokeWidth = Dimens.ProgressBarSmallWidth8,
-                            trackColor = Colors.DarkGrey
                         )
                     }
-
                 } else
                     if (!menuSate.banners.isEmpty()) {
                         BannerCarousel(
@@ -227,7 +226,7 @@ fun MenuContentScreen(
                 categories = categories,
                 selectedTabIndex = selectedTabIndex,
                 onTabSelected = { index ->
-                    onEvent(MenuEvent.ScrollToCategory(index))
+                    onMenuEvent(MenuEvent.ScrollToCategory(index))
                     coroutineScope.launch {
                         val targetIndex = menuItems.indexOfFirst {
                             it is MenuItem.HeaderItem && it.categoryName == categories[index].categoryName
@@ -253,7 +252,7 @@ fun MenuContentScreen(
                             categories = currentSubCategories,
                             selectedTabIndex = selectedSubTabIndex,
                             onTabSelected = { index ->
-                                onEvent(MenuEvent.ScrollToSubCategory(index))
+                                onMenuEvent(MenuEvent.ScrollToSubCategory(index))
                                 coroutineScope.launch {
                                     val targetIndex = menuItems.indexOfFirst {
                                         it is MenuItem.SubHeaderItem && it.categoryName == currentSubCategories[index]
@@ -273,15 +272,16 @@ fun MenuContentScreen(
 
             // Основное меню
             MenuList(
+                modifier = Modifier
+                    .weight(1f),
                 menuItems = menuItems,
                 listState = listState,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(bottom = Dimens.MarginBig32),
-                onEvent = onEvent,
-                onCartEvent = onCartEvent,
                 cartState = cartState,
-                effectFlow = effectFlow
+                onMealDetailsClick = onMealDetailsClick,
+                onToggleFavorite = onToggleFavorite,
+                onAddToCart = onAddToCart,
+                onRemoveFromCart = onRemoveFromCart,
+                favoriteIds = favoriteIds,
             )
         }
 

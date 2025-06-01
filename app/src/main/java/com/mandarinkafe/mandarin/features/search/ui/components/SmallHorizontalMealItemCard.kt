@@ -15,27 +15,36 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
-import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEvent
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.util.ui.components.MealItemImageBox
 import com.mandarinkafe.mandarin.util.ui.components.buttons.MealButtonsRow
 
 @Composable
 fun SmallHorizontalMealItemCard(
+    modifier: Modifier = Modifier,
     meal: Meal,
-    onSearchEvent: (SearchEvent) -> Unit,
-    onCartEvent: (CartContract.CartEvent) -> Unit,
+    favoriteIds: Set<String>,
+    onToggleFavorite: (Meal) -> Unit,
+    onAddToCart: (Meal) -> Unit,
+    onRemoveFromCart: (Meal) -> Unit,
+    onMealDetailsClick: (Meal) -> Unit,
     cartState: CartContract.CartState,
-    modifier: Modifier = Modifier
 ) {
+    val isFavorite by remember(favoriteIds) {
+        derivedStateOf { meal.isFavorite(favoriteIds) }
+    }
 
     Row(
         verticalAlignment = Alignment.Top,
@@ -44,15 +53,17 @@ fun SmallHorizontalMealItemCard(
             .height(IntrinsicSize.Min)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
             .background(Colors.DarkGrey)
-            .clickable { onSearchEvent(SearchEvent.OnMealDetailsClick(meal)) }
+            .clickable { onMealDetailsClick(meal) }
     ) {
         MealItemImageBox(
             modifier = Modifier
                 .size(Dimens.MealItemInSearchResults96)
                 .padding(Dimens.MarginSmall8),
             meal = meal,
-            onToggleFavorite = { onSearchEvent(SearchEvent.ToggleFavorite(meal)) },
-        )
+            isFavorite = isFavorite,
+            onToggleFavorite = { onToggleFavorite(meal) },
+
+            )
 
         Column(
             modifier = Modifier
@@ -94,23 +105,17 @@ fun SmallHorizontalMealItemCard(
                 Spacer(modifier = Modifier.weight(1f))
 
                 MealButtonsRow(
-                    meal = meal,
-                    onCartEvent = onCartEvent,
-                    cartState = cartState,
-                    onMealDetailsClick = { meal ->
-                        onSearchEvent(
-                            SearchEvent.OnMealDetailsClick(
-                                meal
-                            )
-                        )
-                    },
                     modifier = Modifier
                         .width(Dimens.ButtonsRowWidth164)
-                        .padding(top = Dimens.MarginSmall8)
-                )
+                        .padding(top = Dimens.MarginSmall8),
+                    baseMeal = meal,
+                    cartState = cartState,
+                    onAddToCart = { onAddToCart(meal) },
+                    onRemoveFromCart = { onRemoveFromCart(meal) },
+                    onMealDetailsClick = { onMealDetailsClick(meal) },
 
+                    )
             }
-
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.core.data.network
 
-import android.content.Context
+
 import android.util.Log
 import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
@@ -12,13 +12,14 @@ import com.mandarinkafe.mandarin.util.Constants.BANNERS_GOOGLE_DOCS_URL
 import com.mandarinkafe.mandarin.util.Constants.BEARER_PREFIX
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
+import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Constants.RECOMMENDATIONS_GOOGLE_DOCS_URL
 import com.mandarinkafe.mandarin.util.NetworkMonitor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClient(
-    private val context: Context,
+    private val networkMonitor: NetworkMonitor,
     private val iikoService: IikoApiService,
     private val googleDocsApi: GoogleDocsApiService
 ) :
@@ -30,7 +31,7 @@ class RetrofitNetworkClient(
 
     override suspend fun getMenu(): Response {
         if (!isConnected()) {
-            return Response().apply { resultCode = -1 }
+            return Response().apply { resultCode = NO_CONNECTION }
         }
         return withContext(Dispatchers.IO) {
             // если нет токена или Id организации - авторизуемся
@@ -85,7 +86,7 @@ class RetrofitNetworkClient(
     }
 
     private fun isConnected(): Boolean {
-        return NetworkMonitor.isNetworkAvailable(context)
+        return networkMonitor.isNetworkAvailable()
     }
 
     private suspend fun getSheet(url: String): Response {
@@ -93,11 +94,9 @@ class RetrofitNetworkClient(
             Response().apply { resultCode = -1 }
         } else try {
             val csvString = googleDocsApi.getCsv(url)
-            Log.d("DEBUG googleDocsApi", "Успех! csvString: $csvString")
             return CsvResponse(csv = csvString)
 
         } catch (e: Throwable) {
-            Log.d("DEBUG googleDocsApi", "Ошибка: ${e.message}")
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

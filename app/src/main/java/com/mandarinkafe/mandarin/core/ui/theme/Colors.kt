@@ -9,7 +9,7 @@ object Colors {
     val OrangeTransparent20 = Color(0x33F5BD47)
     val LightGrey = Color(0xFFAEAFB4)
     val DarkGrey = Color(0xFF2c2d2b)
-    val GreyTransparent75 = Color(0xBFAEAFB4)
+    val LightGreyTransparent75 = Color(0xBFAEAFB4)
     val WhiteTransparent75 = Color(0xBFFFFFFF)
     val Transparent = Color(0x00000000)
     val LabelVegGreen = Color(0xE694C338)

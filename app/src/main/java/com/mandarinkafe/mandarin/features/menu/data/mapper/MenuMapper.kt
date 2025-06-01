@@ -21,7 +21,6 @@ import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.removeLeadingDash
 
 fun CategoryDto.toDomain(
-    storedFavorites: Set<String>,
     topCategoryName: String? = null
 ): MealCategory {
     val categoryLabels = labels?.map { it.toDomain() } ?: emptyList()
@@ -29,7 +28,6 @@ fun CategoryDto.toDomain(
 
     val safeItems = items?.mapNotNull {
         it.toDomain(
-            storedFavorites = storedFavorites,
             categoryLabels = categoryLabels,
             categoryTags = categoryTags,
             parentCategoryName = name,
@@ -49,7 +47,6 @@ fun CategoryDto.toDomain(
 }
 
 private fun MealDto.toDomain(
-    storedFavorites: Set<String>,
     categoryLabels: List<Label>,
     categoryTags: List<Tag>,
     parentCategoryName: String,
@@ -86,7 +83,6 @@ private fun MealDto.toDomain(
         weight = safeWeight,
         price = safePrice,
         imageUrl = safeImageUrl,
-        isFavorite = storedFavorites.contains(itemId),
         labels = finalMealLabels,
         tags = finalMealTags,
         isHidden = isHidden == true,

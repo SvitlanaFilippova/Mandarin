@@ -39,24 +39,28 @@ import com.mandarinkafe.mandarin.features.meal_details.ui.components.modifiers.M
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.AddsCategoryTabsRow
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.AddsItem
 import com.mandarinkafe.mandarin.features.meal_details.ui.components.pizza_ads.ChosenOptionsChipsRow
-import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
+import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsState
 import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
 import kotlinx.coroutines.launch
 
 @Composable
 fun MealDetailsContentScreen(
-    state: MealDetailsContract.MealDetailsState,
-    onEvent: (MealDetailsEvent) -> Unit,
-    onAddToCart: (CustomizedMeal) -> Unit,
+    state: MealDetailsState,
+    initItem: CustomizedMeal,
+    isFavorite: Boolean,
+    isEditMode: Boolean,
     onClose: () -> Unit,
-    initItem: CustomizedMeal
+    onEvent: (MealDetailsEvent) -> Unit,
+    onAddToCart: () -> Unit,
+    onEdit: () -> Unit,
+    onToggleFavorite: () -> Unit,
 ) {
     val customizedMeal = state.customizedMeal ?: initItem
     val meal = customizedMeal.meal
     val listState = rememberLazyListState()
     val chosenModifiers = state.customizedMeal?.modifiers ?: emptyList()
-    val showToCartButton = customizedMeal.hasSelectedAllRequiredModifiers()
+    val toCartShouldBeActive = customizedMeal.hasSelectedAllRequiredModifiers()
     val coroutineScope = rememberCoroutineScope()
     val scrollTargetKey = SCROLL_TARGET_KEY
     val handleMakeMoreDeliciousClick: () -> Unit = remember(listState) {
@@ -73,18 +77,19 @@ fun MealDetailsContentScreen(
         }
     }
 
+
     Column(
         modifier = Modifier
             .padding(Dimens.MarginSmall8)
     ) {
         BottomSheetHeader(
             meal = meal,
-            onToggleFavorite = { onEvent(MealDetailsEvent.ToggleFavorite) },
-            onClose = onClose
+            onToggleFavorite = { onToggleFavorite() },
+            onClose = onClose,
+            isFavorite = isFavorite
         )
 
         Box {
-
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -115,7 +120,7 @@ fun MealDetailsContentScreen(
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(vertical = Dimens.MarginSmall8)
+                            modifier = Modifier.padding(Dimens.MarginSmall8)
                         ) {
                             Text(
                                 text = modifierGroup.name,
@@ -183,13 +188,14 @@ fun MealDetailsContentScreen(
                         Text(
                             text = stringResource(id = R.string.adds),
                             modifier = Modifier.padding(
+                                start = Dimens.MarginSmall8,
                                 top = Dimens.MarginBig24,
                                 bottom = Dimens.MarginSmall8
                             ),
                             style = Typography.TitleStyle
                         )
                     }
-
+                    // Категории добавок
                     val selectedTabIndex = state.selectedTabIndex
                     item {
                         AddsCategoryTabsRow(
@@ -207,7 +213,7 @@ fun MealDetailsContentScreen(
 
                     val addsItems =
                         state.pizzaAds[selectedTabIndex].mealAdditionals ?: emptyList()
-
+                    // Список доступных добавок
                     itemsIndexed(addsItems) { _, item ->
                         AddsItem(
                             add = item,
@@ -223,7 +229,7 @@ fun MealDetailsContentScreen(
                         )
                     }
                 }
-                // Если это не позиция, где должна быть выбрана всего одная опция - показываем перечень выбранных опций
+                // Если это НЕ позиция, где должна быть выбрана всего одная опция - показываем перечень выбранных опций
                 if (!meal.isOnlySingleRequiredChoice() && customizedMeal.isCustomized()) {
                     item {
                         Text(
@@ -237,7 +243,6 @@ fun MealDetailsContentScreen(
                             color = Colors.LightGrey
                         )
                     }
-
                     item {
                         ChosenOptionsChipsRow(
                             adds = customizedMeal.adds,
@@ -263,7 +268,7 @@ fun MealDetailsContentScreen(
                     }
                 }
 
-                // Отступ для кнопки "в корзину"
+                // Отступ для кнопки "В корзину"
                 item { Spacer(modifier = Modifier.height(Dimens.MarginForCartButton72)) }
 
             }
@@ -273,13 +278,18 @@ fun MealDetailsContentScreen(
                     .align(Alignment.BottomCenter)
                     .background(Colors.Transparent),
                 totalPrice = customizedMeal.totalPrice(),
-                onClick = {
-                    onAddToCart(customizedMeal)
+                onAddToCart = {
+                    onAddToCart()
                     onClose()
                 },
-                shouldBeActive = showToCartButton
+                shouldBeActive = toCartShouldBeActive,
+                isEditMode = isEditMode,
+                onEdit = {
+                    onEdit()
+                    onClose()
+                },
+                onMissingRequiredOptions = { onEvent(MealDetailsEvent.OnToCartClickBeforeMandatoryChoice) }
             )
         }
     }
-
 }

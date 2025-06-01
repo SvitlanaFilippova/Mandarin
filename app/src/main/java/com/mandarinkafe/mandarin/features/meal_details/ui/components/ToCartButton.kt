@@ -21,24 +21,38 @@ import com.mandarinkafe.mandarin.core.ui.theme.Typography
 
 @Composable
 fun ToCartButton(
-    onClick: () -> Unit, totalPrice: Int,
     modifier: Modifier = Modifier,
-    shouldBeActive: Boolean
+    isEditMode: Boolean,
+    shouldBeActive: Boolean,
+    totalPrice: Int,
+    onMissingRequiredOptions: () -> Unit,
+    onAddToCart: () -> Unit,
+    onEdit: () -> Unit,
 ) {
     val contentColor = if (shouldBeActive) {
         Color.White
     } else {
         Color.White.copy(alpha = 0.5f)
     }
+    val containerColor = if (shouldBeActive) {
+        Colors.Orange.copy(alpha = 0.95f)
+    } else {
+        Colors.LightGrey.copy(alpha = 0.4f)
+    }
+
+    val onClickAction = when {
+        !shouldBeActive -> onMissingRequiredOptions
+        isEditMode -> onEdit
+        else -> onAddToCart
+    }
+
     Button(
         modifier = modifier
             .fillMaxWidth(),
-        onClick = onClick,
+        onClick = onClickAction,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
-        enabled = shouldBeActive,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Colors.Orange.copy(alpha = 0.95f),
-            disabledContainerColor = Colors.LightGrey.copy(alpha = 0.4f),
+            containerColor = containerColor,
             contentColor = contentColor
         )
     ) {
@@ -52,7 +66,10 @@ fun ToCartButton(
                 tint = contentColor
             )
             Text(
-                text = stringResource(R.string.meal_price_template, totalPrice),
+                text = if (isEditMode) stringResource(
+                    R.string.save_meal,
+                    totalPrice
+                ) else stringResource(R.string.meal_price_template, totalPrice),
                 style = Typography.ToCartButtonBigStyle,
                 color = contentColor
 

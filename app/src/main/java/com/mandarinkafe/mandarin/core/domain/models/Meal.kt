@@ -6,7 +6,6 @@ data class Meal(
     val weight: Int,
     val price: Int,
     val imageUrl: String,
-    var isFavorite: Boolean,
     val description: String,
     val sku: String,
 

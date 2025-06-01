@@ -30,3 +30,7 @@ fun Meal.isOnlySingleRequiredChoice(): Boolean {
 
     return hasSingleRequiredGroup && noOptionalModifiers && noAdds
 }
+
+fun Meal.isFavorite(favoriteIds: Set<String>): Boolean {
+    return favoriteIds.contains(id)
+}

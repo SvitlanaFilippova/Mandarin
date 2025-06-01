@@ -5,7 +5,7 @@ sealed class Resource<T>(
     val message: String? = null
 ) {
     /**
-     * Исходное состояние, когда загрузка ещё не начналась
+     * Исходное состояние, когда загрузка ещё не начиналась
      */
     class Idle<T> : Resource<T>()
 
@@ -20,7 +20,17 @@ sealed class Resource<T>(
     class Success<T>(data: T) : Resource<T>(data)
 
     /**
-     * Загрузка завершилась с ошибкой
+     * Получен успешный результат, но данные пустые
      */
-    class Error<T>(message: String, data: T? = null) : Resource<T>(data, message)
+    class ErrorEmptyData<T>() : Resource<T>()
+
+    /**
+     * Отсутствует соединение
+     */
+    class ErrorNoInternet<T>() : Resource<T>()
+
+    /**
+     * Другие ошибки
+     */
+    class ErrorOther<T>(message: String) : Resource<T>(message = message)
 }

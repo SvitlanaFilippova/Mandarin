@@ -4,9 +4,6 @@ import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.GetBannersUseCase
 import com.mandarinkafe.mandarin.util.Resource
-import com.mandarinkafe.mandarin.util.Resource.Error
-import com.mandarinkafe.mandarin.util.Resource.Idle
-import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
 
 class GetBannersUseCaseImpl(private val repository: BannersRepository) : GetBannersUseCase {
@@ -19,15 +16,10 @@ class GetBannersUseCaseImpl(private val repository: BannersRepository) : GetBann
                 Success(data)
             }
 
-            is Error -> {
-                Error(result.message.toString())
+            else -> {
+                result
             }
 
-            is Loading -> {
-                Loading()
-            }
-
-            is Idle -> Loading()
         }
     }
 }

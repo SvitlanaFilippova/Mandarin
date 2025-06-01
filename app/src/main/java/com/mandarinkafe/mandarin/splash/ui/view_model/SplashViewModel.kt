@@ -1,11 +1,11 @@
 package com.mandarinkafe.mandarin.splash.ui.view_model
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.splash.domain.usecase.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.splash.ui.view_model.SplashContract.SplashEffect
 import com.mandarinkafe.mandarin.splash.ui.view_model.SplashContract.SplashEvent
 import com.mandarinkafe.mandarin.splash.ui.view_model.SplashContract.SplashState
+import com.mandarinkafe.mandarin.util.BaseViewModel
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_SCREEN_DURATION
 import com.mandarinkafe.mandarin.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,9 +21,9 @@ class SplashViewModel @Inject constructor(
     init {
         loadInitialData()
     }
-
     override fun setInitialState() = SplashState()
     override fun onEvent(event: SplashEvent) {}
+    override fun setLoading(isLoading: Boolean) {}
 
     private fun loadInitialData() {
         viewModelScope.launch {

@@ -53,12 +53,13 @@ fun MealInfo(
                     .clip(RoundedCornerShape(Dimens.CornerRadius8))
             )
 
+            // Ярлыки
             Column(
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4),
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(Dimens.MarginSuperSmall4)
+                    .padding(top = Dimens.MarginStandard16)
             ) {
                 meal.labels.forEach {
                     LabelChip(

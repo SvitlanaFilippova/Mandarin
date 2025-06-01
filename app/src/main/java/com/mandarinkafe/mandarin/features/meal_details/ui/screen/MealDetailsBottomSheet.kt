@@ -8,58 +8,105 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
+import com.mandarinkafe.mandarin.features.meal_details.ui.components.RequiredModifiersDialog
+import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.ui.view_model.MealDetailsViewModel
-import com.mandarinkafe.mandarin.placeholder.ui.screen.PlaceholderScreen
+import com.mandarinkafe.mandarin.shared.cart.ui.components.FavoriteVariantChoiceDialog
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.AddToCart
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.ReplaceMealInCart
+import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartViewModel
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
 import com.mandarinkafe.mandarin.util.ui.components.LoadingScreen
+import com.mandarinkafe.mandarin.util.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealDetailsBottomSheet(
     viewModel: MealDetailsViewModel = hiltViewModel(),
-    onAddToCart: (CustomizedMeal) -> Unit,
-    initItem: CustomizedMeal,
-    onDismiss: () -> Unit,
-    onFavoriteChanged: (String, Boolean) -> Unit = { _, _ -> }
+    sharedViewModel: SharedViewModel,
+    cartViewModel: CartViewModel,
+    initItem: CustomizedMeal?,
+    onClose: () -> Unit,
+    isEditMode: Boolean,
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.onEvent(MealDetailsEvent.SetItem(initItem))
-    }
+    if (initItem == null) return
+
     val state by viewModel.state.collectAsState()
-    val initMeal = initItem.meal
-    val meal = state.customizedMeal?.meal ?: initMeal
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
     )
+    val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
+    val onSharedEvent = sharedViewModel::onEvent
+    val onCartEvent = cartViewModel::onEvent
+    val effectFlow = viewModel.effect
+    val onToggleFavorite = { item: CustomizedMeal ->
+        onSharedEvent(SharedEvent.ToggleFavorite(item = item))
+    }
+    val customizedMeal = state.customizedMeal ?: initItem
+    var showFavoriteVariantChoiceDialog by remember { mutableStateOf(false) }
+    var showRequiredModifiersDialog by remember { mutableStateOf(false) }
+    val error = state.error
+    val onClose: () -> Unit = remember(sheetState, coroutineScope) {
+        {
+            coroutineScope.launch {
+                sheetState.hide()
+                onClose()
+            }
+        }
+    }
+    val isFavorite by remember(customizedMeal, favorites) {
+        derivedStateOf { customizedMeal.isFavorite(favorites) }
+    }
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(MealDetailsEvent.SetItem(initItem))
+    }
 
     LaunchedEffect(Unit) {
         sheetState.show()
     }
 
-    val onClose: () -> Unit = remember(sheetState, coroutineScope) {
-        {
-            coroutineScope.launch {
-                sheetState.hide()
-                meal.let { meal ->
-                    onFavoriteChanged(meal.id, meal.isFavorite)
-                }
-                onDismiss()
-            }
-        }
+
+
+
+    if (showRequiredModifiersDialog) {
+        RequiredModifiersDialog(onDismiss = {
+            showRequiredModifiersDialog = false
+        })
     }
+    if (showFavoriteVariantChoiceDialog) {
+        FavoriteVariantChoiceDialog(
+            onBaseSelected = {
+                onSharedEvent(SharedEvent.ToggleFavorite(meal = customizedMeal.meal))
+                showFavoriteVariantChoiceDialog = false
+            },
+            onCustomSelected = {
+                onToggleFavorite(customizedMeal)
+                showFavoriteVariantChoiceDialog = false
+            },
+            onDismiss = { showFavoriteVariantChoiceDialog = false }
+        )
+    }
+
     when {
         state.isLoading -> LoadingScreen()
-        state.errorMessage != null -> PlaceholderScreen(errorMessage = state.errorMessage!!)
+        error != null -> PlaceholderScreen(error = error)
         else ->
             ModalBottomSheet(
                 modifier = Modifier
@@ -69,17 +116,46 @@ fun MealDetailsBottomSheet(
                 sheetState = sheetState,
                 containerColor = Colors.AppBlack,
                 tonalElevation = Dimens.Elevation2,
-                scrimColor = Colors.GreyTransparent75,
-
+                scrimColor = Colors.LightGreyTransparent75,
                 ) {
                 MealDetailsContentScreen(
                     state = state,
+                    initItem = initItem,
                     onEvent = viewModel::onEvent,
-                    onAddToCart = onAddToCart,
+                    onAddToCart = { onCartEvent(AddToCart(customizedMeal)) },
                     onClose = onClose,
-                    initItem = initItem
+                    onToggleFavorite = {
+                        if (!isFavorite && customizedMeal.isCustomized()) {
+                            onSharedEvent(SharedEvent.ShowFavoriteDialog(customizedMeal))
+                        } else {
+                            onToggleFavorite(customizedMeal)
+                        }
+                    },
+                    isFavorite = isFavorite,
+                    isEditMode = isEditMode,
+                    onEdit = {
+                        onCartEvent(
+                            ReplaceMealInCart(
+                                newItem = customizedMeal,
+                                oldItem = initItem
+                            )
+                        )
+                    },
                 )
-
             }
     }
+
+    LaunchedEffect(effectFlow) {
+        effectFlow.collect { effect ->
+            when (effect) {
+                is MealDetailsEffect.ShowRequiredModifiersDialog -> {
+                    showRequiredModifiersDialog = true
+                }
+            }
+        }
+    }
 }
+
+
+
+

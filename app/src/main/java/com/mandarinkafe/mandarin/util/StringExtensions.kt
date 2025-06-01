@@ -1,5 +1,8 @@
 package com.mandarinkafe.mandarin.util
 
+/**
+ * Заменяет все нестандартные пробелы на обычные (для правильной работы поиска)
+ */
 fun String.normalize(): String =
     this
         .replace(Regex("\\u00A0"), " ")   // неразрывный

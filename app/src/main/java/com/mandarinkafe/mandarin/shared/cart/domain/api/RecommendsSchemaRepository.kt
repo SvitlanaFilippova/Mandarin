@@ -1,0 +1,8 @@
+package com.mandarinkafe.mandarin.shared.cart.domain.api
+
+import com.mandarinkafe.mandarin.shared.cart.domain.model.RecommendsSchemaRule
+import com.mandarinkafe.mandarin.util.Resource
+
+interface RecommendsSchemaRepository {
+    suspend fun getRecommendsSchema(): Resource<List<RecommendsSchemaRule>>
+}

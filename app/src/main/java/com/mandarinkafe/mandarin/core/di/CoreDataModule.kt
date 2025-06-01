@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.core.di
 
-import android.content.Context
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.impl.MenuCacheImpl
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
@@ -12,10 +11,10 @@ import com.mandarinkafe.mandarin.splash.domain.impl.GetInitialDataUseCaseImpl
 import com.mandarinkafe.mandarin.splash.domain.usecase.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.util.Constants.GOOGLE_DOCS_BASE_URL
 import com.mandarinkafe.mandarin.util.Constants.IIKO_BASE_URL
+import com.mandarinkafe.mandarin.util.NetworkMonitor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -52,13 +51,12 @@ class CoreDataModule {
     @Provides
     @Singleton
     fun provideRetrofitNetworkClient(
-        @ApplicationContext
-        context: Context,
         ikkoService: IikoApiService,
-        googleDocsApi: GoogleDocsApiService
+        googleDocsApi: GoogleDocsApiService,
+        networkMonitor: NetworkMonitor
     ): NetworkClient {
         return RetrofitNetworkClient(
-            context = context, iikoService = ikkoService,
+            networkMonitor = networkMonitor, iikoService = ikkoService,
             googleDocsApi = googleDocsApi
         )
     }

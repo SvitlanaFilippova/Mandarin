@@ -1,23 +1,27 @@
 package com.mandarinkafe.mandarin.features.search.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
 import com.mandarinkafe.mandarin.util.fuzzyContains
 import com.mandarinkafe.mandarin.util.levenshteinDistance
 import com.mandarinkafe.mandarin.util.toTranslitVariants
 
-class FilterUseCaseImpl : FilterUseCase {
+class FilterUseCaseImpl() : FilterUseCase {
+
 
     override fun invoke(
         meals: List<Meal>,
         searchText: String,
-        checkedLabels: List<String>
+        checkedLabels: List<String>,
+        favoritesIds: Set<String>
     ): List<Meal> {
         if (searchText.isBlank()) {
+
             return meals.filter { meal ->
                 val labelNames = meal.labels.map { it.name }
                 checkedLabels.isEmpty() || checkedLabels.all { it in labelNames }
-            }.sortedByDescending { it.isFavorite }
+            }.sortedByDescending { it.isFavorite(favoritesIds) } // TODO
         }
 
         val searchVariants = searchText.toTranslitVariants()
@@ -43,7 +47,7 @@ class FilterUseCaseImpl : FilterUseCase {
                         )
                     }
                     distances.minOrNull() ?: Int.MAX_VALUE
-                }.thenByDescending { it.isFavorite }
+                }.thenByDescending { it.isFavorite(favoritesIds) }
             )
     }
 }

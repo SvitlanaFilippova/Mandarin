@@ -1,27 +1,23 @@
 package com.mandarinkafe.mandarin.features.menu.ui.view_model
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
-import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
-import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
+import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.GetBannersUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.features.menu.ui.mappers.MenuItemMapper.menuToMenuItems
 import com.mandarinkafe.mandarin.features.menu.ui.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.ui.models.extensions.getName
-import com.mandarinkafe.mandarin.features.menu.ui.models.extensions.updateMeal
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.CallPhone
-import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEffect.OpenSearch
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.features.menu.ui.view_model.MenuContract.MenuState
+import com.mandarinkafe.mandarin.util.BaseViewModel
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.Resource
-import com.mandarinkafe.mandarin.util.Resource.Error
+import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
@@ -41,27 +37,23 @@ class MenuViewModel @Inject constructor(
     init {
         loadMenu()
         getBanners()
+        observeFavorites()
     }
 
     override fun onEvent(event: MenuEvent) {
         when (event) {
-            is MenuEvent.OnPhoneClick -> sendEffect(CallPhone)
-            is MenuEvent.ToggleFavorite -> toggleFavorite(event.meal)
             is MenuEvent.ScrollToCategory -> scrollToCategory(event.newIndex)
             is MenuEvent.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
             is MenuEvent.ScrollToTop -> scrollToTop()
             is MenuEvent.BannerClick -> findMenuItemByBanner(event.banner)
             is MenuEvent.ResetSelectedMenuItemIndex -> resetSelectedMenuItemIndex()
             is MenuEvent.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
-            is MenuEvent.UpdateMealFavorite -> updateMealFavorite(
-                id = event.id,
-                isFavorite = event.isFavorite
-            )
 
-            is MenuEvent.OnMealDetailsClick -> sendEffect(
-                OpenMealDetailsBS(meal = event.meal)
-            )
         }
+    }
+
+    override fun setLoading(isLoading: Boolean) {
+        setState { copy(isLoading = isLoading) }
     }
 
     // Методы для загрузки меню
@@ -71,10 +63,22 @@ class MenuViewModel @Inject constructor(
                 setLoading(resource is Loading)
                 when (resource) {
                     is Success -> setData(resource.data)
-                    is Error -> setError(resource.message)
                     is Loading -> {}
                     is Idle -> {}
+                    else -> setError(resource)
                 }
+            }
+        }
+    }
+
+    private fun observeFavorites() {
+        viewModelScope.launch {
+            val favoriteIdsFromStorage = mutableSetOf<String>()
+            favoritesApi.observeFavoritesBaseMealIDs().collect { favoriteIdsFromStorage.addAll(it) }
+            setState {
+                copy(
+                    favoriteIds = favoriteIdsFromStorage
+                )
             }
         }
     }
@@ -84,18 +88,20 @@ class MenuViewModel @Inject constructor(
             setState {
                 copy(
                     menuItems = menuToMenuItems(data),
-                    errorMessage = null
+                    error = null
                 )
             }
         }
     }
 
-    private fun setError(errorMessage: String?) {
-        setState { copy(errorMessage = errorMessage) }
-    }
-
-    private fun setLoading(isLoading: Boolean) {
-        setState { copy(isLoading = isLoading) }
+    private fun setError(resource: Resource<*>) {
+        val error = when (resource) {
+            is Resource.ErrorEmptyData<*> -> UiError.MenuEmpty
+            is Resource.ErrorNoInternet<*> -> UiError.NoInternet
+            is ErrorOther<*> -> UiError.OtherError
+            else -> return
+        }
+        setState { copy(error = error) }
     }
 
     // Методы управлением скроллом
@@ -160,38 +166,6 @@ class MenuViewModel @Inject constructor(
 
     }
 
-    // Добавить блюдо в избранное или удалить
-    private fun toggleFavorite(meal: Meal) {
-        viewModelScope.launch {
-            val isNowFavorite = if (meal.isFavorite) {
-                favoritesApi.removeFavorite(meal.toFavoriteMeal())
-                false
-            } else {
-                favoritesApi.addFavorite(meal.toFavoriteMeal())
-                true
-            }
-
-            setState {
-                copy(
-                    menuItems = menuItems.updateMeal(meal.id) { meal ->
-                        meal.copy(isFavorite = isNowFavorite)
-                    }
-                )
-            }
-        }
-    }
-
-    // Если состояние избранного менялось в другом месте (например,в BottomSheet)
-    private fun updateMealFavorite(id: String, isFavorite: Boolean) {
-        setState {
-            copy(
-                menuItems = menuItems.updateMeal(id) { meal ->
-                    meal.copy(isFavorite = isFavorite)
-                }
-            )
-        }
-    }
-
     private fun getBanners() {
         viewModelScope.launch {
             setState { copy(bannersAreLoading = true) }
@@ -202,11 +176,4 @@ class MenuViewModel @Inject constructor(
             }
         }
     }
-
-    //TODO убрать отсюда эту функцию!
-    fun getFavorites(): List<MenuItem> {
-//TODO ()
-        return emptyList()
-    }
-
 }

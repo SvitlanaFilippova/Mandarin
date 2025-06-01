@@ -30,7 +30,8 @@ import com.mandarinkafe.mandarin.util.ui.components.buttons.FavoriteButton
 fun MealItemImageBox(
     modifier: Modifier = Modifier,
     meal: Meal,
-    onToggleFavorite: (Meal) -> Unit,
+    isFavorite: Boolean,
+    onToggleFavorite: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -54,7 +55,7 @@ fun MealItemImageBox(
                             .align(Alignment.Center)
                             .fillMaxSize()
                             .padding(Dimens.MarginSmall8),
-                        color = Colors.GreyTransparent75,
+                        color = Colors.LightGreyTransparent75,
                         strokeWidth = Dimens.PhotoPlaceholderStrokeWidth4
                     )
                 }
@@ -74,13 +75,13 @@ fun MealItemImageBox(
                 }
             }
         }
-
+        // Тэги блюда
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4),
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(vertical = Dimens.MarginSuperSmall4)
+                .padding(top = Dimens.MarginSmall8)
         ) {
             meal.labels.forEach {
                 LabelChip(
@@ -92,8 +93,8 @@ fun MealItemImageBox(
         FavoriteButton(
             modifier = Modifier
                 .align(Alignment.TopStart),
-            isFavorite = meal.isFavorite,
-            onClick = { onToggleFavorite(meal) }
+            isFavorite = isFavorite,
+            onClick = onToggleFavorite
         )
     }
 }

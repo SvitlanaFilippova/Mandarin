@@ -51,7 +51,7 @@ class MenuCacheImpl @Inject constructor(
 
                 if (result is Resource.Success) {
                     return result
-                } else if (result is Resource.Error) {
+                } else if (result is Resource.ErrorOther) {
                 }
 
             } catch (e: Exception) {
@@ -60,7 +60,7 @@ class MenuCacheImpl @Inject constructor(
 
             delay(DELAY_BEFORE_NEXT_ATTEMPT)
         }
-        return Resource.Error("Не удалось загрузить меню после $attempts попыток")
+        return Resource.ErrorOther("Не удалось загрузить меню после $attempts попыток")
     }
 
     override suspend fun forceRefresh(fetcher: suspend () -> Resource<List<MealCategory>>) {

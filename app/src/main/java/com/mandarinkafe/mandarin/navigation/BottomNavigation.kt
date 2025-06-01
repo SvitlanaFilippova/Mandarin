@@ -1,12 +1,15 @@
 package com.mandarinkafe.mandarin.navigation
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Badge
@@ -31,6 +34,7 @@ import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
 
 @Composable
 fun BottomNavigation(
+    visible: Boolean,
     navController: NavController,
     cartCount: Int,
 ) {
@@ -42,86 +46,91 @@ fun BottomNavigation(
         BottomNavigationItem.Delivery,
         BottomNavigationItem.Cart
     )
-
-    BottomAppBar(
-        tonalElevation = Dimens.Elevation2,
-        containerColor = Colors.AppBlack,
-        modifier = Modifier.height(Dimens.BottomBarHeight64)
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically()
     ) {
-        val backStackEntry = navController.currentBackStackEntryAsState().value
-        val currentRoute = backStackEntry?.destination?.route?.substringBefore("?")
+        BottomAppBar(
+            tonalElevation = Dimens.Elevation2,
+            containerColor = Colors.AppBlack,
+            modifier = Modifier.height(Dimens.BottomBarHeight64)
+        ) {
+            val backStackEntry = navController.currentBackStackEntryAsState().value
+            val currentRoute = backStackEntry?.destination?.route?.substringBefore("?")
 
-        listItems.forEach { item ->
-            NavigationBarItem(
-                selected = currentRoute == item.route,
-                onClick = {
-                    navController.navigate(
-                        route = item.route,
-                        navOptions = navOptions {
-                            launchSingleTop = true
-                            popUpTo(MENU_SCREEN_ROUTE) {
-                                inclusive = false
-                                saveState = true
+            listItems.forEach { item ->
+                NavigationBarItem(
+                    selected = currentRoute == item.route,
+                    onClick = {
+                        navController.navigate(
+                            route = item.route,
+                            navOptions = navOptions {
+                                launchSingleTop = true
+                                popUpTo(MENU_SCREEN_ROUTE) {
+                                    inclusive = false
+                                    saveState = true
+                                }
+                                restoreState = true
                             }
-                            restoreState = true
-                        }
-                    )
-                },
-                icon = {
-                    if (item == BottomNavigationItem.Cart && currentRoute != item.route) {
-                        @OptIn(ExperimentalAnimationApi::class)
-                        BadgedBox(
-                            badge = {
-                                AnimatedContent(
-                                    targetState = cartCount,
-                                    transitionSpec = {
-                                        (scaleIn(tween(300)) + fadeIn()).togetherWith(
-                                            scaleOut(
-                                                tween(
-                                                    300
-                                                )
-                                            ) + fadeOut()
-                                        )
-                                    }
-                                ) { count ->
-                                    if (count > 0) {
-                                        Badge(
-                                            containerColor = Colors.Orange,
-                                            contentColor = Colors.AppBlack
-                                        ) {
-                                            Text(count.toString())
+                        )
+                    },
+                    icon = {
+                        if (item == BottomNavigationItem.Cart && currentRoute != item.route) {
+                            @OptIn(ExperimentalAnimationApi::class)
+                            BadgedBox(
+                                badge = {
+                                    AnimatedContent(
+                                        targetState = cartCount,
+                                        transitionSpec = {
+                                            (scaleIn(tween(300)) + fadeIn()).togetherWith(
+                                                scaleOut(
+                                                    tween(
+                                                        300
+                                                    )
+                                                ) + fadeOut()
+                                            )
+                                        }
+                                    ) { count ->
+                                        if (count > 0) {
+                                            Badge(
+                                                containerColor = Colors.Orange,
+                                                contentColor = Colors.AppBlack
+                                            ) {
+                                                Text(count.toString())
+                                            }
                                         }
                                     }
                                 }
+                            ) {
+                                Icon(
+                                    painter = painterResource(item.icon),
+                                    contentDescription = context.getString(item.title)
+                                )
                             }
-                        ) {
+                        } else {
                             Icon(
                                 painter = painterResource(item.icon),
                                 contentDescription = context.getString(item.title)
                             )
                         }
-                    } else {
-                        Icon(
-                            painter = painterResource(item.icon),
-                            contentDescription = context.getString(item.title)
+                    },
+                    label = {
+                        Text(
+                            text = context.getString(item.title),
+                            fontSize = 9.sp
                         )
-                    }
-                },
-                label = {
-                    Text(
-                        text = context.getString(item.title),
-                        fontSize = 9.sp
-                    )
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Colors.Orange,
-                    selectedTextColor = Colors.Orange,
-                    unselectedIconColor = Color.White,
-                    unselectedTextColor = Color.White,
-                    indicatorColor = Color.Transparent
-                ),
-                alwaysShowLabel = false
-            )
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Colors.Orange,
+                        selectedTextColor = Colors.Orange,
+                        unselectedIconColor = Color.White,
+                        unselectedTextColor = Color.White,
+                        indicatorColor = Color.Transparent
+                    ),
+                    alwaysShowLabel = false
+                )
+            }
         }
     }
 }

@@ -1,19 +1,19 @@
 package com.mandarinkafe.mandarin.features.search.ui.view_model
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.core.BaseViewModel
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
-import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteMeal
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
+import com.mandarinkafe.mandarin.core.ui.models.UiError
 import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetFullMealListUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetLabelsUseCase
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEffect
-import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEffect.OpenMealDetailsBS
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchEvent
 import com.mandarinkafe.mandarin.features.search.ui.view_model.SearchContract.SearchState
-import com.mandarinkafe.mandarin.util.Resource.Error
+import com.mandarinkafe.mandarin.util.BaseViewModel
+import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
@@ -34,25 +34,16 @@ class SearchViewModel @Inject constructor(
     init {
         getLabels()
         loadMenu()
+        observeFavorites()
     }
 
     override fun onEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.ClearSearchInput -> clearSearchInput()
             is SearchEvent.SearchMealsByText -> searchByText(event.searchText)
-            is SearchEvent.ToggleFavorite -> toggleFavorite(event.meal)
-            is SearchEvent.UpdateMealFavorite -> updateMealFavorite(
-                id = event.id,
-                isFavorite = event.isFavorite
-            )
-
             is SearchEvent.OnLabelClick -> setLabels(
                 label = event.labelName,
                 isChecked = event.isChecked
-            )
-
-            is SearchEvent.OnMealDetailsClick -> sendEffect(
-                OpenMealDetailsBS(meal = event.meal)
             )
         }
     }
@@ -90,7 +81,11 @@ class SearchViewModel @Inject constructor(
     private fun clearSearchInput() {
         setState {
             copy(
-                filteredMealList = fullMealList.sortedWith(compareByDescending { it.isFavorite }),
+                filteredMealList = fullMealList.sortedWith(compareByDescending {
+                    it.isFavorite(
+                        favoritesIds
+                    )
+                }),
                 latestSearchText = ""
             )
         }
@@ -109,63 +104,11 @@ class SearchViewModel @Inject constructor(
             val filtered = filterUseCase(
                 fullMealList,
                 latestSearchText,
-                checkedLabels
+                checkedLabels,
+                state.value.favoritesIds
             )
 
             copy(filteredMealList = filtered)
-        }
-    }
-
-    // Добавить блюдо в избранное или удалить
-    private fun toggleFavorite(meal: Meal) {
-        viewModelScope.launch {
-            val isNowFavorite = if (meal.isFavorite) {
-                favoritesApi.removeFavorite(meal.toFavoriteMeal())
-                false
-            } else {
-                favoritesApi.addFavorite(meal.toFavoriteMeal())
-                true
-            }
-
-            setState {
-                val updatedFullList = fullMealList.map { currentMeal ->
-                    if (currentMeal.id == meal.id) {
-                        currentMeal.copy(isFavorite = isNowFavorite)
-                    } else {
-                        currentMeal
-                    }
-                }
-
-                val updatedFilteredList = filteredMealList.map { currentMeal ->
-                    if (currentMeal.id == meal.id) {
-                        currentMeal.copy(isFavorite = isNowFavorite)
-                    } else {
-                        currentMeal
-                    }
-                }
-
-                copy(
-                    fullMealList = updatedFullList,
-                    filteredMealList = updatedFilteredList
-                )
-            }
-        }
-    }
-
-    // Если состояние избранного менялось в другом месте (например,в BottomSheet)
-    private fun updateMealFavorite(id: String, isFavorite: Boolean) {
-        setState {
-            val updatedFullList = fullMealList.map { meal ->
-                if (meal.id == id) meal.copy(isFavorite = isFavorite) else meal
-            }
-            val updatedFilteredList = filteredMealList.map { meal ->
-                if (meal.id == id) meal.copy(isFavorite = isFavorite) else meal
-            }
-
-            copy(
-                fullMealList = updatedFullList,
-                filteredMealList = updatedFilteredList
-            )
         }
     }
 
@@ -179,24 +122,44 @@ class SearchViewModel @Inject constructor(
                         copy(
                             isLoading = false,
                             fullMealList = resource.data ?: emptyList(),
-                            filteredMealList = resource.data?.sortedWith(compareByDescending { it.isFavorite })
+                            filteredMealList = resource.data?.sortedWith(compareByDescending {
+                                it.isFavorite(
+                                    favoritesIds
+                                )
+                            })
                                 ?: emptyList()
                         )
                     }
 
-                    is Error -> setError(resource.message)
                     is Loading -> {}
                     is Idle -> {}
+                    else -> setError(resource)
                 }
             }
         }
     }
 
-    private fun setError(errorMessage: String?) {
-        setState { copy(errorMessage = errorMessage) }
+    private fun setError(resource: Resource<*>) {
+        val error = when (resource) {
+            is Resource.ErrorEmptyData<*> -> UiError.MenuEmpty
+            is Resource.ErrorNoInternet<*> -> UiError.NoInternet
+            is ErrorOther<*> -> UiError.OtherError
+            else -> return
+        }
+        setState { copy(error = error) }
     }
 
-    private fun setLoading(isLoading: Boolean) {
+    private fun observeFavorites() {
+        viewModelScope.launch {
+            favoritesApi.observeFavoritesBaseMealIDs().collect { newFavorites ->
+                setState {
+                    copy(favoritesIds = newFavorites)
+                }
+            }
+        }
+    }
+
+    override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
     }
 }

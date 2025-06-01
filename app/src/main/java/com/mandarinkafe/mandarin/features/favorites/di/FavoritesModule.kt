@@ -2,13 +2,18 @@ package com.mandarinkafe.mandarin.features.favorites.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.mandarinkafe.mandarin.core.data.api.FavoritesReader
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
+import com.mandarinkafe.mandarin.core.domain.api.FavoritesReader
+import com.mandarinkafe.mandarin.core.domain.api.FavoritesWriter
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.favorites.data.impl.FavoritesRepositoryImpl
 import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorage
 import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorageImpl
 import com.mandarinkafe.mandarin.features.favorites.domain.impl.FavoritesInteractorImpl
+import com.mandarinkafe.mandarin.features.favorites.domain.impl.ValidateFavoritesUseCaseImpl
+import com.mandarinkafe.mandarin.features.favorites.domain.usecase.ValidateFavoritesUseCase
 import com.mandarinkafe.mandarin.util.Constants.LOCAL_STORAGE_NAME
+import com.mandarinkafe.mandarin.util.NetworkMonitor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,9 +43,13 @@ class FavoritesModule {
     @Provides
     @Singleton
     fun provideFavoritesRepository(
+        networkMonitor: NetworkMonitor,
         storage: FavoritesStorage
     ): FavoritesRepositoryImpl =
-        FavoritesRepositoryImpl(storage)
+        FavoritesRepositoryImpl(
+            storage = storage,
+            networkMonitor = networkMonitor
+        )
 
     @Provides
     @Singleton
@@ -51,15 +60,32 @@ class FavoritesModule {
 
     @Provides
     @Singleton
-    fun provideFavoritesInteractor(
-        repository: FavoritesRepositoryImpl
-    ): FavoritesInteractorImpl =
-        FavoritesInteractorImpl(repository)
+    fun provideFavoritesWriter(
+        repoImpl: FavoritesRepositoryImpl
+    ): FavoritesWriter =
+        repoImpl
 
     @Provides
     @Singleton
     fun provideFavoritesApi(
-        interactorImpl: FavoritesInteractorImpl
-    ): FavoritesApi =
-        interactorImpl
+        reader: FavoritesReader,
+        writer: FavoritesWriter,
+        validator: ValidateFavoritesUseCase
+    ): FavoritesApi {
+        return FavoritesInteractorImpl(
+            reader = reader, writer = writer, validator = validator
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideValidateFavoritesUseCase(
+        menuCache: MenuCache,
+        writer: FavoritesWriter
+    ): ValidateFavoritesUseCase {
+        return ValidateFavoritesUseCaseImpl(
+            menuCache = menuCache,
+            writer = writer
+        )
+    }
 }
