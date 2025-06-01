@@ -47,14 +47,6 @@ class FavoritesRepositoryImpl(
         return _baseIdsFlow.value
     }
 
-    override suspend fun checkIfFavorite(item: FavoriteRecord): Boolean {
-        val currentFavorites = _favoritesFlow.value
-        return when (currentFavorites) {
-            is Resource.Success -> currentFavorites.data?.contains(item) == true
-            else -> false
-        }
-    }
-
     override suspend fun toggleFavorite(record: FavoriteRecord) {
         val currentSet = when (val current = _favoritesFlow.value) {
             is Resource.Success -> current.data?.toMutableSet() ?: mutableSetOf()

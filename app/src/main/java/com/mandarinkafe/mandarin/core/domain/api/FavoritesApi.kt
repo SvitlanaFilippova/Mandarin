@@ -18,12 +18,6 @@ interface FavoritesApi {
     /** Получить уже **валидный**, очищенный от пропавших или устаревших, список. */
     suspend fun getFavorites(): Resource<List<CustomizedMeal>>
 
-    /** Проверяет наличие «чистого» блюда в списке избранных.*/
-    suspend fun checkIfFavorite(custom: CustomizedMeal): Boolean
-
-    /** Проверяет наличие кастомизированное блюда в списке избранных.*/
-    suspend fun checkIfFavorite(meal: Meal): Boolean
-
     /** Эмитит новый список при каждом изменении избранных.*/
 
     fun observeFavoritesItems(): Flow<Resource<List<CustomizedMeal>>>

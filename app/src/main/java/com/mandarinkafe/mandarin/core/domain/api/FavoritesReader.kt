@@ -10,11 +10,6 @@ interface FavoritesReader {
 
     /** Возвращает ID только "базовых" блюд из storage. */
     fun getBaseFavoritesIds(): Set<String>
-
-    /** Проверяет, добавлена ли item в список избранных в storage */
-    suspend fun checkIfFavorite(item: FavoriteRecord): Boolean
-
     fun observeRawFavorites(): Flow<Resource<Set<FavoriteRecord>>>
     fun observeBaseFavoritesIds(): Flow<Set<String>>
-
 }
