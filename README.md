@@ -31,9 +31,9 @@ Multiplatform.
 
 | Технологии             | 
 |------------------------|
-| MVI                    | 
+|        Jetpack Compose                | 
 | StateFlow              | 
-| Jetpack Compose        | 
+| MVI     | 
 | Coroutines             | 
 | Retrofit2              | 
 | Hilt                   | 
