@@ -62,7 +62,6 @@ fun SmallHorizontalMealItemCard(
             meal = meal,
             isFavorite = isFavorite,
             onToggleFavorite = { onToggleFavorite(meal) },
-
             )
 
         Column(

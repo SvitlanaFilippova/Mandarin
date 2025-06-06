@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -52,7 +52,6 @@ fun CartRecommendsItemCard(
                 .padding(Dimens.MarginSmall8)
 
         ) {
-
             // Изображение блюда
             AsyncImage(
                 model = meal.imageUrl.ifEmpty { R.drawable.placeholder_meal_no_photo },

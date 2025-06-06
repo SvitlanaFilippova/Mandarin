@@ -1,6 +1,6 @@
 [versions]
 agp = "8.9.3"
-coilCompose = "2.5.0"
+coilComposeVersion = "3.2.0"
 compiler = "1.5.15"
 firebaseBomVersion = "33.14.0"
 firebaseCrashlytics = "3.0.3"
@@ -16,9 +16,9 @@ hilt = "2.55"
 hiltNavigationCompose = "1.2.0"
 ksp = "2.1.21-2.0.1"
 parcelize = "2.1.20"
-composeBom = "2025.05.01"
+composeBom = "2025.06.00"
 composeActivity = "1.10.1"
-composeViewModel = "2.9.0"
+composeViewModel = "2.9.1"
 navigationCompose = "2.9.0"
 mapkit = "4.13.0-lite"
 runtimeLivedata = "1.8.2"
@@ -34,7 +34,8 @@ accompanist-navigation-material = { module = "com.google.accompanist:accompanist
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontrollerVersion" }
 androidx-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compiler" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilComposeVersion" }
+coil3-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilComposeVersion" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
