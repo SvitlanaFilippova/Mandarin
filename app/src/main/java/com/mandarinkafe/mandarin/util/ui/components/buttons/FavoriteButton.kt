@@ -27,7 +27,6 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
-import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_SUPER_FAST
 
 @Composable
 fun FavoriteButton(
@@ -52,11 +51,11 @@ fun FavoriteButton(
             scaleAnim.snapTo(1f)
             scaleAnim.animateTo(
                 targetValue = 1.2f,
-                animationSpec = tween(durationMillis = ANIMATION_DURATION_SUPER_FAST)
+                animationSpec = tween(durationMillis = ANIMATION_DURATION_FAST)
             )
             scaleAnim.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(durationMillis = ANIMATION_DURATION_SUPER_FAST)
+                animationSpec = tween(durationMillis = ANIMATION_DURATION_FAST)
             )
         }
         prevFavorite = isFavorite

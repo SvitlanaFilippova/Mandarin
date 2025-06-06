@@ -1,7 +1,11 @@
 package com.mandarinkafe.mandarin.features.menu.ui.components
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +24,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,15 +32,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
 import com.mandarinkafe.mandarin.core.ui.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_SLOW
-import com.mandarinkafe.mandarin.util.Constants.AUTO_SCROLL_INTERVAL
+import com.mandarinkafe.mandarin.util.Constants.BANNERS_ASPECT_RATIO
+import com.mandarinkafe.mandarin.util.Constants.BANNERS_AUTO_SCROLL_INTERVAL
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -43,7 +52,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun BannerCarousel(
     banners: List<Banner>,
-    autoScrollInterval: Long = AUTO_SCROLL_INTERVAL,
+    autoScrollInterval: Long = BANNERS_AUTO_SCROLL_INTERVAL,
     easing: Easing = LinearEasing,
     onBannerClick: (Banner) -> Job
 ) {
@@ -91,18 +100,21 @@ fun BannerCarousel(
             )
         ) { page ->
             AsyncImage(
-                model = banners[page].imageUrl,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(banners[page].imageUrl)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = stringResource(R.string.banner_number, page),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(2.91f)
+                    .aspectRatio(BANNERS_ASPECT_RATIO)
                     .clip(RoundedCornerShape(Dimens.CornerRadius8))
                     .clickable { onBannerClick(banners[page]) }
             )
         }
 
-        // Индикаторы страниц
+        // Индикаторы
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -114,15 +126,35 @@ fun BannerCarousel(
                 Dimens.MarginSmall8,
                 Alignment.CenterHorizontally
             )
-
         ) {
             banners.forEachIndexed { index, _ ->
-                val color = if (pagerState.currentPage == index) Colors.Orange else Colors.LightGrey
+                val isActive = pagerState.currentPage == index
+
+                // Анимированная ширина
+                val animatedWidth by animateDpAsState(
+                    targetValue = if (isActive) Dimens.BannerIndicatorActiveWidth32 else Dimens.BannerIndicatorInactiveWidth8,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioLowBouncy,
+                        stiffness = Spring.StiffnessLow
+                    ),
+                    label = "indicator_width"
+                )
+
+                // Анимированный цвет
+                val animatedColor by animateColorAsState(
+                    targetValue = if (isActive) Colors.Orange else Colors.LightGrey,
+                    animationSpec = tween(durationMillis = ANIMATION_DURATION_FAST),
+                    label = "indicator_color"
+                )
+
                 Box(
                     modifier = Modifier
-                        .width(Dimens.BannerIndicatorWidth24)
-                        .height(Dimens.BannerIndicatorHeight4)
-                        .background(color, shape = RoundedCornerShape(Dimens.RadiusImageCorner2))
+                        .width(animatedWidth)
+                        .height(Dimens.BannerIndicatorSize4)
+                        .background(
+                            color = animatedColor,
+                            shape = RoundedCornerShape(Dimens.RadiusImageCorner2)
+                        )
                 )
             }
         }
