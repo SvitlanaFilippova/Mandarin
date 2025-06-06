@@ -8,11 +8,11 @@ object Constants {
     const val IMAGE_VALIDATOR_TIMEOUT = 1000
 
     // Menu UI
-    const val AUTO_SCROLL_INTERVAL: Long = 5000L
-    const val FORCE_SHOW_FAB_DURATION_MS = 1000L
+    const val BANNERS_AUTO_SCROLL_INTERVAL: Long = 5000L
+    const val BANNERS_ASPECT_RATIO = 2.91f
+    const val FORCE_SHOW_FAB_DURATION_MS = 3000L
     const val ANIMATION_DURATION_SLOW = 1000
     const val ANIMATION_DURATION_FAST = 300
-    const val ANIMATION_DURATION_SUPER_FAST = 300
     const val DEFAULT_UNSELECTED_INDEX = -1
     const val DEFAULT_SELECTED_FIRST_INDEX = 0
     const val MAX_LINES_FOR_LABEL_FLOW_ROW = 3
