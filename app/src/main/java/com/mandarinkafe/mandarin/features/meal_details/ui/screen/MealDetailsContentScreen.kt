@@ -56,6 +56,7 @@ fun MealDetailsContentScreen(
     onEdit: () -> Unit,
     onToggleFavorite: () -> Unit,
 ) {
+
     val customizedMeal = state.customizedMeal ?: initItem
     val meal = customizedMeal.meal
     val listState = rememberLazyListState()

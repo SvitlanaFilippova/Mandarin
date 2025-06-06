@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.meal_details.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.ui.theme.Colors
@@ -32,6 +33,8 @@ import com.mandarinkafe.mandarin.util.ui.components.LabelChip
 fun MealInfo(
     meal: Meal,
 ) {
+    Log.d("DEBUG IMAGES", "Meal: ${meal.name}, image: ${meal.imageUrl}")
+
     Column {
         // Изображение блюда
         Box(

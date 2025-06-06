@@ -68,7 +68,6 @@ fun FavoritesItemCard(
             meal = meal,
             isFavorite = isFavorite,
             onToggleFavorite = { onToggleFavorite(item) },
-
             )
 
         Column(
