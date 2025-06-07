@@ -15,10 +15,10 @@ import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.features.delivery.screen.DeliveryScreen
-import com.mandarinkafe.mandarin.features.favorites.ui.screen.FavoritesScreen
-import com.mandarinkafe.mandarin.features.meal_details.ui.screen.MealDetailsBottomSheet
-import com.mandarinkafe.mandarin.features.menu.ui.screen.MenuScreen
-import com.mandarinkafe.mandarin.features.search.ui.screen.SearchScreen
+import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.FavoritesScreen
+import com.mandarinkafe.mandarin.features.meal_details.presentation.ui.screen.MealDetailsBottomSheet
+import com.mandarinkafe.mandarin.features.menu.presentation.ui.screen.MenuScreen
+import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.navigation.NavRoutes.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavRoutes.FAVORITES_SCREEN_ROUTE
@@ -28,7 +28,7 @@ import com.mandarinkafe.mandarin.navigation.NavRoutes.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.shared.cart.ui.screen.CartScreen
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
-import com.mandarinkafe.mandarin.splash.ui.SplashScreen
+import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 

@@ -33,7 +33,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.mandarinkafe.mandarin.core.ui.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point

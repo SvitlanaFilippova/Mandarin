@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.shared.cart.ui.view_model
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
-import com.mandarinkafe.mandarin.core.ui.models.UiError
+import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState

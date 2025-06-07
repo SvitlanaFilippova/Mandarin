@@ -26,11 +26,11 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
-import com.mandarinkafe.mandarin.core.ui.theme.Colors
-import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.core.ui.theme.Typography
-import com.mandarinkafe.mandarin.util.ui.components.MealItemImageBox
-import com.mandarinkafe.mandarin.util.ui.components.buttons.CustomizeButtonWithText
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
+import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CustomizeButtonWithText
 
 /**
  * Компонент, который отвечает за отображение товара, который выбрали в меню

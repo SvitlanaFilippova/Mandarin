@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.core.ui.models.UiError
+import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.shared.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.shared.cart.domain.usecase.GetAllRecommendsUseCase
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEffect
@@ -20,7 +20,6 @@ import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEven
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.RemoveFromCartWithDelay
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.ReplaceMealInCart
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartState
-import com.mandarinkafe.mandarin.util.BaseViewModel
 import com.mandarinkafe.mandarin.util.Constants.DELETE_FROM_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.INTERVAL_FOR_UPD_PROGRESSBAR
 import com.mandarinkafe.mandarin.util.Constants.UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE
@@ -28,6 +27,7 @@ import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.debounce
+import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job

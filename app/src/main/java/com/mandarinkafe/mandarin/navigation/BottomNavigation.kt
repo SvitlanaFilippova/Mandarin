@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
-import com.mandarinkafe.mandarin.core.ui.theme.Colors
-import com.mandarinkafe.mandarin.core.ui.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
 
 @Composable
