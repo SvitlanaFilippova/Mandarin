@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.delivery.components
 import android.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.toArgb
-import com.mandarinkafe.mandarin.core.ui.theme.Colors
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.delivery.Coordinates.Area1
 import com.mandarinkafe.mandarin.features.delivery.Coordinates.Area10
 import com.mandarinkafe.mandarin.features.delivery.Coordinates.Area11

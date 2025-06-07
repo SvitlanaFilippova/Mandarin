@@ -15,8 +15,8 @@ import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.ShowFavoriteDialog
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.ShowTopBar
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedState
-import com.mandarinkafe.mandarin.util.BaseViewModel
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

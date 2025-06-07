@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.features.search
 
 import com.mandarinkafe.mandarin.core.domain.models.Label
-import com.mandarinkafe.mandarin.core.ui.theme.Colors
-import com.mandarinkafe.mandarin.features.search.ui.model.LabelUiModel
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.features.search.presentation.model.LabelUiModel
 import com.mandarinkafe.mandarin.util.Constants.HIT_LABEL_DEFAULT
 import com.mandarinkafe.mandarin.util.Constants.HOT_LABEL_DEFAULT
 import com.mandarinkafe.mandarin.util.Constants.NEW_LABEL_DEFAULT

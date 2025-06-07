@@ -19,16 +19,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.ui.theme.Colors
-import com.mandarinkafe.mandarin.core.ui.theme.Dimens
-import com.mandarinkafe.mandarin.core.ui.theme.Typography
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.shared.cart.ui.components.CartClearTextButton
 import com.mandarinkafe.mandarin.shared.cart.ui.components.CartItemCard
 import com.mandarinkafe.mandarin.shared.cart.ui.components.CartRecommendsList
 import com.mandarinkafe.mandarin.shared.cart.ui.components.ProcessOrderButton
 import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants
-import com.mandarinkafe.mandarin.util.ui.components.buttons.MyCircularProgressIndicator
+import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MyCircularProgressIndicator
 
 @Composable
 fun CartContentScreen(
