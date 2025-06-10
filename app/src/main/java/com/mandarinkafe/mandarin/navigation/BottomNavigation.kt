@@ -22,8 +22,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -38,7 +38,6 @@ fun BottomNavigation(
     navController: NavController,
     cartCount: Int,
 ) {
-    val context = LocalContext.current
     val listItems = listOf(
         BottomNavigationItem.Search,
         BottomNavigationItem.Favorites,
@@ -105,19 +104,19 @@ fun BottomNavigation(
                             ) {
                                 Icon(
                                     painter = painterResource(item.icon),
-                                    contentDescription = context.getString(item.title)
+                                    contentDescription = stringResource(item.title)
                                 )
                             }
                         } else {
                             Icon(
                                 painter = painterResource(item.icon),
-                                contentDescription = context.getString(item.title)
+                                contentDescription = stringResource(item.title)
                             )
                         }
                     },
                     label = {
                         Text(
-                            text = context.getString(item.title),
+                            text = stringResource(item.title),
                             fontSize = 9.sp
                         )
                     },
