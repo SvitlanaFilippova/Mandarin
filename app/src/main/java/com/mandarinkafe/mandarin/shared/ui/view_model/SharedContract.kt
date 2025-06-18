@@ -17,6 +17,7 @@ sealed interface SharedContract {
         data object DismissFavoriteDialog : SharedEvent
         data class ToggleFavorite(val meal: Meal? = null, val item: CustomizedMeal? = null) :
             SharedEvent
+
         data class OnMealDetailsClick(
             val meal: Meal? = null,
             val item: CustomizedMeal? = null,
@@ -40,8 +41,10 @@ sealed interface SharedContract {
     }
 
     data class SharedState(
+        val isSplashVisible: Boolean = true,
         val shouldShowTopBar: Boolean = true,
         val showFavoriteDialog: Boolean = false,
+        val cartItemsCount: Int = 0,
         val selectedMealForFavoriteChoice: CustomizedMeal? = null,
     ) : BaseState
 }

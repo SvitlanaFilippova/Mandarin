@@ -5,7 +5,8 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 /**
  * Проверяет, можно ли как-то кастомизировать блюдо — добавить необязательные модификаторы или добавки.
  */
-fun Meal.isCustomizable() = (isAddable || isModifiable)
+val Meal.isCustomizable: Boolean
+    get() = (this.isAddable || this.isModifiable)
 
 /**
  * Проверяет, что у блюда:
@@ -14,7 +15,7 @@ fun Meal.isCustomizable() = (isAddable || isModifiable)
  * - нет других необязательных модификаторов,
  * - нет доступных добавок.
  *
- * Подходит для блюд, где пользователь должен просто выбрать один вариант из одного списка (например, выбрать тип сосиски).
+ * Подходит для блюд, где пользователь должен просто выбрать один вариант из одного списка (например, выбрать тип сосиски у хотдога).
  */
 fun Meal.isOnlySingleRequiredChoice(): Boolean {
     val requiredModifiers = modifiers.filter { it.isRequired }

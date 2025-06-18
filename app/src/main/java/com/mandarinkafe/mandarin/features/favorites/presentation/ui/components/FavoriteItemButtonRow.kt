@@ -14,7 +14,7 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartState
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CartControls
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CustomizeButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.SelectButton
@@ -44,7 +44,7 @@ fun FavoriteItemButtonRow(
             .height(Dimens.ButtonToCartSmall32)
             .weight(1f)
 
-        if (item.meal.isCustomizable()) {
+        if (item.meal.isCustomizable) {
             CustomizeButton(
                 modifier = Modifier.padding(end = Dimens.MarginSmall8),
                 onClick = { onMealDetailsClick(item) }

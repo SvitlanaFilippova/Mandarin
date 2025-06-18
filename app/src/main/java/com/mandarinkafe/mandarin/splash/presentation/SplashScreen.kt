@@ -22,8 +22,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.model.SplashElementsProvider
-import com.mandarinkafe.mandarin.splash.presentation.view_model.SplashViewModel
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_ANIMATION_DURATION
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_APPEARING_DURATION
@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SplashScreen(
-    viewModel: SplashViewModel = hiltViewModel(),
+    viewModel: SharedViewModel = hiltViewModel(),
     onFinished: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
@@ -54,8 +54,8 @@ fun SplashScreen(
     }
 
     // Анимация скрытия всего контента
-    LaunchedEffect(state.isVisible) {
-        if (!state.isVisible) {
+    LaunchedEffect(state.isSplashVisible) {
+        if (!state.isSplashVisible) {
             globalAlpha.animateTo(
                 targetValue = 0f,
                 animationSpec = tween(durationMillis = ANIMATION_DURATION_FAST)

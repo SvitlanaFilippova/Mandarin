@@ -21,14 +21,14 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.features.cart.ui.components.FavoriteVariantChoiceDialog
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent.AddToCart
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent.ReplaceMealInCart
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.meal_details.presentation.ui.components.RequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.meal_details.presentation.view_model.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.meal_details.presentation.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.presentation.view_model.MealDetailsViewModel
-import com.mandarinkafe.mandarin.shared.cart.ui.components.FavoriteVariantChoiceDialog
-import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.AddToCart
-import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract.CartEvent.ReplaceMealInCart
-import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
@@ -48,6 +48,7 @@ fun MealDetailsBottomSheet(
     if (initItem == null) return
 
     val state by viewModel.state.collectAsState()
+
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -81,8 +82,6 @@ fun MealDetailsBottomSheet(
     LaunchedEffect(Unit) {
         sheetState.show()
     }
-
-
 
 
     if (showRequiredModifiersDialog) {

@@ -77,7 +77,14 @@ fun MealDetailsContentScreen(
             }
         }
     }
-
+    Log.d(
+        "DEBUG meal types",
+        "Meal ${initItem.meal.name}, isAddable: ${initItem.meal.isAddable}, isCustomizable: ${initItem.meal.isCustomizable} "
+    )
+    Log.d(
+        "DEBUG meal types",
+        "requireSelection ${initItem.meal.requireSelection}, isModifiable: ${initItem.meal.isModifiable}, isOnlySingleRequiredChoice ${initItem.meal.isOnlySingleRequiredChoice()} "
+    )
 
     Column(
         modifier = Modifier
@@ -106,7 +113,7 @@ fun MealDetailsContentScreen(
                 }
 
                 // Заголовок для модификаторов/добавок, если блюдо и без них можно закаказать
-                if (meal.isCustomizable()) {
+                if (meal.isCustomizable) {
                     item(key = scrollTargetKey) {
                         MakeMoreDeliciousBlock(onClick = handleMakeMoreDeliciousClick)
                     }
@@ -200,7 +207,7 @@ fun MealDetailsContentScreen(
                     val selectedTabIndex = state.selectedTabIndex
                     item {
                         AddsCategoryTabsRow(
-                            categories = state.pizzaAds.map { it.name },
+                            categories = state.addons.map { it.name },
                             selectedTabIndex = selectedTabIndex,
                             onTabSelected = { index ->
                                 onEvent(
@@ -213,7 +220,7 @@ fun MealDetailsContentScreen(
                     }
 
                     val addsItems =
-                        state.pizzaAds[selectedTabIndex].mealAdditionals ?: emptyList()
+                        state.addons[selectedTabIndex].mealAdditionals ?: emptyList()
                     // Список доступных добавок
                     itemsIndexed(addsItems) { _, item ->
                         AddsItem(

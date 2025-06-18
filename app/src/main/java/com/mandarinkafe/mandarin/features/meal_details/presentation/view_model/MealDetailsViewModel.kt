@@ -22,7 +22,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 @HiltViewModel
 class MealDetailsViewModel @Inject constructor(
     private val getAddonsUseCase: GetAddonsUseCase,
@@ -155,7 +154,7 @@ class MealDetailsViewModel @Inject constructor(
     private fun getAddons() {
         setState { copy(isLoading = true) }
 
-        if (!state.value.pizzaAds.isEmpty()) {
+        if (!state.value.addons.isEmpty()) {
             setState { copy(isLoading = false) }
         } else {
             viewModelScope.launch {
@@ -176,7 +175,7 @@ class MealDetailsViewModel @Inject constructor(
         if (!data.isNullOrEmpty()) {
             setState {
                 copy(
-                    pizzaAds = data,
+                    addons = data,
                     errorMessage = null
                 )
             }

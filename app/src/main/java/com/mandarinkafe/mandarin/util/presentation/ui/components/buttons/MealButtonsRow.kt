@@ -14,7 +14,7 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalPriceByMe
 import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalQuantityByMealId
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 
 @Composable
 fun MealButtonsRow(
@@ -37,7 +37,7 @@ fun MealButtonsRow(
             .height(Dimens.ButtonToCartSmall32)
             .weight(1f)
 
-        if (baseMeal.isCustomizable()) {
+        if (baseMeal.isCustomizable) {
             CustomizeButton(
                 modifier = Modifier.padding(end = Dimens.MarginSmall8),
                 onClick = onMealDetailsClick

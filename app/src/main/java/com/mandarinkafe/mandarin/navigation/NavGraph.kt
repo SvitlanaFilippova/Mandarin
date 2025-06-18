@@ -14,19 +14,23 @@ import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.features.cart.ui.screen.CartScreen
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.delivery.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.features.meal_details.presentation.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.screen.MenuScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
-import com.mandarinkafe.mandarin.navigation.NavRoutes.CART_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavRoutes.DELIVERY_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavRoutes.FAVORITES_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavRoutes.SEARCH_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavRoutes.SPLASH_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.shared.cart.ui.screen.CartScreen
-import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartViewModel
+import com.mandarinkafe.mandarin.navigation.NavConstants.CART_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.FAVORITES_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_FOCUS_INPUT
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_JSON
+import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE_WITH_ARGS
+import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE_WITH_ARGS
+import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
 import java.net.URLDecoder
@@ -86,15 +90,15 @@ fun NavGraph(navHostController: NavHostController) {
             }
 
             composable(
-                route = "$SEARCH_SCREEN_ROUTE?focusInput={focusInput}",
+                route = SEARCH_SCREEN_ROUTE_WITH_ARGS,
                 arguments = listOf(
-                    navArgument("focusInput") {
+                    navArgument(KEY_FOCUS_INPUT) {
                         type = NavType.BoolType
                         defaultValue = false // по умолчанию не фокусируем
                     }
                 )
             ) { entry ->
-                val focusInput = entry.arguments?.getBoolean("focusInput") == true
+                val focusInput = entry.arguments?.getBoolean(KEY_FOCUS_INPUT) == true
 
                 SearchScreen(
                     focusSearchBarInput = focusInput,
@@ -105,17 +109,17 @@ fun NavGraph(navHostController: NavHostController) {
             }
 
             bottomSheet(
-                route = "meal_details/{mealJson}/{isEditMode}",
+                route = MEAL_DETAILS_ROUTE_WITH_ARGS,
                 arguments = listOf(
-                    navArgument("mealJson") { type = NavType.StringType },
-                    navArgument("isEditMode") { type = NavType.BoolType }
+                    navArgument(KEY_MEAL_JSON) { type = NavType.StringType },
+                    navArgument(KEY_IS_EDIT_MODE) { type = NavType.BoolType }
                 )
             ) { backStackEntry ->
-                val json = backStackEntry.arguments?.getString("mealJson")?.let {
+                val json = backStackEntry.arguments?.getString(KEY_MEAL_JSON)?.let {
                     URLDecoder.decode(it, StandardCharsets.UTF_8.toString())
                 }
 
-                val isEditMode = backStackEntry.arguments?.getBoolean("isEditMode") == true
+                val isEditMode = backStackEntry.arguments?.getBoolean(KEY_IS_EDIT_MODE) == true
 
                 val meal = remember(json) {
                     gson.fromJson(json, CustomizedMeal::class.java)

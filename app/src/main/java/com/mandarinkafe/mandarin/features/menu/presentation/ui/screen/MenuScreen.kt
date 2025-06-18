@@ -7,12 +7,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.menu.presentation.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.presentation.view_model.MenuViewModel
 import com.mandarinkafe.mandarin.navigation.navigateToSearchScreen
 import com.mandarinkafe.mandarin.shared.cart.domain.CartMapper.toAddToCartEvent
 import com.mandarinkafe.mandarin.shared.cart.domain.CartMapper.toRemoveFromCartNow
-import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
