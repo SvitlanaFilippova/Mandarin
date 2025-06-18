@@ -141,7 +141,7 @@ fun CartItemCard(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            if ((meal.isCustomizable() || meal.requireSelection) && !itemInPendingDeletion) {
+            if ((meal.isCustomizable || meal.requireSelection) && !itemInPendingDeletion) {
                 when {
                     item.isCustomized() -> {
                         // Кнопка "Редактировать"

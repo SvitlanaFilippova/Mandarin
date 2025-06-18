@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.splash.domain.usecase
+package com.mandarinkafe.mandarin.core.domain.api
 
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.util.Resource

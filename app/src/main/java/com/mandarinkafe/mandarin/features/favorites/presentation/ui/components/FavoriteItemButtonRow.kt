@@ -44,7 +44,7 @@ fun FavoriteItemButtonRow(
             .height(Dimens.ButtonToCartSmall32)
             .weight(1f)
 
-        if (item.meal.isCustomizable()) {
+        if (item.meal.isCustomizable) {
             CustomizeButton(
                 modifier = Modifier.padding(end = Dimens.MarginSmall8),
                 onClick = { onMealDetailsClick(item) }

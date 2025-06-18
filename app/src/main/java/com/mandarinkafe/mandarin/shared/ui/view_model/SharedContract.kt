@@ -40,6 +40,7 @@ sealed interface SharedContract {
     }
 
     data class SharedState(
+        val isSplashVisible: Boolean = true,
         val shouldShowTopBar: Boolean = true,
         val showFavoriteDialog: Boolean = false,
         val selectedMealForFavoriteChoice: CustomizedMeal? = null,

@@ -77,7 +77,14 @@ fun MealDetailsContentScreen(
             }
         }
     }
-
+    Log.d(
+        "DEBUG meal types",
+        "Meal ${initItem.meal.name}, isAddable: ${initItem.meal.isAddable}, isCustomizable: ${initItem.meal.isCustomizable} "
+    )
+    Log.d(
+        "DEBUG meal types",
+        "requireSelection ${initItem.meal.requireSelection}, isModifiable: ${initItem.meal.isModifiable}, isOnlySingleRequiredChoice ${initItem.meal.isOnlySingleRequiredChoice()} "
+    )
 
     Column(
         modifier = Modifier
@@ -106,7 +113,7 @@ fun MealDetailsContentScreen(
                 }
 
                 // Заголовок для модификаторов/добавок, если блюдо и без них можно закаказать
-                if (meal.isCustomizable()) {
+                if (meal.isCustomizable) {
                     item(key = scrollTargetKey) {
                         MakeMoreDeliciousBlock(onClick = handleMakeMoreDeliciousClick)
                     }

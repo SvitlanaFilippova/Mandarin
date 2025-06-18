@@ -37,7 +37,7 @@ fun MealButtonsRow(
             .height(Dimens.ButtonToCartSmall32)
             .weight(1f)
 
-        if (baseMeal.isCustomizable()) {
+        if (baseMeal.isCustomizable) {
             CustomizeButton(
                 modifier = Modifier.padding(end = Dimens.MarginSmall8),
                 onClick = onMealDetailsClick

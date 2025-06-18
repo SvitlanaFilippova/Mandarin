@@ -2,10 +2,10 @@ package com.mandarinkafe.mandarin.navigation
 
 import androidx.annotation.StringRes
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.navigation.NavRoutes.CART_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavRoutes.DELIVERY_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavRoutes.FAVORITES_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavRoutes.MENU_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.CART_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.FAVORITES_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 
 sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val route: String) {
     object Menu : BottomNavigationItem(R.string.menu, R.drawable.ic_food, MENU_SCREEN_ROUTE)
@@ -27,6 +27,6 @@ sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val 
         BottomNavigationItem(
             R.string.search,
             R.drawable.ic_search,
-            NavRoutes.SEARCH_SCREEN_ROUTE
+            NavConstants.SEARCH_SCREEN_ROUTE
         )
 }
