@@ -1,6 +1,8 @@
 package com.mandarinkafe.mandarin.features.meal_details.presentation.view_model
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
@@ -12,6 +14,8 @@ import com.mandarinkafe.mandarin.features.meal_details.presentation.view_model.M
 import com.mandarinkafe.mandarin.features.meal_details.presentation.view_model.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.meal_details.presentation.view_model.MealDetailsContract.MealDetailsState
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_JSON
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
@@ -25,9 +29,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MealDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getAddonsUseCase: GetAddonsUseCase,
 ) : BaseViewModel<MealDetailsEvent, MealDetailsEffect, MealDetailsState>() {
-    override fun setInitialState() = MealDetailsState()
+    private val isEditMode: Boolean = savedStateHandle.get<Boolean>(KEY_IS_EDIT_MODE)!!
+    private val mealJson: String = savedStateHandle.get<String>(KEY_MEAL_JSON)!!
+    private val initItem = Gson().fromJson(mealJson, CustomizedMeal::class.java)
+    override fun setInitialState() = MealDetailsState(
+        isEditMode = isEditMode,
+        initItem = initItem,
+    )
 
     init {
         getAddons()

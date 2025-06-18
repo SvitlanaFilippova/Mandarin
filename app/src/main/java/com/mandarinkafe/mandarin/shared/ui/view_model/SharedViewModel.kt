@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.shared.ui.view_model
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
+import com.mandarinkafe.mandarin.core.domain.api.ObserveCartCountUseCase
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEffect
@@ -32,7 +33,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SharedViewModel @Inject constructor(
     private val favoritesApi: FavoritesApi,
-    private val getInitialDataUseCase: GetInitialDataUseCase
+    private val getInitialDataUseCase: GetInitialDataUseCase,
+    private val observeCartCountUseCase: ObserveCartCountUseCase
 ) :
     BaseViewModel<SharedEvent, SharedEffect, SharedState>() {
     override fun setInitialState() = SharedState()
@@ -60,6 +62,7 @@ class SharedViewModel @Inject constructor(
 
     init {
         loadInitialData()
+        observeCartCount()
     }
 
     override fun onEvent(event: SharedEvent) {
@@ -126,6 +129,14 @@ class SharedViewModel @Inject constructor(
                     setState { copy(isSplashVisible = false) }
                     // Если Success прилетит раньше таймера SPLASH_SCREEN_DURATION - закрываем экран
                 }
+            }
+        }
+    }
+
+    private fun observeCartCount() {
+        viewModelScope.launch {
+            observeCartCountUseCase().collect { count ->
+                setState { copy(cartItemsCount = count) }
             }
         }
     }

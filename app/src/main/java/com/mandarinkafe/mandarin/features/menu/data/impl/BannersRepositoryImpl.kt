@@ -19,7 +19,10 @@ class BannersRepositoryImpl(
     private val imageValidator: ImageValidator
 ) : BannersRepository {
 
-    override suspend fun getBanners(): Resource<List<Banner>> {
+    var bannersCsv: String? = null
+
+    /** Загрузка и кэширование CSV  */
+    override suspend fun loadBannersCsv(): Resource<Unit> {
         val response = try {
             networkClient.getBanners()
         } catch (e: Exception) {
@@ -30,14 +33,34 @@ class BannersRepositoryImpl(
             return Resource.ErrorNoInternet()
         }
 
-        val csvText = (response as? CsvResponse)?.csv
-
-        if (csvText.isNullOrEmpty()) {
+        val csv = (response as? CsvResponse)?.csv
+        if (csv.isNullOrEmpty()) {
             return Resource.ErrorEmptyData()
         }
 
+        bannersCsv = csv
+        return Resource.Success(Unit)
+    }
+
+    /** Парсинг и валидация баннеров */
+    override suspend fun getBanners(): Resource<List<Banner>> {
+        // Если CSV ещё не загружен — пытаемся загрузить
+        if (bannersCsv.isNullOrEmpty()) {
+            when (val csvResult = loadBannersCsv()) {
+                is Resource.Success -> Unit // ок, идём дальше
+                is Resource.ErrorNoInternet -> return Resource.ErrorNoInternet()
+                is Resource.ErrorEmptyData -> return Resource.ErrorEmptyData()
+                is Resource.ErrorOther -> return Resource.ErrorOther(csvResult.message.orEmpty())
+                else -> return Resource.ErrorOther("Неизвестная ошибка при загрузке баннеров")
+            }
+        }
+        val csv = bannersCsv
+        if (csv.isNullOrEmpty()) {
+            return Resource.ErrorOther("CSV не загружен")
+        }
+
         val bannersDto = try {
-            parseCsv(csvText)
+            parseCsv(csv)
         } catch (e: Exception) {
             return Resource.ErrorOther("Ошибка разбора CSV: ${e.message}")
         }
@@ -55,38 +78,29 @@ class BannersRepositoryImpl(
                 }
             }.awaitAll().filterNotNull()
         }
-        return if (validBanners.isEmpty()) Resource.ErrorEmptyData() else
+
+        return if (validBanners.isEmpty()) {
+            Resource.ErrorEmptyData()
+        } else {
             Resource.Success(validBanners)
+        }
     }
 
     private fun parseCsv(csv: String): List<BannerDto> {
-        val lines = csv
-            .lineSequence()
+        val lines = csv.lineSequence()
             .filter { it.isNotBlank() }
             .toList()
-        if (lines.size <= 1) return emptyList()  // нет данных
+        if (lines.size <= 1) return emptyList()  // только заголовок
 
-        // пропускаем заголовок
-        return lines
-            .drop(1)
-            .mapNotNull { line ->
-                // разбиваем только на 2 части: imageUrl и остальное
-                val cols = line.split(",", limit = 2)
-                if (cols.isEmpty()) {
-                    return@mapNotNull null
-                }
+        return lines.drop(1).mapNotNull { line ->
+            val cols = line.split(",", limit = 2)
+            if (cols.isEmpty()) return@mapNotNull null
 
-                val imageUrl = cols[0].trim()
-                if (imageUrl.isEmpty()) {
-                    return@mapNotNull null
-                }
+            val imageUrl = cols[0].trim()
+            if (imageUrl.isEmpty()) return@mapNotNull null
 
-                // targetName может быть пустым или отсутствовать
-                val targetName = cols.getOrNull(1)?.trim().orEmpty()
-                BannerDto(
-                    imageUrl = imageUrl,
-                    targetName = targetName
-                )
-            }
+            val targetName = cols.getOrNull(1)?.trim().orEmpty()
+            BannerDto(imageUrl = imageUrl, targetName = targetName)
+        }
     }
 }
