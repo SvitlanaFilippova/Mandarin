@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BackToTopFAB
@@ -39,7 +40,6 @@ import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.catego
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.getVisibleCategoryIndexes
 import com.mandarinkafe.mandarin.features.menu.presentation.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.presentation.view_model.MenuContract.MenuEvent
-import com.mandarinkafe.mandarin.shared.cart.ui.view_model.CartContract
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.util.Constants.FORCE_SHOW_FAB_DURATION_MS
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MyCircularProgressIndicator

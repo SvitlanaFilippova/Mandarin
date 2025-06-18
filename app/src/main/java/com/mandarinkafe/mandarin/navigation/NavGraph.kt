@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -11,6 +12,8 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
+import com.google.gson.Gson
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.features.cart.ui.screen.CartScreen
 import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.delivery.screen.DeliveryScreen
@@ -30,6 +33,8 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE_WIT
 import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
@@ -39,6 +44,7 @@ fun NavGraph(navHostController: NavHostController) {
 
     val cartViewModel: CartViewModel = hiltViewModel()
     val sharedViewModel: SharedViewModel = hiltViewModel()
+    val gson = remember { Gson() }
 
     ModalBottomSheetLayout(
         bottomSheetNavigator = bottomSheetNavigator
@@ -108,10 +114,22 @@ fun NavGraph(navHostController: NavHostController) {
                     navArgument(KEY_MEAL_JSON) { type = NavType.StringType },
                     navArgument(KEY_IS_EDIT_MODE) { type = NavType.BoolType }
                 )
-            ) {
+            ) { backStackEntry ->
+                val json = backStackEntry.arguments?.getString(KEY_MEAL_JSON)?.let {
+                    URLDecoder.decode(it, StandardCharsets.UTF_8.toString())
+                }
+
+                val isEditMode = backStackEntry.arguments?.getBoolean(KEY_IS_EDIT_MODE) == true
+
+                val meal = remember(json) {
+                    gson.fromJson(json, CustomizedMeal::class.java)
+                }
+
                 MealDetailsBottomSheet(
                     sharedViewModel = sharedViewModel,
                     cartViewModel = cartViewModel,
+                    initItem = meal,
+                    isEditMode = isEditMode,
                     onClose = { navHostController.popBackStack() }
                 )
             }

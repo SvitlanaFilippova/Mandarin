@@ -30,12 +30,10 @@ sealed interface MealDetailsContract {
     }
 
     data class MealDetailsState(
-        val isEditMode: Boolean,
-        val initItem: CustomizedMeal,
         val isLoading: Boolean = false,
         val error: UiError? = null,
         val customizedMeal: CustomizedMeal? = null,
-        val pizzaAds: List<MealAdditionalCategory> = emptyList(),
+        val addons: List<MealAdditionalCategory> = emptyList(),
         val errorMessage: String? = null,
         val selectedTabIndex: Int = DEFAULT_SELECTED_FIRST_INDEX,
     ) : BaseState

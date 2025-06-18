@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.shared.cart.ui.view_model
+package com.mandarinkafe.mandarin.features.cart.ui.view_model
 
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -44,10 +44,5 @@ sealed interface CartContract {
                 .sumOf { (item, quantity) ->
                     item.totalPrice() * quantity
                 }
-        val cartItemsCount: Int
-            get() = cartItems
-                .filter { (item, _) -> item !in pendingDeletionMeals }
-                .values
-                .sum()
     }
 }

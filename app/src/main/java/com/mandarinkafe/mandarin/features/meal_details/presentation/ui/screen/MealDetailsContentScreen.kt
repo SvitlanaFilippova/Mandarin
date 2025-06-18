@@ -207,7 +207,7 @@ fun MealDetailsContentScreen(
                     val selectedTabIndex = state.selectedTabIndex
                     item {
                         AddsCategoryTabsRow(
-                            categories = state.pizzaAds.map { it.name },
+                            categories = state.addons.map { it.name },
                             selectedTabIndex = selectedTabIndex,
                             onTabSelected = { index ->
                                 onEvent(
@@ -220,7 +220,7 @@ fun MealDetailsContentScreen(
                     }
 
                     val addsItems =
-                        state.pizzaAds[selectedTabIndex].mealAdditionals ?: emptyList()
+                        state.addons[selectedTabIndex].mealAdditionals ?: emptyList()
                     // Список доступных добавок
                     itemsIndexed(addsItems) { _, item ->
                         AddsItem(
