@@ -34,14 +34,14 @@ android {
         buildConfigField(
             type = "String",
             name = "MAPKIT_API_KEY",
-            value = properties.getProperty("MAPKIT_API_KEY") ?: ""
+            value = "\"${properties.getProperty("MAPKIT_API_KEY") ?: ""}\""
         )
 
         // iiko
         buildConfigField(
             type = "String",
             name = "IIKO_API_KEY",
-            value = properties.getProperty("IIKO_API_KEY") ?: ""
+            value = "\"${properties.getProperty("IIKO_API_KEY") ?: ""}\""
         )
     }
 
