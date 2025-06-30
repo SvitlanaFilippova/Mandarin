@@ -1,5 +1,5 @@
 build:
-  maxIssues: 100500 # Это нужно, чтобы не упасть сразу после прогона detekt-а, а дождаться остальных утилит.
+  maxIssues: 0
   excludeCorrectable: false
   weights:
   # complexity: 2
@@ -302,8 +302,10 @@ formatting:
   NoBlankLineBeforeRbrace:
     active: false
     autoCorrect: false
+  # Правило выключено, потому что иногда мы ставим больше одной пустой строки
+  # между, например, property и функциями
   NoConsecutiveBlankLines:
-    active: true
+    active: false
     autoCorrect: true
   NoEmptyClassBody:
     active: true
@@ -460,7 +462,7 @@ naming:
   PackageNaming:
     active: true
     packagePattern: '^[a-z]+(\.[a-z][a-z0-9]*)*$'
-    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**', '**/uikit_sample/**' ]
   TopLevelPropertyNaming:
     active: true
     constantPattern: '[A-Z][_A-Za-z0-9]*'
