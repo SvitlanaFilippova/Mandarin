@@ -71,12 +71,11 @@ jobs:
       - name: Create google-services.json from secret
         run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
 
-      - name: Setup environment
-        env:
-          MAPKIT_API_KEY: ${{ secrets.MAPKIT_API_KEY }}
-          IIKO_API_KEY: ${{ secrets.IIKO_API_KEY }}
+      - name: Create apikeys.properties from secrets
         run: |
-          sh ci/setup_env.sh
+          echo "MAPKIT_API_KEY=${{ secrets.MAPKIT_API_KEY }}" > apikeys.properties
+          echo "IIKO_API_KEY=${{ secrets.IIKO_API_KEY }}" >> apikeys.properties
+        working-directory: ${{ github.workspace }}
 
       - name: Assemble app
         run: ./gradlew :app:assembleDebug $commonGradleFlags
