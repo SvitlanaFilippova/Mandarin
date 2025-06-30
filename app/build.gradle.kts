@@ -29,20 +29,15 @@ android {
         val keystoreFile = project.rootProject.file("apikeys.properties")
         val properties = Properties()
         properties.load(keystoreFile.inputStream())
+        ""
 
         // Mapkit
-        buildConfigField(
-            type = "String",
-            name = "MAPKIT_API_KEY",
-            value = "\"${properties.getProperty("MAPKIT_API_KEY") ?: ""}\""
-        )
+        val mapKitApiKey = properties.getProperty("MAPKIT_API_KEY") ?: ""
+        buildConfigField("String", "MAPKIT_API_KEY", "\"$mapKitApiKey\"")
 
         // iiko
-        buildConfigField(
-            type = "String",
-            name = "IIKO_API_KEY",
-            value = "\"${properties.getProperty("IIKO_API_KEY") ?: ""}\""
-        )
+        val iikoApiKey = properties.getProperty("IIKO_API_KEY") ?: ""
+        buildConfigField("String", "IIKO_API_KEY", "\"$iikoApiKey\"")
     }
 
     buildTypes {
