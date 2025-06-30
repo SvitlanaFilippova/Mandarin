@@ -12,6 +12,7 @@ sealed class FavoriteRecord {
 
         override fun equals(other: Any?): Boolean {
             return other is Base && mealId == other.mealId
+            // не сравниваем timestamp
         }
 
         override fun hashCode(): Int {
@@ -32,6 +33,7 @@ sealed class FavoriteRecord {
                     mealId == other.mealId &&
                     addsIds.toSet() == other.addsIds.toSet() &&
                     modifiers.toSet() == other.modifiers.toSet()
+            // не сравниваем timestamp
         }
 
         override fun hashCode(): Int {

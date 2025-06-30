@@ -17,7 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
-import com.mandarinkafe.mandarin.features.cart.ui.components.FavoriteVariantChoiceDialog
+import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
 import com.mandarinkafe.mandarin.navigation.BottomNavigation
 import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavGraph

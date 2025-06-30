@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.cart.ui.components
+package com.mandarinkafe.mandarin.features.cart.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.cart.ui.screen
+package com.mandarinkafe.mandarin.features.cart.presentation.screen
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -22,11 +22,11 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.ui.components.CartClearTextButton
-import com.mandarinkafe.mandarin.features.cart.ui.components.CartItemCard
-import com.mandarinkafe.mandarin.features.cart.ui.components.CartRecommendsList
-import com.mandarinkafe.mandarin.features.cart.ui.components.ProcessOrderButton
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartState
+import com.mandarinkafe.mandarin.features.cart.presentation.components.CartClearTextButton
+import com.mandarinkafe.mandarin.features.cart.presentation.components.CartItemCard
+import com.mandarinkafe.mandarin.features.cart.presentation.components.CartRecommendsList
+import com.mandarinkafe.mandarin.features.cart.presentation.components.ProcessOrderButton
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MyCircularProgressIndicator
 
@@ -49,7 +49,11 @@ fun CartContentScreen(
         state.cartItems.entries.map { it.toPair() }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = Dimens.MarginSmall8)
+    ) {
 
         // Кнопка очистки корзины,
         CartClearTextButton(

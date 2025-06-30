@@ -25,7 +25,7 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartState
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_TITLE_IN_MENU
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox

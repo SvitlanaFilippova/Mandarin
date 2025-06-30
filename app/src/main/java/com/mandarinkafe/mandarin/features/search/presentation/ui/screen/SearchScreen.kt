@@ -5,7 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.search.presentation.ui.components.MySearchBar
 import com.mandarinkafe.mandarin.features.search.presentation.view_model.SearchViewModel
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE

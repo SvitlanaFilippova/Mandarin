@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.meal_details.presentation.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -77,14 +76,6 @@ fun MealDetailsContentScreen(
             }
         }
     }
-    Log.d(
-        "DEBUG meal types",
-        "Meal ${initItem.meal.name}, isAddable: ${initItem.meal.isAddable}, isCustomizable: ${initItem.meal.isCustomizable} "
-    )
-    Log.d(
-        "DEBUG meal types",
-        "requireSelection ${initItem.meal.requireSelection}, isModifiable: ${initItem.meal.isModifiable}, isOnlySingleRequiredChoice ${initItem.meal.isOnlySingleRequiredChoice()} "
-    )
 
     Column(
         modifier = Modifier
@@ -122,10 +113,6 @@ fun MealDetailsContentScreen(
                 // Выбор модификаторов
                 if (meal.modifiers.isNotEmpty()) {
                     itemsIndexed(meal.modifiers) { index, modifierGroup ->
-                        Log.d(
-                            "DEBUG MODIFIER",
-                            "modifierGroup ${modifierGroup.name} isRequired:${modifierGroup.isRequired}"
-                        )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(Dimens.MarginSmall8)

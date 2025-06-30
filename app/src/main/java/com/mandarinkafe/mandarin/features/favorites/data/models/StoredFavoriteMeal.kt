@@ -11,12 +11,15 @@ data class StoredFavoriteMeal(
     override fun equals(other: Any?): Boolean {
         return other is StoredFavoriteMeal &&
                 this.mealId == other.mealId &&
-                this.modifiers == other.modifiers &&
-                this.addsIds == other.addsIds
+                this.modifiers.toSet() == other.modifiers.toSet() &&
+                this.addsIds.toSet() == other.addsIds.toSet()
         // не сравниваем timestamp
     }
 
     override fun hashCode(): Int {
-        return 31 * mealId.hashCode() + modifiers.hashCode()
+        var result = mealId.hashCode()
+        result = 31 * result + addsIds.toSet().hashCode()
+        result = 31 * result + modifiers.toSet().hashCode()
+        return result
     }
 }
