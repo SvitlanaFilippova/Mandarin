@@ -7,7 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.menu.presentation.view_model.MenuContract
 import com.mandarinkafe.mandarin.features.menu.presentation.view_model.MenuViewModel
 import com.mandarinkafe.mandarin.navigation.navigateToSearchScreen
@@ -40,6 +40,8 @@ fun MenuScreen(
         menuSate.isLoading -> LoadingScreen()
         error != null -> PlaceholderScreen(
             error = error,
+            onRetryClick = { }, //TODO
+            onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
         )
 
         else -> MenuContentScreen(

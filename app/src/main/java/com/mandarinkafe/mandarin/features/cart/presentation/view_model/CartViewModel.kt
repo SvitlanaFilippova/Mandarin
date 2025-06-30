@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.cart.ui.view_model
+package com.mandarinkafe.mandarin.features.cart.presentation.view_model
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
@@ -6,18 +6,18 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent.AddToCart
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent.CancelRemove
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent.ClearCart
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent.ConfirmClearCart
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent.Init
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent.RemoveFromCartByItem
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent.RemoveFromCartByMeal
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent.RemoveFromCartWithDelay
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent.ReplaceMealInCart
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartState
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEffect
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.AddToCart
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.CancelRemove
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.ClearCart
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.ConfirmClearCart
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.Init
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.RemoveFromCartByItem
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.RemoveFromCartByMeal
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.RemoveFromCartWithDelay
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.ReplaceMealInCart
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartState
 import com.mandarinkafe.mandarin.shared.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.shared.cart.domain.usecase.GetAllRecommendsUseCase
 import com.mandarinkafe.mandarin.util.Constants.DELETE_FROM_CART_DEBOUNCE_DELAY

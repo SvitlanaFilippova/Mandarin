@@ -74,7 +74,7 @@ private fun MealDto.toDomain(
     }
 
     val finalMealLabels = (mealLabels + categoryLabels).distinctBy { it.name }
-
+    val isRequireSelection = safeModifiers.any { it.isRequired }
     return Meal(
         id = itemId,
         name = name.applyTypography(),
@@ -93,8 +93,8 @@ private fun MealDto.toDomain(
                 ignoreCase = true
             )
         },
-        requireSelection = safeModifiers.any { it.isRequired },
-        isModifiable = safeModifiers.isNotEmpty() && safePrice > 0,
+        requireSelection = isRequireSelection,
+        isModifiable = safeModifiers.isNotEmpty() && safePrice > 0 && !isRequireSelection,
         discountable = !finalMealTags.any { it.name.equals(TAG_NO_DISCOUNT, ignoreCase = true) },
         parentCategoryName = parentCategoryName,
         grandParentCategoryName = grandParentCategoryName,

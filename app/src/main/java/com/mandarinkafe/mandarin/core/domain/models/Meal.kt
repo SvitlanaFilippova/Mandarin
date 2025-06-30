@@ -20,14 +20,14 @@ data class Meal(
     val labels: List<Label>,
 
     /**
-    Группы модификаторов, доступных для блюда
-     */
-    val modifiers: List<ModifierGroup>,
-
-    /**
     Показывает, должно ли блюдо отображаться в общем меню
      */
     val isHidden: Boolean,
+
+    /**
+    Группы модификаторов, доступных для блюда
+     */
+    val modifiers: List<ModifierGroup>,
 
     /**
     Применимы ли добавки

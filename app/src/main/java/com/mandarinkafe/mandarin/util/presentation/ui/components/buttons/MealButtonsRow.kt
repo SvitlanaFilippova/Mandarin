@@ -14,7 +14,7 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalPriceByMe
 import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalQuantityByMealId
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract
 
 @Composable
 fun MealButtonsRow(

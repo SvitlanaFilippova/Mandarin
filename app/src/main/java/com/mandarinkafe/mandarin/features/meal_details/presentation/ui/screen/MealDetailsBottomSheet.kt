@@ -21,10 +21,10 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.ui.components.FavoriteVariantChoiceDialog
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent.AddToCart
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent.ReplaceMealInCart
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
+import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.AddToCart
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.ReplaceMealInCart
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.meal_details.presentation.ui.components.RequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.meal_details.presentation.view_model.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.meal_details.presentation.view_model.MealDetailsContract.MealDetailsEvent
@@ -105,7 +105,10 @@ fun MealDetailsBottomSheet(
 
     when {
         state.isLoading -> LoadingScreen()
-        error != null -> PlaceholderScreen(error = error)
+        error != null -> PlaceholderScreen(
+            error = error,
+            onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+        )
         else ->
             ModalBottomSheet(
                 modifier = Modifier

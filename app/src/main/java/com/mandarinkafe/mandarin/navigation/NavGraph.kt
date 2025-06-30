@@ -14,8 +14,8 @@ import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.features.cart.ui.screen.CartScreen
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
+import com.mandarinkafe.mandarin.features.cart.presentation.screen.CartScreen
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.delivery.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.features.meal_details.presentation.ui.screen.MealDetailsBottomSheet

@@ -78,12 +78,12 @@
     <string name="save_meal">Сохранить (%1$d ₽)</string>
 
     <!-- Ошибки и сообщения -->
-    <string name="placeholder_message_call_us">Попробуйте ещё&#160;раз или просто позвоните нам по&#160;телефону %1$s, чтобы сделать заказ.</string>
+    <string name="placeholder_message_call_us">Попробуй ещё&#160;раз или просто позвони нам по&#160;телефону, чтобы сделать заказ.</string>
     <string name="placeholder_retry">Обновить</string>
     <string name="placeholder_call">Позвонить</string>
     <string name="nothing_found">Ничего не найдено :(</string>
-    <string name="nothing_found_extra">Попробуйте написать по-другому или просто полистайте наше меню. Там точно найдутся нужные вкусности! </string>
-    <string name="error_no_internet">Проверьте подключение к интернету</string>
+    <string name="nothing_found_extra">Попробуй написать по-другому или просто полистай наше меню. Там точно найдутся нужные вкусности! </string>
+    <string name="error_no_internet">Проверь подключение к&#160;интернету</string>
     <string name="error_empty_menu">Сервер вернул пустые данные меню</string>
     <string name="error_empty_addons">Не удалось загрузить добавки</string>
     <string name="error_server_error">Ошибка сервера</string>
@@ -101,6 +101,5 @@
     <string name="added_to_cart">Добавлено в корзину</string>
     <string name="back_to_top">Вернуться в начало</string>
     <string name="is_selected">Выбрано</string>
-
 
 </resources>

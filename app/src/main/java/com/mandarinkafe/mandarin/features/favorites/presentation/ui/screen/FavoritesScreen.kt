@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartViewModel
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.components.FavoritesContent
 import com.mandarinkafe.mandarin.features.favorites.presentation.view_model.FavoritesViewModel
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
@@ -42,10 +42,14 @@ fun FavoritesScreen(
         when {
             state.isLoading -> LoadingScreen()
             error != null -> PlaceholderScreen(
-                error
+                error,
+                onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
             )
 
-            state.data.isEmpty() -> PlaceholderScreen(UiError.FavoritesEmpty)
+            state.data.isEmpty() -> PlaceholderScreen(
+                UiError.FavoritesEmpty,
+                onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+            )
 
             else -> FavoritesContent(
                 data = state.data,

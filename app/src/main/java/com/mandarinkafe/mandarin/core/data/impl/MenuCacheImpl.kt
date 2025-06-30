@@ -48,16 +48,16 @@ class MenuCacheImpl @Inject constructor(
         while (attempts < MAX_ATTEMPTS) {
             try {
                 val result = fetcher.fetchMenu()
-
-                if (result is Resource.Success) {
-                    return result
-                } else if (result is Resource.ErrorOther) {
+                when (result) {
+                    is Resource.Success -> return result
+                    is Resource.ErrorNoInternet<*> -> return result
+                    else -> {
+                    }
                 }
 
             } catch (e: Exception) {
             }
             attempts++
-
             delay(DELAY_BEFORE_NEXT_ATTEMPT)
         }
         return Resource.ErrorOther("Не удалось загрузить меню после $attempts попыток")

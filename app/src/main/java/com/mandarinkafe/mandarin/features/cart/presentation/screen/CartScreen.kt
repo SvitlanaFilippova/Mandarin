@@ -1,9 +1,8 @@
-package com.mandarinkafe.mandarin.features.cart.ui.screen
+package com.mandarinkafe.mandarin.features.cart.presentation.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,11 +14,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
-import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.ui.components.CartClearingConfirmationDialog
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEffect
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartContract.CartEvent
-import com.mandarinkafe.mandarin.features.cart.ui.view_model.CartViewModel
+import com.mandarinkafe.mandarin.features.cart.presentation.components.CartClearingConfirmationDialog
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEffect
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent
+import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartViewModel
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
@@ -47,14 +45,20 @@ fun CartScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Colors.AppBlack)
-            .padding(horizontal = Dimens.MarginSmall8)
-
     ) {
         val error = state.error
         when {
             state.isLoading -> LoadingScreen()
-            error != null -> PlaceholderScreen(error = error)
-            state.cartItems.isEmpty() -> PlaceholderScreen(UiError.CartEmpty)
+            error != null -> PlaceholderScreen(
+                error = error,
+                onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+            )
+
+            state.cartItems.isEmpty() -> PlaceholderScreen(
+                UiError.CartEmpty,
+                onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+            )
+
             else -> {
                 CartContentScreen(
                     listState = listState,
