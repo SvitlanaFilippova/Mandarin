@@ -36,7 +36,7 @@ tasks.withType<Detekt>().configureEach {
         md.required.set(false)
     }
 
-    config.setFrom(files(project.rootDir.resolve("conf/custom-detekt.yml")))
+    config.setFrom(files(project.rootDir.resolve("conf/detekt.yml")))
 }
 
 tasks.register<Detekt>("detektAll") {
@@ -53,7 +53,7 @@ tasks.register<Detekt>("detektAll") {
     include("**/*.kt", "**/*.kts")
     exclude("**/resources/**", "**/build/**")
 
-    config.setFrom(files(rootProject.file("conf/custom-detekt.yml")))
+    config.setFrom(files(rootProject.file("conf/detekt.yml")))
 
     reports {
         xml.required.set(true)
@@ -76,7 +76,7 @@ tasks.register<Detekt>("detektFormat") {
     include("**/*.kt", "**/*.kts")
     exclude("**/resources/**", "**/build/**")
 
-    config.setFrom(files(rootProject.file("conf/custom-detekt.yml")))
+    config.setFrom(files(rootProject.file("conf/detekt.yml")))
 
     reports {
         xml.required.set(false)
@@ -98,7 +98,7 @@ tasks.register<DetektCreateBaselineTask>("detektProjectBaseline") {
     parallel.set(true)
     jvmTarget = JavaVersion.valueOf(libs.versions.java.get()).toString()
 
-    config.setFrom(files(rootProject.file("conf/custom-detekt.yml")))
+    config.setFrom(files(rootProject.file("conf/detekt.yml")))
 }
 
 dependencies {
