@@ -45,14 +45,14 @@ class CartRepositoryImpl @Inject constructor(
                 is Resource.ErrorNoInternet -> Resource.ErrorNoInternet()
                 is Resource.ErrorEmptyData -> Resource.ErrorEmptyData()
                 is Resource.ErrorOther -> Resource.ErrorOther(menuResult.message.orEmpty())
-                else -> Resource.ErrorOther("Unexpected state")
+                else -> Resource.ErrorOther(ERROR_UNEXPECTED_STATE)
             }
         }
         val categories = menuResult.data.orEmpty()
 
         // 2) загрузим сырую корзину (или ErrorOther при исключении)
         val loadedRawCart = rawCart ?: loadRawCart()
-        if (loadedRawCart == null) return Resource.ErrorOther("Ошибка чтения корзины")
+        if (loadedRawCart == null) return Resource.ErrorOther(ERROR_CART_READ)
 
         // 3) замапим и проверим каждый элемент
         val (validCart, invalidIds) = mapAndValidate(loadedRawCart, categories)
@@ -79,7 +79,7 @@ class CartRepositoryImpl @Inject constructor(
             is Resource.ErrorNoInternet -> Resource.ErrorNoInternet()
             is Resource.ErrorEmptyData -> Resource.ErrorEmptyData()
             is Resource.ErrorOther -> Resource.ErrorOther(final.message.orEmpty())
-            else -> Resource.ErrorOther("Unknown menu state")
+            else -> Resource.ErrorOther(ERROR_UNKNOWN_MENU_STATE)
         }
     }
 
@@ -114,7 +114,7 @@ class CartRepositoryImpl @Inject constructor(
                 val cm = item.toCustomizedMeal(meal, adds, mods)
                 valid[cm] = item.quantity
             } catch (e: Exception) {
-                Log.e("CartRepository", "map failed for ${item.mealId}", e)
+                Log.e(ERROR_TAG, "map failed for ${item.mealId}", e)
                 invalid += item.mealId
             }
         }
@@ -125,7 +125,7 @@ class CartRepositoryImpl @Inject constructor(
         if (invalid.isEmpty()) return
         val cleaned = raw.filterNot { it.mealId in invalid }
         storage.saveCart(cleaned)
-        Log.d("CartRepository", "Removed invalid items: $invalid")
+        Log.d(ERROR_TAG, "Removed invalid items: $invalid")
     }
 
     override fun addToCart(item: CustomizedMeal) {
@@ -170,7 +170,7 @@ class CartRepositoryImpl @Inject constructor(
         return try {
             storage.getCart().also { rawCart = it }
         } catch (e: Exception) {
-            Log.e("CartRepository", "loadRawCart failed", e)
+            Log.e(ERROR_TAG, "loadRawCart failed", e)
             null
         }
     }
@@ -179,9 +179,15 @@ class CartRepositoryImpl @Inject constructor(
         _cartCount.value = try {
             storage.getCart().sumOf { it.quantity }
         } catch (e: Exception) {
-            Log.e("CartRepository", "Failed to read cart", e)
+            Log.e(ERROR_TAG, ERROR_CART_READ, e)
             0
         }
     }
 
+    companion object {
+        private const val ERROR_TAG = "CartRepository"
+        private const val ERROR_CART_READ = "Ошибка чтения корзины"
+        private const val ERROR_UNEXPECTED_STATE = "Unexpected state"
+        private const val ERROR_UNKNOWN_MENU_STATE = "Unknown menu state"
+    }
 }

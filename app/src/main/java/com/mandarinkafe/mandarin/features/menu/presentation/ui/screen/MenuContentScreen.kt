@@ -90,7 +90,7 @@ fun MenuContentScreen(
     val forceShowBackToTopFAB = remember { mutableStateOf(false) }
     val showBackToTopFAB by remember {
         derivedStateOf {
-            forceShowBackToTopFAB.value || (!isAtTop && !isScrollingDown.value)
+            forceShowBackToTopFAB.value || !isAtTop && !isScrollingDown.value
         }
     }
 

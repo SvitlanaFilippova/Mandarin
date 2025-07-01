@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,8 +35,7 @@ import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.AddsCategoryTabsRow
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.AddsItem
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.ChosenOptionsChipsRow
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.modifiers.ModifierMultiSelectItem
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.modifiers.ModifierSingleSelectItem
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.modifiers.ModifierGroupItem
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsState
 import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
@@ -111,68 +109,24 @@ fun MealDetailsContentScreen(
                 // Выбор модификаторов
                 if (meal.modifiers.isNotEmpty()) {
                     itemsIndexed(meal.modifiers) { index, modifierGroup ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(Dimens.MarginSmall8)
-                        ) {
-                            Text(
-                                text = modifierGroup.name,
-                                style = Typography.TitleStyle
-                            )
-                            if (modifierGroup.isRequired) {
-                                Text(
-                                    modifier = Modifier.padding(start = Dimens.MarginSmall8),
-                                    text = stringResource(R.string.mandatory),
-                                    style = Typography.RegularTextStyle,
-                                    fontWeight = FontWeight.Light
+                        ModifierGroupItem(
+                            modifierGroup = modifierGroup,
+                            chosenModifiers = chosenModifiers,
+                            onChooseSingleModifier = { modifierGroup ->
+                                onEvent(
+                                    MealDetailsEvent.ChooseSingleModifier(
+                                        modifierGroup
+                                    )
+                                )
+                            },
+                            onChooseMultiModifiers = { modifierGroup, modifierItem, isChecked ->
+                                onEvent(
+                                    MealDetailsEvent.ChooseMultiModifiers(
+                                        modifierGroup, modifierItem, isChecked
+                                    )
                                 )
                             }
-                        }
-                        val selectedItem =
-                            chosenModifiers.find { it.id == modifierGroup.id }?.items?.getOrNull(
-                                0
-                            )
-                        0
-
-                        if (modifierGroup.isSingleChoice) {
-                            modifierGroup.items.forEach { item ->
-                                ModifierSingleSelectItem(
-                                    item = item,
-                                    isAdded = item == selectedItem,
-                                    onItemSelected = { item ->
-                                        onEvent(
-                                            MealDetailsEvent.ChooseSingleModifier(
-                                                modifierGroup.copy(
-                                                    items = listOf(
-                                                        item
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    }
-                                )
-                            }
-
-                        } else {
-                            modifierGroup.items.forEach { item ->
-                                ModifierMultiSelectItem(
-                                    item = item,
-                                    onCheckedChange = { isChecked ->
-                                        onEvent(
-                                            MealDetailsEvent.ChooseMultiModifiers(
-                                                modifierGroup = modifierGroup,
-                                                modifierItem = item,
-                                                isChecked = isChecked
-                                            )
-                                        )
-                                    },
-                                    isAdded = chosenModifiers.find { it.id == modifierGroup.id }?.items?.contains(
-                                        item
-                                    ) == true
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(Dimens.MarginBig24))
-                        }
+                        )
                     }
                 }
                 // Выбор добавок
