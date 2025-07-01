@@ -70,7 +70,7 @@ jobs:
           name: lint-report
           path: app/build/reports/lint-results-debug.html
 
-      - name: Build (Release)
+      - name: Build (debug)
         run: ./gradlew build
 
       - name: Assemble Release APK
