@@ -22,8 +22,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract
-import com.mandarinkafe.mandarin.features.search.presentation.view_model.SearchContract
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
+import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract
 
 /**
  * Компонент с SearchBar - полем для полиска и его результами
@@ -43,7 +43,6 @@ fun MySearchBar(
     onMealDetailsClick: (Meal) -> Unit,
     onToggleFavorite: (Meal) -> Unit,
 ) {
-
     val filteredMenuItems = searchState.filteredMealList
     val latestSearchText = searchState.latestSearchText
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -86,7 +85,6 @@ fun MySearchBar(
                 containerColor = Colors.AppBlack
             ),
             content = {
-
                 LabelChipsRow(
                     labels = searchState.allLabels,
                     checkedLabels = searchState.checkedLabels,

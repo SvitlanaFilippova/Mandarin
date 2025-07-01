@@ -11,8 +11,6 @@ object Constants {
     const val BANNERS_AUTO_SCROLL_INTERVAL: Long = 5000L
     const val BANNERS_ASPECT_RATIO = 2.91f
     const val FORCE_SHOW_FAB_DURATION_MS = 3000L
-    const val ANIMATION_DURATION_SLOW = 1000
-    const val ANIMATION_DURATION_FAST = 300
     const val DEFAULT_UNSELECTED_INDEX = -1
     const val DEFAULT_SELECTED_FIRST_INDEX = 0
     const val MAX_LINES_FOR_LABEL_FLOW_ROW = 3
@@ -26,12 +24,19 @@ object Constants {
     const val SPLASH_SCREEN_DURATION = 5000L
     const val SPLASH_APPEARING_DURATION = 1000
     const val SPLASH_ANIMATION_DURATION = 2000
+    const val SPLASH_ANIMATION_DELAY_FOR_ELEMENT = 80L
+    const val SPLASH_GLOBAL_ALPHA_INIT = 0.1f
+    const val SPLASH_LOGO_ALPHA_INIT = 0.5f
 
     // MealDetails UI
     const val SCROLL_TARGET_KEY = "scrollTarget"
 
     // common UI
+    const val ANIMATION_DURATION_SLOW = 1000
+    const val ANIMATION_DURATION_FAST = 300
     const val GRADIENT_HEIGHT_RATIO = 0.5f
+    const val WEIGHT_RATIO_30 = 0.3f
+    const val WEIGHT_RATIO_70 = 0.7f
 
     // Menu loading
     const val MAX_ATTEMPTS = 3
@@ -40,11 +45,11 @@ object Constants {
     // DI
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
     const val LOCAL_STORAGE_NAME = "local_storage"
-    const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/"
+    const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/spreadsheets/d/e/"
     const val BANNERS_GOOGLE_DOCS_URL =
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3-6HvveASGgkJk7RppqB25IlbRSGJGvdEnN_0_XTtIKtRcR6H-R4KS0L_39ifx1cnGWRUiCA2zPQZ/pub?gid=0&single=true&output=csv"
+        "2PACX-1vQ3-6HvveASGgkJk7RppqB25IlbRSGJGvdEnN_0_XTtIKtRcR6H-R4KS0L_39ifx1cnGWRUiCA2zPQZ/pub?gid=0&single=true&output=csv"
     const val RECOMMENDATIONS_GOOGLE_DOCS_URL =
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3-6HvveASGgkJk7RppqB25IlbRSGJGvdEnN_0_XTtIKtRcR6H-R4KS0L_39ifx1cnGWRUiCA2zPQZ/pub?gid=1629216186&single=true&output=csv"
+        "2PACX-1vQ3-6HvveASGgkJk7RppqB25IlbRSGJGvdEnN_0_XTtIKtRcR6H-R4KS0L_39ifx1cnGWRUiCA2zPQZ/pub?gid=1629216186&single=true&output=csv"
 
     // API
     const val BEARER_PREFIX = "Bearer "

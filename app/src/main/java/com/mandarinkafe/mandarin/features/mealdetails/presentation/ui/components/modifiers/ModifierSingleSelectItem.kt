@@ -32,7 +32,6 @@ fun ModifierSingleSelectItem(
     isAdded: Boolean,
     onItemSelected: (ModifierItem) -> Unit
 ) {
-
     val backgroundColor by animateColorAsState(
         targetValue = if (isAdded) Colors.Orange.copy(alpha = 0.1f) else Color.Transparent,
         label = "AddHighlight"
@@ -50,7 +49,6 @@ fun ModifierSingleSelectItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
             RadioButton(
                 modifier = Modifier.padding(horizontal = Dimens.Margin12),
                 selected = isAdded,

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.search.presentation.view_model
+package com.mandarinkafe.mandarin.features.search.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
@@ -8,9 +8,9 @@ import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetFullMealListUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetLabelsUseCase
-import com.mandarinkafe.mandarin.features.search.presentation.view_model.SearchContract.SearchEffect
-import com.mandarinkafe.mandarin.features.search.presentation.view_model.SearchContract.SearchEvent
-import com.mandarinkafe.mandarin.features.search.presentation.view_model.SearchContract.SearchState
+import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract.SearchEffect
+import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract.SearchEvent
+import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract.SearchState
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle

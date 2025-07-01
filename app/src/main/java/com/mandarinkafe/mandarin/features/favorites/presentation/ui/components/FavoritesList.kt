@@ -16,7 +16,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartState
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants
 
 @Composable
@@ -59,5 +59,5 @@ fun FavoritesContent(
                 onMealDetailsClick = onMealDetailsClick,
             )
         }
-        }
     }
+}

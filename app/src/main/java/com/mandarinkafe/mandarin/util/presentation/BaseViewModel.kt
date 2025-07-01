@@ -13,11 +13,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<
-        Event : BaseEvent,
-        Effect : BaseEffect,
-        State : BaseState,
-        > : ViewModel() {
+abstract class BaseViewModel<Event : BaseEvent, Effect : BaseEffect, State : BaseState> :
+    ViewModel() {
 
     protected abstract fun setInitialState(): State
     private val initialState: State by lazy { setInitialState() }

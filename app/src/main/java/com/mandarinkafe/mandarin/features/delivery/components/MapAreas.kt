@@ -24,51 +24,75 @@ import com.yandex.mapkit.mapview.MapView
 @Composable
 fun MapAreas(mapView: MapView) {
     addColoredArea(
-        mapView, Area1, listOf(),
+        mapView,
+        Area1,
+        listOf(),
         Colors.FirstArea.toArgb()
     )
     addColoredArea(
-        mapView, Area2, Area1,
+        mapView,
+        Area2,
+        Area1,
         Colors.SecondArea.toArgb()
     )
     addColoredArea(
-        mapView, Area3, Area2,
+        mapView,
+        Area3,
+        Area2,
         Colors.ThirdArea.toArgb()
     )
     addColoredArea(
-        mapView, Area4, Area3,
+        mapView,
+        Area4,
+        Area3,
         Colors.FourthArea.toArgb()
     )
     addColoredArea(
-        mapView, Area5, Area4,
+        mapView,
+        Area5,
+        Area4,
         Colors.FifthArea.toArgb()
     )
     addColoredArea(
-        mapView, Area6, Area5,
+        mapView,
+        Area6,
+        Area5,
         Colors.SixthArea.toArgb()
     )
     addColoredArea(
-        mapView, Area7, Area6,
+        mapView,
+        Area7,
+        Area6,
         Colors.SeventhArea.toArgb()
     )
     addColoredArea(
-        mapView, Area8, Area7,
+        mapView,
+        Area8,
+        Area7,
         Colors.EighthArea.toArgb()
     )
     addColoredArea(
-        mapView, Area9, Area8,
+        mapView,
+        Area9,
+        Area8,
         Colors.NinthArea.toArgb()
     )
     addColoredArea(
-        mapView, Area10, Area9,
+        mapView,
+        Area10,
+        Area9,
         Colors.TenthArea.toArgb()
     )
     addColoredArea(
-        mapView, Area11, Area10,
+        mapView,
+        Area11,
+        Area10,
         Colors.EleventhArea.toArgb()
     )
     addColoredArea(
-        mapView, Area12, Area11,
+        mapView,
+        Area12,
+        Area11,
         Colors.TwelfthArea.toArgb()
     )
 }

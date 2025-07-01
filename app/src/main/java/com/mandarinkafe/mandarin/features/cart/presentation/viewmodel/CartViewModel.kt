@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.cart.presentation.view_model
+package com.mandarinkafe.mandarin.features.cart.presentation.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
@@ -6,20 +6,20 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEffect
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.AddToCart
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.CancelRemove
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.ClearCart
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.ConfirmClearCart
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.Init
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.RemoveFromCartByItem
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.RemoveFromCartByMeal
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.RemoveFromCartWithDelay
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.ReplaceMealInCart
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartState
-import com.mandarinkafe.mandarin.shared.cart.domain.usecase.CartInteractor
-import com.mandarinkafe.mandarin.shared.cart.domain.usecase.GetAllRecommendsUseCase
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetAllRecommendsUseCase
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.AddToCart
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.CancelRemove
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ClearCart
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ConfirmClearCart
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.Init
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.RemoveFromCartByItem
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.RemoveFromCartByMeal
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.RemoveFromCartWithDelay
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ReplaceMealInCart
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants.DELETE_FROM_CART_DEBOUNCE_DELAY
 import com.mandarinkafe.mandarin.util.Constants.INTERVAL_FOR_UPD_PROGRESSBAR
 import com.mandarinkafe.mandarin.util.Constants.UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE
@@ -116,7 +116,6 @@ class CartViewModel @Inject constructor(
      * иначе — запускаем отложенное удаление с таймером.
      */
     private fun onReduceItem(item: CustomizedMeal) {
-
         val currentQty = state.value.cartItems[item] ?: 0
         if (currentQty > 1) {
             // уменьшить сразу на единицу
@@ -235,7 +234,7 @@ class CartViewModel @Inject constructor(
             setLoading(cartResource is Loading)
             Log.e(
                 "DEBUG EMPTY CART",
-                "CartViewModel, updateCartState cartResource: ${cartResource}",
+                "CartViewModel, updateCartState cartResource: $cartResource",
             )
             when (cartResource) {
                 is Resource.Success -> setData(cartResource.data)
@@ -327,7 +326,7 @@ class CartViewModel @Inject constructor(
     }
 
     private fun setData(data: Map<CustomizedMeal, Int>?) {
-        Log.d("DEBUG EMPTY CART", "CartViewModel. setData, data: ${data}")
+        Log.d("DEBUG EMPTY CART", "CartViewModel. setData, data: $data")
         if (!data.isNullOrEmpty()) {
             setState {
                 copy(
@@ -347,7 +346,7 @@ class CartViewModel @Inject constructor(
     }
 
     private fun setError(resource: Resource<*>) {
-        Log.d("DEBUG EMPTY CART", "CartViewModel. setError, resource: ${resource}")
+        Log.d("DEBUG EMPTY CART", "CartViewModel. setError, resource: $resource")
         val error = when (resource) {
             is Resource.ErrorEmptyData -> UiError.CartEmpty
             is Resource.ErrorNoInternet -> UiError.NoInternet

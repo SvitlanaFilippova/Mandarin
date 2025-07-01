@@ -28,7 +28,7 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_TITLE_IN_MENU
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
@@ -46,7 +46,6 @@ fun MenuMealItem(
     imageSize: Dp,
     modifier: Modifier = Modifier
 ) {
-
     val isFavorite by remember(favoriteIds) {
         derivedStateOf { meal.isFavorite(favoriteIds) }
     }

@@ -5,5 +5,5 @@ import com.mandarinkafe.mandarin.util.Resource
 
 
 interface MenuRepository {
-   suspend fun fetchMenu(): Resource<List<MealCategory>>
+    suspend fun fetchMenu(): Resource<List<MealCategory>>
 }

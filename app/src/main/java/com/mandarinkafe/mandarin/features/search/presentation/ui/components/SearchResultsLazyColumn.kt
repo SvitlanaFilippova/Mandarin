@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 import com.mandarinkafe.mandarin.util.Constants
 
 @Composable

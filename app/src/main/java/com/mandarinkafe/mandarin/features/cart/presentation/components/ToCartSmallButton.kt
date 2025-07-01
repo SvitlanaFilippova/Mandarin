@@ -21,6 +21,8 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.WEIGHT_RATIO_30
+import com.mandarinkafe.mandarin.util.Constants.WEIGHT_RATIO_70
 
 @Composable
 fun ToCartSmallButton(
@@ -28,7 +30,7 @@ fun ToCartSmallButton(
     price: Int,
     onClick: () -> Unit,
     isInCart: Boolean = false,
-    ) {
+) {
     Button(
         modifier = modifier.height(Dimens.ButtonToCartSmall32),
         onClick = onClick,
@@ -45,14 +47,14 @@ fun ToCartSmallButton(
         ) {
             if (!isInCart) {
                 Icon(
-                    modifier = Modifier.weight(0.3f),
+                    modifier = Modifier.weight(WEIGHT_RATIO_30),
                     painter = painterResource(R.drawable.ic_cart),
                     contentDescription = stringResource(id = R.string.add_to_cart),
                     tint = Color.White
                 )
                 Text(
                     text = stringResource(id = R.string.meal_price_template, price),
-                    modifier = Modifier.weight(0.7f),
+                    modifier = Modifier.weight(WEIGHT_RATIO_70),
                     style = Typography.ToCartButtonStyle
                 )
             } else {

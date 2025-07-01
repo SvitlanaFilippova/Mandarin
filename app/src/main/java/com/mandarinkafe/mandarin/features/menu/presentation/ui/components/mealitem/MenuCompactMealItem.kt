@@ -23,7 +23,7 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MealButtonsRow
 
@@ -39,7 +39,6 @@ fun MenuCompactMealItem(
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
 ) {
-
     val isFavorite by remember(favoriteIds) { derivedStateOf { meal.isFavorite(favoriteIds) } }
 
     Box(

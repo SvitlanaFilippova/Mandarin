@@ -10,7 +10,7 @@ import androidx.navigation.NavController
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEffect
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER_DEFAULT
 import kotlinx.coroutines.flow.Flow
 import java.net.URLEncoder

@@ -28,19 +28,19 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuList
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.SearchBar
-import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.category_tabs.CategoryTabsRow
-import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.category_tabs.SubCategoryTabsRow
+import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.categorytabs.CategoryTabsRow
+import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.categorytabs.SubCategoryTabsRow
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.getVisibleCategoryIndexes
-import com.mandarinkafe.mandarin.features.menu.presentation.view_model.MenuContract
-import com.mandarinkafe.mandarin.features.menu.presentation.view_model.MenuContract.MenuEvent
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract
+import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.util.Constants.FORCE_SHOW_FAB_DURATION_MS
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MyCircularProgressIndicator
 import kotlinx.coroutines.delay
@@ -59,7 +59,6 @@ fun MenuContentScreen(
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
 ) {
-
     val menuItems = menuSate.menuItems
     val selectedTabIndex = menuSate.selectedTabIndex
     val selectedSubTabIndex = menuSate.selectedSubTabIndex
@@ -181,7 +180,6 @@ fun MenuContentScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-
             // Бар с поиском и фильтрами появляется всегда, когда пользователь вверху или скроллит вверх
             AnimatedVisibility(
                 visible = showMenuTopBar,
@@ -199,7 +197,6 @@ fun MenuContentScreen(
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically()
             ) {
-
                 if (menuSate.bannersAreLoading) {
                     Box(
                         modifier = Modifier
@@ -212,13 +209,14 @@ fun MenuContentScreen(
                             strokeWidth = Dimens.ProgressBarSmallWidth8,
                         )
                     }
-                } else
+                } else {
                     if (!menuSate.banners.isEmpty()) {
                         BannerCarousel(
                             banners = menuSate.banners,
                             onBannerClick = handleBannerClick
                         )
                     }
+                }
             }
 
             // Табы-категории видны всегда

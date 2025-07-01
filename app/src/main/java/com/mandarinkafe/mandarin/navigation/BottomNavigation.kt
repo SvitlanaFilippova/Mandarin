@@ -24,13 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 
 @Composable
 fun BottomNavigation(
@@ -82,10 +82,10 @@ fun BottomNavigation(
                                     AnimatedContent(
                                         targetState = cartCount,
                                         transitionSpec = {
-                                            (scaleIn(tween(300)) + fadeIn()).togetherWith(
+                                            (scaleIn(tween(ANIMATION_DURATION_FAST)) + fadeIn()).togetherWith(
                                                 scaleOut(
                                                     tween(
-                                                        300
+                                                        ANIMATION_DURATION_FAST
                                                     )
                                                 ) + fadeOut()
                                             )
@@ -117,7 +117,7 @@ fun BottomNavigation(
                     label = {
                         Text(
                             text = stringResource(item.title),
-                            fontSize = 9.sp
+                            fontSize = Dimens.TextSizeSuperSmall9
                         )
                     },
                     colors = NavigationBarItemDefaults.colors(

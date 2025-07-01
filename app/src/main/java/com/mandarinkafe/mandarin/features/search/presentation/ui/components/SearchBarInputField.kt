@@ -60,7 +60,7 @@ fun SearchBarInputField(
         },
 
         trailingIcon = {
-            if (query.isNotEmpty()) {  // если в поле есть текст - очистить его
+            if (query.isNotEmpty()) { // если в поле есть текст - очистить его
                 IconButton(onClick = { onClear() }) {
                     Icon(
                         Icons.Default.Close,

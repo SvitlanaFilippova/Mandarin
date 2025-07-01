@@ -66,10 +66,14 @@ fun ToCartButton(
                 tint = contentColor
             )
             Text(
-                text = if (isEditMode) stringResource(
-                    R.string.save_meal,
-                    totalPrice
-                ) else stringResource(R.string.meal_price_template, totalPrice),
+                text = if (isEditMode) {
+                    stringResource(
+                        R.string.save_meal,
+                        totalPrice
+                    )
+                } else {
+                    stringResource(R.string.meal_price_template, totalPrice)
+                },
                 style = Typography.ToCartButtonBigStyle,
                 color = contentColor
 

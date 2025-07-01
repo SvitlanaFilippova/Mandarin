@@ -21,7 +21,8 @@ fun LabelChip(label: LabelUiModel) {
     Box(
         modifier = Modifier
             .background(
-                label.backgroundColor, shape = RoundedCornerShape(
+                label.backgroundColor,
+                shape = RoundedCornerShape(
                     topStart = Dimens.CornerRadius8,
                     bottomStart = Dimens.CornerRadius8,
                     topEnd = Dimens.ZeroDp0,

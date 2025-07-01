@@ -26,7 +26,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.components.CartClear
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartItemCard
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartRecommendsList
 import com.mandarinkafe.mandarin.features.cart.presentation.components.ProcessOrderButton
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartState
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MyCircularProgressIndicator
 
@@ -44,7 +44,6 @@ fun CartContentScreen(
     onMealDetailsClick: (CustomizedMeal) -> Unit,
     onEditMealClick: (CustomizedMeal) -> Unit,
 ) {
-
     val cartItemsList: List<Pair<CustomizedMeal, Int>> = remember(state.cartItems) {
         state.cartItems.entries.map { it.toPair() }
     }
@@ -54,7 +53,6 @@ fun CartContentScreen(
             .fillMaxSize()
             .padding(horizontal = Dimens.MarginSmall8)
     ) {
-
         // Кнопка очистки корзины,
         CartClearTextButton(
             onClear = onClearCart,
@@ -62,8 +60,7 @@ fun CartContentScreen(
 
         Box(
             modifier = Modifier.fillMaxSize()
-        )
-        {
+        ) {
             LazyColumn(
                 state = listState
             ) {
@@ -113,7 +110,6 @@ fun CartContentScreen(
                             strokeWidth = Dimens.ProgressBarSmallWidth8,
                         )
                     } else {
-
                         CartRecommendsList(
                             recommendsList = state.recommends,
                             modifier = Modifier.padding(bottom = Dimens.MarginStandard16),

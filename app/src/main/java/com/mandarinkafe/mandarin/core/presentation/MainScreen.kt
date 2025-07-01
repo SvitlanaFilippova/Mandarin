@@ -21,8 +21,8 @@ import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteV
 import com.mandarinkafe.mandarin.navigation.BottomNavigation
 import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavGraph
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.AppTopBar
 import com.mandarinkafe.mandarin.util.presentation.ui.components.HandleEffects
 

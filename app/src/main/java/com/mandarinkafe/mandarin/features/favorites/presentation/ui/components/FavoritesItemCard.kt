@@ -25,7 +25,7 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartState
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_TITLE_IN_MENU
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
@@ -45,7 +45,6 @@ fun FavoritesItemCard(
     onRemoveFromCart: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
 ) {
-
     val meal = item.meal
     val isFavorite =
         true // нет смысла дополнительно проверять, поскольку в этот только избранные попадают
@@ -60,7 +59,6 @@ fun FavoritesItemCard(
             .background(Colors.DarkGrey)
             .clickable(onClick = { onMealDetailsClick(item) })
     ) {
-
         MealItemImageBox(
             modifier = Modifier
                 .size(imageSize)
@@ -68,7 +66,7 @@ fun FavoritesItemCard(
             meal = meal,
             isFavorite = isFavorite,
             onToggleFavorite = { onToggleFavorite(item) },
-            )
+        )
 
         Column(
             modifier = Modifier

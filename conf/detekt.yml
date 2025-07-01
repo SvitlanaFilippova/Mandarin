@@ -282,7 +282,7 @@ formatting:
     autoCorrect: true
     layout: '*,java.**,javax.**,kotlin.**,kotlinx.android.synthetic.**,^'
   Indentation:
-    active: true
+    active: false
     autoCorrect: true
     indentSize: 4
     #continuationIndentSize: 4
@@ -650,7 +650,7 @@ style:
     active: true
   MaxLineLength:
     active: true
-    maxLineLength: 120
+    maxLineLength: 150
     excludePackageStatements: true
     excludeImportStatements: true
     excludeCommentStatements: true

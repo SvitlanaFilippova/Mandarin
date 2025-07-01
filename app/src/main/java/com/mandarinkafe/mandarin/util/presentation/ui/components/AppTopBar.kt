@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 
 @Composable
 fun AppTopBar(
@@ -33,13 +33,11 @@ fun AppTopBar(
         enter = fadeIn() + expandVertically(),
         exit = fadeOut() + shrinkVertically()
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(Dimens.ToolbarHeadHeight40)
         ) {
-
             // Логотип
             Image(
                 painter = painterResource(R.drawable.logo_text_mandarin),

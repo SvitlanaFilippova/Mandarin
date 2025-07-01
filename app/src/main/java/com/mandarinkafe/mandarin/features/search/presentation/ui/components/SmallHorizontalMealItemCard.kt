@@ -27,7 +27,7 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MealButtonsRow
 
@@ -62,7 +62,7 @@ fun SmallHorizontalMealItemCard(
             meal = meal,
             isFavorite = isFavorite,
             onToggleFavorite = { onToggleFavorite(meal) },
-            )
+        )
 
         Column(
             modifier = Modifier
@@ -83,7 +83,9 @@ fun SmallHorizontalMealItemCard(
                     .fillMaxWidth()
             )
             val parentCategoryName =
-                with(meal) { if (!grandParentCategoryName.isNullOrEmpty()) "$grandParentCategoryName / $parentCategoryName" else parentCategoryName }
+                with(
+                    meal
+                ) { if (!grandParentCategoryName.isNullOrEmpty()) "$grandParentCategoryName / $parentCategoryName" else parentCategoryName }
 
             // Родительская категория
             Text(
@@ -100,7 +102,6 @@ fun SmallHorizontalMealItemCard(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-
                 Spacer(modifier = Modifier.weight(1f))
 
                 MealButtonsRow(

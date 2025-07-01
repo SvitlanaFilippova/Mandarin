@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.mealitem.MenuCompactMealItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.mealitem.MenuMealItem
@@ -58,7 +58,6 @@ fun MenuList(
                 }
 
                 is MenuItem.MealItem.SingleMealItem -> {
-
                     // Одинарный формат
                     MenuMealItem(
                         meal = item.meal,
@@ -73,7 +72,6 @@ fun MenuList(
                 }
 
                 is MenuItem.MealItem.MealRow -> {
-
                     // Пара компактных карточек
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8),

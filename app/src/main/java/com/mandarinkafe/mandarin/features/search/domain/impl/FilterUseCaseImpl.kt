@@ -17,7 +17,6 @@ class FilterUseCaseImpl() : FilterUseCase {
         favoritesIds: Set<String>
     ): List<Meal> {
         if (searchText.isBlank()) {
-
             return meals.filter { meal ->
                 val labelNames = meal.labels.map { it.name }
                 checkedLabels.isEmpty() || checkedLabels.all { it in labelNames }

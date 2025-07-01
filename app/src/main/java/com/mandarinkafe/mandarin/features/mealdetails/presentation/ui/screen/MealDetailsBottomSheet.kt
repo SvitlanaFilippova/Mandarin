@@ -22,15 +22,15 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.AddToCart
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.ReplaceMealInCart
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartViewModel
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.AddToCart
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ReplaceMealInCart
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.RequiredModifiersDialog
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.view_model.MealDetailsContract.MealDetailsEffect
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.view_model.MealDetailsContract.MealDetailsEvent
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.view_model.MealDetailsViewModel
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsViewModel
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.launch
@@ -119,7 +119,7 @@ fun MealDetailsBottomSheet(
                 containerColor = Colors.AppBlack,
                 tonalElevation = Dimens.Elevation2,
                 scrimColor = Colors.LightGreyTransparent75,
-                ) {
+            ) {
                 MealDetailsContentScreen(
                     state = state,
                     initItem = initItem,

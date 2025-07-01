@@ -72,13 +72,11 @@ fun CartItemCard(
             .clickable { onItemClick() }
 
     ) {
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-
             MealItemImageBox(
                 modifier = Modifier
                     .size(Dimens.MealSmallImage80)
@@ -131,7 +129,6 @@ fun CartItemCard(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-
             // Стоимость 1 шт с учётом всех добавок и модификаторов
             Text(
                 text = stringResource(R.string.meal_price_template, item.totalPrice()),

@@ -15,11 +15,11 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartClearingConfirmationDialog
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEffect
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartViewModel
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.collectLatest

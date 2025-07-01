@@ -24,7 +24,6 @@ fun ProcessOrderButton(
     totalPrice: Int,
     modifier: Modifier = Modifier
 ) {
-
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
@@ -36,12 +35,10 @@ fun ProcessOrderButton(
             .fillMaxWidth()
             .padding(horizontal = Dimens.MarginSmall8)
     ) {
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
         ) {
-
             Text(
                 text = stringResource(R.string.process_order_price_template, totalPrice),
                 style = Typography.ToCartButtonBigStyle

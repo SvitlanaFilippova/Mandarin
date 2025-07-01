@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.features.cart.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.shared.cart.domain.usecase.GetAllRecommendsUseCase
-import com.mandarinkafe.mandarin.shared.cart.domain.usecase.GetCommonRecommendsUseCase
-import com.mandarinkafe.mandarin.shared.cart.domain.usecase.GetRecommendsUseCase
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetAllRecommendsUseCase
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetCommonRecommendsUseCase
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope

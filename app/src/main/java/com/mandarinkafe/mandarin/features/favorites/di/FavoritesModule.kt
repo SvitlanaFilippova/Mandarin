@@ -73,7 +73,9 @@ class FavoritesModule {
         validator: ValidateFavoritesUseCase
     ): FavoritesApi {
         return FavoritesInteractorImpl(
-            reader = reader, writer = writer, validator = validator
+            reader = reader,
+            writer = writer,
+            validator = validator
         )
     }
 

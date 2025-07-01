@@ -13,7 +13,6 @@ fun LabelChipsRow(
     checkedLabels: List<String>,
     onLabelClick: (String, Boolean) -> Unit
 ) {
-
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         maxLines = MAX_LINES_FOR_LABEL_FLOW_ROW,

@@ -19,7 +19,6 @@ fun CartRecommendsList(
     onMealDetailsClick: (CustomizedMeal) -> Unit,
     modifier: Modifier,
 ) {
-
     LazyRow(
         modifier = modifier
             .padding(horizontal = Dimens.MarginSuperSmall4)

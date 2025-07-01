@@ -27,7 +27,7 @@ interface IikoApiService {
     ): MenuIdResponse
 
     @POST("api/2/menu/by_id")
-    suspend  fun getMenuById(
+    suspend fun getMenuById(
         @Header("Authorization") token: String,
         @Body body: MenuRequest
     ): MenuResponse
