@@ -1,5 +1,14 @@
 import java.util.Properties
 
+// Подмена google-services.json, если он отсутствует
+val googleServicesFile = file("${project.rootDir}/app/google-services.json")
+val googleServicesSampleFile = file("${project.rootDir}/app/google-services.sample.json")
+
+if (!googleServicesFile.exists() && googleServicesSampleFile.exists()) {
+    println("!!! google-services.json не найден. Копирую sample...")
+    googleServicesFile.writeText(googleServicesSampleFile.readText())
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -25,11 +34,19 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        // Подмена apikeys.properties, если он отсутствует
+        val keystoreFile = file("${project.rootDir}/apikeys.properties")
+        val keystoreSampleFile = file("${project.rootDir}/apikeys.sample.properties")
 
-        val keystoreFile = project.rootProject.file("apikeys.properties")
-        val properties = Properties()
-        properties.load(keystoreFile.inputStream())
-        ""
+        if (!keystoreFile.exists() && keystoreSampleFile.exists()) {
+            println("!!! apikeys.properties не найден. Копирую sample...")
+            keystoreFile.writeText(keystoreSampleFile.readText())
+        }
+
+        // Чтение ключей из apikeys.properties
+        val properties = Properties().apply {
+            load(keystoreFile.inputStream())
+        }
 
         // Mapkit
         val mapKitApiKey = properties.getProperty("MAPKIT_API_KEY") ?: ""
