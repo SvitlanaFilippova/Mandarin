@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 
 @Composable
 fun AppTopBar(

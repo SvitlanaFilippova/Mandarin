@@ -44,6 +44,7 @@ import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
 
+@Suppress("MagicNumber")
 @Composable
 fun LocationPicker() {
     val context = LocalContext.current

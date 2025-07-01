@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.search.presentation.view_model
+package com.mandarinkafe.mandarin.features.search.presentation.viewmodel
 
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError

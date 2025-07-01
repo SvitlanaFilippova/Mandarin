@@ -33,13 +33,13 @@ import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.MakeMoreDeliciousBlock
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.MealInfo
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.ToCartButton
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.AddsCategoryTabsRow
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.AddsItem
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.ChosenOptionsChipsRow
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.modifiers.ModifierMultiSelectItem
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.modifiers.ModifierSingleSelectItem
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.pizza_ads.AddsCategoryTabsRow
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.pizza_ads.AddsItem
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.pizza_ads.ChosenOptionsChipsRow
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.view_model.MealDetailsContract.MealDetailsEvent
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.view_model.MealDetailsContract.MealDetailsState
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsState
 import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
 import kotlinx.coroutines.launch
 

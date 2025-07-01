@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.pizza_ads
+package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding

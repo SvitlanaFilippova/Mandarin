@@ -7,12 +7,12 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.sharedprefs.CartStorage
+import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCustomizedMeal
+import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartRepository
 import com.mandarinkafe.mandarin.features.cart.sameAs
 import com.mandarinkafe.mandarin.features.cart.validateBy
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
-import com.mandarinkafe.mandarin.shared.cart.domain.CartMapper.toCustomizedMeal
-import com.mandarinkafe.mandarin.shared.cart.domain.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.util.Resource
 import jakarta.inject.Inject
 import jakarta.inject.Singleton

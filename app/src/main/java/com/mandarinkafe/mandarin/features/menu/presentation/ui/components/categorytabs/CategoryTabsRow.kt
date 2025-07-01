@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.menu.presentation.ui.components.category_tabs
+package com.mandarinkafe.mandarin.features.menu.presentation.ui.components.categorytabs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

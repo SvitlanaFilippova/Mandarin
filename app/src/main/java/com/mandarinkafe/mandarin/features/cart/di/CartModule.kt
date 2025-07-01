@@ -14,11 +14,11 @@ import com.mandarinkafe.mandarin.features.cart.domain.impl.CartInteractorImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.GetAllRecommendsUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.GetCommonRecommendsUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.GetRecommendsUseCaseImpl
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetAllRecommendsUseCase
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetCommonRecommendsUseCase
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.CategoryFilter
-import com.mandarinkafe.mandarin.shared.cart.domain.usecase.CartInteractor
-import com.mandarinkafe.mandarin.shared.cart.domain.usecase.GetAllRecommendsUseCase
-import com.mandarinkafe.mandarin.shared.cart.domain.usecase.GetCommonRecommendsUseCase
-import com.mandarinkafe.mandarin.shared.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.util.di.Recommends
 import dagger.Module
 import dagger.Provides

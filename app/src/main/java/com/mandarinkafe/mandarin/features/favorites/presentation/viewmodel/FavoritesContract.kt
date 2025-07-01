@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.favorites.presentation.view_model
+package com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel
 
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError

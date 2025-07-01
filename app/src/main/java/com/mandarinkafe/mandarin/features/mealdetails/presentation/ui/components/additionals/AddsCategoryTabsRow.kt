@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.menu.presentation.ui.components.category_tabs
+package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,29 +8,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.categorytabs.SubCategoryTabItem
 
 @Composable
-fun SubCategoryTabsRow(
+fun AddsCategoryTabsRow(
     categories: List<String>,
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-    ScrollableTabRow(
-        containerColor = Colors.AppBlack,
-        edgePadding = Dimens.ZeroDp0,
-        selectedTabIndex = selectedTabIndex,
-        indicator = { },
-        divider = { },
-    ) {
-        categories.forEachIndexed { index, category ->
-            SubCategoryTabItem(
-                category = category,
-                isSelected = selectedTabIndex == index,
-                onClick = { onTabSelected(index) }
-            )
+        ScrollableTabRow(
+            containerColor = Colors.AppBlack,
+            edgePadding = Dimens.ZeroDp0,
+            selectedTabIndex = selectedTabIndex,
+            indicator = { },
+            divider = { },
+        ) {
+            categories.forEachIndexed { index, category ->
+                SubCategoryTabItem(
+                    category = category,
+                    isSelected = selectedTabIndex == index,
+                    onClick = { onTabSelected(index) }
+                )
+            }
         }
-    }
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = Dimens.DividerHeight1,

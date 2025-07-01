@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.menu.presentation.view_model
+package com.mandarinkafe.mandarin.features.menu.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
@@ -10,10 +10,10 @@ import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.features.menu.presentation.mappers.MenuItemMapper.menuToMenuItems
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.presentation.models.extensions.getName
-import com.mandarinkafe.mandarin.features.menu.presentation.view_model.MenuContract.MenuEffect
-import com.mandarinkafe.mandarin.features.menu.presentation.view_model.MenuContract.MenuEffect.OpenSearch
-import com.mandarinkafe.mandarin.features.menu.presentation.view_model.MenuContract.MenuEvent
-import com.mandarinkafe.mandarin.features.menu.presentation.view_model.MenuContract.MenuState
+import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEffect
+import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEffect.OpenSearch
+import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
+import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuState
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther

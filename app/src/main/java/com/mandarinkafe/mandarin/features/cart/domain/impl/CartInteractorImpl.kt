@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.cart.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartRepository
-import com.mandarinkafe.mandarin.shared.cart.domain.usecase.CartInteractor
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.util.Resource
 
 class CartInteractorImpl(private val repository: CartRepository) : CartInteractor {

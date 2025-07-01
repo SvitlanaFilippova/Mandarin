@@ -10,6 +10,7 @@ import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.util.Constants.BANNERS_GOOGLE_DOCS_URL
 import com.mandarinkafe.mandarin.util.Constants.BEARER_PREFIX
+import com.mandarinkafe.mandarin.util.Constants.GOOGLE_DOCS_BASE_URL
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
@@ -90,10 +91,11 @@ class RetrofitNetworkClient(
     }
 
     private suspend fun getSheet(url: String): Response {
+        val finalUrl = GOOGLE_DOCS_BASE_URL + url
         return if (!isConnected()) {
             Response().apply { resultCode = -1 }
         } else try {
-            val csvString = googleDocsApi.getCsv(url)
+            val csvString = googleDocsApi.getCsv(finalUrl)
             return CsvResponse(csv = csvString)
 
         } catch (e: Throwable) {

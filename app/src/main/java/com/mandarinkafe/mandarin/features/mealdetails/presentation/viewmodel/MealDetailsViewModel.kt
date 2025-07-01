@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.mealdetails.presentation.view_model
+package com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
@@ -7,10 +7,10 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetAddonsUseCase
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.view_model.MealDetailsContract.MealDetailsEffect
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.view_model.MealDetailsContract.MealDetailsEffect.ShowRequiredModifiersDialog
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.view_model.MealDetailsContract.MealDetailsEvent
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.view_model.MealDetailsContract.MealDetailsState
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowRequiredModifiersDialog
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsState
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther

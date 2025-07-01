@@ -1,12 +1,12 @@
-package com.mandarinkafe.mandarin.features.favorites.presentation.view_model
+package com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
-import com.mandarinkafe.mandarin.features.favorites.presentation.view_model.FavoritesContract.FavoritesEffect
-import com.mandarinkafe.mandarin.features.favorites.presentation.view_model.FavoritesContract.FavoritesEvent
-import com.mandarinkafe.mandarin.features.favorites.presentation.view_model.FavoritesContract.FavoritesState
+import com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel.FavoritesContract.FavoritesEffect
+import com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel.FavoritesContract.FavoritesEvent
+import com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel.FavoritesContract.FavoritesState
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
 import com.mandarinkafe.mandarin.util.Resource.ErrorNoInternet

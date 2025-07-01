@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.shared.cart.domain.usecase
+package com.mandarinkafe.mandarin.features.cart.domain.usecase
 
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.util.Resource

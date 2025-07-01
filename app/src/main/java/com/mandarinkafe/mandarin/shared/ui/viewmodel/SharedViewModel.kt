@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.shared.ui.view_model
+package com.mandarinkafe.mandarin.shared.ui.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
@@ -6,17 +6,17 @@ import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartCountUseCase
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEffect
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEffect.OpenMealDetailsBS
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.DismissFavoriteDialog
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.HideTopBar
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.OnMealDetailsClick
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.OnPhoneClick
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.ResetTopBar
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.ShowFavoriteDialog
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent.ShowTopBar
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedState
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect.OpenMealDetailsBS
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.DismissFavoriteDialog
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.HideTopBar
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.OnMealDetailsClick
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.OnPhoneClick
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.ResetTopBar
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.ShowFavoriteDialog
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.ShowTopBar
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedState
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_SCREEN_DURATION
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel

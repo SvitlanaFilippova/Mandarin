@@ -26,7 +26,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.components.CartClear
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartItemCard
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartRecommendsList
 import com.mandarinkafe.mandarin.features.cart.presentation.components.ProcessOrderButton
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartState
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MyCircularProgressIndicator
 

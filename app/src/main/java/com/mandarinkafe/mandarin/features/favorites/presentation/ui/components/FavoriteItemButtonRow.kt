@@ -14,7 +14,7 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartState
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CartControls
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CustomizeButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.SelectButton

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.shared.cart.domain
+package com.mandarinkafe.mandarin.features.cart.domain
 
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -6,8 +6,8 @@ import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendsSchemaDto
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract
-import com.mandarinkafe.mandarin.shared.cart.domain.model.RecommendsSchemaRule
+import com.mandarinkafe.mandarin.features.cart.domain.model.RecommendsSchemaRule
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 
 object CartMapper {
 

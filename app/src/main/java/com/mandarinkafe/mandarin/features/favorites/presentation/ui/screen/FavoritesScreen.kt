@@ -10,12 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent
-import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartViewModel
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.components.FavoritesContent
-import com.mandarinkafe.mandarin.features.favorites.presentation.view_model.FavoritesViewModel
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
-import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
+import com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel.FavoritesViewModel
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 
