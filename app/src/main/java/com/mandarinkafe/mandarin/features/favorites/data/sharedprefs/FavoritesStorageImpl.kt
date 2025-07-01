@@ -45,13 +45,6 @@ class FavoritesStorageImpl @Inject constructor(private val sharedPreferences: Sh
 
         // Сохраняем обновлённый сет
         saveFavorites(currentSet)
-        Log.d(
-            "FavoritesStorage", if (isNowFavorite)
-                "Added to favorites: ${meal.mealId}"
-            else
-                "Removed from favorites: ${meal.mealId}"
-        )
-
         return isNowFavorite
     }
 
