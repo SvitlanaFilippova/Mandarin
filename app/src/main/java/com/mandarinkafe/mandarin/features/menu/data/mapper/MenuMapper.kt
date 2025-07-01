@@ -8,6 +8,7 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.domain.models.Tag
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannerDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.CategoryDto
+import com.mandarinkafe.mandarin.features.menu.data.dto.ItemSize
 import com.mandarinkafe.mandarin.features.menu.data.dto.LabelDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.MealDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupDto
@@ -56,25 +57,17 @@ private fun MealDto.toDomain(
     val safeWeight = firstSize?.portionWeightGrams?.toInt() ?: 0
     val safePrice = firstSize?.prices?.firstOrNull()?.price?.toInt() ?: 0
     val safeImageUrl = firstSize?.buttonImageUrl ?: ""
-    val safeModifiers = firstSize
-        ?.itemModifierGroups
-        ?.map { it.toDomain() }
-        ?.sortedByDescending { it.isSingleChoice }
-        ?: emptyList()
+    val safeModifiers = getSafeModifiers(firstSize)
 
     val mealLabels = (labels ?: emptyList()).map { it.toDomain() }
     val mealTags = (tags ?: emptyList()).map { it.toDomain() }
 
-    val hasNoAddsTag = mealTags.any { it.name.equals(TAG_NO_ADDS, ignoreCase = true) }
-    val finalMealTags = if (hasNoAddsTag) {
-        // Игнорируем TAG_ADDS из категории
-        mealTags
-    } else {
-        (mealTags + categoryTags).distinctBy { it.name }
-    }
+    val finalMealTags = mergeTags(mealTags, categoryTags)
+    val finalMealLabels = mergeLabels(mealLabels, categoryLabels)
 
-    val finalMealLabels = (mealLabels + categoryLabels).distinctBy { it.name }
+    val hasNoAddsTag = finalMealTags.any { it.name.equals(TAG_NO_ADDS, ignoreCase = true) }
     val isRequireSelection = safeModifiers.any { it.isRequired }
+
     return Meal(
         id = itemId,
         name = name.applyTypography(),
@@ -151,3 +144,22 @@ fun BannerDto.toDomain() = Banner(
     imageUrl = imageUrl ?: "",
     targetName = targetName ?: "",
 )
+
+private fun getSafeModifiers(firstSize: ItemSize?) = firstSize
+    ?.itemModifierGroups
+    ?.map { it.toDomain() }
+    ?.sortedByDescending { it.isSingleChoice }
+    ?: emptyList()
+
+private fun mergeTags(mealTags: List<Tag>, categoryTags: List<Tag>): List<Tag> {
+    val hasNoAddsTag = mealTags.any { it.name.equals(TAG_NO_ADDS, ignoreCase = true) }
+    return if (hasNoAddsTag) {
+        mealTags
+    } else {
+        (mealTags + categoryTags).distinctBy { it.name }
+    }
+}
+
+private fun mergeLabels(mealLabels: List<Label>, categoryLabels: List<Label>): List<Label> {
+    return (mealLabels + categoryLabels).distinctBy { it.name }
+}

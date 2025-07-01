@@ -4,7 +4,7 @@ import androidx.compose.ui.Alignment
 import com.mandarinkafe.mandarin.R
 
 object SplashElementsProvider {
-    fun getSplashElements(): List<SplashElement> = listOf<SplashElement>(
+    private val splashElementsArray = arrayOf<SplashElement>(
         SplashElement(
             R.drawable.splash_wave2,
             Alignment.TopEnd,
@@ -173,4 +173,6 @@ object SplashElementsProvider {
             targetOffsetY = -50f
         ),
     )
+
+    fun getSplashElements(): Array<SplashElement> = splashElementsArray
 }
