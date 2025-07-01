@@ -4,6 +4,9 @@ on:
   push:
     branches: [ "main", "dev" ]
   pull_request:
+permissions:
+  contents: read
+  pull-requests: write
 
 env:
   commonGradleFlags: --parallel --stacktrace --no-configuration-cache --no-daemon
