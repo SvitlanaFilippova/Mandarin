@@ -90,10 +90,9 @@ class CartRepositoryImpl @Inject constructor(
         val valid = mutableMapOf<CustomizedMeal, Int>()
         val invalid = mutableListOf<String>()
 
-        // ускорим lookup по id
         val allMeals = menu
             .flatMap { cat ->
-                (cat.meals.orEmpty() + cat.subCategories.orEmpty().flatMap { it.meals.orEmpty() })
+                cat.meals.orEmpty() + cat.subCategories.orEmpty().flatMap { it.meals.orEmpty() }
             }
             .associateBy { it.id }
 

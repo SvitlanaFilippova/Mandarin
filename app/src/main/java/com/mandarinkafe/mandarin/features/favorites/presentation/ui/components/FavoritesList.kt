@@ -18,6 +18,8 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants
+import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_COLUMN_COUNT
+import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_SPACING_COUNT
 
 @Composable
 fun FavoritesContent(
@@ -31,8 +33,9 @@ fun FavoritesContent(
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val horizontalPadding = Dimens.MarginSmall8
+
     val imageSize = remember(screenWidth) {
-        (screenWidth - horizontalPadding * 3) / 2
+        (screenWidth - horizontalPadding * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
     }
 
     Text(

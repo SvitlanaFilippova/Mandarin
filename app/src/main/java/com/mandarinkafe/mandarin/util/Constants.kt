@@ -19,6 +19,8 @@ object Constants {
     const val MAX_LINES_FOR_MEAL_TITLE_IN_MENU = 3
     const val MAX_LINES_FOR_COLLAPSED_EXPANDABLE_TEXT = 6
     const val IMAGE_SIZE_IN_MENU = 300
+    const val MENU_IMAGE_SPACING_COUNT = 3
+    const val MENU_IMAGE_COLUMN_COUNT = 2
 
     // Splash screen
     const val SPLASH_SCREEN_DURATION = 5000L
@@ -35,7 +37,6 @@ object Constants {
     const val ANIMATION_BOUNCE_STEP = 25f
     const val ANIMATION_BOUNCE_MODIFIER = 4
 
-
     // common UI
     const val ANIMATION_DURATION_SLOW = 1000
     const val ANIMATION_DURATION_FAST = 300
@@ -43,6 +44,7 @@ object Constants {
     const val WEIGHT_RATIO_30 = 0.3f
     const val WEIGHT_RATIO_70 = 0.7f
     const val ALPHA_50 = 0.5f
+    const val TITLE_FONT_WEIGHT = 800
 
     // Menu loading
     const val MAX_ATTEMPTS = 3
