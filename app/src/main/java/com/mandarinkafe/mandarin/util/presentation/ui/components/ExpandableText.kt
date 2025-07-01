@@ -27,6 +27,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.util.Constants
 
 @Composable
 fun ExpandableText(
@@ -60,13 +61,13 @@ fun ExpandableText(
                 modifier = Modifier
                     .matchParentSize()
                     .drawWithContent {
-                        val gradientHeight = size.height * 0.5f
+                        val gradientHeight = size.height * Constants.GRADIENT_HEIGHT_RATIO
                         drawContent()
                         drawRect(
                             brush = Brush.verticalGradient(
                                 colors = listOf(
                                     Color.Transparent,
-                                    Colors.AppBlack.copy(alpha = 0.8f)
+                                    Colors.AppBlack80
                                 ),
                                 startY = size.height - gradientHeight,
                                 endY = size.height
@@ -88,7 +89,7 @@ fun ExpandableText(
                     modifier = Modifier
                         .size(16.dp)
                         .align(Alignment.BottomCenter)
-                        .offset(y = (8).dp),
+                        .offset(y = 8.dp),
                     tint = Colors.LightGrey
                 )
             }

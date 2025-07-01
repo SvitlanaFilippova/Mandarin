@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.meal_details.presentation.ui.components
+package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement

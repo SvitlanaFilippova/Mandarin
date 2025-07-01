@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.meal_details.presentation.ui.components.pizza_ads
+package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.pizza_ads
 
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth

@@ -36,13 +36,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Setup environment
-        env:
-          MAPKIT_API_KEY: ${{ secrets.MAPKIT_API_KEY }}
-          IIKO_API_KEY: ${{ secrets.IIKO_API_KEY }}
-        run: |
-          sh ci/setup_env.sh        
-
       - name: Create google-services.json from secret
         run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
 
@@ -89,5 +82,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-release.apk
-          path: app/build/outputs/apk/release/app-release.apk
+          name: app-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
