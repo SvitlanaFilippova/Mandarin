@@ -6,7 +6,7 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
  * Проверяет, можно ли как-то кастомизировать блюдо — добавить необязательные модификаторы или добавки.
  */
 val Meal.isCustomizable: Boolean
-    get() = (this.isAddable || this.isModifiable)
+    get() = this.isAddable || this.isModifiable
 
 /**
  * Проверяет, что у блюда:

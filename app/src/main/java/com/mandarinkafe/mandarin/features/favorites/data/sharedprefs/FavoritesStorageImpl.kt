@@ -62,7 +62,6 @@ class FavoritesStorageImpl @Inject constructor(private val sharedPreferences: Sh
 
         } catch (e: Exception) {
             Log.e("FavoritesStorage", "Ошибка чтения избранного: ${e.message}")
-            e.printStackTrace()
             sharedPreferences.edit { remove(FAVORITES_KEY) }
             emptySet()
         }

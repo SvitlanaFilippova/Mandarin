@@ -28,29 +28,40 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.ANIMATION_BOUNCE_MODIFIER
+import com.mandarinkafe.mandarin.util.Constants.ANIMATION_BOUNCE_STEP
+import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
+import com.mandarinkafe.mandarin.util.Constants.ANIMATION_REPEAT_NUMBER
+import com.mandarinkafe.mandarin.util.Constants.BOUNCE_OFFSET_INIT
 import kotlinx.coroutines.launch
 
 @Composable
 fun MakeMoreDeliciousBlock(
     onClick: () -> Unit
 ) {
-    val offsetY = remember { Animatable(initialValue = 40f) }
+    val offsetY = remember { Animatable(initialValue = BOUNCE_OFFSET_INIT) }
     val alpha = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
         launch {
-            alpha.animateTo(1f, animationSpec = tween(durationMillis = 300))
+            alpha.animateTo(1f, animationSpec = tween(durationMillis = ANIMATION_DURATION_FAST))
         }
 
-        repeat(5) { i ->
-            val bounceHeight = 25f - i * 4
+        repeat(ANIMATION_REPEAT_NUMBER) { i ->
+            val bounceHeight = ANIMATION_BOUNCE_STEP - i * ANIMATION_BOUNCE_MODIFIER
             offsetY.animateTo(
                 targetValue = -bounceHeight,
-                animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing)
+                animationSpec = tween(
+                    durationMillis = ANIMATION_DURATION_FAST,
+                    easing = FastOutSlowInEasing
+                )
             )
             offsetY.animateTo(
                 targetValue = 0f,
-                animationSpec = tween(durationMillis = 250, easing = LinearOutSlowInEasing)
+                animationSpec = tween(
+                    durationMillis = ANIMATION_DURATION_FAST,
+                    easing = LinearOutSlowInEasing
+                )
             )
         }
     }

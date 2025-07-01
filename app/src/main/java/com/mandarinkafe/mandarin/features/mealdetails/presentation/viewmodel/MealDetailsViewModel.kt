@@ -22,6 +22,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
 class MealDetailsViewModel @Inject constructor(
     private val getAddonsUseCase: GetAddonsUseCase,

@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.core.presentation.theme
 
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import com.mandarinkafe.mandarin.util.Constants.TITLE_FONT_WEIGHT
 
 object Typography {
     val ToCartButtonStyle = TextStyle(
@@ -30,7 +31,7 @@ object Typography {
 
     val TitleStyle = TextStyle(
         fontSize = Dimens.TextSizeBig20,
-        fontWeight = FontWeight(800),
+        fontWeight = FontWeight(TITLE_FONT_WEIGHT),
         color = Colors.White
     )
 
@@ -65,7 +66,7 @@ object Typography {
     val MenuCategoryStyle = TextStyle(
         fontSize = Dimens.TextSizeBig24,
         color = Colors.White,
-        fontWeight = FontWeight(800)
+        fontWeight = FontWeight(TITLE_FONT_WEIGHT)
     )
     val MenuSubCategoryStyle = TitleStyle
 
@@ -79,4 +80,5 @@ object Typography {
         fontWeight = FontWeight.Medium,
         color = Colors.White
     )
+
 }

@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.favorites.data.models
 
 fun StoredFavoriteMeal.isBase(): Boolean {
-    return (this.addsIds.isEmpty()) && (this.modifiers.isEmpty())
+    return this.addsIds.isEmpty() && this.modifiers.isEmpty()
 }
 
 fun StoredFavoriteMeal.sameAs(other: StoredFavoriteMeal): Boolean {

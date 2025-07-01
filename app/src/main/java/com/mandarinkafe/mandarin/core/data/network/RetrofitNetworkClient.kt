@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.core.data.network
 
-
 import android.util.Log
 import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
@@ -35,33 +34,38 @@ class RetrofitNetworkClient(
             return Response().apply { resultCode = NO_CONNECTION }
         }
         return withContext(Dispatchers.IO) {
-            // если нет токена или Id организации - авторизуемся
-            if (token.isEmpty() || organizationId.isEmpty()) {
-                authenticate()
-            }
-            try {
-                // если нет externalMenuId - запрашиваем
-                if (externalMenuId.isEmpty()) {
-                    val menuIdResponse = iikoService.getMenuId(token)
-                    externalMenuId = menuIdResponse.externalMenus.firstOrNull()?.id
-                        ?: throw IllegalStateException("Menu ID not found")
-                    Log.d("DEBUG IIKO API", "Menu ID получено: $externalMenuId")
-                }
-
-                val menuResponse = iikoService.getMenuById(
-                    token = token,
-                    body = MenuRequest(
-                        externalMenuId = externalMenuId,
-                        organizationIds = listOf(organizationId)
-                    )
-                )
-                menuResponse.apply { resultCode = HTTP_SUCCESS }
-
-            } catch (e: Throwable) {
-                Log.d("DEBUG IIKO API", "Ошибка: ${e.message}")
-                Response().apply { resultCode = HTTP_SERVER_ERROR }
-            }
+            ensureAuthenticated()
+            fetchMenu()
         }
+    }
+
+    private suspend fun ensureAuthenticated() {
+        if (token.isEmpty() || organizationId.isEmpty()) authenticate()
+    }
+
+    private suspend fun fetchMenu(): Response {
+        return try {
+            if (externalMenuId.isEmpty()) {
+                externalMenuId = getExternalMenuId()
+            }
+            val menuResponse = iikoService.getMenuById(
+                token = token,
+                body = MenuRequest(
+                    externalMenuId = externalMenuId,
+                    organizationIds = listOf(organizationId)
+                )
+            )
+            menuResponse.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.d("DEBUG IIKO API", "Ошибка: ${e.message}")
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    private suspend fun getExternalMenuId(): String {
+        val menuIdResponse = iikoService.getMenuId(token)
+        return menuIdResponse.externalMenus.firstOrNull()?.id
+            ?: error("Menu ID not found")
     }
 
     private suspend fun authenticate() {
@@ -79,10 +83,9 @@ class RetrofitNetworkClient(
                 body = OrganizationsRequest()
             )
             organizationId = organizationsResponse.organizations.firstOrNull()?.id
-                ?: throw IllegalStateException("No organization found")
+                ?: error("No organization found")
         } catch (e: Throwable) {
             Log.d("DEBUG IIKO API", "Ошибка в методе authenticate: ${e.message}")
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
@@ -100,6 +103,7 @@ class RetrofitNetworkClient(
                 return CsvResponse(csv = csvString)
 
             } catch (e: Throwable) {
+                Log.d("getSheet", "Не удалось прочитать csv. ${e.message}")
                 Response().apply { resultCode = HTTP_SERVER_ERROR }
             }
         }
@@ -112,5 +116,4 @@ class RetrofitNetworkClient(
     override suspend fun getRecommendations(): Response {
         return getSheet(RECOMMENDATIONS_GOOGLE_DOCS_URL)
     }
-
 }

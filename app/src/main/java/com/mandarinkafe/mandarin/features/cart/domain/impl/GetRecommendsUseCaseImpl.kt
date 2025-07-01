@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.cart.domain.impl
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
+import com.mandarinkafe.mandarin.features.cart.domain.model.RecommendsSchemaRule
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
@@ -30,44 +31,13 @@ class GetRecommendsUseCaseImpl(
                 val rules = schemaResult.data ?: return ErrorEmptyData()
 
                 // 2. Нормализуем названия блюд и их категорий из корзины
-                val cartItemsWithNorm = cartItems.map { meal ->
-                    meal.copy(
-                        name = meal.name.normalize(),
-                        parentCategoryName = meal.parentCategoryName.normalize(),
-                        grandParentCategoryName = meal.grandParentCategoryName?.normalize()
-                            .orEmpty()
-                    )
-                }
+                val cartItemsWithNorm = normalizeCartItems(cartItems)
 
                 // 3. Фильтруем правила
-                val matchingRules = rules.filter { rule ->
-                    val rawRuleName = rule.sourceName
-                    if (rawRuleName.isBlank()) return@filter false
-                    val ruleName = rawRuleName.normalize()
-
-                    // 3.1. Находим все элементы корзины, у которых совпало имя правила
-                    val matchingCartMeals = cartItemsWithNorm.filter { meal ->
-                        listOfNotNull(
-                            meal.name,
-                            meal.parentCategoryName,
-                            meal.grandParentCategoryName
-                        )
-                            .any { it.equals(ruleName, ignoreCase = true) }
-                    }
-
-                    if (matchingCartMeals.isEmpty()) {
-                        // Ничего не подходит по имени
-                        return@filter false
-                    }
-
-                    // 3.2. Отбрасываем те, у которых SKU есть в excludeSku
-                    val allowedMeals = matchingCartMeals.filter { meal ->
-                        rule.excludeSku.none { ex -> meal.sku.equals(ex.trim(), ignoreCase = true) }
-                    }
-
-                    // Если после исключений остался хоть один — правило срабатывает
-                    allowedMeals.isNotEmpty()
-                }
+                val matchingRules = filterRules(
+                    rules = rules,
+                    cartItemsWithNorm = cartItemsWithNorm
+                )
 
                 // 4. Собираем сет рекомендованных артикулов
                 val recommendedSkus: List<String> = matchingRules
@@ -84,4 +54,44 @@ class GetRecommendsUseCaseImpl(
             }
         }
     }
+
+    private fun normalizeCartItems(cartItems: Set<Meal>) =
+        cartItems.map { meal ->
+            meal.copy(
+                name = meal.name.normalize(),
+                parentCategoryName = meal.parentCategoryName.normalize(),
+                grandParentCategoryName = meal.grandParentCategoryName?.normalize()
+                    .orEmpty()
+            )
+        }
+
+    private fun filterRules(rules: List<RecommendsSchemaRule>, cartItemsWithNorm: List<Meal>) =
+        rules.filter { rule ->
+            val rawRuleName = rule.sourceName
+            if (rawRuleName.isBlank()) return@filter false
+            val ruleName = rawRuleName.normalize()
+
+            // Находим все элементы корзины, у которых совпало имя правила
+            val matchingCartMeals = cartItemsWithNorm.filter { meal ->
+                listOfNotNull(
+                    meal.name,
+                    meal.parentCategoryName,
+                    meal.grandParentCategoryName
+                )
+                    .any { it.equals(ruleName, ignoreCase = true) }
+            }
+
+            if (matchingCartMeals.isEmpty()) {
+                // Ничего не подходит по имени
+                return@filter false
+            }
+
+            // Отбрасываем те, у которых SKU есть в excludeSku
+            val allowedMeals = matchingCartMeals.filter { meal ->
+                rule.excludeSku.none { ex -> meal.sku.equals(ex.trim(), ignoreCase = true) }
+            }
+
+            // Если после исключений остался хоть один — правило срабатывает
+            allowedMeals.isNotEmpty()
+        }
 }

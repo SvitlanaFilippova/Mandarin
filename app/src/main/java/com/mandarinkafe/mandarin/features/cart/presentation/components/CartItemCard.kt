@@ -29,6 +29,7 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.ALPHA_50
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CustomizeButtonWithText
 
@@ -54,7 +55,7 @@ fun CartItemCard(
 ) {
     val meal = item.meal
     val contentColor = if (itemInPendingDeletion) Colors.LightGreyTransparent75 else Colors.White
-    val imageAlpha = if (itemInPendingDeletion) 0.5f else 1f
+    val imageAlpha = if (itemInPendingDeletion) ALPHA_50 else 1f
 
     val isFavorite by remember(item, favorites) {
         derivedStateOf { item.isFavorite(favorites) }

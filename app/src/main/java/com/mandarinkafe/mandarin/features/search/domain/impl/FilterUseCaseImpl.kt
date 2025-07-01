@@ -7,8 +7,7 @@ import com.mandarinkafe.mandarin.util.fuzzyContains
 import com.mandarinkafe.mandarin.util.levenshteinDistance
 import com.mandarinkafe.mandarin.util.toTranslitVariants
 
-class FilterUseCaseImpl() : FilterUseCase {
-
+class FilterUseCaseImpl : FilterUseCase {
 
     override fun invoke(
         meals: List<Meal>,
@@ -20,7 +19,7 @@ class FilterUseCaseImpl() : FilterUseCase {
             return meals.filter { meal ->
                 val labelNames = meal.labels.map { it.name }
                 checkedLabels.isEmpty() || checkedLabels.all { it in labelNames }
-            }.sortedByDescending { it.isFavorite(favoritesIds) } // TODO
+            }.sortedByDescending { it.isFavorite(favoritesIds) }
         }
 
         val searchVariants = searchText.toTranslitVariants()

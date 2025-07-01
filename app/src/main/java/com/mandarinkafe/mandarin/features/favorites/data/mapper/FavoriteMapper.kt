@@ -21,7 +21,7 @@ object FavoriteMapper {
     }
 
     fun Set<StoredFavoriteMeal>.toFavoriteRecords(): Set<FavoriteRecord> =
-        this.map { it ->
+        this.map {
             if (it.addsIds.isEmpty() && it.modifiers.isEmpty()) {
                 FavoriteRecord.Base(
                     mealId = it.mealId,

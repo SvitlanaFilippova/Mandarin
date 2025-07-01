@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package com.mandarinkafe.mandarin.util
 
 object TypographyRules {

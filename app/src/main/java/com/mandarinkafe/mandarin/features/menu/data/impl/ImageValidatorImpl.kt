@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.menu.data.impl
 
+import android.util.Log
 import com.mandarinkafe.mandarin.features.menu.data.api.ImageValidator
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.IMAGE_VALIDATOR_TIMEOUT
@@ -23,6 +24,7 @@ class ImageValidatorImpl : ImageValidator {
 
             code == HTTP_SUCCESS && contentType?.startsWith("image") == true
         } catch (e: Exception) {
+            Log.d("ImageValidatorImpl", "Изображение не валидно: ${e.message}")
             false
         }
     }

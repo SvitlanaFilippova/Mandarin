@@ -30,14 +30,10 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.HandleEffects
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
-
     val sharedViewModel: SharedViewModel = hiltViewModel()
     val sharedState by sharedViewModel.state.collectAsState()
-    val cartCount = sharedState.cartItemsCount
-    val effectFlow = sharedViewModel.effect
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-
     var isSplashLoading by remember { mutableStateOf(true) }
     val isSplash = if (isSplashLoading) true else currentRoute == SPLASH_SCREEN_ROUTE
     LaunchedEffect(currentRoute) {
@@ -45,7 +41,6 @@ fun MainScreen() {
             isSplashLoading = false
         }
     }
-
     val showBottomBar = !isSplash
     val showTopBar = !isSplash && sharedState.shouldShowTopBar
     val onEvent = sharedViewModel::onEvent
@@ -63,7 +58,7 @@ fun MainScreen() {
             BottomNavigation(
                 visible = showBottomBar,
                 navController = navController,
-                cartCount = cartCount,
+                cartCount = sharedState.cartItemsCount,
             )
 
         }
@@ -95,7 +90,6 @@ fun MainScreen() {
         )
     }
 
-
     LaunchedEffect(currentRoute) {
         // Сбрасываем состояние топбара при изменении маршрута
         if (currentRoute != null && currentRoute != SPLASH_SCREEN_ROUTE) {
@@ -103,7 +97,7 @@ fun MainScreen() {
         }
     }
     HandleEffects(
-        effectFlow = effectFlow,
+        effectFlow = sharedViewModel.effect,
         navController = navController,
     )
 }

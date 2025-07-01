@@ -39,7 +39,7 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: NetworkClient) :
             .drop(1) // пропустить заголовок
             .mapNotNull { line ->
                 val parts = line.split(",")
-                if (parts.size < 3) return@mapNotNull null
+                if (parts.size < CSV_COLUMNS_NUMBER) return@mapNotNull null
 
                 val sourceName = parts[0].takeIf { it.isNotBlank() }
 
@@ -67,5 +67,9 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: NetworkClient) :
             }
             .toList()
 
+    }
+
+    companion object {
+        private const val CSV_COLUMNS_NUMBER = 3
     }
 }

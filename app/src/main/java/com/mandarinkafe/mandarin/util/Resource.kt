@@ -22,12 +22,12 @@ sealed class Resource<T>(
     /**
      * Получен успешный результат, но данные пустые
      */
-    class ErrorEmptyData<T>() : Resource<T>()
+    class ErrorEmptyData<T> : Resource<T>()
 
     /**
      * Отсутствует соединение
      */
-    class ErrorNoInternet<T>() : Resource<T>()
+    class ErrorNoInternet<T> : Resource<T>()
 
     /**
      * Другие ошибки

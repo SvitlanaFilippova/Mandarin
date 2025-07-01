@@ -21,6 +21,8 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.mealitem.MenuCompactMealItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.mealitem.MenuMealItem
+import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_COLUMN_COUNT
+import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_SPACING_COUNT
 
 @Composable
 fun MenuList(
@@ -39,7 +41,7 @@ fun MenuList(
     val screenWidth = configuration.screenWidthDp.dp
     val horizontalPadding = Dimens.MarginSmall8
     val imageSize = remember(screenWidth) {
-        (screenWidth - horizontalPadding * 3) / 2
+        (screenWidth - horizontalPadding * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
     }
 
 

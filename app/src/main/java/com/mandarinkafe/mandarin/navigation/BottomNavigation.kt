@@ -1,19 +1,11 @@
 package com.mandarinkafe.mandarin.navigation
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
@@ -30,7 +22,8 @@ import androidx.navigation.navOptions
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
+import com.mandarinkafe.mandarin.navigation.components.BottomNavigationItem
+import com.mandarinkafe.mandarin.navigation.components.CartIconBox
 
 @Composable
 fun BottomNavigation(
@@ -38,7 +31,7 @@ fun BottomNavigation(
     navController: NavController,
     cartCount: Int,
 ) {
-    val listItems = listOf(
+    val arrayOFItems = arrayOf(
         BottomNavigationItem.Search,
         BottomNavigationItem.Favorites,
         BottomNavigationItem.Menu,
@@ -58,7 +51,7 @@ fun BottomNavigation(
             val backStackEntry = navController.currentBackStackEntryAsState().value
             val currentRoute = backStackEntry?.destination?.route?.substringBefore("?")
 
-            listItems.forEach { item ->
+            arrayOFItems.forEach { item ->
                 NavigationBarItem(
                     selected = currentRoute == item.route,
                     onClick = {
@@ -76,37 +69,11 @@ fun BottomNavigation(
                     },
                     icon = {
                         if (item == BottomNavigationItem.Cart && currentRoute != item.route) {
-                            @OptIn(ExperimentalAnimationApi::class)
-                            BadgedBox(
-                                badge = {
-                                    AnimatedContent(
-                                        targetState = cartCount,
-                                        transitionSpec = {
-                                            (scaleIn(tween(ANIMATION_DURATION_FAST)) + fadeIn()).togetherWith(
-                                                scaleOut(
-                                                    tween(
-                                                        ANIMATION_DURATION_FAST
-                                                    )
-                                                ) + fadeOut()
-                                            )
-                                        }
-                                    ) { count ->
-                                        if (count > 0) {
-                                            Badge(
-                                                containerColor = Colors.Orange,
-                                                contentColor = Colors.AppBlack
-                                            ) {
-                                                Text(count.toString())
-                                            }
-                                        }
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    painter = painterResource(item.icon),
-                                    contentDescription = stringResource(item.title)
-                                )
-                            }
+                            CartIconBox(
+                                cartCount = cartCount,
+                                painterResource = item.icon,
+                                stringResource = item.title
+                            )
                         } else {
                             Icon(
                                 painter = painterResource(item.icon),

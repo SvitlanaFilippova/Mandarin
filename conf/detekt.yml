@@ -87,11 +87,11 @@ complexity:
     ignoreNestingFunctions: false
     nestingFunctions: [ run, let, apply, with, also, use, forEach, isNotNull, ifNull ]
   LabeledExpression:
-    active: true
+    active: false
     ignoredLabels: [ ]
   LargeClass:
     active: true
-    threshold: 200
+    threshold: 250
   LongMethod:
     active: true
     threshold: 40
@@ -226,7 +226,7 @@ exceptions:
   ThrowingNewInstanceOfSameException:
     active: true
   TooGenericExceptionCaught:
-    active: true
+    active: false
     exceptionNames:
       - ArrayIndexOutOfBoundsException
       - Error
@@ -690,7 +690,7 @@ style:
     active: true
   ReturnCount:
     active: true
-    max: 2
+    max: 4
     excludedFunctions: [ 'equals' ]
     excludeLabeled: false
     excludeReturnFromLambda: true

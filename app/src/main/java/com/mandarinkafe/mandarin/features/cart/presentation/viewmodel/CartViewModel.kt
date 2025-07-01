@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Mapper.toCustomizedMeal
@@ -51,7 +50,6 @@ class CartViewModel @Inject constructor(
                 updateCartState()
                 observeCartChanges()
             }
-
             is AddToCart -> addItem(item = event.item)
             is RemoveFromCartWithDelay -> onReduceItem(item = event.item)
             is RemoveFromCartByItem -> removeItem(item = event.item)
@@ -66,16 +64,12 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Вызывает диалог для подтверждения желания очистить корзину
-     */
+    /** Вызывает диалог для подтверждения желания очистить корзину */
     private fun clearConfirmation() {
         sendEffect(CartEffect.ShowClearCartConfirmationDialog)
     }
 
-    /**
-     * Заменяет в корзине отредактированное блюдо
-     */
+    /**  Заменяет в корзине отредактированное блюдо  */
     private fun replaceMealInCart(newItem: CustomizedMeal, oldItem: CustomizedMeal) {
         if (newItem == oldItem) return
         cartInteractor.removeFromCart(oldItem)
@@ -111,10 +105,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    /**
-     * «–» нажато: если количество >1 — просто уменьшаем,
-     * иначе — запускаем отложенное удаление с таймером.
-     */
+    /** «–» нажато: если количество >1 — просто уменьшаем, иначе — запускаем отложенное удаление с таймером. */
     private fun onReduceItem(item: CustomizedMeal) {
         val currentQty = state.value.cartItems[item] ?: 0
         if (currentQty > 1) {
@@ -190,9 +181,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    /**
-    Удаление без таймера, для вызова из экранов, где отображаются "базовые" блюда
-     */
+    /**  Удаление без таймера, для вызова из экранов, где отображаются "базовые" блюда */
     private fun removeFromCartByMeal(meal: Meal) {
         setState {
             val pendingDeletionItems = pendingDeletionMeals.toMutableList()
@@ -232,10 +221,7 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             val cartResource = cartInteractor.getCart()
             setLoading(cartResource is Loading)
-            Log.e(
-                "DEBUG EMPTY CART",
-                "CartViewModel, updateCartState cartResource: $cartResource",
-            )
+
             when (cartResource) {
                 is Resource.Success -> setData(cartResource.data)
                 is Resource.Idle -> {}
@@ -326,7 +312,6 @@ class CartViewModel @Inject constructor(
     }
 
     private fun setData(data: Map<CustomizedMeal, Int>?) {
-        Log.d("DEBUG EMPTY CART", "CartViewModel. setData, data: $data")
         if (!data.isNullOrEmpty()) {
             setState {
                 copy(
@@ -346,7 +331,6 @@ class CartViewModel @Inject constructor(
     }
 
     private fun setError(resource: Resource<*>) {
-        Log.d("DEBUG EMPTY CART", "CartViewModel. setError, resource: $resource")
         val error = when (resource) {
             is Resource.ErrorEmptyData -> UiError.CartEmpty
             is Resource.ErrorNoInternet -> UiError.NoInternet
