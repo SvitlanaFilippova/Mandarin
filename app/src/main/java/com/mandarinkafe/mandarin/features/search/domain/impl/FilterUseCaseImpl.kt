@@ -20,7 +20,7 @@ class FilterUseCaseImpl() : FilterUseCase {
             return meals.filter { meal ->
                 val labelNames = meal.labels.map { it.name }
                 checkedLabels.isEmpty() || checkedLabels.all { it in labelNames }
-            }.sortedByDescending { it.isFavorite(favoritesIds) } // TODO
+            }.sortedByDescending { it.isFavorite(favoritesIds) }
         }
 
         val searchVariants = searchText.toTranslitVariants()

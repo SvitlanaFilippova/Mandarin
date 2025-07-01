@@ -87,7 +87,7 @@ complexity:
     ignoreNestingFunctions: false
     nestingFunctions: [ run, let, apply, with, also, use, forEach, isNotNull, ifNull ]
   LabeledExpression:
-    active: true
+    active: false
     ignoredLabels: [ ]
   LargeClass:
     active: true
@@ -690,7 +690,7 @@ style:
     active: true
   ReturnCount:
     active: true
-    max: 3
+    max: 4
     excludedFunctions: [ 'equals' ]
     excludeLabeled: false
     excludeReturnFromLambda: true

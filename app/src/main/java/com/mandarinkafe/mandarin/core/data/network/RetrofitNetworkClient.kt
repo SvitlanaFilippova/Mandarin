@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.core.data.network
 
-
 import android.util.Log
 import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
@@ -99,6 +98,7 @@ class RetrofitNetworkClient(
                 return CsvResponse(csv = csvString)
 
             } catch (e: Throwable) {
+                Log.d("getSheet", "Не удалось прочитать csv. ${e.message}")
                 Response().apply { resultCode = HTTP_SERVER_ERROR }
             }
         }

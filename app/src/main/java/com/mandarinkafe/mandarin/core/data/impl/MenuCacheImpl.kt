@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.core.data.impl
 
+import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -55,6 +56,7 @@ class MenuCacheImpl @Inject constructor(
                 }
 
             } catch (e: Exception) {
+                Log.d("fetchWithRetries", "Ошибка: ${e.message}")
             }
             attempts++
             delay(DELAY_BEFORE_NEXT_ATTEMPT)

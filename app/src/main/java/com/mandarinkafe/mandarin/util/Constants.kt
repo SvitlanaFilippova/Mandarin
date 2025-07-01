@@ -30,6 +30,11 @@ object Constants {
 
     // MealDetails UI
     const val SCROLL_TARGET_KEY = "scrollTarget"
+    const val BOUNCE_OFFSET_INIT = 40f
+    const val ANIMATION_REPEAT_NUMBER = 5
+    const val ANIMATION_BOUNCE_STEP = 25f
+    const val ANIMATION_BOUNCE_MODIFIER = 4
+
 
     // common UI
     const val ANIMATION_DURATION_SLOW = 1000

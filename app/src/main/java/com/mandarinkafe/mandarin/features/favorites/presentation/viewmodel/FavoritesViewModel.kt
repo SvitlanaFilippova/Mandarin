@@ -29,6 +29,7 @@ class FavoritesViewModel @Inject constructor(private val favoritesApi: Favorites
     }
 
     override fun onEvent(event: FavoritesEvent) {
+        // нет специфичных событий для обработки, все события по избранным обрабатываются в SharedViewModel
     }
 
     override fun setLoading(isLoading: Boolean) {

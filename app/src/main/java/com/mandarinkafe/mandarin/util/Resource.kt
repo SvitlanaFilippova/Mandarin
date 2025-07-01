@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.util
 
+@Suppress("RedundantEmptyConstructor")
 sealed class Resource<T>(
     val data: T? = null,
     val message: String? = null
@@ -27,7 +28,7 @@ sealed class Resource<T>(
     /**
      * Отсутствует соединение
      */
-    class ErrorNoInternet<T>() : Resource<T>()
+    class ErrorNoInternet<T> : Resource<T>()
 
     /**
      * Другие ошибки

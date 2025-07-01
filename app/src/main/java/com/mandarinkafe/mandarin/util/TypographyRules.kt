@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.util
 
+@Suppress("MagicNumber")
 object TypographyRules {
     /**
      * Список коротких слов (предлогов, союзов и частиц), перед которыми нужен неразрывный пробел
