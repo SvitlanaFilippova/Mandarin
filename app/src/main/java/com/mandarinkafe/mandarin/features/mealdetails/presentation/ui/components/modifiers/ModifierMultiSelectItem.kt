@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.meal_details.presentation.ui.components.modifiers
+package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.modifiers
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background

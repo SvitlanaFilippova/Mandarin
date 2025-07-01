@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.meal_details.presentation.ui.screen
+package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,10 +25,10 @@ import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteV
 import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.AddToCart
 import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartContract.CartEvent.ReplaceMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.view_model.CartViewModel
-import com.mandarinkafe.mandarin.features.meal_details.presentation.ui.components.RequiredModifiersDialog
-import com.mandarinkafe.mandarin.features.meal_details.presentation.view_model.MealDetailsContract.MealDetailsEffect
-import com.mandarinkafe.mandarin.features.meal_details.presentation.view_model.MealDetailsContract.MealDetailsEvent
-import com.mandarinkafe.mandarin.features.meal_details.presentation.view_model.MealDetailsViewModel
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.RequiredModifiersDialog
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.view_model.MealDetailsContract.MealDetailsEffect
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.view_model.MealDetailsContract.MealDetailsEvent
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.view_model.MealDetailsViewModel
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.view_model.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen

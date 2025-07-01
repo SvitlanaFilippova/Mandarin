@@ -22,13 +22,16 @@ object Constants {
     const val MAX_LINES_FOR_COLLAPSED_EXPANDABLE_TEXT = 6
     const val IMAGE_SIZE_IN_MENU = 300
 
-    // Splashscreen
+    // Splash screen
     const val SPLASH_SCREEN_DURATION = 5000L
     const val SPLASH_APPEARING_DURATION = 1000
     const val SPLASH_ANIMATION_DURATION = 2000
 
     // MealDetails UI
     const val SCROLL_TARGET_KEY = "scrollTarget"
+
+    // common UI
+    const val GRADIENT_HEIGHT_RATIO = 0.5f
 
     // Menu loading
     const val MAX_ATTEMPTS = 3

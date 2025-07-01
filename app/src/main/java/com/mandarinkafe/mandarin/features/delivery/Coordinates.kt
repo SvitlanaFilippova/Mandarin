@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.delivery
 
 import com.yandex.mapkit.geometry.Point
 
+@Suppress("MagicNumber")
 object Coordinates {
 
     val Area1 = listOf<Point>(
