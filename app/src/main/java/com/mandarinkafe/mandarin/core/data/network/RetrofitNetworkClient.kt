@@ -45,7 +45,6 @@ class RetrofitNetworkClient(
                     val menuIdResponse = iikoService.getMenuId(token)
                     externalMenuId = menuIdResponse.externalMenus.firstOrNull()?.id
                         ?: throw IllegalStateException("Menu ID not found")
-                    Log.d("DEBUG IIKO API", "Menu ID получено: $externalMenuId")
                 }
 
                 val menuResponse = iikoService.getMenuById(

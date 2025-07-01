@@ -49,14 +49,14 @@ class SharedViewModel @Inject constructor(
             }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
+                started = SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT_MILLIS),
                 initialValue = emptyList()
             )
 
     val favoritesIDs: StateFlow<Set<String>> =
         favoritesApi.observeFavoritesBaseMealIDs().stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT_MILLIS),
             initialValue = emptySet()
         )
 
@@ -144,4 +144,9 @@ class SharedViewModel @Inject constructor(
     }
 
     override fun setLoading(isLoading: Boolean) {}
+
+    companion object {
+        private const val SHARING_STOP_TIMEOUT_MILLIS = 5000L
+    }
+
 }

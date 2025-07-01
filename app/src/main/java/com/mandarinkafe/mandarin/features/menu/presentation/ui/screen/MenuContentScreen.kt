@@ -41,6 +41,7 @@ import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.getVis
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.util.Constants.BANNERS_ASPECT_RATIO
 import com.mandarinkafe.mandarin.util.Constants.FORCE_SHOW_FAB_DURATION_MS
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MyCircularProgressIndicator
 import kotlinx.coroutines.delay
@@ -202,7 +203,7 @@ fun MenuContentScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(Dimens.MarginStandard16)
-                            .aspectRatio(2.91f),
+                            .aspectRatio(BANNERS_ASPECT_RATIO),
                         contentAlignment = Alignment.Center
                     ) {
                         MyCircularProgressIndicator(

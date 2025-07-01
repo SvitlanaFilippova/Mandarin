@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.cart.data.sharedprefs
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -30,10 +31,12 @@ class CartStorageImpl @Inject constructor(private val sharedPreferences: SharedP
                 Gson().fromJson(json, listType) ?: mutableListOf()
             }
         } catch (e: ClassCastException) {
+            Log.d("getCart error", "ClassCastException: ${e.message}. Очищаю сохранённую корзину")
             clearCart()
             mutableListOf()
 
         } catch (e: NullPointerException) {
+            Log.d("getCart error", "NullPointerException: ${e.message}. Очищаю сохранённую корзину")
             clearCart()
             mutableListOf()
         }

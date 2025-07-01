@@ -37,6 +37,7 @@ object Constants {
     const val GRADIENT_HEIGHT_RATIO = 0.5f
     const val WEIGHT_RATIO_30 = 0.3f
     const val WEIGHT_RATIO_70 = 0.7f
+    const val ALPHA_50 = 0.5f
 
     // Menu loading
     const val MAX_ATTEMPTS = 3
