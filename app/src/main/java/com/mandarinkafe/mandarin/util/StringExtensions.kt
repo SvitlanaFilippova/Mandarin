@@ -5,8 +5,8 @@ package com.mandarinkafe.mandarin.util
  */
 fun String.normalize(): String =
     this
-        .replace(Regex("\\u00A0"), " ")   // неразрывный
-        .replace(Regex("\\s+"), " ")      // любые пробелы/табы → один
+        .replace(Regex("\\u00A0"), " ") // неразрывный
+        .replace(Regex("\\s+"), " ") // любые пробелы/табы → один
         .trim()
 
 fun String.toTranslitVariants(): List<String> {

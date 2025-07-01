@@ -37,7 +37,6 @@ fun SelectSmallButton(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
         ) {
-
             Text(
                 text = stringResource(id = R.string.to_choose),
                 style = Typography.CartButtonSmallTextStyle

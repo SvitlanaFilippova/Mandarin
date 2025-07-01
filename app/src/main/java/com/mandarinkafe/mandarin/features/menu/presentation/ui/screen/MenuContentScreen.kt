@@ -59,7 +59,6 @@ fun MenuContentScreen(
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
 ) {
-
     val menuItems = menuSate.menuItems
     val selectedTabIndex = menuSate.selectedTabIndex
     val selectedSubTabIndex = menuSate.selectedSubTabIndex
@@ -181,7 +180,6 @@ fun MenuContentScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-
             // Бар с поиском и фильтрами появляется всегда, когда пользователь вверху или скроллит вверх
             AnimatedVisibility(
                 visible = showMenuTopBar,
@@ -199,7 +197,6 @@ fun MenuContentScreen(
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically()
             ) {
-
                 if (menuSate.bannersAreLoading) {
                     Box(
                         modifier = Modifier
@@ -212,13 +209,14 @@ fun MenuContentScreen(
                             strokeWidth = Dimens.ProgressBarSmallWidth8,
                         )
                     }
-                } else
+                } else {
                     if (!menuSate.banners.isEmpty()) {
                         BannerCarousel(
                             banners = menuSate.banners,
                             onBannerClick = handleBannerClick
                         )
                     }
+                }
             }
 
             // Табы-категории видны всегда

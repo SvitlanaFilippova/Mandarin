@@ -39,7 +39,6 @@ fun MenuCompactMealItem(
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
 ) {
-
     val isFavorite by remember(favoriteIds) { derivedStateOf { meal.isFavorite(favoriteIds) } }
 
     Box(

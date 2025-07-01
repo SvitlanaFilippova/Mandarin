@@ -87,7 +87,8 @@ class ValidateFavoritesUseCaseImpl(
             Resource.Success(
                 validPairs
                     .sortedByDescending { it.first.timestamp }
-                    .map { it.second })
+                    .map { it.second }
+            )
         } catch (e: Exception) {
             Resource.ErrorOther(e.message ?: "Favorites validation error")
         }

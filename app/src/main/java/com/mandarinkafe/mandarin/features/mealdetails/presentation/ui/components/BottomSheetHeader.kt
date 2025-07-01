@@ -43,12 +43,10 @@ fun BottomSheetHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-
         IconButton(
             onClick = onClose,
             modifier = Modifier.size(Dimens.ButtonBox32)
         ) {
-
             Icon(
                 modifier = Modifier.size(Dimens.IconSize24),
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,

@@ -55,7 +55,6 @@ fun MealDetailsContentScreen(
     onEdit: () -> Unit,
     onToggleFavorite: () -> Unit,
 ) {
-
     val customizedMeal = state.customizedMeal ?: initItem
     val meal = customizedMeal.meal
     val listState = rememberLazyListState()
@@ -95,7 +94,6 @@ fun MealDetailsContentScreen(
                 state = listState
 
             ) {
-
                 // Изображение блюда и нформация о нём
                 item {
                     MealInfo(

@@ -16,7 +16,8 @@ sealed interface MealDetailsContract {
         data class ChangeAdds(val add: MealAdditional, val isChecked: Boolean) : MealDetailsEvent
         data class ChooseSingleModifier(val modifierGroup: ModifierGroup) : MealDetailsEvent
         data class ChooseMultiModifiers(
-            val modifierGroup: ModifierGroup, val modifierItem: ModifierItem,
+            val modifierGroup: ModifierGroup,
+            val modifierItem: ModifierItem,
             val isChecked: Boolean
         ) : MealDetailsEvent
 

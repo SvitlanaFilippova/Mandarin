@@ -31,7 +31,8 @@ fun CategoryTabsRow(
                         height = Dimens.TabActivatedIndicatorHeight2
                     )
                 }
-            }, divider = { }
+            },
+            divider = { }
         ) {
             categories.forEachIndexed { index, category ->
                 CategoryTabItem(

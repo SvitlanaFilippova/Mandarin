@@ -36,7 +36,6 @@ fun FavoritesScreen(
             .fillMaxSize()
             .background(Colors.AppBlack)
     ) {
-
         val error = state.error
 
         when {

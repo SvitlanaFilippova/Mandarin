@@ -59,5 +59,5 @@ fun FavoritesContent(
                 onMealDetailsClick = onMealDetailsClick,
             )
         }
-        }
     }
+}

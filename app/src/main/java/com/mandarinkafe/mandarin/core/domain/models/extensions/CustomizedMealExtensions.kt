@@ -44,7 +44,9 @@ fun CustomizedMeal.customizedText(): String {
             val itemsText = group.items.joinToString(", ") { it.name }
             "${group.name}: $itemsText"
         }
-    } else null
+    } else {
+        null
+    }
 
     val optionalItems = buildList {
         optionalGroups.forEach { group ->

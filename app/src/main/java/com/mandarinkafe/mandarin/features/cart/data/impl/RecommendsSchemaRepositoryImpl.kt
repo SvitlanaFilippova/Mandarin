@@ -21,13 +21,13 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: NetworkClient) :
             if (csvText == null) {
                 Resource.ErrorOther("Нет валидной схемы")
             } else {
-            val recommendsSchemaDto = parseCsv(csvText)
-            if (recommendsSchemaDto.isEmpty()) {
-                Resource.ErrorOther("Нет валидной схемы")
-            } else {
-                val result = recommendsSchemaDto.map { it.toDomain() }
-                Resource.Success(result)
-            }
+                val recommendsSchemaDto = parseCsv(csvText)
+                if (recommendsSchemaDto.isEmpty()) {
+                    Resource.ErrorOther("Нет валидной схемы")
+                } else {
+                    val result = recommendsSchemaDto.map { it.toDomain() }
+                    Resource.Success(result)
+                }
             }
         }
 

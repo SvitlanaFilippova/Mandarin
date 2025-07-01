@@ -18,7 +18,11 @@ fun List<ModifierGroup>.validateBy(mealModifiers: List<ModifierGroup>): List<Mod
             }
             if (updatedItems.isNotEmpty()) {
                 selectedGroup.copy(items = updatedItems)
-            } else null
-        } else null
+            } else {
+                null
+            }
+        } else {
+            null
+        }
     }
 }

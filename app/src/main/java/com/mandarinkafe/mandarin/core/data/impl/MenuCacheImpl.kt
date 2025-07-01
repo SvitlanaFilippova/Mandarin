@@ -26,7 +26,6 @@ class MenuCacheImpl @Inject constructor(
     override val menu: StateFlow<Resource<List<MealCategory>>> = _menu.asStateFlow()
 
     override fun fetchMenuIfNeeded() {
-
         val current = _menu.value
         if (current is Resource.Success) {
             return

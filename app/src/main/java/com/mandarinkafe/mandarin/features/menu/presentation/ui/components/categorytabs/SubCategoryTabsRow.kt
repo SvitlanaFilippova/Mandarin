@@ -16,21 +16,21 @@ fun SubCategoryTabsRow(
     onTabSelected: (Int) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-    ScrollableTabRow(
-        containerColor = Colors.AppBlack,
-        edgePadding = Dimens.ZeroDp0,
-        selectedTabIndex = selectedTabIndex,
-        indicator = { },
-        divider = { },
-    ) {
-        categories.forEachIndexed { index, category ->
-            SubCategoryTabItem(
-                category = category,
-                isSelected = selectedTabIndex == index,
-                onClick = { onTabSelected(index) }
-            )
+        ScrollableTabRow(
+            containerColor = Colors.AppBlack,
+            edgePadding = Dimens.ZeroDp0,
+            selectedTabIndex = selectedTabIndex,
+            indicator = { },
+            divider = { },
+        ) {
+            categories.forEachIndexed { index, category ->
+                SubCategoryTabItem(
+                    category = category,
+                    isSelected = selectedTabIndex == index,
+                    onClick = { onTabSelected(index) }
+                )
+            }
         }
-    }
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = Dimens.DividerHeight1,

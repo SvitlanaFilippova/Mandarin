@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class GetInitialDataUseCaseImpl(
-    private val menuCache: MenuCache, private val bannersRepository: BannersRepository
+    private val menuCache: MenuCache,
+    private val bannersRepository: BannersRepository
 ) : GetInitialDataUseCase {
     override suspend operator fun invoke(): Flow<Resource<List<MealCategory>>> {
         menuCache.fetchMenuIfNeeded()

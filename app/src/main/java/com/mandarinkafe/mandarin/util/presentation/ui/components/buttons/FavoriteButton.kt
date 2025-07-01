@@ -88,8 +88,11 @@ fun FavoriteButton(
                 Icon(
                     modifier = Modifier.padding(Dimens.MarginSuperSmall4),
                     painter = painterResource(
-                        if (isFav) R.drawable.ic_favorite_active
-                        else R.drawable.ic_favorite_inactive
+                        if (isFav) {
+                            R.drawable.ic_favorite_active
+                        } else {
+                            R.drawable.ic_favorite_inactive
+                        }
                     ),
                     contentDescription = stringResource(R.string.add_to_favorite),
                     tint = Colors.White

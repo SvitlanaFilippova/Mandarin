@@ -33,7 +33,6 @@ fun ModifierMultiSelectItem(
     onCheckedChange: (Boolean) -> Unit,
     isAdded: Boolean
 ) {
-
     val backgroundColor by animateColorAsState(
         targetValue = if (isAdded) Colors.Orange.copy(alpha = 0.1f) else Color.Transparent,
         label = "AddHighlight"

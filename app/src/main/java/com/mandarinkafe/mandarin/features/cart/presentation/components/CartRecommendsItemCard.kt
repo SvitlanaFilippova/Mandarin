@@ -44,7 +44,6 @@ fun CartRecommendsItemCard(
             color = Colors.DarkGrey
         )
     ) {
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier

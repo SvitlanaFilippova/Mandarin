@@ -109,7 +109,9 @@ class SharedViewModel @Inject constructor(
                 favoritesApi.toggleFavorite(meal)
             } else if (item != null) {
                 favoritesApi.toggleFavorite(item)
-            } else return@launch
+            } else {
+                return@launch
+            }
         }
     }
 

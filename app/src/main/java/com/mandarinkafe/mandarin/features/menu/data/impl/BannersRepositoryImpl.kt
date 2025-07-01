@@ -90,7 +90,7 @@ class BannersRepositoryImpl(
         val lines = csv.lineSequence()
             .filter { it.isNotBlank() }
             .toList()
-        if (lines.size <= 1) return emptyList()  // только заголовок
+        if (lines.size <= 1) return emptyList() // только заголовок
 
         return lines.drop(1).mapNotNull { line ->
             val cols = line.split(",", limit = 2)

@@ -20,7 +20,6 @@ fun CartControlWithUndo(
     onRemoveFromCart: () -> Unit,
     onCancel: () -> Unit,
 ) {
-
     if (!mealInPendingDeletion) {
         CartControls(
             numberInCart = numberInCart,

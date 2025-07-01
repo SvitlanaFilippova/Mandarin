@@ -282,7 +282,7 @@ formatting:
     autoCorrect: true
     layout: '*,java.**,javax.**,kotlin.**,kotlinx.android.synthetic.**,^'
   Indentation:
-    active: false
+    active: true
     autoCorrect: true
     indentSize: 4
     #continuationIndentSize: 4

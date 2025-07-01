@@ -94,12 +94,14 @@ class RetrofitNetworkClient(
         val finalUrl = GOOGLE_DOCS_BASE_URL + url
         return if (!isConnected()) {
             Response().apply { resultCode = -1 }
-        } else try {
-            val csvString = googleDocsApi.getCsv(finalUrl)
-            return CsvResponse(csv = csvString)
+        } else {
+            try {
+                val csvString = googleDocsApi.getCsv(finalUrl)
+                return CsvResponse(csv = csvString)
 
-        } catch (e: Throwable) {
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
+            } catch (e: Throwable) {
+                Response().apply { resultCode = HTTP_SERVER_ERROR }
+            }
         }
     }
 

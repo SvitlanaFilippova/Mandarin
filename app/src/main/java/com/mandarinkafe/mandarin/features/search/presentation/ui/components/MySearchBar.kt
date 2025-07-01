@@ -43,7 +43,6 @@ fun MySearchBar(
     onMealDetailsClick: (Meal) -> Unit,
     onToggleFavorite: (Meal) -> Unit,
 ) {
-
     val filteredMenuItems = searchState.filteredMealList
     val latestSearchText = searchState.latestSearchText
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -86,7 +85,6 @@ fun MySearchBar(
                 containerColor = Colors.AppBlack
             ),
             content = {
-
                 LabelChipsRow(
                     labels = searchState.allLabels,
                     checkedLabels = searchState.checkedLabels,

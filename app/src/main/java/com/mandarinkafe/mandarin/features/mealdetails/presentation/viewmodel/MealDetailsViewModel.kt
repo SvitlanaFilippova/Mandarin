@@ -45,7 +45,8 @@ class MealDetailsViewModel @Inject constructor(
 
             is MealDetailsEvent.ChooseMultiModifiers -> chooseMultiModifiers(
                 group = event.modifierGroup,
-                item = event.modifierItem, isChecked = event.isChecked
+                item = event.modifierItem,
+                isChecked = event.isChecked
             )
 
             is MealDetailsEvent.SetItem -> setMeal(item = event.item)

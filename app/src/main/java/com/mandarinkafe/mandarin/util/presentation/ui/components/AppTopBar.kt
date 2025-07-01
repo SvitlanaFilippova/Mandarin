@@ -33,13 +33,11 @@ fun AppTopBar(
         enter = fadeIn() + expandVertically(),
         exit = fadeOut() + shrinkVertically()
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(Dimens.ToolbarHeadHeight40)
         ) {
-
             // Логотип
             Image(
                 painter = painterResource(R.drawable.logo_text_mandarin),

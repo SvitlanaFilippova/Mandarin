@@ -44,6 +44,5 @@ class SearchModule {
     @Provides
     @Singleton
     fun provideGetFilterUseCase(): FilterUseCase =
-        FilterUseCaseImpl(
-        )
+        FilterUseCaseImpl()
 }

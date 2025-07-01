@@ -119,7 +119,7 @@ fun MealDetailsBottomSheet(
                 containerColor = Colors.AppBlack,
                 tonalElevation = Dimens.Elevation2,
                 scrimColor = Colors.LightGreyTransparent75,
-                ) {
+            ) {
                 MealDetailsContentScreen(
                     state = state,
                     initItem = initItem,

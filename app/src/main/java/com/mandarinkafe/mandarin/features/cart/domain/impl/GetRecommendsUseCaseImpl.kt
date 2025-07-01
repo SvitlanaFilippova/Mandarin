@@ -27,7 +27,6 @@ class GetRecommendsUseCaseImpl(
             is Idle -> Idle<List<Meal>>()
             is Loading -> Loading()
             is Resource.Success<*> -> {
-
                 val rules = schemaResult.data ?: return ErrorEmptyData()
 
                 // 2. Нормализуем названия блюд и их категорий из корзины
@@ -80,7 +79,8 @@ class GetRecommendsUseCaseImpl(
                 return Resource.Success(
                     recommendedSkus
                         .flatMap { sku -> menuCache.getMealsBySku(sku) }
-                        .distinctBy { it.id })
+                        .distinctBy { it.id }
+                )
             }
         }
     }

@@ -37,8 +37,7 @@ class CoreDataModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(
-                IikoApiService::
-                class.java
+                IikoApiService::class.java
             )
     }
 
@@ -60,7 +59,8 @@ class CoreDataModule {
         networkMonitor: NetworkMonitor
     ): NetworkClient {
         return RetrofitNetworkClient(
-            networkMonitor = networkMonitor, iikoService = ikkoService,
+            networkMonitor = networkMonitor,
+            iikoService = ikkoService,
             googleDocsApi = googleDocsApi
         )
     }

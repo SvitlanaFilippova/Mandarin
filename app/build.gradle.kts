@@ -62,7 +62,7 @@ android {
         debug {
             applicationIdSuffix = ".debug"
         }
-        
+
         release {
             isMinifyEnabled = false
             proguardFiles(

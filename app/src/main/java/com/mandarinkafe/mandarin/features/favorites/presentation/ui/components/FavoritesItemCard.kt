@@ -45,7 +45,6 @@ fun FavoritesItemCard(
     onRemoveFromCart: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
 ) {
-
     val meal = item.meal
     val isFavorite =
         true // нет смысла дополнительно проверять, поскольку в этот только избранные попадают
@@ -60,7 +59,6 @@ fun FavoritesItemCard(
             .background(Colors.DarkGrey)
             .clickable(onClick = { onMealDetailsClick(item) })
     ) {
-
         MealItemImageBox(
             modifier = Modifier
                 .size(imageSize)
@@ -68,7 +66,7 @@ fun FavoritesItemCard(
             meal = meal,
             isFavorite = isFavorite,
             onToggleFavorite = { onToggleFavorite(item) },
-            )
+        )
 
         Column(
             modifier = Modifier

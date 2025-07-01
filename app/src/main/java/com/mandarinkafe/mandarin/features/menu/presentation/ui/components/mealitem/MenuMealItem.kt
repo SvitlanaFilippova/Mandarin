@@ -46,7 +46,6 @@ fun MenuMealItem(
     imageSize: Dp,
     modifier: Modifier = Modifier
 ) {
-
     val isFavorite by remember(favoriteIds) {
         derivedStateOf { meal.isFavorite(favoriteIds) }
     }

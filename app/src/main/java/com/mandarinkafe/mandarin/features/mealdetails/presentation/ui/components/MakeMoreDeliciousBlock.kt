@@ -76,8 +76,7 @@ fun MakeMoreDeliciousBlock(
                 this.alpha = alpha.value
             },
             contentAlignment = Alignment.Center
-        )
-        {
+        ) {
             IconButton(
                 onClick = onClick,
                 modifier = Modifier.size(Dimens.ButtonBox32)

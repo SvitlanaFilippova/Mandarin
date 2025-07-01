@@ -46,7 +46,6 @@ fun CartControls(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
             // Кнопка "-"
             IconButton(
                 onClick = onDecrease,

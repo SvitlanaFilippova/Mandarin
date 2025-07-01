@@ -116,7 +116,6 @@ class CartViewModel @Inject constructor(
      * иначе — запускаем отложенное удаление с таймером.
      */
     private fun onReduceItem(item: CustomizedMeal) {
-
         val currentQty = state.value.cartItems[item] ?: 0
         if (currentQty > 1) {
             // уменьшить сразу на единицу
@@ -235,7 +234,7 @@ class CartViewModel @Inject constructor(
             setLoading(cartResource is Loading)
             Log.e(
                 "DEBUG EMPTY CART",
-                "CartViewModel, updateCartState cartResource: ${cartResource}",
+                "CartViewModel, updateCartState cartResource: $cartResource",
             )
             when (cartResource) {
                 is Resource.Success -> setData(cartResource.data)
@@ -327,7 +326,7 @@ class CartViewModel @Inject constructor(
     }
 
     private fun setData(data: Map<CustomizedMeal, Int>?) {
-        Log.d("DEBUG EMPTY CART", "CartViewModel. setData, data: ${data}")
+        Log.d("DEBUG EMPTY CART", "CartViewModel. setData, data: $data")
         if (!data.isNullOrEmpty()) {
             setState {
                 copy(
@@ -347,7 +346,7 @@ class CartViewModel @Inject constructor(
     }
 
     private fun setError(resource: Resource<*>) {
-        Log.d("DEBUG EMPTY CART", "CartViewModel. setError, resource: ${resource}")
+        Log.d("DEBUG EMPTY CART", "CartViewModel. setError, resource: $resource")
         val error = when (resource) {
             is Resource.ErrorEmptyData -> UiError.CartEmpty
             is Resource.ErrorNoInternet -> UiError.NoInternet

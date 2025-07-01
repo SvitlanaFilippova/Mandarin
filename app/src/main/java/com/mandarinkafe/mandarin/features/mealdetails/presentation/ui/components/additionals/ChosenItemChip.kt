@@ -21,7 +21,6 @@ fun ChosenItemChip(
     itemName: String,
     onClick: () -> Unit,
 ) {
-
     Box(modifier = Modifier.padding(horizontal = Dimens.MarginSuperSmall4)) {
         InputChip(
             onClick = onClick,

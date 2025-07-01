@@ -69,7 +69,8 @@ fun FavoriteItemButtonRow(
             )
         } else {
             ToCartButtonWithPrice(
-                price = totalPrice, onClick = {
+                price = totalPrice,
+                onClick = {
                     onAddToCart(item)
                 },
                 modifier = modifier
