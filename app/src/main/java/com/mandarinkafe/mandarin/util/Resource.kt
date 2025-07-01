@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.util
 
-@Suppress("RedundantEmptyConstructor")
+@Suppress("EmptyDefaultConstructor ")
 sealed class Resource<T>(
     val data: T? = null,
     val message: String? = null

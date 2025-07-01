@@ -6,7 +6,7 @@ sealed interface MenuItem {
     data class HeaderItem(
         val categoryName: String,
         val sku: String,
-        var subCategoriesNames: List<String>?,
+        val subCategoriesNames: List<String>?,
         val tabIcon: String?,
         val description: String,
     ) : MenuItem

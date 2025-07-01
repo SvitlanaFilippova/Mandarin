@@ -122,7 +122,9 @@ fun MealDetailsContentScreen(
                             onChooseMultiModifiers = { modifierGroup, modifierItem, isChecked ->
                                 onEvent(
                                     MealDetailsEvent.ChooseMultiModifiers(
-                                        modifierGroup, modifierItem, isChecked
+                                        modifierGroup = modifierGroup,
+                                        modifierItem = modifierItem,
+                                        isChecked = isChecked
                                     )
                                 )
                             }

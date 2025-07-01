@@ -24,7 +24,7 @@ class ImageValidatorImpl : ImageValidator {
 
             code == HTTP_SUCCESS && contentType?.startsWith("image") == true
         } catch (e: Exception) {
-            Log.d("ImageValidatorImpl", "Изображение не валидно")
+            Log.d("ImageValidatorImpl", "Изображение не валидно: ${e.message}")
             false
         }
     }

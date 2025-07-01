@@ -7,8 +7,7 @@ import com.mandarinkafe.mandarin.util.fuzzyContains
 import com.mandarinkafe.mandarin.util.levenshteinDistance
 import com.mandarinkafe.mandarin.util.toTranslitVariants
 
-class FilterUseCaseImpl() : FilterUseCase {
-
+class FilterUseCaseImpl : FilterUseCase {
 
     override fun invoke(
         meals: List<Meal>,
