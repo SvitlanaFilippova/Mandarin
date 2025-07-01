@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.util
 
-@Suppress("EmptyDefaultConstructor ")
 sealed class Resource<T>(
     val data: T? = null,
     val message: String? = null
@@ -23,7 +22,7 @@ sealed class Resource<T>(
     /**
      * Получен успешный результат, но данные пустые
      */
-    class ErrorEmptyData<T>() : Resource<T>()
+    class ErrorEmptyData<T> : Resource<T>()
 
     /**
      * Отсутствует соединение

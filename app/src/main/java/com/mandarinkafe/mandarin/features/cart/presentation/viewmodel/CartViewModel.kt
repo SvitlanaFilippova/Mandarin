@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Mapper.toCustomizedMeal
@@ -332,7 +331,6 @@ class CartViewModel @Inject constructor(
     }
 
     private fun setError(resource: Resource<*>) {
-        Log.d("DEBUG EMPTY CART", "CartViewModel. setError, resource: $resource")
         val error = when (resource) {
             is Resource.ErrorEmptyData -> UiError.CartEmpty
             is Resource.ErrorNoInternet -> UiError.NoInternet

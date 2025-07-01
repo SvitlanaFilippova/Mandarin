@@ -134,7 +134,7 @@ fun ModifierGroupDto.toDomain(): ModifierGroup {
             ?.sortedBy { it.price != 0 }
             ?: emptyList(),
         isSingleChoice = restrictions?.maxQuantity == 1,
-        isRequired = (restrictions?.minQuantity ?: 0) > 0,
+        isRequired = restrictions?.minQuantity?.let { it > 0 } == true,
         maxQuantity = restrictions?.maxQuantity ?: Int.MAX_VALUE
     )
 
