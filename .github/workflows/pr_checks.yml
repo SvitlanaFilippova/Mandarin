@@ -96,11 +96,11 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
         uses: softprops/action-gh-release@v2
         with:
-          name: Latest Debug Build
+          name: Debug Build
           tag_name: Latest
           files: app/build/outputs/apk/debug/app-debug.apk
           draft: false
-          prerelease: true
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
