@@ -5,22 +5,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CustomizeButtonWithText
 
 @Composable
 fun MealDetailsButton(
-    item: CustomizedMeal,
-    onEditMealClick: (CustomizedMeal) -> Unit,
-    onMealDetailsClick: (CustomizedMeal) -> Unit,
+    isCustomized: Boolean,
+    onEditMealClick: () -> Unit,
+    onMealDetailsClick: () -> Unit,
 ) {
     when {
-        item.isCustomized() -> {
+        isCustomized -> {
             // Кнопка "Редактировать"
             CustomizeButtonWithText(
-                onClick = { onEditMealClick(item) },
+                onClick = onEditMealClick,
                 text = stringResource(id = R.string.edit_meal),
                 modifier = Modifier.padding(horizontal = Dimens.MarginSmall8)
             )
@@ -29,7 +27,7 @@ fun MealDetailsButton(
         else -> {
             // Кнопка "Сделать вкуснее"
             CustomizeButtonWithText(
-                onClick = { onMealDetailsClick(item) },
+                onClick = onMealDetailsClick,
                 text = stringResource(R.string.add_additionals),
                 modifier = Modifier.padding(horizontal = Dimens.MarginSmall8)
             )
