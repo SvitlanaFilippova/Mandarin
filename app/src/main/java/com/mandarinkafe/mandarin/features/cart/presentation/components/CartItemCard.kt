@@ -31,7 +31,6 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants.ALPHA_50
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
-import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CustomizeButtonWithText
 
 /**
  * Компонент, который отвечает за отображение товара, который выбрали в меню
@@ -54,8 +53,9 @@ fun CartItemCard(
     onEditMealClick: (CustomizedMeal) -> Unit,
 ) {
     val meal = item.meal
-    val contentColor = if (itemInPendingDeletion) Colors.LightGreyTransparent75 else Colors.White
-    val imageAlpha = if (itemInPendingDeletion) ALPHA_50 else 1f
+    val contentColor =
+        remember(itemInPendingDeletion) { if (itemInPendingDeletion) Colors.LightGreyTransparent75 else Colors.White }
+    val imageAlpha = remember(itemInPendingDeletion) { if (itemInPendingDeletion) ALPHA_50 else 1f }
 
     val isFavorite by remember(item, favorites) {
         derivedStateOf { item.isFavorite(favorites) }
@@ -140,25 +140,11 @@ fun CartItemCard(
             Spacer(modifier = Modifier.weight(1f))
 
             if ((meal.isCustomizable || meal.requireSelection) && !itemInPendingDeletion) {
-                when {
-                    item.isCustomized() -> {
-                        // Кнопка "Редактировать"
-                        CustomizeButtonWithText(
-                            onClick = { onEditMealClick(item) },
-                            text = stringResource(id = R.string.edit_meal),
-                            modifier = Modifier.padding(horizontal = Dimens.MarginSmall8)
-                        )
-                    }
-
-                    else -> {
-                        // Кнопка "Сделать вкуснее"
-                        CustomizeButtonWithText(
-                            onClick = { onMealDetailsClick(item) },
-                            text = stringResource(R.string.add_additionals),
-                            modifier = Modifier.padding(horizontal = Dimens.MarginSmall8)
-                        )
-                    }
-                }
+                MealDetailsButton(
+                    item = item,
+                    onEditMealClick = { onEditMealClick(item) },
+                    onMealDetailsClick = { onMealDetailsClick(item) }
+                )
             }
 
             CartControlWithUndo(
