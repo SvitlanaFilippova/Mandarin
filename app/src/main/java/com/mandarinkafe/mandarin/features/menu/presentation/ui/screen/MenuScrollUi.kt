@@ -32,7 +32,6 @@ internal fun createMenuScrollUi(
     onMenuEvent: (MenuEvent) -> Unit,
     onSharedEvent: (SharedEvent) -> Unit,
 ): ScrollUi {
-
     var isScrollingUp by remember { mutableStateOf(false) }
     var isScrollingDown by remember { mutableStateOf(false) }
     var previousIndex by remember { mutableIntStateOf(0) }
@@ -65,35 +64,15 @@ internal fun createMenuScrollUi(
         selectedSubTabIndex,
         onMenuEvent
     )
-
-    // Отслеживание направления скролла
-    LaunchedEffect(listState) {
-        snapshotFlow {
-            listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
-        }.collect { (index, offset) ->
-            val deltaIndex = index - previousIndex
-            val deltaOffset = offset - previousOffset
-
-            val isScrollingDownNow = when {
-                deltaIndex > 0 -> true
-                deltaIndex < 0 -> false
-                else -> deltaOffset > 0
-            }
-
-            val isScrollingUpNow = when {
-                deltaIndex < 0 -> true
-                deltaIndex > 0 -> false
-                else -> deltaOffset < 0
-            }
-
-            isScrollingDown = isScrollingDownNow
-            isScrollingUp = isScrollingUpNow
-
-            previousIndex = index
-            previousOffset = offset
-        }
-    }
-
+    SetupScrollDirectionTracking(
+        listState,
+        { isScrollingUp = it },
+        { isScrollingDown = it },
+        { previousIndex = it },
+        { previousOffset = it },
+        previousIndex,
+        previousOffset
+    )
 
     fun onBannerClick(banner: Banner) {
         coroutineScope.launch {
@@ -202,5 +181,42 @@ private fun SetupTabTracking(
                     onMenuEvent(MenuEvent.ScrollToSubCategory(newSubIndex))
                 }
             }
+    }
+}
+
+@Composable
+private fun SetupScrollDirectionTracking(
+    listState: LazyListState,
+    setScrollingUp: (Boolean) -> Unit,
+    setScrollingDown: (Boolean) -> Unit,
+    setPreviousIndex: (Int) -> Unit,
+    setPreviousOffset: (Int) -> Unit,
+    previousIndex: Int,
+    previousOffset: Int
+) {
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
+        }.collect { (index, offset) ->
+            val deltaIndex = index - previousIndex
+            val deltaOffset = offset - previousOffset
+
+            val isScrollingDownNow = when {
+                deltaIndex > 0 -> true
+                deltaIndex < 0 -> false
+                else -> deltaOffset > 0
+            }
+
+            val isScrollingUpNow = when {
+                deltaIndex < 0 -> true
+                deltaIndex > 0 -> false
+                else -> deltaOffset < 0
+            }
+
+            setScrollingDown(isScrollingDownNow)
+            setScrollingUp(isScrollingUpNow)
+            setPreviousIndex(index)
+            setPreviousOffset(offset)
+        }
     }
 }

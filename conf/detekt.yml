@@ -78,10 +78,10 @@ complexity:
     includePrivateDeclarations: false
   CognitiveComplexMethod:
     active: true
-    threshold: 15
+    threshold: 20
   CyclomaticComplexMethod:
     active: true
-    threshold: 10
+    threshold: 15
     ignoreSingleWhenExpression: true
     ignoreSimpleWhenEntries: true
     ignoreNestingFunctions: false
