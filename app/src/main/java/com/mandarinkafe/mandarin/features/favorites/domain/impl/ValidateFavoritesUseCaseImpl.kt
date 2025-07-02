@@ -16,76 +16,23 @@ class ValidateFavoritesUseCaseImpl(
     private val menuCache: MenuCache,
     private val writer: FavoritesWriter
 ) : ValidateFavoritesUseCase {
+
     override suspend fun invoke(raw: Set<FavoriteRecord>): Resource<List<CustomizedMeal>> {
         return try {
-            // Превращаем raw → DTO для сравнения
             val rawStored = raw.map { it.toStored() }.toSet()
 
-            // Временные коллекции
-            val validPairs = mutableListOf<Pair<FavoriteRecord, CustomizedMeal>>()
-            val validStored = mutableSetOf<FavoriteRecord>()
-            val invalidIds = mutableListOf<String>()
+            // Ожидаем меню
+            waitForMenu()
 
-            // Ждём, пока меню загрузится
-            menuCache.menu.first { it is Resource.Success }
+            val result = processRecords(raw)
 
-            for (record in raw) {
-                val fullMeal = menuCache.getMealById(record.mealId)
-                if (fullMeal == null) {
-                    invalidIds += record.mealId
-                    continue
-                }
-
-                when (record) {
-                    is FavoriteRecord.Base -> {
-                        // Базовый случай
-                        val customized = CustomizedMeal(
-                            meal = fullMeal,
-                            adds = emptyList(),
-                            modifiers = emptyList()
-                        )
-                        validPairs += record to customized
-                        validStored += record
-                    }
-
-                    is FavoriteRecord.Custom -> {
-                        // Валидируем adds
-                        val validAdds = record.addsIds
-                            .mapNotNull { addId ->
-                                menuCache.getMealById(addId)
-                                    ?.toMealAdditional()
-                            }
-                        // Валидируем modifiers
-                        val validMods = record.modifiers
-                            .validateBy(fullMeal.modifiers)
-
-                        // Собираем очищенную запись
-                        val cleanedRecord = record.copy(
-                            addsIds = validAdds.map { it.id },
-                            modifiers = validMods
-                        )
-                        // Собираем CustomizedMeal
-                        val customized = CustomizedMeal(
-                            meal = fullMeal,
-                            adds = validAdds,
-                            modifiers = validMods
-                        )
-                        validPairs += cleanedRecord to customized
-                        validStored += cleanedRecord
-                    }
-                }
+            if (result.cleanedStored.map { it.toStored() }.toSet() != rawStored) {
+                writer.saveFavorites(result.cleanedStored)
+                Log.d("Favorites", "Removed invalid entries: ${result.invalidIds}")
             }
 
-            // Если что-то подчистилось — сохраняем «чистый» набор
-            val newStoredDtos = validStored.map { it.toStored() }.toSet()
-            if (newStoredDtos != rawStored) {
-                writer.saveFavorites(validStored)
-                Log.d("Favorites", "Removed invalid entries: $invalidIds")
-            }
-
-            // Сортируем пары по timestamp и возвращаем только CustomizedMeal
             Resource.Success(
-                validPairs
+                result.validPairs
                     .sortedByDescending { it.first.timestamp }
                     .map { it.second }
             )
@@ -93,5 +40,68 @@ class ValidateFavoritesUseCaseImpl(
             Resource.ErrorOther(e.message ?: "Favorites validation error")
         }
     }
-}
 
+    private suspend fun waitForMenu() {
+        menuCache.menu.first { it is Resource.Success }
+    }
+
+    private fun processRecords(
+        raw: Set<FavoriteRecord>
+    ): ValidationResult {
+        val validPairs = mutableListOf<Pair<FavoriteRecord, CustomizedMeal>>()
+        val cleanedStored = mutableSetOf<FavoriteRecord>()
+        val invalidIds = mutableListOf<String>()
+
+        for (record in raw) {
+            val fullMeal = menuCache.getMealById(record.mealId)
+            if (fullMeal == null) {
+                invalidIds += record.mealId
+                continue
+            }
+
+            when (record) {
+                is FavoriteRecord.Base -> {
+                    val customized = CustomizedMeal(
+                        meal = fullMeal,
+                        adds = emptyList(),
+                        modifiers = emptyList()
+                    )
+                    validPairs += record to customized
+                    cleanedStored += record
+                }
+
+                is FavoriteRecord.Custom -> {
+                    val validAdds = record.addsIds.mapNotNull { id ->
+                        menuCache.getMealById(id)?.toMealAdditional()
+                    }
+
+                    val validMods = record.modifiers.validateBy(fullMeal.modifiers)
+
+                    val cleaned = record.copy(
+                        addsIds = validAdds.map { it.id },
+                        modifiers = validMods
+                    )
+                    val customized = CustomizedMeal(
+                        meal = fullMeal,
+                        adds = validAdds,
+                        modifiers = validMods
+                    )
+                    validPairs += cleaned to customized
+                    cleanedStored += cleaned
+                }
+            }
+        }
+
+        return ValidationResult(
+            validPairs = validPairs,
+            cleanedStored = cleanedStored,
+            invalidIds = invalidIds
+        )
+    }
+
+    private data class ValidationResult(
+        val validPairs: List<Pair<FavoriteRecord, CustomizedMeal>>,
+        val cleanedStored: Set<FavoriteRecord>,
+        val invalidIds: List<String>
+    )
+}

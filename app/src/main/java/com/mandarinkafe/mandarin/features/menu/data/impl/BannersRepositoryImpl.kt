@@ -44,26 +44,27 @@ class BannersRepositoryImpl(
 
     /** Парсинг и валидация баннеров */
     override suspend fun getBanners(): Resource<List<Banner>> {
-        // Если CSV ещё не загружен — пытаемся загрузить
+        // Загружаем CSV, если ещё не загружен
         if (bannersCsv.isNullOrEmpty()) {
-            when (val csvResult = loadBannersCsv()) {
-                is Resource.Success -> Unit // ок, идём дальше
-                is Resource.ErrorNoInternet -> return Resource.ErrorNoInternet()
-                is Resource.ErrorEmptyData -> return Resource.ErrorEmptyData()
-                is Resource.ErrorOther -> return Resource.ErrorOther(csvResult.message.orEmpty())
-                else -> return Resource.ErrorOther("Неизвестная ошибка при загрузке баннеров")
+            val csvResult = loadBannersCsv()
+
+            val error = when (csvResult) {
+                is Resource.Success -> null
+                is Resource.ErrorNoInternet -> Resource.ErrorNoInternet<List<Banner>>()
+                is Resource.ErrorEmptyData -> Resource.ErrorEmptyData<List<Banner>>()
+                is Resource.ErrorOther -> Resource.ErrorOther<List<Banner>>(csvResult.message.orEmpty())
+                else -> Resource.ErrorOther("Неизвестная ошибка при загрузке баннеров")
             }
+            if (error != null) return error
         }
+
         val csv = bannersCsv
         if (csv.isNullOrEmpty()) {
             return Resource.ErrorOther("CSV не загружен")
         }
 
-        val bannersDto = try {
-            parseCsv(csv)
-        } catch (e: Exception) {
-            return Resource.ErrorOther("Ошибка разбора CSV: ${e.message}")
-        }
+        val bannersDto = runCatching { parseCsv(csv) }
+            .getOrElse { return Resource.ErrorOther("Ошибка разбора CSV: ${it.message}") }
 
         if (bannersDto.isEmpty()) {
             Log.e("DEBUG BannersRepo", "getBanners(): no valid banners")
@@ -71,6 +72,7 @@ class BannersRepositoryImpl(
         }
 
         val domain = bannersDto.map { it.toDomain() }
+
         val validBanners = coroutineScope {
             domain.map { banner ->
                 async {

@@ -5,14 +5,12 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,7 +43,6 @@ fun BottomNavigation(
         BottomAppBar(
             tonalElevation = Dimens.Elevation2,
             containerColor = Colors.AppBlack,
-            modifier = Modifier.height(Dimens.BottomBarHeight64)
         ) {
             val backStackEntry = navController.currentBackStackEntryAsState().value
             val currentRoute = backStackEntry?.destination?.route?.substringBefore("?")

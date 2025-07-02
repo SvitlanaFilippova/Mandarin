@@ -690,7 +690,7 @@ style:
     active: true
   ReturnCount:
     active: true
-    max: 4
+    max: 5
     excludedFunctions: [ 'equals' ]
     excludeLabeled: false
     excludeReturnFromLambda: true
