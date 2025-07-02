@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.core.presentation
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -26,7 +25,6 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.AppTopBar
 import com.mandarinkafe.mandarin.util.presentation.ui.components.HandleEffects
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()

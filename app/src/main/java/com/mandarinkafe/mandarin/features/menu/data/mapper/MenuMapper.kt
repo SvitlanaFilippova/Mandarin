@@ -53,42 +53,33 @@ private fun MealDto.toDomain(
     parentCategoryName: String,
     grandParentCategoryName: String?
 ): Meal? {
-    val firstSize = itemSizes?.firstOrNull()
-    val safeWeight = firstSize?.portionWeightGrams?.toInt() ?: 0
-    val safePrice = firstSize?.prices?.firstOrNull()?.price?.toInt() ?: 0
-    val safeImageUrl = firstSize?.buttonImageUrl ?: ""
+    val firstSize = itemSizes?.firstOrNull() ?: return null
+
+    val baseInfo = extractBaseInfo(firstSize)
     val safeModifiers = getSafeModifiers(firstSize)
 
     val mealLabels = (labels ?: emptyList()).map { it.toDomain() }
     val mealTags = (tags ?: emptyList()).map { it.toDomain() }
 
-    val finalMealTags = mergeTags(mealTags, categoryTags)
     val finalMealLabels = mergeLabels(mealLabels, categoryLabels)
-
-    val hasNoAddsTag = finalMealTags.any { it.name.equals(TAG_NO_ADDS, ignoreCase = true) }
-    val isRequireSelection = safeModifiers.any { it.isRequired }
+    val finalMealTags = mergeTags(mealTags, categoryTags)
 
     return Meal(
         id = itemId,
         name = name.applyTypography(),
         description = (description ?: "").applyTypography(),
         sku = sku ?: "",
-        weight = safeWeight,
-        price = safePrice,
-        imageUrl = safeImageUrl,
+        weight = baseInfo.weight,
+        price = baseInfo.price,
+        imageUrl = baseInfo.imageUrl,
         labels = finalMealLabels,
         tags = finalMealTags,
         isHidden = isHidden == true,
         modifiers = safeModifiers,
-        isAddable = !hasNoAddsTag && finalMealTags.any {
-            it.name.equals(
-                TAG_ADDS,
-                ignoreCase = true
-            )
-        },
-        requireSelection = isRequireSelection,
-        isModifiable = safeModifiers.isNotEmpty() && safePrice > 0 && !isRequireSelection,
-        discountable = !finalMealTags.any { it.name.equals(TAG_NO_DISCOUNT, ignoreCase = true) },
+        isAddable = isAddable(finalMealTags),
+        requireSelection = requireSelection(safeModifiers),
+        isModifiable = isModifiable(safeModifiers, baseInfo.price),
+        discountable = isDiscountable(finalMealTags),
         parentCategoryName = parentCategoryName,
         grandParentCategoryName = grandParentCategoryName,
     )
@@ -162,4 +153,36 @@ private fun mergeTags(mealTags: List<Tag>, categoryTags: List<Tag>): List<Tag> {
 
 private fun mergeLabels(mealLabels: List<Label>, categoryLabels: List<Label>): List<Label> {
     return (mealLabels + categoryLabels).distinctBy { it.name }
+}
+
+private data class BaseMealInfo(
+    val weight: Int,
+    val price: Int,
+    val imageUrl: String,
+)
+
+private fun extractBaseInfo(firstSize: ItemSize): BaseMealInfo {
+    val weight = firstSize.portionWeightGrams.toInt()
+    val price = firstSize.prices.firstOrNull()?.price?.toInt() ?: 0
+    val imageUrl = firstSize.buttonImageUrl
+    return BaseMealInfo(weight, price, imageUrl)
+}
+
+private fun isAddable(tags: List<Tag>): Boolean {
+    val hasNoAdds = tags.any { it.name.equals(TAG_NO_ADDS, ignoreCase = true) }
+    val hasAdds = tags.any { it.name.equals(TAG_ADDS, ignoreCase = true) }
+    return !hasNoAdds && hasAdds
+}
+
+private fun isModifiable(modifiers: List<ModifierGroup>, price: Int): Boolean {
+    val required = requireSelection(modifiers)
+    return modifiers.isNotEmpty() && price > 0 && !required
+}
+
+private fun isDiscountable(tags: List<Tag>): Boolean {
+    return tags.none { it.name.equals(TAG_NO_DISCOUNT, ignoreCase = true) }
+}
+
+private fun requireSelection(modifiers: List<ModifierGroup>): Boolean {
+    return modifiers.any { it.isRequired }
 }
