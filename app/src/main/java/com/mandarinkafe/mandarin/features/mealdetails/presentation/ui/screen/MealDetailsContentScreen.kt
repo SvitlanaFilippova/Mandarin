@@ -10,15 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.extensions.hasSelectedAllRequiredModifiers
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
@@ -27,14 +23,13 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isOnlySingleRequi
 import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.AddsHeader
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.BottomSheetHeader
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.MakeMoreDeliciousBlock
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.MealInfo
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.ToCartButton
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.AddsItem
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.ChosenOptionsChipsRow
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.ChosenOptions
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.modifiers.ModifierGroupItem
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
@@ -60,6 +55,8 @@ fun MealDetailsContentScreen(
         remember(customizedMeal) { customizedMeal.hasSelectedAllRequiredModifiers() }
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+    val shouldShowChosen =
+        remember(customizedMeal.isCustomized()) { !meal.isOnlySingleRequiredChoice() && customizedMeal.isCustomized() }
     val handleMakeMoreDeliciousClick: () -> Unit = remember(listState) {
         {
             coroutineScope.launch {
@@ -165,21 +162,9 @@ fun MealDetailsContentScreen(
                     }
                 }
                 // Если это НЕ позиция, где должна быть выбрана всего одная опция - показываем перечень выбранных опций
-                if (!meal.isOnlySingleRequiredChoice() && customizedMeal.isCustomized()) {
+                if (shouldShowChosen) {
                     item {
-                        Text(
-                            modifier = Modifier.padding(
-                                top = Dimens.MarginBig24,
-                                bottom = Dimens.MarginSmall8
-                            ),
-                            text = stringResource(id = R.string.chosen),
-                            style = Typography.RegularLightTextStyle,
-                            fontWeight = FontWeight.Light,
-                            color = Colors.LightGrey
-                        )
-                    }
-                    item {
-                        ChosenOptionsChipsRow(
+                        ChosenOptions(
                             adds = customizedMeal.adds,
                             onAddClick = { add ->
                                 onEvent(
