@@ -22,7 +22,6 @@ import androidx.navigation.navOptions
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.components.BottomNavigationItem
 import com.mandarinkafe.mandarin.navigation.components.CartIconBox
 
 @Composable
