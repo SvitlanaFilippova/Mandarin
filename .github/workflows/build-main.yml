@@ -94,5 +94,6 @@ jobs:
           tag_name: latest
           name: Latest Release Build
           files: app/build/outputs/apk/release/app-release.apk
+          draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
