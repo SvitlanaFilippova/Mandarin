@@ -1,5 +1,10 @@
 package com.mandarinkafe.mandarin.features.menu.presentation.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,16 +29,23 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 
 @Composable
 fun SearchBar(
+    visible: Boolean,
     onSearchClick: () -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Colors.Transparent)
-            .padding(Dimens.MarginSmall8),
-        verticalAlignment = Alignment.CenterVertically,
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically()
     ) {
-        FakeSearchBarField(modifier = Modifier.weight(1f), onClick = onSearchClick)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Colors.Transparent)
+                .padding(Dimens.MarginSmall8),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            FakeSearchBarField(modifier = Modifier.weight(1f), onClick = onSearchClick)
+        }
     }
 }
 
@@ -65,5 +77,6 @@ fun FakeSearchBarField(
             style = MaterialTheme.typography.bodyMedium
         )
     }
-}
+    }
+
 
