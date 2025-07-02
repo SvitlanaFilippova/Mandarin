@@ -23,12 +23,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_TITLE_IN_MENU
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
@@ -42,7 +42,7 @@ fun MenuMealItem(
     favoriteIds: Set<String>,
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
-    cartState: CartContract.CartState,
+    cartItems: Map<CustomizedMeal, Int>,
     imageSize: Dp,
     modifier: Modifier = Modifier
 ) {
@@ -110,7 +110,7 @@ fun MenuMealItem(
                 baseMeal = meal,
                 onAddToCart = { onAddToCart(meal) },
                 onRemoveFromCart = { onRemoveFromCart(meal) },
-                cartState = cartState,
+                cartItems = cartItems,
                 onMealDetailsClick = { onMealDetailsClick(meal) },
             )
 

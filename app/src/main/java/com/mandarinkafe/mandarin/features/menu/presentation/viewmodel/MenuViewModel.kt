@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.menu.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
@@ -101,6 +102,7 @@ class MenuViewModel @Inject constructor(
             is ErrorOther<*> -> UiError.OtherError
             else -> return
         }
+        Log.d("Menu DEBUG", "Error: ${resource.message}")
         setState { copy(error = error) }
     }
 

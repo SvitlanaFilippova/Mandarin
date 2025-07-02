@@ -52,7 +52,7 @@ fun FavoritesScreen(
 
             else -> FavoritesContent(
                 data = state.data,
-                cartState = cartState,
+                cartItems = cartState.cartItems,
                 onAddToCart = { item -> onCartEvent(CartEvent.AddToCart(item)) },
                 onRemoveFromCart = { item -> onCartEvent(CartEvent.RemoveFromCartByItem(item)) },
                 onMealDetailsClick = { item -> onSharedEvent(SharedEvent.OnMealDetailsClick(item = item)) },

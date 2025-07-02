@@ -1,8 +1,11 @@
 package com.mandarinkafe.mandarin.features.menu.presentation.models
 
+import androidx.compose.runtime.Stable
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 
 sealed interface MenuItem {
+
+    @Stable
     data class HeaderItem(
         val categoryName: String,
         val sku: String,

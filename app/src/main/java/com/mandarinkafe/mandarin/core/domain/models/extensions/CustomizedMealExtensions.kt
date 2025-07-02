@@ -28,6 +28,18 @@ fun CustomizedMeal.isCustomized(): Boolean {
     return modifiers.isNotEmpty() || adds.isNotEmpty()
 }
 
+val CustomizedMeal.id: String
+    get() = buildString {
+        append(meal.id)
+        adds.sortedBy { it.id }.forEach { append("_add_${it.id}") }
+        modifiers.sortedBy { it.id }.forEach { group ->
+            append("_modgroup_${group.id}")
+            group.items.sortedBy { it.id }.forEach {
+                append("_mod_${it.id}")
+            }
+        }
+    }
+
 /**
  * Генерирует текстовое описание выбранных опций блюда.
  *

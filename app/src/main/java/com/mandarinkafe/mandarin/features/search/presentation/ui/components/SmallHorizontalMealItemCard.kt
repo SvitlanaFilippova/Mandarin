@@ -22,12 +22,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MealButtonsRow
 
@@ -36,11 +36,11 @@ fun SmallHorizontalMealItemCard(
     modifier: Modifier = Modifier,
     meal: Meal,
     favoriteIds: Set<String>,
+    cartItems: Map<CustomizedMeal, Int>,
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
-    cartState: CartContract.CartState,
 ) {
     val isFavorite by remember(favoriteIds) {
         derivedStateOf { meal.isFavorite(favoriteIds) }
@@ -109,7 +109,7 @@ fun SmallHorizontalMealItemCard(
                         .width(Dimens.ButtonsRowWidth164)
                         .padding(top = Dimens.MarginSmall8),
                     baseMeal = meal,
-                    cartState = cartState,
+                    cartItems = cartItems,
                     onAddToCart = { onAddToCart(meal) },
                     onRemoveFromCart = { onRemoveFromCart(meal) },
                     onMealDetailsClick = { onMealDetailsClick(meal) },

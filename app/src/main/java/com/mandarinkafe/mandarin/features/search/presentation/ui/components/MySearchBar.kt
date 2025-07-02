@@ -19,10 +19,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract
 
 /**
@@ -34,7 +34,7 @@ import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchCo
 fun MySearchBar(
     focusSearchBarInput: Boolean,
     searchState: SearchContract.SearchState,
-    cartState: CartContract.CartState,
+    cartItems: Map<CustomizedMeal, Int>,
     favoriteIds: Set<String>,
     onSearchEvent: (SearchContract.SearchEvent) -> Unit,
     onSearchDismiss: () -> Unit,
@@ -100,7 +100,7 @@ fun MySearchBar(
                 SearchResults(
                     filteredMenuItems = filteredMenuItems,
                     latestSearchText = latestSearchText,
-                    cartState = cartState,
+                    cartItems = cartItems,
                     favoriteIds = favoriteIds,
                     onSearchDismiss = onSearchDismiss,
                     onToggleFavorite = onToggleFavorite,

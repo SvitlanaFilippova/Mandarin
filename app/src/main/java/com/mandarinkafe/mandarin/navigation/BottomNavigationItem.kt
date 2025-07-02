@@ -1,8 +1,7 @@
-package com.mandarinkafe.mandarin.navigation.components
+package com.mandarinkafe.mandarin.navigation
 
 import androidx.annotation.StringRes
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.navigation.NavConstants
 
 sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val route: String) {
     object Menu : BottomNavigationItem(

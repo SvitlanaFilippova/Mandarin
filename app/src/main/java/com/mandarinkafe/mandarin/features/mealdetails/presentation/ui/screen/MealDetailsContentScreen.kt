@@ -3,48 +3,31 @@ package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.extensions.hasSelectedAllRequiredModifiers
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isOnlySingleRequiredChoice
 import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.BottomSheetHeader
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.MakeMoreDeliciousBlock
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.MealInfo
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.MealDetailsMainContent
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.ToCartButton
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.AddsCategoryTabsRow
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.AddsItem
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.ChosenOptionsChipsRow
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.modifiers.ModifierGroupItem
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsState
+import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
 import kotlinx.coroutines.launch
 
 @Composable
 fun MealDetailsContentScreen(
-    state: MealDetailsState,
-    initItem: CustomizedMeal,
+    selectedTabIndex: Int,
+    addons: List<MealAdditionalCategory>,
+    customizedMeal: CustomizedMeal,
     isFavorite: Boolean,
     isEditMode: Boolean,
     onClose: () -> Unit,
@@ -53,18 +36,18 @@ fun MealDetailsContentScreen(
     onEdit: () -> Unit,
     onToggleFavorite: () -> Unit,
 ) {
-    val customizedMeal = state.customizedMeal ?: initItem
-    val meal = customizedMeal.meal
+    val meal = remember(customizedMeal) { customizedMeal.meal }
+    val chosenModifiers = remember(customizedMeal) { customizedMeal.modifiers }
+    val toCartShouldBeActive =
+        remember(customizedMeal) { customizedMeal.hasSelectedAllRequiredModifiers() }
     val listState = rememberLazyListState()
-    val chosenModifiers = state.customizedMeal?.modifiers ?: emptyList()
-    val toCartShouldBeActive = customizedMeal.hasSelectedAllRequiredModifiers()
     val coroutineScope = rememberCoroutineScope()
-    val scrollTargetKey = SCROLL_TARGET_KEY
-    val handleMakeMoreDeliciousClick: () -> Unit = remember(listState) {
+
+    val onMakeMoreDeliciousClick: () -> Unit = remember(listState) {
         {
             coroutineScope.launch {
                 val index = listState.layoutInfo.visibleItemsInfo
-                    .find { it.key == scrollTargetKey }
+                    .find { it.key == SCROLL_TARGET_KEY }
                     ?.index
 
                 if (index != null) {
@@ -86,141 +69,16 @@ fun MealDetailsContentScreen(
         )
 
         Box {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                state = listState
+            MealDetailsMainContent(
+                customizedMeal = customizedMeal,
+                listState = listState,
+                selectedTabIndex = selectedTabIndex,
+                addons = addons,
+                chosenModifiers = chosenModifiers,
+                onMakeMoreDeliciousClick = onMakeMoreDeliciousClick,
+                onEvent = onEvent
+            )
 
-            ) {
-                // Изображение блюда и нформация о нём
-                item {
-                    MealInfo(
-                        meal = meal
-                    )
-                }
-
-                // Заголовок для модификаторов/добавок, если блюдо и без них можно закаказать
-                if (meal.isCustomizable) {
-                    item(key = scrollTargetKey) {
-                        MakeMoreDeliciousBlock(onClick = handleMakeMoreDeliciousClick)
-                    }
-                }
-
-                // Выбор модификаторов
-                if (meal.modifiers.isNotEmpty()) {
-                    itemsIndexed(meal.modifiers) { index, modifierGroup ->
-                        ModifierGroupItem(
-                            modifierGroup = modifierGroup,
-                            chosenModifiers = chosenModifiers,
-                            onChooseSingleModifier = { modifierGroup ->
-                                onEvent(
-                                    MealDetailsEvent.ChooseSingleModifier(
-                                        modifierGroup
-                                    )
-                                )
-                            },
-                            onChooseMultiModifiers = { modifierGroup, modifierItem, isChecked ->
-                                onEvent(
-                                    MealDetailsEvent.ChooseMultiModifiers(
-                                        modifierGroup = modifierGroup,
-                                        modifierItem = modifierItem,
-                                        isChecked = isChecked
-                                    )
-                                )
-                            }
-                        )
-                    }
-                }
-                // Выбор добавок
-                if (meal.isAddable) {
-                    item {
-                        Text(
-                            text = stringResource(id = R.string.adds),
-                            modifier = Modifier.padding(
-                                start = Dimens.MarginSmall8,
-                                top = Dimens.MarginBig24,
-                                bottom = Dimens.MarginSmall8
-                            ),
-                            style = Typography.TitleStyle
-                        )
-                    }
-                    // Категории добавок
-                    val selectedTabIndex = state.selectedTabIndex
-                    item {
-                        AddsCategoryTabsRow(
-                            categories = state.addons.map { it.name },
-                            selectedTabIndex = selectedTabIndex,
-                            onTabSelected = { index ->
-                                onEvent(
-                                    MealDetailsEvent.ChooseCategory(
-                                        index
-                                    )
-                                )
-                            }
-                        )
-                    }
-
-                    val addsItems =
-                        state.addons[selectedTabIndex].mealAdditionals ?: emptyList()
-                    // Список доступных добавок
-                    itemsIndexed(addsItems) { _, item ->
-                        AddsItem(
-                            add = item,
-                            onCheckedChange = { isChecked, add ->
-                                onEvent(
-                                    MealDetailsEvent.ChangeAdds(
-                                        add = add,
-                                        isChecked = isChecked
-                                    )
-                                )
-                            },
-                            isAdded = customizedMeal.adds.contains(item)
-                        )
-                    }
-                }
-                // Если это НЕ позиция, где должна быть выбрана всего одная опция - показываем перечень выбранных опций
-                if (!meal.isOnlySingleRequiredChoice() && customizedMeal.isCustomized()) {
-                    item {
-                        Text(
-                            modifier = Modifier.padding(
-                                top = Dimens.MarginBig24,
-                                bottom = Dimens.MarginSmall8
-                            ),
-                            text = stringResource(id = R.string.chosen),
-                            style = Typography.RegularLightTextStyle,
-                            fontWeight = FontWeight.Light,
-                            color = Colors.LightGrey
-                        )
-                    }
-                    item {
-                        ChosenOptionsChipsRow(
-                            adds = customizedMeal.adds,
-                            onAddClick = { add ->
-                                onEvent(
-                                    MealDetailsEvent.ChangeAdds(
-                                        add = add,
-                                        isChecked = false
-                                    )
-                                )
-                            },
-                            modifiers = customizedMeal.modifiers,
-                            onModifierClick = { group, item ->
-                                onEvent(
-                                    MealDetailsEvent.ChooseMultiModifiers(
-                                        modifierGroup = group,
-                                        modifierItem = item,
-                                        isChecked = false
-                                    )
-                                )
-                            }
-                        )
-                    }
-                }
-
-                // Отступ для кнопки "В корзину"
-                item { Spacer(modifier = Modifier.height(Dimens.MarginForCartButton72)) }
-
-            }
             // Кнопка "В корзину", закреплённая внизу
             ToCartButton(
                 modifier = Modifier

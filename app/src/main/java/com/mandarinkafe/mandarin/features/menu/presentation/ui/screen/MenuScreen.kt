@@ -43,19 +43,24 @@ fun MenuScreen(
             onRetryClick = { },
             onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
         )
-
         else -> MenuContentScreen(
             listState = listState,
             onMenuEvent = onMenuEvent,
             onSharedEvent = onSharedEvent,
-            menuSate = menuSate,
-            cartState = cartState,
+            cartItems = cartState.cartItems,
+            menuItems = menuSate.menuItems,
+            banners = menuSate.banners,
+            bannersAreLoading = menuSate.bannersAreLoading,
+            selectedTabIndex = menuSate.selectedTabIndex,
+            selectedSubTabIndex = menuSate.selectedSubTabIndex,
+            selectedMenuItemIndex = menuSate.selectedMenuItemIndex,
             favoriteIds = favoriteIds,
             onMealDetailsClick = { meal -> onSharedEvent(SharedEvent.OnMealDetailsClick(meal)) },
             onToggleFavorite = { meal -> onSharedEvent(SharedEvent.ToggleFavorite(meal)) },
             onAddToCart = { meal -> onCartEvent(meal.toAddToCartEvent()) },
             onRemoveFromCart = { meal -> onCartEvent(meal.toRemoveFromCartNow()) },
         )
+
     }
 
     // Отлавливаем эффект перехода на поиск

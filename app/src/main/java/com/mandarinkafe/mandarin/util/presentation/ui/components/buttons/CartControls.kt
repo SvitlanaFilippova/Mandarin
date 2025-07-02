@@ -30,11 +30,11 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
 fun CartControls(
+    modifier: Modifier = Modifier,
     numberInCart: Int,
     totalPrice: Int,
     onIncrease: () -> Unit,
     onDecrease: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier

@@ -2,6 +2,8 @@
 
 package com.mandarinkafe.mandarin.util
 
+import com.mandarinkafe.mandarin.util.Constants.NON_BRAKING_SPACE
+
 object TypographyRules {
     /**
      * Список коротких слов (предлогов, союзов и частиц), перед которыми нужен неразрывный пробел
@@ -16,8 +18,6 @@ object TypographyRules {
  * Функция для применения правил типографики к строке
  */
 fun String.applyTypography(): String {
-    val nonBreakingSpace = "\u00A0"
-
     val shortWordRegex = Regex(
         """\b(${TypographyRules.shortWords.joinToString("|")})\s""",
         RegexOption.IGNORE_CASE
@@ -32,7 +32,7 @@ fun String.applyTypography(): String {
         .replace(Regex("""(?<=^|\s)-(?=\S)""")) { "- " }
         // Неразрывный пробел после коротких слов
         .replace(shortWordRegex) { matchResult ->
-            matchResult.groupValues[1] + nonBreakingSpace
+            matchResult.groupValues[1] + NON_BRAKING_SPACE
         }
         // Неразрывные числа (десятичные дроби типа 0,33 и числа с разрядами типа 12 500)
         .normalizeNumbers()
@@ -58,19 +58,18 @@ fun String.applyTypography(): String {
  * Нормализация записи веса (граммов) и размера (в см) в строках
  */
 private fun String.normalizeWeightAndUnits(): String {
-    val nonBreakingSpace = "\u00A0"
     return this
         // "гр" после числа -> "г" с неразрывным пробелом
         .replace(Regex("""\b(\d+)\s*(гр|ГР|Гр|гР)\.?\b""")) {
-            "${it.groupValues[1]}$nonBreakingSpace${"г"}"
+            "${it.groupValues[1]}$NON_BRAKING_SPACE${"г"}"
         }
         // "г" после числа -> "г" с неразрывным пробелом
         .replace(Regex("""(\d+)\s*(г|Г)\.?""")) {
-            "${it.groupValues[1]}$nonBreakingSpace${it.groupValues[2].lowercase()}"
+            "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}"
         }
         // сантиметры (с сохранением точки, если она есть)
         .replace(Regex("""(\d+)\s*(см|См)(\.)?""")) {
-            "${it.groupValues[1]}$nonBreakingSpace${it.groupValues[2].lowercase()}${it.groupValues[3]}"
+            "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}${it.groupValues[3]}"
         }
 }
 
@@ -78,8 +77,6 @@ private fun String.normalizeWeightAndUnits(): String {
  * Нормализация чисел: десятичные дроби и числа с разрядами через неразрывный пробел
  */
 private fun String.normalizeNumbers(): String {
-    val nonBreakingSpace = "\u00A0"
-
     return this
         // 1. Неразрывные дроби (0,33)
         .replace(Regex("""(\d),(\d)""")) { matchResult ->
@@ -90,7 +87,7 @@ private fun String.normalizeNumbers(): String {
         .replace(Regex("""(\d{1,3}) (\d{3})(?!\d)""")) { matchResult ->
             val part1 = matchResult.groupValues[1]
             val part2 = matchResult.groupValues[2]
-            "$part1$nonBreakingSpace$part2"
+            "$part1$NON_BRAKING_SPACE$part2"
         }
 }
 

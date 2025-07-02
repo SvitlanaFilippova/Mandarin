@@ -5,14 +5,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 import com.mandarinkafe.mandarin.util.Constants
 
 @Composable
 fun SearchResultsLazyColumn(
     filteredMenuItems: List<Meal>,
-    cartState: CartContract.CartState,
+    cartItems: Map<CustomizedMeal, Int>,
     favoriteIds: Set<String>,
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
@@ -27,7 +27,7 @@ fun SearchResultsLazyColumn(
             SmallHorizontalMealItemCard(
                 modifier = Modifier.animateItem(tween(Constants.ANIMATION_DURATION_FAST)),
                 meal = meal,
-                cartState = cartState,
+                cartItems = cartItems,
                 favoriteIds = favoriteIds,
                 onToggleFavorite = onToggleFavorite,
                 onAddToCart = onAddToCart,

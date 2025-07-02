@@ -18,12 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MealButtonsRow
 
@@ -32,7 +32,7 @@ fun MenuCompactMealItem(
     modifier: Modifier = Modifier,
     meal: Meal,
     favoriteIds: Set<String>,
-    cartState: CartContract.CartState,
+    cartItems: Map<CustomizedMeal, Int>,
     imageSize: Dp,
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
@@ -72,7 +72,7 @@ fun MenuCompactMealItem(
                 baseMeal = meal,
                 onAddToCart = { onAddToCart(meal) },
                 onRemoveFromCart = { onRemoveFromCart(meal) },
-                cartState = cartState,
+                cartItems = cartItems,
                 onMealDetailsClick = { onMealDetailsClick(meal) }
             )
         }

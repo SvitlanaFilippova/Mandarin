@@ -15,9 +15,9 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
 fun CustomizeButtonWithText(
-    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     text: String,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit,
 ) {
     Button(
         onClick = onClick,

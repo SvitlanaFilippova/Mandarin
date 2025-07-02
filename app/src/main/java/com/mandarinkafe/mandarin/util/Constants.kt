@@ -45,6 +45,7 @@ object Constants {
     const val WEIGHT_RATIO_70 = 0.7f
     const val ALPHA_50 = 0.5f
     const val TITLE_FONT_WEIGHT = 800
+    const val NON_BRAKING_SPACE = "\u00A0"
 
     // Menu loading
     const val MAX_ATTEMPTS = 3

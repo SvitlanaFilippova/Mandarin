@@ -14,7 +14,6 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CartControls
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CustomizeButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.SelectButton
@@ -24,12 +23,12 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ToCartB
 fun FavoriteItemButtonRow(
     modifier: Modifier = Modifier,
     item: CustomizedMeal,
+    cartItems: Map<CustomizedMeal, Int>,
     onAddToCart: (CustomizedMeal) -> Unit,
     onRemoveFromCart: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
-    cartState: CartState,
-) {
-    val cartItems = cartState.cartItems
+
+    ) {
     val isInTheCart = cartItems.keys.any { it == item }
     val totalPrice = item.totalPrice()
     val isCustomized = item.isCustomized()
