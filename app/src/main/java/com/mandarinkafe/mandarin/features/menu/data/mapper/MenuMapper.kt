@@ -71,7 +71,7 @@ private fun MealDto.toDomain(
         sku = sku ?: "",
         weight = baseInfo.weight,
         price = baseInfo.price,
-        imageUrl = baseInfo.imageUrl,
+        imageUrl = baseInfo.imageUrl ?: "",
         labels = finalMealLabels,
         tags = finalMealTags,
         isHidden = isHidden == true,
@@ -158,7 +158,7 @@ private fun mergeLabels(mealLabels: List<Label>, categoryLabels: List<Label>): L
 private data class BaseMealInfo(
     val weight: Int,
     val price: Int,
-    val imageUrl: String,
+    val imageUrl: String?,
 )
 
 private fun extractBaseInfo(firstSize: ItemSize): BaseMealInfo {

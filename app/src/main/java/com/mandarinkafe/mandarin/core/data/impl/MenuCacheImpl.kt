@@ -52,11 +52,15 @@ class MenuCacheImpl @Inject constructor(
                     is Resource.Success -> return result
                     is Resource.ErrorNoInternet<*> -> return result
                     else -> {
+                        Log.d(
+                            "Menu DEBUG",
+                            "fetchWithRetries. Не удалось загрузить меню. ${result.message}"
+                        )
                     }
                 }
 
             } catch (e: Exception) {
-                Log.d("fetchWithRetries", "Ошибка: ${e.message}")
+                Log.d("Menu DEBUG", "fetchWithRetries. Ошибка: ${e.message}")
             }
             attempts++
             delay(DELAY_BEFORE_NEXT_ATTEMPT)

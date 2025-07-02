@@ -45,7 +45,6 @@ import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_SLOW
 import com.mandarinkafe.mandarin.util.Constants.BANNERS_ASPECT_RATIO
 import com.mandarinkafe.mandarin.util.Constants.BANNERS_AUTO_SCROLL_INTERVAL
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -54,7 +53,7 @@ fun BannerCarousel(
     banners: List<Banner>,
     autoScrollInterval: Long = BANNERS_AUTO_SCROLL_INTERVAL,
     easing: Easing = LinearEasing,
-    onBannerClick: (Banner) -> Job
+    onBannerClick: (Banner) -> Unit
 ) {
     val pagerState = rememberPagerState { banners.size }
     val coroutineScope = rememberCoroutineScope()

@@ -14,15 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
@@ -37,14 +29,10 @@ import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuLi
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.SearchBar
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.categorytabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.categorytabs.SubCategoryTabsRow
-import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.getVisibleCategoryIndexes
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.util.Constants.BANNERS_ASPECT_RATIO
-import com.mandarinkafe.mandarin.util.Constants.FORCE_SHOW_FAB_DURATION_MS
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MyCircularProgressIndicator
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun MenuContentScreen(
@@ -64,113 +52,24 @@ fun MenuContentScreen(
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
 ) {
-    val categories = menuItems.filterIsInstance<MenuItem.HeaderItem>()
-    val categoriesNames = categories.map { it.categoryName }
-    val coroutineScope = rememberCoroutineScope()
-
-    val isScrollingUp = remember { mutableStateOf(false) }
-    val isScrollingDown = remember { mutableStateOf(false) }
-
-    var previousIndex by remember { mutableIntStateOf(0) }
-    var previousOffset by remember { mutableIntStateOf(0) }
-
-    val isAtTop by remember {
-        derivedStateOf {
-            listState.firstVisibleItemScrollOffset == 0
-        }
+    val categories = remember(menuItems) {
+        menuItems.filterIsInstance<MenuItem.HeaderItem>()
     }
 
-    val showMenuTopBar by remember {
-        derivedStateOf {
-            isAtTop || isScrollingUp.value
-        }
+    val categoriesNames = remember(categories) {
+        categories.map { it.categoryName }
     }
 
-    val forceShowBackToTopFAB = remember { mutableStateOf(false) }
-    val showBackToTopFAB by remember {
-        derivedStateOf {
-            forceShowBackToTopFAB.value || !isAtTop && !isScrollingDown.value
-        }
-    }
-
-    val handleBannerClick = { banner: Banner ->
-        coroutineScope.launch {
-            onMenuEvent(MenuEvent.BannerClick(banner))
-            forceShowBackToTopFAB.value = true
-            delay(FORCE_SHOW_FAB_DURATION_MS)
-            forceShowBackToTopFAB.value = false
-        }
-    }
-
-    val handleBackToTopClick = {
-        coroutineScope.launch {
-            listState.scrollToItem(index = 0)
-            onMenuEvent(MenuEvent.ScrollToTop)
-        }
-    }
-    // Скрыть/показать TopBar в зависимости от видимой части экрана
-    LaunchedEffect(isAtTop) {
-        if (isAtTop) {
-            onSharedEvent(SharedEvent.ShowTopBar)
-        } else {
-            onSharedEvent(SharedEvent.HideTopBar)
-        }
-    }
-
-    // Отслеживание изменения selectedMenuItemIndex и скролл при обновлении
-    LaunchedEffect(selectedMenuItemIndex) {
-        if (selectedMenuItemIndex >= 0) {
-            listState.scrollToItem(selectedMenuItemIndex, scrollOffset = 1)
-            onMenuEvent(MenuEvent.ResetSelectedMenuItemIndex)
-        }
-    }
-
-    // Отслеживание направления скролла
-    LaunchedEffect(listState) {
-        snapshotFlow {
-            listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
-        }.collect { (index, offset) ->
-            val deltaIndex = index - previousIndex
-            val deltaOffset = offset - previousOffset
-
-            val isScrollingDownNow = when {
-                deltaIndex > 0 -> true
-                deltaIndex < 0 -> false
-                else -> deltaOffset > 0
-            }
-
-            val isScrollingUpNow = when {
-                deltaIndex < 0 -> true
-                deltaIndex > 0 -> false
-                else -> deltaOffset < 0
-            }
-
-            isScrollingDown.value = isScrollingDownNow
-            isScrollingUp.value = isScrollingUpNow
-
-            previousIndex = index
-            previousOffset = offset
-        }
-    }
-
-    // Отслеживание скролла для обновления активного таба
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
-            .collect { visibleItems ->
-                val (newCategoryIndex, newSubIndex) = getVisibleCategoryIndexes(
-                    visibleItems = visibleItems,
-                    menuItems = menuItems,
-                    categoriesNames = categoriesNames
-                )
-
-                if (newCategoryIndex != null && newCategoryIndex != selectedTabIndex) {
-                    onMenuEvent(MenuEvent.ScrollToCategory(newCategoryIndex))
-                }
-                if (newSubIndex != null && newSubIndex != selectedSubTabIndex) {
-                    onMenuEvent(MenuEvent.ScrollToSubCategory(newSubIndex))
-                }
-            }
-    }
+    val scrollUi = rememberScrollUi(
+        listState = listState,
+        selectedTabIndex = selectedTabIndex,
+        selectedSubTabIndex = selectedSubTabIndex,
+        selectedMenuItemIndex = selectedMenuItemIndex,
+        menuItems = menuItems,
+        categoriesNames = categoriesNames,
+        onMenuEvent = onMenuEvent,
+        onSharedEvent = onSharedEvent,
+    )
 
     Box(
         modifier = Modifier
@@ -182,7 +81,7 @@ fun MenuContentScreen(
         ) {
             // Бар с поиском и фильтрами появляется всегда, когда пользователь вверху или скроллит вверх
             AnimatedVisibility(
-                visible = showMenuTopBar,
+                visible = scrollUi.showMenuTopBar,
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically()
             ) {
@@ -193,7 +92,7 @@ fun MenuContentScreen(
 
             // Баннеры видны только если пользователь в самом верху
             AnimatedVisibility(
-                visible = isAtTop,
+                visible = scrollUi.isAtTop,
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically()
             ) {
@@ -213,7 +112,7 @@ fun MenuContentScreen(
                     if (!banners.isEmpty()) {
                         BannerCarousel(
                             banners = banners,
-                            onBannerClick = handleBannerClick
+                            onBannerClick = { banner -> scrollUi.onBannerClick(banner) }
                         )
                     }
                 }
@@ -223,17 +122,7 @@ fun MenuContentScreen(
             CategoryTabsRow(
                 categories = categories,
                 selectedTabIndex = selectedTabIndex,
-                onTabSelected = { index ->
-                    onMenuEvent(MenuEvent.ScrollToCategory(index))
-                    coroutineScope.launch {
-                        val targetIndex = menuItems.indexOfFirst {
-                            it is MenuItem.HeaderItem && it.categoryName == categories[index].categoryName
-                        }
-                        if (targetIndex >= 0) {
-                            listState.scrollToItem(index = targetIndex, scrollOffset = 1)
-                        }
-                    }
-                }
+                onTabSelected = { index -> scrollUi.scrollToCategory(index) }
             )
 
             if (selectedTabIndex >= 0) {
@@ -250,18 +139,7 @@ fun MenuContentScreen(
                             categories = currentSubCategories,
                             selectedTabIndex = selectedSubTabIndex,
                             onTabSelected = { index ->
-                                onMenuEvent(MenuEvent.ScrollToSubCategory(index))
-                                coroutineScope.launch {
-                                    val targetIndex = menuItems.indexOfFirst {
-                                        it is MenuItem.SubHeaderItem && it.categoryName == currentSubCategories[index]
-                                    }
-                                    if (targetIndex >= 0) {
-                                        listState.scrollToItem(
-                                            index = targetIndex,
-                                            scrollOffset = 1
-                                        )
-                                    }
-                                }
+                                scrollUi.scrollToSubCategory(index, currentSubCategories)
                             }
                         )
                     }
@@ -285,7 +163,7 @@ fun MenuContentScreen(
 
         // FAB для возврата наверх, видна когда юзер не скролит вниз и не находится наверху экрана
         AnimatedVisibility(
-            visible = showBackToTopFAB,
+            visible = scrollUi.showBackToTopFAB,
             enter = fadeIn(),
             exit = fadeOut(),
             modifier = Modifier
@@ -293,7 +171,7 @@ fun MenuContentScreen(
                 .padding(Dimens.MarginStandard16)
         ) {
             BackToTopFAB(
-                onClick = { handleBackToTopClick() }
+                onClick = { scrollUi.onBackToTopClick() }
             )
         }
     }
