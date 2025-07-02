@@ -1,0 +1,94 @@
+package com.mandarinkafe.mandarin.features.cart.presentation.components
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.extensions.customizedText
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.ALPHA_50
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
+
+@Composable
+fun CartItemBaseInfo(
+    item: CustomizedMeal,
+    itemInPendingDeletion: Boolean,
+    favorites: List<CustomizedMeal>,
+    contentColor: Color,
+    onToggleFavorite: (CustomizedMeal) -> Unit,
+    onShowFavoriteDialog: (CustomizedMeal) -> Unit,
+) {
+    val imageAlpha = remember(itemInPendingDeletion) { if (itemInPendingDeletion) ALPHA_50 else 1f }
+
+    val isFavorite by remember(item, favorites) {
+        derivedStateOf { item.isFavorite(favorites) }
+    }
+    val meal = item.meal
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        MealItemImageBox(
+            modifier = Modifier
+                .size(Dimens.MealSmallImage80)
+                .alpha(imageAlpha),
+            meal = meal,
+            isFavorite = isFavorite,
+            onToggleFavorite = {
+                if (!isFavorite && item.isCustomized()) {
+                    onShowFavoriteDialog(item)
+                } else {
+                    onToggleFavorite(item)
+                }
+            },
+        )
+
+        Column(
+            modifier = Modifier
+                .padding(
+                    start = Dimens.MarginStandard16,
+                    bottom = Dimens.MarginSmall8
+                )
+                .fillMaxWidth()
+        ) {
+            // Название блюда
+            Text(
+                text = meal.name,
+                style = Typography.RegularTextStyle,
+                color = contentColor,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+
+            // Выбранные опции кастомизации
+            if (item.isCustomized()) {
+                Text(
+                    text = item.customizedText(),
+                    style = Typography.MealSmallTextStyle,
+                    color = contentColor,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+        }
+    }
+}
