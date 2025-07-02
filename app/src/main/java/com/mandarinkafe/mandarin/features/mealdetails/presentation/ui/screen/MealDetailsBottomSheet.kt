@@ -109,6 +109,7 @@ fun MealDetailsBottomSheet(
             error = error,
             onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
         )
+
         else ->
             ModalBottomSheet(
                 modifier = Modifier
@@ -121,20 +122,14 @@ fun MealDetailsBottomSheet(
                 scrimColor = Colors.LightGreyTransparent75,
             ) {
                 MealDetailsContentScreen(
-                    state = state,
-                    initItem = initItem,
+                    customizedMeal = customizedMeal,
                     onEvent = viewModel::onEvent,
-                    onAddToCart = { onCartEvent(AddToCart(customizedMeal)) },
-                    onClose = onClose,
-                    onToggleFavorite = {
-                        if (!isFavorite && customizedMeal.isCustomized()) {
-                            onSharedEvent(SharedEvent.ShowFavoriteDialog(customizedMeal))
-                        } else {
-                            onToggleFavorite(customizedMeal)
-                        }
-                    },
+                    selectedTabIndex = state.selectedTabIndex,
+                    addons = state.addons,
                     isFavorite = isFavorite,
                     isEditMode = isEditMode,
+                    onClose = onClose,
+                    onAddToCart = { onCartEvent(AddToCart(customizedMeal)) },
                     onEdit = {
                         onCartEvent(
                             ReplaceMealInCart(
@@ -142,6 +137,13 @@ fun MealDetailsBottomSheet(
                                 oldItem = initItem
                             )
                         )
+                    },
+                    onToggleFavorite = {
+                        if (!isFavorite && customizedMeal.isCustomized()) {
+                            onSharedEvent(SharedEvent.ShowFavoriteDialog(customizedMeal))
+                        } else {
+                            onToggleFavorite(customizedMeal)
+                        }
                     },
                 )
             }

@@ -28,23 +28,24 @@ import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.AddsHeader
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.BottomSheetHeader
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.MakeMoreDeliciousBlock
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.MealInfo
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.ToCartButton
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.AddsCategoryTabsRow
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.AddsItem
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.ChosenOptionsChipsRow
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.modifiers.ModifierGroupItem
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsState
+import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
 import kotlinx.coroutines.launch
 
 @Composable
 fun MealDetailsContentScreen(
-    state: MealDetailsState,
-    initItem: CustomizedMeal,
+    selectedTabIndex: Int,
+    addons: List<MealAdditionalCategory>,
+    customizedMeal: CustomizedMeal,
     isFavorite: Boolean,
     isEditMode: Boolean,
     onClose: () -> Unit,
@@ -53,18 +54,17 @@ fun MealDetailsContentScreen(
     onEdit: () -> Unit,
     onToggleFavorite: () -> Unit,
 ) {
-    val customizedMeal = state.customizedMeal ?: initItem
     val meal = customizedMeal.meal
+    val chosenModifiers = remember(customizedMeal) { customizedMeal.modifiers }
+    val toCartShouldBeActive =
+        remember(customizedMeal) { customizedMeal.hasSelectedAllRequiredModifiers() }
     val listState = rememberLazyListState()
-    val chosenModifiers = state.customizedMeal?.modifiers ?: emptyList()
-    val toCartShouldBeActive = customizedMeal.hasSelectedAllRequiredModifiers()
     val coroutineScope = rememberCoroutineScope()
-    val scrollTargetKey = SCROLL_TARGET_KEY
     val handleMakeMoreDeliciousClick: () -> Unit = remember(listState) {
         {
             coroutineScope.launch {
                 val index = listState.layoutInfo.visibleItemsInfo
-                    .find { it.key == scrollTargetKey }
+                    .find { it.key == SCROLL_TARGET_KEY }
                     ?.index
 
                 if (index != null) {
@@ -101,7 +101,7 @@ fun MealDetailsContentScreen(
 
                 // Заголовок для модификаторов/добавок, если блюдо и без них можно закаказать
                 if (meal.isCustomizable) {
-                    item(key = scrollTargetKey) {
+                    item(key = SCROLL_TARGET_KEY) {
                         MakeMoreDeliciousBlock(onClick = handleMakeMoreDeliciousClick)
                     }
                 }
@@ -134,22 +134,9 @@ fun MealDetailsContentScreen(
                 // Выбор добавок
                 if (meal.isAddable) {
                     item {
-                        Text(
-                            text = stringResource(id = R.string.adds),
-                            modifier = Modifier.padding(
-                                start = Dimens.MarginSmall8,
-                                top = Dimens.MarginBig24,
-                                bottom = Dimens.MarginSmall8
-                            ),
-                            style = Typography.TitleStyle
-                        )
-                    }
-                    // Категории добавок
-                    val selectedTabIndex = state.selectedTabIndex
-                    item {
-                        AddsCategoryTabsRow(
-                            categories = state.addons.map { it.name },
+                        AddsHeader(
                             selectedTabIndex = selectedTabIndex,
+                            categories = addons.map { it.name },
                             onTabSelected = { index ->
                                 onEvent(
                                     MealDetailsEvent.ChooseCategory(
@@ -159,9 +146,8 @@ fun MealDetailsContentScreen(
                             }
                         )
                     }
-
                     val addsItems =
-                        state.addons[selectedTabIndex].mealAdditionals ?: emptyList()
+                        addons[selectedTabIndex].mealAdditionals ?: emptyList()
                     // Список доступных добавок
                     itemsIndexed(addsItems) { _, item ->
                         AddsItem(
