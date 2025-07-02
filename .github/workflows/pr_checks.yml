@@ -101,6 +101,7 @@ jobs:
           files: app/build/outputs/apk/debug/app-debug.apk
           draft: false
           prerelease: false
+          overwrite: true
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
