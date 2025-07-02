@@ -25,7 +25,6 @@ fun MealButtonsRow(
     onAddToCart: () -> Unit,
     onRemoveFromCart: () -> Unit,
 ) {
-
     val isInTheCart = cartItems.keys.any { it.meal.id == baseMeal.id }
 
     Row(

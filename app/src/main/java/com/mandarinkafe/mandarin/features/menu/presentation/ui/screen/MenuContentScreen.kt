@@ -64,7 +64,6 @@ fun MenuContentScreen(
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
 ) {
-
     val categories = menuItems.filterIsInstance<MenuItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
     val coroutineScope = rememberCoroutineScope()
