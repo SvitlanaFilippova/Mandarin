@@ -99,10 +99,13 @@ jobs:
           path: app/build/outputs/apk/debug/app-debug.apk
 
       - name: Create GitHub Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
           name: Latest Debug Build
           files: app/build/outputs/apk/debug/app-debug.apk
+          draft: false
+          prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
