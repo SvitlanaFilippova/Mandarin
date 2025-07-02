@@ -46,7 +46,7 @@ fun MenuContentScreen(
         categories.map { it.categoryName }
     }
 
-    val scrollUi = rememberScrollUi(
+    val scrollUi = createMenuScrollUi(
         listState = listState,
         selectedTabIndex = selectedTabIndex,
         selectedSubTabIndex = selectedSubTabIndex,

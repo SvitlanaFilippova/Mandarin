@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
+import com.mandarinkafe.mandarin.features.menu.presentation.models.ScrollUi
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.getVisibleCategoryIndexes
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
@@ -21,7 +22,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun rememberScrollUi(
+internal fun createMenuScrollUi(
     listState: LazyListState,
     selectedTabIndex: Int,
     selectedSubTabIndex: Int,
@@ -30,8 +31,8 @@ internal fun rememberScrollUi(
     categoriesNames: List<String>,
     onMenuEvent: (MenuEvent) -> Unit,
     onSharedEvent: (SharedEvent) -> Unit,
+): ScrollUi {
 
-    ): ScrollUi {
     var isScrollingUp by remember { mutableStateOf(false) }
     var isScrollingDown by remember { mutableStateOf(false) }
     var previousIndex by remember { mutableIntStateOf(0) }
@@ -54,22 +55,16 @@ internal fun rememberScrollUi(
         derivedStateOf { forceShowBackToTopFAB || !isAtTop && !isScrollingDown }
     }
 
-    // Скрыть/показать TopBar в зависимости от видимой части экрана
-    LaunchedEffect(isAtTop) {
-        if (isAtTop) {
-            onSharedEvent(SharedEvent.ShowTopBar)
-        } else {
-            onSharedEvent(SharedEvent.HideTopBar)
-        }
-    }
-
-    // Отслеживание изменения selectedMenuItemIndex и скролл при обновлении
-    LaunchedEffect(selectedMenuItemIndex) {
-        if (selectedMenuItemIndex >= 0) {
-            listState.scrollToItem(selectedMenuItemIndex, scrollOffset = 1)
-            onMenuEvent(MenuEvent.ResetSelectedMenuItemIndex)
-        }
-    }
+    SetupTopBarVisibility(isAtTop, onSharedEvent)
+    SetupAutoScrollToItem(selectedMenuItemIndex, listState, onMenuEvent)
+    SetupTabTracking(
+        listState,
+        menuItems,
+        categoriesNames,
+        selectedTabIndex,
+        selectedSubTabIndex,
+        onMenuEvent
+    )
 
     // Отслеживание направления скролла
     LaunchedEffect(listState) {
@@ -99,24 +94,6 @@ internal fun rememberScrollUi(
         }
     }
 
-    // Отслеживание скролла для обновления активного таба
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
-            .collect { visibleItems ->
-                val (newCategoryIndex, newSubIndex) = getVisibleCategoryIndexes(
-                    visibleItems = visibleItems,
-                    menuItems = menuItems,
-                    categoriesNames = categoriesNames
-                )
-
-                if (newCategoryIndex != null && newCategoryIndex != selectedTabIndex) {
-                    onMenuEvent(MenuEvent.ScrollToCategory(newCategoryIndex))
-                }
-                if (newSubIndex != null && newSubIndex != selectedSubTabIndex) {
-                    onMenuEvent(MenuEvent.ScrollToSubCategory(newSubIndex))
-                }
-            }
-    }
 
     fun onBannerClick(banner: Banner) {
         coroutineScope.launch {
@@ -172,12 +149,58 @@ internal fun rememberScrollUi(
     )
 }
 
-internal data class ScrollUi(
-    val isAtTop: Boolean,
-    val showMenuTopBar: Boolean,
-    val showBackToTopFAB: Boolean,
-    val onBannerClick: (Banner) -> Unit,
-    val onBackToTopClick: () -> Unit,
-    val scrollToCategory: (Int) -> Unit,
-    val scrollToSubCategory: (Int, currentSubCategories: List<String>) -> Unit
-)
+@Composable
+private fun SetupTopBarVisibility(
+    isAtTop: Boolean,
+    onSharedEvent: (SharedEvent) -> Unit
+) {
+    LaunchedEffect(isAtTop) {
+        if (isAtTop) {
+            onSharedEvent(SharedEvent.ShowTopBar)
+        } else {
+            onSharedEvent(SharedEvent.HideTopBar)
+        }
+    }
+}
+
+@Composable
+private fun SetupAutoScrollToItem(
+    selectedIndex: Int,
+    listState: LazyListState,
+    onMenuEvent: (MenuEvent) -> Unit
+) {
+    LaunchedEffect(selectedIndex) {
+        if (selectedIndex >= 0) {
+            listState.scrollToItem(selectedIndex, scrollOffset = 1)
+            onMenuEvent(MenuEvent.ResetSelectedMenuItemIndex)
+        }
+    }
+}
+
+@Composable
+private fun SetupTabTracking(
+    listState: LazyListState,
+    menuItems: List<MenuItem>,
+    categoriesNames: List<String>,
+    selectedTabIndex: Int,
+    selectedSubTabIndex: Int,
+    onMenuEvent: (MenuEvent) -> Unit
+) {
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
+            .collect { visibleItems ->
+                val (newCategoryIndex, newSubIndex) = getVisibleCategoryIndexes(
+                    visibleItems = visibleItems,
+                    menuItems = menuItems,
+                    categoriesNames = categoriesNames
+                )
+
+                if (newCategoryIndex != null && newCategoryIndex != selectedTabIndex) {
+                    onMenuEvent(MenuEvent.ScrollToCategory(newCategoryIndex))
+                }
+                if (newSubIndex != null && newSubIndex != selectedSubTabIndex) {
+                    onMenuEvent(MenuEvent.ScrollToSubCategory(newSubIndex))
+                }
+            }
+    }
+}
