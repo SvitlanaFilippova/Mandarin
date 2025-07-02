@@ -9,11 +9,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 
 @Composable
@@ -22,7 +22,7 @@ fun SearchResults(
     latestSearchText: String,
     favoriteIds: Set<String>,
     onSearchDismiss: () -> Unit,
-    cartState: CartContract.CartState,
+    cartItems: Map<CustomizedMeal, Int>,
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
@@ -47,7 +47,7 @@ fun SearchResults(
         if (filteredMenuItems.isNotEmpty()) {
             SearchResultsLazyColumn(
                 filteredMenuItems = filteredMenuItems,
-                cartState = cartState,
+                cartItems = cartItems,
                 favoriteIds = favoriteIds,
                 onToggleFavorite = onToggleFavorite,
                 onAddToCart = onAddToCart,

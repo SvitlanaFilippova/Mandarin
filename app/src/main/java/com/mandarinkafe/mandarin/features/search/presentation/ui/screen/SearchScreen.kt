@@ -30,7 +30,7 @@ fun SearchScreen(
 
     MySearchBar(
         focusSearchBarInput = focusSearchBarInput,
-        cartState = cartState,
+        cartItems = cartState.cartItems,
         favoriteIds = favoriteIds,
         onSearchEvent = searchViewModel::onEvent,
         onSearchDismiss = {

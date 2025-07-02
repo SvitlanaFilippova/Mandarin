@@ -9,23 +9,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalPriceByMealId
 import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalQuantityByMealId
 import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 
 @Composable
 fun MealButtonsRow(
     modifier: Modifier = Modifier,
     baseMeal: Meal,
+    cartItems: Map<CustomizedMeal, Int>,
     onMealDetailsClick: () -> Unit,
     onAddToCart: () -> Unit,
     onRemoveFromCart: () -> Unit,
-    cartState: CartContract.CartState,
 ) {
-    val cartItems = cartState.cartItems
+
     val isInTheCart = cartItems.keys.any { it.meal.id == baseMeal.id }
 
     Row(

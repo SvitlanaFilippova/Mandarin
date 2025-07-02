@@ -17,7 +17,6 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.extensions.id
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_COLUMN_COUNT
 import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_SPACING_COUNT
@@ -25,7 +24,7 @@ import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_SPACING_COUNT
 @Composable
 fun FavoritesContent(
     data: List<CustomizedMeal>,
-    cartState: CartState,
+    cartItems: Map<CustomizedMeal, Int>,
     onToggleFavorite: (CustomizedMeal) -> Unit,
     onAddToCart: (CustomizedMeal) -> Unit,
     onRemoveFromCart: (CustomizedMeal) -> Unit,
@@ -55,7 +54,7 @@ fun FavoritesContent(
             FavoritesItemCard(
                 modifier = Modifier.animateItem(tween(Constants.ANIMATION_DURATION_FAST)),
                 item = item,
-                cartState = cartState,
+                cartItems = cartItems,
                 imageSize = imageSize,
                 onToggleFavorite = onToggleFavorite,
                 onAddToCart = onAddToCart,

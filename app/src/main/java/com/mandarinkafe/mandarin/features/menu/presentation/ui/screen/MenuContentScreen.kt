@@ -25,10 +25,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BackToTopFAB
@@ -38,7 +38,6 @@ import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.Search
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.categorytabs.CategoryTabsRow
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.categorytabs.SubCategoryTabsRow
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.getVisibleCategoryIndexes
-import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.util.Constants.BANNERS_ASPECT_RATIO
@@ -50,9 +49,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun MenuContentScreen(
     listState: LazyListState,
-    cartState: CartContract.CartState,
-    menuSate: MenuContract.MenuState,
+    cartItems: Map<CustomizedMeal, Int>,
+    menuItems: List<MenuItem>,
+    banners: List<Banner>,
+    bannersAreLoading: Boolean,
     favoriteIds: Set<String>,
+    selectedTabIndex: Int,
+    selectedSubTabIndex: Int,
+    selectedMenuItemIndex: Int,
     onMenuEvent: (MenuEvent) -> Unit,
     onSharedEvent: (SharedEvent) -> Unit,
     onToggleFavorite: (Meal) -> Unit,
@@ -60,10 +64,6 @@ fun MenuContentScreen(
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
 ) {
-    val menuItems = menuSate.menuItems
-    val selectedTabIndex = menuSate.selectedTabIndex
-    val selectedSubTabIndex = menuSate.selectedSubTabIndex
-    val selectedMenuItemIndex = menuSate.selectedMenuItemIndex
 
     val categories = menuItems.filterIsInstance<MenuItem.HeaderItem>()
     val categoriesNames = categories.map { it.categoryName }
@@ -198,7 +198,7 @@ fun MenuContentScreen(
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically()
             ) {
-                if (menuSate.bannersAreLoading) {
+                if (bannersAreLoading) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -211,9 +211,9 @@ fun MenuContentScreen(
                         )
                     }
                 } else {
-                    if (!menuSate.banners.isEmpty()) {
+                    if (!banners.isEmpty()) {
                         BannerCarousel(
-                            banners = menuSate.banners,
+                            banners = banners,
                             onBannerClick = handleBannerClick
                         )
                     }
@@ -275,7 +275,7 @@ fun MenuContentScreen(
                     .weight(1f),
                 menuItems = menuItems,
                 listState = listState,
-                cartState = cartState,
+                cartItems = cartItems,
                 onMealDetailsClick = onMealDetailsClick,
                 onToggleFavorite = onToggleFavorite,
                 onAddToCart = onAddToCart,
