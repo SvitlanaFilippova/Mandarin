@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.menu.presentation.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +18,7 @@ import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.getVis
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.util.Constants.FORCE_SHOW_FAB_DURATION_MS
+import com.mandarinkafe.mandarin.util.Constants.OFFSET_THRESHOLD
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -192,51 +192,6 @@ private fun SetupTabTracking(
     }
 }
 
-@Composable
-private fun SetupScrollDirectionTracking(
-    listState: LazyListState,
-    setScrollingUp: (Boolean) -> Unit,
-    setScrollingDown: (Boolean) -> Unit,
-    setPreviousIndex: (Int) -> Unit,
-    setPreviousOffset: (Int) -> Unit,
-    previousIndex: Int,
-    previousOffset: Int
-) {
-    LaunchedEffect(listState) {
-        snapshotFlow {
-            listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
-        }.collect { (index, offset) ->
-            val deltaIndex = index - previousIndex
-            val deltaOffset = offset - previousOffset
-
-            val isScrollingDownNow = when {
-                deltaIndex > 0 -> true
-                deltaIndex < 0 -> false
-                else -> deltaOffset > 0
-            }
-
-            val isScrollingUpNow = when {
-                deltaIndex < 0 -> true
-                deltaIndex > 0 -> false
-                else -> deltaOffset < 0
-            }
-
-            setScrollingDown(isScrollingDownNow)
-            Log.d(
-                "DEBUG SCROLL",
-                "SetupScrollDirectionTracking, isScrollingDownNow: ${isScrollingDownNow}"
-            )
-            setScrollingUp(isScrollingUpNow)
-            Log.d(
-                "DEBUG SCROLL",
-                "SetupScrollDirectionTracking, isScrollingUpNow: ${isScrollingUpNow}"
-            )
-            setPreviousIndex(index)
-            setPreviousOffset(offset)
-        }
-    }
-}
-
 private suspend fun trackScrollDirection(
     listState: LazyListState,
     previousIndex: () -> Int,
@@ -244,7 +199,7 @@ private suspend fun trackScrollDirection(
     updatePrevious: (Int, Int) -> Unit,
     onDirectionChanged: (ScrollDirection) -> Unit
 ) {
-    val offsetThreshold = 8
+    val offsetThreshold = OFFSET_THRESHOLD
     var lastDirection: ScrollDirection? = null
 
     snapshotFlow {
