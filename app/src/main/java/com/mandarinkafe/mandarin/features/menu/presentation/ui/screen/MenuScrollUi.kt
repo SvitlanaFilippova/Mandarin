@@ -18,6 +18,7 @@ import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.getVis
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.util.Constants.FORCE_SHOW_FAB_DURATION_MS
+import com.mandarinkafe.mandarin.util.Constants.OFFSET_THRESHOLD
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -64,15 +65,22 @@ internal fun createMenuScrollUi(
         selectedSubTabIndex,
         onMenuEvent
     )
-    SetupScrollDirectionTracking(
-        listState,
-        { isScrollingUp = it },
-        { isScrollingDown = it },
-        { previousIndex = it },
-        { previousOffset = it },
-        previousIndex,
-        previousOffset
-    )
+
+    LaunchedEffect(listState) {
+        trackScrollDirection(
+            listState = listState,
+            previousIndex = { previousIndex },
+            previousOffset = { previousOffset },
+            updatePrevious = { index, offset ->
+                previousIndex = index
+                previousOffset = offset
+            },
+            onDirectionChanged = { dir ->
+                isScrollingUp = dir == ScrollDirection.UP
+                isScrollingDown = dir == ScrollDirection.DOWN
+            }
+        )
+    }
 
     fun onBannerClick(banner: Banner) {
         coroutineScope.launch {
@@ -184,39 +192,37 @@ private fun SetupTabTracking(
     }
 }
 
-@Composable
-private fun SetupScrollDirectionTracking(
+private suspend fun trackScrollDirection(
     listState: LazyListState,
-    setScrollingUp: (Boolean) -> Unit,
-    setScrollingDown: (Boolean) -> Unit,
-    setPreviousIndex: (Int) -> Unit,
-    setPreviousOffset: (Int) -> Unit,
-    previousIndex: Int,
-    previousOffset: Int
+    previousIndex: () -> Int,
+    previousOffset: () -> Int,
+    updatePrevious: (Int, Int) -> Unit,
+    onDirectionChanged: (ScrollDirection) -> Unit
 ) {
-    LaunchedEffect(listState) {
-        snapshotFlow {
-            listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
-        }.collect { (index, offset) ->
-            val deltaIndex = index - previousIndex
-            val deltaOffset = offset - previousOffset
+    val offsetThreshold = OFFSET_THRESHOLD
+    var lastDirection: ScrollDirection? = null
 
-            val isScrollingDownNow = when {
-                deltaIndex > 0 -> true
-                deltaIndex < 0 -> false
-                else -> deltaOffset > 0
-            }
+    snapshotFlow {
+        listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
+    }.collect { (index, offset) ->
+        val deltaIndex = index - previousIndex()
+        val deltaOffset = offset - previousOffset()
 
-            val isScrollingUpNow = when {
-                deltaIndex < 0 -> true
-                deltaIndex > 0 -> false
-                else -> deltaOffset < 0
-            }
-
-            setScrollingDown(isScrollingDownNow)
-            setScrollingUp(isScrollingUpNow)
-            setPreviousIndex(index)
-            setPreviousOffset(offset)
+        val direction = when {
+            deltaIndex > 0 -> ScrollDirection.DOWN
+            deltaIndex < 0 -> ScrollDirection.UP
+            deltaOffset > offsetThreshold -> ScrollDirection.DOWN
+            deltaOffset < -offsetThreshold -> ScrollDirection.UP
+            else -> null
         }
+
+        if (direction != null && direction != lastDirection) {
+            onDirectionChanged(direction)
+            lastDirection = direction
+        }
+
+        updatePrevious(index, offset)
     }
 }
+
+private enum class ScrollDirection { UP, DOWN }

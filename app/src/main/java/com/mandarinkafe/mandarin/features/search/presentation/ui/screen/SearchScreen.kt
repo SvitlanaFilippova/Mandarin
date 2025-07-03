@@ -8,7 +8,6 @@ import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toAddToCartEvent
 import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toRemoveFromCartNow
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
-import com.mandarinkafe.mandarin.features.search.presentation.ui.components.MySearchBar
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchViewModel
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
@@ -28,7 +27,7 @@ fun SearchScreen(
     val onCartEvent = cartViewModel::onEvent
     val favoriteIds by sharedViewModel.favoritesIDs.collectAsState()
 
-    MySearchBar(
+    SearchScreenContent(
         focusSearchBarInput = focusSearchBarInput,
         cartItems = cartState.cartItems,
         favoriteIds = favoriteIds,

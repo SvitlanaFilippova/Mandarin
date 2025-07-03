@@ -49,7 +49,13 @@ class MenuViewModel @Inject constructor(
             is MenuEvent.BannerClick -> findMenuItemByBanner(event.banner)
             is MenuEvent.ResetSelectedMenuItemIndex -> resetSelectedMenuItemIndex()
             is MenuEvent.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
+            is MenuEvent.ForceRefresh -> forceRefresh()
+        }
+    }
 
+    private fun forceRefresh() {
+        viewModelScope.launch {
+            menuInteractor.forceRefresh()
         }
     }
 

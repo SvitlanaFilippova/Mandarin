@@ -29,7 +29,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.search.SearchMapper.toUiModel
+import com.mandarinkafe.mandarin.features.search.presentation.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.util.Constants.IMAGE_SIZE_IN_MENU
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.FavoriteButton
 
