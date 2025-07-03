@@ -91,9 +91,10 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest
-          name: Latest Release Build
+          tag_name: latest-${{ github.run_number }}
+          name: Release Build-${{ github.run_number }}
           files: app/build/outputs/apk/release/app-release.apk
           draft: false
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
