@@ -21,6 +21,7 @@ object Constants {
     const val IMAGE_SIZE_IN_MENU = 300
     const val MENU_IMAGE_SPACING_COUNT = 3
     const val MENU_IMAGE_COLUMN_COUNT = 2
+    const val OFFSET_THRESHOLD = 8
 
     // Splash screen
     const val SPLASH_SCREEN_DURATION = 5000L
