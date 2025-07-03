@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.menu.presentation.ui.screen
+package com.mandarinkafe.mandarin.features.menu.presentation.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
-import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BannerCarousel
 import com.mandarinkafe.mandarin.util.Constants.BANNERS_ASPECT_RATIO
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MyCircularProgressIndicator
 

@@ -43,14 +43,30 @@ fun SearchBarInputField(
     }
 
     TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
+        shape = RoundedCornerShape(Dimens.RadiusSearchField8),
         value = query,
         onValueChange = onQueryChange,
+        enabled = true,
+        singleLine = true,
+        colors = TextFieldDefaults.colors(
+            cursorColor = Colors.Orange,
+            focusedTextColor = Colors.White,
+            focusedContainerColor = Colors.DarkGrey,
+            focusedIndicatorColor = Colors.Orange,
+            unfocusedTextColor = Colors.White,
+            unfocusedContainerColor = Colors.DarkGrey,
+            unfocusedIndicatorColor = Colors.Transparent,
+        ),
         placeholder = {
             Text(
                 text = stringResource(id = R.string.search_in_menu),
                 color = Colors.White
             )
         },
+
         leadingIcon = {
             Icon(
                 Icons.Default.Search,
@@ -78,21 +94,6 @@ fun SearchBarInputField(
                 }
             }
         },
-        singleLine = true,
-        colors = TextFieldDefaults.colors(
-            cursorColor = Colors.Orange,
-            focusedTextColor = Colors.White,
-            focusedContainerColor = Colors.Transparent,
-            focusedIndicatorColor = Colors.Orange,
-            unfocusedTextColor = Colors.White,
-            unfocusedContainerColor = Colors.Transparent,
-            unfocusedIndicatorColor = Colors.Transparent,
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .focusRequester(focusRequester),
 
-        shape = RoundedCornerShape(Dimens.RadiusSearchField8),
-        enabled = true,
-    )
+        )
 }

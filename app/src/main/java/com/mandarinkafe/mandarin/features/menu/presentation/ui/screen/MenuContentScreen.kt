@@ -15,8 +15,10 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BackToTopFAB
+import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BannersSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuList
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.SearchBar
+import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.TabsSection
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 
