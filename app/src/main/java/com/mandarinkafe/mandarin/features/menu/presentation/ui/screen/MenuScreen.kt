@@ -40,7 +40,7 @@ fun MenuScreen(
         menuSate.isLoading -> LoadingScreen()
         error != null -> PlaceholderScreen(
             error = error,
-            onRetryClick = { },
+            onRetryClick = { onMenuEvent(MenuContract.MenuEvent.ForceRefresh) },
             onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
         )
         else -> MenuContentScreen(
