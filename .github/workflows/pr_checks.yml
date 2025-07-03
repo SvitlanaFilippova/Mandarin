@@ -97,7 +97,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: Debug Build
-          tag_name: Latest (debug)
+          tag_name: LatestDebug
           files: app/build/outputs/apk/debug/app-debug.apk
           draft: false
           prerelease: true
