@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
@@ -43,7 +42,6 @@ fun HandleEffects(
                     val gson = Gson()
                     val json =
                         URLEncoder.encode(gson.toJson(meal), StandardCharsets.UTF_8.toString())
-                    Log.d("DEBUG savedStateHandle", "mealJson: $json, isEditMode: $isEditMode ")
                     val route = "$MEAL_DETAILS_ROUTE/$json/$isEditMode"
                     navController.navigate(route)
                 }

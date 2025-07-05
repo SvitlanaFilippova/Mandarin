@@ -117,6 +117,7 @@ fun ModifierItemDto.toDomain(): ModifierItem {
 }
 
 fun ModifierGroupDto.toDomain(): ModifierGroup {
+    val isSingleChoice = restrictions?.maxQuantity == 1
     return ModifierGroup(
         id = itemGroupId,
         name = name ?: "",
@@ -124,7 +125,7 @@ fun ModifierGroupDto.toDomain(): ModifierGroup {
             ?.map { it.toDomain() }
             ?.sortedBy { it.price != 0 }
             ?: emptyList(),
-        isSingleChoice = restrictions?.maxQuantity == 1,
+        isSingleChoice = isSingleChoice,
         isRequired = restrictions?.minQuantity?.let { it > 0 } == true,
         maxQuantity = restrictions?.maxQuantity ?: Int.MAX_VALUE
     )

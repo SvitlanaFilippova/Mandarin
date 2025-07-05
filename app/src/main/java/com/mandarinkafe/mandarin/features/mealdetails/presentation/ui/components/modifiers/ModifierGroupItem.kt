@@ -66,7 +66,6 @@ fun ModifierGroupItem(
                 }
             )
         }
-
     } else {
         modifierGroup.items.forEach { item ->
             ModifierMultiSelectItem(
