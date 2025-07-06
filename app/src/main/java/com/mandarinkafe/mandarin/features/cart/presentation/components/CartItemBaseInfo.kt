@@ -50,6 +50,7 @@ fun CartItemBaseInfo(
                 .size(Dimens.MealSmallImage80)
                 .alpha(imageAlpha),
             meal = meal,
+            cardIsSmall = true,
             isFavorite = isFavorite,
             onToggleFavorite = {
                 if (!isFavorite && item.isCustomized()) {
@@ -58,7 +59,8 @@ fun CartItemBaseInfo(
                     onToggleFavorite(item)
                 }
             },
-        )
+
+            )
 
         Column(
             modifier = Modifier

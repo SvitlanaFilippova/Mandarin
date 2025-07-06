@@ -54,6 +54,7 @@ fun MenuCompactMealItem(
             MealItemImageBox(
                 modifier = Modifier.size(imageSize),
                 meal = meal,
+                cardIsSmall = false,
                 onToggleFavorite = { onToggleFavorite(meal) },
                 isFavorite = isFavorite,
             )

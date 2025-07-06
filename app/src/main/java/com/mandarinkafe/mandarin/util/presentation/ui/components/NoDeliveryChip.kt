@@ -20,29 +20,29 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_LABEL_CHIP
 
 @Composable
-fun NoDeliveryChip(modifier: Modifier) {
+fun NoDeliveryChip(modifier: Modifier, cardIsSmall: Boolean) {
+    val cornerRadius = if (cardIsSmall) Dimens.CornerRadius4 else Dimens.CornerRadius8
     Column(
         modifier = modifier
-            .padding(bottom = Dimens.MarginSmall8),
     ) {
         Box(
             modifier = Modifier
                 .background(
-                    color = Colors.LabelDefault,
+                    color = Colors.AppBlack80,
                     shape = RoundedCornerShape(
-                        topStart = Dimens.CornerRadius8,
-                        bottomStart = Dimens.CornerRadius8,
+                        topStart = cornerRadius,
+                        bottomStart = cornerRadius,
                         topEnd = Dimens.ZeroDp0,
                         bottomEnd = Dimens.ZeroDp0
                     )
                 )
-                .padding(Dimens.MarginSuperSmall4),
+                .padding(if (cardIsSmall) Dimens.MarginSuperSmall2 else Dimens.MarginSuperSmall4),
             contentAlignment = Alignment.CenterEnd
         ) {
             Text(
                 text = stringResource(R.string.for_selfpickup),
                 color = Color.White,
-                style = Typography.MealLabelSmallTextStyle,
+                style = if (cardIsSmall) Typography.MealLabelSmallTextStyle else Typography.MealLabelTextStyle,
                 textAlign = TextAlign.End,
                 maxLines = MAX_LINES_FOR_LABEL_CHIP,
                 overflow = TextOverflow.Ellipsis
