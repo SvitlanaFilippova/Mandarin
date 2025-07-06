@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.menu.data.mapper
 import com.mandarinkafe.mandarin.core.domain.models.Label
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
+import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.domain.models.Tag
@@ -71,6 +72,7 @@ private fun MealDto.toDomain(
         description = (description ?: "").applyTypography(),
         sku = sku ?: "",
         weight = baseInfo.weight,
+        measureUnitType = MeasureUnitType.from(firstSize.measureUnitType) ?: MeasureUnitType.GRAM,
         price = baseInfo.price,
         imageUrl = baseInfo.imageUrl ?: "",
         labels = finalMealLabels,
@@ -84,7 +86,8 @@ private fun MealDto.toDomain(
         discountable = isDiscountable(finalMealTags),
         parentCategoryName = parentCategoryName,
         grandParentCategoryName = grandParentCategoryName,
-    )
+
+        )
 }
 
 fun CategoryDto.hasParent(): Boolean =

@@ -27,6 +27,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.search.presentation.SearchMapper.toUiModel
+import com.mandarinkafe.mandarin.util.presentation.localizedShortText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LabelChip
 
 @Composable
@@ -92,7 +93,11 @@ fun MealInfo(
         ) {
             if (meal.weight != 0) {
                 Text(
-                    text = stringResource(R.string.meal_weight_template, meal.weight),
+                    text = stringResource(
+                        R.string.meal_weight_template,
+                        meal.weight,
+                        meal.measureUnitType.localizedShortText()
+                    ),
                     style = Typography.RegularLightTextStyle
                 )
             }

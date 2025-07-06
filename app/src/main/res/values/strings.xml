@@ -43,7 +43,6 @@
     <string name="mandatory">(обязательно)</string>
     <string name="make_mandatory_choice_before_cart">Выбери нужные опции в обязательных модификаторах — только после этого можно добавить блюдо в корзину</string>
 
-
     <!-- Доставка -->
     <string name="delivery">Доставка</string>
     <string name="delivery_history">История заказов</string>
@@ -65,11 +64,17 @@
     <string name="filter_by_label">"Фильтр по тегам: "</string>
     <string name="clear_text">Очистить текст</string>
 
+    <!-- Единицы измерения -->
+    <string name="unit_gram">г</string>
+    <string name="unit_kg">кг</string>
+    <string name="unit_ml">мл</string>
+    <string name="unit_l">л</string>
+
     <!-- Шаблоны текста -->
     <string name="default_price_for_button">000 ₽</string>
-    <string name="meal_weight_template">%1$d г</string>
+    <string name="meal_weight_template">%1$d %2$s</string>
+    <string name="meal_title_with_weight_template">%1$s, %2$d %3$s</string>
     <string name="meal_price_template">%1$d ₽</string>
-    <string name="meal_title_with_weight_template">%1$s, %2$d г</string>
     <string name="meal_title_with_price_template">%1$s (%2$d ₽)</string>
     <string name="meal_in_cart_count_template">%1$d шт</string>
     <string name="meal_in_cart_count_plus_template">%1$d шт +</string>
