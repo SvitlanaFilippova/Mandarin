@@ -60,6 +60,7 @@ fun SmallHorizontalMealItemCard(
                 .size(Dimens.MealItemInSearchResults96)
                 .padding(Dimens.MarginSmall8),
             meal = meal,
+            cardIsSmall = true,
             isFavorite = isFavorite,
             onToggleFavorite = { onToggleFavorite(meal) },
         )

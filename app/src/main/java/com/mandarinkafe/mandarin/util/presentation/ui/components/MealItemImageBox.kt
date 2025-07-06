@@ -37,6 +37,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.Favorit
 fun MealItemImageBox(
     modifier: Modifier = Modifier,
     meal: Meal,
+    cardIsSmall: Boolean,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
 ) {
@@ -80,16 +81,20 @@ fun MealItemImageBox(
             }
         }
         // Тэги блюда
+
+        val spacerSize = if (cardIsSmall) Dimens.MarginSuperSmall2 else Dimens.MarginSuperSmall4
+        val paddingSize = if (cardIsSmall) Dimens.MarginSuperSmall4 else Dimens.MarginSmall8
         Column(
             horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4),
+            verticalArrangement = Arrangement.spacedBy(spacerSize),
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = Dimens.MarginSmall8)
+                .padding(top = paddingSize)
         ) {
             meal.labels.forEach {
                 LabelChip(
                     label = it.toUiModel(),
+                    cardIsSmall = cardIsSmall,
                 )
             }
         }
@@ -99,6 +104,8 @@ fun MealItemImageBox(
             NoDeliveryChip(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
+                    .padding(bottom = paddingSize),
+                cardIsSmall = cardIsSmall,
             )
         }
 

@@ -7,6 +7,7 @@ object Dimens {
     val ToolbarHeadHeight40 = 40.dp
     val RecommendsItemWidth96 = 96.dp
     val Border1 = 1.dp
+    val CornerRadius4 = 4.dp
     val CornerRadius8 = 8.dp
     val CornerRadius16 = 16.dp
     val BottomBarHeight64 = 64.dp
@@ -23,6 +24,7 @@ object Dimens {
     val Margin12 = 12.dp
     val MarginSmall8 = 8.dp
     val MarginSuperSmall4 = 4.dp
+    val MarginSuperSmall2 = 2.dp
     val MarginBig20 = 20.dp
     val MarginBig24 = 24.dp
     val MarginBig32 = 32.dp

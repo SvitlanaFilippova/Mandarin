@@ -65,6 +65,7 @@ fun MenuMealItem(
                 .size(imageSize)
                 .padding(Dimens.MarginSmall8),
             meal = meal,
+            cardIsSmall = false,
             isFavorite = isFavorite,
             onToggleFavorite = { onToggleFavorite(meal) },
         )

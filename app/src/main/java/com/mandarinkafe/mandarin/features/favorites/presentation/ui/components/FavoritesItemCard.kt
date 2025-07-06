@@ -46,7 +46,7 @@ fun FavoritesItemCard(
 ) {
     val meal = item.meal
     val isFavorite =
-        true // нет смысла дополнительно проверять, поскольку в этот только избранные попадают
+        true // нет смысла дополнительно проверять, поскольку сюда только избранные попадают
 
     Row(
         verticalAlignment = Alignment.Top,
@@ -63,6 +63,7 @@ fun FavoritesItemCard(
                 .size(imageSize)
                 .padding(Dimens.MarginSmall8),
             meal = meal,
+            cardIsSmall = false,
             isFavorite = isFavorite,
             onToggleFavorite = { onToggleFavorite(item) },
         )
