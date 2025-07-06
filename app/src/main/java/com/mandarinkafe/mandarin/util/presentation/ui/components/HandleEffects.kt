@@ -1,14 +1,13 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.google.gson.Gson
-import com.mandarinkafe.mandarin.core.domain.models.Mapper.toCustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER_DEFAULT
@@ -43,7 +42,6 @@ fun HandleEffects(
                     val gson = Gson()
                     val json =
                         URLEncoder.encode(gson.toJson(meal), StandardCharsets.UTF_8.toString())
-                    Log.d("DEBUG savedStateHandle", "mealJson: $json, isEditMode: $isEditMode ")
                     val route = "$MEAL_DETAILS_ROUTE/$json/$isEditMode"
                     navController.navigate(route)
                 }

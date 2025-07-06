@@ -15,10 +15,10 @@ object Colors {
     val WhiteTransparent75 = Color(0xBFFFFFFF)
     val Transparent = Color(0x00000000)
     val LabelVegGreen = Color(0xE694C338)
-    val LabelHotRed = Color(0xFFDE5836)
-    val LabelNewBlue = Color(0xff1c848c)
-    val LabelHitOrange = Color(0xFFF5BD47)
-    val LabelDefault = Color(0xff756d85)
+    val LabelHotRed = Color(0xE6DE5836)
+    val LabelNewBlue = Color(0xE61C848C)
+    val LabelHitOrange = Color(0xE6F5BD47)
+    val LabelDefault = Color(0xE6756D85)
 
     // Цвета областей доставки
     val FirstArea = Color(0xAA0B7B6B)

@@ -68,6 +68,7 @@ object Constants {
     const val TAG_ADDS = "SHOW_ADDS"
     const val TAG_NO_ADDS = "NO_ADDS"
     const val TAG_NO_DISCOUNT = "NO_DISCOUNT"
+    const val TAG_NO_DELIVERY = "NO_DELIVERY"
 
     // Для обработки особых категорий по их названиям
     const val CATEGORY_ADDS = "добавки"

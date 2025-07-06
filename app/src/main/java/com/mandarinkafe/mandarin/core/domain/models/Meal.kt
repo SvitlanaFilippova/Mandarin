@@ -7,6 +7,7 @@ data class Meal(
     val id: String,
     val name: String,
     val weight: Int,
+    val measureUnitType: MeasureUnitType,
     val price: Int,
     val imageUrl: String,
     val description: String,
@@ -51,6 +52,11 @@ data class Meal(
     Применимы ли скидки
      */
     val discountable: Boolean,
+
+    /**
+    Заказ возможен только на самовывоз
+     */
+    val isPickupOnly: Boolean,
 
     /**
     Название родительской категории

@@ -13,11 +13,11 @@ object SearchMapper {
             Constants.NEW_LABEL_DEFAULT.lowercase() -> Colors.LabelNewBlue
             Constants.HOT_LABEL_DEFAULT.lowercase() -> Colors.LabelHotRed
             Constants.HIT_LABEL_DEFAULT.lowercase() -> Colors.LabelHitOrange
+            Constants.HIT_LABEL_DEFAULT.lowercase() -> Colors.LabelHitOrange
             else -> Colors.LabelDefault
         }
 
         return LabelUiModel(
-            id = id,
             name = name,
             backgroundColor = backgroundColor
         )

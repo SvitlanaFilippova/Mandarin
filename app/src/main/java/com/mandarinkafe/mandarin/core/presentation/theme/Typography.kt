@@ -42,8 +42,14 @@ object Typography {
     )
 
     val MealLabelTextStyle = TextStyle(
-        fontSize = Dimens.TextSizeSmall12,
+        fontSize = Dimens.TextSizeSmall11,
         fontWeight = FontWeight.Bold,
+        color = Colors.White
+    )
+
+    val MealLabelSmallTextStyle = TextStyle(
+        fontSize = Dimens.TextSizeSuperSmall9,
+        fontWeight = FontWeight.Light,
         color = Colors.White
     )
 

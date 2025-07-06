@@ -3,12 +3,13 @@ package com.mandarinkafe.mandarin.features.menu.data.mapper
 import com.mandarinkafe.mandarin.core.domain.models.Label
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
+import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.domain.models.Tag
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannerDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.CategoryDto
-import com.mandarinkafe.mandarin.features.menu.data.dto.ItemSize
+import com.mandarinkafe.mandarin.features.menu.data.dto.ItemSizeDTO
 import com.mandarinkafe.mandarin.features.menu.data.dto.LabelDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.MealDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupDto
@@ -17,6 +18,7 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.TagDto
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.util.Constants.TAG_ADDS
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_ADDS
+import com.mandarinkafe.mandarin.util.Constants.TAG_NO_DELIVERY
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_DISCOUNT
 import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.removeLeadingDash
@@ -70,6 +72,7 @@ private fun MealDto.toDomain(
         description = (description ?: "").applyTypography(),
         sku = sku ?: "",
         weight = baseInfo.weight,
+        measureUnitType = MeasureUnitType.from(firstSize.measureUnitType) ?: MeasureUnitType.GRAM,
         price = baseInfo.price,
         imageUrl = baseInfo.imageUrl ?: "",
         labels = finalMealLabels,
@@ -79,10 +82,12 @@ private fun MealDto.toDomain(
         isAddable = isAddable(finalMealTags),
         requireSelection = requireSelection(safeModifiers),
         isModifiable = isModifiable(safeModifiers, baseInfo.price),
+        isPickupOnly = finalMealTags.any { it.name.equals(TAG_NO_DELIVERY, ignoreCase = true) },
         discountable = isDiscountable(finalMealTags),
         parentCategoryName = parentCategoryName,
         grandParentCategoryName = grandParentCategoryName,
-    )
+
+        )
 }
 
 fun CategoryDto.hasParent(): Boolean =
@@ -117,6 +122,7 @@ fun ModifierItemDto.toDomain(): ModifierItem {
 }
 
 fun ModifierGroupDto.toDomain(): ModifierGroup {
+    val isSingleChoice = restrictions?.maxQuantity == 1
     return ModifierGroup(
         id = itemGroupId,
         name = name ?: "",
@@ -124,7 +130,7 @@ fun ModifierGroupDto.toDomain(): ModifierGroup {
             ?.map { it.toDomain() }
             ?.sortedBy { it.price != 0 }
             ?: emptyList(),
-        isSingleChoice = restrictions?.maxQuantity == 1,
+        isSingleChoice = isSingleChoice,
         isRequired = restrictions?.minQuantity?.let { it > 0 } == true,
         maxQuantity = restrictions?.maxQuantity ?: Int.MAX_VALUE
     )
@@ -136,7 +142,7 @@ fun BannerDto.toDomain() = Banner(
     targetName = targetName ?: "",
 )
 
-private fun getSafeModifiers(firstSize: ItemSize?) = firstSize
+private fun getSafeModifiers(firstSize: ItemSizeDTO?) = firstSize
     ?.itemModifierGroups
     ?.map { it.toDomain() }
     ?.sortedByDescending { it.isSingleChoice }
@@ -161,7 +167,7 @@ private data class BaseMealInfo(
     val imageUrl: String?,
 )
 
-private fun extractBaseInfo(firstSize: ItemSize): BaseMealInfo {
+private fun extractBaseInfo(firstSize: ItemSizeDTO): BaseMealInfo {
     val weight = firstSize.portionWeightGrams.toInt()
     val price = firstSize.prices.firstOrNull()?.price?.toInt() ?: 0
     val imageUrl = firstSize.buttonImageUrl
