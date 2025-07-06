@@ -53,6 +53,11 @@ data class Meal(
     val discountable: Boolean,
 
     /**
+    Заказ возможен только на самовывоз
+     */
+    val isPickupOnly: Boolean,
+
+    /**
     Название родительской категории
      */
     val parentCategoryName: String,

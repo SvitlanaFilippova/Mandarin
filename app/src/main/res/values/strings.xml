@@ -101,5 +101,6 @@
     <string name="added_to_cart">Добавлено в корзину</string>
     <string name="back_to_top">Вернуться в начало</string>
     <string name="is_selected">Выбрано</string>
+    <string name="for_selfpickup">для самовывоза</string>
 
 </resources>

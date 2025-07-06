@@ -49,7 +49,7 @@ fun MealItemImageBox(
         SubcomposeAsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(meal.imageUrl)
-                .size(IMAGE_SIZE_IN_MENU) // Сжимаем до нужного размера
+                .size(IMAGE_SIZE_IN_MENU)
                 .crossfade(true)
                 .build(),
             contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
@@ -92,6 +92,14 @@ fun MealItemImageBox(
                     label = it.toUiModel(),
                 )
             }
+        }
+
+        // Метка "только самовывоз"
+        if (meal.isPickupOnly) {
+            NoDeliveryChip(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+            )
         }
 
         FavoriteButton(

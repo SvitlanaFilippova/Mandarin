@@ -83,7 +83,6 @@ fun MealDetailsBottomSheet(
         sheetState.show()
     }
 
-
     if (showRequiredModifiersDialog) {
         RequiredModifiersDialog(onDismiss = {
             showRequiredModifiersDialog = false
