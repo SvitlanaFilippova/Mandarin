@@ -98,7 +98,8 @@ fun MenuMealItem(
                 Text(
                     modifier = Modifier.padding(vertical = Dimens.MarginSmall8),
                     text = stringResource(
-                        R.string.meal_weight_template, meal.weight,
+                        R.string.meal_weight_template,
+                        meal.weight,
                         meal.measureUnitType.localizedShortText()
                     ),
                     style = Typography.MealSmallTextStyle
