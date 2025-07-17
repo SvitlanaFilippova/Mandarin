@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.menu.presentation.ui.components
 
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
+import com.mandarinkafe.mandarin.util.Constants.SOUS_DLYA_KOROCHEK_SKU
 
 fun getVisibleCategoryIndexes(
     visibleItems: List<LazyListItemInfo>,
@@ -14,8 +15,12 @@ fun getVisibleCategoryIndexes(
 
     val referenceMeal = when (item) {
         is MenuItem.MealItem.SingleMealItem -> item.meal
-        is MenuItem.MealItem.MealRow -> item.left // или right, как решишь
+        is MenuItem.MealItem.MealRow -> item.left
         else -> return null to null
+    }
+    // Если текущее блюдо - соус для корочек, ничего не меняем (он повторяется в разных категориях)
+    if (referenceMeal.sku == SOUS_DLYA_KOROCHEK_SKU) {
+        return null to null
     }
 
     val indexInMenu = menuItems.indexOfFirst {
