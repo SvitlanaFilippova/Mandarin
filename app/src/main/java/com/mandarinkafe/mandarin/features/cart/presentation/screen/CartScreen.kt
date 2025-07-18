@@ -12,12 +12,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartClearingConfirmationDialog
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
+import com.mandarinkafe.mandarin.navigation.navigateToOrder
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
@@ -28,6 +30,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun CartScreen(
     cartViewModel: CartViewModel,
     sharedViewModel: SharedViewModel,
+    navController: NavHostController
 ) {
     val listState = rememberLazyListState()
     val state by cartViewModel.state.collectAsState()
@@ -78,6 +81,7 @@ fun CartScreen(
                     },
                     onMealDetailsClick = { item -> onSharedEvent(SharedEvent.OnMealDetailsClick(item = item)) },
                     onEditMealClick = { item -> onSharedEvent(SharedEvent.OnEditMealClick(item = item)) },
+                    onProceedOrderClick = { onCartEvent(CartEvent.OnProceedOrderClick) },
                 )
             }
         }
@@ -102,9 +106,15 @@ fun CartScreen(
                         showClearCartDialog = true
                     }
 
+                    is CartEffect.ProceedOrder -> {
+                        navController.navigateToOrder()
+                    }
+
                     else -> {}
                 }
             }
         }
     }
 }
+
+

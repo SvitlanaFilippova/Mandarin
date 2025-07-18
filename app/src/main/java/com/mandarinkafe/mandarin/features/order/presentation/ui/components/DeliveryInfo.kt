@@ -10,7 +10,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 
 @Composable
 fun DeliveryInfo(
-    chosen: DeliveryType,
+    chosen: DeliveryType?,
     onDeliverySelected: (DeliveryType) -> Unit,
     addressQuery: String,
     onAddressEntered: (String) -> Unit,

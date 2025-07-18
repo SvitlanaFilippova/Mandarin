@@ -50,6 +50,7 @@ class CartViewModel @Inject constructor(
                 updateCartState()
                 observeCartChanges()
             }
+
             is AddToCart -> addItem(item = event.item)
             is RemoveFromCartWithDelay -> onReduceItem(item = event.item)
             is RemoveFromCartByItem -> removeItem(item = event.item)
@@ -61,12 +62,18 @@ class CartViewModel @Inject constructor(
                 newItem = event.newItem,
                 oldItem = event.oldItem
             )
+            CartEvent.OnProceedOrderClick -> onProceedOrderClick()
         }
     }
 
     /** Вызывает диалог для подтверждения желания очистить корзину */
     private fun clearConfirmation() {
         sendEffect(CartEffect.ShowClearCartConfirmationDialog)
+    }
+
+    /** Вызывает эффект для перехода к оформлению заказа*/
+    private fun onProceedOrderClick() {
+        sendEffect(CartEffect.ProceedOrder)
     }
 
     /**  Заменяет в корзине отредактированное блюдо  */

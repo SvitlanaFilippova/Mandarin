@@ -6,13 +6,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -23,9 +24,10 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.CheckboxWithTex
 @Composable
 fun UtensilPreferences(
     noUtensils: Boolean,
-    chosenUtensils: List<Utensil>
+    chosenUtensils: List<Utensil>,
+    onChangeNoUtensils: (Boolean) -> Unit,
+    onChooseUtensil: (Utensil, Boolean) -> Unit
 ) {
-
     Column {
         Row(
             modifier = Modifier
@@ -33,11 +35,12 @@ fun UtensilPreferences(
                 .padding(top = Dimens.MarginSmall8)
                 .toggleable(
                     value = noUtensils,
-                    onValueChange = { }
+                    role = Role.Switch,
+                    onValueChange = { onChangeNoUtensils(it) }
                 ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Checkbox(
+            Switch(
                 modifier = Modifier.padding(horizontal = Dimens.Margin12),
                 checked = noUtensils,
                 onCheckedChange = null
@@ -61,11 +64,11 @@ fun UtensilPreferences(
                 style = Typography.RegularTextStyle,
             )
             Column(verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)) {
-                utensilTypes.forEach {
+                utensilTypes.forEach { item ->
                     CheckboxWithTextRow(
-                        checked = chosenUtensils.contains(it),
-                        labelRes = it.nameRes,
-                        onCheckedChange = TODO()
+                        checked = chosenUtensils.contains(item),
+                        labelRes = item.nameRes,
+                        onCheckedChange = { checked -> onChooseUtensil(item, checked) }
                     )
                 }
             }

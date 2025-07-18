@@ -26,7 +26,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.RadiobuttonWith
 
 @Composable
 fun PaymentChooser(
-    chosen: PaymentType,
+    chosen: PaymentType?,
     changeAmount: String,
     onPaymentTypeSelected: (PaymentType) -> Unit,
     onChangeEntered: (String) -> Unit,

@@ -58,7 +58,8 @@ fun NavGraph(navHostController: NavHostController) {
             composable(CART_SCREEN_ROUTE) {
                 CartScreen(
                     cartViewModel = cartViewModel,
-                    sharedViewModel = sharedViewModel
+                    sharedViewModel = sharedViewModel,
+                    navController = navHostController
                 )
             }
 
@@ -67,7 +68,9 @@ fun NavGraph(navHostController: NavHostController) {
             }
 
             composable(ORDER_SCREEN_ROUTE) {
-                OrderScreen()
+                OrderScreen(
+                    cartViewModel = cartViewModel
+                )
             }
 
             composable(FAVORITES_SCREEN_ROUTE) {
