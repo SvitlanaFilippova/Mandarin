@@ -59,15 +59,17 @@
     <!-- Оформление заказа -->
     <string name="your_name">Имя</string>
     <string name="your_phone">Номер телефона *</string>
-    <string name="phone_mask">+7 (###) ###-##-##</string>
+    <string name="phone_mask">+# (###) ###-##-##</string>
+    <string name="phone_placeholder">+X (XXX) XXX-XX-XX</string>
     <string name="your_address">Адрес доставки *</string>
+    <string name="get_address">Определить адрес</string>
     <string name="your_comment">Комментарий к заказу</string>
-    <string name="shipping_type">Доставка в:</string>
+    <string name="shipping_type">Доставка в: *</string>
     <string name="shipping_to_apartment">квартиру</string>
     <string name="shipping_to_private_house">частный дом</string>
     <string name="shipping_self_pickup">самовывоз</string>
     <string name="your_apartment_details">Номер подъезда и этаж *</string>
-    <string name="payment_type">Способ оплаты:</string>
+    <string name="payment_type">Способ оплаты: *</string>
     <string name="payment_online">картой онлайн</string>
     <string name="payment_self_card">картой при получении</string>
     <string name="payment_cash">наличными</string>
@@ -80,7 +82,14 @@
     <string name="disposable_utensils">одноразовые приборы</string>
     <string name="napkins">бумажные салфетки</string>
     <string name="gloves">одноразовые перчатки (для бургеров)</string>
+    <string name="total_cart_cost">Сумма заказа</string>
+    <string name="discount_template">Скидка %1$d%%</string>
+    <string name="discount_hint">Скидка по вашей карте может действовать не на все товары.</string>
+    <string name="delivery_cost">Стоимость доставки</string>
+    <string name="delivery_cost_hint">Стоимость доставки рассчитывается в зависимости от суммы заказа и зоны доставки, в которую попадает введённый адрес</string>
+    <string name="why_is_that_number">Почему такая цифра</string>
     <string name="submit_order">Оформить заказ</string>
+    <string name="order_total_cost_template">%.2f ₽</string>
 
 
     <!-- Кнопки действий -->

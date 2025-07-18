@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.order.presentation.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -19,18 +20,38 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
 fun SubmitOrderButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    shouldBeActive: Boolean,
+    totalPrice: Float,
+    onMissingRequiredInfo: () -> Unit,
+    onSubmitOrder: () -> Unit,
 ) {
+    val contentColor = if (shouldBeActive) {
+        Color.White
+    } else {
+        Color.White.copy(alpha = 0.5f)
+    }
+    val containerColor = if (shouldBeActive) {
+        Colors.Orange
+    } else {
+        Colors.LightGrey.copy(alpha = 0.4f)
+    }
+
+    val onClickAction = when {
+        !shouldBeActive -> onMissingRequiredInfo
+        else -> onSubmitOrder
+    }
+
     Button(
-        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth(),
+        onClick = onClickAction,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Colors.Orange,
-            contentColor = Color.White,
+            containerColor = containerColor,
+            contentColor = contentColor
         ),
-        modifier = modifier
-            .fillMaxWidth()
+
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -38,7 +59,14 @@ fun SubmitOrderButton(
         ) {
             Text(
                 text = stringResource(R.string.submit_order),
-                style = Typography.ToCartButtonBigStyle
+                style = Typography.ToCartButtonBigStyle,
+                color = contentColor
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = stringResource(R.string.order_total_cost_template, totalPrice),
+                style = Typography.ToCartButtonBigStyle,
+                color = contentColor
             )
         }
     }

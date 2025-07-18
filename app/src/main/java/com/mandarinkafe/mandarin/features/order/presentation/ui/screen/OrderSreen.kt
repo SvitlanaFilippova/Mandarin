@@ -3,10 +3,8 @@ package com.mandarinkafe.mandarin.features.order.presentation.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -19,6 +17,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.DeliveryInfo
+import com.mandarinkafe.mandarin.features.order.presentation.ui.components.OrderSummaryData
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PaymentChooser
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PersonalInfo
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.SubmitOrderButton
@@ -33,6 +32,7 @@ fun OrderScreen(
     cartViewModel: CartViewModel,
 ) {
     val state by orderViewModel.state.collectAsState()
+    val cartState by cartViewModel.state.collectAsState()
     val onEvent = orderViewModel::onEvent
 
     Column(
@@ -43,26 +43,30 @@ fun OrderScreen(
             .padding(Dimens.MarginStandard16),
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
     ) {
-
         PersonalInfo(
             nameQuery = state.name,
             phoneQuery = state.phone,
+            isError = state.isError,
+            phoneIsValid = state.phoneIsValid,
             onNameEntered = { onEvent(OrderEvent.SetName(it)) },
-            onPhoneChanged = { onEvent(OrderEvent.SetPhone(it)) }
+            onPhoneChanged = { onEvent(OrderEvent.SetPhone(it)) },
         )
 
         DeliveryInfo(
             chosen = state.deliveryType,
             onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
             addressQuery = state.address,
+            isError = state.isError,
             onAddressEntered = { onEvent(OrderEvent.SetAddress(it)) },
             apartmentDetailsQuery = state.apartmentDetails,
-            onApartmentDetailsEntered = { onEvent(OrderEvent.SetApartmentDetails(it)) }
+            onApartmentDetailsEntered = { onEvent(OrderEvent.SetApartmentDetails(it)) },
+            onGetLocationIconClick = { onEvent(OrderEvent.GetLocation) }
         )
 
         PaymentChooser(
             chosen = state.paymentType,
             changeAmount = state.changeFrom,
+            isError = state.isError,
             onPaymentTypeSelected = { onEvent(OrderEvent.SetPaymentType(it)) },
             onChangeEntered = { onEvent(OrderEvent.SetChangeFrom(it)) },
         )
@@ -87,10 +91,19 @@ fun OrderScreen(
             onValueChange = { onEvent(OrderEvent.SetComment(it)) }
         )
 
-        SubmitOrderButton(
-            onClick = { /* обработка нажатия */ },
+        OrderSummaryData(
+            cartSum = cartState.totalCartPrice,
+            discountSum = state.discountSum,
+            discountPercent = state.discountPercent,
+            deliveryCost = state.deliveryCost,
         )
 
-        Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
+        SubmitOrderButton(
+            shouldBeActive = state.canBeSubmitted,
+            modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
+            onMissingRequiredInfo = { onEvent(OrderEvent.OnMissingRequiredInfo) },
+            onSubmitOrder = { onEvent(OrderEvent.SubmitOrder) },
+            totalPrice = 2085.90f,
+        )
     }
 }

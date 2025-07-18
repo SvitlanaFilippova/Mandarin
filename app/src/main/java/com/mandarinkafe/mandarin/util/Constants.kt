@@ -52,6 +52,9 @@ object Constants {
     const val MAX_ATTEMPTS = 3
     const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 100L
 
+    //Order
+    const val VALID_PHONE_LENGTH = 11
+
     // DI
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
     const val LOCAL_STORAGE_NAME = "local_storage"

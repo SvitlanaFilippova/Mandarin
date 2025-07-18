@@ -19,9 +19,14 @@ sealed interface OrderContract {
         data class SetNoNeedUtensils(val noNeedUtensils: Boolean) : OrderEvent
         data class SetChosenUtensils(val utensil: Utensil, val isChosen: Boolean) : OrderEvent
         data class SetComment(val query: String) : OrderEvent
+        data object GetLocation : OrderEvent
+        data object OnMissingRequiredInfo : OrderEvent
+        data object SubmitOrder : OrderEvent
     }
 
-    sealed interface OrderEffect : BaseEffect
+    sealed interface OrderEffect : BaseEffect {
+        data object SubmitOrder : OrderEffect
+    }
 
     data class OrderState(
         val name: String = "",
@@ -34,5 +39,22 @@ sealed interface OrderContract {
         val noNeedUtensils: Boolean = false,
         val chosenUtensils: List<Utensil> = listOf(),
         val comment: String = "",
-    ) : BaseState
+        val isError: Boolean = false,
+        val discountPercent: Int = 10,
+        val deliveryCost: Int = 0,
+        val discountSum: Int = 0,
+    ) : BaseState {
+
+        val phoneIsValid: Boolean
+            get() = phone.isNotEmpty() // TODO добавить валидацию номера телефона
+        val addressEntered: Boolean
+            get() = address.isNotEmpty() || deliveryType == DeliveryType.SELF_PICKUP
+        val apartmentDetailsIsValid: Boolean
+            get() = apartmentDetails.isNotEmpty() || deliveryType != DeliveryType.APARTMENT
+        val paymentTypeChosen: Boolean
+            get() = paymentType != null
+
+        val canBeSubmitted: Boolean
+            get() = phoneIsValid && addressEntered && apartmentDetailsIsValid && paymentTypeChosen
+    }
 }

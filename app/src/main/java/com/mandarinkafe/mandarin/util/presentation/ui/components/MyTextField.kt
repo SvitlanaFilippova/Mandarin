@@ -13,6 +13,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -24,10 +25,14 @@ fun MyTextField(
     modifier: Modifier = Modifier,
     value: String,
     labelRes: Int,
+    isError: Boolean = false,
     onValueChange: (String) -> Unit,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-) {
+    leadingIcon: @Composable (() -> Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
+
+    ) {
     TextField(
         modifier = modifier
             .fillMaxWidth(),
@@ -42,14 +47,17 @@ fun MyTextField(
             unfocusedTextColor = Colors.White,
             unfocusedContainerColor = Colors.DarkGrey,
             unfocusedIndicatorColor = Colors.Transparent,
+            errorIndicatorColor = Colors.ErrorRed,
         ),
-        placeholder = {
+        placeholder = placeholder,
+        label = {
             Text(
                 text = stringResource(id = labelRes),
                 style = Typography.RegularLightTextStyle
             )
         },
-        keyboardOptions = keyboardOptions,
+        isError = isError,
+        keyboardOptions = keyboardOptions.copy(imeAction = ImeAction.Done),
         visualTransformation = visualTransformation,
         trailingIcon = {
             if (value.isNotEmpty()) {
@@ -61,6 +69,8 @@ fun MyTextField(
                     )
                 }
             }
-        }
-    )
+        },
+        leadingIcon = leadingIcon,
+
+        )
 }

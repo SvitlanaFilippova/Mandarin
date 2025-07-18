@@ -41,7 +41,6 @@ fun UtensilPreferences(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Switch(
-                modifier = Modifier.padding(horizontal = Dimens.Margin12),
                 checked = noUtensils,
                 onCheckedChange = null
             )
@@ -49,27 +48,30 @@ fun UtensilPreferences(
                 text = stringResource(R.string.no_utensils),
                 style = Typography.RegularLightTextStyle,
                 color = Colors.White,
-                modifier = Modifier.padding(start = Dimens.MarginSmall8)
+                modifier = Modifier.padding(
+                    start = Dimens.MarginSmall8,
+                ),
             )
         }
 
         if (!noUtensils) {
             val utensilTypes = remember { Utensil.entries.toList() }
-
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = Dimens.MarginStandard16),
-                text = stringResource(R.string.i_need_utensils),
-                style = Typography.RegularTextStyle,
-            )
-            Column(verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)) {
-                utensilTypes.forEach { item ->
-                    CheckboxWithTextRow(
-                        checked = chosenUtensils.contains(item),
-                        labelRes = item.nameRes,
-                        onCheckedChange = { checked -> onChooseUtensil(item, checked) }
-                    )
+            Column {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = Dimens.MarginStandard16, bottom = Dimens.MarginSuperSmall4),
+                    text = stringResource(R.string.i_need_utensils),
+                    style = Typography.RegularTextStyle,
+                )
+                Column(verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)) {
+                    utensilTypes.forEach { item ->
+                        CheckboxWithTextRow(
+                            checked = chosenUtensils.contains(item),
+                            labelRes = item.nameRes,
+                            onCheckedChange = { checked -> onChooseUtensil(item, checked) }
+                        )
+                    }
                 }
             }
         }

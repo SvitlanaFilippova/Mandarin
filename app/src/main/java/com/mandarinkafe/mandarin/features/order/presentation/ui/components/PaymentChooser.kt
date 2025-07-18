@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -28,18 +29,25 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.RadiobuttonWith
 fun PaymentChooser(
     chosen: PaymentType?,
     changeAmount: String,
+    isError: Boolean,
     onPaymentTypeSelected: (PaymentType) -> Unit,
     onChangeEntered: (String) -> Unit,
 ) {
     val paymentTypes = remember { PaymentType.entries.toList() }
     val showChangeInput by remember(chosen) { mutableStateOf(chosen == PaymentType.CASH) }
+    val style = if (isError && chosen == null) {
+        Typography.RegularTextStyle.copy(color = Colors.ErrorRed)
+    } else {
+        Typography.RegularTextStyle
+    }
 
     Column {
         Text(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(bottom = Dimens.MarginSuperSmall4),
             text = stringResource(R.string.payment_type),
-            style = Typography.RegularTextStyle,
+            style = style,
         )
         paymentTypes.forEach { item ->
             RadiobuttonWithTextRow(
@@ -68,7 +76,10 @@ fun PaymentChooser(
                     value = changeAmount,
 
                     shape = RoundedCornerShape(Dimens.CornerRadius8),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
                     placeholder = {
                         Text(
                             text = stringResource(R.string.payment_default_value),

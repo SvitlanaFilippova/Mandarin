@@ -2,29 +2,38 @@ package com.mandarinkafe.mandarin.features.order.presentation.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.util.presentation.ui.components.RadiobuttonWithTextRow
 
 @Composable
 fun DeliveryTypeChooser(
-    chosen: DeliveryType,
+    chosen: DeliveryType?,
+    isError: Boolean,
     onDeliverySelected: (DeliveryType) -> Unit
 ) {
     val deliveryTypes = remember { DeliveryType.entries.toList() }
-
+    val style = if (isError && chosen == null) {
+        Typography.RegularTextStyle.copy(color = Colors.ErrorRed)
+    } else {
+        Typography.RegularTextStyle
+    }
     Column {
         Text(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(bottom = Dimens.MarginSuperSmall4),
             text = stringResource(R.string.shipping_type),
-            style = Typography.RegularTextStyle,
+            style = style,
         )
         deliveryTypes.forEach { item ->
             RadiobuttonWithTextRow(
