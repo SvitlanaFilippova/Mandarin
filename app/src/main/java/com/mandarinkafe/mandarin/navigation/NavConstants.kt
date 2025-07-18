@@ -6,6 +6,7 @@ object NavConstants {
     const val FAVORITES_SCREEN_ROUTE = "favorites"
     const val CART_SCREEN_ROUTE = "cart"
     const val SPLASH_SCREEN_ROUTE = "splash"
+    const val ORDER_SCREEN_ROUTE = "order"
 
     const val MEAL_DETAILS_ROUTE = "meal_details"
     const val KEY_MEAL_JSON = "mealJson"

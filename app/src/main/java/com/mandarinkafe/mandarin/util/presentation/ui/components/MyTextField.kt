@@ -1,0 +1,66 @@
+package com.mandarinkafe.mandarin.util.presentation.ui.components
+
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.VisualTransformation
+import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+
+@Composable
+fun MyTextField(
+    modifier: Modifier = Modifier,
+    value: String,
+    labelRes: Int,
+    onValueChange: (String) -> Unit,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+) {
+    TextField(
+        modifier = modifier
+            .fillMaxWidth(),
+        value = value,
+        shape = RoundedCornerShape(Dimens.CornerRadius8),
+        onValueChange = { onValueChange(it) },
+        colors = TextFieldDefaults.colors(
+            cursorColor = Colors.Orange,
+            focusedTextColor = Colors.White,
+            focusedContainerColor = Colors.DarkGrey,
+            focusedIndicatorColor = Colors.Orange,
+            unfocusedTextColor = Colors.White,
+            unfocusedContainerColor = Colors.DarkGrey,
+            unfocusedIndicatorColor = Colors.Transparent,
+        ),
+        placeholder = {
+            Text(
+                text = stringResource(id = labelRes),
+                style = Typography.RegularLightTextStyle
+            )
+        },
+        keyboardOptions = keyboardOptions,
+        visualTransformation = visualTransformation,
+        trailingIcon = {
+            if (value.isNotEmpty()) {
+                IconButton(onClick = { onValueChange("") }) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.clear_text),
+                        tint = Colors.LightGrey
+                    )
+                }
+            }
+        }
+    )
+}
