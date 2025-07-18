@@ -17,12 +17,10 @@ fun getVisibleCategoryIndexes(
         else -> null
     }
 
-    if (
-        firstVisibleIndex == null ||
-        item == null ||
-        referenceMeal == null ||
-        referenceMeal.sku == SOUS_DLYA_KOROCHEK_SKU
-    ) {
+    if (firstVisibleIndex == null || item == null || referenceMeal == null) {
+        return null to null
+    }
+    if (referenceMeal.sku == SOUS_DLYA_KOROCHEK_SKU) {
         return null to null
     }
 
