@@ -5,7 +5,7 @@ import com.mandarinkafe.mandarin.R
 
 sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val route: String) {
 
-    //TODO Временно, только для теста экрана оформления заказа
+    // TODO Временно, только для теста экрана оформления заказа
     object Order : BottomNavigationItem(
         R.string.submit_order,
         R.drawable.ic_edit,

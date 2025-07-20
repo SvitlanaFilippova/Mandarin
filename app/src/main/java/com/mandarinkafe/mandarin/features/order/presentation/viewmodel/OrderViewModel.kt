@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
+import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -36,7 +37,6 @@ class OrderViewModel @Inject constructor() :
 
     private fun getLocation() {
         Log.d("DEBUG ORDER", "getLocation clicked")
-        //  TODO()
     }
 
     private fun submitOrder() {
@@ -103,7 +103,7 @@ class OrderViewModel @Inject constructor() :
         }
 
         // Ограничиваем до 10 символов
-        val limited = normalized.take(10)
+        val limited = normalized.take(VALID_PHONE_LENGTH)
 
         setState { copy(phone = limited) }
     }

@@ -52,7 +52,7 @@ object Constants {
     const val MAX_ATTEMPTS = 3
     const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 100L
 
-    //Order
+    // Order
     const val VALID_PHONE_LENGTH = 10
 
     // DI
