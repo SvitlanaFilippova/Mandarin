@@ -53,7 +53,7 @@ object Constants {
     const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 100L
 
     //Order
-    const val VALID_PHONE_LENGTH = 11
+    const val VALID_PHONE_LENGTH = 10
 
     // DI
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"

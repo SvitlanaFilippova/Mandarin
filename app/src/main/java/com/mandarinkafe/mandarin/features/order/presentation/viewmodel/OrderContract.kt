@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 
 sealed interface OrderContract {
     sealed interface OrderEvent : BaseEvent {
@@ -46,7 +47,7 @@ sealed interface OrderContract {
     ) : BaseState {
 
         val phoneIsValid: Boolean
-            get() = phone.isNotEmpty()
+            get() = phone.length == VALID_PHONE_LENGTH
         val addressEntered: Boolean
             get() = address.isNotEmpty() || deliveryType == DeliveryType.SELF_PICKUP
         val apartmentDetailsIsValid: Boolean
