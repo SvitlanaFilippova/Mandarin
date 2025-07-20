@@ -19,6 +19,7 @@ object Dimens {
     val ButtonPlaceholderSize200 = 200.dp
     val SplashScreenLogoSize180 = 180.dp
     val SplashScreenBackgroundSize220 = 220.dp
+    val IconSmallSize20 = 20.dp
     val IconSize24 = 24.dp
     val MarginStandard16 = 16.dp
     val Margin12 = 12.dp
@@ -51,6 +52,7 @@ object Dimens {
     val TextSizeBig24 = 24.sp
     val TextSizeBig20 = 20.sp
     val TextSizeRegular14 = 14.sp
+    val TooltipMaxWidth = 200.dp
     val BannerIndicatorActiveWidth32 = 32.dp
     val BannerIndicatorInactiveWidth8 = 8.dp
     val BannerIndicatorSize4 = 4.dp

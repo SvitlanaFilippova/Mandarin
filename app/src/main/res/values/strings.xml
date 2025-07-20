@@ -84,9 +84,9 @@
     <string name="gloves">одноразовые перчатки (для бургеров)</string>
     <string name="total_cart_cost">Сумма заказа</string>
     <string name="discount_template">Скидка %1$d%%</string>
-    <string name="discount_hint">Скидка по вашей карте может действовать не на все товары.</string>
+    <string name="discount_hint">Скидка по&#160;вашей карте может действовать не&#160;на&#160;все товары.</string>
     <string name="delivery_cost">Стоимость доставки</string>
-    <string name="delivery_cost_hint">Стоимость доставки рассчитывается в зависимости от суммы заказа и зоны доставки, в которую попадает введённый адрес</string>
+    <string name="delivery_cost_hint">Стоимость доставки зависит от&#160;суммы заказа и&#160;зоны доставки, в&#160;которую попадает введённый адрес.</string>
     <string name="why_is_that_number">Почему такая цифра</string>
     <string name="submit_order">Оформить заказ</string>
     <string name="order_total_cost_template">%.2f ₽</string>
