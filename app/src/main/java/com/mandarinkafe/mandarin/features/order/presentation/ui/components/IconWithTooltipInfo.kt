@@ -24,7 +24,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
-fun DeliveryTooltipInfo(hintResId: Int) {
+fun IconWithTooltipInfo(tooltipTextResID: Int) {
     var expanded by remember { mutableStateOf(false) }
 
     Box {
@@ -41,12 +41,12 @@ fun DeliveryTooltipInfo(hintResId: Int) {
         // Всплывающее окно c подсказкой
         DropdownMenu(
             expanded = expanded,
-            containerColor = Colors.WhiteTransparent75,
+            containerColor = Colors.White.copy(alpha = 0.9f),
             onDismissRequest = { expanded = false },
             offset = DpOffset(x = 0.dp, y = Dimens.MarginSmall8),
         ) {
             Text(
-                text = stringResource(hintResId),
+                text = stringResource(tooltipTextResID),
                 modifier = Modifier
                     .padding(Dimens.MarginSmall8)
                     .widthIn(max = Dimens.TooltipMaxWidth),

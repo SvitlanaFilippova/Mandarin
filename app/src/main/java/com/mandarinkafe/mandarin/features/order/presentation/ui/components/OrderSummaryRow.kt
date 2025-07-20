@@ -14,7 +14,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
-fun OrderSummaryRow(name: String, amount: Int, hintResId: Int? = null) {
+fun OrderSummaryRow(name: String, amount: Float, hintResId: Int? = null) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -24,13 +24,13 @@ fun OrderSummaryRow(name: String, amount: Int, hintResId: Int? = null) {
         Text(text = name, style = Typography.RegularLightTextStyle)
 
         if (hintResId != null) {
-            DeliveryTooltipInfo(hintResId)
+            IconWithTooltipInfo(hintResId)
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
         Text(
-            text = stringResource(R.string.meal_price_template, amount),
+            text = stringResource(R.string.order_total_cost_template, amount),
             style = Typography.RegularLightTextStyle
         )
     }

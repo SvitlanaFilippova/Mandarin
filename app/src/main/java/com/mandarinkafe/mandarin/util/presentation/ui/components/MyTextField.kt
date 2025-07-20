@@ -29,6 +29,7 @@ fun MyTextField(
     onValueChange: (String) -> Unit,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    prefix: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
 
@@ -71,6 +72,7 @@ fun MyTextField(
             }
         },
         leadingIcon = leadingIcon,
+        prefix = prefix
 
-        )
+    )
 }

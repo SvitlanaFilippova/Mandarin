@@ -12,7 +12,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 @Composable
 fun OrderSummaryData(
     cartSum: Int,
-    discountSum: Int,
+    discountSum: Float,
     discountPercent: Int,
     deliveryCost: Int,
 ) {
@@ -20,7 +20,7 @@ fun OrderSummaryData(
         Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
         OrderSummaryRow(
             name = stringResource(R.string.total_cart_cost),
-            amount = cartSum
+            amount = cartSum.toFloat()
         )
 
         // Информацию о скидке показываем только если по номеру телефона найдена скидочная карта
@@ -34,7 +34,7 @@ fun OrderSummaryData(
 
         OrderSummaryRow(
             name = stringResource(R.string.delivery_cost),
-            amount = deliveryCost,
+            amount = deliveryCost.toFloat(),
             hintResId = R.string.delivery_cost_hint
         )
 

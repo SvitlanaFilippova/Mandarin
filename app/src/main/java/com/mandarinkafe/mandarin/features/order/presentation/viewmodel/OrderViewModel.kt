@@ -93,7 +93,19 @@ class OrderViewModel @Inject constructor() :
     }
 
     private fun setPhone(query: String) {
-        setState { copy(phone = query) }
+        val digitsOnly = query.filter { it.isDigit() }
+
+        // Если первая цифра — 7, 8 или плюс, игнорируем
+        val normalized = when {
+            digitsOnly.startsWith("7") -> digitsOnly.drop(1)
+            digitsOnly.startsWith("8") -> digitsOnly.drop(1)
+            else -> digitsOnly
+        }
+
+        // Ограничиваем до 10 символов
+        val limited = normalized.take(10)
+
+        setState { copy(phone = limited) }
     }
 
     override fun setLoading(isLoading: Boolean) {

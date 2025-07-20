@@ -42,11 +42,11 @@ sealed interface OrderContract {
         val isError: Boolean = false,
         val discountPercent: Int = 10,
         val deliveryCost: Int = 0,
-        val discountSum: Int = 0,
+        val discountSum: Float = 0f,
     ) : BaseState {
 
         val phoneIsValid: Boolean
-            get() = phone.isNotEmpty() // TODO добавить валидацию номера телефона
+            get() = phone.isNotEmpty()
         val addressEntered: Boolean
             get() = address.isNotEmpty() || deliveryType == DeliveryType.SELF_PICKUP
         val apartmentDetailsIsValid: Boolean

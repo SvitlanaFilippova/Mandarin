@@ -10,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
@@ -34,6 +35,12 @@ fun OrderScreen(
     val state by orderViewModel.state.collectAsState()
     val cartState by cartViewModel.state.collectAsState()
     val onEvent = orderViewModel::onEvent
+
+    val cartSum = cartState.totalCartPrice
+    val discountSum = state.discountSum
+    val deliveryCost = state.deliveryCost
+    val totalOrderSum =
+        remember(cartSum, discountSum, deliveryCost) { cartSum - discountSum + deliveryCost }
 
     Column(
         modifier = Modifier
@@ -91,19 +98,23 @@ fun OrderScreen(
             onValueChange = { onEvent(OrderEvent.SetComment(it)) }
         )
 
+
         OrderSummaryData(
-            cartSum = cartState.totalCartPrice,
-            discountSum = state.discountSum,
+            cartSum = cartSum,
+            discountSum = discountSum,
             discountPercent = state.discountPercent,
-            deliveryCost = state.deliveryCost,
+            deliveryCost = deliveryCost,
         )
+
+
+
 
         SubmitOrderButton(
             shouldBeActive = state.canBeSubmitted,
             modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
             onMissingRequiredInfo = { onEvent(OrderEvent.OnMissingRequiredInfo) },
             onSubmitOrder = { onEvent(OrderEvent.SubmitOrder) },
-            totalPrice = 2085.90f,
+            totalPrice = totalOrderSum,
         )
     }
 }

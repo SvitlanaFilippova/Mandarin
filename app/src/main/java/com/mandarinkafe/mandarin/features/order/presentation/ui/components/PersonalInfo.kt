@@ -30,7 +30,7 @@ fun PersonalInfo(
         labelRes = R.string.your_phone,
         isError = isError && !phoneIsValid,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        onValueChange = { onPhoneChanged(it.filter { it.isDigit() }) },
+        onValueChange = { onPhoneChanged(it) },
         visualTransformation = mask,
         placeholder = {
             Text(
@@ -38,5 +38,11 @@ fun PersonalInfo(
                 style = Typography.RegularLightTextStyle
             )
         },
+        prefix = {
+            Text(
+                text = stringResource(R.string.phone_prefix),
+                style = Typography.RegularTextStyle
+            )
+        }
     )
 }
