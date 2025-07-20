@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
@@ -26,6 +27,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Utens
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
+import kotlinx.coroutines.launch
 
 @Composable
 fun OrderScreen(
@@ -35,17 +37,19 @@ fun OrderScreen(
     val state by orderViewModel.state.collectAsState()
     val cartState by cartViewModel.state.collectAsState()
     val onEvent = orderViewModel::onEvent
-
     val cartSum = cartState.totalCartPrice
     val discountSum = state.discountSum
     val deliveryCost = state.deliveryCost
     val totalOrderSum =
         remember(cartSum, discountSum, deliveryCost) { cartSum - discountSum + deliveryCost }
 
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
             .background(Colors.AppBlack)
             .padding(Dimens.MarginStandard16),
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
@@ -122,7 +126,12 @@ fun OrderScreen(
         SubmitOrderButton(
             shouldBeActive = state.canBeSubmitted,
             modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
-            onMissingRequiredInfo = { onEvent(OrderEvent.OnMissingRequiredInfo) },
+            onMissingRequiredInfo = {
+                onEvent(OrderEvent.OnMissingRequiredInfo)
+                coroutineScope.launch {
+                    scrollState.animateScrollTo(0)
+                }
+            },
             onSubmitOrder = { onEvent(OrderEvent.SubmitOrder) },
             totalPrice = totalOrderSum,
         )

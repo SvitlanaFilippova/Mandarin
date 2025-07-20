@@ -44,7 +44,7 @@ fun MyTextField(
             cursorColor = Colors.Orange,
             focusedTextColor = Colors.White,
             focusedContainerColor = Colors.DarkGrey,
-            focusedIndicatorColor = Colors.Orange,
+            focusedIndicatorColor = Colors.White,
             unfocusedTextColor = Colors.White,
             unfocusedContainerColor = Colors.DarkGrey,
             unfocusedIndicatorColor = Colors.Transparent,
