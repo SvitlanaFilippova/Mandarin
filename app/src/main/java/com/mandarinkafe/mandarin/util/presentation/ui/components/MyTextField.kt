@@ -49,6 +49,7 @@ fun MyTextField(
             unfocusedContainerColor = Colors.DarkGrey,
             unfocusedIndicatorColor = Colors.Transparent,
             errorIndicatorColor = Colors.ErrorRed,
+            errorContainerColor = Colors.DarkGrey,
         ),
         placeholder = placeholder,
         label = {

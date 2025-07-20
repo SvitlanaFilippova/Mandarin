@@ -20,7 +20,11 @@ class OrderViewModel @Inject constructor() :
     override fun onEvent(event: OrderEvent) {
         when (event) {
             is OrderEvent.SetAddress -> setAddress(event.query)
-            is OrderEvent.SetApartmentDetails -> setApartmentDetails(event.query)
+            is OrderEvent.SetApartmentNumber -> setApartmentNumber(event.query)
+            is OrderEvent.SetAddressComment -> setAddressComment(event.query)
+            is OrderEvent.SetEntrance -> setEntrance(event.query)
+            is OrderEvent.SetFloor -> setFloor(event.query)
+            is OrderEvent.SetIntercom -> setIntercom(event.query)
             is OrderEvent.SetChangeFrom -> setChangeFrom(event.query)
             is OrderEvent.SetChosenUtensils -> setChosenUtensils(event.utensil, event.isChosen)
             is OrderEvent.SetComment -> setComment(event.query)
@@ -32,7 +36,12 @@ class OrderViewModel @Inject constructor() :
             is OrderEvent.OnMissingRequiredInfo -> setError()
             is OrderEvent.SubmitOrder -> submitOrder()
             is OrderEvent.GetLocation -> getLocation()
+            is OrderEvent.NoChangeToggled -> setNoChange(event.noChange)
         }
+    }
+
+    private fun setNoChange(noChange: Boolean) {
+        setState { copy(noChange = noChange) }
     }
 
     private fun getLocation() {
@@ -52,8 +61,24 @@ class OrderViewModel @Inject constructor() :
         setState { copy(address = query) }
     }
 
-    private fun setApartmentDetails(query: String) {
-        setState { copy(apartmentDetails = query) }
+    private fun setApartmentNumber(query: String) {
+        setState { copy(apartmentNumber = query) }
+    }
+
+    private fun setAddressComment(query: String) {
+        setState { copy(addressComment = query) }
+    }
+
+    private fun setEntrance(query: String) {
+        setState { copy(apartmentEntrance = query) }
+    }
+
+    private fun setFloor(query: String) {
+        setState { copy(apartmentFloor = query) }
+    }
+
+    private fun setIntercom(query: String) {
+        setState { copy(apartmentIntercom = query) }
     }
 
     private fun setChangeFrom(query: String) {
@@ -85,7 +110,7 @@ class OrderViewModel @Inject constructor() :
     }
 
     private fun setNoNeedUtensils(noNeedUtensils: Boolean) {
-        setState { copy(noNeedUtensils = noNeedUtensils, chosenUtensils = listOf()) }
+        setState { copy(noNeedUtensils = noNeedUtensils) }
     }
 
     private fun setPaymentType(paymentType: PaymentType) {

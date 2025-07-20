@@ -12,14 +12,23 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 fun DeliveryInfo(
     chosen: DeliveryType?,
     onDeliverySelected: (DeliveryType) -> Unit,
-    addressQuery: String,
     isError: Boolean,
+    addressQuery: String,
     onAddressEntered: (String) -> Unit,
-    apartmentDetailsQuery: String,
-    onApartmentDetailsEntered: (String) -> Unit,
+    addressComment: String,
+    onAddressCommentsEntered: (String) -> Unit,
+    apartmentNumberQuery: String,
+    onApartmentNumberEntered: (String) -> Unit,
+    apartmentEntranceQuery: String,
+    onEntranceEntered: (String) -> Unit,
+    apartmentFloorQuery: String,
+    onFloorEntered: (String) -> Unit,
+    apartmentIntercomQuery: String,
+    onIntercomEntered: (String) -> Unit,
     onGetLocationIconClick: () -> Unit,
 ) {
     val requestApartmentDetails by remember(chosen) { mutableStateOf(chosen == DeliveryType.APARTMENT) }
+    val requestAddressDetails by remember(chosen) { mutableStateOf(chosen == DeliveryType.PRIVATE_HOUSE) }
 
     DeliveryTypeChooser(chosen = chosen, onDeliverySelected = onDeliverySelected, isError = isError)
 
@@ -40,11 +49,25 @@ fun DeliveryInfo(
 
     // Поле для ввода деталей адреса показываем только если выбран способ доставки в квартиру
     if (requestApartmentDetails) {
+        ApartmentDetails(
+            isError = isError,
+            apartmentNumberQuery = apartmentNumberQuery,
+            onApartmentNumberEntered = onApartmentNumberEntered,
+            apartmentEntranceQuery = apartmentEntranceQuery,
+            onEntranceEntered = onEntranceEntered,
+            apartmentFloorQuery = apartmentFloorQuery,
+            onFloorEntered = onFloorEntered,
+            apartmentIntercomQuery = apartmentIntercomQuery,
+            onIntercomQEntered = onIntercomEntered
+        )
+    }
+
+    // Опциональное поле для примечания к адресу, если выбрана доставка в частный дом
+    if (requestAddressDetails) {
         MyTextField(
-            isError = isError && apartmentDetailsQuery.isEmpty(),
-            value = apartmentDetailsQuery,
-            labelRes = R.string.your_apartment_details,
-            onValueChange = { onApartmentDetailsEntered(it) }
+            value = addressComment,
+            labelRes = R.string.address_comment,
+            onValueChange = { onAddressCommentsEntered(it) }
         )
     }
 

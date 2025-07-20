@@ -14,8 +14,13 @@ sealed interface OrderContract {
         data class SetPhone(val query: String) : OrderEvent
         data class SetDeliveryType(val deliveryType: DeliveryType) : OrderEvent
         data class SetAddress(val query: String) : OrderEvent
-        data class SetApartmentDetails(val query: String) : OrderEvent
+        data class SetAddressComment(val query: String) : OrderEvent
+        data class SetApartmentNumber(val query: String) : OrderEvent
+        data class SetEntrance(val query: String) : OrderEvent
+        data class SetFloor(val query: String) : OrderEvent
+        data class SetIntercom(val query: String) : OrderEvent
         data class SetPaymentType(val paymentType: PaymentType) : OrderEvent
+        data class NoChangeToggled(val noChange: Boolean) : OrderEvent
         data class SetChangeFrom(val query: String) : OrderEvent
         data class SetNoNeedUtensils(val noNeedUtensils: Boolean) : OrderEvent
         data class SetChosenUtensils(val utensil: Utensil, val isChosen: Boolean) : OrderEvent
@@ -34,14 +39,19 @@ sealed interface OrderContract {
         val phone: String = "",
         val deliveryType: DeliveryType? = null,
         val address: String = "",
-        val apartmentDetails: String = "",
+        val addressComment: String = "",
+        val apartmentNumber: String = "",
+        val apartmentEntrance: String = "",
+        val apartmentFloor: String = "",
+        val apartmentIntercom: String = "",
         val paymentType: PaymentType? = null,
+        val noChange: Boolean = false,
         val changeFrom: String = "",
         val noNeedUtensils: Boolean = false,
         val chosenUtensils: List<Utensil> = listOf(),
         val comment: String = "",
         val isError: Boolean = false,
-        val discountPercent: Int = 10,
+        val discountPercent: Int = 0,
         val deliveryCost: Int = 0,
         val discountSum: Float = 0f,
     ) : BaseState {
@@ -51,7 +61,7 @@ sealed interface OrderContract {
         val addressEntered: Boolean
             get() = address.isNotEmpty() || deliveryType == DeliveryType.SELF_PICKUP
         val apartmentDetailsIsValid: Boolean
-            get() = apartmentDetails.isNotEmpty() || deliveryType != DeliveryType.APARTMENT
+            get() = deliveryType != DeliveryType.APARTMENT || (apartmentNumber.isNotEmpty() && apartmentEntrance.isNotEmpty() && apartmentFloor.isNotEmpty())
         val paymentTypeChosen: Boolean
             get() = paymentType != null
 

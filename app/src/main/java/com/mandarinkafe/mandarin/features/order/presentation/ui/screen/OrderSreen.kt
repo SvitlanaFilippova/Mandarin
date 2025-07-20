@@ -65,9 +65,17 @@ fun OrderScreen(
             addressQuery = state.address,
             isError = state.isError,
             onAddressEntered = { onEvent(OrderEvent.SetAddress(it)) },
-            apartmentDetailsQuery = state.apartmentDetails,
-            onApartmentDetailsEntered = { onEvent(OrderEvent.SetApartmentDetails(it)) },
-            onGetLocationIconClick = { onEvent(OrderEvent.GetLocation) }
+            apartmentNumberQuery = state.apartmentNumber,
+            onApartmentNumberEntered = { onEvent(OrderEvent.SetApartmentNumber(it)) },
+            apartmentEntranceQuery = state.apartmentEntrance,
+            onEntranceEntered = { onEvent(OrderEvent.SetEntrance(it)) },
+            apartmentFloorQuery = state.apartmentFloor,
+            onFloorEntered = { onEvent(OrderEvent.SetFloor(it)) },
+            apartmentIntercomQuery = state.apartmentIntercom,
+            onIntercomEntered = { onEvent(OrderEvent.SetIntercom(it)) },
+            onGetLocationIconClick = { onEvent(OrderEvent.GetLocation) },
+            addressComment = state.addressComment,
+            onAddressCommentsEntered = { onEvent(OrderEvent.SetAddressComment(it)) },
         )
 
         PaymentChooser(
@@ -76,6 +84,8 @@ fun OrderScreen(
             isError = state.isError,
             onPaymentTypeSelected = { onEvent(OrderEvent.SetPaymentType(it)) },
             onChangeEntered = { onEvent(OrderEvent.SetChangeFrom(it)) },
+            noChange = state.noChange,
+            onNoChangeToggled = { onEvent(OrderEvent.NoChangeToggled(it)) },
         )
 
         UtensilPreferences(

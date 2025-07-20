@@ -31,7 +31,6 @@ fun BottomNavigation(
     val arrayOFItems = arrayOf(
         BottomNavigationItem.Search,
         BottomNavigationItem.Favorites,
-        BottomNavigationItem.Order, // TODO Временно, только для теста экрана оформления заказа
         BottomNavigationItem.Menu,
         BottomNavigationItem.Delivery,
         BottomNavigationItem.Cart
