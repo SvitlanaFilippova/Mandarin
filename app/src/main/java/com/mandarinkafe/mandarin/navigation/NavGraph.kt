@@ -89,13 +89,7 @@ fun NavGraph(navHostController: NavHostController) {
             }
 
             composable(SPLASH_SCREEN_ROUTE) {
-                SplashScreen(
-                    onFinished = {
-                        navHostController.navigate(MENU_SCREEN_ROUTE) {
-                            popUpTo(SPLASH_SCREEN_ROUTE) { inclusive = true }
-                        }
-                    }
-                )
+                SplashScreen()
             }
 
             composable(
