@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.delivery.screen
+package com.mandarinkafe.mandarin.features.delivery.presentation.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +17,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.delivery.components.LocationPicker
+import com.mandarinkafe.mandarin.features.delivery.presentation.components.LocationPicker
 
 @Preview
 @Composable

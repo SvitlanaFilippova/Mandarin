@@ -1,8 +1,10 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
+import com.mandarinkafe.mandarin.core.domain.models.DeliveryArea
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
+import com.mandarinkafe.mandarin.features.order.presentation.models.UiAddress
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
@@ -38,12 +40,8 @@ sealed interface OrderContract {
         val name: String = "",
         val phone: String = "",
         val deliveryType: DeliveryType? = null,
-        val address: String = "",
-        val addressComment: String = "",
-        val apartmentNumber: String = "",
-        val apartmentEntrance: String = "",
-        val apartmentFloor: String = "",
-        val apartmentIntercom: String = "",
+        val address: UiAddress = UiAddress(),
+        val deliveryZone: DeliveryArea? = null,
         val paymentType: PaymentType? = null,
         val noChange: Boolean = false,
         val changeFrom: String = "",
@@ -59,10 +57,13 @@ sealed interface OrderContract {
         val phoneIsValid: Boolean
             get() = phone.length == VALID_PHONE_LENGTH
         val addressEntered: Boolean
-            get() = address.isNotEmpty() || deliveryType == DeliveryType.SELF_PICKUP
+            get() =
+                address.addressMain.isNotEmpty() || deliveryType == DeliveryType.SELF_PICKUP
         val apartmentDetailsIsValid: Boolean
-            get() = deliveryType != DeliveryType.APARTMENT ||
-                    apartmentNumber.isNotEmpty() && apartmentEntrance.isNotEmpty() && apartmentFloor.isNotEmpty()
+            get() = with(address) {
+                deliveryType != DeliveryType.APARTMENT ||
+                        apartmentNumber.isNotEmpty() && apartmentEntrance.isNotEmpty() && apartmentFloor.isNotEmpty()
+            }
         val paymentTypeChosen: Boolean
             get() = paymentType != null
 

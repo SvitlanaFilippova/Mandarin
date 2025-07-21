@@ -1,6 +1,6 @@
 @file:Suppress("MagicNumber")
 
-package com.mandarinkafe.mandarin.features.delivery.components
+package com.mandarinkafe.mandarin.features.delivery.presentation.components
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -169,6 +169,4 @@ private fun moveCamera(mapView: MapView?, lat: Double, lon: Double) {
         null
     )
 }
-
-
 

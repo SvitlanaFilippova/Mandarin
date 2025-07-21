@@ -56,6 +56,8 @@ object Constants {
     const val VALID_PHONE_LENGTH = 10
 
     // DI
+    const val NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/"
+    const val MANDARIN_CAFE = "your-app-name"
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
     const val LOCAL_STORAGE_NAME = "local_storage"
     const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/spreadsheets/d/e/"
@@ -63,6 +65,8 @@ object Constants {
         "2PACX-1vQ3-6HvveASGgkJk7RppqB25IlbRSGJGvdEnN_0_XTtIKtRcR6H-R4KS0L_39ifx1cnGWRUiCA2zPQZ/pub?gid=0&single=true&output=csv"
     const val RECOMMENDATIONS_GOOGLE_DOCS_URL =
         "2PACX-1vQ3-6HvveASGgkJk7RppqB25IlbRSGJGvdEnN_0_XTtIKtRcR6H-R4KS0L_39ifx1cnGWRUiCA2zPQZ/pub?gid=1629216186&single=true&output=csv"
+    const val ACCEPT_LANGUAGE_RU = "ru"
+    const val FORMAT_JSON = "json"
 
     // API
     const val BEARER_PREFIX = "Bearer "
@@ -82,31 +86,6 @@ object Constants {
     const val INTERVAL_FOR_UPD_PROGRESSBAR: Long = 100L
     const val UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE: Long = 500L
 
-    // Стоимость доставки
-    const val DELIVERY_PRICE_AREA1 = 150
-    const val DELIVERY_PRICE_AREA2 = 200
-    const val DELIVERY_PRICE_AREA3 = 300
-    const val DELIVERY_PRICE_AREA4 = 350
-    const val DELIVERY_PRICE_AREA5 = 400
-    const val DELIVERY_PRICE_AREA6 = 450
-    const val DELIVERY_PRICE_AREA7 = 550
-    const val DELIVERY_PRICE_AREA8 = 650
-    const val DELIVERY_PRICE_AREA9 = 750
-    const val DELIVERY_PRICE_AREA10 = 850
-    const val DELIVERY_PRICE_AREA11 = 950
-    const val DELIVERY_PRICE_AREA12 = 1050
-    const val DELIVERY_PRICE_FREE_AREA1 = 700
-    const val DELIVERY_PRICE_FREE_AREA2 = 800
-    const val DELIVERY_PRICE_FREE_AREA3 = 1500
-    const val DELIVERY_PRICE_FREE_AREA4 = 2000
-    const val DELIVERY_PRICE_FREE_AREA5 = 2200
-    const val DELIVERY_PRICE_FREE_AREA6 = 2500
-    const val DELIVERY_PRICE_FREE_AREA7 = 3000
-    const val DELIVERY_PRICE_FREE_AREA8 = 3200
-    const val DELIVERY_PRICE_FREE_AREA9 = 4000
-    const val DELIVERY_PRICE_FREE_AREA10 = 4500
-    const val DELIVERY_PRICE_FREE_AREA11 = 5000
-    const val DELIVERY_PRICE_FREE_AREA12 = 5500
 
     // remoteConfig
     const val PHONE_NUMBER_DEFAULT = "tel:+74951087055"

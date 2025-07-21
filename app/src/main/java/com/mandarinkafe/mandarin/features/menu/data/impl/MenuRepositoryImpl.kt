@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.menu.data.impl
 
 import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
-import com.mandarinkafe.mandarin.core.data.network.NetworkClient
+import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.menu.data.dto.CategoryDto
@@ -21,12 +21,12 @@ import jakarta.inject.Singleton
 
 @Singleton
 class MenuRepositoryImpl @Inject constructor(
-    private val networkClient: NetworkClient,
+    private val iikoNetworkClient: IikoNetworkClient,
 ) : MenuRepository, MenuFetcher {
 
     override suspend fun fetchMenu(): Resource<List<MealCategory>> {
         return try {
-            val response = networkClient.getMenu()
+            val response = iikoNetworkClient.getMenu()
 
             when (response.resultCode) {
                 NO_CONNECTION -> Resource.ErrorNoInternet()

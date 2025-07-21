@@ -1,25 +1,29 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
 import android.util.Log
+import com.mandarinkafe.mandarin.features.order.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
+import com.mandarinkafe.mandarin.features.order.presentation.models.UiAddress
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
+import com.yandex.mapkit.geometry.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class OrderViewModel @Inject constructor() :
-    BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
+class OrderViewModel @Inject constructor(
+    private val getDeliveryZone: GetDeliveryZoneUseCase
+) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
     override fun setInitialState() = OrderState()
 
     override fun onEvent(event: OrderEvent) {
         when (event) {
-            is OrderEvent.SetAddress -> setAddress(event.query)
+            is OrderEvent.SetAddress -> setAddressMainInfo(event.query)
             is OrderEvent.SetApartmentNumber -> setApartmentNumber(event.query)
             is OrderEvent.SetAddressComment -> setAddressComment(event.query)
             is OrderEvent.SetEntrance -> setEntrance(event.query)
@@ -40,12 +44,15 @@ class OrderViewModel @Inject constructor() :
         }
     }
 
-    private fun setNoChange(noChange: Boolean) {
-        setState { copy(noChange = noChange) }
-    }
 
     private fun getLocation() {
         Log.d("DEBUG ORDER", "getLocation clicked")
+    }
+
+    private fun onLocationReceived(point: Point) {
+        val zones = getDeliveryZone(point)
+        val bestZone = zones.minByOrNull { it.id }
+        setState { copy(deliveryZone = bestZone) }
     }
 
     private fun submitOrder() {
@@ -53,32 +60,26 @@ class OrderViewModel @Inject constructor() :
         sendEffect(OrderEffect.SubmitOrder)
     }
 
-    private fun setError() {
-        setState { copy(isError = true) }
+    private fun setAddressMainInfo(query: String) = updateAddress { copy(addressMain = query) }
+
+    private fun setApartmentNumber(query: String) = updateAddress { copy(apartmentNumber = query) }
+
+    private fun setAddressComment(query: String) = updateAddress { copy(addressComment = query) }
+
+    private fun setEntrance(query: String) = updateAddress { copy(apartmentEntrance = query) }
+
+    private fun setFloor(query: String) = updateAddress { copy(apartmentFloor = query) }
+
+    private fun setIntercom(query: String) = updateAddress { copy(apartmentIntercom = query) }
+
+    private fun updateAddress(transform: UiAddress.() -> UiAddress) {
+        setState {
+            copy(address = address.transform())
+        }
     }
 
-    private fun setAddress(query: String) {
-        setState { copy(address = query) }
-    }
-
-    private fun setApartmentNumber(query: String) {
-        setState { copy(apartmentNumber = query) }
-    }
-
-    private fun setAddressComment(query: String) {
-        setState { copy(addressComment = query) }
-    }
-
-    private fun setEntrance(query: String) {
-        setState { copy(apartmentEntrance = query) }
-    }
-
-    private fun setFloor(query: String) {
-        setState { copy(apartmentFloor = query) }
-    }
-
-    private fun setIntercom(query: String) {
-        setState { copy(apartmentIntercom = query) }
+    private fun setNoChange(noChange: Boolean) {
+        setState { copy(noChange = noChange) }
     }
 
     private fun setChangeFrom(query: String) {
@@ -120,7 +121,7 @@ class OrderViewModel @Inject constructor() :
     private fun setPhone(query: String) {
         val digitsOnly = query.filter { it.isDigit() }
 
-        // Если первая цифра — 7, 8 или плюс, игнорируем
+        // Если первая цифра — 7 или 8, игнорируем
         val normalized = when {
             digitsOnly.startsWith("7") -> digitsOnly.drop(1)
             digitsOnly.startsWith("8") -> digitsOnly.drop(1)
@@ -131,6 +132,10 @@ class OrderViewModel @Inject constructor() :
         val limited = normalized.take(VALID_PHONE_LENGTH)
 
         setState { copy(phone = limited) }
+    }
+
+    private fun setError() {
+        setState { copy(isError = true) }
     }
 
     override fun setLoading(isLoading: Boolean) {

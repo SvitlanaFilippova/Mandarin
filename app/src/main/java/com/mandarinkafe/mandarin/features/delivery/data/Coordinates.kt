@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.delivery
+package com.mandarinkafe.mandarin.features.delivery.data
 
 import com.yandex.mapkit.geometry.Point
 
