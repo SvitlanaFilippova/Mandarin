@@ -61,7 +61,8 @@ sealed interface OrderContract {
         val addressEntered: Boolean
             get() = address.isNotEmpty() || deliveryType == DeliveryType.SELF_PICKUP
         val apartmentDetailsIsValid: Boolean
-            get() = deliveryType != DeliveryType.APARTMENT || (apartmentNumber.isNotEmpty() && apartmentEntrance.isNotEmpty() && apartmentFloor.isNotEmpty())
+            get() = deliveryType != DeliveryType.APARTMENT ||
+                    (apartmentNumber.isNotEmpty() && apartmentEntrance.isNotEmpty() && apartmentFloor.isNotEmpty())
         val paymentTypeChosen: Boolean
             get() = paymentType != null
 
