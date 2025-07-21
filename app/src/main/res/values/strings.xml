@@ -22,6 +22,7 @@
     <string name="cancel_removing">Вернуть</string>
     <string name="clear_cart_question">Очистить корзину?</string>
     <string name="clear_cart_confirmation">Вы действительно хотите удалить всё из корзины?</string>
+    <string name="cart_total_cost_template">%d ₽</string>
 
     <!-- Избранное -->
     <string name="favorite">Избранное</string>
@@ -62,8 +63,8 @@
     <string name="phone_prefix">+7 </string>
     <string name="phone_mask">(###) ###-##-##</string>
     <string name="phone_placeholder">(XXX) XXX-XX-XX</string>
-    <string name="your_address">Адрес доставки *</string>
-    <string name="address_comment">Примечание к адресу</string>
+    <string name="your_address">Город, улица и дом *</string>
+    <string name="address_comment">Комментарий для курьера</string>
     <string name="get_address">Определить адрес</string>
     <string name="your_comment">Комментарий к заказу</string>
     <string name="shipping_type">Доставка в: *</string>
@@ -73,7 +74,7 @@
     <string name="address_apartment_number">Квартира *</string>
     <string name="address_apartment_entrance">Подъезд *</string>
     <string name="address_apartment_floor">Этаж *</string>
-    <string name="address_apartment_intercom">Код домофона</string>
+    <string name="address_apartment_intercom">Домофон</string>
     <string name="payment_type">Способ оплаты: *</string>
     <string name="payment_online">картой онлайн</string>
     <string name="payment_self_card">картой при получении</string>

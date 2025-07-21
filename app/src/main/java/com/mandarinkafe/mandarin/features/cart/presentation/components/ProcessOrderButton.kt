@@ -2,7 +2,9 @@ package com.mandarinkafe.mandarin.features.cart.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -25,23 +27,30 @@ fun ProcessOrderButton(
     modifier: Modifier = Modifier
 ) {
     Button(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimens.MarginSmall8)
+            .height(Dimens.ButtonSubmitOrderHeight),
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         colors = ButtonDefaults.buttonColors(
             containerColor = Colors.Orange,
             contentColor = Color.White,
         ),
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = Dimens.MarginSmall8)
-    ) {
+
+        ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
         ) {
             Text(
-                text = stringResource(R.string.process_order_price_template, totalPrice),
-                style = Typography.ToCartButtonBigStyle
+                text = stringResource(R.string.submit_order),
+                style = Typography.ToCartButtonBigStyle,
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = stringResource(R.string.cart_total_cost_template, totalPrice),
+                style = Typography.ToCartButtonBigStyle,
             )
         }
     }

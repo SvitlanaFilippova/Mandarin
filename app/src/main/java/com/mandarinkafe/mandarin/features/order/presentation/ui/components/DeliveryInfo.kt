@@ -28,12 +28,12 @@ fun DeliveryInfo(
     onGetLocationIconClick: () -> Unit,
 ) {
     val requestApartmentDetails by remember(chosen) { mutableStateOf(chosen == DeliveryType.APARTMENT) }
-    val requestAddressDetails by remember(chosen) { mutableStateOf(chosen == DeliveryType.PRIVATE_HOUSE) }
+    val requestAddress by remember(chosen) { mutableStateOf(chosen != null && chosen != DeliveryType.SELF_PICKUP) }
 
     DeliveryTypeChooser(chosen = chosen, onDeliverySelected = onDeliverySelected, isError = isError)
 
     // Поле для ввода адреса показываем только если выбор способа доставки уже сделан, и это НЕ самовывоз
-    if (chosen != null && chosen != DeliveryType.SELF_PICKUP) {
+    if (requestAddress) {
         MyTextField(
             isError = isError && addressQuery.isEmpty(),
             value = addressQuery,
@@ -62,8 +62,8 @@ fun DeliveryInfo(
         )
     }
 
-    // Опциональное поле для примечания к адресу, если выбрана доставка в частный дом
-    if (requestAddressDetails) {
+    // Опциональное поле для примечания к адресу, если выбор способа доставки уже сделан, и это НЕ самовывоз
+    if (requestAddress) {
         MyTextField(
             value = addressComment,
             labelRes = R.string.address_comment,
