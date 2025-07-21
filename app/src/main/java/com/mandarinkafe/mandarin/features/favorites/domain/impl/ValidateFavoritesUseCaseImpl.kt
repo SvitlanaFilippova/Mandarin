@@ -5,7 +5,7 @@ import com.mandarinkafe.mandarin.core.domain.api.FavoritesWriter
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.FavoriteRecord
-import com.mandarinkafe.mandarin.features.cart.validateBy
+import com.mandarinkafe.mandarin.features.cart.data.validateBy
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toStored
 import com.mandarinkafe.mandarin.features.favorites.domain.usecase.ValidateFavoritesUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional

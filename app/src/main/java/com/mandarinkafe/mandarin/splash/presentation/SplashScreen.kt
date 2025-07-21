@@ -10,21 +10,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.model.SplashElementsProvider
-import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_ANIMATION_DELAY_FOR_ELEMENT
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_ANIMATION_DURATION
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_APPEARING_DURATION
@@ -34,11 +29,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun SplashScreen(
-    viewModel: SharedViewModel = hiltViewModel(),
-    onFinished: () -> Unit
-) {
-    val state by viewModel.state.collectAsState()
+fun SplashScreen() {
     val globalAlpha = remember { Animatable(SPLASH_GLOBAL_ALPHA_INIT) }
     val logoAlpha = remember { Animatable(SPLASH_LOGO_ALPHA_INIT) }
 
@@ -55,22 +46,6 @@ fun SplashScreen(
             )
         }
     }
-
-    // Анимация скрытия всего контента
-    LaunchedEffect(state.isSplashVisible) {
-        if (!state.isSplashVisible) {
-            globalAlpha.animateTo(
-                targetValue = 0f,
-                animationSpec = tween(durationMillis = ANIMATION_DURATION_FAST)
-            )
-            logoAlpha.animateTo(
-                targetValue = 0f,
-                animationSpec = tween(durationMillis = ANIMATION_DURATION_FAST)
-            )
-            onFinished()
-        }
-    }
-
     val elements = remember { SplashElementsProvider.getSplashElements() }
 
     Box(

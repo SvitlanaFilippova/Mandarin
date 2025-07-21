@@ -8,7 +8,9 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
+import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER_DEFAULT
 import kotlinx.coroutines.flow.Flow
@@ -44,6 +46,13 @@ fun HandleEffects(
                         URLEncoder.encode(gson.toJson(meal), StandardCharsets.UTF_8.toString())
                     val route = "$MEAL_DETAILS_ROUTE/$json/$isEditMode"
                     navController.navigate(route)
+                }
+
+                is SharedEffect.NavigateToMain -> {
+                    navController.navigate(MENU_SCREEN_ROUTE) {
+                        popUpTo(NavConstants.SPLASH_SCREEN_ROUTE) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             }
         }

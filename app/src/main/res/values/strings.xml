@@ -22,6 +22,7 @@
     <string name="cancel_removing">Вернуть</string>
     <string name="clear_cart_question">Очистить корзину?</string>
     <string name="clear_cart_confirmation">Вы действительно хотите удалить всё из корзины?</string>
+    <string name="cart_total_cost_template">%d ₽</string>
 
     <!-- Избранное -->
     <string name="favorite">Избранное</string>
@@ -55,6 +56,48 @@
     <string name="pickup_info">Вы всегда можете воспользоваться услугой самовывоза из нашего кафе.\n\nМы находимся по адресу: г. Черноголовка, ул. Береговая, 24.</string>
     <string name="pay">ОПЛАТА</string>
     <string name="pay_info">- Наличными курьеру\n- Карточкой курьеру (через мобильный терминал)\n- Online-перевод на карту Сбербанка</string>
+
+    <!-- Оформление заказа -->
+    <string name="your_name">Имя</string>
+    <string name="your_phone">Номер телефона *</string>
+    <string name="phone_prefix">+7 </string>
+    <string name="phone_mask">(###) ###-##-##</string>
+    <string name="phone_placeholder">(XXX) XXX-XX-XX</string>
+    <string name="your_address">Город, улица и дом *</string>
+    <string name="address_comment">Комментарий для курьера</string>
+    <string name="get_address">Определить адрес</string>
+    <string name="your_comment">Комментарий к заказу</string>
+    <string name="shipping_type">Доставка в: *</string>
+    <string name="shipping_to_apartment">квартиру/офис</string>
+    <string name="shipping_to_private_house">частный дом</string>
+    <string name="shipping_self_pickup">самовывоз</string>
+    <string name="address_apartment_number">Квартира *</string>
+    <string name="address_apartment_entrance">Подъезд *</string>
+    <string name="address_apartment_floor">Этаж *</string>
+    <string name="address_apartment_intercom">Домофон</string>
+    <string name="payment_type">Способ оплаты: *</string>
+    <string name="payment_online">картой онлайн</string>
+    <string name="payment_self_card">картой при получении</string>
+    <string name="payment_cash">наличными</string>
+    <string name="no_change_needed">Без сдачи</string>
+    <string name="payment_change">Сдача с </string>
+    <string name="payment_default_value">0</string>
+    <string name="payment_rub">₽</string>
+    <string name="no_utensils">Мне не нужны приборы и салфетки</string>
+    <string name="i_need_utensils">Мне нужны:</string>
+    <string name="chopsticks">палочки</string>
+    <string name="disposable_utensils">одноразовые приборы</string>
+    <string name="napkins">бумажные салфетки</string>
+    <string name="gloves">одноразовые перчатки (для бургеров)</string>
+    <string name="total_cart_cost">Сумма заказа</string>
+    <string name="discount_template">Скидка %1$d%%</string>
+    <string name="discount_hint">Скидка по&#160;вашей карте может действовать не&#160;на&#160;все товары.</string>
+    <string name="delivery_cost">Стоимость доставки</string>
+    <string name="delivery_cost_hint">Стоимость доставки зависит от&#160;суммы заказа и&#160;зоны доставки, в&#160;которую попадает введённый адрес.</string>
+    <string name="why_is_that_number">Почему такая цифра</string>
+    <string name="submit_order">Оформить заказ</string>
+    <string name="order_total_cost_template">%.2f ₽</string>
+
 
     <!-- Кнопки действий -->
     <string name="minus">-</string>

@@ -21,10 +21,12 @@ import com.mandarinkafe.mandarin.util.Constants.SPLASH_SCREEN_DURATION
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -117,21 +119,25 @@ class SharedViewModel @Inject constructor(
 
     private fun loadInitialData() {
         viewModelScope.launch {
-            // Запускаем параллельно таймер, который через SPLASH_SCREEN_DURATION закроет экран,
+            val done = CompletableDeferred<Unit>()
+
+            // Таймер в отдельной корутине
             launch {
                 delay(SPLASH_SCREEN_DURATION)
-                setState {
-                    copy(isSplashVisible = false)
-                }
+                done.complete(Unit)
             }
 
-            // Параллельно начинаем загрузку меню
-            getInitialDataUseCase().collectLatest { resource ->
-                if (resource is Resource.Success) {
-                    setState { copy(isSplashVisible = false) }
-                    // Если Success прилетит раньше таймера SPLASH_SCREEN_DURATION - закрываем экран
-                }
+            // Сбор из Flow в отдельной корутине, ждём первого успеха
+            launch {
+                getInitialDataUseCase()
+                    .filterIsInstance<Resource.Success<*>>()
+                    .first()
+                done.complete(Unit)
+
             }
+            // Ждём, пока одна из двух корутин вызовет complete()
+            done.await()
+            sendEffect(SharedEffect.NavigateToMain)
         }
     }
 

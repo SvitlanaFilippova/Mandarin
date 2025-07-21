@@ -20,6 +20,7 @@ import com.mandarinkafe.mandarin.features.delivery.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.screen.MenuScreen
+import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.navigation.NavConstants.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
@@ -29,6 +30,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_JSON
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE_WITH_ARGS
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE_WITH_ARGS
 import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
@@ -56,12 +58,19 @@ fun NavGraph(navHostController: NavHostController) {
             composable(CART_SCREEN_ROUTE) {
                 CartScreen(
                     cartViewModel = cartViewModel,
-                    sharedViewModel = sharedViewModel
+                    sharedViewModel = sharedViewModel,
+                    navController = navHostController
                 )
             }
 
             composable(DELIVERY_SCREEN_ROUTE) {
                 DeliveryScreen()
+            }
+
+            composable(ORDER_SCREEN_ROUTE) {
+                OrderScreen(
+                    cartViewModel = cartViewModel
+                )
             }
 
             composable(FAVORITES_SCREEN_ROUTE) {
@@ -80,13 +89,7 @@ fun NavGraph(navHostController: NavHostController) {
             }
 
             composable(SPLASH_SCREEN_ROUTE) {
-                SplashScreen(
-                    onFinished = {
-                        navHostController.navigate(MENU_SCREEN_ROUTE) {
-                            popUpTo(SPLASH_SCREEN_ROUTE) { inclusive = true }
-                        }
-                    }
-                )
+                SplashScreen()
             }
 
             composable(

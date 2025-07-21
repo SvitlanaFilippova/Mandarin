@@ -44,7 +44,6 @@ fun MainScreen() {
     val onEvent = sharedViewModel::onEvent
     val selectedMeal = sharedState.selectedMealForFavoriteChoice
 
-
     Scaffold(
         topBar = {
             AppTopBar(
@@ -94,6 +93,7 @@ fun MainScreen() {
             sharedViewModel.onEvent(SharedEvent.ResetTopBar)
         }
     }
+
     HandleEffects(
         effectFlow = sharedViewModel.effect,
         navController = navController,

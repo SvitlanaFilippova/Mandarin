@@ -21,9 +21,11 @@ sealed interface CartContract {
         data class CancelRemove(val item: CustomizedMeal) : CartEvent
         data object ClearCart : CartEvent
         data object ConfirmClearCart : CartEvent
+        data object OnProceedOrderClick : CartEvent
     }
 
     sealed interface CartEffect : BaseEffect {
+        data object ProceedOrder : CartEffect
         data object ShowClearCartConfirmationDialog : CartEffect
     }
 

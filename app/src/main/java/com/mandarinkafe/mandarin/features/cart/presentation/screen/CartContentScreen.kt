@@ -44,6 +44,7 @@ fun CartContentScreen(
     onDeletionCancel: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
     onEditMealClick: (CustomizedMeal) -> Unit,
+    onProceedOrderClick: () -> Unit,
 ) {
     val cartItemsList: List<Pair<CustomizedMeal, Int>> = remember(state.cartItems) {
         state.cartItems.entries.map { it.toPair() }
@@ -130,7 +131,7 @@ fun CartContentScreen(
                 state.cartItems.keys.all { it in state.pendingDeletionMeals }
             if (!ifCartIsEmpty) {
                 ProcessOrderButton(
-                    onClick = { /* обработка нажатия */ },
+                    onClick = onProceedOrderClick,
                     totalPrice = state.totalCartPrice,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)

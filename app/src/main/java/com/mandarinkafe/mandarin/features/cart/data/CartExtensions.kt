@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.cart
+package com.mandarinkafe.mandarin.features.cart.data
 
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem

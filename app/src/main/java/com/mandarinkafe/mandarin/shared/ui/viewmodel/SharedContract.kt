@@ -37,14 +37,13 @@ sealed interface SharedContract {
             val item: CustomizedMeal? = null,
             val isEditMode: Boolean = false
         ) : SharedEffect
-
+        data object NavigateToMain : SharedEffect
     }
 
     data class SharedState(
-        val isSplashVisible: Boolean = true,
         val shouldShowTopBar: Boolean = true,
         val showFavoriteDialog: Boolean = false,
-        val cartItemsCount: Int = 0,
         val selectedMealForFavoriteChoice: CustomizedMeal? = null,
+        val cartItemsCount: Int = 0,
     ) : BaseState
 }
