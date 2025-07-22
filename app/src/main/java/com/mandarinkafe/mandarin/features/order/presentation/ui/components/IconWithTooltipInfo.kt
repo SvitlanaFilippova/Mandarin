@@ -24,7 +24,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
-fun IconWithTooltipInfo(tooltipTextResID: Int) {
+fun IconWithTooltipInfo(tooltipText: String) {
     var expanded by remember { mutableStateOf(false) }
 
     Box {
@@ -46,7 +46,7 @@ fun IconWithTooltipInfo(tooltipTextResID: Int) {
             offset = DpOffset(x = 0.dp, y = Dimens.MarginSmall8),
         ) {
             Text(
-                text = stringResource(tooltipTextResID),
+                text = tooltipText,
                 modifier = Modifier
                     .padding(Dimens.MarginSmall8)
                     .widthIn(max = Dimens.TooltipMaxWidth),

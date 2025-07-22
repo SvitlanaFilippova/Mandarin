@@ -1,6 +1,8 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.features.order.domain.api.GetCoordinatesUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
@@ -10,15 +12,28 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
+import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.debounce
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.yandex.mapkit.geometry.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class OrderViewModel @Inject constructor(
-    private val getDeliveryZone: GetDeliveryZoneUseCase
+    private val getDeliveryZone: GetDeliveryZoneUseCase,
+    private val getCoordinates: GetCoordinatesUseCase
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
+
+    private val getCoordinatesDebounce = debounce<String>(
+        GET_COORDINATES_DELAY,
+        viewModelScope,
+        useLastParam = true
+    ) { expression ->
+        validateAddress(expression)
+    }
+
     override fun setInitialState() = OrderState()
 
     override fun onEvent(event: OrderEvent) {
@@ -41,18 +56,20 @@ class OrderViewModel @Inject constructor(
             is OrderEvent.SubmitOrder -> submitOrder()
             is OrderEvent.GetLocation -> getLocation()
             is OrderEvent.NoChangeToggled -> setNoChange(event.noChange)
+            is OrderEvent.IsPrivateHouseToggled -> toggleIsPrivateHouse(event.isPrivateHouse)
         }
     }
 
+    private fun toggleIsPrivateHouse(isPrivateHouse: Boolean) {
+        setState { copy(addressIsPrivateHouse = isPrivateHouse) }
+    }
 
     private fun getLocation() {
         Log.d("DEBUG ORDER", "getLocation clicked")
     }
 
-    private fun onLocationReceived(point: Point) {
-        val zones = getDeliveryZone(point)
-        val bestZone = zones.minByOrNull { it.id }
-        setState { copy(deliveryZone = bestZone) }
+    fun cancelSearchDebounce() {
+        getCoordinatesDebounce.cancel()
     }
 
     private fun submitOrder() {
@@ -60,7 +77,56 @@ class OrderViewModel @Inject constructor(
         sendEffect(OrderEffect.SubmitOrder)
     }
 
-    private fun setAddressMainInfo(query: String) = updateAddress { copy(addressMain = query) }
+    private fun setAddressMainInfo(query: String) {
+        cancelSearchDebounce()
+        setState {
+            copy(
+                addressValidationInProgress = true,
+                address = address.copy(addressMain = query)
+            )
+        }
+        getCoordinatesDebounce.invoke(query)
+    }
+
+    private fun validateAddress(query: String) {
+        Log.d("DEBUG ORDER", "validateAddress,  started")
+        viewModelScope.launch {
+            val resource = getCoordinates(query)
+            when (resource) {
+                is Resource.Success -> {
+                    Log.d("DEBUG ORDER", "validateAddress,  point success: $resource")
+                    resource.data?.let { point ->
+                        onLocationReceived(point)
+                    } ?: setAddressValidationError()
+                }
+
+                else -> {
+                    setAddressValidationError()
+                }
+            }
+        }
+    }
+
+    private fun onLocationReceived(point: Point) {
+        val zones = getDeliveryZone(point)
+        val bestZone = zones.minByOrNull { it.id }
+        if (bestZone != null) {
+            setState {
+                copy(
+                    deliveryZone = bestZone,
+                    addressValidated = true,
+                    addressValidationInProgress = false
+                )
+            }
+            Log.d("DEBUG ORDER", "onLocationReceived,  deliveryZone:  $bestZone")
+        } else setAddressValidationError()
+    }
+
+    private fun setAddressValidationError() {
+        setState {
+            copy(addressValidated = false, addressValidationInProgress = false)
+        }
+    }
 
     private fun setApartmentNumber(query: String) = updateAddress { copy(apartmentNumber = query) }
 
@@ -134,11 +200,19 @@ class OrderViewModel @Inject constructor(
         setState { copy(phone = limited) }
     }
 
+    private fun checkDeliveryCost() {
+
+    }
+
     private fun setError() {
         setState { copy(isError = true) }
     }
 
     override fun setLoading(isLoading: Boolean) {
         // не применимо к данному экрану
+    }
+
+    private companion object {
+        private const val GET_COORDINATES_DELAY = 3000L
     }
 }

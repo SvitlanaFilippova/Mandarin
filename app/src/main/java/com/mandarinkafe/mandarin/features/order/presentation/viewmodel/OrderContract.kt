@@ -15,6 +15,7 @@ sealed interface OrderContract {
         data class SetName(val query: String) : OrderEvent
         data class SetPhone(val query: String) : OrderEvent
         data class SetDeliveryType(val deliveryType: DeliveryType) : OrderEvent
+        data class IsPrivateHouseToggled(val isPrivateHouse: Boolean) : OrderEvent
         data class SetAddress(val query: String) : OrderEvent
         data class SetAddressComment(val query: String) : OrderEvent
         data class SetApartmentNumber(val query: String) : OrderEvent
@@ -41,6 +42,9 @@ sealed interface OrderContract {
         val phone: String = "",
         val deliveryType: DeliveryType? = null,
         val address: UiAddress = UiAddress(),
+        val addressIsPrivateHouse: Boolean = false,
+        val addressValidated: Boolean? = null,
+        val addressValidationInProgress: Boolean = false,
         val deliveryZone: DeliveryArea? = null,
         val paymentType: PaymentType? = null,
         val noChange: Boolean = false,
@@ -50,7 +54,7 @@ sealed interface OrderContract {
         val comment: String = "",
         val isError: Boolean = false,
         val discountPercent: Int = 0,
-        val deliveryCost: Int = 0,
+        val deliveryCost: Int? = null,
         val discountSum: Float = 0f,
     ) : BaseState {
 
@@ -61,7 +65,7 @@ sealed interface OrderContract {
                 address.addressMain.isNotEmpty() || deliveryType == DeliveryType.SELF_PICKUP
         val apartmentDetailsIsValid: Boolean
             get() = with(address) {
-                deliveryType != DeliveryType.APARTMENT ||
+                addressIsPrivateHouse ||
                         apartmentNumber.isNotEmpty() && apartmentEntrance.isNotEmpty() && apartmentFloor.isNotEmpty()
             }
         val paymentTypeChosen: Boolean

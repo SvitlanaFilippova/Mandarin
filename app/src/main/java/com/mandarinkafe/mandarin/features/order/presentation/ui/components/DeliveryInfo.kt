@@ -7,12 +7,15 @@ import androidx.compose.runtime.remember
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
+import com.mandarinkafe.mandarin.util.presentation.ui.components.SwitchWithTextRow
 
 @Composable
 fun DeliveryInfo(
     chosen: DeliveryType?,
     onDeliverySelected: (DeliveryType) -> Unit,
     isError: Boolean,
+    isPrivateHouse: Boolean,
+    isPrivateHouseToggled: (Boolean) -> Unit,
     addressQuery: String,
     onAddressEntered: (String) -> Unit,
     addressComment: String,
@@ -27,8 +30,11 @@ fun DeliveryInfo(
     onIntercomEntered: (String) -> Unit,
     onGetLocationIconClick: () -> Unit,
 ) {
-    val requestApartmentDetails by remember(chosen) { mutableStateOf(chosen == DeliveryType.APARTMENT) }
-    val requestAddress by remember(chosen) { mutableStateOf(chosen != null && chosen != DeliveryType.SELF_PICKUP) }
+    val requestAddress by remember(chosen) { mutableStateOf(chosen == DeliveryType.DELIVERY) }
+    val requestApartmentDetails by remember(
+        chosen,
+        isPrivateHouse
+    ) { mutableStateOf(chosen == DeliveryType.DELIVERY && !isPrivateHouse) }
 
     DeliveryTypeChooser(chosen = chosen, onDeliverySelected = onDeliverySelected, isError = isError)
 
@@ -44,6 +50,12 @@ fun DeliveryInfo(
                 )
             },
             onValueChange = { onAddressEntered(it) }
+        )
+
+        SwitchWithTextRow(
+            value = isPrivateHouse,
+            onValueChange = { isPrivateHouseToggled(it) },
+            textRes = R.string.private_house
         )
     }
 

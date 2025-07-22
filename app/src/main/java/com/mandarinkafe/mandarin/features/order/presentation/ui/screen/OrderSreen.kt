@@ -39,7 +39,8 @@ fun OrderScreen(
     val onEvent = orderViewModel::onEvent
     val cartSum = cartState.totalCartPrice
     val discountSum = state.discountSum
-    val deliveryCost = state.deliveryCost
+    val deliveryCost = state.deliveryCost ?: 0
+
     val totalOrderSum =
         remember(cartSum, discountSum, deliveryCost) { cartSum - discountSum + deliveryCost }
 
@@ -65,21 +66,23 @@ fun OrderScreen(
 
         DeliveryInfo(
             chosen = state.deliveryType,
-            onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
             addressQuery = state.address.addressMain,
             isError = state.isError,
-            onAddressEntered = { onEvent(OrderEvent.SetAddress(it)) },
             apartmentNumberQuery = state.address.apartmentNumber,
-            onApartmentNumberEntered = { onEvent(OrderEvent.SetApartmentNumber(it)) },
             apartmentEntranceQuery = state.address.apartmentEntrance,
-            onEntranceEntered = { onEvent(OrderEvent.SetEntrance(it)) },
             apartmentFloorQuery = state.address.apartmentFloor,
-            onFloorEntered = { onEvent(OrderEvent.SetFloor(it)) },
             apartmentIntercomQuery = state.address.apartmentIntercom,
+            addressComment = state.address.addressComment,
+            isPrivateHouse = state.addressIsPrivateHouse,
+            onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
+            onAddressEntered = { onEvent(OrderEvent.SetAddress(it)) },
+            onApartmentNumberEntered = { onEvent(OrderEvent.SetApartmentNumber(it)) },
+            onEntranceEntered = { onEvent(OrderEvent.SetEntrance(it)) },
+            onFloorEntered = { onEvent(OrderEvent.SetFloor(it)) },
             onIntercomEntered = { onEvent(OrderEvent.SetIntercom(it)) },
             onGetLocationIconClick = { onEvent(OrderEvent.GetLocation) },
-            addressComment = state.address.addressComment,
             onAddressCommentsEntered = { onEvent(OrderEvent.SetAddressComment(it)) },
+            isPrivateHouseToggled = { onEvent(OrderEvent.IsPrivateHouseToggled(it)) },
         )
 
         PaymentChooser(
@@ -118,8 +121,10 @@ fun OrderScreen(
             discountSum = discountSum,
             discountPercent = state.discountPercent,
             deliveryCost = deliveryCost,
+            addressValidated = state.addressValidated,
+            freeDeliveryThreshold = state.deliveryZone?.freeDeliveryThreshold,
+            addressValidationInProgress = state.addressValidationInProgress
         )
-
 
 
 

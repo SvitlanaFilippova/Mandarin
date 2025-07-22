@@ -63,14 +63,14 @@
     <string name="phone_prefix">+7 </string>
     <string name="phone_mask">(###) ###-##-##</string>
     <string name="phone_placeholder">(XXX) XXX-XX-XX</string>
+    <string name="private_house">Частный дом</string>
     <string name="your_address">Город, улица и дом *</string>
     <string name="address_comment">Комментарий для курьера</string>
     <string name="get_address">Определить адрес</string>
     <string name="your_comment">Комментарий к заказу</string>
-    <string name="shipping_type">Доставка в: *</string>
-    <string name="shipping_to_apartment">квартиру/офис</string>
-    <string name="shipping_to_private_house">частный дом</string>
-    <string name="shipping_self_pickup">самовывоз</string>
+    <string name="choose_delivery_type">Выбор обязателен</string>
+    <string name="shipping">Доставка</string>
+    <string name="shipping_self_pickup">Cамовывоз</string>
     <string name="address_apartment_number">Квартира *</string>
     <string name="address_apartment_entrance">Подъезд *</string>
     <string name="address_apartment_floor">Этаж *</string>
@@ -93,8 +93,10 @@
     <string name="discount_template">Скидка %1$d%%</string>
     <string name="discount_hint">Скидка по&#160;вашей карте может действовать не&#160;на&#160;все товары.</string>
     <string name="delivery_cost">Стоимость доставки</string>
-    <string name="delivery_cost_hint">Стоимость доставки зависит от&#160;суммы заказа и&#160;зоны доставки, в&#160;которую попадает введённый адрес.</string>
+    <string name="delivery_cost_hint">Стоимость доставки зависит от&#160;суммы заказа и&#160;зоны доставки. Для введённого адреса доставка бесплатна при заказе от&#160;%1&#36;d&#8381; (с&#160;учётом скидок).</string>
     <string name="why_is_that_number">Почему такая цифра</string>
+    <string name="delivery_request_validation">Введите адрес для расчёта стоимости доставки</string>
+    <string name="delivery_validation_error">Не&#160;удалось валидировать адрес. Возможность доставки и её стоимость уточнит оператор после оформления заказа. Информация о&#160;возможных зонах доставки в&#160;разделе &#171;Доставка&#187;</string>
     <string name="submit_order">Оформить заказ</string>
     <string name="order_total_cost_template">%.2f ₽</string>
 

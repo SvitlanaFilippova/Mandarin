@@ -65,8 +65,6 @@ object Constants {
         "2PACX-1vQ3-6HvveASGgkJk7RppqB25IlbRSGJGvdEnN_0_XTtIKtRcR6H-R4KS0L_39ifx1cnGWRUiCA2zPQZ/pub?gid=0&single=true&output=csv"
     const val RECOMMENDATIONS_GOOGLE_DOCS_URL =
         "2PACX-1vQ3-6HvveASGgkJk7RppqB25IlbRSGJGvdEnN_0_XTtIKtRcR6H-R4KS0L_39ifx1cnGWRUiCA2zPQZ/pub?gid=1629216186&single=true&output=csv"
-    const val ACCEPT_LANGUAGE_RU = "ru"
-    const val FORMAT_JSON = "json"
 
     // API
     const val BEARER_PREFIX = "Bearer "

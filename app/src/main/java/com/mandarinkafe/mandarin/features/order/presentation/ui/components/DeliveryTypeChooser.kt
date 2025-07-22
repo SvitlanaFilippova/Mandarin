@@ -22,19 +22,16 @@ fun DeliveryTypeChooser(
     onDeliverySelected: (DeliveryType) -> Unit
 ) {
     val deliveryTypes = remember { DeliveryType.entries.toList() }
-    val style = if (isError && chosen == null) {
-        Typography.RegularTextStyle.copy(color = Colors.ErrorRed)
-    } else {
-        Typography.RegularTextStyle
-    }
     Column {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = Dimens.MarginSuperSmall4),
-            text = stringResource(R.string.shipping_type),
-            style = style,
-        )
+        if (isError && chosen == null) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = Dimens.MarginSuperSmall4),
+                text = stringResource(R.string.choose_delivery_type),
+                style = Typography.RegularTextStyle.copy(color = Colors.ErrorRed),
+            )
+        }
         deliveryTypes.forEach { item ->
             RadiobuttonWithTextRow(
                 label = stringResource(item.nameRes),
