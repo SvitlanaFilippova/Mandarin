@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 object Dimens {
+    val MapPinSize = 48.dp
     val ToolbarHeadHeight40 = 40.dp
     val RecommendsItemWidth96 = 96.dp
     val Border1 = 1.dp
@@ -12,8 +13,10 @@ object Dimens {
     val CornerRadius16 = 16.dp
     val OrderSummaryRowHeight = 32.dp
     val Elevation2 = 2.dp
+    val BigButtonWithTextHeight = 40.dp
     val ButtonSubmitOrderHeight = 56.dp
     val ButtonToCartSmall32 = 32.dp
+    val ButtonBoxBig40 = 40.dp
     val ButtonBox32 = 32.dp
     val ButtonToCartBig120 = 120.dp
     val ButtonsRowWidth164 = 164.dp
@@ -29,6 +32,7 @@ object Dimens {
     val MarginBig20 = 20.dp
     val MarginBig24 = 24.dp
     val MarginBig32 = 32.dp
+    val MarginHuge64 = 64.dp
     val MarginForCartButton72 = 72.dp
     val BSMarginForStatusBar40 = 40.dp
     val ModifierRowHeight48 = 48.dp

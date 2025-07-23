@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.favorites.di
 
-import android.content.Context
 import android.content.SharedPreferences
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesReader
@@ -12,12 +11,10 @@ import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesSt
 import com.mandarinkafe.mandarin.features.favorites.domain.impl.FavoritesInteractorImpl
 import com.mandarinkafe.mandarin.features.favorites.domain.impl.ValidateFavoritesUseCaseImpl
 import com.mandarinkafe.mandarin.features.favorites.domain.usecase.ValidateFavoritesUseCase
-import com.mandarinkafe.mandarin.util.Constants.LOCAL_STORAGE_NAME
 import com.mandarinkafe.mandarin.util.NetworkMonitor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -25,14 +22,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class FavoritesModule {
 
-    @Provides
-    @Singleton
-    fun provideSharedPreferences(
-        @ApplicationContext
-        context: Context
-    ): SharedPreferences {
-        return context.getSharedPreferences(LOCAL_STORAGE_NAME, Context.MODE_PRIVATE)
-    }
 
     @Provides
     @Singleton

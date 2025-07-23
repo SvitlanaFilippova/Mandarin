@@ -1,11 +1,9 @@
-package com.mandarinkafe.mandarin.features.search.presentation.ui.components
+package com.mandarinkafe.mandarin.features.location.presentation.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -22,14 +20,17 @@ import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
-fun SearchBarInputField(
+fun AddressSearchTextField(
+    modifier: Modifier = Modifier,
     query: String,
-    onQueryChange: (String) -> Unit,
+    labelRes: Int,
+    enabled: Boolean,
+    autoFocus: Boolean = false,
     onClear: () -> Unit,
-    onSearchDismiss: () -> Unit,
-    autoFocus: Boolean = false
+    onQueryChange: (String) -> Unit? = { },
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -43,15 +44,19 @@ fun SearchBarInputField(
     }
 
     TextField(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .focusRequester(focusRequester),
-        shape = RoundedCornerShape(Dimens.RadiusSearchField8),
         value = query,
-        onValueChange = onQueryChange,
-        enabled = true,
+        isError = false,
         singleLine = true,
+        shape = RoundedCornerShape(Dimens.CornerRadius8),
+        onValueChange = { onQueryChange(it) },
+        enabled = enabled,
         colors = TextFieldDefaults.colors(
+            disabledTextColor = Colors.White,
+            disabledContainerColor = Colors.DarkGrey,
+            disabledIndicatorColor = Colors.Transparent,
             cursorColor = Colors.Orange,
             focusedTextColor = Colors.White,
             focusedContainerColor = Colors.DarkGrey,
@@ -60,40 +65,23 @@ fun SearchBarInputField(
             unfocusedContainerColor = Colors.DarkGrey,
             unfocusedIndicatorColor = Colors.Transparent,
         ),
-        placeholder = {
+
+        label = {
             Text(
-                text = stringResource(id = R.string.search_in_menu),
-                color = Colors.White
+                text = stringResource(id = labelRes),
+                style = Typography.RegularLightTextStyle
             )
         },
-
-        leadingIcon = {
-            Icon(
-                Icons.Default.Search,
-                contentDescription = stringResource(id = R.string.search_in_menu),
-                tint = Colors.White
-            )
-        },
-
         trailingIcon = {
-            if (query.isNotEmpty()) { // если в поле есть текст - очистить его
-                IconButton(onClick = { onClear() }) {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onQueryChange("") }) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = stringResource(id = R.string.clear_text),
-                        tint = Colors.White
-                    )
-                }
-            } else {
-                IconButton(onClick = { onSearchDismiss() }) { // если поле пустое - возврат назад
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(id = R.string.back),
-                        tint = Colors.White
+                        tint = Colors.LightGrey
                     )
                 }
             }
-        },
-
-        )
+        }
+    )
 }

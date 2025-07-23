@@ -2,7 +2,6 @@ package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.features.order.domain.api.GetCoordinatesUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
@@ -12,18 +11,15 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
-import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.debounce
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.yandex.mapkit.geometry.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class OrderViewModel @Inject constructor(
     private val getDeliveryZone: GetDeliveryZoneUseCase,
-    private val getCoordinates: GetCoordinatesUseCase
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     private val getCoordinatesDebounce = debounce<String>(
@@ -38,12 +34,6 @@ class OrderViewModel @Inject constructor(
 
     override fun onEvent(event: OrderEvent) {
         when (event) {
-            is OrderEvent.SetAddress -> setAddressMainInfo(event.query)
-            is OrderEvent.SetApartmentNumber -> setApartmentNumber(event.query)
-            is OrderEvent.SetAddressComment -> setAddressComment(event.query)
-            is OrderEvent.SetEntrance -> setEntrance(event.query)
-            is OrderEvent.SetFloor -> setFloor(event.query)
-            is OrderEvent.SetIntercom -> setIntercom(event.query)
             is OrderEvent.SetChangeFrom -> setChangeFrom(event.query)
             is OrderEvent.SetChosenUtensils -> setChosenUtensils(event.utensil, event.isChosen)
             is OrderEvent.SetComment -> setComment(event.query)
@@ -54,18 +44,10 @@ class OrderViewModel @Inject constructor(
             is OrderEvent.SetPhone -> setPhone(event.query)
             is OrderEvent.OnMissingRequiredInfo -> setError()
             is OrderEvent.SubmitOrder -> submitOrder()
-            is OrderEvent.GetLocation -> getLocation()
+            is OrderEvent.CreateNewAddress -> goToLocationScreen()
+            is OrderEvent.EditLocation -> goToLocationScreen(event.address)
             is OrderEvent.NoChangeToggled -> setNoChange(event.noChange)
-            is OrderEvent.IsPrivateHouseToggled -> toggleIsPrivateHouse(event.isPrivateHouse)
         }
-    }
-
-    private fun toggleIsPrivateHouse(isPrivateHouse: Boolean) {
-        setState { copy(addressIsPrivateHouse = isPrivateHouse) }
-    }
-
-    private fun getLocation() {
-        Log.d("DEBUG ORDER", "getLocation clicked")
     }
 
     fun cancelSearchDebounce() {
@@ -79,32 +61,15 @@ class OrderViewModel @Inject constructor(
 
     private fun setAddressMainInfo(query: String) {
         cancelSearchDebounce()
-        setState {
-            copy(
-                addressValidationInProgress = true,
-                address = address.copy(addressMain = query)
-            )
-        }
         getCoordinatesDebounce.invoke(query)
+    }
+
+    private fun goToLocationScreen(address: UiAddress? = null) {
+        sendEffect(OrderEffect.GoToLocationScreen(address))
     }
 
     private fun validateAddress(query: String) {
         Log.d("DEBUG ORDER", "validateAddress,  started")
-        viewModelScope.launch {
-            val resource = getCoordinates(query)
-            when (resource) {
-                is Resource.Success -> {
-                    Log.d("DEBUG ORDER", "validateAddress,  point success: $resource")
-                    resource.data?.let { point ->
-                        onLocationReceived(point)
-                    } ?: setAddressValidationError()
-                }
-
-                else -> {
-                    setAddressValidationError()
-                }
-            }
-        }
     }
 
     private fun onLocationReceived(point: Point) {
@@ -125,22 +90,6 @@ class OrderViewModel @Inject constructor(
     private fun setAddressValidationError() {
         setState {
             copy(addressValidated = false, addressValidationInProgress = false)
-        }
-    }
-
-    private fun setApartmentNumber(query: String) = updateAddress { copy(apartmentNumber = query) }
-
-    private fun setAddressComment(query: String) = updateAddress { copy(addressComment = query) }
-
-    private fun setEntrance(query: String) = updateAddress { copy(apartmentEntrance = query) }
-
-    private fun setFloor(query: String) = updateAddress { copy(apartmentFloor = query) }
-
-    private fun setIntercom(query: String) = updateAddress { copy(apartmentIntercom = query) }
-
-    private fun updateAddress(transform: UiAddress.() -> UiAddress) {
-        setState {
-            copy(address = address.transform())
         }
     }
 

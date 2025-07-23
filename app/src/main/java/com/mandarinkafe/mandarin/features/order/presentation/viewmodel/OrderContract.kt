@@ -15,25 +15,20 @@ sealed interface OrderContract {
         data class SetName(val query: String) : OrderEvent
         data class SetPhone(val query: String) : OrderEvent
         data class SetDeliveryType(val deliveryType: DeliveryType) : OrderEvent
-        data class IsPrivateHouseToggled(val isPrivateHouse: Boolean) : OrderEvent
-        data class SetAddress(val query: String) : OrderEvent
-        data class SetAddressComment(val query: String) : OrderEvent
-        data class SetApartmentNumber(val query: String) : OrderEvent
-        data class SetEntrance(val query: String) : OrderEvent
-        data class SetFloor(val query: String) : OrderEvent
-        data class SetIntercom(val query: String) : OrderEvent
+        data object CreateNewAddress : OrderEvent
+        data class EditLocation(val address: UiAddress) : OrderEvent
         data class SetPaymentType(val paymentType: PaymentType) : OrderEvent
         data class NoChangeToggled(val noChange: Boolean) : OrderEvent
         data class SetChangeFrom(val query: String) : OrderEvent
         data class SetNoNeedUtensils(val noNeedUtensils: Boolean) : OrderEvent
         data class SetChosenUtensils(val utensil: Utensil, val isChosen: Boolean) : OrderEvent
         data class SetComment(val query: String) : OrderEvent
-        data object GetLocation : OrderEvent
         data object OnMissingRequiredInfo : OrderEvent
         data object SubmitOrder : OrderEvent
     }
 
     sealed interface OrderEffect : BaseEffect {
+        data class GoToLocationScreen(val address: UiAddress?) : OrderEffect
         data object SubmitOrder : OrderEffect
     }
 
@@ -41,8 +36,7 @@ sealed interface OrderContract {
         val name: String = "",
         val phone: String = "",
         val deliveryType: DeliveryType? = null,
-        val address: UiAddress = UiAddress(),
-        val addressIsPrivateHouse: Boolean = false,
+        val address: UiAddress? = null,
         val addressValidated: Boolean? = null,
         val addressValidationInProgress: Boolean = false,
         val deliveryZone: DeliveryArea? = null,
@@ -62,16 +56,11 @@ sealed interface OrderContract {
             get() = phone.length == VALID_PHONE_LENGTH
         val addressEntered: Boolean
             get() =
-                address.addressMain.isNotEmpty() || deliveryType == DeliveryType.SELF_PICKUP
-        val apartmentDetailsIsValid: Boolean
-            get() = with(address) {
-                addressIsPrivateHouse ||
-                        apartmentNumber.isNotEmpty() && apartmentEntrance.isNotEmpty() && apartmentFloor.isNotEmpty()
-            }
+                address != null || deliveryType == DeliveryType.SELF_PICKUP
         val paymentTypeChosen: Boolean
             get() = paymentType != null
 
         val canBeSubmitted: Boolean
-            get() = phoneIsValid && addressEntered && apartmentDetailsIsValid && paymentTypeChosen
+            get() = phoneIsValid && addressEntered && paymentTypeChosen
     }
 }

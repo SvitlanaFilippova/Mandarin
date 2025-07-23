@@ -36,6 +36,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MapAreas
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -83,7 +84,6 @@ fun LocationPicker() {
     LaunchedEffect(key1 = "loadMapView") {
         snapshotFlow { mapView.value }.collect { mapViewInstance ->
             mapViewInstance?.let {
-                MapKitFactory.initialize(context)
                 MapKitFactory.getInstance().onStart()
                 it.onStart()
                 locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -164,7 +164,7 @@ private fun requestLocationUpdates(
 private fun moveCamera(mapView: MapView?, lat: Double, lon: Double) {
     val userLocation = Point(lat, lon)
     mapView?.mapWindow?.map?.move(
-        CameraPosition(userLocation, 17.0f, 150.0f, 30.0f),
+        CameraPosition(userLocation, 17.0f, 0.0f, 30.0f),
         Animation(Animation.Type.SMOOTH, 2f),
         null
     )

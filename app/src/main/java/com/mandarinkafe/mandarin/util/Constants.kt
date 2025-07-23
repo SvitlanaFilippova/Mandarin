@@ -39,6 +39,7 @@ object Constants {
     const val ANIMATION_BOUNCE_MODIFIER = 4
 
     // common UI
+    const val MAP_ANIMATION_DURATION = 1f
     const val ANIMATION_DURATION_SLOW = 1000
     const val ANIMATION_DURATION_FAST = 300
     const val GRADIENT_HEIGHT_RATIO = 0.5f
@@ -54,6 +55,11 @@ object Constants {
 
     // Order
     const val VALID_PHONE_LENGTH = 10
+
+    // Map
+    const val MAP_DEFAULT_ZOOM = 17.0f
+    const val MAP_DEFAULT_TILT = 30.0f
+    const val MAP_DEFAULT_AZIMUTH = 0.0f
 
     // DI
     const val NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/"

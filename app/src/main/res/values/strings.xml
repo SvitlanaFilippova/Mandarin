@@ -64,6 +64,8 @@
     <string name="phone_mask">(###) ###-##-##</string>
     <string name="phone_placeholder">(XXX) XXX-XX-XX</string>
     <string name="private_house">Частный дом</string>
+    <string name="address_for_delivery">Адрес доставки</string>
+    <string name="new_address">Новый адрес</string>
     <string name="your_address">Город, улица и дом *</string>
     <string name="address_comment">Комментарий для курьера</string>
     <string name="get_address">Определить адрес</string>
@@ -99,6 +101,11 @@
     <string name="delivery_validation_error">Не&#160;удалось валидировать адрес. Возможность доставки и её стоимость уточнит оператор после оформления заказа. Информация о&#160;возможных зонах доставки в&#160;разделе &#171;Доставка&#187;</string>
     <string name="submit_order">Оформить заказ</string>
     <string name="order_total_cost_template">%.2f ₽</string>
+
+    <!-- Адрес -->
+    <string name="location">Адрес</string>
+    <string name="deliver_to_this_location">Доставить сюда</string>
+    <string name="to_my_location">К моей локации</string>
 
 
     <!-- Кнопки действий -->

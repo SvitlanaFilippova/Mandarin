@@ -18,6 +18,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.screen.CartScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.delivery.presentation.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.FavoritesScreen
+import com.mandarinkafe.mandarin.features.location.presentation.ui.screen.LocationScreen
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.screen.MenuScreen
 import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScreen
@@ -28,6 +29,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.FAVORITES_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_FOCUS_INPUT
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_JSON
+import com.mandarinkafe.mandarin.navigation.NavConstants.LOCATION_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE_WITH_ARGS
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
@@ -69,8 +71,13 @@ fun NavGraph(navHostController: NavHostController) {
 
             composable(ORDER_SCREEN_ROUTE) {
                 OrderScreen(
-                    cartViewModel = cartViewModel
+                    cartViewModel = cartViewModel,
+                    navController = navHostController
                 )
+            }
+
+            composable(LOCATION_SCREEN_ROUTE) {
+                LocationScreen(navController = navHostController)
             }
 
             composable(FAVORITES_SCREEN_ROUTE) {

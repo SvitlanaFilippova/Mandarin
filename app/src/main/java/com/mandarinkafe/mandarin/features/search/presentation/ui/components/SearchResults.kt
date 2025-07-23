@@ -4,16 +4,12 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
-import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 
 @Composable
@@ -34,15 +30,7 @@ fun SearchResults(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(
-                RoundedCornerShape(
-                    bottomStart = Dimens.RadiusSearchField8,
-                    bottomEnd = Dimens.RadiusSearchField8
-                )
-            )
-            .padding(top = Dimens.ZeroDp0)
             .background(Colors.Transparent)
-
     ) {
         if (filteredMenuItems.isNotEmpty()) {
             SearchResultsLazyColumn(

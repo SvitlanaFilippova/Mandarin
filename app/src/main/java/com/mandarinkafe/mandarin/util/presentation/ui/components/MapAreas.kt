@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.delivery.presentation.components
+package com.mandarinkafe.mandarin.util.presentation.ui.components
 
 import android.graphics.Color
 import androidx.compose.runtime.Composable

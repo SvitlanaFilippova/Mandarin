@@ -16,6 +16,11 @@ sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val 
         R.drawable.ic_delivery,
         NavConstants.DELIVERY_SCREEN_ROUTE
     )
+    object Location : BottomNavigationItem(
+        R.string.location,
+        R.drawable.ic_map,
+        NavConstants.LOCATION_SCREEN_ROUTE
+    )
 
     object Favorites :
         BottomNavigationItem(

@@ -1,6 +1,8 @@
 package com.mandarinkafe.mandarin.navigation
 
 import androidx.navigation.NavController
+import com.mandarinkafe.mandarin.features.order.presentation.models.UiAddress
+import com.mandarinkafe.mandarin.navigation.NavConstants.LOCATION_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
@@ -17,4 +19,8 @@ fun NavController.navigateToSearchScreen(focusInput: Boolean) {
 
 fun NavController.navigateToOrder() {
     this.navigate(ORDER_SCREEN_ROUTE)
+}
+
+fun NavController.navigateToLocation(address: UiAddress?) {
+    this.navigate(LOCATION_SCREEN_ROUTE)
 }

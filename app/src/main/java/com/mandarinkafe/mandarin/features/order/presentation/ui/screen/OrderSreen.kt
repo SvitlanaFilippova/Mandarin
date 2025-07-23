@@ -7,34 +7,42 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
-import com.mandarinkafe.mandarin.features.order.presentation.ui.components.DeliveryInfo
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.OrderSummaryData
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PaymentChooser
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PersonalInfo
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.SubmitOrderButton
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.UtensilPreferences
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
+import com.mandarinkafe.mandarin.navigation.navigateToLocation
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @Composable
 fun OrderScreen(
     orderViewModel: OrderViewModel = hiltViewModel(),
     cartViewModel: CartViewModel,
+    navController: NavHostController
 ) {
     val state by orderViewModel.state.collectAsState()
+    val effectFlow = orderViewModel.effect
     val cartState by cartViewModel.state.collectAsState()
     val onEvent = orderViewModel::onEvent
     val cartSum = cartState.totalCartPrice
@@ -64,26 +72,11 @@ fun OrderScreen(
             onPhoneChanged = { onEvent(OrderEvent.SetPhone(it)) },
         )
 
-        DeliveryInfo(
-            chosen = state.deliveryType,
-            addressQuery = state.address.addressMain,
-            isError = state.isError,
-            apartmentNumberQuery = state.address.apartmentNumber,
-            apartmentEntranceQuery = state.address.apartmentEntrance,
-            apartmentFloorQuery = state.address.apartmentFloor,
-            apartmentIntercomQuery = state.address.apartmentIntercom,
-            addressComment = state.address.addressComment,
-            isPrivateHouse = state.addressIsPrivateHouse,
-            onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
-            onAddressEntered = { onEvent(OrderEvent.SetAddress(it)) },
-            onApartmentNumberEntered = { onEvent(OrderEvent.SetApartmentNumber(it)) },
-            onEntranceEntered = { onEvent(OrderEvent.SetEntrance(it)) },
-            onFloorEntered = { onEvent(OrderEvent.SetFloor(it)) },
-            onIntercomEntered = { onEvent(OrderEvent.SetIntercom(it)) },
-            onGetLocationIconClick = { onEvent(OrderEvent.GetLocation) },
-            onAddressCommentsEntered = { onEvent(OrderEvent.SetAddressComment(it)) },
-            isPrivateHouseToggled = { onEvent(OrderEvent.IsPrivateHouseToggled(it)) },
-        )
+
+
+        Button(
+            onClick = { onEvent(OrderEvent.CreateNewAddress) },
+            content = { Text("+ добавить адрес") })
 
         PaymentChooser(
             chosen = state.paymentType,
@@ -140,5 +133,19 @@ fun OrderScreen(
             onSubmitOrder = { onEvent(OrderEvent.SubmitOrder) },
             totalPrice = totalOrderSum,
         )
+    }
+
+    LaunchedEffect(Unit) {
+        effectFlow.collectLatest { effect ->
+            when (effect) {
+                is OrderEffect.GoToLocationScreen -> {
+                    navController.navigateToLocation(effect.address)
+                }
+
+                is OrderEffect.SubmitOrder -> {}
+
+                else -> {}
+            }
+        }
     }
 }

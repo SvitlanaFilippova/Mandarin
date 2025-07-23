@@ -1,5 +1,7 @@
 package com.mandarinkafe.mandarin.core.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.mandarinkafe.mandarin.core.data.api.CartCountReader
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.impl.GetInitialDataUseCaseImpl
@@ -17,10 +19,12 @@ import com.mandarinkafe.mandarin.core.domain.api.ObserveCartCountUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.util.Constants.GOOGLE_DOCS_BASE_URL
 import com.mandarinkafe.mandarin.util.Constants.IIKO_BASE_URL
+import com.mandarinkafe.mandarin.util.Constants.LOCAL_STORAGE_NAME
 import com.mandarinkafe.mandarin.util.NetworkMonitor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -30,7 +34,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class CoreDataModule {
-
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(
+        @ApplicationContext
+        context: Context
+    ): SharedPreferences {
+        return context.getSharedPreferences(LOCAL_STORAGE_NAME, Context.MODE_PRIVATE)
+    }
 
     @Provides
     @Singleton
@@ -77,7 +88,6 @@ class CoreDataModule {
             googleDocsApi = googleDocsApi
         )
     }
-
 
     @Provides
     @Singleton

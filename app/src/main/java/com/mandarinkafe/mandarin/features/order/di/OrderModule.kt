@@ -6,9 +6,7 @@ import com.mandarinkafe.mandarin.features.order.data.network.GeocodingClient
 import com.mandarinkafe.mandarin.features.order.data.network.NominatimApiService
 import com.mandarinkafe.mandarin.features.order.data.network.impl.GeocodingClientImpl
 import com.mandarinkafe.mandarin.features.order.domain.api.GeocodingRepository
-import com.mandarinkafe.mandarin.features.order.domain.api.GetCoordinatesUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.GetDeliveryZoneUseCase
-import com.mandarinkafe.mandarin.features.order.domain.impl.GetCoordinatesUseCaseImpl
 import com.mandarinkafe.mandarin.features.order.domain.impl.GetDeliveryZoneUseCaseImpl
 import com.mandarinkafe.mandarin.util.Constants.MANDARIN_CAFE
 import com.mandarinkafe.mandarin.util.Constants.NOMINATIM_BASE_URL
@@ -75,12 +73,4 @@ class OrderModule {
         )
     }
 
-    @Provides
-    fun provideGetCoordinatesUseCase(
-        repository: GeocodingRepository,
-    ): GetCoordinatesUseCase {
-        return GetCoordinatesUseCaseImpl(
-            repository = repository
-        )
-    }
 }
