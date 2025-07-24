@@ -27,11 +27,11 @@ fun SearchBarInputField(
     modifier: Modifier = Modifier,
     query: String,
     placeholderRes: Int,
-    enabled: Boolean,
+    enabled: Boolean = true,
     autoFocus: Boolean = false,
     onQueryChange: (String) -> Unit = { },
     onClear: () -> Unit = { },
-    onDismiss: () -> Unit = { },
+    onDismiss: (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -86,12 +86,14 @@ fun SearchBarInputField(
                         )
                     }
                 } else {
-                    IconButton(onClick = { onDismiss() }) { // если поле пустое - возврат назад
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.back),
-                            tint = Colors.White
-                        )
+                    onDismiss?.let {
+                        IconButton(onClick = onDismiss) { // если поле пустое - возврат назад
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(id = R.string.back),
+                                tint = Colors.White
+                            )
+                        }
                     }
                 }
             }

@@ -56,6 +56,7 @@ fun AddressMapScreen(
     val onEvent = viewModel::onEvent
     val mapView = remember { mutableStateOf<MapView?>(null) }
 
+
     RequestLocationPermission(
         onGranted = { onEvent(AddressEvent.RequestAddress) }
     )
@@ -63,6 +64,13 @@ fun AddressMapScreen(
     // Добавляем на карту зоны доставки
     mapView.value?.let {
         MapAreas(it)
+    }
+
+    val cameraListener = CameraListener { _, _, reason, _ ->
+        // Updating current visible region to apply research on map moved by user gestures.
+        if (reason == CameraUpdateReason.GESTURES) {
+            onEvent(AddressEvent.SetVisibleRegion(mapView.value?.mapWindow?.map?.visibleRegion))
+        }
     }
 
     Column(
@@ -76,18 +84,6 @@ fun AddressMapScreen(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Стрелка "назад"
-//            IconButton(
-//                onClick = { onEvent(LocationEvent.GoBack) })
-//            {
-//                Icon(
-//                    modifier = Modifier
-//                        .padding(Dimens.MarginSmall8),
-//                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-//                    tint = Colors.White,
-//                    contentDescription = stringResource(R.string.back)
-//                )
-//            }
 
             // Строка с адресом
             SearchBarInputField(
@@ -123,7 +119,6 @@ fun AddressMapScreen(
                 modifier = Modifier.fillMaxSize()
             ) { mv ->
                 mapView.value = mv
-
                 // Слушатель перемещения камеры
                 mv.mapWindow.map.addCameraListener(object : CameraListener {
                     override fun onCameraPositionChanged(
@@ -141,6 +136,9 @@ fun AddressMapScreen(
                         }
                     }
                 })
+
+                mv.mapWindow.map.addCameraListener(cameraListener)
+                onEvent(AddressEvent.SetVisibleRegion(mapView.value?.mapWindow?.map?.visibleRegion))
             }
 
             // Кнопка "Вернуться к позиции пользователя"

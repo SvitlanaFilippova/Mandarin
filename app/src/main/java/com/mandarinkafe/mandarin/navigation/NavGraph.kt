@@ -28,14 +28,16 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScre
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE_WITH_ARGS
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_MAP_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_TEXT_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_TEXT_SCREEN_ROUTE_WITH_ARGS
 import com.mandarinkafe.mandarin.navigation.NavConstants.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.FAVORITES_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_ADDRESS_JSON
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_FOCUS_INPUT
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_GEOMETRY_JSON
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_JSON
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_QUERY_INPUT
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE_WITH_ARGS
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
@@ -43,6 +45,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE_WIT
 import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
+import com.yandex.mapkit.geometry.Geometry
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
@@ -152,10 +155,29 @@ fun NavGraph(navHostController: NavHostController) {
                 AddressMapScreen(navController = navHostController)
             }
 
-            composable(ADDRESS_TEXT_SCREEN_ROUTE) {
-                AddressTextScreen(navController = navHostController)
-            }
+            composable(
+                route = ADDRESS_TEXT_SCREEN_ROUTE_WITH_ARGS,
+                arguments = listOf(
+                    navArgument(KEY_QUERY_INPUT) { type = NavType.StringType },
+                    navArgument(KEY_GEOMETRY_JSON) { type = NavType.StringType }
+                ))
+            { backStackEntry ->
+                val jsonGeometry = backStackEntry.arguments?.getString(KEY_GEOMETRY_JSON)?.let {
+                    URLDecoder.decode(it, StandardCharsets.UTF_8.toString())
+                }
+                val geometry = remember(jsonGeometry) {
+                    gson.fromJson(jsonGeometry, Geometry::class.java)
+                }
+                val query = backStackEntry.arguments?.getString(KEY_QUERY_INPUT)?.let {
+                    URLDecoder.decode(it, StandardCharsets.UTF_8.toString())
+                }
+                AddressTextScreen(
+                    navController = navHostController,
+                    query = query,
+                    geometry = geometry,
+                )
 
+            }
             composable(
                 route = ADDRESS_DETAILS_ROUTE_WITH_ARGS,
                 arguments = listOf(

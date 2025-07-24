@@ -6,11 +6,12 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiAddress
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_MAP_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_TEXT_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_TEXT_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
+import com.yandex.mapkit.geometry.Geometry
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -28,8 +29,12 @@ fun NavController.navigateToOrder() {
     this.navigate(ORDER_SCREEN_ROUTE)
 }
 
-fun NavController.navigateToAddressText() {
-    this.navigate(ADDRESS_TEXT_SCREEN_ROUTE)
+fun NavController.navigateToAddressText(query: String = "", geometry: Geometry) {
+    val gson = Gson()
+    val jsonGeometry = URLEncoder.encode(gson.toJson(geometry), StandardCharsets.UTF_8.toString())
+    val queryEncoded = URLEncoder.encode(query, StandardCharsets.UTF_8.toString())
+    val route = "$ADDRESS_TEXT_ROUTE/$queryEncoded/$jsonGeometry"
+    this.navigate(route)
 }
 
 fun NavController.navigateToAddress(address: UiAddress? = null, isEditMode: Boolean = false) {

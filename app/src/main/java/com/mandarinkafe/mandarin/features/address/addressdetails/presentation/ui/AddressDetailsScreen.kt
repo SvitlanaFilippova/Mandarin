@@ -44,6 +44,7 @@ fun AddressDetailsScreen(
     if (initAddress == null) return
 
     val state by viewModel.state.collectAsState()
+    // передача в viewModel стартовой информации
     LaunchedEffect(Unit) {
         viewModel.onEvent(AddressDetailsEvent.SetAddress(initAddress))
     }

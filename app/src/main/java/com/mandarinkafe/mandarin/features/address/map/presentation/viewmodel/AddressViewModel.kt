@@ -17,6 +17,7 @@ import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.debounce
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.VisibleRegion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -43,9 +44,26 @@ class AddressViewModel @Inject constructor(
             is AddressEvent.RequestAddress -> requestLocation()
             is AddressEvent.CameraMoved -> fetchAddressWithDebounce(event.center)
             is AddressEvent.GoBack -> sendEffect(GoBack)
-            is AddressEvent.GoToTextSearch -> sendEffect(GoToTextSearchEffect(event.query))
+            is AddressEvent.GoToTextSearch -> goToTextSearch()
             is AddressEvent.GoToAddressDetails -> goToAddressDetails()
+            is AddressEvent.SetVisibleRegion -> setVisibleRegion(event.region)
         }
+    }
+
+    private fun goToTextSearch() {
+        val visibleRegion = state.value.visibleRegion ?: return
+        val geometry = visibleRegionToBoundingBox(visibleRegion)
+
+        sendEffect(
+            GoToTextSearchEffect(
+                query = state.value.address.orEmpty(),
+                geometry = geometry
+            )
+        )
+    }
+
+    private fun setVisibleRegion(region: VisibleRegion?) {
+        setState { copy(visibleRegion = region) }
     }
 
     private fun goToAddressDetails() {

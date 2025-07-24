@@ -6,6 +6,9 @@ object NavConstants {
     const val KEY_IS_EDIT_MODE = "isEditMode"
     const val KEY_ADDRESS_JSON = "addressJson"
     const val KEY_FOCUS_INPUT = "focusInput"
+    const val KEY_QUERY_INPUT = "query"
+    const val KEY_GEOMETRY_JSON = "geometryJson"
+
 
     // Screen routes
     const val MENU_SCREEN_ROUTE = "menu"
@@ -15,7 +18,9 @@ object NavConstants {
     const val SPLASH_SCREEN_ROUTE = "splash"
     const val ORDER_SCREEN_ROUTE = "order"
     const val ADDRESS_MAP_SCREEN_ROUTE = "address_map"
-    const val ADDRESS_TEXT_SCREEN_ROUTE = "address_text"
+    const val ADDRESS_TEXT_ROUTE = "address_text"
+    const val ADDRESS_TEXT_SCREEN_ROUTE_WITH_ARGS =
+        "$ADDRESS_TEXT_ROUTE/{$KEY_QUERY_INPUT}/{$KEY_GEOMETRY_JSON}"
 
     const val ADDRESS_DETAILS_ROUTE = "address_details"
     const val ADDRESS_DETAILS_ROUTE_WITH_ARGS =

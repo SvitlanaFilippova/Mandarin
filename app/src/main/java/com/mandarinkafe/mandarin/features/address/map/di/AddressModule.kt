@@ -3,6 +3,8 @@ package com.mandarinkafe.mandarin.features.address.map.di
 import android.content.Context
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.mandarinkafe.mandarin.BuildConfig
+import com.mandarinkafe.mandarin.core.data.MapKitFactoryInitializedHolder
 import com.mandarinkafe.mandarin.features.address.map.data.impl.AddressRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.map.data.impl.FusedLocationRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.map.domain.api.AddressRepository
@@ -11,6 +13,8 @@ import com.mandarinkafe.mandarin.features.address.map.domain.api.GetAddressByPoi
 import com.mandarinkafe.mandarin.features.address.map.domain.api.GetCurrentLocationUseCase
 import com.mandarinkafe.mandarin.features.address.map.domain.impl.GetAddressByPointUseCaseImpl
 import com.mandarinkafe.mandarin.features.address.map.domain.impl.GetCurrentLocationUseCaseImpl
+import com.yandex.mapkit.MapKit
+import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.search.SearchManager
 import com.yandex.mapkit.search.SearchManagerType
@@ -24,10 +28,20 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class AddressModule {
+    @Provides
+    @Singleton
+    fun provideMapKit(@ApplicationContext context: Context): MapKit {
+        if (!MapKitFactoryInitializedHolder.isInitialized) {
+            MapKitFactory.setApiKey(BuildConfig.MAPKIT_API_KEY)
+            MapKitFactory.initialize(context)
+            MapKitFactoryInitializedHolder.isInitialized = true
+        }
+        return MapKitFactory.getInstance()
+    }
 
     @Provides
     @Singleton
-    fun provideSearchManager(): SearchManager {
+    fun provideSearchManager(mapKit: MapKit): SearchManager {
         return SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
     }
 

@@ -6,7 +6,6 @@ import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.features.address.map.presentation.viewmodel.AddressContract.AddressEffect
 import com.mandarinkafe.mandarin.navigation.navigateToAddressDetails
 import com.mandarinkafe.mandarin.navigation.navigateToAddressText
-
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -23,8 +22,8 @@ fun HandleAddressEffects(
                 }
 
                 is AddressEffect.GoToTextSearchEffect -> {
-                    navController.navigateToAddressText()
-                } // TODO добавить передачу аргумента
+                    navController.navigateToAddressText(effect.query, effect.geometry)
+                }
             }
         }
     }
