@@ -24,9 +24,16 @@ class AddressDetailsViewModel @Inject constructor() :
             is AddressDetailsEvent.SetFloor -> setFloor(event.query)
             is AddressDetailsEvent.SetIntercom -> setIntercom(event.query)
             is AddressDetailsEvent.SetAddressComment -> setAddressComment(event.query)
-            is AddressDetailsEvent.SaveAddressAsEdited -> TODO()
-            is AddressDetailsEvent.SaveAddressAsNew -> TODO()
+            is AddressDetailsEvent.OnMissingRequiredInfo -> setError()
+            is AddressDetailsEvent.SaveAddressAsEdited -> {}
+            is AddressDetailsEvent.SaveAddressAsNew -> {}
+            is AddressDetailsEvent.DeleteAddress -> {}
+
         }
+    }
+
+    private fun setError() {
+        setState { copy(isError = true) }
     }
 
     private fun setAddress(address: UiAddress) {

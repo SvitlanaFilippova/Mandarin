@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.address.text.presentation.ui.screen
+package com.mandarinkafe.mandarin.features.address.textsearch.presentation.ui.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +17,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.map.presentation.viewmodel.AddressViewModel
-import com.mandarinkafe.mandarin.features.address.text.presentation.ui.components.AddressSearchResults
+import com.mandarinkafe.mandarin.features.address.textsearch.presentation.ui.components.AddressSearchResults
 import com.mandarinkafe.mandarin.util.presentation.ui.components.SearchBarInputField
 
 @Composable

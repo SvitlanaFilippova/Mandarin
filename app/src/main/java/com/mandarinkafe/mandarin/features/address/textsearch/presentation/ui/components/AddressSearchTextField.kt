@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.address.text.presentation.ui.components
+package com.mandarinkafe.mandarin.features.address.textsearch.presentation.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape

@@ -9,12 +9,13 @@ class GetDeliveryZoneUseCaseImpl(
     private val deliveryAreaRepository: DeliveryAreaRepository
 ) : GetDeliveryZoneUseCase {
 
-    override fun invoke(location: Point): List<DeliveryArea> {
+    override fun invoke(location: Point): DeliveryArea? {
         val areas = deliveryAreaRepository.getAllAreas()
-        return areas.filter { area ->
+        areas.filter { area ->
             isPointInPolygon(location, area.polygon) &&
                     (area.parentArea?.let { !isPointInPolygon(location, it) } != false)
         }
+        return areas.minByOrNull { it.id }
     }
 
     // Определяет, находится ли точка внутри полигона (true — внутри, false — снаружи)

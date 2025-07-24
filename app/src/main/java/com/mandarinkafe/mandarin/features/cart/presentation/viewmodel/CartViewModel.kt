@@ -68,7 +68,7 @@ class CartViewModel @Inject constructor(
 
     /** Вызывает диалог для подтверждения желания очистить корзину */
     private fun clearConfirmation() {
-        sendEffect(CartEffect.ShowClearCartConfirmationDialog)
+        sendEffect(CartEffect.ShowClearCartConfirmDialog)
     }
 
     /** Вызывает эффект для перехода к оформлению заказа*/

@@ -22,6 +22,7 @@ fun BigButtonWithText(
     textResID: Int? = null,
     onMissingRequiredInfo: () -> Unit = {},
     onSubmit: () -> Unit,
+    activeContainerColor: Color
 ) {
     val contentColor = if (shouldBeActive) {
         Color.White
@@ -29,7 +30,7 @@ fun BigButtonWithText(
         Color.White.copy(alpha = 0.5f)
     }
     val containerColor = if (shouldBeActive) {
-        Colors.Orange
+        activeContainerColor
     } else {
         Colors.LightGrey.copy(alpha = 0.4f)
     }

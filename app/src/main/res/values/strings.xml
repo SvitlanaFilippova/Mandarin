@@ -105,8 +105,11 @@
     <string name="location">Адрес</string>
     <string name="deliver_to_this_location">Доставить сюда</string>
     <string name="to_my_location">К моей локации</string>
-    <string name="save_address">Сохранить адрес</string>
+    <string name="save">Сохранить</string>
+    <string name="delete">Удалить</string>
     <string name="add_address">+ Новый адрес</string>
+    <string name="delete_address_question">Удалить адрес?</string>
+    <string name="delete_address_text">Вы действительно хотите удалить сохранённый адрес?</string>
 
 
     <!-- Кнопки действий -->

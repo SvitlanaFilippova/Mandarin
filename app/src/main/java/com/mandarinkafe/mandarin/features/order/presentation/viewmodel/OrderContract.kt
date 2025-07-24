@@ -15,8 +15,9 @@ sealed interface OrderContract {
         data class SetName(val query: String) : OrderEvent
         data class SetPhone(val query: String) : OrderEvent
         data class SetDeliveryType(val deliveryType: DeliveryType) : OrderEvent
-        data object CreateNewAddress : OrderEvent
-        data class EditLocation(val address: UiAddress) : OrderEvent
+        data class SetAddress(val address: UiAddress) : OrderEvent
+        data object AddNewAddress : OrderEvent
+        data class EditAddress(val address: UiAddress) : OrderEvent
         data class SetPaymentType(val paymentType: PaymentType) : OrderEvent
         data class NoChangeToggled(val noChange: Boolean) : OrderEvent
         data class SetChangeFrom(val query: String) : OrderEvent
@@ -28,7 +29,8 @@ sealed interface OrderContract {
     }
 
     sealed interface OrderEffect : BaseEffect {
-        data object GoToAddressScreen : OrderEffect
+        data object AddNewAddress : OrderEffect
+        data class EditAddress(val address: UiAddress) : OrderEffect
         data object SubmitOrder : OrderEffect
     }
 

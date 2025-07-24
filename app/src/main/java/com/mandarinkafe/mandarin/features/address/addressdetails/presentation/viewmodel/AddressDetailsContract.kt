@@ -16,11 +16,14 @@ sealed interface AddressDetailsContract {
         data class SetIntercom(val query: String) : AddressDetailsEvent
         data class SetAddressComment(val query: String) : AddressDetailsEvent
         data object SaveAddressAsNew : AddressDetailsEvent
+        data object DeleteAddress : AddressDetailsEvent
         data class SaveAddressAsEdited(val oldAddress: UiAddress) : AddressDetailsEvent
+        data object OnMissingRequiredInfo : AddressDetailsEvent
     }
 
     sealed interface AddressDetailsEffect : BaseEffect {
         data class EditLocation(val address: UiAddress) : AddressDetailsEffect
+        data object ShowDeleteConfirmDialog : AddressDetailsEffect
     }
 
     data class AddressDetailState(

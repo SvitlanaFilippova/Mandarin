@@ -26,7 +26,7 @@ sealed interface CartContract {
 
     sealed interface CartEffect : BaseEffect {
         data object ProceedOrder : CartEffect
-        data object ShowClearCartConfirmationDialog : CartEffect
+        data object ShowClearCartConfirmDialog : CartEffect
     }
 
     data class CartState(

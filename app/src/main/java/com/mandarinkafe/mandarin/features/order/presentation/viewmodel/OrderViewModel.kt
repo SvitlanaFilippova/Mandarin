@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.features.order.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
@@ -11,7 +10,6 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
-import com.mandarinkafe.mandarin.util.debounce
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.yandex.mapkit.geometry.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,14 +19,6 @@ import javax.inject.Inject
 class OrderViewModel @Inject constructor(
     private val getDeliveryZone: GetDeliveryZoneUseCase,
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
-
-    private val getCoordinatesDebounce = debounce<String>(
-        GET_COORDINATES_DELAY,
-        viewModelScope,
-        useLastParam = true
-    ) { expression ->
-        validateAddress(expression)
-    }
 
     override fun setInitialState() = OrderState()
 
@@ -44,14 +34,16 @@ class OrderViewModel @Inject constructor(
             is OrderEvent.SetPhone -> setPhone(event.query)
             is OrderEvent.OnMissingRequiredInfo -> setError()
             is OrderEvent.SubmitOrder -> submitOrder()
-            is OrderEvent.CreateNewAddress -> goToLocationScreen()
-            is OrderEvent.EditLocation -> goToLocationScreen(event.address)
+            is OrderEvent.AddNewAddress -> createNewAddress()
+            is OrderEvent.EditAddress -> goToAddressEdit(event.address)
             is OrderEvent.NoChangeToggled -> setNoChange(event.noChange)
+            is OrderEvent.SetAddress -> setAddress(event.address)
         }
     }
 
-    fun cancelSearchDebounce() {
-        getCoordinatesDebounce.cancel()
+    private fun setAddress(address: UiAddress) {
+        setState { copy(address = address, addressValidationInProgress = true) }
+        onLocationReceived(address.point)
     }
 
     private fun submitOrder() {
@@ -59,32 +51,31 @@ class OrderViewModel @Inject constructor(
         sendEffect(OrderEffect.SubmitOrder)
     }
 
-    private fun setAddressMainInfo(query: String) {
-        cancelSearchDebounce()
-        getCoordinatesDebounce.invoke(query)
+    private fun goToAddressEdit(address: UiAddress) {
+        sendEffect(OrderEffect.EditAddress(address))
     }
 
-    private fun goToLocationScreen(address: UiAddress? = null) {
-        sendEffect(OrderEffect.GoToAddressScreen)
+    private fun createNewAddress() {
+        sendEffect(OrderEffect.AddNewAddress)
     }
 
-    private fun validateAddress(query: String) {
-        Log.d("DEBUG ORDER", "validateAddress,  started")
-    }
+    private fun onLocationReceived(point: Point?) {
+        if (point == null) {
+            setAddressValidationError()
+        } else {
+            val zone = getDeliveryZone(point)
 
-    private fun onLocationReceived(point: Point) {
-        val zones = getDeliveryZone(point)
-        val bestZone = zones.minByOrNull { it.id }
-        if (bestZone != null) {
-            setState {
-                copy(
-                    deliveryZone = bestZone,
-                    addressValidated = true,
-                    addressValidationInProgress = false
-                )
-            }
-            Log.d("DEBUG ORDER", "onLocationReceived,  deliveryZone:  $bestZone")
-        } else setAddressValidationError()
+            if (zone != null) {
+                setState {
+                    copy(
+                        deliveryZone = zone,
+                        addressValidated = true,
+                        addressValidationInProgress = false
+                    )
+                }
+                Log.d("DEBUG ORDER", "onLocationReceived,  deliveryZone:  $zone")
+            } else setAddressValidationError()
+        }
     }
 
     private fun setAddressValidationError() {
@@ -161,7 +152,4 @@ class OrderViewModel @Inject constructor(
         // не применимо к данному экрану
     }
 
-    private companion object {
-        private const val GET_COORDINATES_DELAY = 3000L
-    }
 }

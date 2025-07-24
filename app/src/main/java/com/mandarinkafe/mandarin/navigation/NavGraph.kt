@@ -16,7 +16,7 @@ import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.AddressDetailsScreen
 import com.mandarinkafe.mandarin.features.address.map.presentation.ui.screen.AddressMapScreen
-import com.mandarinkafe.mandarin.features.address.text.presentation.ui.screen.AddressTextScreen
+import com.mandarinkafe.mandarin.features.address.textsearch.presentation.ui.screen.AddressTextScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.screen.CartScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.delivery.presentation.screen.DeliveryScreen
@@ -82,13 +82,7 @@ fun NavGraph(navHostController: NavHostController) {
                 )
             }
 
-            composable(ADDRESS_MAP_SCREEN_ROUTE) {
-                AddressMapScreen(navController = navHostController)
-            }
 
-            composable(ADDRESS_TEXT_SCREEN_ROUTE) {
-                AddressTextScreen(navController = navHostController)
-            }
 
             composable(FAVORITES_SCREEN_ROUTE) {
                 FavoritesScreen(
@@ -152,6 +146,14 @@ fun NavGraph(navHostController: NavHostController) {
                     isEditMode = isEditMode,
                     onClose = { navHostController.popBackStack() }
                 )
+            }
+
+            composable(ADDRESS_MAP_SCREEN_ROUTE) {
+                AddressMapScreen(navController = navHostController)
+            }
+
+            composable(ADDRESS_TEXT_SCREEN_ROUTE) {
+                AddressTextScreen(navController = navHostController)
             }
 
             composable(

@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.order.presentation.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -16,11 +18,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.components.SavedAddressCard
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
@@ -35,8 +41,8 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.navigation.navigateToAddress
+import com.mandarinkafe.mandarin.navigation.navigateToAddressDetails
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
-import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -64,7 +70,7 @@ fun OrderScreen(
                 apartmentNumber = "452",
                 entrance = "4",
                 floor = "10",
-                intercom = "#4456444444444",
+                intercom = "#44564444444",
                 comment = ""
             )
         )
@@ -115,19 +121,25 @@ fun OrderScreen(
             items(items = list) { item ->
                 SavedAddressCard(
                     address = item,
-                    onAddressChosen = { },
-                    onEditAddress = { },
-                    selected = true
+                    onAddressChosen = { onEvent(OrderEvent.SetAddress(item)) },
+                    onEditAddress = { onEvent(OrderEvent.EditAddress(item)) },
+                    selected = item == state.address
                 )
             }
 
             item {
-                ButtonWithText(
-                    textResID = R.string.add_address,
+                Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimens.MarginSmall8),
-                    onClick = { onEvent(OrderEvent.CreateNewAddress) },
+                        .padding(Dimens.MarginSmall8)
+                        .clickable(
+                            onClick = { onEvent(OrderEvent.AddNewAddress) },
+                            role = Role.Button
+                        ),
+                    text = stringResource(R.string.add_address),
+                    textAlign = TextAlign.Center,
+                    style = Typography.RegularTextStyle,
+                    color = Colors.Orange
                 )
             }
         }
@@ -201,13 +213,16 @@ fun OrderScreen(
     LaunchedEffect(Unit) {
         effectFlow.collectLatest { effect ->
             when (effect) {
-                is OrderEffect.GoToAddressScreen -> {
+                is OrderEffect.AddNewAddress -> {
                     navController.navigateToAddress()
                 }
 
-                is OrderEffect.SubmitOrder -> {}
+                is OrderEffect.EditAddress -> navController.navigateToAddressDetails(
+                    address = effect.address,
+                    isEditMode = true
+                )
 
-                else -> {}
+                is OrderEffect.SubmitOrder -> {}
             }
         }
     }

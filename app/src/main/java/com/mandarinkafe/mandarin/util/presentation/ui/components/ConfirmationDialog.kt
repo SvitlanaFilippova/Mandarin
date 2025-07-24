@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.cart.presentation.components
+package com.mandarinkafe.mandarin.util.presentation.ui.components
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -8,7 +8,9 @@ import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 
 @Composable
-fun CartClearingConfirmationDialog(
+fun ConfirmationDialog(
+    titleRes: Int,
+    textRes: Int,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -24,7 +26,7 @@ fun CartClearingConfirmationDialog(
                 Text(stringResource(R.string.cancel))
             }
         },
-        title = { Text(stringResource(R.string.clear_cart_question)) },
-        text = { Text(stringResource(R.string.clear_cart_confirmation)) }
+        title = { Text(stringResource(titleRes)) },
+        text = { Text(stringResource(textRes)) }
     )
 }

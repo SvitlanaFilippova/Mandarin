@@ -13,15 +13,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
-import com.mandarinkafe.mandarin.features.cart.presentation.components.CartClearingConfirmationDialog
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.navigation.navigateToOrder
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.collectLatest
@@ -88,7 +89,9 @@ fun CartScreen(
 
         // Диалог для подтверждения желания очяистить корзину
         if (showClearCartDialog) {
-            CartClearingConfirmationDialog(
+            ConfirmationDialog(
+                titleRes = R.string.clear_cart_question,
+                textRes = R.string.clear_cart_confirmation,
                 onConfirm = {
                     showClearCartDialog = false
                     cartViewModel.onEvent(CartEvent.ConfirmClearCart)
@@ -102,7 +105,7 @@ fun CartScreen(
         LaunchedEffect(Unit) {
             effectFlow.collectLatest { effect ->
                 when (effect) {
-                    is CartEffect.ShowClearCartConfirmationDialog -> {
+                    is CartEffect.ShowClearCartConfirmDialog -> {
                         showClearCartDialog = true
                     }
 
