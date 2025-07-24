@@ -14,8 +14,9 @@ import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.features.address.presentation.ui.screen.LocationScreen
-import com.mandarinkafe.mandarin.features.addressdetails.presentation.ui.AddressDetailsScreen
+import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.AddressDetailsScreen
+import com.mandarinkafe.mandarin.features.address.map.presentation.ui.screen.AddressMapScreen
+import com.mandarinkafe.mandarin.features.address.text.presentation.ui.screen.AddressTextScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.screen.CartScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.delivery.presentation.screen.DeliveryScreen
@@ -26,7 +27,8 @@ import com.mandarinkafe.mandarin.features.order.presentation.models.UiAddress
 import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE_WITH_ARGS
-import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_MAP_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_TEXT_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.FAVORITES_SCREEN_ROUTE
@@ -80,8 +82,12 @@ fun NavGraph(navHostController: NavHostController) {
                 )
             }
 
-            composable(ADDRESS_SCREEN_ROUTE) {
-                LocationScreen(navController = navHostController)
+            composable(ADDRESS_MAP_SCREEN_ROUTE) {
+                AddressMapScreen(navController = navHostController)
+            }
+
+            composable(ADDRESS_TEXT_SCREEN_ROUTE) {
+                AddressTextScreen(navController = navHostController)
             }
 
             composable(FAVORITES_SCREEN_ROUTE) {

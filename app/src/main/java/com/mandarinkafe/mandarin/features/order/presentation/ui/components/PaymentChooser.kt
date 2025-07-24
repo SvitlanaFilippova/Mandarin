@@ -1,7 +1,9 @@
 package com.mandarinkafe.mandarin.features.order.presentation.ui.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,5 +62,6 @@ fun PaymentChooser(
             )
 
         }
+        Spacer(Modifier.height(Dimens.MarginSmall8))
     }
 }

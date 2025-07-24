@@ -14,7 +14,8 @@ object NavConstants {
     const val CART_SCREEN_ROUTE = "cart"
     const val SPLASH_SCREEN_ROUTE = "splash"
     const val ORDER_SCREEN_ROUTE = "order"
-    const val ADDRESS_SCREEN_ROUTE = "address"
+    const val ADDRESS_MAP_SCREEN_ROUTE = "address_map"
+    const val ADDRESS_TEXT_SCREEN_ROUTE = "address_text"
 
     const val ADDRESS_DETAILS_ROUTE = "address_details"
     const val ADDRESS_DETAILS_ROUTE_WITH_ARGS =

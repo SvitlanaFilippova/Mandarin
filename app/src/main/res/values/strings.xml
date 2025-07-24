@@ -11,6 +11,7 @@
     <string name="yes">Да</string>
     <string name="ok">Ок</string>
     <string name="cancel">Отмена</string>
+    <string name="edit">Редактировать</string>
 
     <!-- Корзина -->
     <string name="cart">Корзина</string>
@@ -40,7 +41,6 @@
     <string name="to_choose">Выбрать</string>
     <string name="chosen">Выбрано:</string>
     <string name="cancel_choice">Отменить выбор</string>
-    <string name="edit_meal">Редактировать</string>
     <string name="mandatory">(обязательно)</string>
     <string name="make_mandatory_choice_before_cart">Выбери нужные опции в обязательных модификаторах — только после этого можно добавить блюдо в корзину</string>
 
@@ -70,7 +70,6 @@
     <string name="address_comment">Комментарий для курьера</string>
     <string name="get_address">Определить адрес</string>
     <string name="your_comment">Комментарий к заказу</string>
-    <string name="choose_delivery_type">Выбор обязателен</string>
     <string name="shipping">Доставка</string>
     <string name="shipping_self_pickup">Cамовывоз</string>
     <string name="address_apartment_number">Квартира *</string>
@@ -107,6 +106,7 @@
     <string name="deliver_to_this_location">Доставить сюда</string>
     <string name="to_my_location">К моей локации</string>
     <string name="save_address">Сохранить адрес</string>
+    <string name="add_address">+ Новый адрес</string>
 
 
     <!-- Кнопки действий -->
