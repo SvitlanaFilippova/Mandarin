@@ -28,7 +28,7 @@ sealed interface OrderContract {
     }
 
     sealed interface OrderEffect : BaseEffect {
-        data class GoToLocationScreen(val address: UiAddress?) : OrderEffect
+        data object GoToAddressScreen : OrderEffect
         data object SubmitOrder : OrderEffect
     }
 

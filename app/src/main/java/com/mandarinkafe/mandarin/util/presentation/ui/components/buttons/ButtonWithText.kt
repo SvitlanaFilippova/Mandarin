@@ -1,73 +1,63 @@
-package com.mandarinkafe.mandarin.features.order.presentation.ui.components
+package com.mandarinkafe.mandarin.util.presentation.ui.components.buttons
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography.ToCartButtonBigStyle
 
 @Composable
-fun SubmitOrderButton(
+fun ButtonWithText(
     modifier: Modifier = Modifier,
-    shouldBeActive: Boolean,
-    totalPrice: Float,
-    onMissingRequiredInfo: () -> Unit,
-    onSubmitOrder: () -> Unit,
+    shouldBeActive: Boolean = true,
+    text: String = "",
+    textResID: Int? = null,
+    onMissingRequiredInfo: () -> Unit = {},
+    onClick: () -> Unit,
 ) {
     val contentColor = if (shouldBeActive) {
         Color.White
     } else {
-        Color.White.copy(alpha = 0.5f)
+        Color.White.copy(alpha = 0.6f)
     }
     val containerColor = if (shouldBeActive) {
         Colors.Orange
     } else {
-        Colors.LightGrey.copy(alpha = 0.4f)
+        Colors.LightGrey.copy(alpha = 0.6f)
     }
 
     val onClickAction = when {
         !shouldBeActive -> onMissingRequiredInfo
-        else -> onSubmitOrder
+        else -> onClick
     }
 
     Button(
         modifier = modifier
-            .fillMaxWidth()
-            .height(Dimens.BigButtonWithTextHeight),
+            .height(Dimens.ButtonWithTextHeight),
         onClick = onClickAction,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = contentColor
         ),
-
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
-        ) {
+        if (textResID != null) {
             Text(
-                text = stringResource(R.string.submit_order),
-                style = Typography.ToCartButtonBigStyle,
+                text = stringResource(textResID),
+                style = ToCartButtonBigStyle,
                 color = contentColor
             )
-            Spacer(modifier = Modifier.weight(1f))
+        } else {
             Text(
-                text = stringResource(R.string.order_total_cost_template, totalPrice),
-                style = Typography.ToCartButtonBigStyle,
+                text = text,
+                style = ToCartButtonBigStyle,
                 color = contentColor
             )
         }

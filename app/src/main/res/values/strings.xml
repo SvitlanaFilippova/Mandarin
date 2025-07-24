@@ -106,6 +106,7 @@
     <string name="location">Адрес</string>
     <string name="deliver_to_this_location">Доставить сюда</string>
     <string name="to_my_location">К моей локации</string>
+    <string name="save_address">Сохранить адрес</string>
 
 
     <!-- Кнопки действий -->

@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -22,6 +23,8 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
+import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
+import com.mandarinkafe.mandarin.features.order.presentation.ui.components.DeliveryTypeChooser
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.OrderSummaryData
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PaymentChooser
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PersonalInfo
@@ -30,7 +33,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Utens
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
-import com.mandarinkafe.mandarin.navigation.navigateToLocation
+import com.mandarinkafe.mandarin.navigation.navigateToAddress
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -54,6 +57,7 @@ fun OrderScreen(
 
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
+    val chosenDeliveryType = state.deliveryType
 
     Column(
         modifier = Modifier
@@ -72,8 +76,14 @@ fun OrderScreen(
             onPhoneChanged = { onEvent(OrderEvent.SetPhone(it)) },
         )
 
+        DeliveryTypeChooser(
+            chosen = chosenDeliveryType,
+            isError = state.isError,
+            onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
+        )
 
-
+        // Поле для выбора адреса показываем только если выбор способа доставки уже сделан, и это НЕ самовывоз
+        // TODO
         Button(
             onClick = { onEvent(OrderEvent.CreateNewAddress) },
             content = { Text("+ добавить адрес") })
@@ -138,8 +148,8 @@ fun OrderScreen(
     LaunchedEffect(Unit) {
         effectFlow.collectLatest { effect ->
             when (effect) {
-                is OrderEffect.GoToLocationScreen -> {
-                    navController.navigateToLocation(effect.address)
+                is OrderEffect.GoToAddressScreen -> {
+                    navController.navigateToAddress()
                 }
 
                 is OrderEffect.SubmitOrder -> {}

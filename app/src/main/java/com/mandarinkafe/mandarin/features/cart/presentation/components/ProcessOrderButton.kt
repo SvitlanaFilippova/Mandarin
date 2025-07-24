@@ -30,7 +30,7 @@ fun ProcessOrderButton(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = Dimens.MarginSmall8)
-            .height(Dimens.ButtonSubmitOrderHeight),
+            .height(Dimens.BigButtonWithTextHeight),
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         colors = ButtonDefaults.buttonColors(

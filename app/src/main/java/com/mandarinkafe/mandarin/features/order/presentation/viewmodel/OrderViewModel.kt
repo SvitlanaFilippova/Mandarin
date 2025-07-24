@@ -65,7 +65,7 @@ class OrderViewModel @Inject constructor(
     }
 
     private fun goToLocationScreen(address: UiAddress? = null) {
-        sendEffect(OrderEffect.GoToLocationScreen(address))
+        sendEffect(OrderEffect.GoToAddressScreen)
     }
 
     private fun validateAddress(query: String) {

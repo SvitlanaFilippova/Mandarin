@@ -21,7 +21,7 @@ fun ApartmentDetails(
     apartmentFloorQuery: String,
     onFloorEntered: (String) -> Unit,
     apartmentIntercomQuery: String,
-    onIntercomQEntered: (String) -> Unit,
+    onIntercomEntered: (String) -> Unit,
 ) {
     Row {
         MyTextField(
@@ -57,7 +57,7 @@ fun ApartmentDetails(
             modifier = Modifier.weight(1f),
             value = apartmentIntercomQuery,
             labelRes = R.string.address_apartment_intercom,
-            onValueChange = { onIntercomQEntered(it) }
+            onValueChange = { onIntercomEntered(it) }
         )
     }
 }

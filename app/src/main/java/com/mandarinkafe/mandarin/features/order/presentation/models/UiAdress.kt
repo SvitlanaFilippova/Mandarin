@@ -6,11 +6,11 @@ import com.yandex.mapkit.geometry.Point
 @Stable
 data class UiAddress(
     val point: Point? = null,
-    val addressMain: String = "",
+    val streetAndBuilding: String = "",
     val isPrivateHouse: Boolean = false,
     val apartmentNumber: String = "",
-    val apartmentEntrance: String = "",
-    val apartmentFloor: String = "",
-    val apartmentIntercom: String = "",
-    val addressComment: String = "",
+    val entrance: String = "",
+    val floor: String = "",
+    val intercom: String = "",
+    val comment: String = "",
 )

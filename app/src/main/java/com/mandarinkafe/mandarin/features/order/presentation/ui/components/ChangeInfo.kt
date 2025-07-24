@@ -41,7 +41,7 @@ fun ChangeInfo(
         Row(
             modifier = Modifier
                 .weight(1f)
-                .height(Dimens.ButtonSubmitOrderHeight)
+                .height(Dimens.BigButtonWithTextHeight)
                 .toggleable(
                     value = noChange,
                     role = Role.Switch,

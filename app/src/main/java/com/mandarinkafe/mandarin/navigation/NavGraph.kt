@@ -14,22 +14,26 @@ import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.features.address.presentation.ui.screen.LocationScreen
+import com.mandarinkafe.mandarin.features.addressdetails.presentation.ui.AddressDetailsScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.screen.CartScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.delivery.presentation.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.FavoritesScreen
-import com.mandarinkafe.mandarin.features.location.presentation.ui.screen.LocationScreen
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.screen.MenuScreen
+import com.mandarinkafe.mandarin.features.order.presentation.models.UiAddress
 import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
+import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE_WITH_ARGS
+import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.FAVORITES_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_ADDRESS_JSON
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_FOCUS_INPUT
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_JSON
-import com.mandarinkafe.mandarin.navigation.NavConstants.LOCATION_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE_WITH_ARGS
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
@@ -76,7 +80,7 @@ fun NavGraph(navHostController: NavHostController) {
                 )
             }
 
-            composable(LOCATION_SCREEN_ROUTE) {
+            composable(ADDRESS_SCREEN_ROUTE) {
                 LocationScreen(navController = navHostController)
             }
 
@@ -141,6 +145,27 @@ fun NavGraph(navHostController: NavHostController) {
                     initItem = meal,
                     isEditMode = isEditMode,
                     onClose = { navHostController.popBackStack() }
+                )
+            }
+
+            composable(
+                route = ADDRESS_DETAILS_ROUTE_WITH_ARGS,
+                arguments = listOf(
+                    navArgument(KEY_ADDRESS_JSON) { type = NavType.StringType },
+                    navArgument(KEY_IS_EDIT_MODE) { type = NavType.BoolType }
+                )
+            ) { backStackEntry ->
+                val json = backStackEntry.arguments?.getString(KEY_ADDRESS_JSON)?.let {
+                    URLDecoder.decode(it, StandardCharsets.UTF_8.toString())
+                }
+                val isEditMode = backStackEntry.arguments?.getBoolean(KEY_IS_EDIT_MODE) == true
+                val address = remember(json) {
+                    gson.fromJson(json, UiAddress::class.java)
+                }
+                AddressDetailsScreen(
+                    isEditMode = isEditMode,
+                    initAddress = address,
+                    navController = navHostController
                 )
             }
         }

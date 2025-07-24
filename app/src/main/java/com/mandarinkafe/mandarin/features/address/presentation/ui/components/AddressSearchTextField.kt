@@ -1,8 +1,7 @@
-package com.mandarinkafe.mandarin.util.presentation.ui.components
+package com.mandarinkafe.mandarin.features.address.presentation.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
@@ -11,64 +10,71 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.VisualTransformation
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
-fun MyTextField(
+fun AddressSearchTextField(
     modifier: Modifier = Modifier,
-    value: String,
+    query: String,
     labelRes: Int,
-    isError: Boolean = false,
-    onValueChange: (String) -> Unit = {},
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    enabled: Boolean = true,
-    prefix: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    placeholder: @Composable (() -> Unit)? = null,
+    enabled: Boolean,
+    autoFocus: Boolean = false,
+    onClear: () -> Unit,
+    onQueryChange: (String) -> Unit? = { },
+) {
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    ) {
+    // Фокус и клавиатура сразу при отображении
+    LaunchedEffect(Unit) {
+        if (autoFocus) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
+
     TextField(
         modifier = modifier
-            .fillMaxWidth(),
-        value = value,
-        enabled = enabled,
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
+        value = query,
+        isError = false,
+        singleLine = true,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
-        onValueChange = { onValueChange(it) },
+        onValueChange = { onQueryChange(it) },
+        enabled = enabled,
         colors = TextFieldDefaults.colors(
-            cursorColor = Colors.Orange,
-            focusedTextColor = Colors.White,
-            focusedContainerColor = Colors.DarkGrey,
-            focusedIndicatorColor = Colors.White,
-            unfocusedTextColor = Colors.White,
-            unfocusedContainerColor = Colors.DarkGrey,
-            unfocusedIndicatorColor = Colors.Transparent,
-            errorIndicatorColor = Colors.ErrorRed,
-            errorContainerColor = Colors.DarkGrey,
             disabledTextColor = Colors.White,
             disabledContainerColor = Colors.DarkGrey,
             disabledIndicatorColor = Colors.Transparent,
+            cursorColor = Colors.Orange,
+            focusedTextColor = Colors.White,
+            focusedContainerColor = Colors.DarkGrey,
+            focusedIndicatorColor = Colors.Orange,
+            unfocusedTextColor = Colors.White,
+            unfocusedContainerColor = Colors.DarkGrey,
+            unfocusedIndicatorColor = Colors.Transparent,
         ),
-        placeholder = placeholder,
+
         label = {
             Text(
                 text = stringResource(id = labelRes),
                 style = Typography.RegularLightTextStyle
             )
         },
-        isError = isError,
-        keyboardOptions = keyboardOptions.copy(imeAction = ImeAction.Done),
-        visualTransformation = visualTransformation,
         trailingIcon = {
-            if (value.isNotEmpty()) {
-                IconButton(onClick = { onValueChange("") }) {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onQueryChange("") }) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = stringResource(id = R.string.clear_text),
@@ -76,9 +82,6 @@ fun MyTextField(
                     )
                 }
             }
-        },
-        leadingIcon = leadingIcon,
-        prefix = prefix
-
+        }
     )
 }

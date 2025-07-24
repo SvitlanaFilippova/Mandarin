@@ -7,28 +7,32 @@ import com.mandarinkafe.mandarin.util.BaseState
 
 sealed interface AddressDetailsContract {
     sealed interface AddressDetailsEvent : BaseEvent {
-        data class EditLocation(val address: UiAddress) : AddressDetailsEvent
+        data class SetAddress(val address: UiAddress) : AddressDetailsEvent
+        data object ChangeLocation : AddressDetailsEvent
         data class IsPrivateHouseToggled(val isPrivateHouse: Boolean) : AddressDetailsEvent
-        data class SetAddress(val query: String) : AddressDetailsEvent
-        data class SetAddressComment(val query: String) : AddressDetailsEvent
         data class SetApartmentNumber(val query: String) : AddressDetailsEvent
         data class SetEntrance(val query: String) : AddressDetailsEvent
         data class SetFloor(val query: String) : AddressDetailsEvent
         data class SetIntercom(val query: String) : AddressDetailsEvent
+        data class SetAddressComment(val query: String) : AddressDetailsEvent
+        data object SaveAddressAsNew : AddressDetailsEvent
+        data class SaveAddressAsEdited(val oldAddress: UiAddress) : AddressDetailsEvent
     }
 
-    sealed interface AddressDetailsEffect : BaseEffect
+    sealed interface AddressDetailsEffect : BaseEffect {
+        data class EditLocation(val address: UiAddress) : AddressDetailsEffect
+    }
 
     data class AddressDetailState(
-        val initialAddress: UiAddress? = null,
         val address: UiAddress = UiAddress(),
+        val isError: Boolean = false,
     ) : BaseState {
 
-        val apartmentDetailsIsValid: Boolean
+        val addressIsValid: Boolean
             get() =
                 with(address) {
                     isPrivateHouse ||
-                            apartmentNumber.isNotEmpty() && apartmentEntrance.isNotEmpty() && apartmentFloor.isNotEmpty()
+                            apartmentNumber.isNotEmpty() && entrance.isNotEmpty() && floor.isNotEmpty()
                 }
     }
 }
