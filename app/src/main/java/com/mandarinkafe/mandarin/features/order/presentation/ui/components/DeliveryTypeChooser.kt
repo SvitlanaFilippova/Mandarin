@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.order.presentation.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
@@ -29,6 +30,7 @@ fun DeliveryTypeChooser(
         deliveryTypes.forEachIndexed { index, item ->
             val selected = item == chosen
             SegmentedButton(
+                modifier = Modifier.height(Dimens.BigButtonWithTextHeight),
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
                     count = deliveryTypes.size
