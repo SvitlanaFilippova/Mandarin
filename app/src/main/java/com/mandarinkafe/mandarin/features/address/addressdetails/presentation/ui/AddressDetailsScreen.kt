@@ -60,8 +60,8 @@ fun AddressDetailsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(Dimens.MarginStandard16),
-        verticalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
+            .padding(Dimens.MarginSmall8),
+        verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
         // Улица и дом. При клике - переход на экран выбора адреса на карте
         MyTextField(
@@ -69,7 +69,7 @@ fun AddressDetailsScreen(
             enabled = false,
             isError = isError && state.address.streetAndBuilding.isEmpty(),
             value = state.address.streetAndBuilding,
-            labelRes = R.string.your_address,
+            labelRes = R.string.street_and_building,
             leadingIcon = {
                 GetLocationIcon(
                     onClick = { onEvent(AddressDetailsEvent.ChangeLocation) }

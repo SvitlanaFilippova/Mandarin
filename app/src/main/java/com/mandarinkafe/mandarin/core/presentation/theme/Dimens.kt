@@ -4,7 +4,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 object Dimens {
-    val MapPinSize = 48.dp
+    val MapPinSize = 64.dp
     val ToolbarHeadHeight40 = 40.dp
     val RecommendsItemWidth96 = 96.dp
     val Border1 = 1.dp
@@ -41,6 +41,7 @@ object Dimens {
     val MealItemInSearchResults96 = 96.dp
     val MealSmallImage80 = 80.dp
     val PlaceholderImageSize200 = 200.dp
+    val ProgressBarStroke6 = 6.dp
     val ProgressBarSize124 = 124.dp
     val ProgressBarSmallWidth8 = 8.dp
     val ProgressBarWidth24 = 24.dp
