@@ -2,8 +2,8 @@ package com.mandarinkafe.mandarin.features.address.map.data.impl
 
 import android.annotation.SuppressLint
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.map.domain.api.FusedLocationRepository
-import com.mandarinkafe.mandarin.features.address.map.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.util.Resource
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine

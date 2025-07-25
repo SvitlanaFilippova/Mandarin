@@ -1,7 +1,9 @@
 package com.mandarinkafe.mandarin.features.delivery.di
 
-import com.mandarinkafe.mandarin.core.domain.api.DeliveryAreaRepository
-import com.mandarinkafe.mandarin.features.delivery.impl.DeliveryAreaRepositoryImpl
+import com.mandarinkafe.mandarin.features.address.map.domain.api.DeliveryAreaRepository
+import com.mandarinkafe.mandarin.features.address.map.domain.api.GetDeliveryZoneUseCase
+import com.mandarinkafe.mandarin.features.address.map.domain.impl.DeliveryAreaRepositoryImpl
+import com.mandarinkafe.mandarin.features.address.map.domain.impl.GetDeliveryZoneUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,4 +19,10 @@ class DeliveryDataModule {
         return DeliveryAreaRepositoryImpl()
     }
 
+    @Provides
+    fun provideGetDeliveryZoneUseCase(repository: DeliveryAreaRepository): GetDeliveryZoneUseCase {
+        return GetDeliveryZoneUseCaseImpl(
+            deliveryAreaRepository = repository,
+        )
+    }
 }

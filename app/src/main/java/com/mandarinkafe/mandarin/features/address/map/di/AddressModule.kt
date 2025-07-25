@@ -3,8 +3,6 @@ package com.mandarinkafe.mandarin.features.address.map.di
 import android.content.Context
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.mandarinkafe.mandarin.BuildConfig
-import com.mandarinkafe.mandarin.core.data.MapKitFactoryInitializedHolder
 import com.mandarinkafe.mandarin.features.address.map.data.impl.AddressRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.map.data.impl.FusedLocationRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.map.domain.api.AddressRepository
@@ -31,17 +29,13 @@ class AddressModule {
     @Provides
     @Singleton
     fun provideMapKit(@ApplicationContext context: Context): MapKit {
-        if (!MapKitFactoryInitializedHolder.isInitialized) {
-            MapKitFactory.setApiKey(BuildConfig.MAPKIT_API_KEY)
-            MapKitFactory.initialize(context)
-            MapKitFactoryInitializedHolder.isInitialized = true
-        }
+        MapKitFactory.initialize(context)
         return MapKitFactory.getInstance()
     }
 
     @Provides
     @Singleton
-    fun provideSearchManager(mapKit: MapKit): SearchManager {
+    fun provideSearchManager(mapkit: MapKit): SearchManager { // mapKit для гарантии инициализации
         return SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
     }
 
@@ -84,5 +78,4 @@ class AddressModule {
             addressRepository = repository
         )
     }
-
 }

@@ -30,6 +30,7 @@ fun MyTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     enabled: Boolean = true,
+    minLines: Int = 1,
     prefix: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
@@ -40,6 +41,7 @@ fun MyTextField(
             .fillMaxWidth(),
         value = value,
         enabled = enabled,
+        minLines = minLines,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         onValueChange = { onValueChange(it) },
         colors = TextFieldDefaults.colors(

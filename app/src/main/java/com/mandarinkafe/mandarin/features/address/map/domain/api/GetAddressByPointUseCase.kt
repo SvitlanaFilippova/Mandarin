@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.features.address.map.domain.api
 
-import com.mandarinkafe.mandarin.features.address.map.domain.models.GeoPoint
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.StateFlow
 

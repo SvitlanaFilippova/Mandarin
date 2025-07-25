@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.address.map.presentation.viewmodel
 
+import com.mandarinkafe.mandarin.features.address.map.presentation.ui.models.UiDeliveryArea
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiAddress
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
@@ -27,13 +28,14 @@ sealed interface AddressContract {
 
     data class AddressState(
         val isLoading: Boolean = false,
-        val userLocation: Point? = null,
-        val address: String? = null,
+        val initPinLocation: Point? = null,
+        val displayAddress: String? = null,
+        val deliveryArea: UiDeliveryArea? = null,
         val visibleRegion: VisibleRegion? = null,
+        val deliveryAreas: List<UiDeliveryArea> = listOf(),
         val error: String? = null,
-
-        ) : BaseState {
+    ) : BaseState {
         val locationChosen: Boolean
-            get() = address?.isNotEmpty() == true
+            get() = displayAddress?.isNotEmpty() == true && error == null
     }
 }

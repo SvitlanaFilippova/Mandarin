@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
 import android.util.Log
-import com.mandarinkafe.mandarin.features.order.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
@@ -11,14 +10,11 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
-import com.yandex.mapkit.geometry.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class OrderViewModel @Inject constructor(
-    private val getDeliveryZone: GetDeliveryZoneUseCase,
-) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
+class OrderViewModel @Inject constructor() : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     override fun setInitialState() = OrderState()
 
@@ -43,7 +39,6 @@ class OrderViewModel @Inject constructor(
 
     private fun setAddress(address: UiAddress) {
         setState { copy(address = address, addressValidationInProgress = true) }
-        onLocationReceived(address.point)
     }
 
     private fun submitOrder() {
@@ -57,31 +52,6 @@ class OrderViewModel @Inject constructor(
 
     private fun createNewAddress() {
         sendEffect(OrderEffect.AddNewAddress)
-    }
-
-    private fun onLocationReceived(point: Point?) {
-        if (point == null) {
-            setAddressValidationError()
-        } else {
-            val zone = getDeliveryZone(point)
-
-            if (zone != null) {
-                setState {
-                    copy(
-                        deliveryZone = zone,
-                        addressValidated = true,
-                        addressValidationInProgress = false
-                    )
-                }
-                Log.d("DEBUG ORDER", "onLocationReceived,  deliveryZone:  $zone")
-            } else setAddressValidationError()
-        }
-    }
-
-    private fun setAddressValidationError() {
-        setState {
-            copy(addressValidated = false, addressValidationInProgress = false)
-        }
     }
 
     private fun setNoChange(noChange: Boolean) {
@@ -133,7 +103,6 @@ class OrderViewModel @Inject constructor(
             digitsOnly.startsWith("8") -> digitsOnly.drop(1)
             else -> digitsOnly
         }
-
         // Ограничиваем до 10 символов
         val limited = normalized.take(VALID_PHONE_LENGTH)
 

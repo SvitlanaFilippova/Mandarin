@@ -63,12 +63,10 @@
     <string name="phone_prefix">+7 </string>
     <string name="phone_mask">(###) ###-##-##</string>
     <string name="phone_placeholder">(XXX) XXX-XX-XX</string>
-    <string name="private_house">Частный дом</string>
-    <string name="address_for_delivery">Адрес доставки</string>
     <string name="new_address">Новый адрес</string>
-    <string name="your_address">Город, улица и дом *</string>
+    <string name="street_and_building">Улица и дом *</string>
+    <string name="private_house">Частный дом</string>
     <string name="address_comment">Комментарий для курьера</string>
-    <string name="get_address">Определить адрес</string>
     <string name="your_comment">Комментарий к заказу</string>
     <string name="shipping">Доставка</string>
     <string name="shipping_self_pickup">Cамовывоз</string>

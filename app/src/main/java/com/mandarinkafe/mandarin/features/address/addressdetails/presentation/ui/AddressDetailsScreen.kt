@@ -67,6 +67,7 @@ fun AddressDetailsScreen(
         MyTextField(
             modifier = Modifier.clickable(onClick = { onEvent(AddressDetailsEvent.ChangeLocation) }),
             enabled = false,
+            minLines = 2,
             isError = isError && state.address.streetAndBuilding.isEmpty(),
             value = state.address.streetAndBuilding,
             labelRes = R.string.street_and_building,
@@ -152,7 +153,6 @@ fun AddressDetailsScreen(
             }
         )
     }
-
 
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->

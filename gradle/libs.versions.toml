@@ -5,7 +5,6 @@ compileSdk = "35"
 minSdk = "29"
 targetSdk = "35"
 java = "VERSION_17"
-
 accompanistNavigationMaterialVersion = "0.34.0"
 accompanistSystemuicontrollerVersion = "0.34.0"
 activity = "1.10.1"

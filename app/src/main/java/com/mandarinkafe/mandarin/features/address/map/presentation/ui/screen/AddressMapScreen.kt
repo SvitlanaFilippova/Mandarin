@@ -1,14 +1,13 @@
 package com.mandarinkafe.mandarin.features.address.map.presentation.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,6 +29,8 @@ import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.map.presentation.ui.components.ChosenLocationPin
+import com.mandarinkafe.mandarin.features.address.map.presentation.ui.components.DeliveryAreaInfo
+import com.mandarinkafe.mandarin.features.address.map.presentation.ui.components.DeliveryAreasOnMap
 import com.mandarinkafe.mandarin.features.address.map.presentation.ui.components.HandleAddressEffects
 import com.mandarinkafe.mandarin.features.address.map.presentation.ui.components.RequestLocationPermission
 import com.mandarinkafe.mandarin.features.address.map.presentation.viewmodel.AddressContract.AddressEvent
@@ -40,7 +42,6 @@ import com.mandarinkafe.mandarin.util.Constants.MAP_ANIMATION_DURATION
 import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_AZIMUTH
 import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_TILT
 import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_ZOOM
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MapAreas
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.RoundedButton
@@ -49,7 +50,6 @@ import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.CameraUpdateReason
 import com.yandex.mapkit.mapview.MapView
 
 @Composable
@@ -58,7 +58,7 @@ fun AddressMapScreen(
     navController: NavHostController
 ) {
     val state by viewModel.state.collectAsState()
-    val userLocation = state.userLocation
+    val userLocation = state.initPinLocation
     val onEvent = viewModel::onEvent
     var mapView by remember { mutableStateOf<MapView?>(null) }
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -66,20 +66,18 @@ fun AddressMapScreen(
     RequestLocationPermission(
         onGranted = { onEvent(AddressEvent.RequestAddress) }
     )
-    val TAG = "DEBUG MapKitFactory"
     var mapShouldBeVisible by remember { mutableStateOf(true) }
     // Добавляем на карту зоны доставки
     mapView?.let {
-        MapAreas(it)
+        DeliveryAreasOnMap(
+            mapView = it,
+            deliveryAreas = state.deliveryAreas
+        )
     }
 
     val cameraListener = remember {
-        CameraListener { _, cameraPosition, reason, finished ->
-            if (reason == CameraUpdateReason.GESTURES && finished) {
-                Log.d(
-                    TAG,
-                    "onCameraPositionChanged finished, calling VM, target:- ${cameraPosition.target}"
-                )
+        CameraListener { _, cameraPosition, _, finished ->
+            if (finished) {
                 onEvent(CameraMoved(cameraPosition.target))
                 onEvent(SetVisibleRegion(mapView?.mapWindow?.map?.visibleRegion))
             }
@@ -91,34 +89,31 @@ fun AddressMapScreen(
             .fillMaxSize()
             .padding(Dimens.MarginSmall8)
     ) {
-        val addressValue = state.address ?: ""
-        Row(
+        val addressValue = state.displayAddress ?: ""
+        // Строка с адресом
+        MyTextField(
             modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            // Строка с адресом
-            MyTextField(
-                modifier = Modifier
-                    .padding(bottom = Dimens.MarginSmall8)
-                    .clickable(onClick = {
-                        onEvent(
-                            AddressEvent.GoToTextSearch(
-                                addressValue
-                            )
+                .fillMaxWidth()
+                .padding(bottom = Dimens.MarginSmall8)
+                .clickable(onClick = {
+                    onEvent(
+                        AddressEvent.GoToTextSearch(
+                            addressValue
                         )
-                    }),
-                enabled = false,
-                value = addressValue,
-                labelRes = R.string.street_and_building,
-                leadingIcon = { GetLocationIcon() }
-            )
+                    )
+                }),
+            enabled = false,
+            minLines = 2,
+            value = addressValue,
+            labelRes = R.string.street_and_building,
+            leadingIcon = { GetLocationIcon() }
+        )
 
-        }
         // Контейнер для карты и её элементов управления
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .clip(RoundedCornerShape(Dimens.CornerRadius8))
         )
         {
             if (mapShouldBeVisible) {
@@ -126,11 +121,17 @@ fun AddressMapScreen(
                 AndroidView(
                     modifier = Modifier.fillMaxSize(),
                     factory = { MapView(it) },
-
-                    ) {
+                ) {
                     it.mapWindow.map.addCameraListener(cameraListener)
                     onEvent(SetVisibleRegion(it.mapWindow.map.visibleRegion))
                     mapView = it
+                }
+                // Окно с информацией о текущей зоне доставки
+                state.deliveryArea?.let {
+                    DeliveryAreaInfo(
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        deliveryArea = it
+                    )
                 }
 
                 // Кнопка "Вернуться к позиции пользователя"

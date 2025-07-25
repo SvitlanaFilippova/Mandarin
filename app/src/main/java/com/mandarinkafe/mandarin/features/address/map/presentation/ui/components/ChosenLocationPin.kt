@@ -22,12 +22,15 @@ fun ChosenLocationPin(
     isError: Boolean,
     addressFound: Boolean
 ) {
-    val iconRes = when {
-        isError -> R.drawable.ic_question
-        isLoading -> null
-        addressFound -> R.drawable.ic_home
-        else -> null
+    val iconRes = remember(isLoading, isError, addressFound) {
+        when {
+            isLoading -> null
+            addressFound -> R.drawable.ic_home
+            isError -> R.drawable.ic_question
+            else -> null
+        }
     }
+
     val indicatorSize = remember { Dimens.MapPinSize * 0.45f }
     val indicatorOffsetY = remember { Dimens.MapPinSize * 0.09f }
     Box(
@@ -43,15 +46,7 @@ fun ChosenLocationPin(
             tint = Colors.Orange,
             contentDescription = null,
         )
-        // Иконка внутри
-        iconRes?.let {
-            Icon(
-                modifier = Modifier.fillMaxSize(),
-                painter = painterResource(iconRes),
-                tint = Colors.Orange,
-                contentDescription = null,
-            )
-        }
+
         // Индикатор загрузки
         if (isLoading) {
             CircularProgressIndicator(
@@ -61,6 +56,16 @@ fun ChosenLocationPin(
                     .size(indicatorSize)
                     .offset(y = -indicatorOffsetY)
             )
+        } else {
+            // Иконка внутри
+            iconRes?.let {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(iconRes),
+                    tint = Colors.Orange,
+                    contentDescription = null,
+                )
+            }
         }
     }
 }

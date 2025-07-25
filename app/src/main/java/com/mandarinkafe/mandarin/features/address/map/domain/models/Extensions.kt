@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.address.map.domain.models
 
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.yandex.mapkit.geometry.Point
 
 fun GeoPoint.toYandexPoint(): Point {

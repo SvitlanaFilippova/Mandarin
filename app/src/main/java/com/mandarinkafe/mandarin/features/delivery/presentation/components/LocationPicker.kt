@@ -73,7 +73,7 @@ fun LocationPicker() {
             .heightIn(min = Dimens.MapMinSize200, max = Dimens.MapMaxSize600)
             .widthIn(min = Dimens.MapMinSize200, max = Dimens.MapMaxSize600)
             .padding(Dimens.MarginBig20)
-            .clip(RoundedCornerShape(Dimens.CornerRadius16))
+            .clip(RoundedCornerShape(Dimens.CornerRadius8))
     ) { _ ->
         AndroidView(
             factory = { MapView(it) },

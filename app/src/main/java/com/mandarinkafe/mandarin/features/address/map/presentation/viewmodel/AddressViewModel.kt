@@ -1,9 +1,10 @@
 package com.mandarinkafe.mandarin.features.address.map.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.features.address.map.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.address.map.domain.api.GetAddressByPointUseCase
 import com.mandarinkafe.mandarin.features.address.map.domain.api.GetCurrentLocationUseCase
+import com.mandarinkafe.mandarin.features.address.map.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.map.domain.models.toGeoPoint
 import com.mandarinkafe.mandarin.features.address.map.domain.models.toYandexPoint
 import com.mandarinkafe.mandarin.features.address.map.presentation.viewmodel.AddressContract.AddressEffect
@@ -19,7 +20,6 @@ import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.VisibleRegion
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,6 +28,8 @@ import javax.inject.Inject
 class AddressViewModel @Inject constructor(
     private val getAddressByPoint: GetAddressByPointUseCase,
     private val getUserLocation: GetCurrentLocationUseCase,
+    private val getDeliveryZone: GetDeliveryZoneUseCase,
+    private val deliveryAreaRepository: DeliveryAreaRepository
 ) : BaseViewModel<AddressEvent, AddressEffect, AddressState>() {
     private val fetchAddressDebounce = debounce<Point>(
         FETCH_ADDRESS_DELAY,
@@ -35,6 +37,10 @@ class AddressViewModel @Inject constructor(
         useLastParam = true
     ) { point ->
         fetchAddress(point)
+    }
+
+    init {
+        setState { copy(deliveryAreas = deliveryAreaRepository.getAllAreas().map { it.toUi() }) }
     }
 
     override fun setInitialState() = AddressState()
@@ -56,7 +62,7 @@ class AddressViewModel @Inject constructor(
 
         sendEffect(
             GoToTextSearchEffect(
-                query = state.value.address.orEmpty(),
+                query = state.value.displayAddress.orEmpty(),
                 geometry = geometry
             )
         )
@@ -67,8 +73,8 @@ class AddressViewModel @Inject constructor(
     }
 
     private fun goToAddressDetails() {
-        val point = state.value.userLocation
-        val address = state.value.address ?: ""
+        val point = state.value.initPinLocation
+        val address = state.value.displayAddress ?: ""
         point?.let {
             val address = UiAddress(
                 point = point,
@@ -79,58 +85,73 @@ class AddressViewModel @Inject constructor(
     }
 
     private fun fetchAddressWithDebounce(point: Point) {
-        setState { copy(isLoading = true, error = null) }
-        Log.d("DEBUG LOCATION", "fetchAddressWithDebounce called")
+        setLoading()
         fetchAddressDebounce.cancel()
         fetchAddressDebounce.invoke(point)
     }
 
     private fun fetchAddress(point: Point) {
-        Log.d("DEBUG LOCATION", "fetchAddress called")
-
         viewModelScope.launch {
             getAddressByPoint(point.toGeoPoint())
-            delay(1000)
             getAddressByPoint.observeAddress().collectLatest { result ->
-                Log.d("DEBUG LOCATION", "Current result is: $result")
-                if (result is Resource.Success) {
-                    val address = result.data
-                    Log.d("DEBUG LOCATION", "Current user address is: $address.")
-                    setState { copy(address = address, isLoading = false) }
-                } else {
-                    setState { copy(error = "Не удалось определить адрес", isLoading = false) }
+                when (result) {
+                    is Resource.Loading -> setLoading()
+                    is Resource.Success -> {
+                        val address = result.data
+                        val deliveryArea = getDeliveryZone(point.toGeoPoint())
+                        setState {
+                            copy(
+                                displayAddress = address,
+                                isLoading = false,
+                                error = null,
+                                deliveryArea = deliveryArea?.toUi()
+                            )
+                        }
+                    }
+
+                    else -> {
+                        setState {
+                            copy(
+                                error = "Не удалось определить адрес",
+                                isLoading = false,
+                                displayAddress = null
+                            )
+                        }
+                    }
                 }
             }
         }
-
     }
 
     private fun requestLocation() {
-        Log.d("DEBUG LOCATION", "requestLocation called")
         viewModelScope.launch {
             when (val result = getUserLocation()) {
                 is Resource.Success -> {
                     val point = result.data?.toYandexPoint()
-                    setState { copy(userLocation = point) }
-                    Log.d("DEBUG LOCATION", "Current user location is: $point")
-
+                    setState { copy(initPinLocation = point) }
                 }
 
                 else -> {
                     setState {
-                        copy(error = "Не удалось определить местоположение")
+                        copy(
+                            initPinLocation = Point(
+                                MANDARIN_LATITUDE,
+                                MANDARIN_LONGITUDE
+                            )
+                        )
                     }
                 }
-
             }
         }
     }
 
     override fun setLoading(isLoading: Boolean) {
-        setState { copy(isLoading = true) }
+        setState { copy(isLoading = true, error = null) }
     }
 
     private companion object {
-        private const val FETCH_ADDRESS_DELAY = 2000L
+        private const val MANDARIN_LATITUDE = 55.998040
+        private const val MANDARIN_LONGITUDE = 38.375328
+        private const val FETCH_ADDRESS_DELAY = 1000L
     }
 }

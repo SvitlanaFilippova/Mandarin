@@ -10,6 +10,7 @@ import com.mandarinkafe.mandarin.features.address.textsearch.presentation.viewmo
 import com.mandarinkafe.mandarin.util.debounce
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.yandex.mapkit.geometry.Geometry
+import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.Response
 import com.yandex.mapkit.search.SearchManager
 import com.yandex.mapkit.search.SearchOptions
@@ -22,18 +23,17 @@ import javax.inject.Inject
 @HiltViewModel
 class AddressTextViewModel @Inject constructor(private val searchManager: SearchManager) :
     BaseViewModel<AddressTextEvent, AddressTextEffect, AddressTextState>() {
-
-    override fun setInitialState() = AddressTextState()
+    private val logTag = "DEBUG MapKitFactory"
     private var searchSession: Session? = null
 
-    private val TAG = "AddressTextVM SEARCH"
+    override fun setInitialState() = AddressTextState()
 
     private val searchWithDebounce = debounce<String>(
         SEARCH_DELAY,
         viewModelScope,
         useLastParam = true
     ) {
-        Log.d(TAG, "Debounced search triggered with query: $it")
+        Log.d(logTag, "Debounced search triggered with query: $it")
         startSearch(it)
     }
 
@@ -42,17 +42,14 @@ class AddressTextViewModel @Inject constructor(private val searchManager: Search
             is AddressTextEvent.ChooseAddress -> {}
             is AddressTextEvent.GoToMapSearch -> {}
             is AddressTextEvent.Search -> {
-                Log.d(TAG, "Manual search triggered: ${event.query}")
                 startSearch(event.query)
             }
 
             is AddressTextEvent.SetQuery -> {
-                Log.d(TAG, "SetQuery: ${event.query}")
                 setQuery(event.query)
             }
 
             is AddressTextEvent.SetInitData -> {
-                Log.d(TAG, "SetInitData: query=${event.query}")
                 setInitData(event.geometry, event.query)
             }
         }
@@ -60,6 +57,7 @@ class AddressTextViewModel @Inject constructor(private val searchManager: Search
 
     private fun setInitData(geometry: Geometry, query: String) {
         setState { copy(query = query, visibleGeometry = geometry) }
+
     }
 
     private fun setQuery(searchText: String) {
@@ -69,24 +67,26 @@ class AddressTextViewModel @Inject constructor(private val searchManager: Search
 
     private fun startSearch(searchText: String? = null) {
         val text = searchText ?: state.value.query
-        Log.d(TAG, "StartSearch called with text: '$text'")
+        Log.d(logTag, "StartSearch called with text: '$text'")
         if (text.isEmpty()) {
-            Log.d(TAG, "Search aborted: empty query")
+            Log.d(logTag, "Search aborted: empty query")
             return
         }
+
+        val point = Point(55.751244, 37.618423) // Москва TODO - временно для теста
+        val geometry = Geometry.fromPoint(point)
 
         val region = state.value.visibleGeometry
         if (region == null) {
-            Log.d(TAG, "Search aborted: visibleGeometry is null")
+            Log.d(logTag, "Search aborted: visibleGeometry is null")
             return
         }
-
-        submitSearch(text, region)
+        submitSearch(text, geometry) // TODO - временно для теста подставила geometry вместо region
     }
 
     private val searchSessionListener = object : SearchListener {
         override fun onSearchResponse(response: Response) {
-            Log.d(TAG, "onSearchResponse: ${response.collection.children.size} results")
+            Log.d(logTag, "onSearchResponse: ${response.collection.children.size} results")
             val items = response.collection.children.mapNotNull {
                 val point = it.obj?.geometry?.firstOrNull()?.point ?: return@mapNotNull null
                 SearchResponseItem(point.toGeoPoint(), it.obj)
@@ -95,13 +95,13 @@ class AddressTextViewModel @Inject constructor(private val searchManager: Search
         }
 
         override fun onSearchError(p0: Error) {
-            Log.e(TAG, "onSearchError: $p0")
+            Log.e(logTag, "onSearchError: $p0")
             setState { copy(isError = true, isLoading = false) }
         }
     }
 
     private fun submitSearch(query: String, geometry: Geometry) {
-        Log.d(TAG, "submitSearch: query='$query', geometry=$geometry")
+        Log.d(logTag, "submitSearch: query='$query', geometry=$geometry")
         searchSession?.cancel()
         try {
             searchSession = searchManager.submit(
@@ -110,15 +110,16 @@ class AddressTextViewModel @Inject constructor(private val searchManager: Search
                 SearchOptions().apply { resultPageSize = 32 },
                 searchSessionListener
             )
-            Log.d(TAG, "submitSearch: submitted successfully")
+            Log.d(logTag, "submitSearch: submitted successfully")
+
         } catch (e: Exception) {
-            Log.e(TAG, "submitSearch: exception: $e")
+            Log.e(logTag, "submitSearch: exception: $e")
         }
         setLoading()
     }
 
     private fun reset() {
-        Log.d(TAG, "reset called")
+        Log.d(logTag, "reset called")
         searchWithDebounce.cancel
         searchSession?.cancel()
         searchSession = null
@@ -126,7 +127,7 @@ class AddressTextViewModel @Inject constructor(private val searchManager: Search
     }
 
     override fun setLoading(isLoading: Boolean) {
-        Log.d(TAG, "setLoading: $isLoading")
+        Log.d(logTag, "setLoading: $isLoading")
         setState { copy(isLoading = true) }
     }
 

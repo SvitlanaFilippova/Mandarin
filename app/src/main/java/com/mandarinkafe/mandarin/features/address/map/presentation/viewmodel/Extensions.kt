@@ -1,5 +1,9 @@
 package com.mandarinkafe.mandarin.features.address.map.presentation.viewmodel
 
+import com.mandarinkafe.mandarin.core.domain.models.DeliveryArea
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors.deliveryAreaColorMap
+import com.mandarinkafe.mandarin.features.address.map.presentation.ui.models.UiDeliveryArea
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Geometry
 import com.yandex.mapkit.map.VisibleRegion
@@ -23,4 +27,15 @@ fun visibleRegionToBoundingBox(region: VisibleRegion): Geometry {
     )
 
     return Geometry.fromBoundingBox(boundingBox)
+}
+
+fun DeliveryArea.toUi(): UiDeliveryArea {
+    return UiDeliveryArea(
+        id = id,
+        polygon = polygon,
+        parentArea = parentArea,
+        deliveryPrice = deliveryPrice,
+        freeDeliveryThreshold = freeDeliveryThreshold,
+        color = deliveryAreaColorMap[id] ?: Colors.LightGrey
+    )
 }

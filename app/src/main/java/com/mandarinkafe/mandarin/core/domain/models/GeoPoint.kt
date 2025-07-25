@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.address.map.domain.models
+package com.mandarinkafe.mandarin.core.domain.models
 
 data class GeoPoint(
     val latitude: Double,

@@ -1,26 +1,32 @@
-package com.mandarinkafe.mandarin.features.order.domain.impl
+package com.mandarinkafe.mandarin.features.address.map.domain.impl
 
-import com.mandarinkafe.mandarin.core.domain.api.DeliveryAreaRepository
+import android.util.Log
 import com.mandarinkafe.mandarin.core.domain.models.DeliveryArea
-import com.mandarinkafe.mandarin.features.order.domain.api.GetDeliveryZoneUseCase
-import com.yandex.mapkit.geometry.Point
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
+import com.mandarinkafe.mandarin.features.address.map.domain.api.DeliveryAreaRepository
+import com.mandarinkafe.mandarin.features.address.map.domain.api.GetDeliveryZoneUseCase
 
 class GetDeliveryZoneUseCaseImpl(
     private val deliveryAreaRepository: DeliveryAreaRepository
 ) : GetDeliveryZoneUseCase {
 
-    override fun invoke(location: Point): DeliveryArea? {
+    override fun invoke(location: GeoPoint): DeliveryArea? {
+        Log.d("DEBUG DELIVERY AREA", "GetDeliveryZoneUseCaseImpl, location = $location")
         val areas = deliveryAreaRepository.getAllAreas()
-        areas.filter { area ->
+
+        val matchedAreas = areas.filter { area ->
             isPointInPolygon(location, area.polygon) &&
                     (area.parentArea?.let { !isPointInPolygon(location, it) } != false)
         }
-        return areas.minByOrNull { it.id }
+
+        val bestArea = matchedAreas.minByOrNull { it.id }
+        Log.d("DEBUG DELIVERY AREA", "GetDeliveryZoneUseCaseImpl, bestArea = $bestArea")
+        return bestArea
     }
 
     // Определяет, находится ли точка внутри полигона (true — внутри, false — снаружи)
     // Используется алгоритм Ray Casting: горизонтальный луч от точки проверяется на количество пересечений с границами полигона
-    private fun isPointInPolygon(point: Point, polygon: List<Point>): Boolean {
+    private fun isPointInPolygon(point: GeoPoint, polygon: List<GeoPoint>): Boolean {
         var intersectCount = 0
         for (i in polygon.indices) {
             val j = (i + 1) % polygon.size // Следующая вершина, с учётом замыкания полигона
@@ -37,7 +43,7 @@ class GetDeliveryZoneUseCaseImpl(
     }
 
     // Проверяет, пересекает ли горизонтальный луч, идущий вправо от точки p, отрезок (p1, p2)
-    private fun rayIntersectsSegment(p: Point, p1: Point, p2: Point): Boolean {
+    private fun rayIntersectsSegment(p: GeoPoint, p1: GeoPoint, p2: GeoPoint): Boolean {
         val px = p.longitude // X-координата точки
         var py = p.latitude  // Y-координата точки
 
@@ -66,5 +72,4 @@ class GetDeliveryZoneUseCaseImpl(
         // Если наклон луча >= наклона отрезка — считается, что пересекли
         return blue >= red
     }
-
 }

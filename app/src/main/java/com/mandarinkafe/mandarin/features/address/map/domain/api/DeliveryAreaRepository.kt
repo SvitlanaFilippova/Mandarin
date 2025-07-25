@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.core.domain.api
+package com.mandarinkafe.mandarin.features.address.map.domain.api
 
 import com.mandarinkafe.mandarin.core.domain.models.DeliveryArea
 

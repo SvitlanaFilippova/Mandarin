@@ -34,4 +34,19 @@ object Colors {
     val TenthArea = Color(0x80482366)
     val EleventhArea = Color(0x80214464)
     val TwelfthArea = Color(0x802E2B70)
+
+    val deliveryAreaColorMap = mapOf(
+        1 to Color(0x800B7B6B),
+        2 to Color(0x80195A42),
+        3 to Color(0x80376946),
+        4 to Color(0x80637334),
+        5 to Color(0x80978829),
+        6 to Color(0x809C7345),
+        7 to Color(0x808D3A34),
+        8 to Color(0x808A1832),
+        9 to Color(0x8083155C),
+        10 to Color(0x80482366),
+        11 to Color(0x80214464),
+        12 to Color(0x802E2B70)
+    )
 }

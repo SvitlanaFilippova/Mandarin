@@ -31,7 +31,7 @@ fun ApartmentDetails(
             labelRes = R.string.address_apartment_number,
             onValueChange = { onApartmentNumberEntered(it) }
         )
-        Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
+        Spacer(modifier = Modifier.size(Dimens.MarginSmall8))
 
         MyTextField(
             modifier = Modifier.weight(1f),
@@ -52,7 +52,7 @@ fun ApartmentDetails(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             onValueChange = { onFloorEntered(it) }
         )
-        Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
+        Spacer(modifier = Modifier.size(Dimens.MarginSmall8))
         MyTextField(
             modifier = Modifier.weight(1f),
             value = apartmentIntercomQuery,
