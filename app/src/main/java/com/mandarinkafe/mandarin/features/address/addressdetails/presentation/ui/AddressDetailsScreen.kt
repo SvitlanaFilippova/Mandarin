@@ -72,9 +72,7 @@ fun AddressDetailsScreen(
             value = state.address.streetAndBuilding,
             labelRes = R.string.street_and_building,
             leadingIcon = {
-                GetLocationIcon(
-                    onClick = { onEvent(AddressDetailsEvent.ChangeLocation) }
-                )
+                GetLocationIcon(enabled = false)
             }
         )
 

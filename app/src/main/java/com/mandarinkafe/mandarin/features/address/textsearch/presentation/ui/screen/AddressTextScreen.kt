@@ -24,6 +24,7 @@ import com.mandarinkafe.mandarin.features.address.textsearch.presentation.ui.com
 import com.mandarinkafe.mandarin.features.address.textsearch.presentation.viewmodel.AddressTextContract.AddressTextEvent
 import com.mandarinkafe.mandarin.features.address.textsearch.presentation.viewmodel.AddressTextViewModel
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.GetLocationIcon
+import com.mandarinkafe.mandarin.util.Constants.MIN_LINES_FOR_ADDRESS_INPUT
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Geometry
@@ -65,19 +66,12 @@ fun AddressTextScreen(
                 .fillMaxWidth()
                 .padding(bottom = Dimens.MarginSmall8),
             value = state.query,
+            minLines = MIN_LINES_FOR_ADDRESS_INPUT,
             labelRes = R.string.street_and_building,
             onValueChange = { onEvent(AddressTextEvent.SetQuery(it)) },
-            leadingIcon = { GetLocationIcon() }
+            leadingIcon = { GetLocationIcon(enabled = false) }
         )
-//        SearchBarInputField(
-//            modifier = Modifier
-//                .padding(Dimens.MarginSmall8),
-//            query = state.query,
-//            placeholderRes = R.string.street_and_building,
-//            autoFocus = true,
-//            onQueryChange = { onEvent(AddressTextEvent.SetQuery(it)) },
-//            onClear = { onEvent(AddressTextEvent.SetQuery("")) },
-//        )
+
 
         if (state.isLoading) {
             CircularProgressIndicator(

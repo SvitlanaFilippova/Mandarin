@@ -12,8 +12,8 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 
 @Composable
-fun GetLocationIcon(onClick: () -> Unit = {}) {
-    IconButton(onClick = onClick) {
+fun GetLocationIcon(onClick: () -> Unit = {}, enabled: Boolean = true) {
+    IconButton(onClick = onClick, enabled = enabled) {
         Icon(
             modifier = Modifier.padding(Dimens.MarginSuperSmall4),
             painter = painterResource(R.drawable.ic_pin_with_home),

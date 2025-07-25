@@ -42,6 +42,7 @@ import com.mandarinkafe.mandarin.util.Constants.MAP_ANIMATION_DURATION
 import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_AZIMUTH
 import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_TILT
 import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_ZOOM
+import com.mandarinkafe.mandarin.util.Constants.MIN_LINES_FOR_ADDRESS_INPUT
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.RoundedButton
@@ -103,10 +104,10 @@ fun AddressMapScreen(
                     )
                 }),
             enabled = false,
-            minLines = 2,
+            minLines = MIN_LINES_FOR_ADDRESS_INPUT,
             value = addressValue,
             labelRes = R.string.street_and_building,
-            leadingIcon = { GetLocationIcon() }
+            leadingIcon = { GetLocationIcon(enabled = false) }
         )
 
         // Контейнер для карты и её элементов управления
