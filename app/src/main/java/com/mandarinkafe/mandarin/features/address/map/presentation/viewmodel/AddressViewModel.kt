@@ -77,7 +77,7 @@ class AddressViewModel @Inject constructor(
         val address = state.value.displayAddress ?: ""
         point?.let {
             val address = UiAddress(
-                point = point,
+                point = point.toGeoPoint(),
                 streetAndBuilding = address
             )
             sendEffect(GoToAddressDetailsEffect(address))

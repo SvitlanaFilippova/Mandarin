@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
@@ -55,7 +56,8 @@ fun OrderScreen(
     val list = remember {
         listOf(
             UiAddress(
-                streetAndBuilding = "Солнечная 4",
+                point = GeoPoint(55.996873, 38.374358),
+                streetAndBuilding = "ул. Солнечная 4, Черноголовка",
                 isPrivateHouse = false,
                 apartmentNumber = "82",
                 entrance = "2",
@@ -63,9 +65,13 @@ fun OrderScreen(
                 intercom = "#4444",
                 comment = ""
             ),
-            UiAddress(streetAndBuilding = "Берёзовая 2а", isPrivateHouse = true),
             UiAddress(
-                streetAndBuilding = "Ногинск, ул. Преображенская 187",
+                point = GeoPoint(55.996837, 38.377260),
+                streetAndBuilding = "Берёзовая 2а, Черноголовка", isPrivateHouse = true
+            ),
+            UiAddress(
+                point = GeoPoint(55.859610, 38.449978),
+                streetAndBuilding = "Рогожская улица, 26, Ногинск",
                 isPrivateHouse = false,
                 apartmentNumber = "452",
                 entrance = "4",
@@ -112,6 +118,7 @@ fun OrderScreen(
         item {
             DeliveryTypeChooser(
                 chosen = chosenDeliveryType,
+                pickupOnly = cartState.pickupOnly,
                 isError = state.isError,
                 onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
             )
@@ -188,9 +195,9 @@ fun OrderScreen(
                 discountSum = discountSum,
                 discountPercent = state.discountPercent,
                 deliveryCost = deliveryCost,
-                addressValidated = state.addressValidated,
+                addressInNotInDeliveryArea = state.addressInNotInDeliveryArea,
                 freeDeliveryThreshold = state.deliveryZone?.freeDeliveryThreshold,
-                addressValidationInProgress = state.addressValidationInProgress
+                deliveryType = state.deliveryType
             )
         }
 

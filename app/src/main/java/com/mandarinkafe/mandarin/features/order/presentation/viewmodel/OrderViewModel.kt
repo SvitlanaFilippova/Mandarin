@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
 import android.util.Log
+import com.mandarinkafe.mandarin.features.address.map.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
@@ -14,7 +15,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class OrderViewModel @Inject constructor() : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
+class OrderViewModel @Inject constructor(private val getDeliveryZone: GetDeliveryZoneUseCase) :
+    BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     override fun setInitialState() = OrderState()
 
@@ -38,7 +40,12 @@ class OrderViewModel @Inject constructor() : BaseViewModel<OrderEvent, OrderEffe
     }
 
     private fun setAddress(address: UiAddress) {
-        setState { copy(address = address, addressValidationInProgress = true) }
+        setState {
+            copy(
+                address = address,
+                deliveryZone = getDeliveryZone(address.point)
+            )
+        }
     }
 
     private fun submitOrder() {
@@ -110,7 +117,7 @@ class OrderViewModel @Inject constructor() : BaseViewModel<OrderEvent, OrderEffe
     }
 
     private fun checkDeliveryCost() {
-
+        // TODO
     }
 
     private fun setError() {

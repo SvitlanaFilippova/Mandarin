@@ -1,11 +1,11 @@
 package com.mandarinkafe.mandarin.features.order.presentation.models
 
 import androidx.compose.runtime.Stable
-import com.yandex.mapkit.geometry.Point
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 
 @Stable
 data class UiAddress(
-    val point: Point? = null,
+    val point: GeoPoint? = null,
     val streetAndBuilding: String = "",
     val isPrivateHouse: Boolean = false,
     val apartmentNumber: String = "",

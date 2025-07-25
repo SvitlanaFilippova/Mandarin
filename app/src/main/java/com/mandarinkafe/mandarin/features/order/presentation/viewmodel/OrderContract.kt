@@ -39,8 +39,6 @@ sealed interface OrderContract {
         val phone: String = "",
         val deliveryType: DeliveryType? = null,
         val address: UiAddress? = null,
-        val addressValidated: Boolean? = null,
-        val addressValidationInProgress: Boolean = false,
         val deliveryZone: DeliveryArea? = null,
         val paymentType: PaymentType? = null,
         val noChange: Boolean = false,
@@ -53,15 +51,15 @@ sealed interface OrderContract {
         val deliveryCost: Int? = null,
         val discountSum: Float = 0f,
     ) : BaseState {
-
         val phoneIsValid: Boolean
             get() = phone.length == VALID_PHONE_LENGTH
         val addressEntered: Boolean
             get() =
                 address != null || deliveryType == DeliveryType.SELF_PICKUP
+        val addressInNotInDeliveryArea: Boolean
+            get() = deliveryType == DeliveryType.DELIVERY && address != null && deliveryZone == null
         val paymentTypeChosen: Boolean
             get() = paymentType != null
-
         val canBeSubmitted: Boolean
             get() = phoneIsValid && addressEntered && paymentTypeChosen
     }

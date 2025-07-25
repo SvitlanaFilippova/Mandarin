@@ -46,5 +46,10 @@ sealed interface CartContract {
                 .sumOf { (item, quantity) ->
                     item.totalPrice() * quantity
                 }
+        val pickupOnly: Boolean
+            get() = cartItems
+                .filter { (item, _) -> item !in pendingDeletionMeals }
+                .keys
+                .any { it.meal.isPickupOnly }
     }
 }

@@ -126,11 +126,11 @@ fun AddressMapScreen(
                     onEvent(SetVisibleRegion(it.mapWindow.map.visibleRegion))
                     mapView = it
                 }
-                // Окно с информацией о текущей зоне доставки
-                state.deliveryArea?.let {
+                if (state.displayAddress != null) {
+                    // Окно с информацией о текущей зоне доставки
                     DeliveryAreaInfo(
                         modifier = Modifier.align(Alignment.TopCenter),
-                        deliveryArea = it
+                        deliveryArea = state.deliveryArea
                     )
                 }
 

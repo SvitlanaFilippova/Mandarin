@@ -4,5 +4,5 @@ import com.mandarinkafe.mandarin.core.domain.models.DeliveryArea
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 
 interface GetDeliveryZoneUseCase {
-    operator fun invoke(location: GeoPoint): DeliveryArea?
+    operator fun invoke(location: GeoPoint?): DeliveryArea?
 }

@@ -10,18 +10,18 @@ import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 
 @Composable
 fun OrderSummaryData(
     cartSum: Int,
     discountSum: Float,
     discountPercent: Int,
+    deliveryType: DeliveryType?,
     deliveryCost: Int,
-    addressValidated: Boolean?,
+    addressInNotInDeliveryArea: Boolean,
     freeDeliveryThreshold: Int?,
-    addressValidationInProgress: Boolean,
 ) {
-    val freeDeliveryThreshold = freeDeliveryThreshold ?: 0
 
     Column {
         Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
@@ -39,35 +39,29 @@ fun OrderSummaryData(
             )
         }
 
-
-
-        when (addressValidated) {
-            true -> {
-                OrderSummaryRow(
-                    name = stringResource(R.string.delivery_cost),
-                    amount = deliveryCost.toFloat(),
-                    hintText = stringResource(
-                        R.string.delivery_cost_hint, freeDeliveryThreshold
+// Стоимость доставки показываем только если НЕ выбран самовывоз
+        if (deliveryType != DeliveryType.SELF_PICKUP) {
+            when (addressInNotInDeliveryArea) {
+                true -> {
+                    Text(
+                        text = stringResource(R.string.delivery_validation_error),
+                        style = Typography.RegularLightTextStyle
                     )
-                )
-            }
+                }
 
-            false -> {
-                Text(
-                    text = stringResource(R.string.delivery_validation_error),
-                    style = Typography.RegularLightTextStyle
-                )
-            }
+                false -> {
+                    val hintText = if (freeDeliveryThreshold != null) stringResource(
+                        R.string.delivery_cost_hint, freeDeliveryThreshold
+                    ) else null
 
-            null -> {
-                OrderSummaryRow(
-                    name = stringResource(R.string.delivery_cost),
-                    inProgress = addressValidationInProgress,
-                    amount = null,
-                )
+                    OrderSummaryRow(
+                        name = stringResource(R.string.delivery_cost),
+                        amount = deliveryCost.toFloat(),
+                        hintText = hintText
+                    )
+                }
             }
         }
-
         Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
     }
 }

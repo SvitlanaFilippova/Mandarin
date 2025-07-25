@@ -21,7 +21,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.address.map.presentation.ui.models.UiDeliveryArea
 
 @Composable
-fun DeliveryAreaInfo(modifier: Modifier = Modifier, deliveryArea: UiDeliveryArea) {
+fun DeliveryAreaInfo(modifier: Modifier = Modifier, deliveryArea: UiDeliveryArea?) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -35,32 +35,42 @@ fun DeliveryAreaInfo(modifier: Modifier = Modifier, deliveryArea: UiDeliveryArea
                 .fillMaxWidth()
                 .padding(Dimens.MarginSmall8),
         ) {
-            // Цвет и номер зоны доставки
-            Box(
-                modifier = Modifier
-                    .size(Dimens.IconSize24)
-                    .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                    .background(deliveryArea.color), contentAlignment = Alignment.Center
-            ) {
+            if (deliveryArea != null) {
+                // Цвет и номер зоны доставки
+                Box(
+                    modifier = Modifier
+                        .size(Dimens.IconSize24)
+                        .clip(RoundedCornerShape(Dimens.CornerRadius8))
+                        .background(deliveryArea.color), contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = deliveryArea.id.toString(),
+                        style = Typography.RegularLightTextStyle,
+                        color = Colors.White
+                    )
+                }
+
+                // Мин сумма заказа и цена доставки
                 Text(
-                    text = deliveryArea.id.toString(),
+                    modifier = Modifier.padding(start = Dimens.MarginSmall8),
+                    text =
+                        stringResource(
+                            R.string.free_delivery_at,
+                            deliveryArea.freeDeliveryThreshold,
+                            deliveryArea.deliveryPrice
+                        ),
                     style = Typography.RegularLightTextStyle,
-                    color = Colors.White
+                    color = Colors.AppBlack
+                )
+            } else {
+                Text(
+                    modifier = Modifier.padding(start = Dimens.MarginSmall8),
+                    text = stringResource(
+                        R.string.delivery_validation_error
+                    ), style = Typography.RegularLightTextStyle,
+                    color = Colors.AppBlack
                 )
             }
-
-            // Мин сумма заказа и цена доставки
-            Text(
-                modifier = Modifier.padding(start = Dimens.MarginSmall8),
-                text =
-                    stringResource(
-                        R.string.free_delivery_at,
-                        deliveryArea.freeDeliveryThreshold,
-                        deliveryArea.deliveryPrice
-                    ),
-                style = Typography.RegularLightTextStyle,
-                color = Colors.AppBlack
-            )
         }
     }
 }

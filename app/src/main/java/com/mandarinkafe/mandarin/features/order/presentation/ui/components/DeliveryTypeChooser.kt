@@ -12,22 +12,36 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
+import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
 @Composable
 fun DeliveryTypeChooser(
     chosen: DeliveryType?,
     isError: Boolean,
-    onDeliverySelected: (DeliveryType) -> Unit
+    onDeliverySelected: (DeliveryType) -> Unit,
+    pickupOnly: Boolean
 ) {
     val deliveryTypes = remember { DeliveryType.entries.toList() }
     val borderColor = if (isError && chosen == null) Colors.ErrorRed else Colors.AppBlack
 
+    if (pickupOnly) {
+        TooltipText(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = Dimens.MarginSmall8),
+            textRes = R.string.pickup_only
+        )
+    }
+
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
         deliveryTypes.forEachIndexed { index, item ->
+            val isDelivery = item == DeliveryType.DELIVERY
+            val itemEnabled = !(pickupOnly && isDelivery)
             val selected = item == chosen
             SegmentedButton(
                 modifier = Modifier.height(Dimens.BigButtonWithTextHeight),
@@ -37,6 +51,7 @@ fun DeliveryTypeChooser(
                 ),
                 onClick = { onDeliverySelected(item) },
                 selected = selected,
+                enabled = itemEnabled,
                 colors = SegmentedButtonColors(
                     activeContainerColor = Colors.DarkGrey,
                     activeContentColor = Colors.Orange,
@@ -45,18 +60,18 @@ fun DeliveryTypeChooser(
                     inactiveContentColor = Colors.White,
                     inactiveBorderColor = borderColor,
                     disabledActiveContainerColor = Colors.AppBlack,
-                    disabledActiveContentColor = Colors.White,
-                    disabledActiveBorderColor = borderColor,
+                    disabledActiveContentColor = Colors.DarkGrey,
+                    disabledActiveBorderColor = Colors.AppBlack,
                     disabledInactiveContainerColor = Colors.AppBlack,
-                    disabledInactiveContentColor = Colors.White,
-                    disabledInactiveBorderColor = borderColor,
+                    disabledInactiveContentColor = Colors.LightGreyTransparent75,
+                    disabledInactiveBorderColor = Colors.AppBlack,
                 ),
                 label = {
                     Text(
                         modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
                         text = stringResource(item.nameRes),
                         style = Typography.RegularTextStyle,
-                        color = if (selected) Colors.Orange else Colors.White
+                        color = if (selected) Colors.Orange else if (!itemEnabled) Colors.LightGreyTransparent75 else Colors.White
                     )
                 }
             )

@@ -10,7 +10,8 @@ class GetDeliveryZoneUseCaseImpl(
     private val deliveryAreaRepository: DeliveryAreaRepository
 ) : GetDeliveryZoneUseCase {
 
-    override fun invoke(location: GeoPoint): DeliveryArea? {
+    override fun invoke(location: GeoPoint?): DeliveryArea? {
+        if (location == null) return null
         Log.d("DEBUG DELIVERY AREA", "GetDeliveryZoneUseCaseImpl, location = $location")
         val areas = deliveryAreaRepository.getAllAreas()
 

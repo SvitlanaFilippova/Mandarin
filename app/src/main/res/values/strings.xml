@@ -43,13 +43,15 @@
     <string name="cancel_choice">Отменить выбор</string>
     <string name="mandatory">(обязательно)</string>
     <string name="make_mandatory_choice_before_cart">Выбери нужные опции в обязательных модификаторах — только после этого можно добавить блюдо в корзину</string>
+    <string name="for_selfpickup">для самовывоза</string>
+    <string name="for_selfpickup_details">Позиция доступна только для заказа самовывозом. Доставка невозможна.</string>
 
     <!-- Доставка -->
     <string name="delivery">Доставка</string>
     <string name="delivery_history">История заказов</string>
     <string name="delivery_price">СТОИМОСТЬ ДОСТАВКИ</string>
     <string name="delivery_price_from_beregovaya">(по "Береговой" 100 рублей)</string>
-    <string name="free_delivery_at"> Бесплатная доставка при заказе от %1$d рублей;\nдоставка %2$d рублей </string>
+    <string name="free_delivery_at">Доставка %2$d ₽;\nПри заказе от %1$d ₽ — бесплатно.</string>
     <string name="delivery_price_info">Доставка — БЕСПЛАТНО, при условии заказа на минимальную сумму. Чем дальше от Черноголовки, тем сумма выше. Все суммы указаны на карте ниже.</string>
     <string name="delivery_price_info_other">Стоимость доставки в остальные населенные пункты и СНТ уточняйте у оператора.</string>
     <string name="pickup">САМОВЫВОЗ</string>
@@ -92,10 +94,11 @@
     <string name="discount_template">Скидка %1$d%%</string>
     <string name="discount_hint">Скидка по&#160;вашей карте может действовать не&#160;на&#160;все товары.</string>
     <string name="delivery_cost">Стоимость доставки</string>
-    <string name="delivery_cost_hint">Стоимость доставки зависит от&#160;суммы заказа и&#160;зоны доставки. Для введённого адреса доставка бесплатна при заказе от&#160;%1&#36;d&#8381; (с&#160;учётом скидок).</string>
+    <string name="delivery_cost_hint">Для выбранного адреса доставка бесплатна при заказе от&#160;%1&#36;d&#8381; (с&#160;учётом скидок).</string>
     <string name="why_is_that_number">Почему такая цифра</string>
     <string name="delivery_request_validation">Введите адрес для расчёта стоимости доставки</string>
-    <string name="delivery_validation_error">Не&#160;удалось валидировать адрес. Возможность доставки и её стоимость уточнит оператор после оформления заказа. Информация о&#160;возможных зонах доставки в&#160;разделе &#171;Доставка&#187;</string>
+    <string name="pickup_only">В&#160;заказе есть товары, доступные только для самовывоза. Выбор доставки невозможен.</string>
+    <string name="delivery_validation_error">Не&#160;удалось найти выбранный адрес в&#160;пределах зон доставки. Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа.</string>
     <string name="submit_order">Оформить заказ</string>
     <string name="order_total_cost_template">%.2f ₽</string>
 
@@ -141,7 +144,7 @@
     <string name="placeholder_retry">Обновить</string>
     <string name="placeholder_call">Позвонить</string>
     <string name="nothing_found">Ничего не найдено :(</string>
-    <string name="nothing_found_extra">Попробуй написать по-другому или просто полистай наше меню. Там точно найдутся нужные вкусности! </string>
+    <string name="nothing_found_extra">Попробуй написать по-другому или просто полистай наше меню. Там точно найдутся нужные вкусности!</string>
     <string name="error_no_internet">Проверь подключение к&#160;интернету</string>
     <string name="error_empty_menu">Сервер вернул пустые данные меню</string>
     <string name="error_empty_addons">Не удалось загрузить добавки</string>
@@ -149,8 +152,7 @@
     <string name="error_something_wrong">Что-то пошло не так :(</string>
     <string name="error_empty_cart">В корзине пока ничего нет :(</string>
     <string name="error_empty_favorites">В избранных пока ничего нет.</string>
-    <string name="error_empty_favorites_extra">Скорее добавь свои любимые
-    блюда, чтобы заказывать их было ещё удобнее!</string>
+    <string name="error_empty_favorites_extra">Скорее добавь свои любимые блюда, чтобы заказывать их&#160;было ещё удобнее!</string>
 
     <!-- Для contentDescription  -->
     <string name="picture_of_meal_template">Изображение %1$s</string>
@@ -161,7 +163,5 @@
     <string name="back_to_top">Вернуться в начало</string>
     <string name="is_selected">Выбрано</string>
 
-    <string name="for_selfpickup">для самовывоза</string>
-    <string name="for_selfpickup_details">! Позиция доступна только для заказа самовывозом. Доставка невозможна.</string>
 
 </resources>
