@@ -25,7 +25,6 @@ fun SwitchWithTextRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = Dimens.MarginSmall8)
             .toggleable(
                 value = value,
                 role = Role.Switch,
