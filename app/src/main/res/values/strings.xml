@@ -97,7 +97,7 @@
     <string name="delivery_cost_hint">Для выбранного адреса доставка бесплатна при заказе от&#160;%1&#36;d&#8381; (с&#160;учётом скидок).</string>
     <string name="why_is_that_number">Почему такая цифра</string>
     <string name="delivery_request_validation">Введите адрес для расчёта стоимости доставки</string>
-    <string name="pickup_only">В&#160;заказе есть товары, доступные только для самовывоза. Выбор доставки невозможен.</string>
+    <string name="pickup_only">В&#160;заказе есть товары, доступные только для самовывоза. Доставка невозможна.</string>
     <string name="delivery_validation_error">Не&#160;удалось найти выбранный адрес в&#160;пределах зон доставки. Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа.</string>
     <string name="submit_order">Оформить заказ</string>
     <string name="order_total_cost_template">%.2f ₽</string>

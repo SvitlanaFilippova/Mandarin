@@ -11,8 +11,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.extensions.hasSelectedAllRequiredModifiers
-import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
+import com.mandarinkafe.mandarin.core.domain.models.hasSelectedAllRequiredModifiers
+import com.mandarinkafe.mandarin.core.domain.models.totalPrice
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.BottomSheetHeader

@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.order.presentation.ui.screen
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
@@ -43,6 +44,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.navigation.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.navigateToAddressDetails
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -125,8 +127,10 @@ fun OrderScreen(
         }
 
         if (chosenDeliveryType == DeliveryType.DELIVERY) {
-            items(items = list) { item ->
+
+            items(items = list, key = { it.hashCode() }) { item ->
                 SavedAddressCard(
+                    modifier = Modifier.animateItem(tween(Constants.ANIMATION_DURATION_FAST)),
                     address = item,
                     onAddressChosen = { onEvent(OrderEvent.SetAddress(item)) },
                     onEditAddress = { onEvent(OrderEvent.EditAddress(item)) },

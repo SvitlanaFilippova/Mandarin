@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.order.presentation.ui.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -33,7 +34,7 @@ fun DeliveryTypeChooser(
         TooltipText(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = Dimens.MarginSmall8),
+                .padding(bottom = Dimens.MarginStandard16),
             textRes = R.string.pickup_only
         )
     }
@@ -47,7 +48,8 @@ fun DeliveryTypeChooser(
                 modifier = Modifier.height(Dimens.BigButtonWithTextHeight),
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
-                    count = deliveryTypes.size
+                    count = deliveryTypes.size,
+                    baseShape = RoundedCornerShape(Dimens.CornerRadius8)
                 ),
                 onClick = { onDeliverySelected(item) },
                 selected = selected,
@@ -62,8 +64,8 @@ fun DeliveryTypeChooser(
                     disabledActiveContainerColor = Colors.AppBlack,
                     disabledActiveContentColor = Colors.DarkGrey,
                     disabledActiveBorderColor = Colors.AppBlack,
-                    disabledInactiveContainerColor = Colors.AppBlack,
-                    disabledInactiveContentColor = Colors.LightGreyTransparent75,
+                    disabledInactiveContainerColor = Colors.DarkGrey,
+                    disabledInactiveContentColor = Colors.LightGrey.copy(alpha = 0.1f),
                     disabledInactiveBorderColor = Colors.AppBlack,
                 ),
                 label = {

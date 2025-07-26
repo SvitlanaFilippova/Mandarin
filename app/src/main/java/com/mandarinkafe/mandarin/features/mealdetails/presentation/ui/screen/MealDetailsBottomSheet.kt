@@ -17,8 +17,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
+import com.mandarinkafe.mandarin.core.domain.models.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
@@ -138,7 +138,7 @@ fun MealDetailsBottomSheet(
                         )
                     },
                     onToggleFavorite = {
-                        if (!isFavorite && customizedMeal.isCustomized()) {
+                        if (!isFavorite && customizedMeal.isCustomized) {
                             onSharedEvent(SharedEvent.ShowFavoriteDialog(customizedMeal))
                         } else {
                             onToggleFavorite(customizedMeal)

@@ -27,6 +27,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.models.getDetails
 
 @Composable
 fun SavedAddressCard(
+    modifier: Modifier = Modifier,
     selected: Boolean,
     address: UiAddress,
     onAddressChosen: () -> Unit,
@@ -35,7 +36,7 @@ fun SavedAddressCard(
     val details = remember { address.getDetails() }
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onAddressChosen),
         verticalAlignment = Alignment.CenterVertically

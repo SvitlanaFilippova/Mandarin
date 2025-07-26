@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.cart.presentation.viewmodel
 
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
+import com.mandarinkafe.mandarin.core.domain.models.totalPrice
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
@@ -39,17 +39,18 @@ sealed interface CartContract {
         val pendingDeletionMeals: List<CustomizedMeal> = emptyList(),
         val mealDeletionProgress: Map<CustomizedMeal, Float> = emptyMap(),
     ) : BaseState {
+        val actualCartItems: Map<CustomizedMeal, Int>
+            get() = cartItems.filter { (item, _) -> item !in pendingDeletionMeals }
+
         val totalCartPrice: Int
-            get() = cartItems
-                .filter { (item, _) -> item !in pendingDeletionMeals }
-                .entries
-                .sumOf { (item, quantity) ->
-                    item.totalPrice() * quantity
-                }
+            get() = actualCartItems.entries.sumOf { (item, quantity) ->
+                item.totalPrice() * quantity
+            }
+
         val pickupOnly: Boolean
-            get() = cartItems
-                .filter { (item, _) -> item !in pendingDeletionMeals }
-                .keys
-                .any { it.meal.isPickupOnly }
+            get() = actualCartItems.keys.any { it.meal.isPickupOnly }
+
+        val contentNotDiscountable: Boolean
+            get() = actualCartItems.keys.any { !it.meal.discountable }
     }
 }

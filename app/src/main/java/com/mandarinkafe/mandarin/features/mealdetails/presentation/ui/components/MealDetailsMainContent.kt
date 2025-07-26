@@ -11,9 +11,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isOnlySingleRequiredChoice
+import com.mandarinkafe.mandarin.core.domain.models.isCustomizable
+import com.mandarinkafe.mandarin.core.domain.models.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.isOnlySingleRequiredChoice
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.AddsItem
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.ChosenOptions
@@ -34,7 +34,7 @@ fun MealDetailsMainContent(
 ) {
     val meal = remember { customizedMeal.meal }
     val shouldShowChosen =
-        remember(customizedMeal.isCustomized()) { !meal.isOnlySingleRequiredChoice() && customizedMeal.isCustomized() }
+        remember(customizedMeal.isCustomized) { !meal.isOnlySingleRequiredChoice() && customizedMeal.isCustomized }
 
     LazyColumn(
         modifier = Modifier

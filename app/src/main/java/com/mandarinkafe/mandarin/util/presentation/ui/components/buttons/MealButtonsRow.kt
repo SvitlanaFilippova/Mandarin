@@ -11,9 +11,9 @@ import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalPriceByMealId
-import com.mandarinkafe.mandarin.core.domain.models.extensions.getTotalQuantityByMealId
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
+import com.mandarinkafe.mandarin.core.domain.models.getTotalPriceByMealId
+import com.mandarinkafe.mandarin.core.domain.models.getTotalQuantityByMealId
+import com.mandarinkafe.mandarin.core.domain.models.isCustomizable
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 
 @Composable

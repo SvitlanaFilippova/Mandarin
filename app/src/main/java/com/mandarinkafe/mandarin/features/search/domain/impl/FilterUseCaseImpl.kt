@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.search.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
+import com.mandarinkafe.mandarin.core.domain.models.isFavorite
 import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
 import com.mandarinkafe.mandarin.util.fuzzyContains
 import com.mandarinkafe.mandarin.util.levenshteinDistance

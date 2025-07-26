@@ -63,8 +63,6 @@ object Constants {
     const val MAP_DEFAULT_AZIMUTH = 0.0f
 
     // DI
-    const val NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/"
-    const val MANDARIN_CAFE = "your-app-name"
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
     const val LOCAL_STORAGE_NAME = "local_storage"
     const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/spreadsheets/d/e/"
