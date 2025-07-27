@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
-
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
@@ -63,13 +65,25 @@ fun DeliveryAreaInfo(modifier: Modifier = Modifier, deliveryArea: UiDeliveryArea
                     color = Colors.AppBlack
                 )
             } else {
-                Text(
-                    modifier = Modifier.padding(start = Dimens.MarginSmall8),
-                    text = stringResource(
-                        R.string.delivery_validation_error
-                    ), style = Typography.RegularLightTextStyle,
-                    color = Colors.AppBlack
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .padding(Dimens.MarginSmall8),
+                        imageVector = Icons.Default.Info,
+                        tint = Colors.AppBlack,
+                        contentDescription = null
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = Dimens.MarginSmall8),
+                        text = stringResource(
+                            R.string.delivery_validation_error
+                        ), style = Typography.RegularLightTextStyle,
+                        color = Colors.AppBlack.copy(alpha = 0.5f)
+                    )
+                }
             }
         }
     }

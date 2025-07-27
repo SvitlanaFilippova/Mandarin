@@ -96,7 +96,7 @@ fun MapWithButtons(
         // Кнопка "Доставить сюда"
         ButtonWithText(
             modifier = Modifier
-                .padding(Dimens.MarginBig20)
+                .padding(Dimens.MarginBig24)
                 .align(Alignment.BottomCenter),
             shouldBeActive = locationChosen,
             textResID = R.string.deliver_to_this_location,
