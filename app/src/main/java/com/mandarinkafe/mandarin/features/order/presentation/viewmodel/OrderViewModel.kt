@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
 import android.util.Log
-import com.mandarinkafe.mandarin.features.address.map.domain.api.GetDeliveryZoneUseCase
+import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil

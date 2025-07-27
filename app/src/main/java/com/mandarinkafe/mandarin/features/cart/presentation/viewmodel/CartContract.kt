@@ -50,7 +50,7 @@ sealed interface CartContract {
         val pickupOnly: Boolean
             get() = actualCartItems.keys.any { it.meal.isPickupOnly }
 
-        val contentNotDiscountable: Boolean
+        val containNotDiscountable: Boolean
             get() = actualCartItems.keys.any { !it.meal.discountable }
     }
 }

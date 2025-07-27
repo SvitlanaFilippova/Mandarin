@@ -88,7 +88,7 @@ object Constants {
     const val DELETE_FROM_CART_DEBOUNCE_DELAY: Long = 3000L
     const val INTERVAL_FOR_UPD_PROGRESSBAR: Long = 100L
     const val UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE: Long = 500L
-
+    const val LOCALE_RU = "ru_RU"
 
     // remoteConfig
     const val PHONE_NUMBER_DEFAULT = "tel:+74951087055"

@@ -19,7 +19,7 @@ sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val 
     object Location : BottomNavigationItem(
         R.string.location,
         R.drawable.ic_map,
-        NavConstants.ADDRESS_MAP_SCREEN_ROUTE
+        NavConstants.ADDRESS_SCREEN_ROUTE
     )
 
     object Favorites :

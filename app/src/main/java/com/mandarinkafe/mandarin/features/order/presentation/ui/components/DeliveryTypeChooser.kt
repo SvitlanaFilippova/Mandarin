@@ -65,7 +65,7 @@ fun DeliveryTypeChooser(
                     disabledActiveContentColor = Colors.DarkGrey,
                     disabledActiveBorderColor = Colors.AppBlack,
                     disabledInactiveContainerColor = Colors.DarkGrey,
-                    disabledInactiveContentColor = Colors.LightGrey.copy(alpha = 0.1f),
+                    disabledInactiveContentColor = Colors.AppBlack,
                     disabledInactiveBorderColor = Colors.AppBlack,
                 ),
                 label = {
@@ -73,7 +73,9 @@ fun DeliveryTypeChooser(
                         modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
                         text = stringResource(item.nameRes),
                         style = Typography.RegularTextStyle,
-                        color = if (selected) Colors.Orange else if (!itemEnabled) Colors.LightGreyTransparent75 else Colors.White
+                        color = if (selected) Colors.Orange else if (!itemEnabled) Colors.LightGrey.copy(
+                            alpha = 0.2f
+                        ) else Colors.White
                     )
                 }
             )

@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.features.delivery.di
 
-import com.mandarinkafe.mandarin.features.address.map.domain.api.DeliveryAreaRepository
-import com.mandarinkafe.mandarin.features.address.map.domain.api.GetDeliveryZoneUseCase
-import com.mandarinkafe.mandarin.features.address.map.domain.impl.DeliveryAreaRepositoryImpl
-import com.mandarinkafe.mandarin.features.address.map.domain.impl.GetDeliveryZoneUseCaseImpl
+import com.mandarinkafe.mandarin.features.address.address.domain.api.DeliveryAreaRepository
+import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
+import com.mandarinkafe.mandarin.features.address.address.domain.impl.DeliveryAreaRepositoryImpl
+import com.mandarinkafe.mandarin.features.address.address.domain.impl.GetDeliveryZoneUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

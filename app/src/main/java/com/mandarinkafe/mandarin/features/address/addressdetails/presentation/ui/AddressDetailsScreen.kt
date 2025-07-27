@@ -27,7 +27,7 @@ import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.vi
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsViewModel
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiAddress
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.ApartmentDetails
-import com.mandarinkafe.mandarin.features.order.presentation.ui.components.GetLocationIcon
+import com.mandarinkafe.mandarin.features.order.presentation.ui.components.LocationIcon
 import com.mandarinkafe.mandarin.navigation.navigateToAddress
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
@@ -72,7 +72,7 @@ fun AddressDetailsScreen(
             value = state.address.streetAndBuilding,
             labelRes = R.string.street_and_building,
             leadingIcon = {
-                GetLocationIcon(enabled = false)
+                LocationIcon(enabled = false)
             }
         )
 
