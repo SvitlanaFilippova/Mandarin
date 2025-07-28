@@ -15,7 +15,7 @@ class FusedLocationRepositoryImpl(private val fusedProvider: FusedLocationProvid
         suspendCoroutine { continuation ->
             fusedProvider.lastLocation
                 .addOnSuccessListener { location ->
-                    if (location != null)
+                    if (location != null) {
                         continuation.resume(
                             Resource.Success(
                                 GeoPoint(
@@ -24,8 +24,9 @@ class FusedLocationRepositoryImpl(private val fusedProvider: FusedLocationProvid
                                 )
                             )
                         )
-                    else
+                    } else {
                         continuation.resume(Resource.ErrorEmptyData())
+                    }
                 }
                 .addOnFailureListener {
                     continuation.resume(Resource.ErrorEmptyData())

@@ -14,8 +14,7 @@ import dagger.hilt.components.SingletonComponent
 class DeliveryDataModule {
 
     @Provides
-    fun provideDeliveryAreaRepository(
-    ): DeliveryAreaRepository {
+    fun provideDeliveryAreaRepository(): DeliveryAreaRepository {
         return DeliveryAreaRepositoryImpl()
     }
 

@@ -37,7 +37,6 @@ fun MapWithButtons(
     onBackToInitLocationClick: (() -> Unit)?,
     onBackToUserLocationClick: (() -> Unit)?
 ) {
-
     val cameraListener = remember {
         CameraListener { _, cameraPosition, _, finished ->
             if (finished) {
@@ -59,8 +58,8 @@ fun MapWithButtons(
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
     )
     {
-        // Карта
         AndroidView(
+            // Карта
             modifier = Modifier.fillMaxSize(),
             factory = { MapView(it) },
         ) {

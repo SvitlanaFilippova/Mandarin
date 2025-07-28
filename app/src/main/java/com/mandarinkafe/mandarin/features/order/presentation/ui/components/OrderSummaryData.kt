@@ -22,7 +22,6 @@ fun OrderSummaryData(
     addressInNotInDeliveryArea: Boolean,
     freeDeliveryThreshold: Int?,
 ) {
-
     Column {
         Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
         OrderSummaryRow(
@@ -50,9 +49,13 @@ fun OrderSummaryData(
                 }
 
                 false -> {
-                    val hintText = if (freeDeliveryThreshold != null) stringResource(
-                        R.string.delivery_cost_hint, freeDeliveryThreshold
-                    ) else null
+                    val hintText = if (freeDeliveryThreshold != null) {
+                        stringResource(
+                            R.string.delivery_cost_hint, freeDeliveryThreshold
+                        )
+                    } else {
+                        null
+                    }
 
                     OrderSummaryRow(
                         name = stringResource(R.string.delivery_cost),

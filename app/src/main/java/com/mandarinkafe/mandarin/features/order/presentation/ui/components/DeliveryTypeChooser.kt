@@ -87,9 +87,15 @@ fun DeliveryTypeChooser(
                         modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
                         text = stringResource(item.nameRes),
                         style = Typography.RegularTextStyle,
-                        color = if (selected) Colors.Orange else if (!itemEnabled) Colors.LightGrey.copy(
-                            alpha = 0.2f
-                        ) else Colors.White
+                        color = if (selected) {
+                            Colors.Orange
+                        } else if (!itemEnabled) {
+                            Colors.LightGrey.copy(
+                                alpha = 0.2f
+                            )
+                        } else {
+                            Colors.White
+                        }
                     )
                 }
             )

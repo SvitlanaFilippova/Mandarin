@@ -16,7 +16,7 @@ data class Address(
     val comment: String = "",
 ) {
     val noNeedAddressDetails: Boolean
-        get() = (addressType == AddressType.PRIVATE_HOUSE || addressType == AddressType.OTHER)
+        get() = addressType == AddressType.PRIVATE_HOUSE || addressType == AddressType.OTHER
 }
 
 fun Address.getDetailsString(): String {

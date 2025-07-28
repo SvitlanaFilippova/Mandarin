@@ -23,7 +23,10 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.models.UiDeliveryArea
 
 @Composable
-fun DeliveryAreaInfo(modifier: Modifier = Modifier, deliveryArea: UiDeliveryArea?) {
+fun DeliveryAreaInfo(
+    modifier: Modifier = Modifier,
+    deliveryArea: UiDeliveryArea?
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -43,7 +46,8 @@ fun DeliveryAreaInfo(modifier: Modifier = Modifier, deliveryArea: UiDeliveryArea
                     modifier = Modifier
                         .size(Dimens.IconSize24)
                         .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                        .background(deliveryArea.color), contentAlignment = Alignment.Center
+                        .background(deliveryArea.color),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = deliveryArea.id.toString(),
@@ -77,7 +81,8 @@ fun DeliveryAreaInfo(modifier: Modifier = Modifier, deliveryArea: UiDeliveryArea
                         contentDescription = null
                     )
                     Text(
-                        modifier = Modifier.padding(start = Dimens.MarginSmall8),
+                        modifier = Modifier
+                            .padding(start = Dimens.MarginSmall8),
                         text = stringResource(
                             R.string.delivery_validation_error
                         ), style = Typography.RegularLightTextStyle,

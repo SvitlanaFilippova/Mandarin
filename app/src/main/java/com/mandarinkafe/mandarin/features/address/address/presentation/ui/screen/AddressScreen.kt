@@ -78,9 +78,9 @@ fun AddressMapScreen(
     var searchResultsBeVisible by remember { mutableStateOf(false) }
     var mapShouldBeVisible by remember { mutableStateOf(true) }
     val keyboardController =
-        LocalSoftwareKeyboardController.current     // Добавляем на карту зоны доставки
+        LocalSoftwareKeyboardController.current // Добавляем на карту зоны доставки
     val addressValue = state.displayAddress ?: ""
-    val onValueChange: (String) -> Unit = { it ->
+    val onValueChange: (String) -> Unit = {
         if (it.isNotBlank()) {
             onEvent(AddressEvent.ChangeSearchQuery(it))
             searchResultsBeVisible = true
@@ -108,8 +108,7 @@ fun AddressMapScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-        )
-        {
+        ) {
             // Контейнер для карты и её элементов управления
             if (mapShouldBeVisible) {
                 with(state) {
@@ -136,7 +135,7 @@ fun AddressMapScreen(
                 }
             }
 
-            if (searchResultsBeVisible)
+            if (searchResultsBeVisible) {
                 SearchByTextResults(
                     modifier = Modifier
                         .align(Alignment.TopCenter),
@@ -154,6 +153,7 @@ fun AddressMapScreen(
                         keyboardController?.hide()
                     },
                 )
+            }
 
         }
     }
@@ -189,12 +189,13 @@ fun AddressMapScreen(
 }
 
 private fun moveCamera(point: Point?, mapView: MapView?) {
-    if (point != null)
+    if (point != null) {
         mapView?.mapWindow?.map?.move(
             CameraPosition(point, MAP_DEFAULT_ZOOM, MAP_DEFAULT_AZIMUTH, MAP_DEFAULT_TILT),
             Animation(Animation.Type.SMOOTH, MAP_ANIMATION_DURATION),
             null
         )
+    }
 }
 
 

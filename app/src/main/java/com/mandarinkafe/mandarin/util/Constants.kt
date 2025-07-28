@@ -64,6 +64,8 @@ object Constants {
     const val MAP_DEFAULT_ZOOM = 17.0f
     const val MAP_DEFAULT_TILT = 30.0f
     const val MAP_DEFAULT_AZIMUTH = 0.0f
+    const val PIN_INDICATOR_SCALE = 0.45f
+    const val PIN_INDICATOR_Y_OFFSET_FACTOR = 0.09f
 
     // DI
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"

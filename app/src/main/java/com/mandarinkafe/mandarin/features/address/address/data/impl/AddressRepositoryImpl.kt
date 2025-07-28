@@ -92,10 +92,14 @@ class AddressRepositoryImpl(
             session?.cancel()
             session = searchManager.submit(
                 yPoint,
-                16,
+                DEFAULT_ZOOM_FOR_SEARCH,
                 searchOptions,
                 listener
             )
         }
+    }
+
+    private companion object {
+        const val DEFAULT_ZOOM_FOR_SEARCH = 16
     }
 }

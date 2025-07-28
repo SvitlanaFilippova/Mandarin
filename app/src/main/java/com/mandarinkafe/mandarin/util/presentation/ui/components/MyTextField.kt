@@ -69,15 +69,13 @@ fun MyTextField(
         keyboardOptions = keyboardOptions.copy(imeAction = ImeAction.Done),
         visualTransformation = visualTransformation,
         trailingIcon = {
-            if (enabled) {
-                if (value.isNotEmpty()) {
-                    IconButton(onClick = { onValueChange("") }) {
-                        Icon(
-                            Icons.Default.Close,
-                            contentDescription = stringResource(id = R.string.clear_text),
-                            tint = Colors.LightGrey
-                        )
-                    }
+            if (enabled && value.isNotEmpty()) {
+                IconButton(onClick = { onValueChange("") }) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.clear_text),
+                        tint = Colors.LightGrey
+                    )
                 }
             }
         },

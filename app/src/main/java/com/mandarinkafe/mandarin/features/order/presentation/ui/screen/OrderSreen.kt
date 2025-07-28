@@ -3,11 +3,9 @@ package com.mandarinkafe.mandarin.features.order.presentation.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,19 +16,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.components.SavedAddressCard
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.DeliveryTypeChooser
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.OrderSummaryData
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PaymentChooser
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PersonalInfo
+import com.mandarinkafe.mandarin.features.order.presentation.ui.components.SavedAddressesSection
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.SubmitOrderButton
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.UtensilPreferences
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
@@ -41,10 +38,8 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SAVED_ADDRESSES_NUMBER
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_LAST_ADDED_KEY
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickableText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
-import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -72,9 +67,13 @@ fun OrderScreen(
     val chosenDeliveryType = state.deliveryType
 
     var showAllAddresses by remember { mutableStateOf(false) }
-    val addresses = if (showAllAddresses) state.savedAddresses else state.savedAddresses.take(
-        DEFAULT_SAVED_ADDRESSES_NUMBER
-    )
+    val addresses = if (showAllAddresses) {
+        state.savedAddresses
+    } else {
+        state.savedAddresses.take(
+            DEFAULT_SAVED_ADDRESSES_NUMBER
+        )
+    }
 
     // для корректного возврата с экрана добавления адреса
     val currentBackStackEntry = remember(navController) {
@@ -129,51 +128,17 @@ fun OrderScreen(
         item { Spacer(Modifier.height(Dimens.MarginSmall8)) }
 
         if (chosenDeliveryType == DeliveryType.DELIVERY) {
-            if (addresses.isNotEmpty()) {
-                items(items = addresses) { item ->
-                    SavedAddressCard(
-                        address = item,
-                        onAddressChosen = { onEvent(OrderEvent.SetAddress(item)) },
-                        onEditAddress = { onEvent(OrderEvent.EditAddress(item)) },
-                        selected = item == state.chosenAddress,
-                        onRemoveAddress = {
-                            addressToDelete = item.id
-                            showConfirmDeleteDialog = true
-                        },
-                    )
-                }
-                // Кнопка "Показать ещё" или "Скрыть"
-                if (state.savedAddresses.size > DEFAULT_SAVED_ADDRESSES_NUMBER) {
-                    item {
-                        ClickableText(
-                            onClick = { showAllAddresses = !showAllAddresses },
-                            text = if (showAllAddresses) stringResource(R.string.addresses_hide) else stringResource(
-                                R.string.addresses_show_more,
-                                state.savedAddresses.size - DEFAULT_SAVED_ADDRESSES_NUMBER
-                            )
-                        )
-                    }
-                }
-
-            } else {
-                item {
-                    TooltipText(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                horizontal = Dimens.MarginSmall8,
-                                vertical = Dimens.MarginStandard16
-                            ),
-                        textRes = R.string.no_saved_addressed
-                    )
-                }
-            }
-
             item {
-                ClickableText(
-                    textRes = R.string.add_address,
-                    onClick = { onEvent(OrderEvent.AddNewAddress) }
-                )
+                SavedAddressesSection(
+                    addresses = addresses,
+                    selectedAddress = state.chosenAddress,
+                    onEvent = onEvent,
+                    onDeleteRequest = {
+                        addressToDelete = it
+                        showConfirmDeleteDialog = true
+                    },
+                    showAllAddresses = showAllAddresses,
+                    onToggleShowAll = { showAllAddresses = !showAllAddresses })
             }
         }
 

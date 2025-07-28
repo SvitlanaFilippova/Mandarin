@@ -32,37 +32,37 @@ fun SearchByTextResults(
     onItemClick: (AddressSearchResult) -> Unit,
     onDismiss: () -> Unit,
 ) {
-
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
             .background(Colors.DarkGrey)
             .padding(Dimens.MarginSmall8)
-    )
-    {
+    ) {
         item {
-            if (isLoading || searchError != null) Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .size(Dimens.MarginForCartButton72),
-                contentAlignment = Alignment.Center
-            ) {
-                if (isLoading) {
-                    MyCircularProgressIndicator(
-                        modifier = Modifier
-                            .padding(Dimens.MarginStandard16),
-                        strokeWidth = Dimens.ProgressBarSmallWidth8,
-                    )
-                }
+            if (isLoading || searchError != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .size(Dimens.MarginForCartButton72),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (isLoading) {
+                        MyCircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(Dimens.MarginStandard16),
+                            strokeWidth = Dimens.ProgressBarSmallWidth8,
+                        )
+                    }
 
-                if (searchError != null) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(Dimens.MarginStandard16),
-                        text = searchError,
-                        style = Typography.RegularLightTextStyle
-                    )
+                    if (searchError != null) {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(Dimens.MarginStandard16),
+                            text = searchError,
+                            style = Typography.RegularLightTextStyle
+                        )
+                    }
                 }
             }
         }

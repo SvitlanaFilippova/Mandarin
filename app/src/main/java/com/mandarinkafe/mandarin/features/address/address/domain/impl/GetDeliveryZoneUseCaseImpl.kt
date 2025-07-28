@@ -17,7 +17,7 @@ class GetDeliveryZoneUseCaseImpl(
 
         val matchedAreas = areas.filter { area ->
             isPointInPolygon(location, area.polygon) &&
-                    (area.parentArea?.let { !isPointInPolygon(location, it) } != false)
+                    area.parentArea?.let { !isPointInPolygon(location, it) } != false
         }
 
         val bestArea = matchedAreas.minByOrNull { it.id }
@@ -40,13 +40,13 @@ class GetDeliveryZoneUseCaseImpl(
             }
         }
         // Если число пересечений нечётное — точка внутри
-        return (intersectCount % 2 == 1)
+        return intersectCount % 2 == 1
     }
 
     // Проверяет, пересекает ли горизонтальный луч, идущий вправо от точки p, отрезок (p1, p2)
     private fun rayIntersectsSegment(p: GeoPoint, p1: GeoPoint, p2: GeoPoint): Boolean {
         val px = p.longitude // X-координата точки
-        var py = p.latitude  // Y-координата точки
+        var py = p.latitude // Y-координата точки
 
         val x1 = p1.longitude
         val y1 = p1.latitude
@@ -57,7 +57,7 @@ class GetDeliveryZoneUseCaseImpl(
         if (y1 > y2) return rayIntersectsSegment(p, p2, p1)
 
         // Обработка случая, когда точка лежит ровно на вершине — слегка поднимаем её вверх
-        if (py == y1 || py == y2) py += 0.0000001
+        if (py == y1 || py == y2) py += CORRELATION_OFFSET
 
         // Если точка выше, ниже или правее отрезка — пересечения нет
         if (py > y2 || py < y1 || px > maxOf(x1, x2)) return false
@@ -72,5 +72,9 @@ class GetDeliveryZoneUseCaseImpl(
 
         // Если наклон луча >= наклона отрезка — считается, что пересекли
         return blue >= red
+    }
+
+    private companion object {
+        const val CORRELATION_OFFSET = 0.0000001
     }
 }

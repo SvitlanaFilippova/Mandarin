@@ -14,6 +14,8 @@ import androidx.compose.ui.res.painterResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.util.Constants.PIN_INDICATOR_SCALE
+import com.mandarinkafe.mandarin.util.Constants.PIN_INDICATOR_Y_OFFSET_FACTOR
 
 @Composable
 fun ChosenLocationPin(
@@ -30,9 +32,9 @@ fun ChosenLocationPin(
             else -> null
         }
     }
+    val indicatorSize = remember { Dimens.MapPinSize * PIN_INDICATOR_SCALE }
+    val indicatorOffsetY = remember { Dimens.MapPinSize * PIN_INDICATOR_Y_OFFSET_FACTOR }
 
-    val indicatorSize = remember { Dimens.MapPinSize * 0.45f }
-    val indicatorOffsetY = remember { Dimens.MapPinSize * 0.09f }
     Box(
         modifier = modifier
             .size(Dimens.MapPinSize),
