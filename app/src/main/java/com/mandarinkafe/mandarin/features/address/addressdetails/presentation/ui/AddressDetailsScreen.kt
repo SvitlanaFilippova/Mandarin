@@ -20,23 +20,24 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.components.AddressTypeChooser
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsContract.AddressDetailsEffect
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsContract.AddressDetailsEvent
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsViewModel
-import com.mandarinkafe.mandarin.features.order.presentation.models.UiAddress
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.ApartmentDetails
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.LocationIcon
-import com.mandarinkafe.mandarin.navigation.navigateToAddress
+import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
-import com.mandarinkafe.mandarin.util.presentation.ui.components.SwitchWithTextRow
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.BigButtonWithText
 
 @Composable
 fun AddressDetailsScreen(
-    initAddress: UiAddress?,
+    initAddress: Address?,
     isEditMode: Boolean,
     viewModel: AddressDetailsViewModel = hiltViewModel(),
     navController: NavHostController
@@ -50,12 +51,20 @@ fun AddressDetailsScreen(
     }
     val effectFlow = viewModel.effect
     val onEvent = viewModel::onEvent
-    val isPrivateHouse = state.address.isPrivateHouse
     val isError = state.isError
-    val requestApartmentDetails by remember(
-        isPrivateHouse
-    ) { mutableStateOf(!isPrivateHouse) }
+
     var showConfirmDeleteDialog by remember { mutableStateOf(false) }
+
+    val parentEntry = remember(navController.currentBackStackEntry) {
+        navController.getBackStackEntry(ORDER_SCREEN_ROUTE)
+    }
+    val parentSavedStateHandle = parentEntry.savedStateHandle
+    val backToOrderScreen = {
+        parentSavedStateHandle["shouldRefreshAddresses"] = true
+        navController.popBackStack(ORDER_SCREEN_ROUTE, inclusive = false)
+    }
+    val noNeedAddressDetails =
+        remember(state.address.addressType) { state.address.noNeedAddressDetails }
 
     Column(
         modifier = Modifier
@@ -76,14 +85,13 @@ fun AddressDetailsScreen(
             }
         )
 
-        SwitchWithTextRow(
-            value = isPrivateHouse,
-            onValueChange = { onEvent(AddressDetailsEvent.IsPrivateHouseToggled(it)) },
-            textRes = R.string.private_house
+        AddressTypeChooser(
+            chosen = state.address.addressType,
+            isError = state.isError,
+            onItemSelected = { onEvent(AddressDetailsEvent.SetAddressType(it)) }
         )
-
         // Поле для ввода деталей адреса показываем только если выбран способ доставки в квартиру
-        if (requestApartmentDetails) {
+        if (!noNeedAddressDetails) {
             with(state.address) {
                 ApartmentDetails(
                     isError = isError,
@@ -118,10 +126,6 @@ fun AddressDetailsScreen(
                 )
                 Spacer(Modifier.width(Dimens.MarginStandard16))
             }
-            val actionOnSubmit =
-                if (isEditMode) onEvent(AddressDetailsEvent.SaveAddressAsEdited(initAddress)) else onEvent(
-                    AddressDetailsEvent.SaveAddressAsNew
-                )
 
             BigButtonWithText(
                 modifier = Modifier.weight(1f),
@@ -132,7 +136,11 @@ fun AddressDetailsScreen(
                         AddressDetailsEvent.OnMissingRequiredInfo
                     )
                 },
-                onSubmit = { actionOnSubmit },
+                onSubmit = {
+                    onEvent(AddressDetailsEvent.SaveAddress)
+                    backToOrderScreen()
+
+                },
                 activeContainerColor = Colors.Orange
             )
         }
@@ -144,7 +152,8 @@ fun AddressDetailsScreen(
             textRes = R.string.delete_address_text,
             onConfirm = {
                 showConfirmDeleteDialog = false
-                onEvent(AddressDetailsEvent.DeleteAddress)
+                onEvent(AddressDetailsEvent.RemoveAddress)
+                backToOrderScreen()
             },
             onDismiss = {
                 showConfirmDeleteDialog = false
@@ -160,5 +169,4 @@ fun AddressDetailsScreen(
             }
         }
     }
-
 }

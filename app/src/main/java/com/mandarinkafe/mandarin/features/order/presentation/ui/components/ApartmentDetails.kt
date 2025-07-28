@@ -24,15 +24,18 @@ fun ApartmentDetails(
     onIntercomEntered: (String) -> Unit,
 ) {
     Row {
+        // № Квартиры
         MyTextField(
             modifier = Modifier.weight(1f),
             isError = isError && apartmentNumberQuery.isEmpty(),
             value = apartmentNumberQuery,
             labelRes = R.string.address_apartment_number,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             onValueChange = { onApartmentNumberEntered(it) }
         )
         Spacer(modifier = Modifier.size(Dimens.MarginSmall8))
 
+        // Подъезд
         MyTextField(
             modifier = Modifier.weight(1f),
             isError = isError && apartmentEntranceQuery.isEmpty(),
@@ -44,6 +47,7 @@ fun ApartmentDetails(
     }
 
     Row {
+        // Этаж
         MyTextField(
             modifier = Modifier.weight(1f),
             isError = isError && apartmentFloorQuery.isEmpty(),
@@ -53,6 +57,8 @@ fun ApartmentDetails(
             onValueChange = { onFloorEntered(it) }
         )
         Spacer(modifier = Modifier.size(Dimens.MarginSmall8))
+
+        // Домофон
         MyTextField(
             modifier = Modifier.weight(1f),
             value = apartmentIntercomQuery,

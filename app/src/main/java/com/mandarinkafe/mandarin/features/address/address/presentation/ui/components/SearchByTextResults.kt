@@ -41,9 +41,10 @@ fun SearchByTextResults(
     )
     {
         item {
-            Box(
+            if (isLoading || searchError != null) Box(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .size(Dimens.MarginForCartButton72),
                 contentAlignment = Alignment.Center
             ) {
                 if (isLoading) {

@@ -5,9 +5,10 @@ import com.mandarinkafe.mandarin.features.address.address.domain.models.AddressS
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
 
-interface AddressRepository {
-    val addressStringFlow: Flow<Resource<AddressSearchResult>>
-    val addressListFlow: Flow<Resource<List<AddressSearchResult>>>
-    suspend fun getAddressFromPoint(point: GeoPoint)
-    suspend fun searchAddressByString(query: String, point: GeoPoint)
+interface AddressSearchInteractor {
+    fun observeAddress(): Flow<Resource<AddressSearchResult>>
+    fun observeSearchResults(): Flow<Resource<List<AddressSearchResult>>>
+    suspend fun searchAddressByText(query: String, point: GeoPoint)
+    suspend fun getAddressByPoint(point: GeoPoint)
 }
+

@@ -56,6 +56,9 @@ object Constants {
 
     // Order
     const val VALID_PHONE_LENGTH = 10
+    const val DEFAULT_SAVED_ADDRESSES_NUMBER = 3
+    const val SHOULD_REFRESH_ADDRESSES_KEY = "shouldRefreshAddresses"
+    const val SHOULD_SELECT_LAST_ADDED_KEY = "should_select_last_added"
 
     // Map
     const val MAP_DEFAULT_ZOOM = 17.0f

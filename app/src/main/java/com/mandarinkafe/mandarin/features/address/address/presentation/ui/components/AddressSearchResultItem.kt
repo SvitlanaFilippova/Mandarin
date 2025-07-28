@@ -45,8 +45,8 @@ fun AddressSearchResultItem(
             extraText?.let {
                 Text(
                     text = extraText,
-                    style = Typography.RegularLightTextStyle,
-                    maxLines = 2
+                    style = Typography.MealSmallTextStyle,
+                    maxLines = 1
                 )
             }
         }

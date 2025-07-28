@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.address.address.presentation.ui.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -32,8 +33,9 @@ fun MapWithButtons(
     isError: Boolean,
     onCameraMoved: (Point) -> Unit,
     onDeliverHereClick: () -> Unit,
-    onBackToInitLocationClick: () -> Unit,
-    onMapReady: (MapView) -> Unit
+    onMapReady: (MapView) -> Unit,
+    onBackToInitLocationClick: (() -> Unit)?,
+    onBackToUserLocationClick: (() -> Unit)?
 ) {
 
     val cameraListener = remember {
@@ -56,7 +58,8 @@ fun MapWithButtons(
             .padding(top = Dimens.MarginSmall8)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
     )
-    {            // Карта
+    {
+        // Карта
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { MapView(it) },
@@ -64,7 +67,7 @@ fun MapWithButtons(
             it.mapWindow.map.addCameraListener(cameraListener)
             onMapReady(it)
         }
-        if (displayAddress != null) {
+        if (displayAddress != null && !isLoading) {
             // Окно с информацией о текущей зоне доставки
             DeliveryAreaInfo(
                 modifier = Modifier.align(Alignment.TopCenter),
@@ -72,15 +75,32 @@ fun MapWithButtons(
             )
         }
 
-        // Кнопка "Вернуться к позиции пользователя"
-        RoundedButton(
+        Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = Dimens.MarginHuge64, end = Dimens.MarginSmall8),
-            onClick = onBackToInitLocationClick,
-            painter = painterResource(R.drawable.ic_my_location),
-            contentDescriptionResId = R.string.to_my_location
-        )
+                .padding(bottom = Dimens.MarginHuge80, end = Dimens.MarginSmall8),
+        ) {
+            // Кнопка "Вернуться к стартовой позиции"
+            onBackToInitLocationClick?.let {
+                RoundedButton(
+
+                    onClick = onBackToInitLocationClick,
+                    painter = painterResource(R.drawable.ic_undo),
+                    contentDescriptionResId = R.string.to_my_location
+                )
+            }
+
+            // Кнопка "Вернуться к позиции пользователя"
+            onBackToUserLocationClick?.let {
+                RoundedButton(
+                    modifier = Modifier.padding(top = Dimens.MarginSmall8),
+                    onClick = onBackToUserLocationClick,
+                    painter = painterResource(R.drawable.ic_my_location),
+                    contentDescriptionResId = R.string.to_my_location
+                )
+            }
+
+        }
 
         // Центральный маркер
         val offset = remember { -Dimens.MapPinSize / 2 }

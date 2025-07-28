@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.order.presentation.ui.components
+package com.mandarinkafe.mandarin.features.address.addressdetails.presentation.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,20 +14,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.AddressType
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
-import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
 @Composable
-fun DeliveryTypeChooser(
-    chosen: DeliveryType?,
+fun AddressTypeChooser(
+    chosen: AddressType?,
     isError: Boolean,
-    onDeliverySelected: (DeliveryType) -> Unit,
-    pickupOnly: Boolean
+    onItemSelected: (AddressType) -> Unit,
 ) {
-    val deliveryTypes = remember { DeliveryType.entries.toList() }
+    val types = remember { AddressType.entries.toList() }
     val borderColor = if (isError && chosen == null) Colors.ErrorRed else Colors.AppBlack
 
     val style = if (isError && chosen == null) {
@@ -40,34 +38,22 @@ fun DeliveryTypeChooser(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = Dimens.MarginSuperSmall4),
-        text = stringResource(R.string.delivery_type),
+        text = stringResource(R.string.address_type),
         style = style,
     )
 
-    if (pickupOnly) {
-        TooltipText(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = Dimens.MarginStandard16),
-            textRes = R.string.pickup_only
-        )
-    }
-
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-        deliveryTypes.forEachIndexed { index, item ->
-            val isDelivery = item == DeliveryType.DELIVERY
-            val itemEnabled = !(pickupOnly && isDelivery)
+        types.forEachIndexed { index, item ->
             val selected = item == chosen
             SegmentedButton(
                 modifier = Modifier.height(Dimens.BigButtonWithTextHeight),
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
-                    count = deliveryTypes.size,
+                    count = types.size,
                     baseShape = RoundedCornerShape(Dimens.CornerRadius8)
                 ),
-                onClick = { onDeliverySelected(item) },
+                onClick = { onItemSelected(item) },
                 selected = selected,
-                enabled = itemEnabled,
                 colors = SegmentedButtonColors(
                     activeContainerColor = Colors.DarkGrey,
                     activeContentColor = Colors.Orange,
@@ -86,10 +72,8 @@ fun DeliveryTypeChooser(
                     Text(
                         modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
                         text = stringResource(item.nameRes),
-                        style = Typography.RegularTextStyle,
-                        color = if (selected) Colors.Orange else if (!itemEnabled) Colors.LightGrey.copy(
-                            alpha = 0.2f
-                        ) else Colors.White
+                        style = Typography.SmallTextStyle,
+                        color = if (selected) Colors.Orange else Colors.White
                     )
                 }
             )

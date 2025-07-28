@@ -23,7 +23,7 @@ fun GeoObject.toAddressSearchResult(): AddressSearchResult {
 
     val toponymMetadata = metadataContainer.getItem(ToponymObjectMetadata::class.java)
     val address = toponymMetadata?.address
-    val rawFullAddress = address?.formattedAddress ?: "—"
+    val rawFullAddress = address?.formattedAddress?.takeIf { it != "—" }
 
     val locality = address
         ?.components
@@ -31,15 +31,15 @@ fun GeoObject.toAddressSearchResult(): AddressSearchResult {
         ?.name
         .takeIf { !it.isNullOrBlank() }
 
-    // Страна (первый компонент)
     val country = address
         ?.components
         ?.firstOrNull { it.kinds.contains(Address.Component.Kind.COUNTRY) }
         ?.name
 
-    // Удалим страну (если есть) и дублирующийся poiName из formattedAddress
-    var fullAddress = rawFullAddress
+    // Если formattedAddress нормальный, обрабатываем его
+    var fullAddress = rawFullAddress ?: buildFallbackAddress()
 
+    // Удаляем страну и poiName из fullAddress
     if (!country.isNullOrBlank() && fullAddress.startsWith("$country, ")) {
         fullAddress = fullAddress.removePrefix("$country, ")
     }
@@ -51,7 +51,6 @@ fun GeoObject.toAddressSearchResult(): AddressSearchResult {
     }
 
     val addressLineOne = poiName ?: locality.orEmpty()
-
     val addressLineTwo = if (locality == null || locality == poiName) {
         fullAddress
     } else {
@@ -64,3 +63,12 @@ fun GeoObject.toAddressSearchResult(): AddressSearchResult {
         addressLineTwo = addressLineTwo
     )
 }
+
+private fun GeoObject.buildFallbackAddress(): String {
+    val parts = listOfNotNull(
+        descriptionText?.takeIf { it.isNotBlank() },
+        name?.takeIf { it.isNotBlank() }
+    )
+    return parts.joinToString(", ")
+}
+

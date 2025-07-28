@@ -1,22 +1,33 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
-import android.util.Log
+import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
+import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
+import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
-import com.mandarinkafe.mandarin.features.order.presentation.models.UiAddress
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OrderViewModel @Inject constructor(private val getDeliveryZone: GetDeliveryZoneUseCase) :
+class OrderViewModel @Inject constructor(
+    private val getDeliveryZone: GetDeliveryZoneUseCase,
+    private val getSavedAddresses: GetSavedAddressesUseCase,
+    private val removeAddress: RemoveAddressUseCase
+) :
     BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
+
+    init {
+        getAddresses()
+    }
 
     override fun setInitialState() = OrderState()
 
@@ -36,24 +47,45 @@ class OrderViewModel @Inject constructor(private val getDeliveryZone: GetDeliver
             is OrderEvent.EditAddress -> goToAddressEdit(event.address)
             is OrderEvent.NoChangeToggled -> setNoChange(event.noChange)
             is OrderEvent.SetAddress -> setAddress(event.address)
+            is OrderEvent.RemoveAddress -> removeSavedAddress(event.id)
+            is OrderEvent.RefreshAddresses -> getAddresses()
+            is OrderEvent.SelectLastAddedAddress -> selectLastAddedAddress()
         }
     }
 
-    private fun setAddress(address: UiAddress) {
+    private fun selectLastAddedAddress() {
+        val latest = state.value.savedAddresses.firstOrNull()
+        latest?.let { setAddress(it) }
+
+    }
+
+    private fun removeSavedAddress(id: String) {
+        viewModelScope.launch { removeAddress(id) }
+        getAddresses()
+
+    }
+
+    private fun getAddresses() {
+        viewModelScope.launch {
+            val addressList = getSavedAddresses()
+            setState { copy(savedAddresses = addressList) }
+        }
+    }
+
+    private fun setAddress(address: Address) {
         setState {
             copy(
-                address = address,
+                chosenAddress = address,
                 deliveryZone = getDeliveryZone(address.point)
             )
         }
     }
 
     private fun submitOrder() {
-        Log.d("DEBUG ORDER", "submitOrder clicked")
         sendEffect(OrderEffect.SubmitOrder)
     }
 
-    private fun goToAddressEdit(address: UiAddress) {
+    private fun goToAddressEdit(address: Address) {
         sendEffect(OrderEffect.EditAddress(address))
     }
 

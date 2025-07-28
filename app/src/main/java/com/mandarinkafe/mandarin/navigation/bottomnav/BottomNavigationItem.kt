@@ -1,7 +1,8 @@
-package com.mandarinkafe.mandarin.navigation
+package com.mandarinkafe.mandarin.navigation.bottomnav
 
 import androidx.annotation.StringRes
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.navigation.NavConstants
 
 sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val route: String) {
 
@@ -15,11 +16,6 @@ sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val 
         R.string.delivery,
         R.drawable.ic_delivery,
         NavConstants.DELIVERY_SCREEN_ROUTE
-    )
-    object Location : BottomNavigationItem(
-        R.string.location,
-        R.drawable.ic_map,
-        NavConstants.ADDRESS_SCREEN_ROUTE
     )
 
     object Favorites :

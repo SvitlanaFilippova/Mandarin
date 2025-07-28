@@ -1,18 +1,27 @@
 package com.mandarinkafe.mandarin.features.address.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.mandarinkafe.mandarin.features.address.address.data.impl.AddressRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.address.data.impl.FusedLocationRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.address.domain.api.AddressRepository
+import com.mandarinkafe.mandarin.features.address.address.domain.api.AddressSearchInteractor
 import com.mandarinkafe.mandarin.features.address.address.domain.api.FusedLocationRepository
-import com.mandarinkafe.mandarin.features.address.address.domain.api.GetAddressByPointUseCase
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetCurrentLocationUseCase
-import com.mandarinkafe.mandarin.features.address.address.domain.api.SearchAddressByTextUseCase
-import com.mandarinkafe.mandarin.features.address.address.domain.impl.GetAddressByPointUseCaseImpl
+import com.mandarinkafe.mandarin.features.address.address.domain.impl.AddressSearchInteractorImpl
 import com.mandarinkafe.mandarin.features.address.address.domain.impl.GetCurrentLocationUseCaseImpl
-import com.mandarinkafe.mandarin.features.address.address.domain.impl.SearchAddressByTextUseCaseImpl
+import com.mandarinkafe.mandarin.features.address.savedadresses.data.impl.SavedAddressRepositoryImpl
+import com.mandarinkafe.mandarin.features.address.savedadresses.data.sharedprefs.AddressStorage
+import com.mandarinkafe.mandarin.features.address.savedadresses.data.sharedprefs.AddressStorageImpl
+import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
+import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
+import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.SaveAddressUseCase
+import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.SavedAddressRepository
+import com.mandarinkafe.mandarin.features.address.savedadresses.domain.impl.GetSavedAddressesUseCaseImpl
+import com.mandarinkafe.mandarin.features.address.savedadresses.domain.impl.RemoveAddressUseCaseImpl
+import com.mandarinkafe.mandarin.features.address.savedadresses.domain.impl.SaveAddressUseCaseImpl
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.search.SearchFactory
@@ -75,17 +84,49 @@ class AddressModule {
 
     @Provides
     @Singleton
-    fun provideGetAddressByPointUseCase(repository: AddressRepository): GetAddressByPointUseCase {
-        return GetAddressByPointUseCaseImpl(
-            addressRepository = repository
+    fun provideAddressSearchInteractor(repository: AddressRepository): AddressSearchInteractor {
+        return AddressSearchInteractorImpl(
+            repository = repository
         )
     }
 
     @Provides
     @Singleton
-    fun provideSearchAddressByTextUseCase(repository: AddressRepository): SearchAddressByTextUseCase {
-        return SearchAddressByTextUseCaseImpl(
-            addressRepository = repository
+    fun provideAddressStorage(sharedPreferences: SharedPreferences): AddressStorage {
+        return AddressStorageImpl(
+            sharedPreferences = sharedPreferences
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideSavedAddressRepository(storage: AddressStorage): SavedAddressRepository {
+        return SavedAddressRepositoryImpl(
+            storage = storage
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideSaveAddressUseCase(repository: SavedAddressRepository): SaveAddressUseCase {
+        return SaveAddressUseCaseImpl(
+            repository = repository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemoveAddressUseCase(repository: SavedAddressRepository): RemoveAddressUseCase {
+        return RemoveAddressUseCaseImpl(
+            repository = repository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetSavedAddressesUseCase(repository: SavedAddressRepository): GetSavedAddressesUseCase {
+        return GetSavedAddressesUseCaseImpl(
+            repository = repository
         )
     }
 

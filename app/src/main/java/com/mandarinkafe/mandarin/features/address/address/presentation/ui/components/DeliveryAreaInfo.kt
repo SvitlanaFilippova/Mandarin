@@ -73,7 +73,7 @@ fun DeliveryAreaInfo(modifier: Modifier = Modifier, deliveryArea: UiDeliveryArea
                         modifier = Modifier
                             .padding(Dimens.MarginSmall8),
                         imageVector = Icons.Default.Info,
-                        tint = Colors.AppBlack,
+                        tint = Colors.AppBlack.copy(alpha = 0.5f),
                         contentDescription = null
                     )
                     Text(
@@ -81,7 +81,7 @@ fun DeliveryAreaInfo(modifier: Modifier = Modifier, deliveryArea: UiDeliveryArea
                         text = stringResource(
                             R.string.delivery_validation_error
                         ), style = Typography.RegularLightTextStyle,
-                        color = Colors.AppBlack.copy(alpha = 0.5f)
+                        color = Colors.AppBlack
                     )
                 }
             }

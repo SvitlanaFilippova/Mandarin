@@ -22,6 +22,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.address.domain.models.toYandexPoint
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.components.HandleAddressEffects
@@ -47,31 +48,52 @@ import com.yandex.mapkit.mapview.MapView
 @Composable
 fun AddressMapScreen(
     viewModel: AddressViewModel = hiltViewModel(),
-    navController: NavHostController
+    navController: NavHostController,
+    initAddress: Address?
 ) {
     val state by viewModel.state.collectAsState()
-    val userLocation = state.initPinPoint
     val onEvent = viewModel::onEvent
-    var mapView by remember { mutableStateOf<MapView?>(null) }
-    val lifecycleOwner = LocalLifecycleOwner.current
 
+    // если был передан адрес для редактирования - передаём его дальше в VM
+    initAddress?.let {
+        LaunchedEffect(Unit) {
+            viewModel.onEvent(AddressEvent.SetInitAddress(initAddress))
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var mapView by remember { mutableStateOf<MapView?>(null) }
+    val initLocation = state.initPinPoint
+    val userLocation = state.userLocation
+    LaunchedEffect(initLocation, userLocation) {
+        if (initLocation != null) {
+            moveCamera(initLocation, mapView)
+        } else {
+            moveCamera(userLocation, mapView)
+        }
+    }
     RequestLocationPermission(
         onGranted = { onEvent(AddressEvent.RequestAddress) }
     )
-
     var searchResultsBeVisible by remember { mutableStateOf(false) }
-
     var mapShouldBeVisible by remember { mutableStateOf(true) }
-    // Добавляем на карту зоны доставки
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-
+    val keyboardController =
+        LocalSoftwareKeyboardController.current     // Добавляем на карту зоны доставки
+    val addressValue = state.displayAddress ?: ""
+    val onValueChange: (String) -> Unit = { it ->
+        if (it.isNotBlank()) {
+            onEvent(AddressEvent.ChangeSearchQuery(it))
+            searchResultsBeVisible = true
+        } else {
+            onEvent(AddressEvent.ChangeSearchQuery(it))
+            searchResultsBeVisible = false
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(Dimens.MarginSmall8)
     ) {
-        val addressValue = state.displayAddress ?: ""
         // Строка с адресом
         MyTextField(
             modifier = Modifier
@@ -79,10 +101,7 @@ fun AddressMapScreen(
             minLines = MIN_LINES_FOR_ADDRESS_INPUT,
             value = addressValue,
             labelRes = R.string.street_and_building,
-            onValueChange = {
-                onEvent(AddressEvent.ChangeSearchQuery(it))
-                searchResultsBeVisible = true
-            },
+            onValueChange = { onValueChange(it) },
             leadingIcon = { LocationIcon(enabled = false) }
         )
         // Родительский контейнер для отображения результатов поиска поваерх карты
@@ -94,12 +113,15 @@ fun AddressMapScreen(
             // Контейнер для карты и её элементов управления
             if (mapShouldBeVisible) {
                 with(state) {
+                    val onBackToInitClick = initLocation?.let { { moveCamera(it, mapView) } }
+                    val onBackToUserClick = userLocation?.let { { moveCamera(it, mapView) } }
+
                     MapWithButtons(
                         mapView = mapView,
                         deliveryAreas = deliveryAreas,
                         displayAddress = displayAddress,
                         deliveryArea = deliveryArea,
-                        isLoading = isLoading,
+                        isLoading = fetchAddressInProgress,
                         locationChosen = locationChosen,
                         isError = error != null,
                         onMapReady = { mapView = it },
@@ -108,7 +130,8 @@ fun AddressMapScreen(
                             onEvent(AddressEvent.GoToAddressDetails)
                             mapShouldBeVisible = false
                         },
-                        onBackToInitLocationClick = { moveCamera(userLocation, mapView) }
+                        onBackToInitLocationClick = onBackToInitClick,
+                        onBackToUserLocationClick = onBackToUserClick
                     )
                 }
             }
@@ -117,11 +140,12 @@ fun AddressMapScreen(
                 SearchByTextResults(
                     modifier = Modifier
                         .align(Alignment.TopCenter),
-                    isLoading = state.searchIsLoading,
+                    isLoading = state.searchInProgress,
                     data = state.searchResults,
                     searchError = state.searchError,
                     onItemClick = {
                         searchResultsBeVisible = false
+                        keyboardController?.hide()
                         moveCamera(it.point?.toYandexPoint(), mapView)
 
                     },
@@ -137,12 +161,6 @@ fun AddressMapScreen(
         effectFlow = viewModel.effect,
         navController = navController
     )
-
-    LaunchedEffect(userLocation) {
-        if (userLocation != null) {
-            moveCamera(userLocation, mapView)
-        }
-    }
 
     // Lifecycle observer для вызова onStart/onStop у MapKitFactory
     DisposableEffect(lifecycleOwner) {

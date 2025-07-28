@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.order.presentation.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,28 +9,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.components.SavedAddressCard
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
-import com.mandarinkafe.mandarin.features.order.presentation.models.UiAddress
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.DeliveryTypeChooser
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.OrderSummaryData
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PaymentChooser
@@ -41,9 +36,15 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Utens
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
-import com.mandarinkafe.mandarin.navigation.navigateToAddress
-import com.mandarinkafe.mandarin.navigation.navigateToAddressDetails
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
+import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SAVED_ADDRESSES_NUMBER
+import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
+import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_LAST_ADDED_KEY
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickableText
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
+import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -53,35 +54,6 @@ fun OrderScreen(
     cartViewModel: CartViewModel,
     navController: NavHostController
 ) {
-    val list = remember {
-        listOf(
-            UiAddress(
-                point = GeoPoint(55.996873, 38.374358),
-                streetAndBuilding = "ул. Солнечная 4, Черноголовка",
-                isPrivateHouse = false,
-                apartmentNumber = "82",
-                entrance = "2",
-                floor = "10",
-                intercom = "#4444",
-                comment = ""
-            ),
-            UiAddress(
-                point = GeoPoint(55.996837, 38.377260),
-                streetAndBuilding = "Берёзовая 2а, Черноголовка", isPrivateHouse = true
-            ),
-            UiAddress(
-                point = GeoPoint(55.859610, 38.449978),
-                streetAndBuilding = "Рогожская улица, 26, Ногинск",
-                isPrivateHouse = false,
-                apartmentNumber = "452",
-                entrance = "4",
-                floor = "10",
-                intercom = "#44564444444",
-                comment = ""
-            )
-        )
-    }
-
     val state by orderViewModel.state.collectAsState()
     val effectFlow = orderViewModel.effect
     val cartState by cartViewModel.state.collectAsState()
@@ -92,10 +64,41 @@ fun OrderScreen(
 
     val totalOrderSum =
         remember(cartSum, discountSum, deliveryCost) { cartSum - discountSum + deliveryCost }
+    var showConfirmDeleteDialog by remember { mutableStateOf(false) }
+    var addressToDelete by remember { mutableStateOf<String?>(null) }
 
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     val chosenDeliveryType = state.deliveryType
+
+    var showAllAddresses by remember { mutableStateOf(false) }
+    val addresses = if (showAllAddresses) state.savedAddresses else state.savedAddresses.take(
+        DEFAULT_SAVED_ADDRESSES_NUMBER
+    )
+
+    // для корректного возврата с экрана добавления адреса
+    val currentBackStackEntry = remember(navController) {
+        navController.currentBackStackEntry
+    }
+    val savedStateHandle = currentBackStackEntry?.savedStateHandle
+    LaunchedEffect(savedStateHandle) {
+        savedStateHandle?.getLiveData<Boolean>(SHOULD_REFRESH_ADDRESSES_KEY)
+            ?.observeForever { shouldRefresh ->
+                if (shouldRefresh == true) {
+                    orderViewModel.onEvent(OrderEvent.RefreshAddresses)
+                    savedStateHandle[SHOULD_REFRESH_ADDRESSES_KEY] = false
+                }
+            }
+
+        savedStateHandle?.getLiveData<Boolean>(SHOULD_SELECT_LAST_ADDED_KEY)
+            ?.observeForever { shouldSelect ->
+                if (shouldSelect == true) {
+                    orderViewModel.onEvent(OrderEvent.SelectLastAddedAddress)
+                    savedStateHandle[SHOULD_SELECT_LAST_ADDED_KEY] = false
+                }
+            }
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -123,36 +126,59 @@ fun OrderScreen(
                 onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
             )
         }
+        item { Spacer(Modifier.height(Dimens.MarginSmall8)) }
 
         if (chosenDeliveryType == DeliveryType.DELIVERY) {
+            if (addresses.isNotEmpty()) {
+                items(items = addresses) { item ->
+                    SavedAddressCard(
+                        address = item,
+                        onAddressChosen = { onEvent(OrderEvent.SetAddress(item)) },
+                        onEditAddress = { onEvent(OrderEvent.EditAddress(item)) },
+                        selected = item == state.chosenAddress,
+                        onRemoveAddress = {
+                            addressToDelete = item.id
+                            showConfirmDeleteDialog = true
+                        },
+                    )
+                }
+                // Кнопка "Показать ещё" или "Скрыть"
+                if (state.savedAddresses.size > DEFAULT_SAVED_ADDRESSES_NUMBER) {
+                    item {
+                        ClickableText(
+                            onClick = { showAllAddresses = !showAllAddresses },
+                            text = if (showAllAddresses) stringResource(R.string.addresses_hide) else stringResource(
+                                R.string.addresses_show_more,
+                                state.savedAddresses.size - DEFAULT_SAVED_ADDRESSES_NUMBER
+                            )
+                        )
+                    }
+                }
 
-            items(items = list, key = { it.hashCode() }) { item ->
-                SavedAddressCard(
-                    address = item,
-                    onAddressChosen = { onEvent(OrderEvent.SetAddress(item)) },
-                    onEditAddress = { onEvent(OrderEvent.EditAddress(item)) },
-                    selected = item == state.address
-                )
+            } else {
+                item {
+                    TooltipText(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = Dimens.MarginSmall8,
+                                vertical = Dimens.MarginStandard16
+                            ),
+                        textRes = R.string.no_saved_addressed
+                    )
+                }
             }
 
             item {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(Dimens.MarginSmall8)
-                        .clickable(
-                            onClick = { onEvent(OrderEvent.AddNewAddress) },
-                            role = Role.Button
-                        ),
-                    text = stringResource(R.string.add_address),
-                    textAlign = TextAlign.Center,
-                    style = Typography.RegularTextStyle,
-                    color = Colors.Orange
+                ClickableText(
+                    textRes = R.string.add_address,
+                    onClick = { onEvent(OrderEvent.AddNewAddress) }
                 )
             }
         }
 
         item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
+
         item {
             PaymentChooser(
                 chosen = state.paymentType,
@@ -216,6 +242,25 @@ fun OrderScreen(
                 totalPrice = totalOrderSum,
             )
         }
+    }
+
+    // Диалог для подтверждения желания удалить адрес
+    if (showConfirmDeleteDialog && addressToDelete != null) {
+        ConfirmationDialog(
+            titleRes = R.string.delete_address_question,
+            textRes = R.string.delete_address_text,
+            onConfirm = {
+                addressToDelete?.let { id ->
+                    onEvent(OrderEvent.RemoveAddress(id))
+                }
+                showConfirmDeleteDialog = false
+                addressToDelete = null
+            },
+            onDismiss = {
+                showConfirmDeleteDialog = false
+                addressToDelete = null
+            }
+        )
     }
 
     LaunchedEffect(Unit) {

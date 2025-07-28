@@ -1,10 +1,10 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
+import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.DeliveryArea
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
-import com.mandarinkafe.mandarin.features.order.presentation.models.UiAddress
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
@@ -14,23 +14,26 @@ sealed interface OrderContract {
     sealed interface OrderEvent : BaseEvent {
         data class SetName(val query: String) : OrderEvent
         data class SetPhone(val query: String) : OrderEvent
+        data object RefreshAddresses : OrderEvent
         data class SetDeliveryType(val deliveryType: DeliveryType) : OrderEvent
-        data class SetAddress(val address: UiAddress) : OrderEvent
+        data class SetAddress(val address: Address) : OrderEvent
         data object AddNewAddress : OrderEvent
-        data class EditAddress(val address: UiAddress) : OrderEvent
+        data class EditAddress(val address: Address) : OrderEvent
+        data class RemoveAddress(val id: String) : OrderEvent
         data class SetPaymentType(val paymentType: PaymentType) : OrderEvent
         data class NoChangeToggled(val noChange: Boolean) : OrderEvent
         data class SetChangeFrom(val query: String) : OrderEvent
         data class SetNoNeedUtensils(val noNeedUtensils: Boolean) : OrderEvent
         data class SetChosenUtensils(val utensil: Utensil, val isChosen: Boolean) : OrderEvent
         data class SetComment(val query: String) : OrderEvent
+        data object SelectLastAddedAddress : OrderEvent
         data object OnMissingRequiredInfo : OrderEvent
         data object SubmitOrder : OrderEvent
     }
 
     sealed interface OrderEffect : BaseEffect {
         data object AddNewAddress : OrderEffect
-        data class EditAddress(val address: UiAddress) : OrderEffect
+        data class EditAddress(val address: Address) : OrderEffect
         data object SubmitOrder : OrderEffect
     }
 
@@ -38,7 +41,8 @@ sealed interface OrderContract {
         val name: String = "",
         val phone: String = "",
         val deliveryType: DeliveryType? = null,
-        val address: UiAddress? = null,
+        val chosenAddress: Address? = null,
+        val savedAddresses: List<Address> = listOf(),
         val deliveryZone: DeliveryArea? = null,
         val paymentType: PaymentType? = null,
         val noChange: Boolean = false,
@@ -55,9 +59,9 @@ sealed interface OrderContract {
             get() = phone.length == VALID_PHONE_LENGTH
         val addressEntered: Boolean
             get() =
-                address != null || deliveryType == DeliveryType.SELF_PICKUP
+                chosenAddress != null || deliveryType == DeliveryType.SELF_PICKUP
         val addressInNotInDeliveryArea: Boolean
-            get() = deliveryType == DeliveryType.DELIVERY && address != null && deliveryZone == null
+            get() = deliveryType == DeliveryType.DELIVERY && chosenAddress != null && deliveryZone == null
         val paymentTypeChosen: Boolean
             get() = paymentType != null
         val canBeSubmitted: Boolean

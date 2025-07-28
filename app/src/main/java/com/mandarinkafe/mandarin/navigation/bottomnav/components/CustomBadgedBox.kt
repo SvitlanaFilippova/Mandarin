@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.navigation.components
+package com.mandarinkafe.mandarin.navigation.bottomnav.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi

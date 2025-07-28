@@ -4,8 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
@@ -24,6 +26,7 @@ import com.mandarinkafe.mandarin.features.menu.presentation.ui.screen.MenuScreen
 import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE_WITH_ARGS
+import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE_WITH_ARGS
 import com.mandarinkafe.mandarin.navigation.NavConstants.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
@@ -103,7 +106,10 @@ fun NavGraph(navHostController: NavHostController) {
             composable(
                 route = SEARCH_SCREEN_ROUTE_WITH_ARGS,
                 arguments = listOf(
-                    boolNavArg(KEY_FOCUS_INPUT)
+                    navArgument(KEY_FOCUS_INPUT) {
+                        type = NavType.BoolType
+                        defaultValue = false
+                    }
                 )
             ) { backStackEntry ->
                 val focusInput = backStackEntry.arguments?.getBoolean(KEY_FOCUS_INPUT) == true
@@ -133,14 +139,16 @@ fun NavGraph(navHostController: NavHostController) {
                     onClose = { navHostController.popBackStack() }
                 )
             }
-
+            composable(route = ADDRESS_SCREEN_ROUTE) {
+                AddressMapScreen(navController = navHostController, initAddress = null)
+            }
             composable(
                 route = ADDRESS_SCREEN_ROUTE_WITH_ARGS,
                 arguments = listOf(
                     jsonNavArg(KEY_ADDRESS_JSON)
                 )
             ) { backStackEntry ->
-                val address = backStackEntry.decodeJsonArg<Address>(KEY_ADDRESS_JSON, gson)
+                val address = backStackEntry.decodeJsonArg<Address?>(KEY_ADDRESS_JSON, gson)
                 AddressMapScreen(navController = navHostController, initAddress = address)
             }
 

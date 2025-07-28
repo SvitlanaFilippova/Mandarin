@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.navigation
+package com.mandarinkafe.mandarin.navigation.bottomnav
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -20,7 +20,7 @@ import androidx.navigation.navOptions
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.components.CartIconBox
+import com.mandarinkafe.mandarin.navigation.bottomnav.components.CartIconBox
 
 @Composable
 fun BottomNavigation(
@@ -29,7 +29,6 @@ fun BottomNavigation(
     cartCount: Int,
 ) {
     val arrayOFItems = arrayOf(
-        BottomNavigationItem.Location,
         BottomNavigationItem.Search,
         BottomNavigationItem.Favorites,
         BottomNavigationItem.Menu,

@@ -1,10 +1,7 @@
 <resources>
     <!-- Основное -->
     <string name="app_name">Мандарин</string>
-    <string name="logo_cafe">Логотип кафе</string>
     <string name="cafe_phone_number">+7&#160;(495)&#160;108–70–55</string>
-
-    <!-- Навигация -->
     <string name="back">Назад</string>
     <string name="search">Поиск</string>
     <string name="menu">Меню</string>
@@ -12,6 +9,7 @@
     <string name="ok">Ок</string>
     <string name="cancel">Отмена</string>
     <string name="edit">Редактировать</string>
+    <string name="remove">Удалить</string>
 
     <!-- Корзина -->
     <string name="cart">Корзина</string>
@@ -67,15 +65,11 @@
     <string name="phone_placeholder">(XXX) XXX-XX-XX</string>
     <string name="new_address">Новый адрес</string>
     <string name="street_and_building">Улица и дом *</string>
-    <string name="private_house">Частный дом</string>
     <string name="address_comment">Комментарий для курьера</string>
     <string name="your_comment">Комментарий к заказу</string>
     <string name="shipping">Доставка</string>
     <string name="shipping_self_pickup">Cамовывоз</string>
-    <string name="address_apartment_number">Квартира *</string>
-    <string name="address_apartment_entrance">Подъезд *</string>
-    <string name="address_apartment_floor">Этаж *</string>
-    <string name="address_apartment_intercom">Домофон</string>
+    <string name="delivery_type">Способ получения: *</string>
     <string name="payment_type">Способ оплаты: *</string>
     <string name="payment_online">картой онлайн</string>
     <string name="payment_self_card">картой при получении</string>
@@ -105,13 +99,24 @@
     <!-- Адрес -->
     <string name="location">Адрес</string>
     <string name="deliver_to_this_location">Доставить сюда</string>
-    <string name="to_my_location">К моей локации</string>
+    <string name="to_init_location">Вернуться к изначальному адресу</string>
+    <string name="to_my_location">Вернуться к моей локации</string>
     <string name="save">Сохранить</string>
     <string name="delete">Удалить</string>
+    <string name="no_saved_addressed">Сохранённых адресов пока нет.</string>
     <string name="add_address">+ Новый адрес</string>
     <string name="delete_address_question">Удалить адрес?</string>
     <string name="delete_address_text">Вы действительно хотите удалить сохранённый адрес?</string>
-
+    <string name="address_type">Тип адреса: *</string>
+    <string name="address_apartment_number">Квартира *</string>
+    <string name="address_apartment_entrance">Подъезд *</string>
+    <string name="address_apartment_floor">Этаж *</string>
+    <string name="address_apartment_intercom">Домофон</string>
+    <string name="address_type_apartment">Квартира</string>
+    <string name="address_type_private_house">Частный дом</string>
+    <string name="address_type_other">Другое</string>
+    <string name="addresses_hide">Скрыть</string>
+    <string name="addresses_show_more">Показать ещё %1$d</string>
 
     <!-- Кнопки действий -->
     <string name="minus">-</string>
@@ -162,6 +167,6 @@
     <string name="added_to_cart">Добавлено в корзину</string>
     <string name="back_to_top">Вернуться в начало</string>
     <string name="is_selected">Выбрано</string>
-
+    <string name="logo_cafe">Логотип кафе</string>
 
 </resources>

@@ -28,11 +28,14 @@ fun NavController.navigateToOrder() {
 }
 
 fun NavController.navigateToAddress(address: Address? = null) {
-    val gson = Gson()
-    val json =
-        URLEncoder.encode(gson.toJson(address), StandardCharsets.UTF_8.toString())
-    val route = "$ADDRESS_SCREEN_ROUTE/$json"
-    this.navigate(route)
+    if (address == null) {
+        this.navigate(ADDRESS_SCREEN_ROUTE)
+    } else {
+        val gson = Gson()
+        val json = URLEncoder.encode(gson.toJson(address), StandardCharsets.UTF_8.toString())
+        val route = "$ADDRESS_SCREEN_ROUTE/$json"
+        this.navigate(route)
+    }
 }
 
 fun NavController.navigateToMealDetails(meal: CustomizedMeal, isEditMode: Boolean) {
