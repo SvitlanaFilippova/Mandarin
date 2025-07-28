@@ -19,7 +19,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
 import com.mandarinkafe.mandarin.navigation.bottomnav.components.CartIconBox
 
 @Composable
@@ -35,6 +35,7 @@ fun BottomNavigation(
         BottomNavigationItem.Delivery,
         BottomNavigationItem.Cart
     )
+
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn() + expandVertically(),
@@ -55,11 +56,10 @@ fun BottomNavigation(
                             route = item.route,
                             navOptions = navOptions {
                                 launchSingleTop = true
-                                popUpTo(MENU_SCREEN_ROUTE) {
-                                    inclusive = false
+                                restoreState = true
+                                popUpTo(MAIN_GRAPH) {
                                     saveState = true
                                 }
-                                restoreState = true
                             }
                         )
                     },

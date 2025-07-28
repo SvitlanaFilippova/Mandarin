@@ -40,7 +40,7 @@ sealed interface SharedContract {
             val item: CustomizedMeal? = null,
             val isEditMode: Boolean = false
         ) : SharedEffect
-        data object NavigateToMain : SharedEffect
+        data object FinishSplash : SharedEffect
     }
 
     data class SharedState(

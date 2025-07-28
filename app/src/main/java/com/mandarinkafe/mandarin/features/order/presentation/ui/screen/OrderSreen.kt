@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -44,7 +43,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OrderScreen(
-    orderViewModel: OrderViewModel = hiltViewModel(),
+    orderViewModel: OrderViewModel,
     cartViewModel: CartViewModel,
     navController: NavHostController
 ) {

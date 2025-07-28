@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
@@ -24,6 +25,7 @@ import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.Favor
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.screen.MenuScreen
 import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScreen
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE_WITH_ARGS
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
@@ -35,6 +37,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_ADDRESS_JSON
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_FOCUS_INPUT
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_JSON
+import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE_WITH_ARGS
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
@@ -54,6 +57,7 @@ fun NavGraph(navHostController: NavHostController) {
 
     val cartViewModel: CartViewModel = hiltViewModel()
     val sharedViewModel: SharedViewModel = hiltViewModel()
+    val orderViewModel: OrderViewModel = hiltViewModel()
     val gson = remember { Gson() }
 
     ModalBottomSheetLayout(
@@ -63,61 +67,55 @@ fun NavGraph(navHostController: NavHostController) {
             navController = navHostController,
             startDestination = SPLASH_SCREEN_ROUTE
         ) {
-            composable(CART_SCREEN_ROUTE) {
-                CartScreen(
-                    cartViewModel = cartViewModel,
-                    sharedViewModel = sharedViewModel,
-                    navController = navHostController
-                )
-            }
-
-            composable(DELIVERY_SCREEN_ROUTE) {
-                DeliveryScreen()
-            }
-
-            composable(ORDER_SCREEN_ROUTE) {
-                OrderScreen(
-                    cartViewModel = cartViewModel,
-                    navController = navHostController
-                )
-            }
-
-
-            composable(FAVORITES_SCREEN_ROUTE) {
-                FavoritesScreen(
-                    cartViewModel = cartViewModel,
-                    sharedViewModel = sharedViewModel
-                )
-            }
-
-            composable(MENU_SCREEN_ROUTE) {
-                MenuScreen(
-                    navController = navHostController,
-                    cartViewModel = cartViewModel,
-                    sharedViewModel = sharedViewModel
-                )
-            }
-
             composable(SPLASH_SCREEN_ROUTE) {
                 SplashScreen()
             }
 
-            composable(
-                route = SEARCH_SCREEN_ROUTE_WITH_ARGS,
-                arguments = listOf(
-                    navArgument(KEY_FOCUS_INPUT) {
-                        type = NavType.BoolType
-                        defaultValue = false
-                    }
-                )
-            ) { backStackEntry ->
-                val focusInput = backStackEntry.arguments?.getBoolean(KEY_FOCUS_INPUT) == true
-                SearchScreen(
-                    focusSearchBarInput = focusInput,
-                    navController = navHostController,
-                    cartViewModel = cartViewModel,
-                    sharedViewModel = sharedViewModel
-                )
+            navigation(
+                startDestination = MENU_SCREEN_ROUTE,
+                route = MAIN_GRAPH
+            ) {
+                // экраны, доступные через BottomNavigation:
+                composable(MENU_SCREEN_ROUTE) {
+                    MenuScreen(
+                        navController = navHostController,
+                        cartViewModel = cartViewModel,
+                        sharedViewModel = sharedViewModel
+                    )
+                }
+                composable(
+                    route = SEARCH_SCREEN_ROUTE_WITH_ARGS,
+                    arguments = listOf(
+                        navArgument(KEY_FOCUS_INPUT) {
+                            type = NavType.BoolType
+                            defaultValue = false
+                        }
+                    )
+                ) { backStackEntry ->
+                    val focusInput = backStackEntry.arguments?.getBoolean(KEY_FOCUS_INPUT) == true
+                    SearchScreen(
+                        focusSearchBarInput = focusInput,
+                        navController = navHostController,
+                        cartViewModel = cartViewModel,
+                        sharedViewModel = sharedViewModel
+                    )
+                }
+                composable(FAVORITES_SCREEN_ROUTE) {
+                    FavoritesScreen(
+                        cartViewModel = cartViewModel,
+                        sharedViewModel = sharedViewModel
+                    )
+                }
+                composable(DELIVERY_SCREEN_ROUTE) {
+                    DeliveryScreen()
+                }
+                composable(CART_SCREEN_ROUTE) {
+                    CartScreen(
+                        cartViewModel = cartViewModel,
+                        sharedViewModel = sharedViewModel,
+                        navController = navHostController
+                    )
+                }
             }
 
             bottomSheet(
@@ -136,6 +134,14 @@ fun NavGraph(navHostController: NavHostController) {
                     initItem = meal,
                     isEditMode = isEditMode,
                     onClose = { navHostController.popBackStack() }
+                )
+            }
+
+            composable(ORDER_SCREEN_ROUTE) {
+                OrderScreen(
+                    cartViewModel = cartViewModel,
+                    navController = navHostController,
+                    orderViewModel = orderViewModel
                 )
             }
             composable(route = ADDRESS_SCREEN_ROUTE) {

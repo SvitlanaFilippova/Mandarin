@@ -7,6 +7,7 @@ object NavConstants {
     const val KEY_ADDRESS_JSON = "addressJson"
     const val KEY_FOCUS_INPUT = "focusInput"
 
+    const val MAIN_GRAPH = "main_graph"
     // Screen routes
     const val MENU_SCREEN_ROUTE = "menu"
     const val DELIVERY_SCREEN_ROUTE = "delivery"

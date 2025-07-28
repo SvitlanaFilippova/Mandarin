@@ -7,8 +7,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
-import com.mandarinkafe.mandarin.navigation.NavConstants
-import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
+import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMealDetails
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER_DEFAULT
@@ -40,10 +40,13 @@ fun HandleEffects(
                     )
                 }
 
-                is SharedEffect.NavigateToMain -> {
-                    navController.navigate(MENU_SCREEN_ROUTE) {
-                        popUpTo(NavConstants.SPLASH_SCREEN_ROUTE) { inclusive = true }
-                        launchSingleTop = true
+                is SharedEffect.FinishSplash -> {
+//                    navController.navigate(MENU_SCREEN_ROUTE) {
+//                        popUpTo(NavConstants.SPLASH_SCREEN_ROUTE) { inclusive = true }
+//                        launchSingleTop = true
+//                    }
+                    navController.navigate(MAIN_GRAPH) {
+                        popUpTo(SPLASH_SCREEN_ROUTE) { inclusive = true }
                     }
                 }
 

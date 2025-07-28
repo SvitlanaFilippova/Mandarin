@@ -138,7 +138,7 @@ class SharedViewModel @Inject constructor(
             }
             // Ждём, пока одна из двух корутин вызовет complete()
             done.await()
-            sendEffect(SharedEffect.NavigateToMain)
+            sendEffect(SharedEffect.FinishSplash)
         }
     }
 
