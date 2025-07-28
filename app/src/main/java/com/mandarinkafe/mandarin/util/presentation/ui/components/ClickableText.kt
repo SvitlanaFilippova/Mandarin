@@ -23,11 +23,11 @@ fun ClickableText(text: String? = null, textRes: Int? = null, onClick: () -> Uni
     Text(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(Dimens.MarginSmall8)
             .clickable(
                 onClick = onClick,
                 role = Role.Button
-            ),
+            )
+            .padding(Dimens.MarginSmall8),
         text = resolvedText,
         textAlign = TextAlign.Center,
         style = Typography.RegularTextStyle,

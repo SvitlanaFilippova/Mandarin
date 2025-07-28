@@ -1,5 +1,10 @@
 package com.mandarinkafe.mandarin.features.order.presentation.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -53,14 +58,17 @@ fun PaymentChooser(
             )
         }
 
-        if (showChangeInput) {
+        AnimatedVisibility(
+            visible = showChangeInput,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
             ChangeInfo(
                 noChange = noChange,
                 onNoChangeToggled = { onNoChangeToggled(it) },
                 changeAmount = changeAmount,
                 onChangeEntered = { onChangeEntered(it) }
             )
-
         }
         Spacer(Modifier.height(Dimens.MarginSmall8))
     }

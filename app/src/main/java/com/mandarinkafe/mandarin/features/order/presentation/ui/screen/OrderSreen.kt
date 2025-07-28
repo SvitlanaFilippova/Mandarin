@@ -35,7 +35,6 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
-import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SAVED_ADDRESSES_NUMBER
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_ADDRESS_ID
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
@@ -67,13 +66,7 @@ fun OrderScreen(
     val chosenDeliveryType = state.deliveryType
 
     var showAllAddresses by remember { mutableStateOf(false) }
-    val addresses = if (showAllAddresses) {
-        state.savedAddresses
-    } else {
-        state.savedAddresses.take(
-            DEFAULT_SAVED_ADDRESSES_NUMBER
-        )
-    }
+
 
     // для корректного возврата с экрана добавления адреса
     val currentBackStackEntry = remember(navController) {
@@ -102,7 +95,7 @@ fun OrderScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Colors.AppBlack)
-            .padding(Dimens.MarginStandard16),
+            .padding(Dimens.MarginSmall8),
     ) {
         item {
             PersonalInfo(
@@ -127,21 +120,21 @@ fun OrderScreen(
         }
         item { Spacer(Modifier.height(Dimens.MarginSmall8)) }
 
-        if (chosenDeliveryType == DeliveryType.DELIVERY) {
-            item {
-                SavedAddressesSection(
-                    addresses = addresses,
-                    selectedAddress = state.chosenAddress,
-                    onEvent = onEvent,
-                    onDeleteRequest = {
-                        addressToDelete = it
-                        showConfirmDeleteDialog = true
-                    },
-                    showAllAddresses = showAllAddresses,
-                    onToggleShowAll = { showAllAddresses = !showAllAddresses }
-                )
-            }
+        item {
+            SavedAddressesSection(
+                visible = chosenDeliveryType == DeliveryType.DELIVERY,
+                allSavedAddresses = state.savedAddresses,
+                selectedAddress = state.chosenAddress,
+                onEvent = onEvent,
+                onDeleteRequest = {
+                    addressToDelete = it
+                    showConfirmDeleteDialog = true
+                },
+                showAllAddresses = showAllAddresses,
+                onToggleShowAll = { showAllAddresses = !showAllAddresses }
+            )
         }
+
 
         item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
 

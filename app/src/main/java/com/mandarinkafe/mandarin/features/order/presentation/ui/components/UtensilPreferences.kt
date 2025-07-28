@@ -1,5 +1,10 @@
 package com.mandarinkafe.mandarin.features.order.presentation.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,13 +35,20 @@ fun UtensilPreferences(
             textRes = R.string.no_utensils
         )
 
-        if (!noUtensils) {
+        AnimatedVisibility(
+            visible = !noUtensils,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
             val utensilTypes = remember { Utensil.entries.toList() }
             Column {
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = Dimens.MarginStandard16, bottom = Dimens.MarginSuperSmall4),
+                        .padding(
+                            top = Dimens.MarginStandard16,
+                            bottom = Dimens.MarginSuperSmall4
+                        ),
                     text = stringResource(R.string.i_need_utensils),
                     style = Typography.RegularTextStyle,
                 )

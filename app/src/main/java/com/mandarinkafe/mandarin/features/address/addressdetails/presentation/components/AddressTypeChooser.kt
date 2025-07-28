@@ -43,8 +43,6 @@ fun AddressTypeChooser(
         style = style,
     )
 
-
-
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
         types.forEachIndexed { index, item ->
             val selected = item.name == chosen?.name

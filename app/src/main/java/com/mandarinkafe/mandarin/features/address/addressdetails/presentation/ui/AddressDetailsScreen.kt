@@ -1,12 +1,12 @@
 package com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -74,7 +74,6 @@ fun AddressDetailsScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(Dimens.MarginSmall8),
-        verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
         // Улица и дом. При клике - переход на экран выбора адреса на карте
         MyTextField(
@@ -89,15 +88,18 @@ fun AddressDetailsScreen(
             }
         )
 
+        Spacer(Modifier.height(Dimens.MarginSmall8))
+
         AddressTypeChooser(
             chosen = state.address.addressType,
             isError = state.isError,
             onItemSelected = { onEvent(AddressDetailsEvent.SetAddressType(it)) }
         )
-        // Поле для ввода деталей адреса показываем только если выбран способ доставки в квартиру
-        if (!noNeedAddressDetails) {
+
+        // Поле для ввода деталей адреса. Показывается только если выбран способ доставки в квартиру
             with(state.address) {
                 ApartmentDetails(
+                    visible = !noNeedAddressDetails,
                     isError = isError,
                     apartmentNumberQuery = apartmentNumber,
                     apartmentEntranceQuery = entrance,
@@ -109,7 +111,7 @@ fun AddressDetailsScreen(
                     onIntercomEntered = { onEvent(AddressDetailsEvent.SetIntercom(it)) }
                 )
             }
-        }
+        Spacer(Modifier.height(Dimens.MarginSmall8))
         // Опциональное поле для примечания к адресу
         MyTextField(
             value = state.address.comment,
