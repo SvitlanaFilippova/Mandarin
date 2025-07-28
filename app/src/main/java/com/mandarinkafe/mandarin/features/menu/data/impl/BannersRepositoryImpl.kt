@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.menu.data.impl
 
 import android.util.Log
 import com.mandarinkafe.mandarin.core.data.dto.CsvResponse
-import com.mandarinkafe.mandarin.core.data.network.NetworkClient
+import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.features.menu.data.api.ImageValidator
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannerDto
 import com.mandarinkafe.mandarin.features.menu.data.mapper.toDomain
@@ -15,7 +15,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
 class BannersRepositoryImpl(
-    private val networkClient: NetworkClient,
+    private val networkClient: GoogleDocsNetworkClient,
     private val imageValidator: ImageValidator
 ) : BannersRepository {
 

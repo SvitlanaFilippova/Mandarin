@@ -18,6 +18,7 @@ object Constants {
     const val MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU = 5
     const val MAX_LINES_FOR_MEAL_TITLE_IN_MENU = 3
     const val MAX_LINES_FOR_COLLAPSED_EXPANDABLE_TEXT = 6
+    const val MIN_LINES_FOR_ADDRESS_INPUT = 2
     const val IMAGE_SIZE_IN_MENU = 300
     const val MENU_IMAGE_SPACING_COUNT = 3
     const val MENU_IMAGE_COLUMN_COUNT = 2
@@ -40,6 +41,7 @@ object Constants {
     const val ANIMATION_BOUNCE_MODIFIER = 4
 
     // common UI
+    const val MAP_ANIMATION_DURATION = 1f
     const val ANIMATION_DURATION_SLOW = 1000
     const val ANIMATION_DURATION_FAST = 300
     const val GRADIENT_HEIGHT_RATIO = 0.5f
@@ -55,6 +57,16 @@ object Constants {
 
     // Order
     const val VALID_PHONE_LENGTH = 10
+    const val DEFAULT_SAVED_ADDRESSES_NUMBER = 3
+    const val SHOULD_REFRESH_ADDRESSES_KEY = "shouldRefreshAddresses"
+    const val SHOULD_SELECT_LAST_ADDED_KEY = "should_select_last_added"
+
+    // Map
+    const val MAP_DEFAULT_ZOOM = 17.0f
+    const val MAP_DEFAULT_TILT = 30.0f
+    const val MAP_DEFAULT_AZIMUTH = 0.0f
+    const val PIN_INDICATOR_SCALE = 0.45f
+    const val PIN_INDICATOR_Y_OFFSET_FACTOR = 0.09f
 
     // DI
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
@@ -82,32 +94,7 @@ object Constants {
     const val DELETE_FROM_CART_DEBOUNCE_DELAY: Long = 3000L
     const val INTERVAL_FOR_UPD_PROGRESSBAR: Long = 100L
     const val UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE: Long = 500L
-
-    // Стоимость доставки
-    const val DELIVERY_PRICE_AREA1 = 150
-    const val DELIVERY_PRICE_AREA2 = 200
-    const val DELIVERY_PRICE_AREA3 = 300
-    const val DELIVERY_PRICE_AREA4 = 350
-    const val DELIVERY_PRICE_AREA5 = 400
-    const val DELIVERY_PRICE_AREA6 = 450
-    const val DELIVERY_PRICE_AREA7 = 550
-    const val DELIVERY_PRICE_AREA8 = 650
-    const val DELIVERY_PRICE_AREA9 = 750
-    const val DELIVERY_PRICE_AREA10 = 850
-    const val DELIVERY_PRICE_AREA11 = 950
-    const val DELIVERY_PRICE_AREA12 = 1050
-    const val DELIVERY_PRICE_FREE_AREA1 = 700
-    const val DELIVERY_PRICE_FREE_AREA2 = 800
-    const val DELIVERY_PRICE_FREE_AREA3 = 1500
-    const val DELIVERY_PRICE_FREE_AREA4 = 2000
-    const val DELIVERY_PRICE_FREE_AREA5 = 2200
-    const val DELIVERY_PRICE_FREE_AREA6 = 2500
-    const val DELIVERY_PRICE_FREE_AREA7 = 3000
-    const val DELIVERY_PRICE_FREE_AREA8 = 3200
-    const val DELIVERY_PRICE_FREE_AREA9 = 4000
-    const val DELIVERY_PRICE_FREE_AREA10 = 4500
-    const val DELIVERY_PRICE_FREE_AREA11 = 5000
-    const val DELIVERY_PRICE_FREE_AREA12 = 5500
+    const val LOCALE_RU = "ru_RU"
 
     // remoteConfig
     const val PHONE_NUMBER_DEFAULT = "tel:+74951087055"

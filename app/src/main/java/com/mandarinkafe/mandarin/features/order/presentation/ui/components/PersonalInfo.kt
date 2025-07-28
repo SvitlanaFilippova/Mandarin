@@ -1,11 +1,15 @@
 package com.mandarinkafe.mandarin.features.order.presentation.ui.components
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 
@@ -24,6 +28,8 @@ fun PersonalInfo(
         labelRes = R.string.your_name,
         onValueChange = { onNameEntered(it) }
     )
+
+    Spacer(Modifier.height(Dimens.MarginStandard16))
 
     MyTextField(
         value = phoneQuery,

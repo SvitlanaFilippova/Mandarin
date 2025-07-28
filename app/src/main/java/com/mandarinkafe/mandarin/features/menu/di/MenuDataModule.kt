@@ -2,7 +2,8 @@ package com.mandarinkafe.mandarin.features.menu.di
 
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
-import com.mandarinkafe.mandarin.core.data.network.NetworkClient
+import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
+import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.menu.data.api.ImageValidator
 import com.mandarinkafe.mandarin.features.menu.data.impl.BannersRepositoryImpl
 import com.mandarinkafe.mandarin.features.menu.data.impl.ImageValidatorImpl
@@ -22,10 +23,10 @@ class MenuDataModule {
     @Provides
     @Singleton
     fun provideMenuRepository(
-        networkClient: NetworkClient,
+        iikoNetworkClient: IikoNetworkClient,
     ): MenuRepositoryImpl {
         return MenuRepositoryImpl(
-            networkClient = networkClient,
+            iikoNetworkClient = iikoNetworkClient,
         )
     }
 
@@ -45,7 +46,7 @@ class MenuDataModule {
     @Provides
     @Singleton
     fun provideBannersRepository(
-        networkClient: NetworkClient,
+        networkClient: GoogleDocsNetworkClient,
         imageValidator: ImageValidator
     ): BannersRepository {
         return BannersRepositoryImpl(

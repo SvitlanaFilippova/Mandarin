@@ -11,9 +11,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
-import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
+import com.mandarinkafe.mandarin.core.domain.models.isCustomizable
+import com.mandarinkafe.mandarin.core.domain.models.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.totalPrice
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
@@ -46,7 +46,7 @@ fun PriceAndButtons(
 
         if ((meal.isCustomizable || meal.requireSelection) && !itemInPendingDeletion) {
             MealDetailsButton(
-                isCustomized = item.isCustomized(),
+                isCustomized = item.isCustomized,
                 onEditMealClick = onEditMealClick,
                 onMealDetailsClick = onMealDetailsClick
             )

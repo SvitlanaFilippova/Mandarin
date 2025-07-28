@@ -1,0 +1,46 @@
+package com.mandarinkafe.mandarin.util.presentation.ui.components
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+
+@Composable
+fun TooltipText(modifier: Modifier = Modifier, textRes: Int) {
+    Box(
+        modifier = modifier
+            .border(
+                BorderStroke(width = Dimens.Border1, color = Colors.DarkGrey),
+                shape = RoundedCornerShape(Dimens.CornerRadius8)
+            )
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                modifier = Modifier
+                    .padding(Dimens.MarginSmall8),
+                imageVector = Icons.Default.Info,
+                tint = Colors.WhiteTransparent75,
+                contentDescription = null
+            )
+            Text(
+                modifier = Modifier.padding(Dimens.MarginStandard16),
+                text = stringResource(textRes),
+                style = Typography.SmallTextStyle.copy(color = Colors.WhiteTransparent75),
+            )
+        }
+    }
+}

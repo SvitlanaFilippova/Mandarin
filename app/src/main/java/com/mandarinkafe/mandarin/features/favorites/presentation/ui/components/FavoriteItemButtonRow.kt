@@ -10,9 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomizable
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
-import com.mandarinkafe.mandarin.core.domain.models.extensions.totalPrice
+import com.mandarinkafe.mandarin.core.domain.models.isCustomizable
+import com.mandarinkafe.mandarin.core.domain.models.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.totalPrice
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CartControls
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CustomizeButton
@@ -31,7 +31,7 @@ fun FavoriteItemButtonRow(
     ) {
     val isInTheCart = cartItems.keys.any { it == item }
     val totalPrice = item.totalPrice()
-    val isCustomized = item.isCustomized()
+    val isCustomized = item.isCustomized
 
 
     Row(

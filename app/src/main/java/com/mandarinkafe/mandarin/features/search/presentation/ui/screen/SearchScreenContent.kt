@@ -6,7 +6,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,14 +17,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.search.presentation.ui.components.LabelChipsRow
-import com.mandarinkafe.mandarin.features.search.presentation.ui.components.SearchBarInputField
 import com.mandarinkafe.mandarin.features.search.presentation.ui.components.SearchResults
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract
+import com.mandarinkafe.mandarin.util.presentation.ui.components.SearchBarInputField
 
 /**
  * Компонент с SearchBar - полем для полиска и его результами
@@ -65,8 +70,17 @@ fun SearchScreenContent(
                 }
             },
             onClear = { handleOnClear() },
-            onSearchDismiss = { onSearchDismiss() },
-            autoFocus = focusSearchBarInput
+            onDismiss = { onSearchDismiss() },
+            autoFocus = focusSearchBarInput,
+            placeholderRes = R.string.search_in_menu,
+            enabled = true,
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = stringResource(R.string.search_in_menu),
+                    tint = Colors.White
+                )
+            }
         )
 
         LabelChipsRow(

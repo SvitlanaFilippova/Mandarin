@@ -1,13 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart.data
 
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
-import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
-
-fun StoredCartItem.sameAs(other: StoredCartItem): Boolean {
-    return mealId == other.mealId &&
-            addsIds.orEmpty() == other.addsIds.orEmpty() &&
-            modifiers.orEmpty() == other.modifiers.orEmpty()
-}
 
 fun List<ModifierGroup>.validateBy(mealModifiers: List<ModifierGroup>): List<ModifierGroup> {
     return this.mapNotNull { selectedGroup ->

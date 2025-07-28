@@ -54,5 +54,5 @@ abstract class BaseViewModel<Event : BaseEvent, Effect : BaseEffect, State : Bas
     /**
     Устанавливает флаг загрузки.
      */
-    protected abstract fun setLoading(isLoading: Boolean)
+    protected abstract fun setLoading(isLoading: Boolean = true)
 }

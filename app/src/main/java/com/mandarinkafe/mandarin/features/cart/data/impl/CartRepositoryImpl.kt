@@ -6,7 +6,7 @@ import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
-import com.mandarinkafe.mandarin.features.cart.data.sameAs
+import com.mandarinkafe.mandarin.features.cart.data.models.sameAs
 import com.mandarinkafe.mandarin.features.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.features.cart.data.validateBy
 import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCustomizedMeal

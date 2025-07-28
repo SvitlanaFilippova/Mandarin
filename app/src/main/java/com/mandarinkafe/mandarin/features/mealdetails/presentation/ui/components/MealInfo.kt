@@ -20,6 +20,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.presentation.localizedShortText
+import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
 @Composable
 fun MealInfo(
@@ -61,12 +62,11 @@ fun MealInfo(
 
         // Метка "только самовывоз"
         if (meal.isPickupOnly) {
-            Text(
-                modifier = Modifier.padding(vertical = Dimens.MarginSmall8),
-                text = stringResource(R.string.for_selfpickup_details),
-                style = Typography.RegularLightTextStyle,
-                fontWeight = FontWeight.Light,
-                color = Colors.LightGrey
+            TooltipText(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Dimens.MarginSmall8),
+                textRes = R.string.for_selfpickup_details
             )
         }
     }

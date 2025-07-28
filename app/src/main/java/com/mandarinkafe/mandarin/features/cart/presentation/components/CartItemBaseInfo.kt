@@ -16,9 +16,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.extensions.customizedText
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isFavorite
+import com.mandarinkafe.mandarin.core.domain.models.customizedText
+import com.mandarinkafe.mandarin.core.domain.models.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants.ALPHA_50
@@ -53,7 +53,7 @@ fun CartItemBaseInfo(
             cardIsSmall = true,
             isFavorite = isFavorite,
             onToggleFavorite = {
-                if (!isFavorite && item.isCustomized()) {
+                if (!isFavorite && item.isCustomized) {
                     onShowFavoriteDialog(item)
                 } else {
                     onToggleFavorite(item)
@@ -82,7 +82,7 @@ fun CartItemBaseInfo(
             )
 
             // Выбранные опции кастомизации
-            if (item.isCustomized()) {
+            if (item.isCustomized) {
                 Text(
                     text = item.customizedText(),
                     style = Typography.MealSmallTextStyle,

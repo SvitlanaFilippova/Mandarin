@@ -46,7 +46,7 @@ fun SubmitOrderButton(
     Button(
         modifier = modifier
             .fillMaxWidth()
-            .height(Dimens.ButtonSubmitOrderHeight),
+            .height(Dimens.BigButtonWithTextHeight),
         onClick = onClickAction,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         colors = ButtonDefaults.buttonColors(

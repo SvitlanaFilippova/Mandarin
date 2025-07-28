@@ -19,7 +19,7 @@ fun MealDetailsButton(
             // Кнопка "Редактировать"
             CustomizeButtonWithText(
                 onClick = onEditMealClick,
-                text = stringResource(id = R.string.edit_meal),
+                text = stringResource(id = R.string.edit),
                 modifier = Modifier.padding(horizontal = Dimens.MarginSmall8)
             )
         }

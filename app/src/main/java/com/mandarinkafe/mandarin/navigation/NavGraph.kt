@@ -13,18 +13,25 @@ import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.gson.Gson
+import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.features.address.address.presentation.ui.screen.AddressMapScreen
+import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.AddressDetailsScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.screen.CartScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
-import com.mandarinkafe.mandarin.features.delivery.screen.DeliveryScreen
+import com.mandarinkafe.mandarin.features.delivery.presentation.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.screen.MenuScreen
 import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
+import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE_WITH_ARGS
+import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE_WITH_ARGS
 import com.mandarinkafe.mandarin.navigation.NavConstants.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.FAVORITES_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_ADDRESS_JSON
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_FOCUS_INPUT
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_JSON
@@ -33,10 +40,11 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE_WITH_ARGS
 import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.extensions.boolNavArg
+import com.mandarinkafe.mandarin.navigation.extensions.decodeJsonArg
+import com.mandarinkafe.mandarin.navigation.extensions.jsonNavArg
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
-import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
@@ -69,9 +77,12 @@ fun NavGraph(navHostController: NavHostController) {
 
             composable(ORDER_SCREEN_ROUTE) {
                 OrderScreen(
-                    cartViewModel = cartViewModel
+                    cartViewModel = cartViewModel,
+                    navController = navHostController
                 )
             }
+
+
 
             composable(FAVORITES_SCREEN_ROUTE) {
                 FavoritesScreen(
@@ -97,12 +108,11 @@ fun NavGraph(navHostController: NavHostController) {
                 arguments = listOf(
                     navArgument(KEY_FOCUS_INPUT) {
                         type = NavType.BoolType
-                        defaultValue = false // по умолчанию не фокусируем
+                        defaultValue = false
                     }
                 )
-            ) { entry ->
-                val focusInput = entry.arguments?.getBoolean(KEY_FOCUS_INPUT) == true
-
+            ) { backStackEntry ->
+                val focusInput = backStackEntry.arguments?.getBoolean(KEY_FOCUS_INPUT) == true
                 SearchScreen(
                     focusSearchBarInput = focusInput,
                     navController = navHostController,
@@ -114,19 +124,12 @@ fun NavGraph(navHostController: NavHostController) {
             bottomSheet(
                 route = MEAL_DETAILS_ROUTE_WITH_ARGS,
                 arguments = listOf(
-                    navArgument(KEY_MEAL_JSON) { type = NavType.StringType },
-                    navArgument(KEY_IS_EDIT_MODE) { type = NavType.BoolType }
+                    jsonNavArg(KEY_MEAL_JSON),
+                    boolNavArg(KEY_IS_EDIT_MODE)
                 )
             ) { backStackEntry ->
-                val json = backStackEntry.arguments?.getString(KEY_MEAL_JSON)?.let {
-                    URLDecoder.decode(it, StandardCharsets.UTF_8.toString())
-                }
-
                 val isEditMode = backStackEntry.arguments?.getBoolean(KEY_IS_EDIT_MODE) == true
-
-                val meal = remember(json) {
-                    gson.fromJson(json, CustomizedMeal::class.java)
-                }
+                val meal = backStackEntry.decodeJsonArg<CustomizedMeal>(KEY_MEAL_JSON, gson)
 
                 MealDetailsBottomSheet(
                     sharedViewModel = sharedViewModel,
@@ -134,6 +137,34 @@ fun NavGraph(navHostController: NavHostController) {
                     initItem = meal,
                     isEditMode = isEditMode,
                     onClose = { navHostController.popBackStack() }
+                )
+            }
+            composable(route = ADDRESS_SCREEN_ROUTE) {
+                AddressMapScreen(navController = navHostController, initAddress = null)
+            }
+            composable(
+                route = ADDRESS_SCREEN_ROUTE_WITH_ARGS,
+                arguments = listOf(
+                    jsonNavArg(KEY_ADDRESS_JSON)
+                )
+            ) { backStackEntry ->
+                val address = backStackEntry.decodeJsonArg<Address?>(KEY_ADDRESS_JSON, gson)
+                AddressMapScreen(navController = navHostController, initAddress = address)
+            }
+
+            composable(
+                route = ADDRESS_DETAILS_ROUTE_WITH_ARGS,
+                arguments = listOf(
+                    jsonNavArg(KEY_ADDRESS_JSON),
+                    boolNavArg(KEY_IS_EDIT_MODE)
+                )
+            ) { backStackEntry ->
+                val isEditMode = backStackEntry.arguments?.getBoolean(KEY_IS_EDIT_MODE) == true
+                val address = backStackEntry.decodeJsonArg<Address>(KEY_ADDRESS_JSON, gson)
+                AddressDetailsScreen(
+                    isEditMode = isEditMode,
+                    initAddress = address,
+                    navController = navHostController
                 )
             }
         }

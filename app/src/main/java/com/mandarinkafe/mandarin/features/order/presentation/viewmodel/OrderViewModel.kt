@@ -1,6 +1,10 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
-import android.util.Log
+import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.core.domain.models.Address
+import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
+import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
+import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
@@ -10,21 +14,25 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OrderViewModel @Inject constructor() :
+class OrderViewModel @Inject constructor(
+    private val getDeliveryZone: GetDeliveryZoneUseCase,
+    private val getSavedAddresses: GetSavedAddressesUseCase,
+    private val removeAddress: RemoveAddressUseCase
+) :
     BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
+
+    init {
+        getAddresses()
+    }
+
     override fun setInitialState() = OrderState()
 
     override fun onEvent(event: OrderEvent) {
         when (event) {
-            is OrderEvent.SetAddress -> setAddress(event.query)
-            is OrderEvent.SetApartmentNumber -> setApartmentNumber(event.query)
-            is OrderEvent.SetAddressComment -> setAddressComment(event.query)
-            is OrderEvent.SetEntrance -> setEntrance(event.query)
-            is OrderEvent.SetFloor -> setFloor(event.query)
-            is OrderEvent.SetIntercom -> setIntercom(event.query)
             is OrderEvent.SetChangeFrom -> setChangeFrom(event.query)
             is OrderEvent.SetChosenUtensils -> setChosenUtensils(event.utensil, event.isChosen)
             is OrderEvent.SetComment -> setComment(event.query)
@@ -35,50 +43,58 @@ class OrderViewModel @Inject constructor() :
             is OrderEvent.SetPhone -> setPhone(event.query)
             is OrderEvent.OnMissingRequiredInfo -> setError()
             is OrderEvent.SubmitOrder -> submitOrder()
-            is OrderEvent.GetLocation -> getLocation()
+            is OrderEvent.AddNewAddress -> createNewAddress()
+            is OrderEvent.EditAddress -> goToAddressEdit(event.address)
             is OrderEvent.NoChangeToggled -> setNoChange(event.noChange)
+            is OrderEvent.SetAddress -> setAddress(event.address)
+            is OrderEvent.RemoveAddress -> removeSavedAddress(event.id)
+            is OrderEvent.RefreshAddresses -> getAddresses()
+            is OrderEvent.SelectLastAddedAddress -> selectLastAddedAddress()
         }
+    }
+
+    private fun selectLastAddedAddress() {
+        val latest = state.value.savedAddresses.firstOrNull()
+        latest?.let { setAddress(it) }
+
+    }
+
+    private fun removeSavedAddress(id: String) {
+        viewModelScope.launch { removeAddress(id) }
+        getAddresses()
+
+    }
+
+    private fun getAddresses() {
+        viewModelScope.launch {
+            val addressList = getSavedAddresses()
+            setState { copy(savedAddresses = addressList) }
+        }
+    }
+
+    private fun setAddress(address: Address) {
+        setState {
+            copy(
+                chosenAddress = address,
+                deliveryZone = getDeliveryZone(address.point)
+            )
+        }
+    }
+
+    private fun submitOrder() {
+        sendEffect(OrderEffect.SubmitOrder)
+    }
+
+    private fun goToAddressEdit(address: Address) {
+        sendEffect(OrderEffect.EditAddress(address))
+    }
+
+    private fun createNewAddress() {
+        sendEffect(OrderEffect.AddNewAddress)
     }
 
     private fun setNoChange(noChange: Boolean) {
         setState { copy(noChange = noChange) }
-    }
-
-    private fun getLocation() {
-        Log.d("DEBUG ORDER", "getLocation clicked")
-    }
-
-    private fun submitOrder() {
-        Log.d("DEBUG ORDER", "submitOrder clicked")
-        sendEffect(OrderEffect.SubmitOrder)
-    }
-
-    private fun setError() {
-        setState { copy(isError = true) }
-    }
-
-    private fun setAddress(query: String) {
-        setState { copy(address = query) }
-    }
-
-    private fun setApartmentNumber(query: String) {
-        setState { copy(apartmentNumber = query) }
-    }
-
-    private fun setAddressComment(query: String) {
-        setState { copy(addressComment = query) }
-    }
-
-    private fun setEntrance(query: String) {
-        setState { copy(apartmentEntrance = query) }
-    }
-
-    private fun setFloor(query: String) {
-        setState { copy(apartmentFloor = query) }
-    }
-
-    private fun setIntercom(query: String) {
-        setState { copy(apartmentIntercom = query) }
     }
 
     private fun setChangeFrom(query: String) {
@@ -120,20 +136,24 @@ class OrderViewModel @Inject constructor() :
     private fun setPhone(query: String) {
         val digitsOnly = query.filter { it.isDigit() }
 
-        // Если первая цифра — 7, 8 или плюс, игнорируем
+        // Если первая цифра — 7 или 8, игнорируем
         val normalized = when {
             digitsOnly.startsWith("7") -> digitsOnly.drop(1)
             digitsOnly.startsWith("8") -> digitsOnly.drop(1)
             else -> digitsOnly
         }
-
         // Ограничиваем до 10 символов
         val limited = normalized.take(VALID_PHONE_LENGTH)
 
         setState { copy(phone = limited) }
     }
 
+    private fun setError() {
+        setState { copy(isError = true) }
+    }
+
     override fun setLoading(isLoading: Boolean) {
         // не применимо к данному экрану
     }
+
 }

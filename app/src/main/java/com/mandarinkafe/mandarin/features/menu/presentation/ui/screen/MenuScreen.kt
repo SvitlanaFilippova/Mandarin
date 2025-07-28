@@ -12,7 +12,7 @@ import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toRemoveFromCar
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuViewModel
-import com.mandarinkafe.mandarin.navigation.navigateToSearchScreen
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToSearchScreen
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen

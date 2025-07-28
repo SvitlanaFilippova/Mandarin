@@ -26,9 +26,11 @@ fun MyTextField(
     value: String,
     labelRes: Int,
     isError: Boolean = false,
-    onValueChange: (String) -> Unit,
+    onValueChange: (String) -> Unit = {},
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    enabled: Boolean = true,
+    minLines: Int = 1,
     prefix: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
@@ -38,6 +40,8 @@ fun MyTextField(
         modifier = modifier
             .fillMaxWidth(),
         value = value,
+        enabled = enabled,
+        minLines = minLines,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         onValueChange = { onValueChange(it) },
         colors = TextFieldDefaults.colors(
@@ -50,6 +54,9 @@ fun MyTextField(
             unfocusedIndicatorColor = Colors.Transparent,
             errorIndicatorColor = Colors.ErrorRed,
             errorContainerColor = Colors.DarkGrey,
+            disabledTextColor = Colors.White,
+            disabledContainerColor = Colors.DarkGrey,
+            disabledIndicatorColor = Colors.Transparent,
         ),
         placeholder = placeholder,
         label = {
@@ -62,7 +69,7 @@ fun MyTextField(
         keyboardOptions = keyboardOptions.copy(imeAction = ImeAction.Done),
         visualTransformation = visualTransformation,
         trailingIcon = {
-            if (value.isNotEmpty()) {
+            if (enabled && value.isNotEmpty()) {
                 IconButton(onClick = { onValueChange("") }) {
                     Icon(
                         Icons.Default.Close,

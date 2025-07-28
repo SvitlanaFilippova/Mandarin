@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.favorites.data.mapper
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.FavoriteRecord
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
 
 object FavoriteMapper {
@@ -38,7 +38,7 @@ object FavoriteMapper {
         }.toSet()
 
     fun CustomizedMeal.toFavoriteRecord(timestamp: Long): FavoriteRecord {
-        return if (this.isCustomized()) {
+        return if (this.isCustomized) {
             FavoriteRecord.Custom(
                 mealId = meal.id,
                 addsIds = adds.map { it.id },

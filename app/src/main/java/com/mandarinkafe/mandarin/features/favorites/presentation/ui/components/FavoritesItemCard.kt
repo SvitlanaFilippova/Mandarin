@@ -20,8 +20,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.extensions.customizedText
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.customizedText
+import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
@@ -96,7 +96,7 @@ fun FavoritesItemCard(
             Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
 
             // Выбранные опции кастомизации
-            if (item.isCustomized()) {
+            if (item.isCustomized) {
                 Text(
                     text = item.customizedText(),
                     style = Typography.MealSmallTextStyle,

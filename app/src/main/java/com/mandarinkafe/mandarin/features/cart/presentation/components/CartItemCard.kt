@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.extensions.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 
@@ -37,7 +37,7 @@ fun CartItemCard(
     val contentColor =
         remember(itemInPendingDeletion) { if (itemInPendingDeletion) Colors.LightGreyTransparent75 else Colors.White }
 
-    val onItemClick = if (item.isCustomized()) {
+    val onItemClick = if (item.isCustomized) {
         { onMealDetailsClick(item) }
     } else {
         { onEditMealClick(item) }
