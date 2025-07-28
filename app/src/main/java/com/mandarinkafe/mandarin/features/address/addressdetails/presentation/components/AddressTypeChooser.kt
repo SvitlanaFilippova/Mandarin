@@ -18,6 +18,8 @@ import com.mandarinkafe.mandarin.core.domain.models.AddressType
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.models.UiAddressType
+import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.models.toDomain
 
 @Composable
 fun AddressTypeChooser(
@@ -25,8 +27,7 @@ fun AddressTypeChooser(
     isError: Boolean,
     onItemSelected: (AddressType) -> Unit,
 ) {
-    val types = remember { AddressType.entries.toList() }
-    val borderColor = if (isError && chosen == null) Colors.ErrorRed else Colors.AppBlack
+    val types = remember { UiAddressType.entries.toList() }
 
     val style = if (isError && chosen == null) {
         Typography.RegularTextStyle.copy(color = Colors.ErrorRed)
@@ -42,9 +43,17 @@ fun AddressTypeChooser(
         style = style,
     )
 
+
+
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
         types.forEachIndexed { index, item ->
-            val selected = item == chosen
+            val selected = item.name == chosen?.name
+            val borderColor = when {
+                selected -> Colors.Orange
+                isError && chosen == null -> Colors.ErrorRed
+                else -> Colors.AppBlack
+            }
+
             SegmentedButton(
                 modifier = Modifier.height(Dimens.BigButtonWithTextHeight),
                 shape = SegmentedButtonDefaults.itemShape(
@@ -52,7 +61,7 @@ fun AddressTypeChooser(
                     count = types.size,
                     baseShape = RoundedCornerShape(Dimens.CornerRadius8)
                 ),
-                onClick = { onItemSelected(item) },
+                onClick = { onItemSelected(item.toDomain()) },
                 selected = selected,
                 colors = SegmentedButtonColors(
                     activeContainerColor = Colors.DarkGrey,
@@ -68,12 +77,12 @@ fun AddressTypeChooser(
                     disabledInactiveContentColor = Colors.AppBlack,
                     disabledInactiveBorderColor = Colors.AppBlack,
                 ),
+                icon = { },
                 label = {
-                    Text(
-                        modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
-                        text = stringResource(item.nameRes),
-                        style = Typography.SmallTextStyle,
-                        color = if (selected) Colors.Orange else Colors.White
+                    SegmentedButtonLabel(
+                        selected = selected,
+                        nameRes = item.nameRes,
+                        iconRes = item.iconRes,
                     )
                 }
             )

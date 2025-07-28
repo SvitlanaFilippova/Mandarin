@@ -31,6 +31,8 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Apart
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.LocationIcon
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
+import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
+import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_ADDRESS_ID
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.BigButtonWithText
@@ -59,10 +61,12 @@ fun AddressDetailsScreen(
         navController.getBackStackEntry(ORDER_SCREEN_ROUTE)
     }
     val parentSavedStateHandle = parentEntry.savedStateHandle
-    val backToOrderScreen = {
-        parentSavedStateHandle["shouldRefreshAddresses"] = true
-        navController.popBackStack(ORDER_SCREEN_ROUTE, inclusive = false)
-    }
+    val backToOrderScreen: (String?) -> Unit =
+        { shouldSelectId ->
+            parentSavedStateHandle[SHOULD_REFRESH_ADDRESSES_KEY] = true
+            parentSavedStateHandle[SHOULD_SELECT_ADDRESS_ID] = shouldSelectId
+            navController.popBackStack(ORDER_SCREEN_ROUTE, inclusive = false)
+        }
     val noNeedAddressDetails =
         remember(state.address.addressType) { state.address.noNeedAddressDetails }
 
@@ -138,7 +142,7 @@ fun AddressDetailsScreen(
                 },
                 onSubmit = {
                     onEvent(AddressDetailsEvent.SaveAddress)
-                    backToOrderScreen()
+                    backToOrderScreen(state.address.id)
 
                 },
                 activeContainerColor = Colors.Orange
@@ -153,7 +157,8 @@ fun AddressDetailsScreen(
             onConfirm = {
                 showConfirmDeleteDialog = false
                 onEvent(AddressDetailsEvent.RemoveAddress)
-                backToOrderScreen()
+                backToOrderScreen(null)
+
             },
             onDismiss = {
                 showConfirmDeleteDialog = false

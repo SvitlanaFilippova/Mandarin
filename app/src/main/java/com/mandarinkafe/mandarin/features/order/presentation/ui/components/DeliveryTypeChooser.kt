@@ -17,7 +17,10 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.components.SegmentedButtonLabel
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
+import com.mandarinkafe.mandarin.features.order.presentation.models.UiDeliveryType
+import com.mandarinkafe.mandarin.features.order.presentation.models.toDomain
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
 @Composable
@@ -27,8 +30,7 @@ fun DeliveryTypeChooser(
     onDeliverySelected: (DeliveryType) -> Unit,
     pickupOnly: Boolean
 ) {
-    val deliveryTypes = remember { DeliveryType.entries.toList() }
-    val borderColor = if (isError && chosen == null) Colors.ErrorRed else Colors.AppBlack
+    val deliveryTypes = remember { UiDeliveryType.entries.toList() }
 
     val style = if (isError && chosen == null) {
         Typography.RegularTextStyle.copy(color = Colors.ErrorRed)
@@ -55,9 +57,16 @@ fun DeliveryTypeChooser(
 
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
         deliveryTypes.forEachIndexed { index, item ->
-            val isDelivery = item == DeliveryType.DELIVERY
+            val selected = item.toDomain() == chosen
+            val borderColor = when {
+                selected -> Colors.Orange
+                isError && chosen == null -> Colors.ErrorRed
+                else -> Colors.AppBlack
+            }
+
+            val isDelivery = item == UiDeliveryType.DELIVERY
             val itemEnabled = !(pickupOnly && isDelivery)
-            val selected = item == chosen
+
             SegmentedButton(
                 modifier = Modifier.height(Dimens.BigButtonWithTextHeight),
                 shape = SegmentedButtonDefaults.itemShape(
@@ -65,7 +74,7 @@ fun DeliveryTypeChooser(
                     count = deliveryTypes.size,
                     baseShape = RoundedCornerShape(Dimens.CornerRadius8)
                 ),
-                onClick = { onDeliverySelected(item) },
+                onClick = { onDeliverySelected(item.toDomain()) },
                 selected = selected,
                 enabled = itemEnabled,
                 colors = SegmentedButtonColors(
@@ -82,20 +91,13 @@ fun DeliveryTypeChooser(
                     disabledInactiveContentColor = Colors.AppBlack,
                     disabledInactiveBorderColor = Colors.AppBlack,
                 ),
+                icon = { },
                 label = {
-                    Text(
-                        modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
-                        text = stringResource(item.nameRes),
-                        style = Typography.RegularTextStyle,
-                        color = if (selected) {
-                            Colors.Orange
-                        } else if (!itemEnabled) {
-                            Colors.LightGrey.copy(
-                                alpha = 0.2f
-                            )
-                        } else {
-                            Colors.White
-                        }
+                    SegmentedButtonLabel(
+                        selected = selected,
+                        nameRes = item.nameRes,
+                        iconRes = item.iconRes,
+                        isEnabled = itemEnabled
                     )
                 }
             )

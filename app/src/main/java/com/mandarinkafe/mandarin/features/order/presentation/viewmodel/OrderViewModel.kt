@@ -49,14 +49,13 @@ class OrderViewModel @Inject constructor(
             is OrderEvent.SetAddress -> setAddress(event.address)
             is OrderEvent.RemoveAddress -> removeSavedAddress(event.id)
             is OrderEvent.RefreshAddresses -> getAddresses()
-            is OrderEvent.SelectLastAddedAddress -> selectLastAddedAddress()
+            is OrderEvent.SelectAddressById -> selectAddressById(event.id)
         }
     }
 
-    private fun selectLastAddedAddress() {
-        val latest = state.value.savedAddresses.firstOrNull()
-        latest?.let { setAddress(it) }
-
+    private fun selectAddressById(id: String) {
+        val address = state.value.savedAddresses.first { it.id == id }
+        setAddress(address)
     }
 
     private fun removeSavedAddress(id: String) {

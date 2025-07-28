@@ -37,7 +37,7 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SAVED_ADDRESSES_NUMBER
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
-import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_LAST_ADDED_KEY
+import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_ADDRESS_ID
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import kotlinx.coroutines.flow.collectLatest
@@ -89,11 +89,11 @@ fun OrderScreen(
                 }
             }
 
-        savedStateHandle?.getLiveData<Boolean>(SHOULD_SELECT_LAST_ADDED_KEY)
-            ?.observeForever { shouldSelect ->
-                if (shouldSelect == true) {
-                    orderViewModel.onEvent(OrderEvent.SelectLastAddedAddress)
-                    savedStateHandle[SHOULD_SELECT_LAST_ADDED_KEY] = false
+        savedStateHandle?.getLiveData<String>(SHOULD_SELECT_ADDRESS_ID)
+            ?.observeForever { id ->
+                if (id != null) {
+                    orderViewModel.onEvent(OrderEvent.SelectAddressById(id))
+                    savedStateHandle[SHOULD_SELECT_ADDRESS_ID] = null
                 }
             }
     }
