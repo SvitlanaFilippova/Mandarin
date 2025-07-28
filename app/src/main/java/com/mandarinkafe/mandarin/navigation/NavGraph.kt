@@ -83,7 +83,6 @@ fun NavGraph(navHostController: NavHostController) {
             }
 
 
-
             composable(FAVORITES_SCREEN_ROUTE) {
                 FavoritesScreen(
                     cartViewModel = cartViewModel,

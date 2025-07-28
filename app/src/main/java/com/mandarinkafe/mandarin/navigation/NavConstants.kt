@@ -31,4 +31,10 @@ object NavConstants {
     const val SEARCH_SCREEN_ROUTE_WITH_ARGS =
         "$SEARCH_SCREEN_ROUTE?$KEY_FOCUS_INPUT={$KEY_FOCUS_INPUT}"
 
+    val RoutesWithBackButton = setOf(
+        ADDRESS_SCREEN_ROUTE,
+        ADDRESS_SCREEN_ROUTE_WITH_ARGS,
+        ADDRESS_DETAILS_ROUTE_WITH_ARGS,
+        ORDER_SCREEN_ROUTE
+    )
 }

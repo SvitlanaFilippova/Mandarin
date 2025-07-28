@@ -46,6 +46,10 @@ fun HandleEffects(
                         launchSingleTop = true
                     }
                 }
+
+                is SharedEffect.GoBackEffect -> {
+                    navController.popBackStack()
+                }
             }
         }
     }

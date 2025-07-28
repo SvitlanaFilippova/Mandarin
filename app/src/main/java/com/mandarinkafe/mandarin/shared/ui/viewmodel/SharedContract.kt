@@ -28,9 +28,12 @@ sealed interface SharedContract {
             val item: CustomizedMeal
         ) : SharedEvent
 
+        data object GoBack : SharedEvent
+
     }
 
     sealed interface SharedEffect : BaseEffect {
+        data object GoBackEffect : SharedEffect
         data object OnPhoneClick : SharedEffect
         data class OpenMealDetailsBS(
             val meal: Meal? = null,

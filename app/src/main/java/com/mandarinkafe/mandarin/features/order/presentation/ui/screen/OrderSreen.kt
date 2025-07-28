@@ -67,7 +67,6 @@ fun OrderScreen(
 
     var showAllAddresses by remember { mutableStateOf(false) }
 
-
     // для корректного возврата с экрана добавления адреса
     val currentBackStackEntry = remember(navController) {
         navController.currentBackStackEntry

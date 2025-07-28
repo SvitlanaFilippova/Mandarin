@@ -102,6 +102,7 @@ class SharedViewModel @Inject constructor(
                 )
             }
 
+            is SharedEvent.GoBack -> sendEffect(SharedEffect.GoBackEffect)
         }
     }
 
