@@ -138,7 +138,8 @@ fun OrderScreen(
                         showConfirmDeleteDialog = true
                     },
                     showAllAddresses = showAllAddresses,
-                    onToggleShowAll = { showAllAddresses = !showAllAddresses })
+                    onToggleShowAll = { showAllAddresses = !showAllAddresses }
+                )
             }
         }
 

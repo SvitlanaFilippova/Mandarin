@@ -56,8 +56,7 @@ fun DeliveryAreaInfo(
                     )
                 }
 
-                // Мин сумма заказа и цена доставки
-                Text(
+                Text( // Мин сумма заказа и цена доставки
                     modifier = Modifier.padding(start = Dimens.MarginSmall8),
                     text =
                         stringResource(
@@ -85,7 +84,8 @@ fun DeliveryAreaInfo(
                             .padding(start = Dimens.MarginSmall8),
                         text = stringResource(
                             R.string.delivery_validation_error
-                        ), style = Typography.RegularLightTextStyle,
+                        ),
+                        style = Typography.RegularLightTextStyle,
                         color = Colors.AppBlack
                     )
                 }

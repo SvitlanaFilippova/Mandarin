@@ -56,8 +56,7 @@ fun MapWithButtons(
             .fillMaxSize()
             .padding(top = Dimens.MarginSmall8)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
-    )
-    {
+    ) {
         AndroidView(
             // Карта
             modifier = Modifier.fillMaxSize(),

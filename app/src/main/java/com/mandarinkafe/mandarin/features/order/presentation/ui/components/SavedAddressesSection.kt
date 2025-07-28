@@ -35,13 +35,16 @@ fun SavedAddressesSection(
         }
         // Кнопка "Показать ещё" или "Скрыть"
         if (addresses.size > DEFAULT_SAVED_ADDRESSES_NUMBER) {
-
             ClickableText(
                 onClick = onToggleShowAll,
-                text = if (showAllAddresses) stringResource(R.string.addresses_hide) else stringResource(
-                    R.string.addresses_show_more,
-                    addresses - DEFAULT_SAVED_ADDRESSES_NUMBER
-                )
+                text = if (showAllAddresses) {
+                    stringResource(R.string.addresses_hide)
+                } else {
+                    stringResource(
+                        R.string.addresses_show_more,
+                        addresses - DEFAULT_SAVED_ADDRESSES_NUMBER
+                    )
+                }
             )
 
         }

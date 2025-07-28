@@ -148,10 +148,6 @@ class OrderViewModel @Inject constructor(
         setState { copy(phone = limited) }
     }
 
-    private fun checkDeliveryCost() {
-        // TODO
-    }
-
     private fun setError() {
         setState { copy(isError = true) }
     }

@@ -51,7 +51,8 @@ fun OrderSummaryData(
                 false -> {
                     val hintText = if (freeDeliveryThreshold != null) {
                         stringResource(
-                            R.string.delivery_cost_hint, freeDeliveryThreshold
+                            R.string.delivery_cost_hint,
+                            freeDeliveryThreshold
                         )
                     } else {
                         null
