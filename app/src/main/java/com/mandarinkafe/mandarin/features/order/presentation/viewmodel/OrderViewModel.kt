@@ -66,7 +66,7 @@ class OrderViewModel @Inject constructor(
 
     private fun getAddresses() {
         viewModelScope.launch {
-            val addressList = getSavedAddresses()
+            val addressList = getSavedAddresses().reversed()
             setState { copy(savedAddresses = addressList) }
         }
     }

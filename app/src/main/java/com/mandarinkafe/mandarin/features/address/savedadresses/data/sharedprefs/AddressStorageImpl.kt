@@ -20,7 +20,7 @@ class AddressStorageImpl @Inject constructor(private val sharedPreferences: Shar
             if (json.isNullOrEmpty()) {
                 mutableListOf()
             } else {
-                gson.fromJson<List<Address>>(json, listType)?.reversed() ?: emptyList()
+                gson.fromJson<List<Address>>(json, listType) ?: emptyList()
             }
         } catch (e: Exception) {
             Log.d(
