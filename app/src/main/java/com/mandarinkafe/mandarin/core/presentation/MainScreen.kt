@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.core.presentation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
+import com.mandarinkafe.mandarin.navigation.NavConstants.RoutesWithBackButton
 import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavGraph
 import com.mandarinkafe.mandarin.navigation.bottomnav.BottomNavigation
@@ -44,11 +46,18 @@ fun MainScreen() {
     val onEvent = sharedViewModel::onEvent
     val selectedMeal = sharedState.selectedMealForFavoriteChoice
 
+    val showBackButton = currentRoute?.let { route ->
+        RoutesWithBackButton.any { route.startsWith(it.substringBefore("/{")) }
+
+    } == true
+    Log.d("DEBUG showBackButton", "currentRoute: $currentRoute, showBackButton: $showBackButton")
     Scaffold(
+
         topBar = {
             AppTopBar(
-                visible = showTopBar,
-                onEvent = onEvent
+                showAppBar = showTopBar,
+                showBackButton = showBackButton,
+                onEvent = onEvent,
             )
         },
         bottomBar = {

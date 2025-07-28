@@ -6,6 +6,7 @@ object NavConstants {
     const val KEY_IS_EDIT_MODE = "isEditMode"
     const val KEY_ADDRESS_JSON = "addressJson"
     const val KEY_FOCUS_INPUT = "focusInput"
+    const val MAIN_GRAPH = "main_graph"
 
     // Screen routes
     const val MENU_SCREEN_ROUTE = "menu"
@@ -31,4 +32,10 @@ object NavConstants {
     const val SEARCH_SCREEN_ROUTE_WITH_ARGS =
         "$SEARCH_SCREEN_ROUTE?$KEY_FOCUS_INPUT={$KEY_FOCUS_INPUT}"
 
+    val RoutesWithBackButton = setOf(
+        ADDRESS_SCREEN_ROUTE,
+        ADDRESS_SCREEN_ROUTE_WITH_ARGS,
+        ADDRESS_DETAILS_ROUTE_WITH_ARGS,
+        ORDER_SCREEN_ROUTE
+    )
 }

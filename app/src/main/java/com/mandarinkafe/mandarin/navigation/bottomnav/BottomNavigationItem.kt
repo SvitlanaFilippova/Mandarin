@@ -14,7 +14,7 @@ sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val 
 
     object Delivery : BottomNavigationItem(
         R.string.delivery,
-        R.drawable.ic_delivery,
+        R.drawable.ic_courier,
         NavConstants.DELIVERY_SCREEN_ROUTE
     )
 

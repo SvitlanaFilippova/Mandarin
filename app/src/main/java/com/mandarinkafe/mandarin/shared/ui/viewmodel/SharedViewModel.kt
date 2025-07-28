@@ -102,6 +102,7 @@ class SharedViewModel @Inject constructor(
                 )
             }
 
+            is SharedEvent.GoBack -> sendEffect(SharedEffect.GoBackEffect)
         }
     }
 
@@ -137,7 +138,7 @@ class SharedViewModel @Inject constructor(
             }
             // Ждём, пока одна из двух корутин вызовет complete()
             done.await()
-            sendEffect(SharedEffect.NavigateToMain)
+            sendEffect(SharedEffect.FinishSplash)
         }
     }
 

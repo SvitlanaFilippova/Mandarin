@@ -1,5 +1,11 @@
 package com.mandarinkafe.mandarin.features.order.presentation.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -16,54 +22,69 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
 @Composable
 fun SavedAddressesSection(
-    addresses: List<Address>,
+    allSavedAddresses: List<Address>,
     selectedAddress: Address?,
     onEvent: (OrderEvent) -> Unit,
     onDeleteRequest: (String) -> Unit,
     showAllAddresses: Boolean,
-    onToggleShowAll: () -> Unit
+    onToggleShowAll: () -> Unit,
+    visible: Boolean
 ) {
-    if (addresses.isNotEmpty()) {
-        addresses.forEach { item ->
-            SavedAddressCard(
-                address = item,
-                onAddressChosen = { onEvent(OrderEvent.SetAddress(item)) },
-                onEditAddress = { onEvent(OrderEvent.EditAddress(item)) },
-                selected = item == selectedAddress,
-                onRemoveAddress = { onDeleteRequest(item.id) },
-            )
-        }
-        // Кнопка "Показать ещё" или "Скрыть"
-        if (addresses.size > DEFAULT_SAVED_ADDRESSES_NUMBER) {
-            ClickableText(
-                onClick = onToggleShowAll,
-                text = if (showAllAddresses) {
-                    stringResource(R.string.addresses_hide)
-                } else {
-                    stringResource(
-                        R.string.addresses_show_more,
-                        addresses - DEFAULT_SAVED_ADDRESSES_NUMBER
-                    )
-                }
-            )
-
-        }
-
+    val addressesToShow = if (showAllAddresses) {
+        allSavedAddresses
     } else {
-        TooltipText(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = Dimens.MarginSmall8,
-                    vertical = Dimens.MarginStandard16
-                ),
-            textRes = R.string.no_saved_addressed
+        allSavedAddresses.take(
+            DEFAULT_SAVED_ADDRESSES_NUMBER
         )
-
     }
 
-    ClickableText(
-        textRes = R.string.add_address,
-        onClick = { onEvent(OrderEvent.AddNewAddress) }
-    )
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically()
+    ) {
+        Column {
+            if (addressesToShow.isNotEmpty()) {
+                addressesToShow.forEach { item ->
+                    SavedAddressCard(
+                        address = item,
+                        onAddressChosen = { onEvent(OrderEvent.SetAddress(item)) },
+                        onEditAddress = { onEvent(OrderEvent.EditAddress(item)) },
+                        selected = item == selectedAddress,
+                        onRemoveAddress = { onDeleteRequest(item.id) },
+                    )
+                }
+                // Кнопка "Показать ещё" или "Скрыть"
+                if (allSavedAddresses.size > DEFAULT_SAVED_ADDRESSES_NUMBER) {
+                    ClickableText(
+                        onClick = onToggleShowAll,
+                        text = if (showAllAddresses) {
+                            stringResource(R.string.addresses_hide)
+                        } else {
+                            stringResource(
+                                R.string.addresses_show_more,
+                                allSavedAddresses.size - DEFAULT_SAVED_ADDRESSES_NUMBER
+                            )
+                        }
+                    )
+                }
+
+            } else {
+                TooltipText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = Dimens.MarginSmall8,
+                            vertical = Dimens.MarginStandard16
+                        ),
+                    textRes = R.string.no_saved_addressed
+                )
+            }
+
+            ClickableText(
+                textRes = R.string.add_address,
+                onClick = { onEvent(OrderEvent.AddNewAddress) }
+            )
+        }
+    }
 }

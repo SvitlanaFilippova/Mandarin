@@ -26,7 +26,7 @@ sealed interface OrderContract {
         data class SetNoNeedUtensils(val noNeedUtensils: Boolean) : OrderEvent
         data class SetChosenUtensils(val utensil: Utensil, val isChosen: Boolean) : OrderEvent
         data class SetComment(val query: String) : OrderEvent
-        data object SelectLastAddedAddress : OrderEvent
+        data class SelectAddressById(val id: String) : OrderEvent
         data object OnMissingRequiredInfo : OrderEvent
         data object SubmitOrder : OrderEvent
     }

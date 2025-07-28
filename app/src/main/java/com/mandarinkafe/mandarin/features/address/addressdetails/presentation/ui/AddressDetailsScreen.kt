@@ -1,12 +1,12 @@
 package com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -31,6 +31,8 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Apart
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.LocationIcon
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
+import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
+import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_ADDRESS_ID
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.BigButtonWithText
@@ -59,10 +61,12 @@ fun AddressDetailsScreen(
         navController.getBackStackEntry(ORDER_SCREEN_ROUTE)
     }
     val parentSavedStateHandle = parentEntry.savedStateHandle
-    val backToOrderScreen = {
-        parentSavedStateHandle["shouldRefreshAddresses"] = true
-        navController.popBackStack(ORDER_SCREEN_ROUTE, inclusive = false)
-    }
+    val backToOrderScreen: (String?) -> Unit =
+        { shouldSelectId ->
+            parentSavedStateHandle[SHOULD_REFRESH_ADDRESSES_KEY] = true
+            parentSavedStateHandle[SHOULD_SELECT_ADDRESS_ID] = shouldSelectId
+            navController.popBackStack(ORDER_SCREEN_ROUTE, inclusive = false)
+        }
     val noNeedAddressDetails =
         remember(state.address.addressType) { state.address.noNeedAddressDetails }
 
@@ -70,7 +74,6 @@ fun AddressDetailsScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(Dimens.MarginSmall8),
-        verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
         // Улица и дом. При клике - переход на экран выбора адреса на карте
         MyTextField(
@@ -85,15 +88,18 @@ fun AddressDetailsScreen(
             }
         )
 
+        Spacer(Modifier.height(Dimens.MarginSmall8))
+
         AddressTypeChooser(
             chosen = state.address.addressType,
             isError = state.isError,
             onItemSelected = { onEvent(AddressDetailsEvent.SetAddressType(it)) }
         )
-        // Поле для ввода деталей адреса показываем только если выбран способ доставки в квартиру
-        if (!noNeedAddressDetails) {
+
+        // Поле для ввода деталей адреса. Показывается только если выбран способ доставки в квартиру
             with(state.address) {
                 ApartmentDetails(
+                    visible = !noNeedAddressDetails,
                     isError = isError,
                     apartmentNumberQuery = apartmentNumber,
                     apartmentEntranceQuery = entrance,
@@ -105,7 +111,7 @@ fun AddressDetailsScreen(
                     onIntercomEntered = { onEvent(AddressDetailsEvent.SetIntercom(it)) }
                 )
             }
-        }
+        Spacer(Modifier.height(Dimens.MarginSmall8))
         // Опциональное поле для примечания к адресу
         MyTextField(
             value = state.address.comment,
@@ -138,7 +144,7 @@ fun AddressDetailsScreen(
                 },
                 onSubmit = {
                     onEvent(AddressDetailsEvent.SaveAddress)
-                    backToOrderScreen()
+                    backToOrderScreen(state.address.id)
 
                 },
                 activeContainerColor = Colors.Orange
@@ -153,7 +159,8 @@ fun AddressDetailsScreen(
             onConfirm = {
                 showConfirmDeleteDialog = false
                 onEvent(AddressDetailsEvent.RemoveAddress)
-                backToOrderScreen()
+                backToOrderScreen(null)
+
             },
             onDismiss = {
                 showConfirmDeleteDialog = false

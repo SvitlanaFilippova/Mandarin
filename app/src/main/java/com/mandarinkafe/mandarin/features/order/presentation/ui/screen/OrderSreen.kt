@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -35,9 +34,8 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
-import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SAVED_ADDRESSES_NUMBER
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
-import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_LAST_ADDED_KEY
+import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_ADDRESS_ID
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import kotlinx.coroutines.flow.collectLatest
@@ -45,7 +43,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OrderScreen(
-    orderViewModel: OrderViewModel = hiltViewModel(),
+    orderViewModel: OrderViewModel,
     cartViewModel: CartViewModel,
     navController: NavHostController
 ) {
@@ -62,18 +60,11 @@ fun OrderScreen(
     var showConfirmDeleteDialog by remember { mutableStateOf(false) }
     var addressToDelete by remember { mutableStateOf<String?>(null) }
 
-    val scrollState = rememberScrollState()
+    val scrollState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val chosenDeliveryType = state.deliveryType
 
     var showAllAddresses by remember { mutableStateOf(false) }
-    val addresses = if (showAllAddresses) {
-        state.savedAddresses
-    } else {
-        state.savedAddresses.take(
-            DEFAULT_SAVED_ADDRESSES_NUMBER
-        )
-    }
 
     // для корректного возврата с экрана добавления адреса
     val currentBackStackEntry = remember(navController) {
@@ -89,11 +80,11 @@ fun OrderScreen(
                 }
             }
 
-        savedStateHandle?.getLiveData<Boolean>(SHOULD_SELECT_LAST_ADDED_KEY)
-            ?.observeForever { shouldSelect ->
-                if (shouldSelect == true) {
-                    orderViewModel.onEvent(OrderEvent.SelectLastAddedAddress)
-                    savedStateHandle[SHOULD_SELECT_LAST_ADDED_KEY] = false
+        savedStateHandle?.getLiveData<String>(SHOULD_SELECT_ADDRESS_ID)
+            ?.observeForever { id ->
+                if (id != null) {
+                    orderViewModel.onEvent(OrderEvent.SelectAddressById(id))
+                    savedStateHandle[SHOULD_SELECT_ADDRESS_ID] = null
                 }
             }
     }
@@ -102,7 +93,8 @@ fun OrderScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Colors.AppBlack)
-            .padding(Dimens.MarginStandard16),
+            .padding(Dimens.MarginSmall8),
+        state = scrollState,
     ) {
         item {
             PersonalInfo(
@@ -127,21 +119,21 @@ fun OrderScreen(
         }
         item { Spacer(Modifier.height(Dimens.MarginSmall8)) }
 
-        if (chosenDeliveryType == DeliveryType.DELIVERY) {
-            item {
-                SavedAddressesSection(
-                    addresses = addresses,
-                    selectedAddress = state.chosenAddress,
-                    onEvent = onEvent,
-                    onDeleteRequest = {
-                        addressToDelete = it
-                        showConfirmDeleteDialog = true
-                    },
-                    showAllAddresses = showAllAddresses,
-                    onToggleShowAll = { showAllAddresses = !showAllAddresses }
-                )
-            }
+        item {
+            SavedAddressesSection(
+                visible = chosenDeliveryType == DeliveryType.DELIVERY,
+                allSavedAddresses = state.savedAddresses,
+                selectedAddress = state.chosenAddress,
+                onEvent = onEvent,
+                onDeleteRequest = {
+                    addressToDelete = it
+                    showConfirmDeleteDialog = true
+                },
+                showAllAddresses = showAllAddresses,
+                onToggleShowAll = { showAllAddresses = !showAllAddresses }
+            )
         }
+
 
         item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
 
@@ -201,7 +193,7 @@ fun OrderScreen(
                 onMissingRequiredInfo = {
                     onEvent(OrderEvent.OnMissingRequiredInfo)
                     coroutineScope.launch {
-                        scrollState.animateScrollTo(0)
+                        scrollState.animateScrollToItem(0)
                     }
                 },
                 onSubmitOrder = { onEvent(OrderEvent.SubmitOrder) },

@@ -29,7 +29,7 @@ fun PersonalInfo(
         onValueChange = { onNameEntered(it) }
     )
 
-    Spacer(Modifier.height(Dimens.MarginStandard16))
+    Spacer(Modifier.height(Dimens.MarginSmall8))
 
     MyTextField(
         value = phoneQuery,
