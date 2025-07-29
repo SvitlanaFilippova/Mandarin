@@ -10,7 +10,8 @@ fun Meal.toMealAdditional() = MealAdditional(
     id = id,
     name = name.applyTypography(),
     price = price,
-    orderItemType = orderItemType
+    orderItemType = orderItemType,
+    discountable = discountable,
 )
 
 fun MealCategory.toMealAdditionalCategory() = MealAdditionalCategory(

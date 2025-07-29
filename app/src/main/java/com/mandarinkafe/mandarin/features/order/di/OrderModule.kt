@@ -4,10 +4,12 @@ import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.order.data.impl.LoyaltyCustomerRepositoryImpl
 import com.mandarinkafe.mandarin.features.order.data.impl.OrderRepositoryImpl
 import com.mandarinkafe.mandarin.features.order.domain.api.CheckDiscountByPhoneUseCase
+import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.LoyaltyCustomerRepository
 import com.mandarinkafe.mandarin.features.order.domain.api.OrderRepository
 import com.mandarinkafe.mandarin.features.order.domain.impl.CheckDiscountByPhoneUseCaseImpl
+import com.mandarinkafe.mandarin.features.order.domain.impl.CreateOrderUseCaseImpl
 import com.mandarinkafe.mandarin.features.order.domain.impl.GetPaymentTypesUseCaseImpl
 import dagger.Module
 import dagger.Provides
@@ -54,6 +56,16 @@ class OrderModule {
     ): OrderRepository {
         return OrderRepositoryImpl(
             networkClient = networkClient
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideCreateOrderUseCase(
+        repository: OrderRepository
+    ): CreateOrderUseCase {
+        return CreateOrderUseCaseImpl(
+            repository = repository
         )
     }
 

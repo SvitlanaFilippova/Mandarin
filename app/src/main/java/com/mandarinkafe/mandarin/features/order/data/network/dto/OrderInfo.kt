@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.order.data.network.dto
 data class OrderInfo(
     val id: String,
     val timestamp: Int,
-    val creationStatus: String, //Enum: "Success" "InProgress" "Error",
+    val creationStatus: String,
     val errorInfo: ErrorInfo
 )
 

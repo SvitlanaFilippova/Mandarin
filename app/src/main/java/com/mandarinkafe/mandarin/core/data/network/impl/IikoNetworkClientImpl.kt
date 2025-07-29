@@ -64,6 +64,7 @@ class IikoNetworkClientImpl(
     }
 
     override suspend fun createDelivery(order: OrderDto): Response {
+        Log.d(logTag, "createDelivery called")
         return try {
             val response = iikoService.createDelivery(
                 token = token, body = CreateDeliveryRequest(

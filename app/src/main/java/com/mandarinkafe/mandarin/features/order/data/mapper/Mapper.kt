@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.order.data.mapper
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.PRICE_DECIMALS
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.UTENSILS_NEED_PREFIX
 import com.mandarinkafe.mandarin.features.order.data.network.dto.LoyaltyCustomerResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.AddressDto
@@ -19,6 +20,7 @@ import com.mandarinkafe.mandarin.features.order.domain.models.Order
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
+import com.mandarinkafe.mandarin.util.roundTo
 
 fun LoyaltyCustomerResponse.toDomain(): LoyaltyCustomer {
     return LoyaltyCustomer(
@@ -54,9 +56,6 @@ fun OrderState.toDomain(paymentType: PaymentType): Order {
 }
 
 fun Order.toOrderDto(): OrderDto {
-    // TODO Добавить сюда учёт скидки (discountSize Int (например,10, что значит 10% скидка) из OrderState) для всех item,
-    // которые discountable==true и для всех модификаторов (даже если это модификаторы блюда, которое  discountable == false)
-
     return OrderDto(
         phone = OrderConstants.PHONE_PREFIX + phone,
         orderServiceType = if (deliveryType == DeliveryType.DELIVERY)
@@ -70,8 +69,8 @@ fun Order.toOrderDto(): OrderDto {
             type = OrderConstants.CUSTOMER_TYPE_ONE_TIME
         ),
         items = cartItems.flatMap { (customizedMeal, quantity) ->
-            val mealItem = customizedMeal.toItem(quantity)
-            val addsItems = customizedMeal.adds.map { it.toItem(quantity) }
+            val mealItem = customizedMeal.toItem(quantity, discountSize)
+            val addsItems = customizedMeal.adds.map { it.toItem(quantity, discountSize) }
             listOf(mealItem) + addsItems
         },
         payments = listOf(
@@ -84,19 +83,30 @@ fun Order.toOrderDto(): OrderDto {
     )
 }
 
-fun CustomizedMeal.toItem(quantity: Int): Item {
+fun CustomizedMeal.toItem(quantity: Int, discountSize: Int): Item {
+    val discountMultiplier =
+        (OrderConstants.FULL_PERCENT - discountSize) / OrderConstants.FULL_PERCENT_DOUBLE
+
+    val discountedPrice = if (meal.discountable) {
+        (meal.price.toDouble() * discountMultiplier).roundTo(PRICE_DECIMALS)
+    } else {
+        meal.price.toDouble().roundTo(PRICE_DECIMALS)
+    }
+
+    val discountedModifiers = modifiers.flatMap { group ->
+        group.items.map {
+            OrderModifier(
+                id = it.id,
+                amount = 1.0,
+                price = (it.price.toDouble() * discountMultiplier).roundTo(PRICE_DECIMALS)
+            )
+        }
+    }
+
     return Item(
         productId = meal.id,
-        modifiers = modifiers.flatMap { group ->
-            group.items.map {
-                OrderModifier(
-                    id = it.id,
-                    amount = 1.0,
-                    price = it.price.toDouble()
-                )
-            }
-        },
-        price = meal.price.toDouble(),
+        modifiers = discountedModifiers,
+        price = discountedPrice,
         amount = quantity.toDouble(),
         type = meal.orderItemType,
         comment = if (adds.isNotEmpty()) {
@@ -105,11 +115,20 @@ fun CustomizedMeal.toItem(quantity: Int): Item {
     )
 }
 
-fun MealAdditional.toItem(quantity: Int): Item {
+fun MealAdditional.toItem(quantity: Int = 1, discountSize: Int): Item {
+    val discountMultiplier =
+        (OrderConstants.FULL_PERCENT - discountSize) / OrderConstants.FULL_PERCENT_DOUBLE
+
+    val discountedPrice = if (discountable) {
+        (price.toDouble() * discountMultiplier).roundTo(PRICE_DECIMALS)
+    } else {
+        price.toDouble().roundTo(PRICE_DECIMALS)
+    }
+
     return Item(
         productId = id,
         modifiers = emptyList(),
-        price = price.toDouble(),
+        price = discountedPrice,
         amount = quantity.toDouble(),
         type = orderItemType
     )
@@ -157,3 +176,5 @@ fun buildFullComment(
         .joinToString(", ")
         .trim()
 }
+
+
