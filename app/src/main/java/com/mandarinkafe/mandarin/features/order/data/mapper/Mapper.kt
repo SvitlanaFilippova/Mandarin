@@ -58,10 +58,11 @@ fun OrderState.toDomain(paymentType: PaymentType): Order {
 fun Order.toOrderDto(): OrderDto {
     return OrderDto(
         phone = OrderConstants.PHONE_PREFIX + phone,
-        orderServiceType = if (deliveryType == DeliveryType.DELIVERY)
+        orderServiceType = if (deliveryType == DeliveryType.DELIVERY) {
             OrderConstants.DELIVERY_TYPE_DELIVERY
-        else
-            OrderConstants.DELIVERY_TYPE_PICKUP,
+        } else {
+            OrderConstants.DELIVERY_TYPE_PICKUP
+        },
         deliveryPoint = chosenAddress?.toDeliveryPoint(comment),
         comment = comment,
         customer = Customer(
@@ -111,7 +112,9 @@ fun CustomizedMeal.toItem(quantity: Int, discountSize: Int): Item {
         type = meal.orderItemType,
         comment = if (adds.isNotEmpty()) {
             adds.joinToString(", ") { it.name }
-        } else ""
+        } else {
+            ""
+        }
     )
 }
 

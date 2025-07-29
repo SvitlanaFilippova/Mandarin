@@ -58,7 +58,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d(logTag, "Ошибка: ${e.message}")
+            Log.d(logTag, "$ERROR: ${e.message}")
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -67,14 +67,15 @@ class IikoNetworkClientImpl(
         Log.d(logTag, "createDelivery called")
         return try {
             val response = iikoService.createDelivery(
-                token = token, body = CreateDeliveryRequest(
+                token = token,
+                body = CreateDeliveryRequest(
                     order = order,
                     organizationId = organizationId
                 )
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d(logTag, "Ошибка: ${e.message}")
+            Log.d(logTag, "$ERROR: ${e.message}")
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -91,7 +92,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d(logTag, "Ошибка: ${e.message}")
+            Log.d(logTag, "$ERROR: ${e.message}")
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -114,7 +115,7 @@ class IikoNetworkClientImpl(
             )
             menuResponse.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d(logTag, "Ошибка: ${e.message}")
+            Log.d(logTag, "$ERROR: ${e.message}")
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -151,5 +152,6 @@ class IikoNetworkClientImpl(
 
     private companion object {
         const val BEARER_PREFIX = "Bearer "
+        const val ERROR = "Ошибка: "
     }
 }

@@ -23,7 +23,6 @@ fun CheckboxWithTextRow(
     text: String? = null,
     onCheckedChange: (Boolean) -> Unit
 ) {
-
     val displayText = text ?: labelRes?.let { stringResource(it) } ?: ""
 
     Row(
