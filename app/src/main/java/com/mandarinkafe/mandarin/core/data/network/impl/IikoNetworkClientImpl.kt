@@ -21,6 +21,7 @@ class IikoNetworkClientImpl(
     private val networkMonitor: NetworkMonitor,
     private val iikoService: IikoApiService,
 ) : IikoNetworkClient {
+    private val logTag = "DEBUG IIKO API"
 
     private var token = ""
     private var organizationId = ""
@@ -58,7 +59,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d("DEBUG IIKO API", "Ошибка: ${e.message}")
+            Log.d(logTag, "Ошибка: ${e.message}")
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -81,7 +82,7 @@ class IikoNetworkClientImpl(
             )
             menuResponse.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d("DEBUG IIKO API", "Ошибка: ${e.message}")
+            Log.d(logTag, "Ошибка: ${e.message}")
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -109,7 +110,7 @@ class IikoNetworkClientImpl(
             organizationId = organizationsResponse.organizations.firstOrNull()?.id
                 ?: error("No organization found")
         } catch (e: Throwable) {
-            Log.d("DEBUG IIKO API", "Ошибка в методе authenticate: ${e.message}")
+            Log.d(logTag, "Ошибка в методе authenticate: ${e.message}")
         }
     }
 

@@ -169,8 +169,7 @@ fun OrderScreen(
         }
 
         item {
-            with(state)
-            {
+            with(state) {
                 OrderSummaryData(
                     cartSum = cartSum,
                     discountSum = discountSum,

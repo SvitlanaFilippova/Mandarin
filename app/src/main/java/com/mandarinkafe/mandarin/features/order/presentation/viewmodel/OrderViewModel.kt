@@ -133,12 +133,12 @@ class OrderViewModel @Inject constructor(
                 group.items.sumOf { it.price.toDouble() }
             }
             val fullPricePerItem = mealPrice + addsPrice + modifiersPrice
-            val discountModifier = 1 - discountAmount / 100.0
+            val discountModifier = 1 - discountAmount / PERCENT_DIVISOR
             val discountedPricePerItem = if (customizedMeal.meal.discountable) {
                 // если блюдо discountable, то скидка работает на всё
                 fullPricePerItem * discountModifier
             } else {
-                // иначе - только на добавки и модиаифкаторы, но не на само блюдо
+                // иначе - только на добавки и модификаторы, но не на само блюдо
                 mealPrice + (addsPrice + modifiersPrice) * discountModifier
             }
             val total = discountedPricePerItem * quantity
@@ -238,9 +238,9 @@ class OrderViewModel @Inject constructor(
 
         setState { copy(phone = limited) }
 
-        if (limited.length == VALID_PHONE_LENGTH) {
-            checkDiscount(limited)
-        }
+
+        checkDiscount(limited)
+
     }
 
     private fun setError() {
@@ -252,19 +252,28 @@ class OrderViewModel @Inject constructor(
     }
 
     private fun checkDiscount(phone: String) {
-        viewModelScope.launch {
-            val result = checkDiscountByPhone.invoke(phone)
-            val discount = when (result) {
-                is Resource.Success -> result.data
-                else -> null
+        if (phone.length != VALID_PHONE_LENGTH) {
+            with(state.value) {
+                recalculateCartState(
+                    items = cartItems,
+                    discountSize = 0,
+                    deliveryFreeThreshold = deliveryFreeThreshold,
+                    deliveryBasePrice = deliveryBasePrice
+                )
             }
-            discount?.let {
-                setState { copy(discountSize = discount) }
+        } else {
+            viewModelScope.launch {
+                val result = checkDiscountByPhone.invoke(phone)
+                val discount = when (result) {
+                    is Resource.Success -> result.data
+                    else -> null
+                }
+
                 // Пересчёт после установки скидки
                 with(state.value) {
                     recalculateCartState(
                         items = cartItems,
-                        discountSize = it,
+                        discountSize = discount ?: 0,
                         deliveryFreeThreshold = deliveryFreeThreshold,
                         deliveryBasePrice = deliveryBasePrice
                     )
@@ -295,11 +304,15 @@ class OrderViewModel @Inject constructor(
             copy(
                 totalCartSum = totalCartSum,
                 containNotDiscountable = containNotDiscountable,
+                discountSize = discountSize,
                 discountSum = discountSum,
                 totalCartSumWithDiscount = cartSumWithDiscount,
                 totalOrderSum = totalOrderSum,
-
                 )
         }
+    }
+
+    private companion object {
+        const val PERCENT_DIVISOR = 100.0
     }
 }
