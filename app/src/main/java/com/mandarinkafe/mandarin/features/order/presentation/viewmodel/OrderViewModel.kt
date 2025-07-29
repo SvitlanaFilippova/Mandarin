@@ -9,8 +9,10 @@ import com.mandarinkafe.mandarin.core.domain.models.totalPrice
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
+import com.mandarinkafe.mandarin.features.menu.domain.models.MealPickupPoint
 import com.mandarinkafe.mandarin.features.order.domain.api.CheckDiscountByPhoneUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
+import com.mandarinkafe.mandarin.features.order.domain.models.OrderPickupPoint
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
@@ -79,6 +81,7 @@ class OrderViewModel @Inject constructor(
                 setState {
                     val containNotDiscountable = items.keys.any { !it.meal.discountable }
                     val isPickupOnly = items.keys.any { it.meal.isPickupOnly }
+                    val pickupPoint = resolveOrderPickupPoint(items.keys)
                     val adjustedDeliveryType =
                         if (isPickupOnly && deliveryType == DeliveryType.DELIVERY) null else deliveryType
                     val adjustedAddress =
@@ -88,7 +91,9 @@ class OrderViewModel @Inject constructor(
                         cartItems = items,
                         containNotDiscountable = containNotDiscountable,
                         deliveryType = adjustedDeliveryType,
-                        chosenAddress = adjustedAddress
+                        chosenAddress = adjustedAddress,
+                        pickupPoint = pickupPoint,
+                        pickupOnly = isPickupOnly
                     )
                 }
                 // вызываем перерасчёт скидки и стоимости доставки
@@ -97,7 +102,7 @@ class OrderViewModel @Inject constructor(
                         items = items,
                         discountSize = discountSize,
                         deliveryFreeThreshold = deliveryFreeThreshold,
-                        deliveryBasePrice = deliveryBasePrice
+                        deliveryBasePrice = deliveryBasePrice,
                     )
                 }
 
@@ -308,8 +313,25 @@ class OrderViewModel @Inject constructor(
                 discountSum = discountSum,
                 totalCartSumWithDiscount = cartSumWithDiscount,
                 totalOrderSum = totalOrderSum,
-                )
+            )
         }
+    }
+
+    private fun resolveOrderPickupPoint(items: Set<CustomizedMeal>): OrderPickupPoint {
+        val points = items.map { it.meal.pickupPoint }.toSet()
+        return when {
+            points.containsAll(
+                setOf(
+                    MealPickupPoint.PIZZERIA,
+                    MealPickupPoint.CAFE
+                )
+            ) -> OrderPickupPoint.BOTH
+
+            points.contains(MealPickupPoint.PIZZERIA) -> OrderPickupPoint.PIZZERIA
+            points.contains(MealPickupPoint.CAFE) -> OrderPickupPoint.CAFE
+            else -> OrderPickupPoint.CAFE
+        }
+
     }
 
     private companion object {

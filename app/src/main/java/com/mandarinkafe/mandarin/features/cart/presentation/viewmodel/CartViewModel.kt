@@ -19,9 +19,6 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.RemoveFromCartWithDelay
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ReplaceMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
-import com.mandarinkafe.mandarin.util.Constants.DELETE_FROM_CART_DEBOUNCE_DELAY
-import com.mandarinkafe.mandarin.util.Constants.INTERVAL_FOR_UPD_PROGRESSBAR
-import com.mandarinkafe.mandarin.util.Constants.UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Loading
@@ -345,5 +342,11 @@ class CartViewModel @Inject constructor(
             else -> return
         }
         setState { copy(error = error) }
+    }
+
+    private companion object {
+        const val DELETE_FROM_CART_DEBOUNCE_DELAY: Long = 3000L
+        const val INTERVAL_FOR_UPD_PROGRESSBAR: Long = 100L
+        const val UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE: Long = 500L
     }
 }

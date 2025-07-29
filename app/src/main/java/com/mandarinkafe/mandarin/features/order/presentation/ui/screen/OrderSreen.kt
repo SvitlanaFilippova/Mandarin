@@ -26,6 +26,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Order
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PaymentChooser
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PersonalInfo
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.SavedAddressesSection
+import com.mandarinkafe.mandarin.features.order.presentation.ui.components.SelfPickupInfo
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.SubmitOrderButton
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.UtensilPreferences
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
@@ -112,6 +113,13 @@ fun OrderScreen(
             )
         }
         item { Spacer(Modifier.height(Dimens.MarginSmall8)) }
+
+        item {
+            SelfPickupInfo(
+                visible = chosenDeliveryType == DeliveryType.SELF_PICKUP,
+                pickupPoint = state.pickupPoint
+            )
+        }
 
         item {
             SavedAddressesSection(

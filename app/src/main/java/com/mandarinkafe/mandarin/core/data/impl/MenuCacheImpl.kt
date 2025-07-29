@@ -5,8 +5,6 @@ import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
-import com.mandarinkafe.mandarin.util.Constants.DELAY_BEFORE_NEXT_ATTEMPT
-import com.mandarinkafe.mandarin.util.Constants.MAX_ATTEMPTS
 import com.mandarinkafe.mandarin.util.Resource
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -107,5 +105,10 @@ class MenuCacheImpl @Inject constructor(
     private fun findMealsBySku(category: MealCategory, sku: String, result: MutableList<Meal>) {
         category.meals?.firstOrNull { it.sku.equals(sku, true) }?.let { result.add(it) }
         category.subCategories?.forEach { findMealsBySku(it, sku, result) }
+    }
+
+    private companion object {
+        const val MAX_ATTEMPTS = 3
+        const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 100L
     }
 }

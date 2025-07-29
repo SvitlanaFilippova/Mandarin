@@ -51,10 +51,6 @@ object Constants {
     const val TITLE_FONT_WEIGHT = 800
     const val NON_BRAKING_SPACE = "\u00A0"
 
-    // Menu loading
-    const val MAX_ATTEMPTS = 3
-    const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 100L
-
     // Order
     const val VALID_PHONE_LENGTH = 10
     const val DEFAULT_SAVED_ADDRESSES_NUMBER = 3
@@ -77,23 +73,18 @@ object Constants {
     const val RECOMMENDATIONS_GOOGLE_DOCS_URL =
         "2PACX-1vQ3-6HvveASGgkJk7RppqB25IlbRSGJGvdEnN_0_XTtIKtRcR6H-R4KS0L_39ifx1cnGWRUiCA2zPQZ/pub?gid=1629216186&single=true&output=csv"
 
-    // API
-    const val BEARER_PREFIX = "Bearer "
+    // Для обработки особых категорий по их названиям
+    const val CATEGORY_ADDS = "добавки"
+    const val CATEGORY_RECOMMENDS = "Рекомендованные (общие)"
 
     // Внутренние теги для особой логики в меню
     const val TAG_ADDS = "SHOW_ADDS"
     const val TAG_NO_ADDS = "NO_ADDS"
     const val TAG_NO_DISCOUNT = "NO_DISCOUNT"
     const val TAG_NO_DELIVERY = "NO_DELIVERY"
+    const val TAG_PIZZERIA = "PIZZERIA"
+    const val TAG_CAFE = "CAFE"
 
-    // Для обработки особых категорий по их названиям
-    const val CATEGORY_ADDS = "добавки"
-    const val CATEGORY_RECOMMENDS = "Рекомендованные (общие)"
-
-    // DEBOUNCE для корзины
-    const val DELETE_FROM_CART_DEBOUNCE_DELAY: Long = 3000L
-    const val INTERVAL_FOR_UPD_PROGRESSBAR: Long = 100L
-    const val UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE: Long = 500L
     const val LOCALE_RU = "ru_RU"
 
     // remoteConfig

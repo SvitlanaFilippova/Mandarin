@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
+import com.mandarinkafe.mandarin.features.order.domain.models.OrderPickupPoint
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.util.BaseEffect
@@ -51,7 +52,6 @@ sealed interface OrderContract {
         val comment: String = "",
         val isError: Boolean = false,
         val cartItems: Map<CustomizedMeal, Int> = emptyMap(),
-        val pickupOnly: Boolean = false,
         val containNotDiscountable: Boolean = false,
         val totalCartSum: Int? = null,
         val deliveryFreeThreshold: Int? = null,
@@ -61,6 +61,9 @@ sealed interface OrderContract {
         val discountSum: Double = 0.0,
         val totalCartSumWithDiscount: Double = 0.0,
         val totalOrderSum: Double = 0.0,
+        val pickupOnly: Boolean = false,
+        val pickupPoint: OrderPickupPoint = OrderPickupPoint.CAFE
+
     ) : BaseState {
         val phoneIsValid: Boolean
             get() = phone.length == VALID_PHONE_LENGTH

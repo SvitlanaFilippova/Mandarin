@@ -9,7 +9,6 @@ import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.features.order.data.network.LoyaltyCustomerByPhoneRequest
-import com.mandarinkafe.mandarin.util.Constants.BEARER_PREFIX
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
@@ -120,5 +119,6 @@ class IikoNetworkClientImpl(
 
     private companion object {
         const val CODE_FOR_PHONE = "+7"
+        const val BEARER_PREFIX = "Bearer "
     }
 }

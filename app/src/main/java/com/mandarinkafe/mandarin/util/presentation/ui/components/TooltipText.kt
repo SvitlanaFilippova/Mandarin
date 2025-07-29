@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.util.presentation.ui.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,7 +21,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
-fun TooltipText(modifier: Modifier = Modifier, textRes: Int) {
+fun TooltipText(modifier: Modifier = Modifier, textRes: Int, extraTextRes: Int? = null) {
     Box(
         modifier = modifier
             .border(
@@ -30,17 +31,28 @@ fun TooltipText(modifier: Modifier = Modifier, textRes: Int) {
     ) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                modifier = Modifier
-                    .padding(Dimens.MarginSmall8),
+                modifier = Modifier.padding(
+                    start = Dimens.MarginStandard16,
+                    top = Dimens.MarginStandard16,
+                    bottom = Dimens.MarginStandard16
+                ),
                 imageVector = Icons.Default.Info,
                 tint = Colors.WhiteTransparent75,
                 contentDescription = null
             )
-            Text(
-                modifier = Modifier.padding(Dimens.MarginStandard16),
-                text = stringResource(textRes),
-                style = Typography.SmallTextStyle.copy(color = Colors.WhiteTransparent75),
-            )
+            Column(modifier = Modifier.padding(Dimens.MarginStandard16)) {
+                Text(
+                    text = stringResource(textRes),
+                    style = Typography.SmallTextStyle.copy(color = Colors.WhiteTransparent75),
+                )
+                extraTextRes?.let {
+                    Text(
+                        modifier = Modifier.padding(top = Dimens.MarginStandard16),
+                        text = stringResource(extraTextRes),
+                        style = Typography.SmallTextStyle.copy(color = Colors.WhiteTransparent75),
+                    )
+                }
+            }
         }
     }
 }
