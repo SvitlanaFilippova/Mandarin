@@ -11,6 +11,7 @@ import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.features.order.data.network.LoyaltyCustomerByPhoneRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.OrderDto
+import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
@@ -49,7 +50,12 @@ class IikoNetworkClientImpl(
 
     override suspend fun getPaymentTypes(): Response {
         return try {
-            val response = iikoService.getPaymentTypes(token = token)
+            val response = iikoService.getPaymentTypes(
+                token = token,
+                body = PaymentTypesRequest(
+                    organizationIds = listOf(organizationId)
+                )
+            )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Log.d(logTag, "Ошибка: ${e.message}")

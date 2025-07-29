@@ -80,10 +80,6 @@
     <string name="payment_rub">₽</string>
     <string name="no_utensils">Мне не нужны приборы и салфетки</string>
     <string name="i_need_utensils">Мне нужны:</string>
-    <string name="chopsticks">палочки</string>
-    <string name="disposable_utensils">одноразовые приборы</string>
-    <string name="napkins">бумажные салфетки</string>
-    <string name="gloves">одноразовые перчатки (для бургеров)</string>
     <string name="total_cart_cost">Сумма заказа</string>
     <string name="discount_template">Скидка %1$d%%</string>
     <string name="discount_hint">Скидка по&#160;вашей карте действует не&#160;на&#160;все товары в заказе.</string>

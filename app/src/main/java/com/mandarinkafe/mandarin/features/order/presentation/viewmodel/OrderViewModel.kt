@@ -10,11 +10,13 @@ import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDelivery
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealPickupPoint
+import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.CheckDiscountByPhoneUseCase
+import com.mandarinkafe.mandarin.features.order.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.OrderPickupPoint
-import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
+import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
@@ -31,9 +33,9 @@ class OrderViewModel @Inject constructor(
     private val getSavedAddressesUseCase: GetSavedAddressesUseCase,
     private val removeAddress: RemoveAddressUseCase,
     private val observeCartItemsUseCase: ObserveCartItemsUseCase,
-    private val checkDiscountByPhone: CheckDiscountByPhoneUseCase
-) :
-    BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
+    private val checkDiscountByPhone: CheckDiscountByPhoneUseCase,
+    private val getPaymentTypesUseCase: GetPaymentTypesUseCase
+) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     init {
         getSavedAddresses()
@@ -61,6 +63,14 @@ class OrderViewModel @Inject constructor(
             is OrderEvent.RemoveAddress -> removeSavedAddress(event.id)
             is OrderEvent.RefreshAddresses -> getSavedAddresses()
             is OrderEvent.SelectAddressById -> selectAddressById(event.id)
+            is OrderEvent.GetPaymentTypes -> getPaymentTypes()
+        }
+    }
+
+    private fun getPaymentTypes() {
+        viewModelScope.launch {
+            val types = getPaymentTypesUseCase()
+            setState { copy(availablePaymentTypes = types) }
         }
     }
 
@@ -178,7 +188,15 @@ class OrderViewModel @Inject constructor(
     }
 
     private fun submitOrder() {
-        sendEffect(OrderEffect.SubmitOrder)
+        viewModelScope.launch {
+            with(state.value) {
+                val order = toDomain(
+                    paymentType = availablePaymentTypes.first { it.code == chosenPaymentType?.code }
+                )
+                Log.d("DEBUG CREATE ORDER API", "VM, submitOrder, order created: $order")
+            }
+//            sendEffect(OrderEffect.SubmitOrder)
+        }
     }
 
     private fun goToAddressEdit(address: Address) {
@@ -225,8 +243,10 @@ class OrderViewModel @Inject constructor(
         setState { copy(noNeedUtensils = noNeedUtensils) }
     }
 
-    private fun setPaymentType(paymentType: PaymentType) {
-        setState { copy(paymentType = paymentType) }
+    private fun setPaymentType(paymentType: UiPaymentType) {
+        setState {
+            copy(chosenPaymentType = paymentType)
+        }
     }
 
     private fun setPhone(query: String) {

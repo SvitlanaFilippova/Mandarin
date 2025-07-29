@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.OrderPickupPoint
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
+import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
@@ -21,7 +22,7 @@ sealed interface OrderContract {
         data object AddNewAddress : OrderEvent
         data class EditAddress(val address: Address) : OrderEvent
         data class RemoveAddress(val id: String) : OrderEvent
-        data class SetPaymentType(val paymentType: PaymentType) : OrderEvent
+        data class SetPaymentType(val paymentType: UiPaymentType) : OrderEvent
         data class NoChangeToggled(val noChange: Boolean) : OrderEvent
         data class SetChangeFrom(val query: String) : OrderEvent
         data class SetNoNeedUtensils(val noNeedUtensils: Boolean) : OrderEvent
@@ -30,6 +31,7 @@ sealed interface OrderContract {
         data class SelectAddressById(val id: String) : OrderEvent
         data object OnMissingRequiredInfo : OrderEvent
         data object SubmitOrder : OrderEvent
+        data object GetPaymentTypes : OrderEvent
     }
 
     sealed interface OrderEffect : BaseEffect {
@@ -44,7 +46,8 @@ sealed interface OrderContract {
         val deliveryType: DeliveryType? = null,
         val chosenAddress: Address? = null,
         val savedAddresses: List<Address> = listOf(),
-        val paymentType: PaymentType? = null,
+        val availablePaymentTypes: List<PaymentType> = emptyList(),
+        val chosenPaymentType: UiPaymentType? = null,
         val noChange: Boolean = false,
         val changeFrom: String = "",
         val noNeedUtensils: Boolean = false,
@@ -72,10 +75,10 @@ sealed interface OrderContract {
                 chosenAddress != null || deliveryType == DeliveryType.SELF_PICKUP
         val addressInNotInDeliveryArea: Boolean
             get() = deliveryType == DeliveryType.DELIVERY && chosenAddress != null && deliveryFreeThreshold == null
-        val paymentTypeChosen: Boolean
-            get() = paymentType != null
+        val paymentTypeIsChosen: Boolean
+            get() = chosenPaymentType != null
         val canBeSubmitted: Boolean
-            get() = phoneIsValid && addressEntered && paymentTypeChosen
+            get() = phoneIsValid && addressEntered && paymentTypeIsChosen
 
     }
 }

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.address.addressdetails.presentation.components
+package com.mandarinkafe.mandarin.util.presentation.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

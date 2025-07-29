@@ -5,5 +5,6 @@ data class Item(
     val modifiers: List<OrderModifier>,
     val price: Double,
     val amount: Double,
-    val type: String, // product or compound
+    val type: String,
+    val comment: String = ""
 )

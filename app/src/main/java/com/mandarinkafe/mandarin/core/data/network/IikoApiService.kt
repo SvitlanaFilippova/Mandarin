@@ -11,6 +11,7 @@ import com.mandarinkafe.mandarin.features.order.data.network.LoyaltyCustomerByPh
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.LoyaltyCustomerResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.CreateDeliveryRequest
+import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.paymenttype.PaymentTypesResponse
 import retrofit2.http.Body
 import retrofit2.http.Header
@@ -45,7 +46,8 @@ interface IikoApiService {
 
     @POST("/api/1/payment_types")
     suspend fun getPaymentTypes(
-        @Header("Authorization") token: String
+        @Header("Authorization") token: String,
+        @Body body: PaymentTypesRequest
     ): PaymentTypesResponse
 
     @POST("/api/1/deliveries/create")

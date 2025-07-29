@@ -84,6 +84,10 @@ fun OrderScreen(
             }
     }
 
+    LaunchedEffect(Unit) {
+        orderViewModel.onEvent(OrderEvent.GetPaymentTypes)
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -141,7 +145,8 @@ fun OrderScreen(
 
         item {
             PaymentChooser(
-                chosen = state.paymentType,
+                paymentTypes = state.availablePaymentTypes,
+                chosen = state.chosenPaymentType,
                 changeAmount = state.changeFrom,
                 isError = state.isError,
                 onPaymentTypeSelected = { onEvent(OrderEvent.SetPaymentType(it)) },

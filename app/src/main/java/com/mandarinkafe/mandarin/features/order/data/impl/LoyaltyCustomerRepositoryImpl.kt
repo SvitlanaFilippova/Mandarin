@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.order.data.impl
 
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
-import com.mandarinkafe.mandarin.features.order.data.impl.mapper.toDomain
+import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.data.network.dto.LoyaltyCustomerResponse
 import com.mandarinkafe.mandarin.features.order.domain.api.LoyaltyCustomerRepository
 import com.mandarinkafe.mandarin.features.order.domain.models.LoyaltyCustomer

@@ -13,6 +13,7 @@ data class Meal(
     val imageUrl: String,
     val description: String,
     val sku: String,
+    val orderItemType: String,
 
     /**
     Внутренние теги для особой обработки блюда в меню

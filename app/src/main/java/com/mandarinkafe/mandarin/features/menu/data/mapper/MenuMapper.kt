@@ -90,6 +90,7 @@ private fun MealDto.toDomain(
         parentCategoryName = parentCategoryName,
         grandParentCategoryName = grandParentCategoryName,
         pickupPoint = resolvePickupPoint(finalMealTags),
+        orderItemType = orderItemType,
     )
 }
 

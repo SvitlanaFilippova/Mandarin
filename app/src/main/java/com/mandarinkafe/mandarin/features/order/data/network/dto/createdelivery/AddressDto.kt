@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery
 
-data class Address(
+data class AddressDto(
     val street: Street,
-    val house: String,
+    val house: String = "-",
     val flat: String,
     val entrance: String,
     val floor: String,
