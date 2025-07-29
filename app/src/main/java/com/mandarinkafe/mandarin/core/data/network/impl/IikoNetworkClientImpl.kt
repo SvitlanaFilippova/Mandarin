@@ -58,7 +58,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d(logTag, "$ERROR: ${e.message}")
+            Log.d(logTag, ERROR + e.message)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -75,7 +75,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d(logTag, "$ERROR: ${e.message}")
+            Log.d(logTag, ERROR + e.message)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -92,7 +92,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d(logTag, "$ERROR: ${e.message}")
+            Log.d(logTag, ERROR + e.message)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -115,7 +115,7 @@ class IikoNetworkClientImpl(
             )
             menuResponse.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d(logTag, "$ERROR: ${e.message}")
+            Log.d(logTag, ERROR + e.message)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

@@ -91,7 +91,7 @@ fun CustomizedMeal.toItem(quantity: Int, discountSize: Int): Item {
     val discountedPrice = if (meal.discountable) {
         (meal.price.toDouble() * discountMultiplier).roundTo(PRICE_DECIMALS)
     } else {
-        meal.price.toDouble().roundTo(PRICE_DECIMALS)
+        meal.price.toDouble()
     }
 
     val discountedModifiers = modifiers.flatMap { group ->
@@ -125,7 +125,7 @@ fun MealAdditional.toItem(quantity: Int = 1, discountSize: Int): Item {
     val discountedPrice = if (discountable) {
         (price.toDouble() * discountMultiplier).roundTo(PRICE_DECIMALS)
     } else {
-        price.toDouble().roundTo(PRICE_DECIMALS)
+        price.toDouble()
     }
 
     return Item(
