@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.cart.data.impl
 
 import android.util.Log
-import com.mandarinkafe.mandarin.core.data.api.CartCountReader
+import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
@@ -16,24 +16,32 @@ import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
 import com.mandarinkafe.mandarin.util.Resource
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @Singleton
 class CartRepositoryImpl @Inject constructor(
     private val storage: CartStorage,
     private val menuCache: MenuCache,
-) : CartRepository, CartCountReader {
+) : CartRepository, CartReader {
 
     private var rawCart: List<StoredCartItem>? = null
     private val _cartCount = MutableStateFlow(0)
     override fun observeCartItemsCount(): Flow<Int> = _cartCount.asStateFlow()
 
+    private val _cartItems = MutableStateFlow<Map<CustomizedMeal, Int>>(emptyMap())
+    override fun observeCartItems(): Flow<Map<CustomizedMeal, Int>> = _cartItems.asStateFlow()
+
     init {
-        updateCartCount()
+        CoroutineScope(Dispatchers.IO).launch {
+            refreshCart(storage.getCart())
+        }
     }
 
     override suspend fun getCart(): Resource<Map<CustomizedMeal, Int>> {
@@ -138,8 +146,9 @@ class CartRepositoryImpl @Inject constructor(
             cart.add(item.toStoredCartItem(quantity = 1))
         }
         storage.saveCart(cart)
-        rawCart = null
-        updateCartCount()
+        CoroutineScope(Dispatchers.IO).launch {
+            refreshCart(cart)
+        }
     }
 
     override fun removeFromCart(item: CustomizedMeal) {
@@ -155,14 +164,17 @@ class CartRepositoryImpl @Inject constructor(
             }
         }
         storage.saveCart(cart)
-        rawCart = null
-        updateCartCount()
+        CoroutineScope(Dispatchers.IO).launch {
+            refreshCart(cart)
+        }
     }
 
     override fun clearCart() {
         storage.clearCart()
         rawCart = null
-        updateCartCount()
+        CoroutineScope(Dispatchers.IO).launch {
+            refreshCart(emptyList())
+        }
     }
 
     private fun loadRawCart(): List<StoredCartItem>? {
@@ -174,14 +186,31 @@ class CartRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun updateCartCount() {
-        _cartCount.value = try {
-            storage.getCart().sumOf { it.quantity }
-        } catch (e: Exception) {
-            Log.e(ERROR_TAG, ERROR_CART_READ, e)
-            0
+    private suspend fun refreshCart(updatedRawCart: List<StoredCartItem>) {
+        rawCart = updatedRawCart
+
+        val menu = awaitMenu()
+        if (menu !is Resource.Success) {
+            _cartItems.value = emptyMap()
+            _cartCount.value = 0
+            return
         }
+
+        val (valid, invalidIds) = mapAndValidate(updatedRawCart, menu.data ?: emptyList())
+        cleanupInvalid(invalidIds, updatedRawCart)
+
+        _cartItems.value = valid
+        _cartCount.value = valid.values.sum()
     }
+
+//    private fun updateCartCount() {
+//        _cartCount.value = try {
+//            storage.getCart().sumOf { it.quantity }
+//        } catch (e: Exception) {
+//            Log.e(ERROR_TAG, ERROR_CART_READ, e)
+//            0
+//        }
+//    }
 
     companion object {
         private const val ERROR_TAG = "CartRepository"

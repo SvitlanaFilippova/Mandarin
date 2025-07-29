@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.core.domain.models.DeliveryArea
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
@@ -43,7 +43,6 @@ sealed interface OrderContract {
         val deliveryType: DeliveryType? = null,
         val chosenAddress: Address? = null,
         val savedAddresses: List<Address> = listOf(),
-        val deliveryZone: DeliveryArea? = null,
         val paymentType: PaymentType? = null,
         val noChange: Boolean = false,
         val changeFrom: String = "",
@@ -51,9 +50,17 @@ sealed interface OrderContract {
         val chosenUtensils: List<Utensil> = listOf(),
         val comment: String = "",
         val isError: Boolean = false,
-        val discountPercent: Int = 0,
-        val deliveryCost: Int? = null,
-        val discountSum: Float = 0f,
+        val cartItems: Map<CustomizedMeal, Int> = emptyMap(),
+        val pickupOnly: Boolean = false,
+        val containNotDiscountable: Boolean = false,
+        val totalCartSum: Int? = null,
+        val deliveryFreeThreshold: Int? = null,
+        val deliveryBasePrice: Int? = null,
+        val deliveryRealCost: Int? = null,
+        val discountSize: Int = 0,
+        val discountSum: Double = 0.0,
+        val totalCartSumWithDiscount: Double = 0.0,
+        val totalOrderSum: Double = 0.0,
     ) : BaseState {
         val phoneIsValid: Boolean
             get() = phone.length == VALID_PHONE_LENGTH
@@ -61,10 +68,11 @@ sealed interface OrderContract {
             get() =
                 chosenAddress != null || deliveryType == DeliveryType.SELF_PICKUP
         val addressInNotInDeliveryArea: Boolean
-            get() = deliveryType == DeliveryType.DELIVERY && chosenAddress != null && deliveryZone == null
+            get() = deliveryType == DeliveryType.DELIVERY && chosenAddress != null && deliveryFreeThreshold == null
         val paymentTypeChosen: Boolean
             get() = paymentType != null
         val canBeSubmitted: Boolean
             get() = phoneIsValid && addressEntered && paymentTypeChosen
+
     }
 }

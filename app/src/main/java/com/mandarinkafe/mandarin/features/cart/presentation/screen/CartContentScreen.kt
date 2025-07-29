@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -108,9 +109,16 @@ fun CartContentScreen(
                 // Горизонтальный список рекомендаций
                 item {
                     if (state.recommendsAreLoading) {
-                        MyCircularProgressIndicator(
-                            strokeWidth = Dimens.ProgressBarSmallWidth8,
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = Dimens.MarginStandard16),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            MyCircularProgressIndicator(
+                                strokeWidth = Dimens.ProgressBarSmallWidth8,
+                            )
+                        }
                     } else {
                         CartRecommendsList(
                             recommendsList = state.recommends,
@@ -118,7 +126,6 @@ fun CartContentScreen(
                             onAddToCart = onAddToCart,
                             onMealDetailsClick = onMealDetailsClick,
                         )
-
                     }
                 }
 

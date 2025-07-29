@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.cart.di
 
 import android.content.SharedPreferences
-import com.mandarinkafe.mandarin.core.data.api.CartCountReader
+import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.cart.data.impl.CartRepositoryImpl
@@ -53,7 +53,7 @@ object CartModule {
     @Singleton
     fun provideCartCountReader(
         cartRepository: CartRepository
-    ): CartCountReader = cartRepository as CartCountReader
+    ): CartReader = cartRepository as CartReader
 
     @Provides
     @Singleton

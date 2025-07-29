@@ -20,7 +20,6 @@ import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.DeliveryTypeChooser
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.OrderSummaryData
@@ -44,19 +43,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun OrderScreen(
     orderViewModel: OrderViewModel,
-    cartViewModel: CartViewModel,
     navController: NavHostController
 ) {
     val state by orderViewModel.state.collectAsState()
     val effectFlow = orderViewModel.effect
-    val cartState by cartViewModel.state.collectAsState()
     val onEvent = orderViewModel::onEvent
-    val cartSum = cartState.totalCartPrice
-    val discountSum = state.discountSum
-    val deliveryCost = state.deliveryCost ?: 0
+    val cartSum = state.totalCartSum ?: 0
 
-    val totalOrderSum =
-        remember(cartSum, discountSum, deliveryCost) { cartSum - discountSum + deliveryCost }
+    val totalOrderSum = state.totalOrderSum
     var showConfirmDeleteDialog by remember { mutableStateOf(false) }
     var addressToDelete by remember { mutableStateOf<String?>(null) }
 
@@ -112,7 +106,7 @@ fun OrderScreen(
         item {
             DeliveryTypeChooser(
                 chosen = chosenDeliveryType,
-                pickupOnly = cartState.pickupOnly,
+                pickupOnly = state.pickupOnly,
                 isError = state.isError,
                 onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
             )
@@ -175,15 +169,19 @@ fun OrderScreen(
         }
 
         item {
-            OrderSummaryData(
-                cartSum = cartSum,
-                discountSum = discountSum,
-                discountPercent = state.discountPercent,
-                deliveryCost = deliveryCost,
-                addressInNotInDeliveryArea = state.addressInNotInDeliveryArea,
-                freeDeliveryThreshold = state.deliveryZone?.freeDeliveryThreshold,
-                deliveryType = state.deliveryType
-            )
+            with(state)
+            {
+                OrderSummaryData(
+                    cartSum = cartSum,
+                    discountSum = discountSum,
+                    discountSize = discountSize,
+                    deliveryCost = deliveryRealCost ?: 0,
+                    containNotDiscountable = state.containNotDiscountable,
+                    addressInNotInDeliveryArea = addressInNotInDeliveryArea,
+                    freeDeliveryThreshold = deliveryFreeThreshold,
+                    deliveryType = deliveryType
+                )
+            }
         }
 
         item {
@@ -197,7 +195,7 @@ fun OrderScreen(
                     }
                 },
                 onSubmitOrder = { onEvent(OrderEvent.SubmitOrder) },
-                totalPrice = totalOrderSum,
+                totalOrderSum = totalOrderSum,
             )
         }
     }
