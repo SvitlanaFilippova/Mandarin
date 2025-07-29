@@ -9,6 +9,8 @@ import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.features.order.data.network.LoyaltyCustomerByPhoneRequest
+import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.CreateDeliveryRequest
+import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.OrderDto
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
@@ -20,8 +22,7 @@ class IikoNetworkClientImpl(
     private val networkMonitor: NetworkMonitor,
     private val iikoService: IikoApiService,
 ) : IikoNetworkClient {
-    private val logTag = "DEBUG IIKO API"
-
+    private val logTag = "DEBUG IIKO NetworkClient"
     private var token = ""
     private var organizationId = ""
     private var externalMenuId = ""
@@ -46,11 +47,36 @@ class IikoNetworkClientImpl(
         }
     }
 
+    override suspend fun getPaymentTypes(): Response {
+        return try {
+            val response = iikoService.getPaymentTypes(token = token)
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.d(logTag, "Ошибка: ${e.message}")
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    override suspend fun createDelivery(order: OrderDto): Response {
+        return try {
+            val response = iikoService.createDelivery(
+                token = token, body = CreateDeliveryRequest(
+                    order = order,
+                    organizationId = organizationId
+                )
+            )
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.d(logTag, "Ошибка: ${e.message}")
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
     private suspend fun fetchLoyaltyCustomerInfo(phone: String): Response {
         return try {
             val request = LoyaltyCustomerByPhoneRequest(
                 organizationId = organizationId,
-                phone = CODE_FOR_PHONE + phone
+                phone = phone
             )
             val response = iikoService.getLoyaltyCustomerInfo(
                 token = token,
@@ -97,7 +123,6 @@ class IikoNetworkClientImpl(
             // Уже авторизованы
             return
         }
-
         try {
             val authResponse = iikoService.authenticate(AuthRequest(BuildConfig.IIKO_API_KEY))
             token = BEARER_PREFIX + authResponse.token
@@ -118,7 +143,6 @@ class IikoNetworkClientImpl(
     }
 
     private companion object {
-        const val CODE_FOR_PHONE = "+7"
         const val BEARER_PREFIX = "Bearer "
     }
 }

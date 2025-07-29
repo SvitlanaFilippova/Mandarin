@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.order.data.mapper
+package com.mandarinkafe.mandarin.features.order.data.impl.mapper
 
 import com.mandarinkafe.mandarin.features.order.data.network.dto.LoyaltyCustomerResponse
 import com.mandarinkafe.mandarin.features.order.domain.models.LoyaltyCustomer
