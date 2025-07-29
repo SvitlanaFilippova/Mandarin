@@ -8,7 +8,7 @@ import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
-import com.mandarinkafe.mandarin.util.Constants.BEARER_PREFIX
+import com.mandarinkafe.mandarin.features.order.data.network.LoyaltyCustomerByPhoneRequest
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
@@ -20,6 +20,7 @@ class IikoNetworkClientImpl(
     private val networkMonitor: NetworkMonitor,
     private val iikoService: IikoApiService,
 ) : IikoNetworkClient {
+    private val logTag = "DEBUG IIKO API"
 
     private var token = ""
     private var organizationId = ""
@@ -32,6 +33,33 @@ class IikoNetworkClientImpl(
         return withContext(Dispatchers.IO) {
             ensureAuthenticated()
             fetchMenu()
+        }
+    }
+
+    override suspend fun getLoyaltyCustomerInfo(phone: String): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return withContext(Dispatchers.IO) {
+            ensureAuthenticated()
+            fetchLoyaltyCustomerInfo(phone)
+        }
+    }
+
+    private suspend fun fetchLoyaltyCustomerInfo(phone: String): Response {
+        return try {
+            val request = LoyaltyCustomerByPhoneRequest(
+                organizationId = organizationId,
+                phone = CODE_FOR_PHONE + phone
+            )
+            val response = iikoService.getLoyaltyCustomerInfo(
+                token = token,
+                body = request
+            )
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.d(logTag, "Ошибка: ${e.message}")
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
@@ -53,7 +81,7 @@ class IikoNetworkClientImpl(
             )
             menuResponse.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d("DEBUG IIKO API", "Ошибка: ${e.message}")
+            Log.d(logTag, "Ошибка: ${e.message}")
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -81,7 +109,7 @@ class IikoNetworkClientImpl(
             organizationId = organizationsResponse.organizations.firstOrNull()?.id
                 ?: error("No organization found")
         } catch (e: Throwable) {
-            Log.d("DEBUG IIKO API", "Ошибка в методе authenticate: ${e.message}")
+            Log.d(logTag, "Ошибка в методе authenticate: ${e.message}")
         }
     }
 
@@ -89,5 +117,8 @@ class IikoNetworkClientImpl(
         return networkMonitor.isNetworkAvailable()
     }
 
-
+    private companion object {
+        const val CODE_FOR_PHONE = "+7"
+        const val BEARER_PREFIX = "Bearer "
+    }
 }

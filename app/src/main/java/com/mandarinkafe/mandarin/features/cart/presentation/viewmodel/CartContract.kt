@@ -46,11 +46,5 @@ sealed interface CartContract {
             get() = actualCartItems.entries.sumOf { (item, quantity) ->
                 item.totalPrice() * quantity
             }
-
-        val pickupOnly: Boolean
-            get() = actualCartItems.keys.any { it.meal.isPickupOnly }
-
-        val containNotDiscountable: Boolean
-            get() = actualCartItems.keys.any { !it.meal.discountable }
     }
 }

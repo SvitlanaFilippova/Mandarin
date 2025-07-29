@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.core.domain.models
 
 import androidx.compose.runtime.Stable
+import com.mandarinkafe.mandarin.features.menu.domain.models.MealPickupPoint
 
 @Stable
 data class Meal(
@@ -66,7 +67,12 @@ data class Meal(
     /**
     Название прародительской категории, если есть
      */
-    val grandParentCategoryName: String?
+    val grandParentCategoryName: String?,
+
+    /**
+    Название прародительской категории, если есть
+     */
+    val pickupPoint: MealPickupPoint
 )
 
 /**

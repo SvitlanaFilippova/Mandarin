@@ -86,15 +86,20 @@
     <string name="gloves">одноразовые перчатки (для бургеров)</string>
     <string name="total_cart_cost">Сумма заказа</string>
     <string name="discount_template">Скидка %1$d%%</string>
-    <string name="discount_hint">Скидка по&#160;вашей карте может действовать не&#160;на&#160;все товары.</string>
+    <string name="discount_hint">Скидка по&#160;вашей карте действует не&#160;на&#160;все товары в заказе.</string>
     <string name="delivery_cost">Стоимость доставки</string>
     <string name="delivery_cost_hint">Для выбранного адреса доставка бесплатна при заказе от&#160;%1&#36;d&#8381; (с&#160;учётом скидок).</string>
     <string name="why_is_that_number">Почему такая цифра</string>
-    <string name="delivery_request_validation">Введите адрес для расчёта стоимости доставки</string>
-    <string name="pickup_only">В&#160;заказе есть товары, доступные только для самовывоза. Доставка невозможна.</string>
+    <string name="delivery_request_validation">Нужно ввести адрес для расчёта стоимости доставки</string>
     <string name="delivery_validation_error">Не&#160;удалось найти выбранный адрес в&#160;пределах зон доставки. Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа.</string>
     <string name="submit_order">Оформить заказ</string>
     <string name="order_total_cost_template">%.2f ₽</string>
+    <string name="pickup_only">В&#160;заказе есть позиции, доступные только для самовывоза. Доставка невозможна.</string>
+    <string name="pickup_both_title">Ваш заказ будет готов в&#160;двух точках самовывоза</string>
+    <string name="pickup_both_description">В&#160;заказе есть блюда, которые готовятся в&#160;пиццерии, и&#160;те, что готовятся в&#160;основном кафе.
+Их&#160;нужно будет забрать по&#160;двум адресам. Это соседние здания.</string>
+    <string name="pickup_cafe_address">Кафе&#160;&#8212; Черноголовка, ул. Береговая, 24</string>
+    <string name="pickup_pizzeria_address">Пиццерия&#160;&#8212; Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
 
     <!-- Адрес -->
     <string name="location">Адрес</string>

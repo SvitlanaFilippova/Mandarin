@@ -15,12 +15,13 @@ import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 @Composable
 fun OrderSummaryData(
     cartSum: Int,
-    discountSum: Float,
-    discountPercent: Int,
+    discountSize: Int,
+    discountSum: Double,
     deliveryType: DeliveryType?,
     deliveryCost: Int,
     addressInNotInDeliveryArea: Boolean,
     freeDeliveryThreshold: Int?,
+    containNotDiscountable: Boolean,
 ) {
     Column {
         Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
@@ -29,16 +30,18 @@ fun OrderSummaryData(
             amount = cartSum.toFloat()
         )
 
-        // Информацию о скидке показываем только если по номеру телефона найдена скидочная карта
-        if (discountPercent > 0) {
+        // Информацию о скидке показываем только если есть скидочная карта
+        if (discountSize > 0) {
+            val hintText =
+                if (containNotDiscountable) stringResource(R.string.discount_hint) else null
             OrderSummaryRow(
-                name = stringResource(R.string.discount_template, discountPercent),
-                amount = discountSum,
-                hintText = stringResource(R.string.discount_hint)
+                name = stringResource(R.string.discount_template, discountSize),
+                amount = discountSum.toFloat(),
+                hintText = hintText
             )
         }
 
-// Стоимость доставки показываем только если НЕ выбран самовывоз
+        // Стоимость доставки показываем только если НЕ выбран самовывоз
         if (deliveryType != DeliveryType.SELF_PICKUP) {
             when (addressInNotInDeliveryArea) {
                 true -> {

@@ -139,7 +139,6 @@ fun NavGraph(navHostController: NavHostController) {
 
             composable(ORDER_SCREEN_ROUTE) {
                 OrderScreen(
-                    cartViewModel = cartViewModel,
                     navController = navHostController,
                     orderViewModel = orderViewModel
                 )

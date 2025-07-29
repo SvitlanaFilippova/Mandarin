@@ -23,7 +23,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 fun SubmitOrderButton(
     modifier: Modifier = Modifier,
     shouldBeActive: Boolean,
-    totalPrice: Float,
+    totalOrderSum: Double,
     onMissingRequiredInfo: () -> Unit,
     onSubmitOrder: () -> Unit,
 ) {
@@ -66,7 +66,7 @@ fun SubmitOrderButton(
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = stringResource(R.string.order_total_cost_template, totalPrice),
+                text = stringResource(R.string.order_total_cost_template, totalOrderSum),
                 style = Typography.ToCartButtonBigStyle,
                 color = contentColor
             )

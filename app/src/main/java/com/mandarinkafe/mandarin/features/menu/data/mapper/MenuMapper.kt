@@ -16,10 +16,13 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierItemDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.TagDto
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
+import com.mandarinkafe.mandarin.features.menu.domain.models.MealPickupPoint
 import com.mandarinkafe.mandarin.util.Constants.TAG_ADDS
+import com.mandarinkafe.mandarin.util.Constants.TAG_CAFE
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_ADDS
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_DELIVERY
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_DISCOUNT
+import com.mandarinkafe.mandarin.util.Constants.TAG_PIZZERIA
 import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.removeLeadingDash
 
@@ -86,8 +89,8 @@ private fun MealDto.toDomain(
         discountable = isDiscountable(finalMealTags),
         parentCategoryName = parentCategoryName,
         grandParentCategoryName = grandParentCategoryName,
-
-        )
+        pickupPoint = resolvePickupPoint(finalMealTags),
+    )
 }
 
 fun CategoryDto.hasParent(): Boolean =
@@ -192,3 +195,12 @@ private fun isDiscountable(tags: List<Tag>): Boolean {
 private fun requireSelection(modifiers: List<ModifierGroup>): Boolean {
     return modifiers.any { it.isRequired }
 }
+
+private fun resolvePickupPoint(tags: List<Tag>): MealPickupPoint {
+    return when {
+        tags.any { it.name.equals(TAG_PIZZERIA, ignoreCase = true) } -> MealPickupPoint.PIZZERIA
+        tags.any { it.name.equals(TAG_CAFE, ignoreCase = true) } -> MealPickupPoint.CAFE
+        else -> MealPickupPoint.ANY
+    }
+}
+

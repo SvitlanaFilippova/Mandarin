@@ -2,11 +2,9 @@ package com.mandarinkafe.mandarin.core.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.mandarinkafe.mandarin.core.data.api.CartCountReader
+import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
-import com.mandarinkafe.mandarin.core.data.impl.GetInitialDataUseCaseImpl
 import com.mandarinkafe.mandarin.core.data.impl.MenuCacheImpl
-import com.mandarinkafe.mandarin.core.data.impl.ObserveCartCountUseCaseImpl
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.IikoApiService
@@ -16,6 +14,10 @@ import com.mandarinkafe.mandarin.core.data.network.impl.IikoNetworkClientImpl
 import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartCountUseCase
+import com.mandarinkafe.mandarin.core.domain.api.ObserveCartItemsUseCase
+import com.mandarinkafe.mandarin.core.domain.impl.GetInitialDataUseCaseImpl
+import com.mandarinkafe.mandarin.core.domain.impl.ObserveCartCountUseCaseImpl
+import com.mandarinkafe.mandarin.core.domain.impl.ObserveCartItemsUseCaseImpl
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.util.Constants.GOOGLE_DOCS_BASE_URL
 import com.mandarinkafe.mandarin.util.Constants.IIKO_BASE_URL
@@ -33,7 +35,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class CoreDataModule {
+class CoreModule {
     @Provides
     @Singleton
     fun provideSharedPreferences(
@@ -111,9 +113,15 @@ class CoreDataModule {
 
     @Provides
     @Singleton
-    fun provideObserveCartCountUseCase(cartCountReader: CartCountReader): ObserveCartCountUseCase {
+    fun provideObserveCartCountUseCase(cartReader: CartReader): ObserveCartCountUseCase {
         return ObserveCartCountUseCaseImpl(
-            reader = cartCountReader
+            reader = cartReader
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideObserveCartItemsUseCase(cartReader: CartReader): ObserveCartItemsUseCase {
+        return ObserveCartItemsUseCaseImpl(reader = cartReader)
     }
 }

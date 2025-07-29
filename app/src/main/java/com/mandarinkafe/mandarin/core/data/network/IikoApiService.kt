@@ -7,6 +7,8 @@ import com.mandarinkafe.mandarin.core.data.dto.OrganizationsResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.MenuIdResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.MenuResponse
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
+import com.mandarinkafe.mandarin.features.order.data.network.LoyaltyCustomerByPhoneRequest
+import com.mandarinkafe.mandarin.features.order.data.network.dto.LoyaltyCustomerResponse
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -31,4 +33,10 @@ interface IikoApiService {
         @Header("Authorization") token: String,
         @Body body: MenuRequest
     ): MenuResponse
+
+    @POST("api/1/loyalty/iiko/customer/info")
+    suspend fun getLoyaltyCustomerInfo(
+        @Header("Authorization") token: String,
+        @Body body: LoyaltyCustomerByPhoneRequest
+    ): LoyaltyCustomerResponse
 }

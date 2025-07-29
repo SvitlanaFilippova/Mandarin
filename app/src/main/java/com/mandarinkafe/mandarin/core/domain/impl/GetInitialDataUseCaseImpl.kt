@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.core.data.impl
+package com.mandarinkafe.mandarin.core.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
