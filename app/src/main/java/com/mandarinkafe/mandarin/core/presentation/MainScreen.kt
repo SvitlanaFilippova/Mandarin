@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.core.presentation
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -52,9 +51,8 @@ fun MainScreen() {
     val snackbarHostState = remember { SnackbarHostState() }
     val showBackButton = currentRoute?.let { route ->
         RoutesWithBackButton.any { route.startsWith(it.substringBefore("/{")) }
-
     } == true
-    Log.d("DEBUG showBackButton", "currentRoute: $currentRoute, showBackButton: $showBackButton")
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
 

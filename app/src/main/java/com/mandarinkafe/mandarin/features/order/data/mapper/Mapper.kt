@@ -72,7 +72,7 @@ fun Order.toOrderDto(): OrderDto {
         } else {
             OrderConstants.DELIVERY_TYPE_PICKUP
         },
-        deliveryPoint = chosenAddress?.toDeliveryPoint(comment),
+        deliveryPoint = chosenAddress?.toDeliveryPoint(),
         comment = comment,
         customer = Customer(
             name = name,
@@ -119,11 +119,6 @@ fun CustomizedMeal.toItem(quantity: Int, discountSize: Int): Item {
         price = discountedPrice,
         amount = quantity.toDouble(),
         type = meal.orderItemType,
-        comment = if (adds.isNotEmpty()) {
-            adds.joinToString(", ") { it.name }
-        } else {
-            ""
-        }
     )
 }
 
@@ -146,13 +141,13 @@ fun MealAdditional.toItem(quantity: Int = 1, discountSize: Int): Item {
     )
 }
 
-fun Address?.toDeliveryPoint(comment: String): DeliveryPoint? {
+fun Address?.toDeliveryPoint(): DeliveryPoint? {
     return if (this == null) {
         null
     } else {
         DeliveryPoint(
             address = AddressDto(
-                street = Street(name = this.streetAndBuilding),
+                street = Street(name = this.streetAndBuilding, id = null),
                 flat = apartmentNumber,
                 entrance = entrance,
                 floor = floor,
@@ -227,4 +222,3 @@ fun ErrorInfoDto.toDomain() = ErrorInfo(
     errorReason = errorReason,
     additionalData = additionalData
 )
-

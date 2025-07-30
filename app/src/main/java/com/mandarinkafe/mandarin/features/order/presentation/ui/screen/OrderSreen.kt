@@ -3,10 +3,12 @@ package com.mandarinkafe.mandarin.features.order.presentation.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -16,10 +18,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.DeliveryTypeChooser
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.OrderSummaryData
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PaymentChooser
@@ -121,6 +125,19 @@ fun OrderScreen(
                 visible = state.deliveryInfo.isPickup,
                 pickupPoint = state.pickupPoint
             )
+        }
+
+        // Сообщение об ошибке, если выбрана доставка, но не выбран адрес
+        if (state.isError && state.deliveryInfo.isDelivery && !state.deliveryInfo.addressIsValid) {
+            item {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = Dimens.MarginSuperSmall4),
+                    text = stringResource(R.string.choose_address),
+                    style = Typography.RegularTextStyle.copy(color = Colors.ErrorRed),
+                )
+            }
         }
 
         item {

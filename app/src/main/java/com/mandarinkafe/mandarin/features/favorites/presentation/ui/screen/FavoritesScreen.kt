@@ -55,7 +55,14 @@ fun FavoritesScreen(
                 cartItems = cartState.cartItems,
                 onAddToCart = { item -> onCartEvent(CartEvent.AddToCart(item)) },
                 onRemoveFromCart = { item -> onCartEvent(CartEvent.RemoveFromCartByItem(item)) },
-                onMealDetailsClick = { item -> onSharedEvent(SharedEvent.OnMealDetailsClick(item = item)) },
+                onMealDetailsClick = { item ->
+                    onSharedEvent(
+                        SharedEvent.OnMealDetailsClick(
+                            item = item,
+                            isEditMode = false
+                        )
+                    )
+                },
                 onToggleFavorite = { item -> onSharedEvent(SharedEvent.ToggleFavorite(item = item)) }
             )
         }

@@ -78,6 +78,7 @@ class SharedViewModel @Inject constructor(
                     OpenMealDetailsBS(
                         event.meal,
                         event.item,
+                        isEditMode = false
                     )
                 )
             }

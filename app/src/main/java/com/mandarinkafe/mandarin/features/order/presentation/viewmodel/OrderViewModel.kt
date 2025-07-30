@@ -269,6 +269,7 @@ class OrderViewModel @Inject constructor(
                     else -> null
                 }
                 // Пересчёт после установки скидки
+                setState { copy(cartSummary = cartSummary.copy(discountCategory = discount ?: 0)) }
                 recalculateCartSummary(discountSize = discount)
 
             }

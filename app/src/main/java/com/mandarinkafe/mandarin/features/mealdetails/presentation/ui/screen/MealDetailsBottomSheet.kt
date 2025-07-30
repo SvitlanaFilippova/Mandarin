@@ -46,9 +46,7 @@ fun MealDetailsBottomSheet(
     isEditMode: Boolean,
 ) {
     if (initItem == null) return
-
     val state by viewModel.state.collectAsState()
-
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,

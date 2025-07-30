@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_CONFIRMATION_ROUTE
@@ -21,6 +22,12 @@ fun NavController.navigateToSearchScreen(focusInput: Boolean) {
         popUpTo(MENU_SCREEN_ROUTE) {
             saveState = true
         }
+    }
+}
+
+fun NavController.navigateToMenu() {
+    this.navigate(MENU_SCREEN_ROUTE) {
+        restoreState = true
     }
 }
 
@@ -56,11 +63,11 @@ fun NavController.navigateToAddressDetails(address: Address, isEditMode: Boolean
 }
 
 fun NavController.navigateToOrderConfirmation(orderId: String) {
-    val route = "$ORDER_CONFIRMATION_ROUTE/$orderId"
-    this.navigate(route) {
-        launchSingleTop = true
-        popUpTo(ORDER_SCREEN_ROUTE) {
+    this.navigate("$ORDER_CONFIRMATION_ROUTE/$orderId") {
+        popUpTo(MAIN_GRAPH) {
             inclusive = true
         }
+        launchSingleTop = true
     }
+
 }

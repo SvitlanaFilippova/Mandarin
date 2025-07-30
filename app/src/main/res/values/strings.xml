@@ -97,7 +97,8 @@
     <string name="pickup_cafe_address">Кафе&#160;&#8212; Черноголовка, ул. Береговая, 24</string>
     <string name="pickup_pizzeria_address">Пиццерия&#160;&#8212; Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
     <string name="order_submit_success">Заказ №%1$s успешно создан</string>
-
+    <string name="back_to_menu">Вернуться в меню</string>
+    <string name="choose_address">Выберите адрес *</string>
 
     <!-- Адрес -->
     <string name="location">Адрес</string>

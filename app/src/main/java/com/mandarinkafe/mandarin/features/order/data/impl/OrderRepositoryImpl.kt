@@ -27,6 +27,7 @@ class OrderRepositoryImpl(private val networkClient: IikoNetworkClient) : OrderR
             return emptyList()
         }
     }
+
     private val logTag = "DEBUG ORDER API OrderRepository"
 
     override suspend fun createOrder(order: Order): Resource<OrderInfo> {
@@ -49,7 +50,12 @@ class OrderRepositoryImpl(private val networkClient: IikoNetworkClient) : OrderR
 
                 HTTP_SUCCESS -> {
                     Log.d(logTag, "Success response, converting to domain")
-                    Resource.Success(data = (response as CreateDeliveryResponse).orderInfo.toDomain())
+                    val orderInfo = (response as CreateDeliveryResponse).orderInfo.toDomain()
+                    if (orderInfo.errorInfo == null) {
+                        Resource.Success(data = orderInfo)
+                    } else {
+                        Resource.ErrorOther(orderInfo.errorInfo.message ?: "Неизвестная ошибка")
+                    }
                 }
 
                 else -> {

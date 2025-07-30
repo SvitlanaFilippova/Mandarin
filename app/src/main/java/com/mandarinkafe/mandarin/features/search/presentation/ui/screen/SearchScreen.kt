@@ -12,7 +12,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewMo
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract.SearchEffect
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract.SearchEvent
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchViewModel
-import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 
@@ -50,7 +50,7 @@ fun SearchScreen(
         effectFlow.collect { effect ->
             if (effect is SearchEffect.GoBackToMenuEffect) {
                 if (!navController.popBackStack()) {
-                    navController.navigate(MENU_SCREEN_ROUTE)
+                    navController.navigateToMenu()
                 }
             }
         }
