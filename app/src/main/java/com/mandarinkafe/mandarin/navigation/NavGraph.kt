@@ -125,12 +125,6 @@ fun NavGraph(navHostController: NavHostController) {
                 )
             }
 
-            composable(NavConstants.ORDER_SCREEN_ROUTE) {
-                OrderScreen(
-                    navController = navHostController,
-                    orderViewModel = orderViewModel
-                )
-            }
             composable(route = NavConstants.ADDRESS_SCREEN_ROUTE) {
                 AddressMapScreen(navController = navHostController, initAddress = null)
             }
@@ -162,6 +156,12 @@ fun NavGraph(navHostController: NavHostController) {
                     navController = navHostController
                 )
             }
+            composable(NavConstants.ORDER_SCREEN_ROUTE) {
+                OrderScreen(
+                    navController = navHostController,
+                    orderViewModel = orderViewModel
+                )
+            }
 
             composable(
                 route = NavConstants.ORDER_CONFIRMATION_ROUTE_WITH_ARGS,
@@ -173,7 +173,8 @@ fun NavGraph(navHostController: NavHostController) {
             ) { backStackEntry ->
                 val orderId = backStackEntry.arguments?.getString(NavConstants.KEY_ORDER_ID) ?: ""
                 OrderConfirmationScreen(
-                    orderID = orderId
+                    orderID = orderId,
+                    navController = navHostController
                 )
             }
         }
