@@ -11,11 +11,20 @@ import com.yandex.mapkit.geometry.Point
 sealed interface AddressContract {
 
     sealed interface AddressEvent : BaseEvent {
+        // Установка начального состояния
         data class SetInitAddress(val address: Address) : AddressEvent
+
+        // Запрос данных
         data object RequestAddress : AddressEvent
+
+        // Навигация
         data object GoBack : AddressEvent
-        data class ChangeSearchQuery(val query: String) : AddressEvent
         data object GoToAddressDetails : AddressEvent
+
+        // Поиск адреса
+        data class ChangeSearchQuery(val query: String) : AddressEvent
+
+        // Взаимодействие с картой
         data class CameraMoved(val center: Point) : AddressEvent
     }
 

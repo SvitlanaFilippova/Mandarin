@@ -10,17 +10,23 @@ import com.mandarinkafe.mandarin.util.BaseState
 
 sealed interface CartContract {
     sealed interface CartEvent : BaseEvent {
+        // Инициализация
         data object Init : CartEvent
+
+        // Управление элементами корзины
         data class AddToCart(val item: CustomizedMeal) : CartEvent
         data class RemoveFromCartWithDelay(val item: CustomizedMeal) : CartEvent
         data class RemoveFromCartByItem(val item: CustomizedMeal) : CartEvent
         data class RemoveFromCartByMeal(val meal: Meal) : CartEvent
         data class ReplaceMealInCart(val newItem: CustomizedMeal, val oldItem: CustomizedMeal) :
             CartEvent
-
         data class CancelRemove(val item: CustomizedMeal) : CartEvent
+
+        // Очистка корзины
         data object ClearCart : CartEvent
         data object ConfirmClearCart : CartEvent
+
+        // Переход к оформлению заказа
         data object OnProceedOrderClick : CartEvent
     }
 

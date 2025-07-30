@@ -16,24 +16,37 @@ import com.mandarinkafe.mandarin.util.BaseState
 
 sealed interface OrderContract {
     sealed interface OrderEvent : BaseEvent {
-        data class SetName(val query: String) : OrderEvent
-        data class SetPhone(val query: String) : OrderEvent
+        // Управление адресами
         data object RefreshAddresses : OrderEvent
-        data class SetDeliveryType(val deliveryType: DeliveryType) : OrderEvent
-        data class SetAddress(val address: Address) : OrderEvent
         data object AddNewAddress : OrderEvent
+        data class SetAddress(val address: Address) : OrderEvent
         data class EditAddress(val address: Address) : OrderEvent
         data class RemoveAddress(val id: String) : OrderEvent
+        data class SelectAddressById(val id: String) : OrderEvent
+
+        // Ввод персональных данных
+        data class SetName(val query: String) : OrderEvent
+        data class SetPhone(val query: String) : OrderEvent
+
+        // Настройки доставки
+        data class SetDeliveryType(val deliveryType: DeliveryType) : OrderEvent
+
+        // Настройки оплаты
+        data object GetPaymentTypes : OrderEvent
         data class SetPaymentType(val paymentType: UiPaymentType) : OrderEvent
+
+        // Настройки сдачи и приборов
         data class NoChangeToggled(val noChange: Boolean) : OrderEvent
         data class SetChangeFrom(val query: String) : OrderEvent
         data class SetNoNeedUtensils(val noNeedUtensils: Boolean) : OrderEvent
         data class SetChosenUtensils(val utensil: Utensil, val isChosen: Boolean) : OrderEvent
+
+        // Комментарий к заказу
         data class SetComment(val query: String) : OrderEvent
-        data class SelectAddressById(val id: String) : OrderEvent
+
+        // Управление заказом
         data object OnMissingRequiredInfo : OrderEvent
         data object SubmitOrder : OrderEvent
-        data object GetPaymentTypes : OrderEvent
     }
 
     sealed interface OrderEffect : BaseEffect {
@@ -54,9 +67,14 @@ sealed interface OrderContract {
         val pickupPoint: OrderPickupPoint = OrderPickupPoint.CAFE
     ) : BaseState {
         val deliveryCost: Int
-            get() = deliveryInfo.deliveryZone?.let { zone ->
-                if (cartSummary.cartSumWithDiscount < zone.freeDeliveryThreshold) zone.deliveryPrice else 0
-            } ?: 0
+            get() = when {
+                deliveryInfo.isPickup -> 0
+                deliveryInfo.deliveryZone == null -> 0
+                cartSummary.cartSumWithDiscount < deliveryInfo.deliveryZone.freeDeliveryThreshold ->
+                    deliveryInfo.deliveryZone.deliveryPrice
+
+                else -> 0
+            }
 
         val totalOrderSum: Double
             get() = cartSummary.cartSumWithDiscount + deliveryCost.toDouble()
@@ -65,6 +83,5 @@ sealed interface OrderContract {
             get() = userInfo.phoneIsValid &&
                     deliveryInfo.addressIsValid &&
                     paymentInfo.paymentTypeIsChosen
-
     }
 }

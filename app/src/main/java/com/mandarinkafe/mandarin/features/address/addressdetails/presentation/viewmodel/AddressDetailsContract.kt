@@ -8,17 +8,28 @@ import com.mandarinkafe.mandarin.util.BaseState
 
 sealed interface AddressDetailsContract {
     sealed interface AddressDetailsEvent : BaseEvent {
-        data class SetAddress(val address: Address) : AddressDetailsEvent
-        data object ChangeLocation : AddressDetailsEvent
+        // Установка адреса при инициализации
+        data class SetInitAddress(val address: Address) : AddressDetailsEvent
+
+        // Установка типа адреса
         data class SetAddressType(val addressType: AddressType) : AddressDetailsEvent
+
+        // Ввод деталей адреса
         data class SetApartmentNumber(val query: String) : AddressDetailsEvent
         data class SetEntrance(val query: String) : AddressDetailsEvent
         data class SetFloor(val query: String) : AddressDetailsEvent
         data class SetIntercom(val query: String) : AddressDetailsEvent
         data class SetAddressComment(val query: String) : AddressDetailsEvent
+
+        // Действия с адресом
         data object SaveAddress : AddressDetailsEvent
         data object RemoveAddress : AddressDetailsEvent
+
+        // Обработка ошибок
         data object OnMissingRequiredInfo : AddressDetailsEvent
+
+        // Попытка изменить изначальный адрес -> переход на карту
+        data object ChangeLocation : AddressDetailsEvent
     }
 
     sealed interface AddressDetailsEffect : BaseEffect {
