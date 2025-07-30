@@ -13,5 +13,5 @@ data class Order(
     val cartItems: Map<CustomizedMeal, Int>,
     val deliveryRealCost: Int,
     val totalOrderSum: Double,
-    val discountSize: Int,
+    val discountCategory: Int,
 )

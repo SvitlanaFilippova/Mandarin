@@ -3,9 +3,14 @@ package com.mandarinkafe.mandarin.features.order.data.mapper
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DISCOUNT_APPLIED
+import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DISCOUNT_PERCENT
+import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVIDER_FOR_TECH_PART
+import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVIDER_FOR_USER_COMMENT
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.PRICE_DECIMALS
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.UTENSILS_NEED_PREFIX
 import com.mandarinkafe.mandarin.features.order.data.network.dto.LoyaltyCustomerResponse
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OrderInfoDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.AddressDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.Customer
 import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.DeliveryPoint
@@ -17,6 +22,7 @@ import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.LoyaltyCustomer
 import com.mandarinkafe.mandarin.features.order.domain.models.Order
+import com.mandarinkafe.mandarin.features.order.domain.models.OrderInfo
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
@@ -31,27 +37,28 @@ fun LoyaltyCustomerResponse.toDomain(): LoyaltyCustomer {
 }
 
 fun OrderState.toDomain(paymentType: PaymentType): Order {
-    requireNotNull(deliveryType) { "deliveryType is null" }
     val cash = paymentType.code == OrderConstants.PAYMENT_CASH_CODE
-    val comment = buildFullComment(
+    val fullComment = buildFullComment(
         userComment = comment,
-        noNeedUtensils = noNeedUtensils,
-        chosenUtensils = chosenUtensils,
-        noChange = if (cash) noChange else null,
-        changeFrom = if (cash) changeFrom else ""
+        noNeedUtensils = utensils.noNeedUtensils,
+        chosenUtensils = utensils.chosenUtensils,
+        noChange = if (cash) paymentInfo.noChange else null,
+        changeFrom = if (cash) paymentInfo.changeFrom else "",
+        discountCategory = cartSummary.discountCategory
     )
 
     return Order(
-        name = name,
-        phone = phone,
-        deliveryType = deliveryType,
-        chosenAddress = chosenAddress,
+        name = userInfo.name,
+        phone = userInfo.phone,
+        deliveryType = deliveryInfo.deliveryType
+            ?: error("deliveryType is null"),
+        chosenAddress = deliveryInfo.chosenAddress,
         paymentType = paymentType,
-        comment = comment,
-        cartItems = cartItems,
-        deliveryRealCost = deliveryRealCost ?: 0,
+        comment = fullComment,
+        cartItems = cartSummary.items,
+        deliveryRealCost = deliveryCost,
         totalOrderSum = totalOrderSum,
-        discountSize = discountSize
+        discountCategory = cartSummary.discountCategory
     )
 }
 
@@ -70,8 +77,8 @@ fun Order.toOrderDto(): OrderDto {
             type = OrderConstants.CUSTOMER_TYPE_ONE_TIME
         ),
         items = cartItems.flatMap { (customizedMeal, quantity) ->
-            val mealItem = customizedMeal.toItem(quantity, discountSize)
-            val addsItems = customizedMeal.adds.map { it.toItem(quantity, discountSize) }
+            val mealItem = customizedMeal.toItem(quantity, discountCategory)
+            val addsItems = customizedMeal.adds.map { it.toItem(quantity, discountCategory) }
             listOf(mealItem) + addsItems
         },
         payments = listOf(
@@ -160,24 +167,57 @@ fun buildFullComment(
     noNeedUtensils: Boolean,
     chosenUtensils: List<Utensil>,
     noChange: Boolean?,
-    changeFrom: String
+    changeFrom: String,
+    discountCategory: Int
 ): String {
     val utensilsPart = when {
         noNeedUtensils -> OrderConstants.NO_UTENSILS_COMMENT
-        chosenUtensils.isNotEmpty() -> UTENSILS_NEED_PREFIX + chosenUtensils.joinToString { it.stringName }
-        else -> ""
+        chosenUtensils.isNotEmpty() -> UTENSILS_NEED_PREFIX +
+                chosenUtensils.joinToString { it.stringName }
+
+        else -> null
     }
 
     val changePart = when {
-        noChange == null -> ""
+        noChange == null -> null
         noChange -> OrderConstants.NO_CHANGE_COMMENT
         changeFrom.isNotEmpty() -> OrderConstants.CHANGE_FROM_COMMENT_PREFIX + changeFrom
-        else -> ""
+        else -> null
     }
 
-    return listOfNotNull(userComment.takeIf { it.isNotBlank() }, utensilsPart, changePart)
-        .joinToString(", ")
-        .trim()
+    val techParts = listOfNotNull(utensilsPart, changePart)
+        .takeIf { it.isNotEmpty() }
+        ?.joinToString()
+
+    val discountPart = if (discountCategory != 0) {
+        DISCOUNT_APPLIED + discountCategory + DISCOUNT_PERCENT
+    } else {
+        null
+    }
+
+    val fullTechnicalComment = listOfNotNull(techParts, discountPart)
+        .takeIf { it.isNotEmpty() }
+        ?.joinToString(DIVIDER_FOR_TECH_PART) // точка после каждого блока
+
+    return buildString {
+        append(userComment.trim())
+
+        if (userComment.isNotBlank() && !fullTechnicalComment.isNullOrBlank()) {
+            append(DIVIDER_FOR_USER_COMMENT)
+        }
+
+        if (!fullTechnicalComment.isNullOrBlank()) {
+            append(fullTechnicalComment)
+        }
+    }.trim()
 }
 
+fun OrderInfoDto.toDomain(): OrderInfo {
+    return OrderInfo(
+        id = id,
+        timestamp = timestamp,
+        creationStatus = creationStatus,
+        errorInfo = errorInfo.toDomain()
+    )
+}
 

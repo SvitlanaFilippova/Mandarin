@@ -16,4 +16,8 @@ object OrderConstants {
     const val UTENSILS_NEED_PREFIX = "НУЖНЫ: "
     const val NO_CHANGE_COMMENT = "Без сдачи"
     const val CHANGE_FROM_COMMENT_PREFIX = "НУЖНА СДАЧА С "
+    const val DISCOUNT_APPLIED = "Применена скидка "
+    const val DISCOUNT_PERCENT = "%"
+    const val DIVIDER_FOR_USER_COMMENT = " || "
+    const val DIVIDER_FOR_TECH_PART = ". "
 }
