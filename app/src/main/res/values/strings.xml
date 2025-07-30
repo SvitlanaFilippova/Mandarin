@@ -10,6 +10,7 @@
     <string name="cancel">Отмена</string>
     <string name="edit">Редактировать</string>
     <string name="remove">Удалить</string>
+    <string name="rub">₽</string>
 
     <!-- Корзина -->
     <string name="cart">Корзина</string>
@@ -77,7 +78,6 @@
     <string name="no_change_needed">Без сдачи</string>
     <string name="payment_change">Сдача с </string>
     <string name="payment_default_value">0</string>
-    <string name="payment_rub">₽</string>
     <string name="no_utensils">Мне не нужны приборы и салфетки</string>
     <string name="i_need_utensils">Мне нужны:</string>
     <string name="total_cart_cost">Сумма заказа</string>
@@ -96,6 +96,8 @@
 Их&#160;нужно будет забрать по&#160;двум адресам. Это соседние здания.</string>
     <string name="pickup_cafe_address">Кафе&#160;&#8212; Черноголовка, ул. Береговая, 24</string>
     <string name="pickup_pizzeria_address">Пиццерия&#160;&#8212; Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
+    <string name="order_submit_success">Заказ №%1$s успешно создан</string>
+
 
     <!-- Адрес -->
     <string name="location">Адрес</string>

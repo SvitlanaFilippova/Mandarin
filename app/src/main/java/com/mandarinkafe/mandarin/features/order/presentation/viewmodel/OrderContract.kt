@@ -52,7 +52,11 @@ sealed interface OrderContract {
     sealed interface OrderEffect : BaseEffect {
         data object AddNewAddress : OrderEffect
         data class EditAddress(val address: Address) : OrderEffect
-        data object SubmitOrder : OrderEffect
+
+        // Обработка отправки заказа
+        data class ShowSuccess(val orderId: String) : OrderEffect
+        data class ShowError(val message: String) : OrderEffect
+
     }
 
     data class OrderState(
@@ -64,7 +68,8 @@ sealed interface OrderContract {
         val comment: String = "",
         val isError: Boolean = false,
         val pickupOnly: Boolean = false,
-        val pickupPoint: OrderPickupPoint = OrderPickupPoint.CAFE
+        val pickupPoint: OrderPickupPoint = OrderPickupPoint.CAFE,
+        val isLoading: Boolean = false
     ) : BaseState {
         val deliveryCost: Int
             get() = when {

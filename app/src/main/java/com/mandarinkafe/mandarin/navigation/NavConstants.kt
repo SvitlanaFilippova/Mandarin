@@ -7,6 +7,7 @@ object NavConstants {
     const val KEY_ADDRESS_JSON = "addressJson"
     const val KEY_FOCUS_INPUT = "focusInput"
     const val MAIN_GRAPH = "main_graph"
+    const val KEY_ORDER_ID = "orderId"
 
     // Screen routes
     const val MENU_SCREEN_ROUTE = "menu"
@@ -31,6 +32,9 @@ object NavConstants {
     const val SEARCH_SCREEN_ROUTE = "search"
     const val SEARCH_SCREEN_ROUTE_WITH_ARGS =
         "$SEARCH_SCREEN_ROUTE?$KEY_FOCUS_INPUT={$KEY_FOCUS_INPUT}"
+
+    const val ORDER_CONFIRMATION_ROUTE = "order_confirmation"
+    const val ORDER_CONFIRMATION_ROUTE_WITH_ARGS = "$ORDER_CONFIRMATION_ROUTE/{$KEY_ORDER_ID}"
 
     val RoutesWithBackButton = setOf(
         ADDRESS_SCREEN_ROUTE,

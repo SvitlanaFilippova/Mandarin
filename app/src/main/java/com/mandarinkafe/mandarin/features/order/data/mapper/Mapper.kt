@@ -9,6 +9,7 @@ import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVID
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVIDER_FOR_USER_COMMENT
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.PRICE_DECIMALS
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.UTENSILS_NEED_PREFIX
+import com.mandarinkafe.mandarin.features.order.data.network.dto.ErrorInfoDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.LoyaltyCustomerResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OrderInfoDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.AddressDto
@@ -20,6 +21,7 @@ import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.
 import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.Payment
 import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.Street
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
+import com.mandarinkafe.mandarin.features.order.domain.models.ErrorInfo
 import com.mandarinkafe.mandarin.features.order.domain.models.LoyaltyCustomer
 import com.mandarinkafe.mandarin.features.order.domain.models.Order
 import com.mandarinkafe.mandarin.features.order.domain.models.OrderInfo
@@ -197,7 +199,7 @@ fun buildFullComment(
 
     val fullTechnicalComment = listOfNotNull(techParts, discountPart)
         .takeIf { it.isNotEmpty() }
-        ?.joinToString(DIVIDER_FOR_TECH_PART) // точка после каждого блока
+        ?.joinToString(DIVIDER_FOR_TECH_PART)
 
     return buildString {
         append(userComment.trim())
@@ -212,12 +214,17 @@ fun buildFullComment(
     }.trim()
 }
 
-fun OrderInfoDto.toDomain(): OrderInfo {
-    return OrderInfo(
-        id = id,
-        timestamp = timestamp,
-        creationStatus = creationStatus,
-        errorInfo = errorInfo.toDomain()
-    )
-}
+fun OrderInfoDto.toDomain() = OrderInfo(
+    id = id,
+    timestamp = timestamp,
+    creationStatus = creationStatus,
+    errorInfo = errorInfo?.toDomain()
+)
+
+fun ErrorInfoDto.toDomain() = ErrorInfo(
+    code = code,
+    message = message,
+    errorReason = errorReason,
+    additionalData = additionalData
+)
 

@@ -62,21 +62,34 @@ class IikoNetworkClientImpl(
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
+    private val logTagORDER = "DEBUG ORDER API NetworkClient"
 
     override suspend fun createDelivery(order: OrderDto): Response {
-        Log.d(logTag, "createDelivery called")
+        Log.d(logTagORDER, "createDelivery called with order: $order")
+        Log.d(logTagORDER, "organizationId: $organizationId")
         return try {
+            val request = CreateDeliveryRequest(
+                order = order,
+                organizationId = organizationId
+            )
+            Log.d(logTagORDER, "Sending request: $request")
+
             val response = iikoService.createDelivery(
                 token = token,
-                body = CreateDeliveryRequest(
-                    order = order,
-                    organizationId = organizationId
-                )
+                body = request
             )
-            response.apply { resultCode = HTTP_SUCCESS }
+            Log.d(logTagORDER, "Received response: $response")
+
+            response.apply {
+                resultCode = HTTP_SUCCESS
+                Log.d(logTagORDER, "Modified response code to HTTP_SUCCESS")
+            }
         } catch (e: Throwable) {
-            Log.d(logTag, ERROR + e.message)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
+            Log.e(logTagORDER, "Error in createDelivery: ${e.message}", e)
+            Response().apply {
+                resultCode = HTTP_SERVER_ERROR
+                Log.d(logTagORDER, "Created error response with code $HTTP_SERVER_ERROR")
+            }
         }
     }
 

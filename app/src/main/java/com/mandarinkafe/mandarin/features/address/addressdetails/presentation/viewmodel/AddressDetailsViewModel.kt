@@ -25,7 +25,7 @@ class AddressDetailsViewModel @Inject constructor(
     override fun onEvent(event: AddressDetailsEvent) {
         when (event) {
             is AddressDetailsEvent.ChangeLocation -> changeLocation()
-            is AddressDetailsEvent.SetAddress -> setAddress(event.address)
+            is AddressDetailsEvent.SetInitAddress -> setAddress(event.address)
             is AddressDetailsEvent.SetApartmentNumber -> setApartmentNumber(event.query)
             is AddressDetailsEvent.SetEntrance -> setEntrance(event.query)
             is AddressDetailsEvent.SetFloor -> setFloor(event.query)

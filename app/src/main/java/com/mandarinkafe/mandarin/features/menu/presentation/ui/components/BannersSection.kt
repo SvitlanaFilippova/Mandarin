@@ -38,7 +38,7 @@ fun BannersSection(
                 contentAlignment = Alignment.Center
             ) {
                 MyCircularProgressIndicator(
-                    strokeWidth = Dimens.ProgressBarSmallWidth8,
+                    strokeWidth = Dimens.ProgressBarStroke6,
                 )
             }
         } else {

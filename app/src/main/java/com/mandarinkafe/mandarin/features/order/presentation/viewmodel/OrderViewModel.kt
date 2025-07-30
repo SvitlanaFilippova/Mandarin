@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartItemsUseCase
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
@@ -18,9 +18,14 @@ import com.mandarinkafe.mandarin.features.order.domain.models.OrderPickupPoint
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.AddNewAddress
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.EditAddress
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowError
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowSuccess
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
@@ -36,7 +41,8 @@ class OrderViewModel @Inject constructor(
     private val observeCartItemsUseCase: ObserveCartItemsUseCase,
     private val checkDiscountByPhone: CheckDiscountByPhoneUseCase,
     private val getPaymentTypesUseCase: GetPaymentTypesUseCase,
-    private val createOrderUseCase: CreateOrderUseCase
+    private val createOrderUseCase: CreateOrderUseCase,
+    private val clearCart: ClearCartUseCase
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     init {
@@ -48,24 +54,25 @@ class OrderViewModel @Inject constructor(
 
     override fun onEvent(event: OrderEvent) {
         when (event) {
+            is OrderEvent.GetPaymentTypes -> getPaymentTypes()
+            is OrderEvent.RefreshAddresses -> getSavedAddresses()
+            is OrderEvent.SetName -> setName(event.query)
+            is OrderEvent.SetPhone -> setPhone(event.query)
+            is OrderEvent.SetDeliveryType -> setDeliveryType(event.deliveryType)
+            is OrderEvent.SetPaymentType -> setPaymentType(event.paymentType)
             is OrderEvent.SetChangeFrom -> setChangeFrom(event.query)
+            is OrderEvent.SetNoNeedUtensils -> setNoNeedUtensils(event.noNeedUtensils)
             is OrderEvent.SetChosenUtensils -> setChosenUtensils(event.utensil, event.isChosen)
             is OrderEvent.SetComment -> setComment(event.query)
-            is OrderEvent.SetDeliveryType -> setDeliveryType(event.deliveryType)
-            is OrderEvent.SetName -> setName(event.query)
-            is OrderEvent.SetNoNeedUtensils -> setNoNeedUtensils(event.noNeedUtensils)
-            is OrderEvent.SetPaymentType -> setPaymentType(event.paymentType)
-            is OrderEvent.SetPhone -> setPhone(event.query)
-            is OrderEvent.OnMissingRequiredInfo -> setError()
-            is OrderEvent.SubmitOrder -> submitOrder()
             is OrderEvent.AddNewAddress -> createNewAddress()
             is OrderEvent.EditAddress -> goToAddressEdit(event.address)
             is OrderEvent.NoChangeToggled -> setNoChange(event.noChange)
             is OrderEvent.SetAddress -> setAddress(event.address)
             is OrderEvent.RemoveAddress -> removeSavedAddress(event.id)
-            is OrderEvent.RefreshAddresses -> getSavedAddresses()
             is OrderEvent.SelectAddressById -> selectAddressById(event.id)
-            is OrderEvent.GetPaymentTypes -> getPaymentTypes()
+            is OrderEvent.OnMissingRequiredInfo -> showMissingRequiredInfo()
+            is OrderEvent.SubmitOrder -> submitOrder()
+
         }
     }
 
@@ -166,25 +173,23 @@ class OrderViewModel @Inject constructor(
         }
     }
 
-    private fun submitOrder() {
-        viewModelScope.launch {
-            with(state.value) {
-                val order =
-                    toDomain(paymentType = paymentInfo.chosenPaymentTypeDomain)
-                Log.d("DEBUG CREATE ORDER API", "VM, submitOrder, order created: $order")
-
-                createOrderUseCase(order)
-            }
-//            sendEffect(OrderEffect.SubmitOrder)
+    private fun clearState() {
+        setState {
+            val savedAddresses = deliveryInfo.savedAddresses
+            val paymentTypes = paymentInfo.availablePaymentTypes
+            OrderState(
+                deliveryInfo = DeliveryInfo(savedAddresses = savedAddresses),
+                paymentInfo = PaymentInfo(availablePaymentTypes = paymentTypes)
+            )
         }
     }
 
     private fun goToAddressEdit(address: Address) {
-        sendEffect(OrderEffect.EditAddress(address))
+        sendEffect(EditAddress(address))
     }
 
     private fun createNewAddress() {
-        sendEffect(OrderEffect.AddNewAddress)
+        sendEffect(AddNewAddress)
     }
 
     private fun setNoChange(noChange: Boolean) {
@@ -244,8 +249,11 @@ class OrderViewModel @Inject constructor(
         checkDiscount(limited)
     }
 
-    private fun setError() {
-        setState { copy(isError = true) }
+    private fun showMissingRequiredInfo() {
+        setState {
+            copy(isError = true)
+        }
+        sendErrorEffect("Заполните все обязательные поля")
     }
 
     private fun checkDiscount(phone: String) {
@@ -297,7 +305,41 @@ class OrderViewModel @Inject constructor(
     }
 
     override fun setLoading(isLoading: Boolean) {
-        // не применимо к данному экрану
+        setState { copy(isLoading = isLoading) }
+    }
+
+    private fun submitOrder() {
+        viewModelScope.launch {
+            //  началась загрузка
+            setLoading()
+            val order = state.value.toDomain(
+                paymentType = state.value.paymentInfo.chosenPaymentTypeDomain
+            )
+
+            when (val response = createOrderUseCase(order)) {
+                is Resource.Loading -> setLoading()
+                is Resource.Success -> {
+                    if (response.data != null) {
+                        val orderId = response.data.id
+                        clearState()
+                        clearCart()
+                        sendEffect(ShowSuccess(orderId))
+                    }
+                }
+
+                is Resource.ErrorNoInternet -> sendErrorEffect("Нет подключения к интернету")
+
+                else -> {
+                    val msg = response.message ?: "Не удалось отправить заказ"
+                    sendErrorEffect(msg)
+                }
+            }
+        }
+    }
+
+    private fun sendErrorEffect(msg: String) {
+        setLoading(false)
+        sendEffect(ShowError(msg))
     }
 
     private companion object {

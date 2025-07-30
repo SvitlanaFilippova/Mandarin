@@ -7,8 +7,8 @@ import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 
 @Stable
 data class DeliveryInfo(
-    val savedAddresses: List<Address> = emptyList(),
     val deliveryType: DeliveryType? = null,
+    val savedAddresses: List<Address> = emptyList(),
     val chosenAddress: Address? = null,
     val deliveryZone: DeliveryZone? = null,
 

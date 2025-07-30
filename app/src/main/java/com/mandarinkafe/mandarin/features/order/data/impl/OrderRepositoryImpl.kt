@@ -2,11 +2,14 @@ package com.mandarinkafe.mandarin.features.order.data.impl
 
 import android.util.Log
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.data.mapper.toOrderDto
+import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.paymenttype.PaymentTypesResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.paymenttype.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.OrderRepository
 import com.mandarinkafe.mandarin.features.order.domain.models.Order
+import com.mandarinkafe.mandarin.features.order.domain.models.OrderInfo
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
@@ -24,22 +27,41 @@ class OrderRepositoryImpl(private val networkClient: IikoNetworkClient) : OrderR
             return emptyList()
         }
     }
+    private val logTag = "DEBUG ORDER API OrderRepository"
 
-    private val logTag = "DEBUG IIKO OrderRepositoryImpl"
-
-    override suspend fun createOrder(order: Order): Resource<Unit> {
+    override suspend fun createOrder(order: Order): Resource<OrderInfo> {
         return try {
-            Log.d(logTag, "createOrder called")
-            val response = networkClient.createDelivery(order.toOrderDto())
-            Log.d(logTag, "response code: ${response.resultCode} , response $response")
+            Log.d(logTag, "createOrder called with order: $order")
+            val orderDto = order.toOrderDto()
+            Log.d(logTag, "Converted to DTO: $orderDto")
+
+            val response = networkClient.createDelivery(orderDto)
+            Log.d(
+                logTag,
+                "response code: ${response.resultCode}, full response: $response"
+            )
+
             when (response.resultCode) {
-                NO_CONNECTION -> Resource.ErrorNoInternet<Unit>()
-                HTTP_SUCCESS -> Resource.Success<Unit>(data = Unit)
-                else -> Resource.ErrorOther<Unit>("Ошибка сервера или пустой ответ")
+                NO_CONNECTION -> {
+                    Log.d(logTag, "No connection error")
+                    Resource.ErrorNoInternet()
+                }
+
+                HTTP_SUCCESS -> {
+                    Log.d(logTag, "Success response, converting to domain")
+                    Resource.Success(data = (response as CreateDeliveryResponse).orderInfo.toDomain())
+                }
+
+                else -> {
+                    Log.e(logTag, "Server error or empty response. Code: ${response.resultCode}")
+                    Resource.ErrorOther("Ошибка сервера или пустой ответ")
+                }
             }
         } catch (e: Exception) {
+            Log.e(logTag, "Exception in createOrder: ${e.message}", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
 }
+
 

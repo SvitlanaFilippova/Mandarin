@@ -33,8 +33,10 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrderConfirmation
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_ADDRESS_ID
+import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import kotlinx.coroutines.flow.collectLatest
@@ -201,6 +203,7 @@ fun OrderScreen(
         item {
             SubmitOrderButton(
                 shouldBeActive = state.canBeSubmitted,
+                isLoading = state.isLoading,
                 modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
                 onMissingRequiredInfo = {
                     onEvent(OrderEvent.OnMissingRequiredInfo)
@@ -232,6 +235,7 @@ fun OrderScreen(
             }
         )
     }
+    val snackbarHostState = LocalSnackbarHostState.current
 
     LaunchedEffect(Unit) {
         effectFlow.collectLatest { effect ->
@@ -245,8 +249,12 @@ fun OrderScreen(
                     isEditMode = true
                 )
 
-                is OrderEffect.SubmitOrder -> {
-                    // TODO
+                is OrderEffect.ShowError -> {
+                    snackbarHostState.showSnackbar("Ошибка: ${effect.message}")
+                }
+
+                is OrderEffect.ShowSuccess -> {
+                    navController.navigateToOrderConfirmation(orderId = effect.orderId)
                 }
             }
         }

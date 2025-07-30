@@ -4,5 +4,5 @@ import com.mandarinkafe.mandarin.core.data.dto.Response
 
 data class CreateDeliveryResponse(
     val correlationId: String,
-    val orderInfo: OrderInfo
+    val orderInfo: OrderInfoDto
 ) : Response()

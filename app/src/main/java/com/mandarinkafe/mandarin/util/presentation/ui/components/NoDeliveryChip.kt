@@ -32,8 +32,6 @@ fun NoDeliveryChip(modifier: Modifier, cardIsSmall: Boolean) {
                     shape = RoundedCornerShape(
                         topStart = cornerRadius,
                         bottomStart = cornerRadius,
-                        topEnd = Dimens.ZeroDp0,
-                        bottomEnd = Dimens.ZeroDp0
                     )
                 )
                 .padding(if (cardIsSmall) Dimens.MarginSuperSmall2 else Dimens.MarginSuperSmall4),

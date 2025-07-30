@@ -90,7 +90,7 @@ fun ChangeInfo(
                 },
                 suffix = {
                     Text(
-                        text = stringResource(R.string.payment_rub),
+                        text = stringResource(R.string.rub),
                         style = Typography.RegularLightTextStyle
                     )
                 },

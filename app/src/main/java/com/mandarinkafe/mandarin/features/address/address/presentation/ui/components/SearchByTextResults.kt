@@ -50,7 +50,7 @@ fun SearchByTextResults(
                         MyCircularProgressIndicator(
                             modifier = Modifier
                                 .padding(Dimens.MarginStandard16),
-                            strokeWidth = Dimens.ProgressBarSmallWidth8,
+                            strokeWidth = Dimens.ProgressBarStroke6,
                         )
                     }
 

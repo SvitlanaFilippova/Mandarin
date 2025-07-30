@@ -8,6 +8,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_CONFIRMATION_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
 import java.net.URLEncoder
@@ -52,4 +53,14 @@ fun NavController.navigateToAddressDetails(address: Address, isEditMode: Boolean
         URLEncoder.encode(gson.toJson(address), StandardCharsets.UTF_8.toString())
     val route = "$ADDRESS_DETAILS_ROUTE/$json/$isEditMode"
     this.navigate(route)
+}
+
+fun NavController.navigateToOrderConfirmation(orderId: String) {
+    val route = "$ORDER_CONFIRMATION_ROUTE/$orderId"
+    this.navigate(route) {
+        launchSingleTop = true
+        popUpTo(ORDER_SCREEN_ROUTE) {
+            inclusive = true
+        }
+    }
 }
