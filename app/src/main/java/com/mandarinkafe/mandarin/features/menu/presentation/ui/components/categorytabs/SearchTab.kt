@@ -1,23 +1,21 @@
 package com.mandarinkafe.mandarin.features.menu.presentation.ui.components.categorytabs
 
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import coil3.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 
 @Composable
-fun CategoryTabItem(
-    name: String,
-    icon: Any?,
+fun SearchTab(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
@@ -26,21 +24,16 @@ fun CategoryTabItem(
         onClick = onClick,
         text = {
             Text(
-                name,
-                color = if (isSelected) Colors.Orange else Color.White
+                stringResource(R.string.search),
+                color = Color.White
             )
         },
         icon = {
-            AsyncImage(
-                model = icon,
-                contentDescription = stringResource(
-                    R.string.icon_of_category,
-                    name
-                ),
+            Icon(
                 modifier = Modifier.size(Dimens.IconSize24),
-                error = painterResource(R.drawable.logo_orange),
-                placeholder = painterResource(R.drawable.logo_orange),
-                colorFilter = ColorFilter.tint(if (isSelected) Colors.Orange else Color.White)
+                imageVector = Icons.Default.Search,
+                contentDescription = stringResource(id = R.string.search_in_menu),
+                tint = Colors.White
             )
         },
         selectedContentColor = Colors.Orange,

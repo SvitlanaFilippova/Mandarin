@@ -76,7 +76,7 @@ fun MealDetailsBottomSheet(
         derivedStateOf { customizedMeal.isFavorite(favorites) }
     }
     LaunchedEffect(Unit) {
-        viewModel.onEvent(MealDetailsEvent.SetItem(initItem))
+        viewModel.onEvent(MealDetailsEvent.SetInitItem(initItem))
     }
 
     LaunchedEffect(Unit) {

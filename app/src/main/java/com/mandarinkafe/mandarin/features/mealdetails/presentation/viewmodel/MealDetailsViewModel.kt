@@ -50,7 +50,7 @@ class MealDetailsViewModel @Inject constructor(
                 isChecked = event.isChecked
             )
 
-            is MealDetailsEvent.SetItem -> setMeal(item = event.item)
+            is MealDetailsEvent.SetInitItem -> setMeal(item = event.item)
             is MealDetailsEvent.ChooseCategory -> chooseAdsCategory(newIndex = event.newIndex)
             is MealDetailsEvent.OnToCartClickBeforeMandatoryChoice -> sendEffect(
                 ShowRequiredModifiersDialog

@@ -17,7 +17,6 @@ import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BannersSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuList
-import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.SearchBar
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.TabsSection
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
@@ -67,12 +66,6 @@ fun MenuContentScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Бар с поиском и фильтрами появляется всегда, когда пользователь вверху или скроллит вверх
-            SearchBar(
-                visible = scrollUi.showMenuTopBar,
-                onSearchClick = { onMenuEvent(MenuEvent.SearchOnOpenSearchClick) },
-            )
-
             // Баннеры видны только если пользователь в самом верху
             BannersSection(
                 visible = scrollUi.isAtTop,
@@ -89,7 +82,8 @@ fun MenuContentScreen(
                 onTabSelected = { index -> scrollUi.scrollToCategory(index) },
                 onSubTabSelected = { index, currentSubCategories ->
                     scrollUi.scrollToSubCategory(index, currentSubCategories)
-                }
+                },
+                onSearchClick = { onMenuEvent(MenuEvent.SearchOnOpenSearchClick) }
             )
 
             // Основное меню

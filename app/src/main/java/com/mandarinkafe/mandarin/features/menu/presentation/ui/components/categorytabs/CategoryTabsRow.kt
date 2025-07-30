@@ -7,6 +7,7 @@ import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -16,17 +17,21 @@ import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 fun CategoryTabsRow(
     categories: List<MenuItem.HeaderItem>,
     selectedTabIndex: Int,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
+    onSearchClick: () -> Unit,
 ) {
+
+    val selectedTab = remember(selectedTabIndex) { selectedTabIndex + 1 }
+
     Column(modifier = Modifier.fillMaxWidth()) {
         ScrollableTabRow(
             containerColor = Colors.AppBlack,
-            selectedTabIndex = selectedTabIndex,
+            selectedTabIndex = selectedTab,
             edgePadding = Dimens.ZeroDp0,
             indicator = { tabPositions ->
                 if (selectedTabIndex >= 0) {
                     SecondaryIndicator(
-                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                        Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
                         color = Colors.Orange,
                         height = Dimens.TabActivatedIndicatorHeight2
                     )
@@ -34,11 +39,19 @@ fun CategoryTabsRow(
             },
             divider = { }
         ) {
+            // Поиск
+            SearchTab(
+                isSelected = false,
+                onClick = onSearchClick,
+            )
+
+            // Все остальные категории
             categories.forEachIndexed { index, category ->
                 CategoryTabItem(
-                    category = category,
+                    name = category.categoryName,
+                    icon = category.tabIcon,
                     isSelected = selectedTabIndex == index,
-                    onClick = { onTabSelected(index) }
+                    onClick = { onTabSelected(index) },
                 )
             }
         }
