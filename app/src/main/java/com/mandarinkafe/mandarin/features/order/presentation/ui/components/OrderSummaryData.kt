@@ -3,21 +3,19 @@ package com.mandarinkafe.mandarin.features.order.presentation.ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
+import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
 @Composable
 fun OrderSummaryData(
     cartSum: Int,
     discountSize: Int,
     discountSum: Double,
-    deliveryType: DeliveryType?,
+    isPickup: Boolean,
     deliveryCost: Int,
     addressInNotInDeliveryArea: Boolean,
     freeDeliveryThreshold: Int?,
@@ -36,19 +34,16 @@ fun OrderSummaryData(
                 if (containNotDiscountable) stringResource(R.string.discount_hint) else null
             OrderSummaryRow(
                 name = stringResource(R.string.discount_template, discountSize),
-                amount = discountSum.toFloat(),
+                amount = -discountSum.toFloat(),
                 hintText = hintText
             )
         }
 
         // Стоимость доставки показываем только если НЕ выбран самовывоз
-        if (deliveryType != DeliveryType.SELF_PICKUP) {
+        if (!isPickup) {
             when (addressInNotInDeliveryArea) {
                 true -> {
-                    Text(
-                        text = stringResource(R.string.delivery_validation_error),
-                        style = Typography.RegularLightTextStyle
-                    )
+                    TooltipText(textRes = R.string.delivery_validation_error)
                 }
 
                 false -> {

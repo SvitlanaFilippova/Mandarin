@@ -1,16 +1,18 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.OrderPickupPoint
-import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.CartSummary
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.UserInfo
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Utensils
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
-import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 
 sealed interface OrderContract {
     sealed interface OrderEvent : BaseEvent {
@@ -41,44 +43,28 @@ sealed interface OrderContract {
     }
 
     data class OrderState(
-        val name: String = "",
-        val phone: String = "",
-        val deliveryType: DeliveryType? = null,
-        val chosenAddress: Address? = null,
-        val savedAddresses: List<Address> = listOf(),
-        val availablePaymentTypes: List<PaymentType> = emptyList(),
-        val chosenPaymentType: UiPaymentType? = null,
-        val noChange: Boolean = false,
-        val changeFrom: String = "",
-        val noNeedUtensils: Boolean = false,
-        val chosenUtensils: List<Utensil> = listOf(),
+        val userInfo: UserInfo = UserInfo(),
+        val deliveryInfo: DeliveryInfo = DeliveryInfo(),
+        val paymentInfo: PaymentInfo = PaymentInfo(),
+        val cartSummary: CartSummary = CartSummary(),
+        val utensils: Utensils = Utensils(),
         val comment: String = "",
         val isError: Boolean = false,
-        val cartItems: Map<CustomizedMeal, Int> = emptyMap(),
-        val containNotDiscountable: Boolean = false,
-        val totalCartSum: Int? = null,
-        val deliveryFreeThreshold: Int? = null,
-        val deliveryBasePrice: Int? = null,
-        val deliveryRealCost: Int? = null,
-        val discountSize: Int = 0,
-        val discountSum: Double = 0.0,
-        val totalCartSumWithDiscount: Double = 0.0,
-        val totalOrderSum: Double = 0.0,
         val pickupOnly: Boolean = false,
         val pickupPoint: OrderPickupPoint = OrderPickupPoint.CAFE
-
     ) : BaseState {
-        val phoneIsValid: Boolean
-            get() = phone.length == VALID_PHONE_LENGTH
-        val addressEntered: Boolean
-            get() =
-                chosenAddress != null || deliveryType == DeliveryType.SELF_PICKUP
-        val addressInNotInDeliveryArea: Boolean
-            get() = deliveryType == DeliveryType.DELIVERY && chosenAddress != null && deliveryFreeThreshold == null
-        val paymentTypeIsChosen: Boolean
-            get() = chosenPaymentType != null
+        val deliveryCost: Int
+            get() = deliveryInfo.deliveryZone?.let { zone ->
+                if (cartSummary.cartSumWithDiscount < zone.freeDeliveryThreshold) zone.deliveryPrice else 0
+            } ?: 0
+
+        val totalOrderSum: Double
+            get() = cartSummary.cartSumWithDiscount + deliveryCost.toDouble()
+
         val canBeSubmitted: Boolean
-            get() = phoneIsValid && addressEntered && paymentTypeIsChosen
+            get() = userInfo.phoneIsValid &&
+                    deliveryInfo.addressIsValid &&
+                    paymentInfo.paymentTypeIsChosen
 
     }
 }

@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.address.address.domain.impl
 
 import android.util.Log
-import com.mandarinkafe.mandarin.core.domain.models.DeliveryArea
+import com.mandarinkafe.mandarin.core.domain.models.DeliveryZone
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
@@ -10,7 +10,7 @@ class GetDeliveryZoneUseCaseImpl(
     private val deliveryAreaRepository: DeliveryAreaRepository
 ) : GetDeliveryZoneUseCase {
 
-    override fun invoke(location: GeoPoint?): DeliveryArea? {
+    override fun invoke(location: GeoPoint?): DeliveryZone? {
         if (location == null) return null
         Log.d("DEBUG DELIVERY AREA", "GetDeliveryZoneUseCaseImpl, location = $location")
         val areas = deliveryAreaRepository.getAllAreas()

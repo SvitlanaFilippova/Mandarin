@@ -5,13 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartItemsUseCase
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.totalPrice
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealPickupPoint
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.CheckDiscountByPhoneUseCase
+import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.OrderPickupPoint
@@ -20,6 +20,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentTyp
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
@@ -34,7 +35,8 @@ class OrderViewModel @Inject constructor(
     private val removeAddress: RemoveAddressUseCase,
     private val observeCartItemsUseCase: ObserveCartItemsUseCase,
     private val checkDiscountByPhone: CheckDiscountByPhoneUseCase,
-    private val getPaymentTypesUseCase: GetPaymentTypesUseCase
+    private val getPaymentTypesUseCase: GetPaymentTypesUseCase,
+    private val createOrderUseCase: CreateOrderUseCase
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     init {
@@ -70,12 +72,12 @@ class OrderViewModel @Inject constructor(
     private fun getPaymentTypes() {
         viewModelScope.launch {
             val types = getPaymentTypesUseCase()
-            setState { copy(availablePaymentTypes = types) }
+            setState { copy(paymentInfo = paymentInfo.copy(availablePaymentTypes = types)) }
         }
     }
 
     private fun selectAddressById(id: String) {
-        val address = state.value.savedAddresses.first { it.id == id }
+        val address = state.value.deliveryInfo.savedAddresses.first { it.id == id }
         setAddress(address)
     }
 
@@ -89,52 +91,34 @@ class OrderViewModel @Inject constructor(
         viewModelScope.launch {
             observeCartItemsUseCase().collect { items ->
                 setState {
+                    // проверяем, есть ли в корзине блюда, на которые не распространяется скидка
                     val containNotDiscountable = items.keys.any { !it.meal.discountable }
-                    val isPickupOnly = items.keys.any { it.meal.isPickupOnly }
-                    val pickupPoint = resolveOrderPickupPoint(items.keys)
-                    val adjustedDeliveryType =
-                        if (isPickupOnly && deliveryType == DeliveryType.DELIVERY) null else deliveryType
-                    val adjustedAddress =
-                        if (isPickupOnly && deliveryType == DeliveryType.DELIVERY) null else chosenAddress
 
+                    // прововеряем, откуда нужно будет забирать заказ в случае самовывоза
+                    val pickupPoint = resolveOrderPickupPoint(items.keys)
+
+                    // если была выбрана доставка, но заказ стал isPickupOnly - обнуляем данные доставки
+                    val isPickupOnly = items.keys.any { it.meal.isPickupOnly }
+
+                    //Обновляем инфо в стейте
+                    val newDeliveryInfo =
+                        if (isPickupOnly && deliveryInfo.isDelivery) DeliveryInfo() else deliveryInfo
+                    val newCartSummary = cartSummary.copy(
+                        items = items,
+                        containNotDiscountable = containNotDiscountable
+                    )
                     copy(
-                        cartItems = items,
-                        containNotDiscountable = containNotDiscountable,
-                        deliveryType = adjustedDeliveryType,
-                        chosenAddress = adjustedAddress,
+                        cartSummary = newCartSummary,
+                        deliveryInfo = newDeliveryInfo,
                         pickupPoint = pickupPoint,
                         pickupOnly = isPickupOnly
                     )
                 }
                 // вызываем перерасчёт скидки и стоимости доставки
-                with(state.value) {
-                    recalculateCartState(
-                        items = items,
-                        discountSize = discountSize,
-                        deliveryFreeThreshold = deliveryFreeThreshold,
-                        deliveryBasePrice = deliveryBasePrice,
-                    )
-                }
+                recalculateCartSummary()
 
             }
         }
-    }
-
-    private fun getDeliveryCost(
-        freeDeliveryThreshold: Int?,
-        deliveryBasePrice: Int?,
-        totalCartSumWithDiscount: Double?
-    ): Int? {
-        if (totalCartSumWithDiscount == null) return deliveryBasePrice
-
-        val threshold = freeDeliveryThreshold?.toFloat() ?: 0f
-
-        val deliveryCost = if (totalCartSumWithDiscount < threshold) {
-            deliveryBasePrice
-        } else {
-            0
-        }
-        return deliveryCost
     }
 
     private fun getCartSumWithDiscount(
@@ -164,36 +148,32 @@ class OrderViewModel @Inject constructor(
     private fun getSavedAddresses() {
         viewModelScope.launch {
             val addressList = getSavedAddressesUseCase().reversed()
-            setState { copy(savedAddresses = addressList) }
+            setState {
+                val newDeliveryInfo = deliveryInfo.copy(savedAddresses = addressList)
+                copy(deliveryInfo = newDeliveryInfo)
+            }
         }
     }
 
     private fun setAddress(address: Address) {
         setState {
             val deliveryZone = getDeliveryZone(address.point)
-
-            val deliveryCost = getDeliveryCost(
-                freeDeliveryThreshold = deliveryZone?.freeDeliveryThreshold,
-                deliveryBasePrice = deliveryZone?.deliveryPrice,
-                totalCartSumWithDiscount = totalCartSumWithDiscount
-            )
-
-            copy(
+            val newDeliveryInfo = deliveryInfo.copy(
                 chosenAddress = address,
-                deliveryFreeThreshold = deliveryZone?.freeDeliveryThreshold,
-                deliveryBasePrice = deliveryZone?.deliveryPrice,
-                deliveryRealCost = deliveryCost
+                deliveryZone = deliveryZone,
             )
+            copy(deliveryInfo = newDeliveryInfo)
         }
     }
 
     private fun submitOrder() {
         viewModelScope.launch {
             with(state.value) {
-                val order = toDomain(
-                    paymentType = availablePaymentTypes.first { it.code == chosenPaymentType?.code }
-                )
+                val order =
+                    toDomain(paymentType = paymentInfo.chosenPaymentTypeDomain)
                 Log.d("DEBUG CREATE ORDER API", "VM, submitOrder, order created: $order")
+
+                createOrderUseCase(order)
             }
 //            sendEffect(OrderEffect.SubmitOrder)
         }
@@ -208,21 +188,21 @@ class OrderViewModel @Inject constructor(
     }
 
     private fun setNoChange(noChange: Boolean) {
-        setState { copy(noChange = noChange) }
+        setState { copy(paymentInfo = paymentInfo.copy(noChange = noChange)) }
     }
 
     private fun setChangeFrom(query: String) {
-        setState { copy(changeFrom = query) }
+        setState { copy(paymentInfo = paymentInfo.copy(changeFrom = query)) }
     }
 
     private fun setChosenUtensils(utensil: Utensil, isChosen: Boolean) {
         setState {
             copy(
-                chosenUtensils = if (isChosen) {
-                    chosenUtensils + utensil
-                } else {
-                    chosenUtensils - utensil
-                }
+                utensils = utensils.copy(
+                    chosenUtensils = with(utensils.chosenUtensils) {
+                        if (isChosen) this + utensil else this - utensil
+                    }
+                )
             )
         }
     }
@@ -232,20 +212,20 @@ class OrderViewModel @Inject constructor(
     }
 
     private fun setDeliveryType(deliveryType: DeliveryType) {
-        setState { copy(deliveryType = deliveryType) }
+        setState { copy(deliveryInfo = deliveryInfo.copy(deliveryType = deliveryType)) }
     }
 
     private fun setName(query: String) {
-        setState { copy(name = query) }
+        setState { copy(userInfo = userInfo.copy(name = query)) }
     }
 
     private fun setNoNeedUtensils(noNeedUtensils: Boolean) {
-        setState { copy(noNeedUtensils = noNeedUtensils) }
+        setState { copy(utensils = utensils.copy(noNeedUtensils = noNeedUtensils)) }
     }
 
     private fun setPaymentType(paymentType: UiPaymentType) {
         setState {
-            copy(chosenPaymentType = paymentType)
+            copy(paymentInfo = paymentInfo.copy(chosenPaymentType = paymentType))
         }
     }
 
@@ -260,79 +240,42 @@ class OrderViewModel @Inject constructor(
         }
         // Ограничиваем до 10 символов
         val limited = normalized.take(VALID_PHONE_LENGTH)
-
-        setState { copy(phone = limited) }
-
-
+        setState { copy(userInfo = userInfo.copy(phone = limited)) }
         checkDiscount(limited)
-
     }
 
     private fun setError() {
         setState { copy(isError = true) }
     }
 
-    override fun setLoading(isLoading: Boolean) {
-        // не применимо к данному экрану
-    }
-
     private fun checkDiscount(phone: String) {
-        if (phone.length != VALID_PHONE_LENGTH) {
-            with(state.value) {
-                recalculateCartState(
-                    items = cartItems,
-                    discountSize = 0,
-                    deliveryFreeThreshold = deliveryFreeThreshold,
-                    deliveryBasePrice = deliveryBasePrice
-                )
-            }
-        } else {
+        // если введён некорректный номер телефона и была применена скидка по карте - пересчитываем всё без скидки
+        if (phone.length != VALID_PHONE_LENGTH && state.value.cartSummary.discountCategory > 0) {
+            recalculateCartSummary(discountSize = 0)
+            // иначе, если телефон валидный - проверяем наличие скидки
+        } else if (phone.length == VALID_PHONE_LENGTH) {
             viewModelScope.launch {
                 val result = checkDiscountByPhone.invoke(phone)
                 val discount = when (result) {
                     is Resource.Success -> result.data
                     else -> null
                 }
-
                 // Пересчёт после установки скидки
-                with(state.value) {
-                    recalculateCartState(
-                        items = cartItems,
-                        discountSize = discount ?: 0,
-                        deliveryFreeThreshold = deliveryFreeThreshold,
-                        deliveryBasePrice = deliveryBasePrice
-                    )
-                }
+                recalculateCartSummary(discountSize = discount)
+
             }
         }
     }
 
-    private fun recalculateCartState(
-        items: Map<CustomizedMeal, Int>,
-        discountSize: Int,
-        deliveryFreeThreshold: Int?,
-        deliveryBasePrice: Int?
-    ) {
-        Log.d("DEBUG DISCOUNT", "VM recalculateCartState, discountAmount: $discountSize")
-        val totalCartSum = items.entries.sumOf { (item, quantity) ->
-            item.totalPrice() * quantity
-        }
-        val cartSumWithDiscount = getCartSumWithDiscount(items, discountSize)
-        val deliveryCost = getDeliveryCost(
-            freeDeliveryThreshold = deliveryFreeThreshold,
-            deliveryBasePrice = deliveryBasePrice,
-            totalCartSumWithDiscount = cartSumWithDiscount
-        )
-        val discountSum = totalCartSum - cartSumWithDiscount
-        val totalOrderSum = cartSumWithDiscount + (deliveryCost ?: 0)
+    private fun recalculateCartSummary(discountSize: Int? = null) {
         setState {
+            val discountSize = discountSize ?: cartSummary.discountCategory
+            val cartSumWithDiscount =
+                getCartSumWithDiscount(cartSummary.items, discountSize)
             copy(
-                totalCartSum = totalCartSum,
-                containNotDiscountable = containNotDiscountable,
-                discountSize = discountSize,
-                discountSum = discountSum,
-                totalCartSumWithDiscount = cartSumWithDiscount,
-                totalOrderSum = totalOrderSum,
+                cartSummary = cartSummary.copy(
+                    cartSumWithDiscount = cartSumWithDiscount,
+                )
             )
         }
     }
@@ -351,7 +294,10 @@ class OrderViewModel @Inject constructor(
             points.contains(MealPickupPoint.CAFE) -> OrderPickupPoint.CAFE
             else -> OrderPickupPoint.CAFE
         }
+    }
 
+    override fun setLoading(isLoading: Boolean) {
+        // не применимо к данному экрану
     }
 
     private companion object {

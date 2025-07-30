@@ -20,7 +20,6 @@ import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.DeliveryTypeChooser
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.OrderSummaryData
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PaymentChooser
@@ -49,15 +48,10 @@ fun OrderScreen(
     val state by orderViewModel.state.collectAsState()
     val effectFlow = orderViewModel.effect
     val onEvent = orderViewModel::onEvent
-    val cartSum = state.totalCartSum ?: 0
-
-    val totalOrderSum = state.totalOrderSum
     var showConfirmDeleteDialog by remember { mutableStateOf(false) }
     var addressToDelete by remember { mutableStateOf<String?>(null) }
-
     val scrollState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-    val chosenDeliveryType = state.deliveryType
 
     var showAllAddresses by remember { mutableStateOf(false) }
 
@@ -96,21 +90,23 @@ fun OrderScreen(
         state = scrollState,
     ) {
         item {
-            PersonalInfo(
-                nameQuery = state.name,
-                phoneQuery = state.phone,
-                isError = state.isError,
-                phoneIsValid = state.phoneIsValid,
-                onNameEntered = { onEvent(OrderEvent.SetName(it)) },
-                onPhoneChanged = { onEvent(OrderEvent.SetPhone(it)) },
-            )
+            with(state.userInfo) {
+                PersonalInfo(
+                    nameQuery = name,
+                    phoneQuery = phone,
+                    isError = state.isError,
+                    phoneIsValid = phoneIsValid,
+                    onNameEntered = { onEvent(OrderEvent.SetName(it)) },
+                    onPhoneChanged = { onEvent(OrderEvent.SetPhone(it)) },
+                )
+            }
         }
 
         item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
 
         item {
             DeliveryTypeChooser(
-                chosen = chosenDeliveryType,
+                chosen = state.deliveryInfo.deliveryType,
                 pickupOnly = state.pickupOnly,
                 isError = state.isError,
                 onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
@@ -120,56 +116,62 @@ fun OrderScreen(
 
         item {
             SelfPickupInfo(
-                visible = chosenDeliveryType == DeliveryType.SELF_PICKUP,
+                visible = state.deliveryInfo.isPickup,
                 pickupPoint = state.pickupPoint
             )
         }
 
         item {
-            SavedAddressesSection(
-                visible = chosenDeliveryType == DeliveryType.DELIVERY,
-                allSavedAddresses = state.savedAddresses,
-                selectedAddress = state.chosenAddress,
-                onEvent = onEvent,
-                onDeleteRequest = {
-                    addressToDelete = it
-                    showConfirmDeleteDialog = true
-                },
-                showAllAddresses = showAllAddresses,
-                onToggleShowAll = { showAllAddresses = !showAllAddresses }
-            )
+            with(state.deliveryInfo) {
+                SavedAddressesSection(
+                    visible = isDelivery,
+                    allSavedAddresses = savedAddresses,
+                    selectedAddress = chosenAddress,
+                    onEvent = onEvent,
+                    onDeleteRequest = {
+                        addressToDelete = it
+                        showConfirmDeleteDialog = true
+                    },
+                    showAllAddresses = showAllAddresses,
+                    onToggleShowAll = { showAllAddresses = !showAllAddresses }
+                )
+            }
         }
 
 
         item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
 
         item {
-            PaymentChooser(
-                paymentTypes = state.availablePaymentTypes,
-                chosen = state.chosenPaymentType,
-                changeAmount = state.changeFrom,
-                isError = state.isError,
-                onPaymentTypeSelected = { onEvent(OrderEvent.SetPaymentType(it)) },
-                onChangeEntered = { onEvent(OrderEvent.SetChangeFrom(it)) },
-                noChange = state.noChange,
-                onNoChangeToggled = { onEvent(OrderEvent.NoChangeToggled(it)) },
-            )
+            with(state.paymentInfo) {
+                PaymentChooser(
+                    paymentTypes = availablePaymentTypes,
+                    chosen = chosenPaymentType,
+                    changeAmount = changeFrom,
+                    isError = state.isError,
+                    onPaymentTypeSelected = { onEvent(OrderEvent.SetPaymentType(it)) },
+                    onChangeEntered = { onEvent(OrderEvent.SetChangeFrom(it)) },
+                    noChange = noChange,
+                    onNoChangeToggled = { onEvent(OrderEvent.NoChangeToggled(it)) },
+                )
+            }
         }
 
         item {
-            UtensilPreferences(
-                noUtensils = state.noNeedUtensils,
-                chosenUtensils = state.chosenUtensils,
-                onChangeNoUtensils = { onEvent(OrderEvent.SetNoNeedUtensils(it)) },
-                onChooseUtensil = { utensil, isChecked ->
-                    onEvent(
-                        OrderEvent.SetChosenUtensils(
-                            utensil,
-                            isChecked
+            with(state.utensils) {
+                UtensilPreferences(
+                    noUtensils = noNeedUtensils,
+                    chosenUtensils = chosenUtensils,
+                    onChangeNoUtensils = { onEvent(OrderEvent.SetNoNeedUtensils(it)) },
+                    onChooseUtensil = { utensil, isChecked ->
+                        onEvent(
+                            OrderEvent.SetChosenUtensils(
+                                utensil,
+                                isChecked
+                            )
                         )
-                    )
-                }
-            )
+                    }
+                )
+            }
         }
         item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
 
@@ -182,16 +184,16 @@ fun OrderScreen(
         }
 
         item {
-            with(state) {
+            with(state.cartSummary) {
                 OrderSummaryData(
-                    cartSum = cartSum,
+                    cartSum = totalCartSum,
                     discountSum = discountSum,
-                    discountSize = discountSize,
-                    deliveryCost = deliveryRealCost ?: 0,
-                    containNotDiscountable = state.containNotDiscountable,
-                    addressInNotInDeliveryArea = addressInNotInDeliveryArea,
-                    freeDeliveryThreshold = deliveryFreeThreshold,
-                    deliveryType = deliveryType
+                    discountSize = discountCategory,
+                    deliveryCost = state.deliveryCost,
+                    containNotDiscountable = containNotDiscountable,
+                    addressInNotInDeliveryArea = state.deliveryInfo.addressOutOfDeliveryZone,
+                    freeDeliveryThreshold = state.deliveryInfo.deliveryZone?.freeDeliveryThreshold,
+                    isPickup = state.deliveryInfo.isPickup
                 )
             }
         }
@@ -207,7 +209,7 @@ fun OrderScreen(
                     }
                 },
                 onSubmitOrder = { onEvent(OrderEvent.SubmitOrder) },
-                totalOrderSum = totalOrderSum,
+                totalOrderSum = state.totalOrderSum,
             )
         }
     }
@@ -243,7 +245,9 @@ fun OrderScreen(
                     isEditMode = true
                 )
 
-                is OrderEffect.SubmitOrder -> {}
+                is OrderEffect.SubmitOrder -> {
+                    // TODO
+                }
             }
         }
     }
