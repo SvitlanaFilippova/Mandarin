@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.features.order.domain.models.OrderInfo
 import com.mandarinkafe.mandarin.features.orderconfirmation.domain.api.ObserveOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEffect
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEffect.ShowError
@@ -22,30 +22,28 @@ class OrderConfirmationViewModel @Inject constructor(private val observeOrderSta
     override fun onEvent(event: OrderConfirmationEvent) {
         when (event) {
             is OrderConfirmationEvent.SetInitId -> startObservingOrderStatus(event.id)
+            OrderConfirmationEvent.StopObservingStatus -> stopObservingOrderStatus()
         }
     }
 
     private var observeStatusJob: Job? = null
 
-    val logTag = "OBSERVE STATUS VM"
     private fun startObservingOrderStatus(orderId: String) {
-        observeStatusJob?.cancel() // отмена предыдущего
+        observeStatusJob?.cancel()
         observeStatusJob = viewModelScope.launch {
-            Log.d(logTag, "started startObservingOrderStatus")
             observeOrderStatus(orderId)
-                .collect { statusResponse ->
-                    Log.d(logTag, "statusResponse: $statusResponse")
-                    when (statusResponse) {
+                .collect { result ->
+                    when (result) {
                         is Resource.Loading -> setLoading()
-                        is Resource.Success -> setStatus(statusResponse.data)
+                        is Resource.Success -> setStatus(result.data)
                         is Resource.ErrorNoInternet -> showError("Нет подключения к интернету")
-                        else -> showError(statusResponse.message ?: "Что-то пошло не так")
+                        else -> showError(result.message ?: "Что-то пошло не так")
                     }
                 }
         }
     }
 
-    fun stopObservingOrderStatus() {
+    private fun stopObservingOrderStatus() {
         observeStatusJob?.cancel()
     }
 
@@ -55,8 +53,8 @@ class OrderConfirmationViewModel @Inject constructor(private val observeOrderSta
         }
     }
 
-    private fun setStatus(status: String?) {
-        setState { copy(isLoading = false, status = status) }
+    private fun setStatus(status: OrderInfo?) {
+        setState { copy(isLoading = false, orderInfo = status) }
     }
 
     override fun setLoading(isLoading: Boolean) {

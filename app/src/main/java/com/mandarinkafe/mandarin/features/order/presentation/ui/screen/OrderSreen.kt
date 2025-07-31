@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,6 +35,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Submi
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.UtensilPreferences
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
@@ -174,6 +176,7 @@ fun OrderScreen(
                 )
             }
         }
+        item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
 
         item {
             with(state.utensils) {
@@ -274,6 +277,12 @@ fun OrderScreen(
                     navController.navigateToOrderConfirmation(orderId = effect.orderId)
                 }
             }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            onEvent(StopObservingStatus)
         }
     }
 }

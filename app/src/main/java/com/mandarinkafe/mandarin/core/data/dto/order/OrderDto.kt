@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.core.data.dto.order
 
 data class OrderDto(
-    val id: String? = null,
     val phone: String? = null,
     val orderServiceType: String? = null,
     val deliveryPoint: DeliveryPointDto? = null,
@@ -25,4 +24,5 @@ data class OrderDto(
     val whenPrinted: String? = null,
     val whenSended: String? = null,
     val problem: Problem? = null,
+    val number: String? = null //Delivery No.
 )

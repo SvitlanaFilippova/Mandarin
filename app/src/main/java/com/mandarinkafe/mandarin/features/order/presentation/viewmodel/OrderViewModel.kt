@@ -13,6 +13,9 @@ import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.CheckDiscountByPhoneUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.GetPaymentTypesUseCase
+import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus.Error
+import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus.InProgress
+import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus.Success
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.OrderPickupPoint
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
@@ -26,10 +29,12 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
+import com.mandarinkafe.mandarin.features.orderconfirmation.domain.api.ObserveOrderStatusUseCase
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,7 +47,8 @@ class OrderViewModel @Inject constructor(
     private val checkDiscountByPhone: CheckDiscountByPhoneUseCase,
     private val getPaymentTypesUseCase: GetPaymentTypesUseCase,
     private val createOrderUseCase: CreateOrderUseCase,
-    private val clearCart: ClearCartUseCase
+    private val clearCart: ClearCartUseCase,
+    private val observeOrderStatus: ObserveOrderStatusUseCase
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     init {
@@ -51,6 +57,7 @@ class OrderViewModel @Inject constructor(
     }
 
     override fun setInitialState() = OrderState()
+    private var observeStatusJob: Job? = null
 
     override fun onEvent(event: OrderEvent) {
         when (event) {
@@ -72,6 +79,7 @@ class OrderViewModel @Inject constructor(
             is OrderEvent.SelectAddressById -> selectAddressById(event.id)
             is OrderEvent.OnMissingRequiredInfo -> showMissingRequiredInfo()
             is OrderEvent.SubmitOrder -> submitOrder()
+            is OrderEvent.StopObservingStatus -> stopObservingOrderStatus()
         }
     }
 
@@ -315,25 +323,89 @@ class OrderViewModel @Inject constructor(
                 paymentType = state.value.paymentInfo.chosenPaymentTypeDomain
             )
 
-            when (val response = createOrderUseCase(order)) {
+            when (val result = createOrderUseCase(order)) {
                 is Resource.Loading -> setLoading()
                 is Resource.Success -> {
-                    if (response.data != null) {
-                        val orderId = response.data.id
-                        clearState()
-                        clearCart()
-                        sendEffect(ShowSuccess(orderId))
+                    val orderInfo = result.data
+                    val status = result.data?.creationStatus
+                    when (status) {
+                        InProgress -> {
+                            setLoading()
+                            // Сохраняем orderId и начинаем наблюдение
+                            observeOrderUntilSuccess(orderInfo.id)
+                        }
+
+                        Success -> {
+                            onSuccessOrderCreation(orderInfo.id)
+                        }
+
+                        Error -> {
+                            sendErrorEffect(
+                                result.data.errorInfo?.message ?: "Не удалось создать заказ"
+                            )
+                        }
+
+                        null -> {
+                            sendErrorEffect("Ошибка: пустой ответ от сервера")
+                        }
                     }
                 }
 
                 is Resource.ErrorNoInternet -> sendErrorEffect("Нет подключения к интернету")
 
                 else -> {
-                    val msg = response.message ?: "Не удалось отправить заказ"
+                    val msg = result.message ?: "Не удалось отправить заказ"
                     sendErrorEffect(msg)
                 }
             }
         }
+    }
+
+    private fun observeOrderUntilSuccess(orderId: String) {
+        stopObservingOrderStatus()
+        observeStatusJob = viewModelScope.launch {
+            observeOrderStatus(orderId).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        when (result.data?.creationStatus) {
+                            Success -> {
+                                onSuccessOrderCreation(orderId)
+                            }
+
+                            Error -> {
+                                sendErrorEffect(
+                                    result.data.errorInfo?.message ?: "Не удалось создать заказ"
+                                )
+                                stopObservingOrderStatus()
+                            }
+
+                            else -> {
+                                // Всё ещё в процессе — продолжаем крутить прелоадер
+                                setLoading()
+                            }
+                        }
+                    }
+
+                    is Resource.ErrorNoInternet -> sendErrorEffect("Нет подключения к интернету")
+                    is Resource.ErrorOther -> sendErrorEffect(
+                        result.message ?: "Ошибка получения статуса"
+                    )
+
+                    else -> Unit
+                }
+            }
+        }
+    }
+
+    private fun stopObservingOrderStatus() {
+        observeStatusJob?.cancel()
+    }
+
+    private fun onSuccessOrderCreation(id: String) {
+        clearState()
+        clearCart()
+        sendEffect(ShowSuccess(id))
+        stopObservingOrderStatus()
     }
 
     private fun sendErrorEffect(msg: String) {

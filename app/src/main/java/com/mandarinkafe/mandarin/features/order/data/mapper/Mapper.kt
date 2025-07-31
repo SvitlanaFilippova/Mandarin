@@ -6,7 +6,6 @@ import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
 import com.mandarinkafe.mandarin.core.data.dto.order.ItemDto
 import com.mandarinkafe.mandarin.core.data.dto.order.OrderDto
-import com.mandarinkafe.mandarin.core.data.dto.order.OrderInfoDto
 import com.mandarinkafe.mandarin.core.data.dto.order.OrderModifierDto
 import com.mandarinkafe.mandarin.core.data.dto.order.PaymentDto
 import com.mandarinkafe.mandarin.core.data.dto.order.StreetDto
@@ -29,7 +28,6 @@ import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.ErrorInfo
 import com.mandarinkafe.mandarin.features.order.domain.models.LoyaltyCustomer
 import com.mandarinkafe.mandarin.features.order.domain.models.Order
-import com.mandarinkafe.mandarin.features.order.domain.models.OrderInfo
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
@@ -233,12 +231,6 @@ private fun buildFullComment(
     }.trim()
 }
 
-fun OrderInfoDto.toDomain() = OrderInfo(
-    id = id,
-    timestamp = timestamp,
-    creationStatus = creationStatus,
-    errorInfo = errorInfo?.toDomain()
-)
 
 fun ErrorInfoDto.toDomain() = ErrorInfo(
     code = code,

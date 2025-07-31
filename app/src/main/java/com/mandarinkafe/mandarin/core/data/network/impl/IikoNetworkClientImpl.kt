@@ -24,7 +24,7 @@ class IikoNetworkClientImpl(
     private val networkMonitor: NetworkMonitor,
     private val iikoService: IikoApiService,
 ) : IikoNetworkClient {
-    private val logTag = "DEBUG IIKO NetworkClient"
+    private val logTag = "IIKO NetworkClient"
     private var token = ""
     private var organizationId = ""
     private var externalMenuId = ""
@@ -158,10 +158,8 @@ class IikoNetworkClientImpl(
         }
     }
 
-    private val logTagOrderStatus = "DEBUG ORDER STATUS NetworkClient"
 
     override suspend fun getOrderStatusById(id: String): Response {
-        Log.d(logTagOrderStatus, "called getOrderStatusById with id $id")
         return try {
             val request = OderInfoRequest(
                 organizationId = organizationId,
@@ -172,17 +170,14 @@ class IikoNetworkClientImpl(
                 token = token,
                 body = request
             )
-            Log.d(logTagOrderStatus, "Received response: $response")
-
             response.apply {
                 resultCode = HTTP_SUCCESS
-                Log.d(logTagOrderStatus, "Modified response code to HTTP_SUCCESS")
             }
         } catch (e: Throwable) {
-            Log.e(logTagOrderStatus, "Error in createDelivery: ${e.message}", e)
+            Log.e(logTag, "Error in getOrderStatusById: ${e.message}", e)
             Response().apply {
                 resultCode = HTTP_SERVER_ERROR
-                Log.d(logTagOrderStatus, "Created error response with code $HTTP_SERVER_ERROR")
+                Log.d(logTag, "Created error response with code $HTTP_SERVER_ERROR")
             }
         }
     }

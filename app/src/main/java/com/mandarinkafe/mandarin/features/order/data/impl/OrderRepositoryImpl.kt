@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.features.order.data.impl
 
 import android.util.Log
+import com.mandarinkafe.mandarin.core.data.dto.order.toDomain
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
-import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.data.mapper.toOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesResponse

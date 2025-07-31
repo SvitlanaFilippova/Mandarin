@@ -47,6 +47,7 @@ sealed interface OrderContract {
         // Управление заказом
         data object OnMissingRequiredInfo : OrderEvent
         data object SubmitOrder : OrderEvent
+        data object StopObservingStatus : OrderEvent
     }
 
     sealed interface OrderEffect : BaseEffect {
