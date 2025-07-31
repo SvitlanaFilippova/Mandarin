@@ -24,9 +24,9 @@ import com.mandarinkafe.mandarin.features.delivery.presentation.screen.DeliveryS
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.screen.MenuScreen
-import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderConfirmationScreen
 import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScreen
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
+import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.screen.OrderConfirmationScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.navigation.extensions.boolNavArg
 import com.mandarinkafe.mandarin.navigation.extensions.decodeJsonArg

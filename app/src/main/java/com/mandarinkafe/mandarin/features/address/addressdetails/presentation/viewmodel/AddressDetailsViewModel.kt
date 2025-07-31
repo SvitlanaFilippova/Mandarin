@@ -67,13 +67,29 @@ class AddressDetailsViewModel @Inject constructor(
 
     private fun setAddressType(type: AddressType) = updateAddress { copy(addressType = type) }
 
-    private fun setApartmentNumber(query: String) = updateAddress { copy(apartmentNumber = query) }
+    private fun setApartmentNumber(query: String) = updateAddress {
+        // Ограничиваем до 10 символов по требованию API
+        val limited = query.take(MAX_ADDRESS_DETAILS_LENGTH)
+        copy(apartmentNumber = limited)
+    }
 
-    private fun setEntrance(query: String) = updateAddress { copy(entrance = query) }
+    private fun setEntrance(query: String) = updateAddress {
+        // Ограничиваем до 10 символов по требованию API
+        val limited = query.take(MAX_ADDRESS_DETAILS_LENGTH)
+        copy(entrance = limited)
+    }
 
-    private fun setFloor(query: String) = updateAddress { copy(floor = query) }
+    private fun setFloor(query: String) = updateAddress {
+        // Ограничиваем до 10 символов по требованию API
+        val limited = query.take(MAX_ADDRESS_DETAILS_LENGTH)
+        copy(floor = limited)
+    }
 
-    private fun setIntercom(query: String) = updateAddress { copy(intercom = query) }
+    private fun setIntercom(query: String) = updateAddress {
+        // Ограничиваем до 10 символов по требованию API
+        val limited = query.take(MAX_ADDRESS_DETAILS_LENGTH)
+        copy(intercom = limited)
+    }
 
     private fun setAddressComment(query: String) = updateAddress { copy(comment = query) }
 
@@ -86,5 +102,9 @@ class AddressDetailsViewModel @Inject constructor(
 
     override fun setLoading(isLoading: Boolean) {
         // не применимо
+    }
+
+    private companion object {
+        const val MAX_ADDRESS_DETAILS_LENGTH = 10
     }
 }

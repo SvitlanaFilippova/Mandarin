@@ -9,7 +9,7 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.domain.models.Tag
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannerDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.CategoryDto
-import com.mandarinkafe.mandarin.features.menu.data.dto.ItemSizeDTO
+import com.mandarinkafe.mandarin.features.menu.data.dto.ItemSizeDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.LabelDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.MealDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupDto
@@ -146,7 +146,7 @@ fun BannerDto.toDomain() = Banner(
     targetName = targetName ?: "",
 )
 
-private fun getSafeModifiers(firstSize: ItemSizeDTO?) = firstSize
+private fun getSafeModifiers(firstSize: ItemSizeDto?) = firstSize
     ?.itemModifierGroups
     ?.map { it.toDomain() }
     ?.sortedByDescending { it.isSingleChoice }
@@ -171,7 +171,7 @@ private data class BaseMealInfo(
     val imageUrl: String?,
 )
 
-private fun extractBaseInfo(firstSize: ItemSizeDTO): BaseMealInfo {
+private fun extractBaseInfo(firstSize: ItemSizeDto): BaseMealInfo {
     val weight = firstSize.portionWeightGrams.toInt()
     val price = firstSize.prices.firstOrNull()?.price?.toInt() ?: 0
     val imageUrl = firstSize.buttonImageUrl

@@ -72,7 +72,6 @@ class OrderViewModel @Inject constructor(
             is OrderEvent.SelectAddressById -> selectAddressById(event.id)
             is OrderEvent.OnMissingRequiredInfo -> showMissingRequiredInfo()
             is OrderEvent.SubmitOrder -> submitOrder()
-
         }
     }
 
@@ -271,7 +270,6 @@ class OrderViewModel @Inject constructor(
                 // Пересчёт после установки скидки
                 setState { copy(cartSummary = cartSummary.copy(discountCategory = discount ?: 0)) }
                 recalculateCartSummary(discountSize = discount)
-
             }
         }
     }

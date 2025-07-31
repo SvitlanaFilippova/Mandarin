@@ -178,7 +178,9 @@ class AddressViewModel @Inject constructor(
                         address?.let {
                             setState {
                                 copy(
-                                    displayAddress = address.addressSingleLine,
+                                    displayAddress = address.addressSingleLine.take(
+                                        MAX_ADDRESS_LENGTH
+                                    ),
                                     fetchAddressInProgress = false,
                                     error = null,
                                 )
@@ -246,5 +248,6 @@ class AddressViewModel @Inject constructor(
         private const val MANDARIN_LONGITUDE = 38.375328
         private const val SEARCH_DELAY = 1000L
         private const val FETCH_ADDRESS_DELAY = 1000L
+        private const val MAX_ADDRESS_LENGTH = 250
     }
 }

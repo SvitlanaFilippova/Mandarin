@@ -1,0 +1,28 @@
+package com.mandarinkafe.mandarin.core.data.dto.order
+
+data class OrderDto(
+    val id: String? = null,
+    val phone: String? = null,
+    val orderServiceType: String? = null,
+    val deliveryPoint: DeliveryPointDto? = null,
+    val comment: String? = null,
+    val customer: CustomerDto? = null,
+    val items: List<ItemDto?>,
+    val payments: List<PaymentDto>? = null,
+    val status: String? = null,
+    val deliveryDuration: Int? = null,
+    val cancelInfo: CancelInfo? = null,
+    val courierInfo: CourierInfo? = null,
+    val orderType: OrderType? = null,
+    val processedPaymentsSum: Int? = null,
+    val sum: Int? = null,
+    val whenClosed: String? = null,
+    val whenConfirmed: String? = null,
+    val whenCookingCompleted: String? = null,
+    val whenCreated: String? = null,
+    val whenDelivered: String? = null,
+    val whenPacked: String? = null,
+    val whenPrinted: String? = null,
+    val whenSended: String? = null,
+    val problem: Problem? = null,
+)

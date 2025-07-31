@@ -5,13 +5,14 @@ import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.Response
+import com.mandarinkafe.mandarin.core.data.dto.order.OrderDto
 import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
+import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.LoyaltyCustomerByPhoneRequest
-import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.CreateDeliveryRequest
-import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.OrderDto
-import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.paymenttype.PaymentTypesRequest
+import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesRequest
+import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.OderInfoRequest
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
@@ -28,6 +29,36 @@ class IikoNetworkClientImpl(
     private var organizationId = ""
     private var externalMenuId = ""
 
+    private suspend fun authenticate() {
+        if (token.isNotEmpty() && organizationId.isNotEmpty()) {
+            // Уже авторизованы
+            return
+        }
+        try {
+            val authResponse = iikoService.authenticate(AuthRequest(BuildConfig.IIKO_API_KEY))
+            token = BEARER_PREFIX + authResponse.token
+
+            val organizationsResponse = iikoService.getOrganizations(
+                token = token,
+                body = OrganizationsRequest()
+            )
+            organizationId = organizationsResponse.organizations.firstOrNull()?.id
+                ?: error("No organization found")
+        } catch (e: Throwable) {
+            Log.d(logTag, "Ошибка в методе authenticate: ${e.message}")
+        }
+    }
+
+    private suspend fun ensureAuthenticated() {
+        if (token.isEmpty() || organizationId.isEmpty()) authenticate()
+    }
+
+    private suspend fun getExternalMenuId(): String {
+        val menuIdResponse = iikoService.getMenuId(token)
+        return menuIdResponse.externalMenus.firstOrNull()?.id
+            ?: error("Menu ID not found")
+    }
+
     override suspend fun getMenu(): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
@@ -35,6 +66,25 @@ class IikoNetworkClientImpl(
         return withContext(Dispatchers.IO) {
             ensureAuthenticated()
             fetchMenu()
+        }
+    }
+
+    private suspend fun fetchMenu(): Response {
+        return try {
+            if (externalMenuId.isEmpty()) {
+                externalMenuId = getExternalMenuId()
+            }
+            val menuResponse = iikoService.getMenuById(
+                token = token,
+                body = MenuRequest(
+                    externalMenuId = externalMenuId,
+                    organizationIds = listOf(organizationId)
+                )
+            )
+            menuResponse.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.d(logTag, ERROR + e.message)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
@@ -62,17 +112,15 @@ class IikoNetworkClientImpl(
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
-    private val logTagORDER = "DEBUG ORDER API NetworkClient"
+
+    private val logTagORDER = "DEBUG ORDER NetworkClient"
 
     override suspend fun createDelivery(order: OrderDto): Response {
-        Log.d(logTagORDER, "createDelivery called with order: $order")
-        Log.d(logTagORDER, "organizationId: $organizationId")
         return try {
             val request = CreateDeliveryRequest(
                 order = order,
                 organizationId = organizationId
             )
-            Log.d(logTagORDER, "Sending request: $request")
 
             val response = iikoService.createDelivery(
                 token = token,
@@ -110,52 +158,32 @@ class IikoNetworkClientImpl(
         }
     }
 
-    private suspend fun ensureAuthenticated() {
-        if (token.isEmpty() || organizationId.isEmpty()) authenticate()
-    }
+    private val logTagOrderStatus = "DEBUG ORDER STATUS NetworkClient"
 
-    private suspend fun fetchMenu(): Response {
+    override suspend fun getOrderStatusById(id: String): Response {
+        Log.d(logTagOrderStatus, "called getOrderStatusById with id $id")
         return try {
-            if (externalMenuId.isEmpty()) {
-                externalMenuId = getExternalMenuId()
+            val request = OderInfoRequest(
+                organizationId = organizationId,
+                orderIds = listOf(id)
+            )
+
+            val response = iikoService.getOrdersStatusById(
+                token = token,
+                body = request
+            )
+            Log.d(logTagOrderStatus, "Received response: $response")
+
+            response.apply {
+                resultCode = HTTP_SUCCESS
+                Log.d(logTagOrderStatus, "Modified response code to HTTP_SUCCESS")
             }
-            val menuResponse = iikoService.getMenuById(
-                token = token,
-                body = MenuRequest(
-                    externalMenuId = externalMenuId,
-                    organizationIds = listOf(organizationId)
-                )
-            )
-            menuResponse.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d(logTag, ERROR + e.message)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
-        }
-    }
-
-    private suspend fun getExternalMenuId(): String {
-        val menuIdResponse = iikoService.getMenuId(token)
-        return menuIdResponse.externalMenus.firstOrNull()?.id
-            ?: error("Menu ID not found")
-    }
-
-    private suspend fun authenticate() {
-        if (token.isNotEmpty() && organizationId.isNotEmpty()) {
-            // Уже авторизованы
-            return
-        }
-        try {
-            val authResponse = iikoService.authenticate(AuthRequest(BuildConfig.IIKO_API_KEY))
-            token = BEARER_PREFIX + authResponse.token
-
-            val organizationsResponse = iikoService.getOrganizations(
-                token = token,
-                body = OrganizationsRequest()
-            )
-            organizationId = organizationsResponse.organizations.firstOrNull()?.id
-                ?: error("No organization found")
-        } catch (e: Throwable) {
-            Log.d(logTag, "Ошибка в методе authenticate: ${e.message}")
+            Log.e(logTagOrderStatus, "Error in createDelivery: ${e.message}", e)
+            Response().apply {
+                resultCode = HTTP_SERVER_ERROR
+                Log.d(logTagOrderStatus, "Created error response with code $HTTP_SERVER_ERROR")
+            }
         }
     }
 

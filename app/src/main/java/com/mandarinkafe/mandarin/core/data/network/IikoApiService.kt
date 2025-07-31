@@ -7,12 +7,14 @@ import com.mandarinkafe.mandarin.core.data.dto.OrganizationsResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.MenuIdResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.MenuResponse
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
+import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.LoyaltyCustomerByPhoneRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
-import com.mandarinkafe.mandarin.features.order.data.network.dto.LoyaltyCustomerResponse
-import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.CreateDeliveryRequest
-import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.paymenttype.PaymentTypesRequest
-import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.paymenttype.PaymentTypesResponse
+import com.mandarinkafe.mandarin.features.order.data.network.dto.loyalty.LoyaltyCustomerResponse
+import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesRequest
+import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesResponse
+import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.OderInfoRequest
+import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.dto.OrderInfoResponse
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -56,4 +58,9 @@ interface IikoApiService {
         @Body body: CreateDeliveryRequest
     ): CreateDeliveryResponse
 
+    @POST("/api/1/deliveries/by_id")
+    suspend fun getOrdersStatusById(
+        @Header("Authorization") token: String,
+        @Body body: OderInfoRequest
+    ): OrderInfoResponse
 }

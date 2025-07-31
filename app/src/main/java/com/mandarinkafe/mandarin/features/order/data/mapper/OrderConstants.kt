@@ -6,10 +6,15 @@ object OrderConstants {
     const val DELIVERY_TYPE_PICKUP = "DeliveryByClient"
     const val CUSTOMER_TYPE_ONE_TIME = "one-time"
     const val ADDRESS_TYPE_LEGACY = "legacy"
+    const val ADDRESS_TYPE_CITY = "city"
     const val PAYMENT_CASH_CODE = "CASH"
     const val FULL_PERCENT = 100
     const val FULL_PERCENT_DOUBLE = 100.0
     const val PRICE_DECIMALS = 2
+    const val DEFAULT_AMOUNT = 1.0
+
+    const val DELIVERY_ID = "0ea99e6f-fb25-4140-8233-dbc4e1113cb8"
+    const val DELIVERY_ITEM_TYPE = "Product"
 
     // Комментарии
     const val NO_UTENSILS_COMMENT = "БЕЗ ПРИБОРОВ"

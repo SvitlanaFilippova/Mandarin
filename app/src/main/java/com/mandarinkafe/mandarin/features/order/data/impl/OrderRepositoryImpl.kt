@@ -5,8 +5,8 @@ import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.data.mapper.toOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
-import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.paymenttype.PaymentTypesResponse
-import com.mandarinkafe.mandarin.features.order.data.network.dto.createdelivery.paymenttype.toDomain
+import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesResponse
+import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.OrderRepository
 import com.mandarinkafe.mandarin.features.order.domain.models.Order
 import com.mandarinkafe.mandarin.features.order.domain.models.OrderInfo
