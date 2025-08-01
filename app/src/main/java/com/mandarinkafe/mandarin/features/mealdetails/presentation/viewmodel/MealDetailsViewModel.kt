@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
@@ -72,13 +71,17 @@ class MealDetailsViewModel @Inject constructor(
                 .find { it.id == group.id }
                 ?.items
                 ?.size ?: 0
-            group.maxQuantity?.let {
-                if (isChecked && selectedCount >= it) {
-                    sendEffect(ShowMaxModifiersQuantity(max = it, groupName = group.name))
-                    Log.d("DEBUG Snackbar", "VM, sent ShowMaxModifiersQuantity")
-                    return@setState this
+
+            if (group.maxQuantity > 1 && isChecked && selectedCount >= group.maxQuantity) {
+                sendEffect(
+                    ShowMaxModifiersQuantity(
+                        max = group.maxQuantity,
+                        groupName = group.name
+                    )
+                )
+                return@setState this
                 }
-            }
+
             val modifiersList = currentItem.modifiers.toMutableList()
             val groupIndex = modifiersList.indexOfFirst { it.id == group.id }
 
