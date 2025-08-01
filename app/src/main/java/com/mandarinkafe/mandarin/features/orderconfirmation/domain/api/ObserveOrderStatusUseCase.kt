@@ -5,5 +5,5 @@ import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface ObserveOrderStatusUseCase {
-    operator fun invoke(id: String): Flow<Resource<OrderInfo>>
+    operator fun invoke(id: String, delay: Long): Flow<Resource<OrderInfo>>
 }

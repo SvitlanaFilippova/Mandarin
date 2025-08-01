@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 class ObserveOrderStatusUseCaseImpl(private val repository: OrderInfoRepository) :
     ObserveOrderStatusUseCase {
-    override fun invoke(id: String): Flow<Resource<OrderInfo>> {
-        return repository.observeOrderInfo(id)
+    override fun invoke(id: String, delay: Long): Flow<Resource<OrderInfo>> {
+        return repository.observeOrderInfo(id, delay)
     }
 }

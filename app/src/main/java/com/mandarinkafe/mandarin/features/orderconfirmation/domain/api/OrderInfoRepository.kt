@@ -5,5 +5,5 @@ import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface OrderInfoRepository {
-    fun observeOrderInfo(id: String): Flow<Resource<OrderInfo>>
+    fun observeOrderInfo(id: String, delay: Long): Flow<Resource<OrderInfo>>
 }

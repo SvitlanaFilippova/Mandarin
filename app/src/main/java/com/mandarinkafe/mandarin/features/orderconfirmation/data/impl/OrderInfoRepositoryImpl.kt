@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
 class OrderInfoRepositoryImpl(private val networkClient: IikoNetworkClient) : OrderInfoRepository {
-    override fun observeOrderInfo(id: String): Flow<Resource<OrderInfo>> = flow {
+    override fun observeOrderInfo(id: String, delay: Long): Flow<Resource<OrderInfo>> = flow {
         while (true) {
             val response = networkClient.getOrderStatusById(id)
             val result = when (response.resultCode) {
@@ -41,11 +41,9 @@ class OrderInfoRepositoryImpl(private val networkClient: IikoNetworkClient) : Or
             }
 
             emit(result)
-            delay(ORDER_STATUS_UPD_DELAY)
+            delay(delay)
         }
     }.flowOn(Dispatchers.IO)
 
-    private companion object {
-        const val ORDER_STATUS_UPD_DELAY = 10000L
-    }
+    private companion object
 }

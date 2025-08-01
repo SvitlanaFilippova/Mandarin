@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartItemsUseCase
@@ -116,7 +117,10 @@ class OrderViewModel @Inject constructor(
 
                     //Обновляем инфо в стейте
                     val newDeliveryInfo =
-                        if (isPickupOnly && deliveryInfo.isDelivery) DeliveryInfo() else deliveryInfo
+                        if (isPickupOnly) deliveryInfo.copy(
+                            deliveryType = DeliveryType.SELF_PICKUP,
+                            chosenAddress = null
+                        ) else deliveryInfo
                     val newCartSummary = cartSummary.copy(
                         items = items,
                         containNotDiscountable = containNotDiscountable
@@ -364,7 +368,7 @@ class OrderViewModel @Inject constructor(
     private fun observeOrderUntilSuccess(orderId: String) {
         stopObservingOrderStatus()
         observeStatusJob = viewModelScope.launch {
-            observeOrderStatus(orderId).collect { result ->
+            observeOrderStatus(orderId, ORDER_STATUS_UPD_DELAY).collect { result ->
                 when (result) {
                     is Resource.Success -> {
                         when (result.data?.creationStatus) {
@@ -375,6 +379,10 @@ class OrderViewModel @Inject constructor(
                             Error -> {
                                 sendErrorEffect(
                                     result.data.errorInfo?.message ?: "Не удалось создать заказ"
+                                )
+                                Log.d(
+                                    "DEBUG ORDER CREATE VM",
+                                    "Error: ${result.data.errorInfo?.errorReason} ${result.data.errorInfo?.message}"
                                 )
                                 stopObservingOrderStatus()
                             }
@@ -415,5 +423,6 @@ class OrderViewModel @Inject constructor(
 
     private companion object {
         const val PERCENT_DIVISOR = 100.0
+        const val ORDER_STATUS_UPD_DELAY = 1000L
     }
 }

@@ -31,7 +31,7 @@ class OrderConfirmationViewModel @Inject constructor(private val observeOrderSta
     private fun startObservingOrderStatus(orderId: String) {
         observeStatusJob?.cancel()
         observeStatusJob = viewModelScope.launch {
-            observeOrderStatus(orderId)
+            observeOrderStatus(orderId, ORDER_STATUS_UPD_DELAY)
                 .collect { result ->
                     when (result) {
                         is Resource.Loading -> setLoading()
@@ -61,4 +61,7 @@ class OrderConfirmationViewModel @Inject constructor(private val observeOrderSta
         setState { copy(isLoading = isLoading) }
     }
 
+    private companion object {
+        const val ORDER_STATUS_UPD_DELAY = 10000L
+    }
 }
