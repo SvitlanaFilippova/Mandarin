@@ -77,7 +77,7 @@ fun MealDetailsMainContent(
                                 isChecked = isChecked
                             )
                         )
-                    }
+                    },
                 )
             }
         }

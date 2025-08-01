@@ -36,6 +36,7 @@ sealed interface MealDetailsContract {
 
     sealed interface MealDetailsEffect : BaseEffect {
         data object ShowRequiredModifiersDialog : MealDetailsEffect
+        data class ShowMaxModifiersQuantity(val groupName: String, val max: Int) : MealDetailsEffect
     }
 
     data class MealDetailsState(

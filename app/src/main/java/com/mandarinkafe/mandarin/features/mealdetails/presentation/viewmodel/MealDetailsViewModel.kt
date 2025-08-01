@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
@@ -8,6 +9,7 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowMaxModifiersQuantity
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowRequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsState
@@ -65,6 +67,18 @@ class MealDetailsViewModel @Inject constructor(
     ) {
         setState {
             val currentItem = customizedMeal ?: return@setState this
+
+            val selectedCount = currentItem.modifiers
+                .find { it.id == group.id }
+                ?.items
+                ?.size ?: 0
+            group.maxQuantity?.let {
+                if (isChecked && selectedCount >= it) {
+                    sendEffect(ShowMaxModifiersQuantity(max = it, groupName = group.name))
+                    Log.d("DEBUG Snackbar", "VM, sent ShowMaxModifiersQuantity")
+                    return@setState this
+                }
+            }
             val modifiersList = currentItem.modifiers.toMutableList()
             val groupIndex = modifiersList.indexOfFirst { it.id == group.id }
 
@@ -90,7 +104,7 @@ class MealDetailsViewModel @Inject constructor(
             // Сортировка: сначала SingleChoice группы
             modifiersList.sortByDescending { it.isSingleChoice }
             copy(
-                customizedMeal = currentItem.copy(modifiers = modifiersList)
+                customizedMeal = currentItem.copy(modifiers = modifiersList),
             )
         }
     }

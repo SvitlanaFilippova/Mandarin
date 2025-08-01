@@ -41,6 +41,8 @@
     <string name="chosen">Выбрано:</string>
     <string name="cancel_choice">Отменить выбор</string>
     <string name="mandatory">(обязательно)</string>
+    <string name="maximum_modifier">В этой группе уже выбрано максимально возможное количество добавок"</string>
+    <string name="maximum_modifier_short">(максимум %d)</string>
     <string name="make_mandatory_choice_before_cart">Выбери нужные опции в обязательных модификаторах — только после этого можно добавить блюдо в корзину</string>
     <string name="for_selfpickup">для самовывоза</string>
     <string name="for_selfpickup_details">Позиция доступна только для заказа самовывозом. Доставка невозможна.</string>
