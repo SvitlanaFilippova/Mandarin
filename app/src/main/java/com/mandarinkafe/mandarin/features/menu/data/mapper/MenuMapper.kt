@@ -2,13 +2,11 @@ package com.mandarinkafe.mandarin.features.menu.data.mapper
 
 import com.mandarinkafe.mandarin.core.domain.models.Label
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.domain.models.Tag
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannerDto
-import com.mandarinkafe.mandarin.features.menu.data.dto.CategoryDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ItemSizeDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.LabelDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.MealDto
@@ -26,37 +24,10 @@ import com.mandarinkafe.mandarin.util.Constants.TAG_PIZZERIA
 import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.removeLeadingDash
 
-fun CategoryDto.toDomain(
-    topCategoryName: String? = null
-): MealCategory {
-    val categoryLabels = labels?.map { it.toDomain() } ?: emptyList()
-    val categoryTags = tags?.map { it.toDomain() } ?: emptyList()
-
-    val safeItems = items?.mapNotNull {
-        it.toDomain(
-            categoryLabels = categoryLabels,
-            categoryTags = categoryTags,
-            parentCategoryName = name,
-            grandParentCategoryName = topCategoryName
-        )
-    } ?: emptyList()
-
-    return MealCategory(
-        id = id,
-        name = name.applyTypography(),
-        meals = safeItems,
-        subCategories = null,
-        tabIcon = buttonImageUrl,
-        description = (description ?: "").applyTypography(),
-        isHidden = isHidden == true,
-    )
-}
-
-private fun MealDto.toDomain(
+fun MealDto.toDomain(
     categoryLabels: List<Label>,
     categoryTags: List<Tag>,
-    parentCategoryName: String,
-    grandParentCategoryName: String?
+    categoryPath: List<String>
 ): Meal? {
     val firstSize = itemSizes?.firstOrNull() ?: return null
 
@@ -87,23 +58,11 @@ private fun MealDto.toDomain(
         isModifiable = isModifiable(safeModifiers, baseInfo.price),
         isPickupOnly = finalMealTags.any { it.name.equals(TAG_NO_DELIVERY, ignoreCase = true) },
         discountable = isDiscountable(finalMealTags),
-        parentCategoryName = parentCategoryName,
-        grandParentCategoryName = grandParentCategoryName,
         pickupPoint = resolvePickupPoint(finalMealTags),
         orderItemType = orderItemType,
+        categoryPath = categoryPath,
     )
 }
-
-fun CategoryDto.hasParent(): Boolean =
-    name.contains("/")
-
-fun CategoryDto.parentName(): String =
-    name.substringBefore("/")
-        .trim()
-
-fun CategoryDto.subName(): String =
-    name.substringAfter("/")
-        .trim()
 
 fun TagDto.toDomain() = Tag(
     id = id,

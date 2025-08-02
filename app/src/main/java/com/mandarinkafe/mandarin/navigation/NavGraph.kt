@@ -20,7 +20,6 @@ import com.mandarinkafe.mandarin.features.address.address.presentation.ui.screen
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.AddressDetailsScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.screen.CartScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
-import com.mandarinkafe.mandarin.features.delivery.presentation.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.screen.MenuScreen
@@ -92,9 +91,7 @@ fun NavGraph(navHostController: NavHostController) {
                         sharedViewModel = sharedViewModel
                     )
                 }
-                composable(NavConstants.DELIVERY_SCREEN_ROUTE) {
-                    DeliveryScreen()
-                }
+
                 composable(NavConstants.CART_SCREEN_ROUTE) {
                     CartScreen(
                         cartViewModel = cartViewModel,

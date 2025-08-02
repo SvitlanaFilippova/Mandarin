@@ -17,5 +17,5 @@ fun Meal.toMealAdditional() = MealAdditional(
 fun MealCategory.toMealAdditionalCategory() = MealAdditionalCategory(
     id = id,
     name = name.applyTypography(),
-    mealAdditionals = meals?.map { it.toMealAdditional() } ?: emptyList(),
+    items = meals?.map { it.toMealAdditional() } ?: emptyList(),
 )

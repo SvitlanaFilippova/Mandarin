@@ -174,13 +174,15 @@ class OrderViewModel @Inject constructor(
     }
 
     private fun setAddress(address: Address) {
-        setState {
+        viewModelScope.launch {
             val deliveryZone = getDeliveryZone(address.point)
-            val newDeliveryInfo = deliveryInfo.copy(
-                chosenAddress = address,
-                deliveryZone = deliveryZone,
-            )
-            copy(deliveryInfo = newDeliveryInfo)
+            setState {
+                val newDeliveryInfo = deliveryInfo.copy(
+                    chosenAddress = address,
+                    deliveryZone = deliveryZone,
+                )
+                copy(deliveryInfo = newDeliveryInfo)
+            }
         }
     }
 

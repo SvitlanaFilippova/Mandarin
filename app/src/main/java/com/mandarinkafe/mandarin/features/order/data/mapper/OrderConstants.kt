@@ -13,9 +13,6 @@ object OrderConstants {
     const val PRICE_DECIMALS = 2
     const val DEFAULT_AMOUNT = 1.0
 
-    const val DELIVERY_ID = "0ea99e6f-fb25-4140-8233-dbc4e1113cb8"
-    const val DELIVERY_ITEM_TYPE = "Product"
-
     // Комментарии
     const val NO_UTENSILS_COMMENT = "БЕЗ ПРИБОРОВ"
     const val UTENSILS_NEED_PREFIX = "НУЖНЫ: "

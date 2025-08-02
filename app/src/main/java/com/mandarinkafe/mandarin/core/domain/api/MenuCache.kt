@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
  */
 interface MenuCache {
     val menu: StateFlow<Resource<List<MealCategory>>>
+    val addonsCategories: StateFlow<List<MealCategory>>
+    val deliveryCategory: StateFlow<MealCategory?>
     fun getMealById(id: String): Meal?
     fun getMealsBySku(sku: String): List<Meal>
     fun fetchMenuIfNeeded()

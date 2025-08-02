@@ -5,50 +5,36 @@ import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditionalCategory
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
-import com.mandarinkafe.mandarin.features.menu.domain.usecase.CategoryFilter
+import com.mandarinkafe.mandarin.util.Constants.CATEGORY_ADDS
 import com.mandarinkafe.mandarin.util.Resource
-import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
-import com.mandarinkafe.mandarin.util.Resource.ErrorNoInternet
-import com.mandarinkafe.mandarin.util.Resource.ErrorOther
-import com.mandarinkafe.mandarin.util.Resource.Idle
-import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
-import com.mandarinkafe.mandarin.util.di.Addons
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class GetAddonsUseCaseImpl(
     private val cache: MenuCache,
-    @Addons private val addonsFilter: CategoryFilter,
 ) : GetAddonsUseCase {
 
-    override operator fun invoke(): Flow<Resource<List<MealAdditionalCategory>>> {
-        return cache.menu.map { result ->
-            when (result) {
-                is Success -> {
-                    val addonsParents = result.data?.filter { addonsFilter.isMatch(it) }
-                    val addonsCategories: List<MealCategory> = addonsParents
-                        ?.flatMap {
-                            it.subCategories ?: emptyList()
-                        } ?: emptyList()
-                    Success(addonsCategories.map { it.toMealAdditionalCategory() })
-                }
-
-                is ErrorOther -> {
-                    ErrorOther(result.message.toString())
-                }
-
-                is Loading -> {
-                    Loading()
-                }
-
-                is Idle -> {
-                    Loading()
-                }
-
-                is ErrorEmptyData -> ErrorEmptyData()
-                is ErrorNoInternet -> ErrorNoInternet()
-            }
+    override fun invoke(categoryPath: List<String>): Flow<Resource<List<MealAdditionalCategory>>> {
+        return cache.addonsCategories.map { addons ->
+            val matched = addons.firstOrNull { it.categoryPath == categoryPath + CATEGORY_ADDS }
+            Success(
+                matched?.subCategories.orEmpty()
+                    .map { it.toMealAdditionalCategory() }
+            )
         }
+    }
+
+    private fun findCategoryByPath(
+        path: List<String>,
+        categories: List<MealCategory>
+    ): MealCategory? {
+        var currentLevel = categories
+        var result: MealCategory? = null
+        for (name in path) {
+            result = currentLevel.find { it.name == name } ?: return null
+            currentLevel = result.subCategories.orEmpty()
+        }
+        return result
     }
 }

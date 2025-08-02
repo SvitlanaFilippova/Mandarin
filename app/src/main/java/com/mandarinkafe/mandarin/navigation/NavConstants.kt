@@ -11,7 +11,6 @@ object NavConstants {
 
     // Screen routes
     const val MENU_SCREEN_ROUTE = "menu"
-    const val DELIVERY_SCREEN_ROUTE = "delivery"
     const val FAVORITES_SCREEN_ROUTE = "favorites"
     const val CART_SCREEN_ROUTE = "cart"
     const val SPLASH_SCREEN_ROUTE = "splash"

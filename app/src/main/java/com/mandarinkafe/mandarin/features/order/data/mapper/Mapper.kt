@@ -14,8 +14,6 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DEFAULT_AMOUNT
-import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DELIVERY_ID
-import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DELIVERY_ITEM_TYPE
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DISCOUNT_APPLIED
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DISCOUNT_PERCENT
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVIDER_FOR_TECH_PART
@@ -63,7 +61,8 @@ fun OrderState.toDomain(paymentType: PaymentType): Order {
         cartItems = cartSummary.items,
         deliveryRealCost = deliveryCost,
         totalOrderSum = totalOrderSum,
-        discountCategory = cartSummary.discountCategory
+        discountCategory = cartSummary.discountCategory,
+        deliveryZoneID = deliveryInfo.deliveryZone?.id
     )
 }
 
@@ -84,7 +83,7 @@ fun Order.toOrderDto(): OrderDto {
         items = cartItems.flatMap { (customizedMeal, quantity) ->
             val mealItem = customizedMeal.toItem(quantity, discountCategory)
             val addsItems = customizedMeal.adds.map { it.toItem(quantity, discountCategory) }
-            listOf(mealItem) + addsItems + createDelivery(deliveryRealCost)
+            listOf(mealItem) + addsItems
         },
         payments = listOf(
             PaymentDto(
@@ -93,15 +92,6 @@ fun Order.toOrderDto(): OrderDto {
                 sum = totalOrderSum,
             )
         )
-    )
-}
-
-private fun createDelivery(price: Int): ItemDto {
-    return ItemDto(
-        productId = DELIVERY_ID,
-        price = price.toDouble(),
-        amount = DEFAULT_AMOUNT,
-        type = DELIVERY_ITEM_TYPE
     )
 }
 
@@ -230,7 +220,6 @@ private fun buildFullComment(
         }
     }.trim()
 }
-
 
 fun ErrorInfoDto.toDomain() = ErrorInfo(
     code = code,

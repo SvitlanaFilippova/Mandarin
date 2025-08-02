@@ -235,6 +235,8 @@ fun OrderScreen(
                 totalOrderSum = state.totalOrderSum,
             )
         }
+
+        item { Spacer(Modifier.height(Dimens.MarginForCartButton72)) }
     }
 
     // Диалог для подтверждения желания удалить адрес

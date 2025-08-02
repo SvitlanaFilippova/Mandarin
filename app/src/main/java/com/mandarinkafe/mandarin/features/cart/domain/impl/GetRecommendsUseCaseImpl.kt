@@ -59,9 +59,7 @@ class GetRecommendsUseCaseImpl(
         cartItems.map { meal ->
             meal.copy(
                 name = meal.name.normalize(),
-                parentCategoryName = meal.parentCategoryName.normalize(),
-                grandParentCategoryName = meal.grandParentCategoryName?.normalize()
-                    .orEmpty()
+                categoryPath = meal.categoryPath.map { it.normalize() }
             )
         }
 
@@ -73,12 +71,8 @@ class GetRecommendsUseCaseImpl(
 
             // Находим все элементы корзины, у которых совпало имя правила
             val matchingCartMeals = cartItemsWithNorm.filter { meal ->
-                listOfNotNull(
-                    meal.name,
-                    meal.parentCategoryName,
-                    meal.grandParentCategoryName
-                )
-                    .any { it.equals(ruleName, ignoreCase = true) }
+                meal.name.equals(ruleName, ignoreCase = true) ||
+                        meal.categoryPath.any { it.equals(ruleName, ignoreCase = true) }
             }
 
             if (matchingCartMeals.isEmpty()) {

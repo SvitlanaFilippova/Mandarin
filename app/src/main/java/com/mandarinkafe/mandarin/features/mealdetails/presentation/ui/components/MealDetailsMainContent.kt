@@ -82,7 +82,7 @@ fun MealDetailsMainContent(
             }
         }
         // Выбор добавок
-        if (meal.isAddable) {
+        if (meal.isAddable && addons.isNotEmpty()) {
             item {
                 AddsHeader(
                     selectedTabIndex = selectedTabIndex,
@@ -97,7 +97,7 @@ fun MealDetailsMainContent(
                 )
             }
             val addsItems =
-                addons[selectedTabIndex].mealAdditionals ?: emptyList()
+                addons[selectedTabIndex].items ?: emptyList()
             // Список доступных добавок
             itemsIndexed(addsItems) { _, item ->
                 AddsItem(

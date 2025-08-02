@@ -80,7 +80,7 @@ class MealDetailsViewModel @Inject constructor(
                     )
                 )
                 return@setState this
-                }
+            }
 
             val modifiersList = currentItem.modifiers.toMutableList()
             val groupIndex = modifiersList.indexOfFirst { it.id == group.id }
@@ -177,7 +177,9 @@ class MealDetailsViewModel @Inject constructor(
             setState { copy(isLoading = false) }
         } else {
             viewModelScope.launch {
-                getAddonsUseCase().collectLatest { result ->
+                getAddonsUseCase(
+                    categoryPath = state.value.customizedMeal?.meal?.categoryPath ?: emptyList()
+                ).collectLatest { result ->
                     setLoading(result is Loading)
                     when (result) {
                         is Success -> setData(result.data)

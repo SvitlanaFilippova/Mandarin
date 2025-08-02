@@ -4,14 +4,20 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.address.address.data.impl.AddressRepositoryImpl
+import com.mandarinkafe.mandarin.features.address.address.data.impl.DeliveryAreaRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.address.data.impl.FusedLocationRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.address.domain.api.AddressRepository
 import com.mandarinkafe.mandarin.features.address.address.domain.api.AddressSearchInteractor
+import com.mandarinkafe.mandarin.features.address.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.address.address.domain.api.FusedLocationRepository
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetCurrentLocationUseCase
+import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.address.domain.impl.AddressSearchInteractorImpl
 import com.mandarinkafe.mandarin.features.address.address.domain.impl.GetCurrentLocationUseCaseImpl
+import com.mandarinkafe.mandarin.features.address.address.domain.impl.GetDeliveryZoneUseCaseImpl
 import com.mandarinkafe.mandarin.features.address.savedadresses.data.impl.SavedAddressRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.savedadresses.data.sharedprefs.AddressStorage
 import com.mandarinkafe.mandarin.features.address.savedadresses.data.sharedprefs.AddressStorageImpl
@@ -130,4 +136,21 @@ class AddressModule {
         )
     }
 
+    @Provides
+    fun provideDeliveryAreaRepository(
+        networkClient: GoogleDocsNetworkClient,
+        menuCache: MenuCache
+    ): DeliveryAreaRepository {
+        return DeliveryAreaRepositoryImpl(
+            networkClient = networkClient,
+            menuCache = menuCache
+        )
+    }
+
+    @Provides
+    fun provideGetDeliveryZoneUseCase(repository: DeliveryAreaRepository): GetDeliveryZoneUseCase {
+        return GetDeliveryZoneUseCaseImpl(
+            deliveryAreaRepository = repository,
+        )
+    }
 }

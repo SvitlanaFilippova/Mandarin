@@ -32,10 +32,7 @@ class OrderRepositoryImpl(private val networkClient: IikoNetworkClient) : OrderR
 
     override suspend fun createOrder(order: Order): Resource<OrderInfo> {
         return try {
-            Log.d(logTag, "createOrder called with order: $order")
             val orderDto = order.toOrderDto()
-            Log.d(logTag, "Converted to DTO: $orderDto")
-
             val response = networkClient.createDelivery(orderDto)
             Log.d(
                 logTag,
@@ -69,5 +66,3 @@ class OrderRepositoryImpl(private val networkClient: IikoNetworkClient) : OrderR
         }
     }
 }
-
-

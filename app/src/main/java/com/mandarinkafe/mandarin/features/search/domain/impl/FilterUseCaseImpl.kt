@@ -8,7 +8,6 @@ import com.mandarinkafe.mandarin.util.levenshteinDistance
 import com.mandarinkafe.mandarin.util.toTranslitVariants
 
 class FilterUseCaseImpl : FilterUseCase {
-
     override fun invoke(
         meals: List<Meal>,
         searchText: String,
@@ -26,7 +25,12 @@ class FilterUseCaseImpl : FilterUseCase {
 
         return meals
             .filter { meal ->
-                val matchesText = listOf(meal.name, meal.parentCategoryName).any { field ->
+                val searchableFields = listOf(
+                    meal.name,
+                    meal.categoryPath.joinToString(" ")
+                )
+
+                val matchesText = searchableFields.any { field ->
                     searchVariants.any { variant -> field.fuzzyContains(variant) }
                 }
 
@@ -40,9 +44,10 @@ class FilterUseCaseImpl : FilterUseCase {
                 compareBy<Meal> { meal ->
                     val distances = searchVariants.flatMap { variant ->
                         listOf(
-                            meal.name.levenshteinDistance(variant),
-                            meal.parentCategoryName.levenshteinDistance(variant)
-                        )
+                            meal.name.levenshteinDistance(variant)
+                        ) + meal.categoryPath.map { categorySegment ->
+                            categorySegment.levenshteinDistance(variant)
+                        }
                     }
                     distances.minOrNull() ?: Int.MAX_VALUE
                 }.thenByDescending { it.isFavorite(favoritesIds) }

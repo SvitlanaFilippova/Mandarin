@@ -61,14 +61,10 @@ data class Meal(
     val isPickupOnly: Boolean,
 
     /**
-    Название родительской категории
+    Название родительской категории и всех прародительских, если есть
      */
-    val parentCategoryName: String,
+    val categoryPath: List<String>,
 
-    /**
-    Название прародительской категории, если есть
-     */
-    val grandParentCategoryName: String?,
 
     /**
     Название прародительской категории, если есть

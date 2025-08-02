@@ -11,7 +11,8 @@ data class Order(
     val paymentType: PaymentType,
     val comment: String,
     val cartItems: Map<CustomizedMeal, Int>,
-    val deliveryRealCost: Int,
-    val totalOrderSum: Double,
     val discountCategory: Int,
+    val totalOrderSum: Double,
+    val deliveryRealCost: Int,
+    val deliveryZoneID: Int?,
 )

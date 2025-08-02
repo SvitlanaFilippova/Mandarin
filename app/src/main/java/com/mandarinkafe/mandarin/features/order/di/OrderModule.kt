@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.order.di
 
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.order.data.impl.LoyaltyCustomerRepositoryImpl
 import com.mandarinkafe.mandarin.features.order.data.impl.OrderRepositoryImpl
 import com.mandarinkafe.mandarin.features.order.domain.api.CheckDiscountByPhoneUseCase
@@ -62,10 +63,12 @@ class OrderModule {
     @Singleton
     @Provides
     fun provideCreateOrderUseCase(
-        repository: OrderRepository
+        repository: OrderRepository,
+        menuCache: MenuCache
     ): CreateOrderUseCase {
         return CreateOrderUseCaseImpl(
-            repository = repository
+            repository = repository,
+            menuCache = menuCache
         )
     }
 

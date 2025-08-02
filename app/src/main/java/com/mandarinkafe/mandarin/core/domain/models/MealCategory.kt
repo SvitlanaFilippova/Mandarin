@@ -10,5 +10,6 @@ data class MealCategory(
     val subCategories: List<MealCategory>?,
     val tabIcon: String?,
     val description: String,
-    val isHidden: Boolean
+    val isHidden: Boolean,
+    val categoryPath: List<String>,
 )
