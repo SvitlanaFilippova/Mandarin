@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.menu.data.impl
 
+import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
@@ -7,6 +8,7 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.CategoryDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.MenuResponse
 import com.mandarinkafe.mandarin.features.menu.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
+import com.mandarinkafe.mandarin.util.Constants.CATEGORY_ADDS
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
@@ -43,13 +45,20 @@ class MenuRepositoryImpl @Inject constructor(
     }
 
     private fun buildMenuStructure(menuDto: List<CategoryDto>): List<MealCategory> {
+        val addonPaths = collectAddonPaths(menuDto)
         val map = buildBuilderMap(menuDto)
         linkBuilderHierarchy(map)
 
         return map
             .filterKeys { it.size == 1 } // Только корневые категории
             .values
-            .mapNotNull { builder -> toMealCategory(builder) }
+            .mapNotNull { builder -> toMealCategory(builder, addonPaths) }
+    }
+
+    private fun collectAddonPaths(dtoList: List<CategoryDto>): List<List<String>> {
+        return dtoList
+            .map { it.name.split('/').map(String::trim) }
+            .filter { CATEGORY_ADDS in it }
     }
 
     private fun buildBuilderMap(dtoList: List<CategoryDto>): MutableMap<List<String>, Builder> {
@@ -89,25 +98,28 @@ class MenuRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun toMealCategory(builder: Builder): MealCategory? {
+    private fun toMealCategory(builder: Builder, addonPaths: List<List<String>>): MealCategory? {
         val dto = builder.dto
 
-        val meals = if (builder.children.isEmpty()) {
-            dto?.items?.mapNotNull { mealDto ->
-                mealDto.toDomain(
-                    categoryLabels = dto.labels?.map { it.toDomain() } ?: emptyList(),
-                    categoryTags = dto.tags?.map { it.toDomain() } ?: emptyList(),
-                    categoryPath = builder.fullPath
-                )
-            }
-        } else null
+        val meals = dto?.items?.mapNotNull { mealDto ->
+            val isAddable = isAddableForPath(builder.fullPath, addonPaths)
+            mealDto.toDomain(
+                categoryLabels = dto.labels?.map { it.toDomain() } ?: emptyList(),
+                categoryTags = dto.tags?.map { it.toDomain() } ?: emptyList(),
+                categoryPath = builder.fullPath,
+                isAddable = isAddable
+            )
+        }
 
-        val subCategories = builder.children
-            .mapNotNull { toMealCategory(it) }
-            .takeIf { it.isNotEmpty() }
+        val subCategories = builder.children.mapNotNull { toMealCategory(it, addonPaths) }
 
-        if (meals == null && subCategories == null) return null
-
+        if ((meals == null || meals.isEmpty()) && builder.children.isEmpty()) {
+            return null
+        }
+        Log.d(
+            "MealCategoryBuild",
+            "Built category: ${builder.fullPath.joinToString(" / ")} with ${meals?.size ?: 0} meals and ${subCategories.size} subcategories"
+        )
         return MealCategory(
             id = dto?.id ?: UUID.nameUUIDFromBytes(builder.fullPath.joinToString("/").toByteArray())
                 .toString(),
@@ -119,6 +131,18 @@ class MenuRepositoryImpl @Inject constructor(
             isHidden = dto?.isHidden == true,
             categoryPath = builder.fullPath
         )
+    }
+
+    private fun isAddableForPath(
+        categoryPath: List<String>,
+        addonPaths: List<List<String>>
+    ): Boolean {
+
+        if (categoryPath.isEmpty()) return false
+        val mainCategory = categoryPath.firstOrNull() ?: return false
+        val isAddable =
+            addonPaths.any { it.getOrNull(0) == mainCategory && it.getOrNull(1) == CATEGORY_ADDS }
+        return isAddable
     }
 
     private data class Builder(

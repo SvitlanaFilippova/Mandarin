@@ -15,7 +15,6 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierItemDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.TagDto
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealPickupPoint
-import com.mandarinkafe.mandarin.util.Constants.TAG_ADDS
 import com.mandarinkafe.mandarin.util.Constants.TAG_CAFE
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_ADDS
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_DELIVERY
@@ -27,7 +26,8 @@ import com.mandarinkafe.mandarin.util.removeLeadingDash
 fun MealDto.toDomain(
     categoryLabels: List<Label>,
     categoryTags: List<Tag>,
-    categoryPath: List<String>
+    categoryPath: List<String>,
+    isAddable: Boolean
 ): Meal? {
     val firstSize = itemSizes?.firstOrNull() ?: return null
 
@@ -53,7 +53,7 @@ fun MealDto.toDomain(
         tags = finalMealTags,
         isHidden = isHidden == true,
         modifiers = safeModifiers,
-        isAddable = isAddable(finalMealTags),
+        isAddable = checkIfAddable(tags = finalMealTags, catIsAddable = isAddable),
         requireSelection = requireSelection(safeModifiers),
         isModifiable = isModifiable(safeModifiers, baseInfo.price),
         isPickupOnly = finalMealTags.any { it.name.equals(TAG_NO_DELIVERY, ignoreCase = true) },
@@ -137,10 +137,9 @@ private fun extractBaseInfo(firstSize: ItemSizeDto): BaseMealInfo {
     return BaseMealInfo(weight, price, imageUrl)
 }
 
-private fun isAddable(tags: List<Tag>): Boolean {
+private fun checkIfAddable(tags: List<Tag>, catIsAddable: Boolean): Boolean {
     val hasNoAdds = tags.any { it.name.equals(TAG_NO_ADDS, ignoreCase = true) }
-    val hasAdds = tags.any { it.name.equals(TAG_ADDS, ignoreCase = true) }
-    return !hasNoAdds && hasAdds
+    return !hasNoAdds && catIsAddable
 }
 
 private fun isModifiable(modifiers: List<ModifierGroup>, price: Int): Boolean {
