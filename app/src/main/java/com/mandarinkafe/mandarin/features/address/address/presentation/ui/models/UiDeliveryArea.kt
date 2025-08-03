@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.address.address.presentation.ui.models
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
 import com.mandarinkafe.mandarin.core.domain.models.DeliveryZone
@@ -18,6 +19,10 @@ fun DeliveryZone.toUi(): UiDeliveryArea {
     val safeColor = try {
         Color(colorHex.toColorInt())
     } catch (e: IllegalArgumentException) {
+        Log.e(
+            "Map DeliveryZone to UI Error",
+            "Не удалось распознать цвет. Использую стандартный. Ошибка: $e"
+        )
         Color.Gray
     }
     return UiDeliveryArea(

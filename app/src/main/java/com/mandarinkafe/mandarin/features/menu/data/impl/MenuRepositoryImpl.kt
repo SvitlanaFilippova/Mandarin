@@ -137,7 +137,7 @@ class MenuRepositoryImpl @Inject constructor(
         return isAddable
     }
 
-    private data class Builder(
+    private class Builder(
         var dto: CategoryDto?,
         val name: String,
         val fullPath: List<String>,

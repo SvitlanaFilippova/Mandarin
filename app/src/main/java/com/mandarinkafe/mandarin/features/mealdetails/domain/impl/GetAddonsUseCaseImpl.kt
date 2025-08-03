@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.mealdetails.domain.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
@@ -16,16 +15,12 @@ class GetAddonsUseCaseImpl(
 
     override fun invoke(categoryPath: List<String>): Flow<Resource<List<MealAdditionalCategory>>> {
         return cache.addonsCategories.map { addons ->
-            Log.d("AddonsUseCase", "Invoked with categoryPath=$categoryPath")
-
             val baseCategory = categoryPath.firstOrNull()
             if (baseCategory == null) {
-                Log.w("AddonsUseCase", "Empty category path, returning empty list")
                 return@map Success(emptyList())
             }
 
             val addonsPrefix = listOf(baseCategory, CATEGORY_ADDS)
-            Log.d("AddonsUseCase", "Looking for addons with prefix=$addonsPrefix")
 
             val total = addons
                 .filter { it.categoryPath.startsWith(addonsPrefix) }
@@ -35,7 +30,6 @@ class GetAddonsUseCaseImpl(
                 }
                 .filter { !it.items.isNullOrEmpty() }
 
-            Log.d("AddonsUseCase", "Matched ${total.size} addons total")
             Success(total)
         }
     }

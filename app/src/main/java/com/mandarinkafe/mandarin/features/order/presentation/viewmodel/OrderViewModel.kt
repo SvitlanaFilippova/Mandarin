@@ -115,12 +115,16 @@ class OrderViewModel @Inject constructor(
                     // если была выбрана доставка, но заказ стал isPickupOnly - обнуляем данные доставки
                     val isPickupOnly = items.keys.any { it.meal.isPickupOnly }
 
-                    //Обновляем инфо в стейте
+                    // Обновляем инфо в стейте
                     val newDeliveryInfo =
-                        if (isPickupOnly) deliveryInfo.copy(
-                            deliveryType = DeliveryType.SELF_PICKUP,
-                            chosenAddress = null
-                        ) else deliveryInfo
+                        if (isPickupOnly) {
+                            deliveryInfo.copy(
+                                deliveryType = DeliveryType.SELF_PICKUP,
+                                chosenAddress = null
+                            )
+                        } else {
+                            deliveryInfo
+                        }
                     val newCartSummary = cartSummary.copy(
                         items = items,
                         containNotDiscountable = containNotDiscountable

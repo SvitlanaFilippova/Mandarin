@@ -27,8 +27,8 @@ import com.mandarinkafe.mandarin.features.order.domain.models.ErrorInfo
 import com.mandarinkafe.mandarin.features.order.domain.models.LoyaltyCustomer
 import com.mandarinkafe.mandarin.features.order.domain.models.Order
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
-import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Utensils
 import com.mandarinkafe.mandarin.util.roundTo
 
 fun LoyaltyCustomerResponse.toDomain(): LoyaltyCustomer {
@@ -43,8 +43,7 @@ fun OrderState.toDomain(paymentType: PaymentType): Order {
     val cash = paymentType.code == OrderConstants.PAYMENT_CASH_CODE
     val fullComment = buildFullComment(
         userComment = comment.trim(),
-        noNeedUtensils = utensils.noNeedUtensils,
-        chosenUtensils = utensils.chosenUtensils,
+        utensils = utensils,
         noChange = if (cash) paymentInfo.noChange else null,
         changeFrom = if (cash) paymentInfo.changeFrom else "",
         discountCategory = cartSummary.discountCategory
@@ -173,16 +172,15 @@ fun Address?.toDeliveryPoint(): DeliveryPointDto? {
 
 private fun buildFullComment(
     userComment: String,
-    noNeedUtensils: Boolean,
-    chosenUtensils: List<Utensil>,
+    utensils: Utensils,
     noChange: Boolean?,
     changeFrom: String,
     discountCategory: Int
 ): String {
     val utensilsPart = when {
-        noNeedUtensils -> OrderConstants.NO_UTENSILS_COMMENT
-        chosenUtensils.isNotEmpty() -> UTENSILS_NEED_PREFIX +
-                chosenUtensils.joinToString { it.stringName }
+        utensils.noNeedUtensils -> OrderConstants.NO_UTENSILS_COMMENT
+        utensils.chosenUtensils.isNotEmpty() -> UTENSILS_NEED_PREFIX +
+                utensils.chosenUtensils.joinToString { it.stringName }
 
         else -> null
     }

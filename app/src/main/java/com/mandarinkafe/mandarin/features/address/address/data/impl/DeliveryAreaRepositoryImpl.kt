@@ -70,14 +70,6 @@ class DeliveryAreaRepositoryImpl(
                 Log.w("DeliveryZone", "Price not found for zone id=$id — setting to 0")
             }
 
-            Log.d(
-                "DeliveryZone", "Zone $id — " +
-                        "polygonSize=${polygon.size}, " +
-                        "price=${deliveryPrice ?: 0}, " +
-                        "threshold=${meta.freeDeliveryThreshold}, " +
-                        "color=${meta.colorHex}"
-            )
-
             DeliveryZone(
                 id = id,
                 polygon = polygon,

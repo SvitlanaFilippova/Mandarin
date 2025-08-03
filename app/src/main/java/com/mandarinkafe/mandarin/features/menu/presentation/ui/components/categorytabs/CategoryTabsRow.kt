@@ -20,7 +20,6 @@ fun CategoryTabsRow(
     onTabSelected: (Int) -> Unit,
     onSearchClick: () -> Unit,
 ) {
-
     val selectedTab = remember(selectedTabIndex) { selectedTabIndex + 1 }
 
     Column(modifier = Modifier.fillMaxWidth()) {
