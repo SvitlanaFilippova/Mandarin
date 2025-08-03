@@ -13,7 +13,7 @@ class DeliveryAreaRepositoryImpl(
     private val networkClient: GoogleDocsNetworkClient,
     private val menuCache: MenuCache
 ) : DeliveryAreaRepository {
-
+    private val logTag = "DeliveryZone Error"
     private var cachedZones: List<DeliveryZone>? = null
 
     override suspend fun getAllAreas(): List<DeliveryZone> {
@@ -56,18 +56,18 @@ class DeliveryAreaRepositoryImpl(
         return polygonsMap.mapNotNull { (id, polygon) ->
             val meta = metaMap[id]
             if (meta == null) {
-                Log.w("DeliveryZone", "Meta not found for zone id=$id — skipping")
+                Log.w(logTag, "Meta not found for zone id=$id — skipping")
                 return@mapNotNull null
             }
 
             val parentArea = polygonsMap[id - 1]
             if (parentArea == null) {
-                Log.d("DeliveryZone", "Parent area not found for zone id=$id (parent=${id - 1})")
+                Log.d(logTag, "Parent area not found for zone id=$id (parent=${id - 1})")
             }
 
             val deliveryPrice = pricesMap[id]
             if (deliveryPrice == null) {
-                Log.w("DeliveryZone", "Price not found for zone id=$id — setting to 0")
+                Log.w(logTag, "Price not found for zone id=$id — setting to 0")
             }
 
             DeliveryZone(
@@ -92,7 +92,9 @@ class DeliveryAreaRepositoryImpl(
                 val lon = parts.getOrNull(2)?.toDoubleOrNull()
                 if (id != null && lat != null && lon != null) {
                     id to GeoPoint(lat, lon)
-                } else null
+                } else {
+                    null
+                }
             }
             .groupBy({ it.first }, { it.second })
     }
@@ -108,7 +110,9 @@ class DeliveryAreaRepositoryImpl(
                 val colorHex = parts.getOrNull(2)
                 if (id != null && threshold != null && colorHex != null) {
                     id to ZoneMeta(id, threshold, colorHex)
-                } else null
+                } else {
+                    null
+                }
             }
             .toMap()
     }
