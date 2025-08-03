@@ -48,10 +48,9 @@ fun SearchScreen(
     // Отлавливаем эффект возврата в меню
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
-            if (effect is SearchEffect.GoBackToMenuEffect) {
-                if (!navController.popBackStack()) {
-                    navController.navigateToMenu()
-                }
+            if (effect is SearchEffect.GoBackToMenuEffect && !navController.popBackStack()) {
+                navController.navigateToMenu()
+
             }
         }
     }

@@ -9,7 +9,6 @@ fun AddsHeader(
     categories: List<String>,
     onTabSelected: (Int) -> Unit
 ) {
-
     // Категории добавок
     AddsCategoryTabsRow(
         categories = categories,
@@ -20,4 +19,3 @@ fun AddsHeader(
     )
 
 }
-

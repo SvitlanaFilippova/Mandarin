@@ -130,7 +130,6 @@ class MenuRepositoryImpl @Inject constructor(
         categoryPath: List<String>,
         addonPaths: List<List<String>>
     ): Boolean {
-
         if (categoryPath.isEmpty()) return false
         val mainCategory = categoryPath.firstOrNull() ?: return false
         val isAddable =

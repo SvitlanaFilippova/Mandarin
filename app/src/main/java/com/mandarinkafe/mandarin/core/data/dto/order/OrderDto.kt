@@ -24,5 +24,5 @@ data class OrderDto(
     val whenPrinted: String? = null,
     val whenSended: String? = null,
     val problem: Problem? = null,
-    val number: String? = null //Delivery No.
+    val number: String? = null
 )
