@@ -1,9 +1,8 @@
 package com.mandarinkafe.mandarin.features.mealdetails.domain.impl
 
+import android.util.Log
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
-import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetAddonsUseCase
-import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditionalCategory
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.CATEGORY_ADDS
 import com.mandarinkafe.mandarin.util.Resource
@@ -17,24 +16,32 @@ class GetAddonsUseCaseImpl(
 
     override fun invoke(categoryPath: List<String>): Flow<Resource<List<MealAdditionalCategory>>> {
         return cache.addonsCategories.map { addons ->
-            val matched = addons.firstOrNull { it.categoryPath == categoryPath + CATEGORY_ADDS }
-            Success(
-                matched?.subCategories.orEmpty()
-                    .map { it.toMealAdditionalCategory() }
-            )
+            Log.d("AddonsUseCase", "Invoked with categoryPath=$categoryPath")
+
+            val baseCategory = categoryPath.firstOrNull()
+            if (baseCategory == null) {
+                Log.w("AddonsUseCase", "Empty category path, returning empty list")
+                return@map Success(emptyList())
+            }
+
+            val addonsPrefix = listOf(baseCategory, CATEGORY_ADDS)
+            Log.d("AddonsUseCase", "Looking for addons with prefix=$addonsPrefix")
+
+            val total = addons
+                .filter { it.categoryPath.startsWith(addonsPrefix) }
+                .filter {
+                    val depth = it.categoryPath.size
+                    depth == addonsPrefix.size + 1 || it.categoryPath == addonsPrefix
+                }
+                .filter { !it.items.isNullOrEmpty() }
+
+            Log.d("AddonsUseCase", "Matched ${total.size} addons total")
+            Success(total)
         }
     }
 
-    private fun findCategoryByPath(
-        path: List<String>,
-        categories: List<MealCategory>
-    ): MealCategory? {
-        var currentLevel = categories
-        var result: MealCategory? = null
-        for (name in path) {
-            result = currentLevel.find { it.name == name } ?: return null
-            currentLevel = result.subCategories.orEmpty()
-        }
-        return result
+    private fun List<String>.startsWith(prefix: List<String>): Boolean {
+        if (this.size < prefix.size) return false
+        return this.subList(0, prefix.size) == prefix
     }
 }

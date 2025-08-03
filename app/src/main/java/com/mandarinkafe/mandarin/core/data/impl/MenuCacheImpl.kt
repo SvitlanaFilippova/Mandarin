@@ -5,6 +5,8 @@ import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
+import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditionalCategory
+import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.CATEGORY_ADDS
 import com.mandarinkafe.mandarin.util.Constants.DELIVERY_CATEGORY_NAME
 import com.mandarinkafe.mandarin.util.Resource
@@ -25,11 +27,12 @@ class MenuCacheImpl @Inject constructor(
     private val _menu = MutableStateFlow<Resource<List<MealCategory>>>(Resource.Idle())
     override val menu: StateFlow<Resource<List<MealCategory>>> = _menu.asStateFlow()
 
-    private val _addonsCategories = MutableStateFlow<List<MealCategory>>(emptyList())
-    override val addonsCategories: StateFlow<List<MealCategory>> = _addonsCategories.asStateFlow()
+    private val _addonsCategories = MutableStateFlow<List<MealAdditionalCategory>>(emptyList())
+    override val addonsCategories: StateFlow<List<MealAdditionalCategory>> =
+        _addonsCategories.asStateFlow()
 
-    private val _deliveryCategory = MutableStateFlow<MealCategory?>(null)
-    override val deliveryCategory: StateFlow<MealCategory?> = _deliveryCategory.asStateFlow()
+    private val _deliveryItems = MutableStateFlow<MealCategory?>(null)
+    override val deliveryItems: StateFlow<MealCategory?> = _deliveryItems.asStateFlow()
 
     override fun fetchMenuIfNeeded() {
         val current = _menu.value
@@ -57,7 +60,7 @@ class MenuCacheImpl @Inject constructor(
                     is Resource.Success -> {
                         val rootCategories = result.data ?: emptyList()
                         _addonsCategories.value = extractAddons(rootCategories)
-                        _deliveryCategory.value = extractDelivery(rootCategories)
+                        _deliveryItems.value = extractDelivery(rootCategories)
                         val filteredMenu = filterVisibleCategories(rootCategories)
                         return Resource.Success(filteredMenu)
                     }
@@ -121,28 +124,23 @@ class MenuCacheImpl @Inject constructor(
         category.subCategories?.forEach { findMealsBySku(it, sku, result) }
     }
 
-    private fun extractAddons(categories: List<MealCategory>): List<MealCategory> {
+    private fun extractAddons(categories: List<MealCategory>): List<MealAdditionalCategory> {
         val result = mutableListOf<MealCategory>()
 
         fun dfs(cat: MealCategory, path: List<String>) {
             val curPath = path + cat.name
 
-            if (
-                CATEGORY_ADDS in curPath &&
-                curPath.indexOf(CATEGORY_ADDS) < curPath.lastIndex &&
-                curPath.indexOf(CATEGORY_ADDS) + 1 == curPath.size - 1
-            ) {
+            if (CATEGORY_ADDS in curPath) {
                 result += cat
             }
             cat.subCategories?.forEach { dfs(it, curPath) }
         }
 
         categories.forEach { dfs(it, emptyList()) }
-        return result
+        return result.map { it.toMealAdditionalCategory() }
     }
 
     private fun extractDelivery(categories: List<MealCategory>): MealCategory? {
-
         fun dfs(cat: MealCategory, depth: Int): MealCategory? {
             if (cat.name.equals(DELIVERY_CATEGORY_NAME, ignoreCase = true)) {
                 return cat

@@ -34,7 +34,7 @@ class DeliveryAreaRepositoryImpl(
         val metaMap = parseMetaCsv(metaCsv)
 
         // Извлекаем цены из deliveryCategory
-        val pricesCategory = menuCache.deliveryCategory.value?.meals
+        val pricesCategory = menuCache.deliveryItems.value?.meals
         val pricesMap = pricesCategory
             ?.mapNotNull { meal ->
                 val zoneId = extractZoneIdFromName(meal.name)

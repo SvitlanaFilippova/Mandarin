@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.menu.data.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
@@ -78,13 +77,11 @@ class MenuRepositoryImpl @Inject constructor(
                         fullPath = prefix
                     )
                 }
-
                 if (isLeaf) {
                     builder.dto = dto
                 }
             }
         }
-
         return map
     }
 
@@ -116,10 +113,6 @@ class MenuRepositoryImpl @Inject constructor(
         if ((meals == null || meals.isEmpty()) && builder.children.isEmpty()) {
             return null
         }
-        Log.d(
-            "MealCategoryBuild",
-            "Built category: ${builder.fullPath.joinToString(" / ")} with ${meals?.size ?: 0} meals and ${subCategories.size} subcategories"
-        )
         return MealCategory(
             id = dto?.id ?: UUID.nameUUIDFromBytes(builder.fullPath.joinToString("/").toByteArray())
                 .toString(),

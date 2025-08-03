@@ -21,7 +21,7 @@ class CreateOrderUseCaseImpl(
     private suspend fun withDeliveryItemIfNeeded(order: Order): Order {
         if (order.deliveryRealCost <= 0) return order
 
-        val deliveryCategory = menuCache.deliveryCategory.firstOrNull()
+        val deliveryCategory = menuCache.deliveryItems.firstOrNull()
         val deliveryMeal = deliveryCategory?.meals?.firstOrNull {
             it.name.contains("$DELIVERY_ZONE_STRING ${order.deliveryZoneID}")
         } ?: return order // не добавляем доставку, если не нашли

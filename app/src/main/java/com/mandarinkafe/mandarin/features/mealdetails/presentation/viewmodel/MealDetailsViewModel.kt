@@ -30,12 +30,9 @@ class MealDetailsViewModel @Inject constructor(
 ) : BaseViewModel<MealDetailsEvent, MealDetailsEffect, MealDetailsState>() {
     override fun setInitialState() = MealDetailsState()
 
-    init {
-        getAddons()
-    }
-
     override fun onEvent(event: MealDetailsEvent) {
         when (event) {
+            is MealDetailsEvent.SetInitItem -> setInitData(item = event.item)
             is MealDetailsEvent.ChangeAdds -> changeAdds(
                 add = event.add,
                 isAdded = event.isChecked
@@ -51,11 +48,17 @@ class MealDetailsViewModel @Inject constructor(
                 isChecked = event.isChecked
             )
 
-            is MealDetailsEvent.SetInitItem -> setMeal(item = event.item)
             is MealDetailsEvent.ChooseCategory -> chooseAdsCategory(newIndex = event.newIndex)
             is MealDetailsEvent.OnToCartClickBeforeMandatoryChoice -> sendEffect(
                 ShowRequiredModifiersDialog
             )
+        }
+    }
+
+    private fun setInitData(item: CustomizedMeal) {
+        setMeal(item)
+        if (item.meal.isAddable) {
+            getAddons(path = item.meal.categoryPath)
         }
     }
 
@@ -170,23 +173,16 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun getAddons() {
+    private fun getAddons(path: List<String>) {
         setState { copy(isLoading = true) }
-
-        if (!state.value.addons.isEmpty()) {
-            setState { copy(isLoading = false) }
-        } else {
-            viewModelScope.launch {
-                getAddonsUseCase(
-                    categoryPath = state.value.customizedMeal?.meal?.categoryPath ?: emptyList()
-                ).collectLatest { result ->
-                    setLoading(result is Loading)
-                    when (result) {
-                        is Success -> setData(result.data)
-                        is Loading -> {}
-                        is Idle -> {}
-                        else -> setError(result)
-                    }
+        viewModelScope.launch {
+            getAddonsUseCase(categoryPath = path).collectLatest { result ->
+                setLoading(result is Loading)
+                when (result) {
+                    is Success -> setData(result.data)
+                    is Loading -> {}
+                    is Idle -> {}
+                    else -> setError(result)
                 }
             }
         }

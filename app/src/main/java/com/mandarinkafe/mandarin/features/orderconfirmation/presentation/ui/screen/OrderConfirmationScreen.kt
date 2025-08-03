@@ -86,12 +86,12 @@ fun OrderConfirmationScreen(
             order.phone?.let { Text("Телефон: $it") }
             order.comment?.let { Text("Комментарий: $it") }
             order.customer?.let { Text("Клиент: ${it.name}") }
-        }
 
-        ButtonWithText(
-            textResID = R.string.back_to_menu,
-            onClick = { navController.navigateToMenu() }
-        )
+            ButtonWithText(
+                textResID = R.string.back_to_menu,
+                onClick = { navController.navigateToMenu() }
+            )
+        }
     }
 
     DisposableEffect(Unit) {

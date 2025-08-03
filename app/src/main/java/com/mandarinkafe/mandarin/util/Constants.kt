@@ -79,7 +79,6 @@ object Constants {
     const val DELIVERY_CATEGORY_NAME = "Доставка"
 
     // Внутренние теги для особой логики в меню
-    const val TAG_ADDS = "SHOW_ADDS"
     const val TAG_NO_ADDS = "NO_ADDS"
     const val TAG_NO_DISCOUNT = "NO_DISCOUNT"
     const val TAG_NO_DELIVERY = "NO_DELIVERY"
