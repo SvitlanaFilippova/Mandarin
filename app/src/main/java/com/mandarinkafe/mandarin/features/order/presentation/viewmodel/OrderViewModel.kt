@@ -5,20 +5,19 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartItemsUseCase
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
-import com.mandarinkafe.mandarin.features.menu.domain.models.MealPickupPoint
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
-import com.mandarinkafe.mandarin.features.order.domain.api.CheckDiscountByPhoneUseCase
+import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
+import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWithDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.GetPaymentTypesUseCase
+import com.mandarinkafe.mandarin.features.order.domain.api.ResolvePickupPointUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus.Error
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus.InProgress
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus.Success
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
-import com.mandarinkafe.mandarin.features.order.domain.models.OrderPickupPoint
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
@@ -31,7 +30,6 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
 import com.mandarinkafe.mandarin.features.orderconfirmation.domain.api.ObserveOrderStatusUseCase
-import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,11 +43,13 @@ class OrderViewModel @Inject constructor(
     private val getSavedAddressesUseCase: GetSavedAddressesUseCase,
     private val removeAddress: RemoveAddressUseCase,
     private val observeCartItemsUseCase: ObserveCartItemsUseCase,
-    private val checkDiscountByPhone: CheckDiscountByPhoneUseCase,
     private val getPaymentTypesUseCase: GetPaymentTypesUseCase,
     private val createOrderUseCase: CreateOrderUseCase,
     private val clearCart: ClearCartUseCase,
-    private val observeOrderStatus: ObserveOrderStatusUseCase
+    private val observeOrderStatus: ObserveOrderStatusUseCase,
+    private val calculateCartTotalWithDiscount: CalculateCartTotalWithDiscountUseCase,
+    private val resolvePickupPoint: ResolvePickupPointUseCase,
+    private val applyPhoneDiscount: ApplyPhoneDiscountUseCase
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     init {
@@ -110,7 +110,7 @@ class OrderViewModel @Inject constructor(
                     val containNotDiscountable = items.keys.any { !it.meal.discountable }
 
                     // прововеряем, откуда нужно будет забирать заказ в случае самовывоза
-                    val pickupPoint = resolveOrderPickupPoint(items.keys)
+                    val pickupPoint = resolvePickupPoint(items.keys)
 
                     // если была выбрана доставка, но заказ стал isPickupOnly - обнуляем данные доставки
                     val isPickupOnly = items.keys.any { it.meal.isPickupOnly }
@@ -140,30 +140,6 @@ class OrderViewModel @Inject constructor(
                 recalculateCartSummary()
 
             }
-        }
-    }
-
-    private fun getCartSumWithDiscount(
-        items: Map<CustomizedMeal, Int>,
-        discountAmount: Int
-    ): Double {
-        return items.entries.sumOf { (customizedMeal, quantity) ->
-            val mealPrice = customizedMeal.meal.price.toDouble()
-            val addsPrice = customizedMeal.adds.sumOf { it.price.toDouble() }
-            val modifiersPrice = customizedMeal.modifiers.sumOf { group ->
-                group.items.sumOf { it.price.toDouble() }
-            }
-            val fullPricePerItem = mealPrice + addsPrice + modifiersPrice
-            val discountModifier = 1 - discountAmount / PERCENT_DIVISOR
-            val discountedPricePerItem = if (customizedMeal.meal.discountable) {
-                // если блюдо discountable, то скидка работает на всё
-                fullPricePerItem * discountModifier
-            } else {
-                // иначе - только на добавки и модификаторы, но не на само блюдо
-                mealPrice + (addsPrice + modifiersPrice) * discountModifier
-            }
-            val total = discountedPricePerItem * quantity
-            total
         }
     }
 
@@ -252,18 +228,17 @@ class OrderViewModel @Inject constructor(
     }
 
     private fun setPhone(query: String) {
-        val digitsOnly = query.filter { it.isDigit() }
+        viewModelScope.launch {
+            val result = applyPhoneDiscount(query, state.value.cartSummary.discountCategory)
 
-        // Если первая цифра — 7 или 8, игнорируем
-        val normalized = when {
-            digitsOnly.startsWith("7") -> digitsOnly.drop(1)
-            digitsOnly.startsWith("8") -> digitsOnly.drop(1)
-            else -> digitsOnly
+            setState { copy(userInfo = userInfo.copy(phone = result.phone)) }
+            if (result.shouldUpdate) {
+                setState {
+                    copy(cartSummary = cartSummary.copy(discountCategory = result.discountSize))
+                }
+                recalculateCartSummary(result.discountSize)
+            }
         }
-        // Ограничиваем до 10 символов
-        val limited = normalized.take(VALID_PHONE_LENGTH)
-        setState { copy(userInfo = userInfo.copy(phone = limited)) }
-        checkDiscount(limited)
     }
 
     private fun showMissingRequiredInfo() {
@@ -273,51 +248,16 @@ class OrderViewModel @Inject constructor(
         sendErrorEffect("Заполните все обязательные поля")
     }
 
-    private fun checkDiscount(phone: String) {
-        // если введён некорректный номер телефона и была применена скидка по карте - пересчитываем всё без скидки
-        if (phone.length != VALID_PHONE_LENGTH && state.value.cartSummary.discountCategory > 0) {
-            recalculateCartSummary(discountSize = 0)
-            // иначе, если телефон валидный - проверяем наличие скидки
-        } else if (phone.length == VALID_PHONE_LENGTH) {
-            viewModelScope.launch {
-                val result = checkDiscountByPhone.invoke(phone)
-                val discount = when (result) {
-                    is Resource.Success -> result.data
-                    else -> null
-                }
-                // Пересчёт после установки скидки
-                setState { copy(cartSummary = cartSummary.copy(discountCategory = discount ?: 0)) }
-                recalculateCartSummary(discountSize = discount)
-            }
-        }
-    }
-
     private fun recalculateCartSummary(discountSize: Int? = null) {
         setState {
             val discountSize = discountSize ?: cartSummary.discountCategory
             val cartSumWithDiscount =
-                getCartSumWithDiscount(cartSummary.items, discountSize)
+                calculateCartTotalWithDiscount(cartSummary.items, discountSize)
             copy(
                 cartSummary = cartSummary.copy(
                     cartSumWithDiscount = cartSumWithDiscount,
                 )
             )
-        }
-    }
-
-    private fun resolveOrderPickupPoint(items: Set<CustomizedMeal>): OrderPickupPoint {
-        val points = items.map { it.meal.pickupPoint }.toSet()
-        return when {
-            points.containsAll(
-                setOf(
-                    MealPickupPoint.PIZZERIA,
-                    MealPickupPoint.CAFE
-                )
-            ) -> OrderPickupPoint.BOTH
-
-            points.contains(MealPickupPoint.PIZZERIA) -> OrderPickupPoint.PIZZERIA
-            points.contains(MealPickupPoint.CAFE) -> OrderPickupPoint.CAFE
-            else -> OrderPickupPoint.CAFE
         }
     }
 
@@ -428,7 +368,6 @@ class OrderViewModel @Inject constructor(
     }
 
     private companion object {
-        const val PERCENT_DIVISOR = 100.0
         const val ORDER_STATUS_UPD_DELAY = 1000L
     }
 }
