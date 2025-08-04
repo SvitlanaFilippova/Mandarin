@@ -70,47 +70,16 @@ class MealDetailsViewModel @Inject constructor(
         setState {
             val currentItem = customizedMeal ?: return@setState this
 
-            val selectedCount = currentItem.modifiers
-                .find { it.id == group.id }
-                ?.items
-                ?.size ?: 0
-
-            if (group.maxQuantity > 1 && isChecked && selectedCount >= group.maxQuantity) {
-                sendEffect(
-                    ShowMaxModifiersQuantity(
-                        max = group.maxQuantity,
-                        groupName = group.name
-                    )
-                )
+            val selectedCount = getSelectedModifiersCount(currentItem, group)
+            if (isLimitExceeded(group, isChecked, selectedCount)) {
+                showLimitExceededEffect(group)
                 return@setState this
             }
 
-            val modifiersList = currentItem.modifiers.toMutableList()
-            val groupIndex = modifiersList.indexOfFirst { it.id == group.id }
+            val updatedModifiers = updateModifierList(currentItem, group, item, isChecked)
 
-            if (groupIndex != -1) {
-                val existingGroup = modifiersList[groupIndex]
-                val updatedItems = existingGroup.items.toMutableList()
-
-                if (isChecked) {
-                    if (item !in updatedItems) updatedItems.add(item)
-                } else {
-                    updatedItems.remove(item)
-                }
-
-                if (updatedItems.isEmpty()) {
-                    modifiersList.removeAt(groupIndex)
-                } else {
-                    modifiersList[groupIndex] = existingGroup.copy(items = updatedItems)
-                }
-            } else {
-                modifiersList.add(group.copy(items = listOf(item)))
-            }
-
-            // Сортировка: сначала SingleChoice группы
-            modifiersList.sortByDescending { it.isSingleChoice }
             copy(
-                customizedMeal = currentItem.copy(modifiers = modifiersList),
+                customizedMeal = currentItem.copy(modifiers = updatedModifiers)
             )
         }
     }
@@ -135,6 +104,64 @@ class MealDetailsViewModel @Inject constructor(
             )
 
         }
+    }
+
+    private fun getSelectedModifiersCount(currentItem: CustomizedMeal, group: ModifierGroup): Int {
+        return currentItem.modifiers
+            .find { it.id == group.id }
+            ?.items
+            ?.size ?: 0
+    }
+
+    private fun isLimitExceeded(
+        group: ModifierGroup,
+        isChecked: Boolean,
+        selectedCount: Int
+    ): Boolean {
+        return group.maxQuantity > 1 && isChecked && selectedCount >= group.maxQuantity
+    }
+
+    private fun showLimitExceededEffect(group: ModifierGroup) {
+        sendEffect(
+            ShowMaxModifiersQuantity(
+                max = group.maxQuantity,
+                groupName = group.name
+            )
+        )
+    }
+
+    private fun updateModifierList(
+        currentItem: CustomizedMeal,
+        group: ModifierGroup,
+        item: ModifierItem,
+        isChecked: Boolean
+    ): List<ModifierGroup> {
+        val modifiersList = currentItem.modifiers.toMutableList()
+        val groupIndex = modifiersList.indexOfFirst { it.id == group.id }
+
+        if (groupIndex != -1) {
+            val existingGroup = modifiersList[groupIndex]
+            val updatedItems = existingGroup.items.toMutableList()
+
+            if (isChecked) {
+                if (item !in updatedItems) updatedItems.add(item)
+            } else {
+                updatedItems.remove(item)
+            }
+
+            if (updatedItems.isEmpty()) {
+                modifiersList.removeAt(groupIndex)
+            } else {
+                modifiersList[groupIndex] = existingGroup.copy(items = updatedItems)
+            }
+        } else {
+            modifiersList.add(group.copy(items = listOf(item)))
+        }
+
+        // Сортировка: сначала SingleChoice группы
+        modifiersList.sortByDescending { it.isSingleChoice }
+
+        return modifiersList
     }
 
     private fun chooseAdsCategory(newIndex: Int) {

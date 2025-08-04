@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.order.domain.impl
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWithDiscountUseCase
 
-class CalculateCartTotalWithDiscountUseCaseImpl() : CalculateCartTotalWithDiscountUseCase {
+class CalculateCartTotalWithDiscountUseCaseImpl : CalculateCartTotalWithDiscountUseCase {
     override fun invoke(
         items: Map<CustomizedMeal, Int>,
         discountAmount: Int

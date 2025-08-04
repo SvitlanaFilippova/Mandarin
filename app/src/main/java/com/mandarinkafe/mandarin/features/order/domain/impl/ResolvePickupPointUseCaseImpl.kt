@@ -5,7 +5,7 @@ import com.mandarinkafe.mandarin.features.menu.domain.models.MealPickupPoint
 import com.mandarinkafe.mandarin.features.order.domain.api.ResolvePickupPointUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.OrderPickupPoint
 
-class ResolvePickupPointUseCaseImpl() : ResolvePickupPointUseCase {
+class ResolvePickupPointUseCaseImpl : ResolvePickupPointUseCase {
     override fun invoke(items: Set<CustomizedMeal>): OrderPickupPoint {
         val points = items.map { it.meal.pickupPoint }.toSet()
         return when {
