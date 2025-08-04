@@ -20,6 +20,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.models.UiAddressType
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.models.toDomain
+import com.mandarinkafe.mandarin.util.presentation.ui.components.SegmentedButtonLabel
 
 @Composable
 fun AddressTypeChooser(

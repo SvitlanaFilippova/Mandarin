@@ -19,9 +19,12 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 @Composable
 fun CheckboxWithTextRow(
     checked: Boolean,
-    labelRes: Int,
+    labelRes: Int? = null,
+    text: String? = null,
     onCheckedChange: (Boolean) -> Unit
 ) {
+    val displayText = text ?: labelRes?.let { stringResource(it) } ?: ""
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,7 +42,7 @@ fun CheckboxWithTextRow(
             onCheckedChange = null
         )
         Text(
-            text = stringResource(id = labelRes),
+            text = displayText,
             modifier = Modifier.padding(start = Dimens.MarginSmall8),
             style = Typography.RegularLightTextStyle,
             color = Colors.White

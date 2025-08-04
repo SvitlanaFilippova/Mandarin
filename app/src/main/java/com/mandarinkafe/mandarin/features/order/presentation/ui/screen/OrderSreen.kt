@@ -1,13 +1,9 @@
 package com.mandarinkafe.mandarin.features.order.presentation.ui.screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,31 +11,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.presentation.theme.Colors
-import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
-import com.mandarinkafe.mandarin.features.order.presentation.ui.components.DeliveryTypeChooser
-import com.mandarinkafe.mandarin.features.order.presentation.ui.components.OrderSummaryData
-import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PaymentChooser
-import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PersonalInfo
-import com.mandarinkafe.mandarin.features.order.presentation.ui.components.SavedAddressesSection
-import com.mandarinkafe.mandarin.features.order.presentation.ui.components.SelfPickupInfo
-import com.mandarinkafe.mandarin.features.order.presentation.ui.components.SubmitOrderButton
-import com.mandarinkafe.mandarin.features.order.presentation.ui.components.UtensilPreferences
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrderConfirmation
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_ADDRESS_ID
+import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @Composable
 fun OrderScreen(
@@ -49,163 +36,38 @@ fun OrderScreen(
     val state by orderViewModel.state.collectAsState()
     val effectFlow = orderViewModel.effect
     val onEvent = orderViewModel::onEvent
-    val cartSum = state.totalCartSum ?: 0
-
-    val totalOrderSum = state.totalOrderSum
     var showConfirmDeleteDialog by remember { mutableStateOf(false) }
     var addressToDelete by remember { mutableStateOf<String?>(null) }
-
     val scrollState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-    val chosenDeliveryType = state.deliveryType
-
     var showAllAddresses by remember { mutableStateOf(false) }
 
     // для корректного возврата с экрана добавления адреса
     val currentBackStackEntry = remember(navController) {
         navController.currentBackStackEntry
     }
-    val savedStateHandle = currentBackStackEntry?.savedStateHandle
-    LaunchedEffect(savedStateHandle) {
-        savedStateHandle?.getLiveData<Boolean>(SHOULD_REFRESH_ADDRESSES_KEY)
-            ?.observeForever { shouldRefresh ->
-                if (shouldRefresh == true) {
-                    orderViewModel.onEvent(OrderEvent.RefreshAddresses)
-                    savedStateHandle[SHOULD_REFRESH_ADDRESSES_KEY] = false
-                }
-            }
 
-        savedStateHandle?.getLiveData<String>(SHOULD_SELECT_ADDRESS_ID)
-            ?.observeForever { id ->
-                if (id != null) {
-                    orderViewModel.onEvent(OrderEvent.SelectAddressById(id))
-                    savedStateHandle[SHOULD_SELECT_ADDRESS_ID] = null
-                }
-            }
+    ObserveNavBackstack(
+        savedStateHandle = currentBackStackEntry?.savedStateHandle,
+        onEvent = onEvent
+    )
+
+    LaunchedEffect(Unit) {
+        orderViewModel.onEvent(OrderEvent.GetPaymentTypes)
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Colors.AppBlack)
-            .padding(Dimens.MarginSmall8),
-        state = scrollState,
-    ) {
-        item {
-            PersonalInfo(
-                nameQuery = state.name,
-                phoneQuery = state.phone,
-                isError = state.isError,
-                phoneIsValid = state.phoneIsValid,
-                onNameEntered = { onEvent(OrderEvent.SetName(it)) },
-                onPhoneChanged = { onEvent(OrderEvent.SetPhone(it)) },
-            )
+    OrderContent(
+        state = state,
+        onEvent = onEvent,
+        scrollState = scrollState,
+        coroutineScope = coroutineScope,
+        showAllAddresses = showAllAddresses,
+        onToggleShowAll = { showAllAddresses = !showAllAddresses },
+        onDeleteRequest = {
+            addressToDelete = it
+            showConfirmDeleteDialog = true
         }
-
-        item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
-
-        item {
-            DeliveryTypeChooser(
-                chosen = chosenDeliveryType,
-                pickupOnly = state.pickupOnly,
-                isError = state.isError,
-                onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
-            )
-        }
-        item { Spacer(Modifier.height(Dimens.MarginSmall8)) }
-
-        item {
-            SelfPickupInfo(
-                visible = chosenDeliveryType == DeliveryType.SELF_PICKUP,
-                pickupPoint = state.pickupPoint
-            )
-        }
-
-        item {
-            SavedAddressesSection(
-                visible = chosenDeliveryType == DeliveryType.DELIVERY,
-                allSavedAddresses = state.savedAddresses,
-                selectedAddress = state.chosenAddress,
-                onEvent = onEvent,
-                onDeleteRequest = {
-                    addressToDelete = it
-                    showConfirmDeleteDialog = true
-                },
-                showAllAddresses = showAllAddresses,
-                onToggleShowAll = { showAllAddresses = !showAllAddresses }
-            )
-        }
-
-
-        item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
-
-        item {
-            PaymentChooser(
-                chosen = state.paymentType,
-                changeAmount = state.changeFrom,
-                isError = state.isError,
-                onPaymentTypeSelected = { onEvent(OrderEvent.SetPaymentType(it)) },
-                onChangeEntered = { onEvent(OrderEvent.SetChangeFrom(it)) },
-                noChange = state.noChange,
-                onNoChangeToggled = { onEvent(OrderEvent.NoChangeToggled(it)) },
-            )
-        }
-
-        item {
-            UtensilPreferences(
-                noUtensils = state.noNeedUtensils,
-                chosenUtensils = state.chosenUtensils,
-                onChangeNoUtensils = { onEvent(OrderEvent.SetNoNeedUtensils(it)) },
-                onChooseUtensil = { utensil, isChecked ->
-                    onEvent(
-                        OrderEvent.SetChosenUtensils(
-                            utensil,
-                            isChecked
-                        )
-                    )
-                }
-            )
-        }
-        item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
-
-        item {
-            MyTextField(
-                value = state.comment,
-                labelRes = R.string.your_comment,
-                onValueChange = { onEvent(OrderEvent.SetComment(it)) }
-            )
-        }
-
-        item {
-            with(state) {
-                OrderSummaryData(
-                    cartSum = cartSum,
-                    discountSum = discountSum,
-                    discountSize = discountSize,
-                    deliveryCost = deliveryRealCost ?: 0,
-                    containNotDiscountable = state.containNotDiscountable,
-                    addressInNotInDeliveryArea = addressInNotInDeliveryArea,
-                    freeDeliveryThreshold = deliveryFreeThreshold,
-                    deliveryType = deliveryType
-                )
-            }
-        }
-
-        item {
-            SubmitOrderButton(
-                shouldBeActive = state.canBeSubmitted,
-                modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
-                onMissingRequiredInfo = {
-                    onEvent(OrderEvent.OnMissingRequiredInfo)
-                    coroutineScope.launch {
-                        scrollState.animateScrollToItem(0)
-                    }
-                },
-                onSubmitOrder = { onEvent(OrderEvent.SubmitOrder) },
-                totalOrderSum = totalOrderSum,
-            )
-        }
-    }
+    )
 
     // Диалог для подтверждения желания удалить адрес
     if (showConfirmDeleteDialog && addressToDelete != null) {
@@ -225,21 +87,63 @@ fun OrderScreen(
             }
         )
     }
+    val snackbarHostState = LocalSnackbarHostState.current
 
+    HandleOrderEffects(
+        effectFlow = effectFlow,
+        navController = navController,
+        snackbarHostState = snackbarHostState
+    )
+    DisposableEffect(Unit) {
+        onDispose {
+            onEvent(StopObservingStatus)
+        }
+    }
+}
+
+@Composable
+private fun HandleOrderEffects(
+    effectFlow: Flow<OrderEffect>,
+    navController: NavHostController,
+    snackbarHostState: SnackbarHostState
+) {
     LaunchedEffect(Unit) {
         effectFlow.collectLatest { effect ->
             when (effect) {
-                is OrderEffect.AddNewAddress -> {
-                    navController.navigateToAddress()
-                }
+                is OrderEffect.AddNewAddress -> navController.navigateToAddress()
+                is OrderEffect.EditAddress ->
+                    navController.navigateToAddressDetails(effect.address, isEditMode = true)
 
-                is OrderEffect.EditAddress -> navController.navigateToAddressDetails(
-                    address = effect.address,
-                    isEditMode = true
-                )
+                is OrderEffect.ShowError ->
+                    snackbarHostState.showSnackbar("Ошибка: ${effect.message}")
 
-                is OrderEffect.SubmitOrder -> {}
+                is OrderEffect.ShowSuccess ->
+                    navController.navigateToOrderConfirmation(effect.orderId)
             }
         }
+    }
+}
+
+@Composable
+private fun ObserveNavBackstack(
+    savedStateHandle: SavedStateHandle?,
+    onEvent: (OrderEvent) -> Unit
+) {
+    LaunchedEffect(savedStateHandle) {
+        savedStateHandle?.getLiveData<Boolean>(SHOULD_REFRESH_ADDRESSES_KEY)
+            ?.observeForever { shouldRefresh ->
+                if (shouldRefresh == true) {
+                    onEvent(OrderEvent.RefreshAddresses)
+                    savedStateHandle[SHOULD_REFRESH_ADDRESSES_KEY] = false
+                }
+            }
+
+        savedStateHandle?.getLiveData<String>(SHOULD_SELECT_ADDRESS_ID)
+            ?.observeForever { id ->
+                if (id != null) {
+                    onEvent(OrderEvent.SelectAddressById(id))
+                    savedStateHandle[SHOULD_SELECT_ADDRESS_ID] = null
+                }
+            }
     }
 }

@@ -2,14 +2,12 @@ package com.mandarinkafe.mandarin.features.menu.data.mapper
 
 import com.mandarinkafe.mandarin.core.domain.models.Label
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.domain.models.Tag
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannerDto
-import com.mandarinkafe.mandarin.features.menu.data.dto.CategoryDto
-import com.mandarinkafe.mandarin.features.menu.data.dto.ItemSizeDTO
+import com.mandarinkafe.mandarin.features.menu.data.dto.ItemSizeDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.LabelDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.MealDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupDto
@@ -17,7 +15,6 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierItemDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.TagDto
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealPickupPoint
-import com.mandarinkafe.mandarin.util.Constants.TAG_ADDS
 import com.mandarinkafe.mandarin.util.Constants.TAG_CAFE
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_ADDS
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_DELIVERY
@@ -26,37 +23,11 @@ import com.mandarinkafe.mandarin.util.Constants.TAG_PIZZERIA
 import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.removeLeadingDash
 
-fun CategoryDto.toDomain(
-    topCategoryName: String? = null
-): MealCategory {
-    val categoryLabels = labels?.map { it.toDomain() } ?: emptyList()
-    val categoryTags = tags?.map { it.toDomain() } ?: emptyList()
-
-    val safeItems = items?.mapNotNull {
-        it.toDomain(
-            categoryLabels = categoryLabels,
-            categoryTags = categoryTags,
-            parentCategoryName = name,
-            grandParentCategoryName = topCategoryName
-        )
-    } ?: emptyList()
-
-    return MealCategory(
-        id = id,
-        name = name.applyTypography(),
-        meals = safeItems,
-        subCategories = null,
-        tabIcon = buttonImageUrl,
-        description = (description ?: "").applyTypography(),
-        isHidden = isHidden == true,
-    )
-}
-
-private fun MealDto.toDomain(
+fun MealDto.toDomain(
     categoryLabels: List<Label>,
     categoryTags: List<Tag>,
-    parentCategoryName: String,
-    grandParentCategoryName: String?
+    categoryPath: List<String>,
+    isAddable: Boolean
 ): Meal? {
     val firstSize = itemSizes?.firstOrNull() ?: return null
 
@@ -82,27 +53,16 @@ private fun MealDto.toDomain(
         tags = finalMealTags,
         isHidden = isHidden == true,
         modifiers = safeModifiers,
-        isAddable = isAddable(finalMealTags),
+        isAddable = checkIfAddable(tags = finalMealTags, catIsAddable = isAddable),
         requireSelection = requireSelection(safeModifiers),
         isModifiable = isModifiable(safeModifiers, baseInfo.price),
         isPickupOnly = finalMealTags.any { it.name.equals(TAG_NO_DELIVERY, ignoreCase = true) },
         discountable = isDiscountable(finalMealTags),
-        parentCategoryName = parentCategoryName,
-        grandParentCategoryName = grandParentCategoryName,
         pickupPoint = resolvePickupPoint(finalMealTags),
+        orderItemType = orderItemType,
+        categoryPath = categoryPath,
     )
 }
-
-fun CategoryDto.hasParent(): Boolean =
-    name.contains("/")
-
-fun CategoryDto.parentName(): String =
-    name.substringBefore("/")
-        .trim()
-
-fun CategoryDto.subName(): String =
-    name.substringAfter("/")
-        .trim()
 
 fun TagDto.toDomain() = Tag(
     id = id,
@@ -135,7 +95,7 @@ fun ModifierGroupDto.toDomain(): ModifierGroup {
             ?: emptyList(),
         isSingleChoice = isSingleChoice,
         isRequired = restrictions?.minQuantity?.let { it > 0 } == true,
-        maxQuantity = restrictions?.maxQuantity ?: Int.MAX_VALUE
+        maxQuantity = restrictions?.maxQuantity ?: 0
     )
 
 }
@@ -145,7 +105,7 @@ fun BannerDto.toDomain() = Banner(
     targetName = targetName ?: "",
 )
 
-private fun getSafeModifiers(firstSize: ItemSizeDTO?) = firstSize
+private fun getSafeModifiers(firstSize: ItemSizeDto?) = firstSize
     ?.itemModifierGroups
     ?.map { it.toDomain() }
     ?.sortedByDescending { it.isSingleChoice }
@@ -170,17 +130,16 @@ private data class BaseMealInfo(
     val imageUrl: String?,
 )
 
-private fun extractBaseInfo(firstSize: ItemSizeDTO): BaseMealInfo {
+private fun extractBaseInfo(firstSize: ItemSizeDto): BaseMealInfo {
     val weight = firstSize.portionWeightGrams.toInt()
     val price = firstSize.prices.firstOrNull()?.price?.toInt() ?: 0
     val imageUrl = firstSize.buttonImageUrl
     return BaseMealInfo(weight, price, imageUrl)
 }
 
-private fun isAddable(tags: List<Tag>): Boolean {
+private fun checkIfAddable(tags: List<Tag>, catIsAddable: Boolean): Boolean {
     val hasNoAdds = tags.any { it.name.equals(TAG_NO_ADDS, ignoreCase = true) }
-    val hasAdds = tags.any { it.name.equals(TAG_ADDS, ignoreCase = true) }
-    return !hasNoAdds && hasAdds
+    return !hasNoAdds && catIsAddable
 }
 
 private fun isModifiable(modifiers: List<ModifierGroup>, price: Int): Boolean {

@@ -18,6 +18,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MyCircularProgressIndicator
 
 @Composable
 fun SubmitOrderButton(
@@ -26,6 +27,7 @@ fun SubmitOrderButton(
     totalOrderSum: Double,
     onMissingRequiredInfo: () -> Unit,
     onSubmitOrder: () -> Unit,
+    isLoading: Boolean,
 ) {
     val contentColor = if (shouldBeActive) {
         Color.White
@@ -48,6 +50,7 @@ fun SubmitOrderButton(
             .fillMaxWidth()
             .height(Dimens.BigButtonWithTextHeight),
         onClick = onClickAction,
+        enabled = !isLoading,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
@@ -65,11 +68,22 @@ fun SubmitOrderButton(
                 color = contentColor
             )
             Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = stringResource(R.string.order_total_cost_template, totalOrderSum),
-                style = Typography.ToCartButtonBigStyle,
-                color = contentColor
-            )
+            when (isLoading) {
+                true -> {
+                    MyCircularProgressIndicator(
+                        strokeWidth = Dimens.ProgressBarStroke6,
+                    )
+                }
+
+                false -> {
+                    Text(
+                        text = stringResource(R.string.order_total_cost_template, totalOrderSum),
+                        style = Typography.ToCartButtonBigStyle,
+                        color = contentColor
+                    )
+                }
+            }
+
         }
     }
 }

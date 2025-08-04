@@ -41,10 +41,6 @@ fun HandleEffects(
                 }
 
                 is SharedEffect.FinishSplash -> {
-//                    navController.navigate(MENU_SCREEN_ROUTE) {
-//                        popUpTo(NavConstants.SPLASH_SCREEN_ROUTE) { inclusive = true }
-//                        launchSingleTop = true
-//                    }
                     navController.navigate(MAIN_GRAPH) {
                         popUpTo(SPLASH_SCREEN_ROUTE) { inclusive = true }
                     }

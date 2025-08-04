@@ -13,7 +13,13 @@ import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SELECTED_FIRST_INDEX
 
 sealed interface MealDetailsContract {
     sealed interface MealDetailsEvent : BaseEvent {
+        // Установка блюда при инициализации
+        data class SetInitItem(val item: CustomizedMeal) : MealDetailsEvent
+
+        // Управление добавками
         data class ChangeAdds(val add: MealAdditional, val isChecked: Boolean) : MealDetailsEvent
+
+        // Выбор модификаторов
         data class ChooseSingleModifier(val modifierGroup: ModifierGroup) : MealDetailsEvent
         data class ChooseMultiModifiers(
             val modifierGroup: ModifierGroup,
@@ -21,13 +27,16 @@ sealed interface MealDetailsContract {
             val isChecked: Boolean
         ) : MealDetailsEvent
 
-        data class SetItem(val item: CustomizedMeal) : MealDetailsEvent
+        // Навигация по категориям
         data class ChooseCategory(val newIndex: Int) : MealDetailsEvent
+
+        // Обработка действий с корзиной
         data object OnToCartClickBeforeMandatoryChoice : MealDetailsEvent
     }
 
     sealed interface MealDetailsEffect : BaseEffect {
         data object ShowRequiredModifiersDialog : MealDetailsEffect
+        data class ShowMaxModifiersQuantity(val groupName: String, val max: Int) : MealDetailsEffect
     }
 
     data class MealDetailsState(

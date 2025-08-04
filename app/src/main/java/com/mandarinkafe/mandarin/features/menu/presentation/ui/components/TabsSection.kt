@@ -17,11 +17,13 @@ fun TabsSection(
     selectedSubTabIndex: Int,
     onTabSelected: (Int) -> Unit,
     onSubTabSelected: (Int, List<String>) -> Unit,
+    onSearchClick: () -> Unit,
 ) {
     CategoryTabsRow(
         categories = categories,
         selectedTabIndex = selectedTabIndex,
-        onTabSelected = { index -> onTabSelected(index) }
+        onTabSelected = { index -> onTabSelected(index) },
+        onSearchClick = onSearchClick
     )
 
     if (selectedTabIndex >= 0) {

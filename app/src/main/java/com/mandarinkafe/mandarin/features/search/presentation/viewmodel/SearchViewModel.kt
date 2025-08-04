@@ -45,6 +45,8 @@ class SearchViewModel @Inject constructor(
                 label = event.labelName,
                 isChecked = event.isChecked
             )
+
+            is SearchEvent.GoBackToMenu -> sendEffect(SearchEffect.GoBackToMenuEffect)
         }
     }
 

@@ -1,11 +1,13 @@
 package com.mandarinkafe.mandarin.core.presentation
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,6 +26,7 @@ import com.mandarinkafe.mandarin.navigation.NavGraph
 import com.mandarinkafe.mandarin.navigation.bottomnav.BottomNavigation
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.AppTopBar
 import com.mandarinkafe.mandarin.util.presentation.ui.components.HandleEffects
 
@@ -45,13 +48,13 @@ fun MainScreen() {
     val showTopBar = !isSplash && sharedState.shouldShowTopBar
     val onEvent = sharedViewModel::onEvent
     val selectedMeal = sharedState.selectedMealForFavoriteChoice
-
+    val snackbarHostState = remember { SnackbarHostState() }
     val showBackButton = currentRoute?.let { route ->
         RoutesWithBackButton.any { route.startsWith(it.substringBefore("/{")) }
-
     } == true
-    Log.d("DEBUG showBackButton", "currentRoute: $currentRoute, showBackButton: $showBackButton")
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
 
         topBar = {
             AppTopBar(
@@ -69,14 +72,16 @@ fun MainScreen() {
 
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .background(Colors.AppBlack)
-        ) {
-            NavGraph(
-                navHostController = navController
-            )
+        CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
+            Box(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .background(Colors.AppBlack)
+            ) {
+                NavGraph(
+                    navHostController = navController
+                )
+            }
         }
     }
 

@@ -49,7 +49,7 @@ fun AddressDetailsScreen(
     val state by viewModel.state.collectAsState()
     // передача в viewModel стартовой информации
     LaunchedEffect(Unit) {
-        viewModel.onEvent(AddressDetailsEvent.SetAddress(initAddress))
+        viewModel.onEvent(AddressDetailsEvent.SetInitAddress(initAddress))
     }
     val effectFlow = viewModel.effect
     val onEvent = viewModel::onEvent

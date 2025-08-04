@@ -10,6 +10,7 @@
     <string name="cancel">Отмена</string>
     <string name="edit">Редактировать</string>
     <string name="remove">Удалить</string>
+    <string name="rub">₽</string>
 
     <!-- Корзина -->
     <string name="cart">Корзина</string>
@@ -40,6 +41,8 @@
     <string name="chosen">Выбрано:</string>
     <string name="cancel_choice">Отменить выбор</string>
     <string name="mandatory">(обязательно)</string>
+    <string name="maximum_modifier">В этой группе уже выбрано максимально возможное количество добавок"</string>
+    <string name="maximum_modifier_short">(максимум %d)</string>
     <string name="make_mandatory_choice_before_cart">Выбери нужные опции в обязательных модификаторах — только после этого можно добавить блюдо в корзину</string>
     <string name="for_selfpickup">для самовывоза</string>
     <string name="for_selfpickup_details">Позиция доступна только для заказа самовывозом. Доставка невозможна.</string>
@@ -77,13 +80,8 @@
     <string name="no_change_needed">Без сдачи</string>
     <string name="payment_change">Сдача с </string>
     <string name="payment_default_value">0</string>
-    <string name="payment_rub">₽</string>
     <string name="no_utensils">Мне не нужны приборы и салфетки</string>
     <string name="i_need_utensils">Мне нужны:</string>
-    <string name="chopsticks">палочки</string>
-    <string name="disposable_utensils">одноразовые приборы</string>
-    <string name="napkins">бумажные салфетки</string>
-    <string name="gloves">одноразовые перчатки (для бургеров)</string>
     <string name="total_cart_cost">Сумма заказа</string>
     <string name="discount_template">Скидка %1$d%%</string>
     <string name="discount_hint">Скидка по&#160;вашей карте действует не&#160;на&#160;все товары в заказе.</string>
@@ -100,6 +98,9 @@
 Их&#160;нужно будет забрать по&#160;двум адресам. Это соседние здания.</string>
     <string name="pickup_cafe_address">Кафе&#160;&#8212; Черноголовка, ул. Береговая, 24</string>
     <string name="pickup_pizzeria_address">Пиццерия&#160;&#8212; Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
+    <string name="order_submit_success">Заказ №%1$s успешно создан</string>
+    <string name="back_to_menu">Вернуться в меню</string>
+    <string name="choose_address">Выберите адрес *</string>
 
     <!-- Адрес -->
     <string name="location">Адрес</string>

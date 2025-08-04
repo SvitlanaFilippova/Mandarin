@@ -13,25 +13,29 @@ import coil3.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 
 @Composable
-fun CategoryTabItem(category: MenuItem.HeaderItem, isSelected: Boolean, onClick: () -> Unit) {
+fun CategoryTabItem(
+    name: String,
+    icon: Any?,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
     Tab(
         selected = isSelected,
         onClick = onClick,
         text = {
             Text(
-                category.categoryName,
+                name,
                 color = if (isSelected) Colors.Orange else Color.White
             )
         },
         icon = {
             AsyncImage(
-                model = category.tabIcon,
+                model = icon,
                 contentDescription = stringResource(
                     R.string.icon_of_category,
-                    category.categoryName
+                    name
                 ),
                 modifier = Modifier.size(Dimens.IconSize24),
                 error = painterResource(R.drawable.logo_orange),

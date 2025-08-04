@@ -12,12 +12,6 @@ sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val 
         NavConstants.MENU_SCREEN_ROUTE
     )
 
-    object Delivery : BottomNavigationItem(
-        R.string.delivery,
-        R.drawable.ic_courier,
-        NavConstants.DELIVERY_SCREEN_ROUTE
-    )
-
     object Favorites :
         BottomNavigationItem(
             R.string.favorite,

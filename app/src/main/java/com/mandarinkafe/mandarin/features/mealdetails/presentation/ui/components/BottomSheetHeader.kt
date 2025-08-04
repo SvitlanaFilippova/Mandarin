@@ -77,7 +77,7 @@ fun BottomSheetHeader(
                 CircularProgressIndicator(
                     modifier = Modifier.size(Dimens.IconSize24),
                     color = Colors.LightGrey,
-                    strokeWidth = Dimens.ProgressBarSmallWidth8,
+                    strokeWidth = Dimens.ProgressBarStroke6,
                     trackColor = Colors.DarkGrey
                 )
             }

@@ -3,18 +3,23 @@ package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.component
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.isCustomizable
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.isOnlySingleRequiredChoice
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.AddsItem
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.ChosenOptions
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.modifiers.ModifierGroupItem
@@ -77,43 +82,60 @@ fun MealDetailsMainContent(
                                 isChecked = isChecked
                             )
                         )
-                    }
+                    },
                 )
             }
         }
         // Выбор добавок
         if (meal.isAddable) {
             item {
-                AddsHeader(
-                    selectedTabIndex = selectedTabIndex,
-                    categories = addons.map { it.name },
-                    onTabSelected = { index ->
-                        onEvent(
-                            MealDetailsEvent.ChooseCategory(
-                                index
-                            )
-                        )
-                    }
+                Text(
+                    text = stringResource(id = R.string.adds),
+                    modifier = Modifier.padding(
+                        start = Dimens.MarginSmall8,
+                        top = Dimens.MarginBig24,
+                        bottom = Dimens.MarginSmall8
+                    ),
+                    style = Typography.TitleStyle
                 )
             }
-            val addsItems =
-                addons[selectedTabIndex].mealAdditionals ?: emptyList()
-            // Список доступных добавок
-            itemsIndexed(addsItems) { _, item ->
-                AddsItem(
-                    add = item,
-                    onCheckedChange = { isChecked, add ->
-                        onEvent(
-                            MealDetailsEvent.ChangeAdds(
-                                add = add,
-                                isChecked = isChecked
+
+            if (addons.size > 1) {
+                item {
+                    AddsHeader(
+                        selectedTabIndex = selectedTabIndex,
+                        categories = addons.map { it.name },
+                        onTabSelected = { index ->
+                            onEvent(
+                                MealDetailsEvent.ChooseCategory(
+                                    index
+                                )
                             )
-                        )
-                    },
-                    isAdded = customizedMeal.adds.contains(item)
-                )
+                        }
+                    )
+                }
+            }
+            if (addons.isNotEmpty()) {
+                val addsItems =
+                    addons[selectedTabIndex].items ?: emptyList()
+                // Список доступных добавок
+                itemsIndexed(addsItems) { _, item ->
+                    AddsItem(
+                        add = item,
+                        onCheckedChange = { isChecked, add ->
+                            onEvent(
+                                MealDetailsEvent.ChangeAdds(
+                                    add = add,
+                                    isChecked = isChecked
+                                )
+                            )
+                        },
+                        isAdded = customizedMeal.adds.contains(item)
+                    )
+                }
             }
         }
+
         // Если это НЕ позиция, где должна быть выбрана всего одная опция - показываем перечень выбранных опций
         if (shouldShowChosen) {
             item {

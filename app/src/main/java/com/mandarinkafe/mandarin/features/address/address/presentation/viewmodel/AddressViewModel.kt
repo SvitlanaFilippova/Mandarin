@@ -9,6 +9,7 @@ import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDelivery
 import com.mandarinkafe.mandarin.features.address.address.domain.models.AddressSearchResult
 import com.mandarinkafe.mandarin.features.address.address.domain.models.toGeoPoint
 import com.mandarinkafe.mandarin.features.address.address.domain.models.toYandexPoint
+import com.mandarinkafe.mandarin.features.address.address.presentation.ui.models.toUi
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressContract.AddressEffect
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressContract.AddressEffect.GoBack
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressContract.AddressEffect.GoToAddressDetailsEffect
@@ -47,7 +48,7 @@ class AddressViewModel @Inject constructor(
     }
 
     init {
-        setState { copy(deliveryAreas = deliveryAreaRepository.getAllAreas().map { it.toUi() }) }
+        getDeliveryZones()
         observeSearchResults()
         observeDisplayAddress()
     }
@@ -69,6 +70,16 @@ class AddressViewModel @Inject constructor(
         setState { copy(initAddress = address, initPinPoint = address.point?.toYandexPoint()) }
     }
 
+    private fun getDeliveryZones() {
+        viewModelScope.launch {
+            val deliveryAreasResource = deliveryAreaRepository.getAllAreas()
+            if (deliveryAreasResource is Resource.Success) {
+                val deliveryAreas = deliveryAreasResource.data?.map { it.toUi() }
+                deliveryAreas?.let { setState { copy(deliveryAreas = deliveryAreas) } }
+            }
+        }
+    }
+
     private fun changeSearchQuery(query: String) {
         setState { copy(displayAddress = query) }
         fetchAddressDebounce.cancel()
@@ -83,8 +94,10 @@ class AddressViewModel @Inject constructor(
     }
 
     private fun onCameraMoved(point: Point) {
-        fetchAddressWithDebounce(point)
-        checkDeliveryArea(point)
+        viewModelScope.launch {
+            fetchAddressWithDebounce(point)
+            checkDeliveryArea(point)
+        }
     }
 
     private fun observeSearchResults() {
@@ -178,7 +191,9 @@ class AddressViewModel @Inject constructor(
                         address?.let {
                             setState {
                                 copy(
-                                    displayAddress = address.addressSingleLine,
+                                    displayAddress = address.addressSingleLine.take(
+                                        MAX_ADDRESS_LENGTH
+                                    ),
                                     fetchAddressInProgress = false,
                                     error = null,
                                 )
@@ -222,7 +237,7 @@ class AddressViewModel @Inject constructor(
         }
     }
 
-    private fun checkDeliveryArea(point: Point) {
+    private suspend fun checkDeliveryArea(point: Point) {
         val deliveryArea = getDeliveryZone(point.toGeoPoint())
         setState { copy(deliveryArea = deliveryArea?.toUi()) }
     }
@@ -246,5 +261,6 @@ class AddressViewModel @Inject constructor(
         private const val MANDARIN_LONGITUDE = 38.375328
         private const val SEARCH_DELAY = 1000L
         private const val FETCH_ADDRESS_DELAY = 1000L
+        private const val MAX_ADDRESS_LENGTH = 250
     }
 }

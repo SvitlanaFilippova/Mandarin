@@ -32,8 +32,7 @@ fun BottomNavigation(
         BottomNavigationItem.Search,
         BottomNavigationItem.Favorites,
         BottomNavigationItem.Menu,
-        BottomNavigationItem.Delivery,
-        BottomNavigationItem.Cart
+        BottomNavigationItem.Cart,
     )
 
     AnimatedVisibility(

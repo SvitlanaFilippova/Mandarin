@@ -8,6 +8,7 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowMaxModifiersQuantity
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowRequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsState
@@ -29,12 +30,9 @@ class MealDetailsViewModel @Inject constructor(
 ) : BaseViewModel<MealDetailsEvent, MealDetailsEffect, MealDetailsState>() {
     override fun setInitialState() = MealDetailsState()
 
-    init {
-        getAddons()
-    }
-
     override fun onEvent(event: MealDetailsEvent) {
         when (event) {
+            is MealDetailsEvent.SetInitItem -> setInitData(item = event.item)
             is MealDetailsEvent.ChangeAdds -> changeAdds(
                 add = event.add,
                 isAdded = event.isChecked
@@ -50,11 +48,17 @@ class MealDetailsViewModel @Inject constructor(
                 isChecked = event.isChecked
             )
 
-            is MealDetailsEvent.SetItem -> setMeal(item = event.item)
             is MealDetailsEvent.ChooseCategory -> chooseAdsCategory(newIndex = event.newIndex)
             is MealDetailsEvent.OnToCartClickBeforeMandatoryChoice -> sendEffect(
                 ShowRequiredModifiersDialog
             )
+        }
+    }
+
+    private fun setInitData(item: CustomizedMeal) {
+        setMeal(item)
+        if (item.meal.isAddable) {
+            getAddons(path = item.meal.categoryPath)
         }
     }
 
@@ -65,32 +69,17 @@ class MealDetailsViewModel @Inject constructor(
     ) {
         setState {
             val currentItem = customizedMeal ?: return@setState this
-            val modifiersList = currentItem.modifiers.toMutableList()
-            val groupIndex = modifiersList.indexOfFirst { it.id == group.id }
 
-            if (groupIndex != -1) {
-                val existingGroup = modifiersList[groupIndex]
-                val updatedItems = existingGroup.items.toMutableList()
-
-                if (isChecked) {
-                    if (item !in updatedItems) updatedItems.add(item)
-                } else {
-                    updatedItems.remove(item)
-                }
-
-                if (updatedItems.isEmpty()) {
-                    modifiersList.removeAt(groupIndex)
-                } else {
-                    modifiersList[groupIndex] = existingGroup.copy(items = updatedItems)
-                }
-            } else {
-                modifiersList.add(group.copy(items = listOf(item)))
+            val selectedCount = getSelectedModifiersCount(currentItem, group)
+            if (isLimitExceeded(group, isChecked, selectedCount)) {
+                showLimitExceededEffect(group)
+                return@setState this
             }
 
-            // Сортировка: сначала SingleChoice группы
-            modifiersList.sortByDescending { it.isSingleChoice }
+            val updatedModifiers = updateModifierList(currentItem, group, item, isChecked)
+
             copy(
-                customizedMeal = currentItem.copy(modifiers = modifiersList)
+                customizedMeal = currentItem.copy(modifiers = updatedModifiers)
             )
         }
     }
@@ -115,6 +104,64 @@ class MealDetailsViewModel @Inject constructor(
             )
 
         }
+    }
+
+    private fun getSelectedModifiersCount(currentItem: CustomizedMeal, group: ModifierGroup): Int {
+        return currentItem.modifiers
+            .find { it.id == group.id }
+            ?.items
+            ?.size ?: 0
+    }
+
+    private fun isLimitExceeded(
+        group: ModifierGroup,
+        isChecked: Boolean,
+        selectedCount: Int
+    ): Boolean {
+        return group.maxQuantity > 1 && isChecked && selectedCount >= group.maxQuantity
+    }
+
+    private fun showLimitExceededEffect(group: ModifierGroup) {
+        sendEffect(
+            ShowMaxModifiersQuantity(
+                max = group.maxQuantity,
+                groupName = group.name
+            )
+        )
+    }
+
+    private fun updateModifierList(
+        currentItem: CustomizedMeal,
+        group: ModifierGroup,
+        item: ModifierItem,
+        isChecked: Boolean
+    ): List<ModifierGroup> {
+        val modifiersList = currentItem.modifiers.toMutableList()
+        val groupIndex = modifiersList.indexOfFirst { it.id == group.id }
+
+        if (groupIndex != -1) {
+            val existingGroup = modifiersList[groupIndex]
+            val updatedItems = existingGroup.items.toMutableList()
+
+            if (isChecked) {
+                if (item !in updatedItems) updatedItems.add(item)
+            } else {
+                updatedItems.remove(item)
+            }
+
+            if (updatedItems.isEmpty()) {
+                modifiersList.removeAt(groupIndex)
+            } else {
+                modifiersList[groupIndex] = existingGroup.copy(items = updatedItems)
+            }
+        } else {
+            modifiersList.add(group.copy(items = listOf(item)))
+        }
+
+        // Сортировка: сначала SingleChoice группы
+        modifiersList.sortByDescending { it.isSingleChoice }
+
+        return modifiersList
     }
 
     private fun chooseAdsCategory(newIndex: Int) {
@@ -153,21 +200,16 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun getAddons() {
+    private fun getAddons(path: List<String>) {
         setState { copy(isLoading = true) }
-
-        if (!state.value.addons.isEmpty()) {
-            setState { copy(isLoading = false) }
-        } else {
-            viewModelScope.launch {
-                getAddonsUseCase().collectLatest { result ->
-                    setLoading(result is Loading)
-                    when (result) {
-                        is Success -> setData(result.data)
-                        is Loading -> {}
-                        is Idle -> {}
-                        else -> setError(result)
-                    }
+        viewModelScope.launch {
+            getAddonsUseCase(categoryPath = path).collectLatest { result ->
+                setLoading(result is Loading)
+                when (result) {
+                    is Success -> setData(result.data)
+                    is Loading -> {}
+                    is Idle -> {}
+                    else -> setError(result)
                 }
             }
         }

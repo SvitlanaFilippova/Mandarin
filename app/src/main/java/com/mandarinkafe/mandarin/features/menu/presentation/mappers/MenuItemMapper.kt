@@ -7,47 +7,42 @@ import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 object MenuItemMapper {
 
     fun menuToMenuItems(menu: List<MealCategory>?): List<MenuItem> {
-        val menuItems = buildList<MenuItem> {
+        return buildList {
             menu?.forEach { category ->
-                if (!category.subCategories.isNullOrEmpty()) {
-                    // Добавляем Header
+                val hasMeals = !category.meals.isNullOrEmpty()
+                val visibleSubcategories =
+                    category.subCategories.orEmpty().filter { !it.meals.isNullOrEmpty() }
+
+                val hasVisibleSubcategories = visibleSubcategories.isNotEmpty()
+
+                // Добавляем HeaderItem, если есть блюда или подкатегории с блюдами
+                if (hasMeals || hasVisibleSubcategories) {
                     this += MenuItem.HeaderItem(
                         categoryName = category.name,
-                        subCategoriesNames = category.subCategories
-                            .filter { !it.meals.isNullOrEmpty() }
-                            .map { it.name },
+                        sku = category.id,
+                        subCategoriesNames = visibleSubcategories.map { it.name }
+                            .takeIf { it.isNotEmpty() },
                         tabIcon = category.tabIcon,
-                        description = category.description,
-                        sku = category.id
+                        description = category.description
                     )
+                }
 
-                    // Обработка подкатегорий
-                    category.subCategories.forEach { subCategory ->
-                        if (!subCategory.meals.isNullOrEmpty()) {
-                            this += MenuItem.SubHeaderItem(
-                                categoryName = subCategory.name,
-                                description = subCategory.description,
-                                sku = subCategory.id
-                            )
-                            this += groupMealsToItems(subCategory.meals)
-                        }
-                    }
-                } else {
-                    // Категория без подкатегорий
-                    if (!category.meals.isNullOrEmpty()) {
-                        this += MenuItem.HeaderItem(
-                            categoryName = category.name,
-                            subCategoriesNames = null,
-                            tabIcon = category.tabIcon,
-                            description = category.description,
-                            sku = category.id
-                        )
-                        this += groupMealsToItems(category.meals)
-                    }
+                // Добавляем блюда самой категории
+                if (hasMeals) {
+                    this += groupMealsToItems(category.meals)
+                }
+
+                // Добавляем подкатегории (если есть)
+                visibleSubcategories.forEach { subCategory ->
+                    this += MenuItem.SubHeaderItem(
+                        categoryName = subCategory.name,
+                        sku = subCategory.id,
+                        description = subCategory.description
+                    )
+                    this += groupMealsToItems(subCategory.meals!!)
                 }
             }
         }
-        return menuItems
     }
 
     // 👇 Логика разбиения на SingleMealItem / MealRow

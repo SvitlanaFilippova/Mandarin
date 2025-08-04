@@ -14,7 +14,6 @@ fun MyCircularProgressIndicator(
     CircularProgressIndicator(
         modifier = modifier,
         strokeWidth = strokeWidth,
-        color = Colors.LightGrey,
-        trackColor = Colors.DarkGrey
+        color = Colors.LightGrey.copy(alpha = 0.8f),
     )
 }

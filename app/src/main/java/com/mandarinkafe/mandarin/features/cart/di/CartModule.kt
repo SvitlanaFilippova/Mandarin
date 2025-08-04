@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.cart.di
 import android.content.SharedPreferences
 import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
+import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.cart.data.impl.CartRepositoryImpl
 import com.mandarinkafe.mandarin.features.cart.data.impl.RecommendsSchemaRepositoryImpl
@@ -11,6 +12,7 @@ import com.mandarinkafe.mandarin.features.cart.data.sharedprefs.CartStorageImpl
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartRepository
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
 import com.mandarinkafe.mandarin.features.cart.domain.impl.CartInteractorImpl
+import com.mandarinkafe.mandarin.features.cart.domain.impl.ClearCartUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.GetAllRecommendsUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.GetCommonRecommendsUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.GetRecommendsUseCaseImpl
@@ -98,4 +100,12 @@ object CartModule {
         common: GetCommonRecommendsUseCase,
         cartBased: GetRecommendsUseCase
     ): GetAllRecommendsUseCase = GetAllRecommendsUseCaseImpl(common = common, cartBased = cartBased)
+
+    @Provides
+    @Singleton
+    fun provideClearCartUseCase(cartRepository: CartRepository): ClearCartUseCase {
+        return ClearCartUseCaseImpl(
+            repository = cartRepository
+        )
+    }
 }

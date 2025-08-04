@@ -7,4 +7,6 @@ data class MealAdditional(
     val id: String,
     val name: String,
     val price: Int,
+    val discountable: Boolean,
+    val orderItemType: String,
 )

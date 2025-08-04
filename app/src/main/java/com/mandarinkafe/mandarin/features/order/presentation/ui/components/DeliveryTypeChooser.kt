@@ -17,10 +17,10 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.components.SegmentedButtonLabel
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiDeliveryType
 import com.mandarinkafe.mandarin.features.order.presentation.models.toDomain
+import com.mandarinkafe.mandarin.util.presentation.ui.components.SegmentedButtonLabel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
 @Composable

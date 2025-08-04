@@ -10,7 +10,6 @@ object Dimens {
     val Border1 = 1.dp
     val CornerRadius4 = 4.dp
     val CornerRadius8 = 8.dp
-    val CornerRadius16 = 16.dp
     val OrderSummaryRowHeight = 32.dp
     val Elevation2 = 2.dp
     val ButtonWithTextHeight = 40.dp
@@ -42,11 +41,9 @@ object Dimens {
     val MealItemInSearchResults96 = 96.dp
     val MealSmallImage80 = 80.dp
     val PlaceholderImageSize200 = 200.dp
-    val ProgressBarStroke6 = 6.dp
     val ProgressBarSize124 = 124.dp
-    val ProgressBarSmallWidth8 = 8.dp
+    val ProgressBarStroke6 = 6.dp
     val ProgressBarWidth24 = 24.dp
-    val FakeSearchBarHeight48 = 48.dp
     val DividerHeight1 = 1.dp
     val TabActivatedIndicatorHeight2 = 2.dp
     val ZeroDp0 = 0.dp
@@ -64,4 +61,3 @@ object Dimens {
     val MapMinSize200 = 200.dp
     val MapMaxSize600 = 600.dp
 }
-

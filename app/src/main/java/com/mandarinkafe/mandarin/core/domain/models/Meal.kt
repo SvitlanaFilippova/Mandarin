@@ -13,6 +13,7 @@ data class Meal(
     val imageUrl: String,
     val description: String,
     val sku: String,
+    val orderItemType: String,
 
     /**
     Внутренние теги для особой обработки блюда в меню
@@ -60,14 +61,10 @@ data class Meal(
     val isPickupOnly: Boolean,
 
     /**
-    Название родительской категории
+    Название родительской категории и всех прародительских, если есть
      */
-    val parentCategoryName: String,
+    val categoryPath: List<String>,
 
-    /**
-    Название прародительской категории, если есть
-     */
-    val grandParentCategoryName: String?,
 
     /**
     Название прародительской категории, если есть

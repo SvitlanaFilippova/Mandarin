@@ -56,7 +56,7 @@ fun UtensilPreferences(
                     utensilTypes.forEach { item ->
                         CheckboxWithTextRow(
                             checked = chosenUtensils.contains(item),
-                            labelRes = item.nameRes,
+                            text = item.stringName,
                             onCheckedChange = { checked -> onChooseUtensil(item, checked) }
                         )
                     }

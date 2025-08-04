@@ -16,6 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.isFavorite
@@ -25,12 +26,12 @@ import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteV
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.AddToCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ReplaceMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.RequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsViewModel
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.util.presentation.ui.components.InformationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.launch
@@ -46,9 +47,7 @@ fun MealDetailsBottomSheet(
     isEditMode: Boolean,
 ) {
     if (initItem == null) return
-
     val state by viewModel.state.collectAsState()
-
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -63,6 +62,8 @@ fun MealDetailsBottomSheet(
     val customizedMeal = state.customizedMeal ?: initItem
     var showFavoriteVariantChoiceDialog by remember { mutableStateOf(false) }
     var showRequiredModifiersDialog by remember { mutableStateOf(false) }
+    var showMaxModifiersQuantity by remember { mutableStateOf(false) }
+
     val error = state.error
     val onClose: () -> Unit = remember(sheetState, coroutineScope) {
         {
@@ -76,32 +77,34 @@ fun MealDetailsBottomSheet(
         derivedStateOf { customizedMeal.isFavorite(favorites) }
     }
     LaunchedEffect(Unit) {
-        viewModel.onEvent(MealDetailsEvent.SetItem(initItem))
+        viewModel.onEvent(MealDetailsEvent.SetInitItem(initItem))
     }
 
     LaunchedEffect(Unit) {
         sheetState.show()
     }
 
-    if (showRequiredModifiersDialog) {
-        RequiredModifiersDialog(onDismiss = {
-            showRequiredModifiersDialog = false
-        })
-    }
-    if (showFavoriteVariantChoiceDialog) {
-        FavoriteVariantChoiceDialog(
-            onBaseSelected = {
-                onSharedEvent(SharedEvent.ToggleFavorite(meal = customizedMeal.meal))
-                showFavoriteVariantChoiceDialog = false
-            },
-            onCustomSelected = {
-                onToggleFavorite(customizedMeal)
-                showFavoriteVariantChoiceDialog = false
-            },
-            onDismiss = { showFavoriteVariantChoiceDialog = false }
-        )
-    }
 
+    RequiredModifiersDialog(
+        show = showRequiredModifiersDialog,
+        onDismiss = { showRequiredModifiersDialog = false }
+    )
+
+    MaxModifiersDialog(
+        show = showMaxModifiersQuantity,
+        onDismiss = { showMaxModifiersQuantity = false }
+    )
+
+    FavoriteVariantDialog(
+        show = showFavoriteVariantChoiceDialog,
+        onBaseSelected = {
+            onSharedEvent(SharedEvent.ToggleFavorite(meal = customizedMeal.meal))
+        },
+        onCustomSelected = {
+            onToggleFavorite(customizedMeal)
+        },
+        onDismiss = { showFavoriteVariantChoiceDialog = false }
+    )
     when {
         state.isLoading -> LoadingScreen()
         error != null -> PlaceholderScreen(
@@ -154,11 +157,59 @@ fun MealDetailsBottomSheet(
                 is MealDetailsEffect.ShowRequiredModifiersDialog -> {
                     showRequiredModifiersDialog = true
                 }
+
+                is MealDetailsEffect.ShowMaxModifiersQuantity -> {
+                    showMaxModifiersQuantity = true
+                }
             }
         }
     }
 }
 
+@Composable
+private fun RequiredModifiersDialog(
+    show: Boolean,
+    onDismiss: () -> Unit,
+) {
+    if (show) {
+        InformationDialog(
+            textRes = R.string.make_mandatory_choice_before_cart,
+            onDismiss = onDismiss
+        )
+    }
+}
 
+@Composable
+private fun MaxModifiersDialog(
+    show: Boolean,
+    onDismiss: () -> Unit,
+) {
+    if (show) {
+        InformationDialog(
+            textRes = R.string.maximum_modifier,
+            onDismiss = onDismiss
+        )
+    }
+}
 
-
+@Composable
+private fun FavoriteVariantDialog(
+    show: Boolean,
+    onBaseSelected: () -> Unit,
+    onCustomSelected: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    if (show) {
+        FavoriteVariantChoiceDialog(
+            onBaseSelected = {
+                onBaseSelected()
+                onDismiss()
+            },
+            onCustomSelected = {
+                onCustomSelected()
+                onDismiss()
+            },
+            onDismiss = onDismiss
+        )
+    }
+}

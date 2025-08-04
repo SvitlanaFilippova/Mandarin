@@ -5,5 +5,5 @@ import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface GetAddonsUseCase {
-    operator fun invoke(): Flow<Resource<List<MealAdditionalCategory>>>
+    operator fun invoke(categoryPath: List<String>): Flow<Resource<List<MealAdditionalCategory>>>
 }

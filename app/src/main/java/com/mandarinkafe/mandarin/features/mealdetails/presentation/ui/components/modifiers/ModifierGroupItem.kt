@@ -26,6 +26,7 @@ fun ModifierGroupItem(
         modifierItem: ModifierItem,
         isChecked: Boolean
     ) -> Unit
+
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -41,6 +42,15 @@ fun ModifierGroupItem(
                 text = stringResource(R.string.mandatory),
                 style = Typography.RegularTextStyle,
                 fontWeight = FontWeight.Light
+            )
+        }
+
+        if (modifierGroup.maxQuantity != null && modifierGroup.maxQuantity > 1) {
+            Text(
+                modifier = Modifier.padding(start = Dimens.MarginSmall8),
+                text = stringResource(R.string.maximum_modifier_short, modifierGroup.maxQuantity),
+                style = Typography.RegularTextStyle,
+                fontWeight = FontWeight.Light,
             )
         }
     }

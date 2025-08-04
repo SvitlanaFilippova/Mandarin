@@ -1,7 +1,8 @@
 package com.mandarinkafe.mandarin.features.address.address.domain.api
 
-import com.mandarinkafe.mandarin.core.domain.models.DeliveryArea
+import com.mandarinkafe.mandarin.core.domain.models.DeliveryZone
+import com.mandarinkafe.mandarin.util.Resource
 
 interface DeliveryAreaRepository {
-    fun getAllAreas(): List<DeliveryArea>
+   suspend fun getAllAreas(): Resource<List<DeliveryZone>>
 }

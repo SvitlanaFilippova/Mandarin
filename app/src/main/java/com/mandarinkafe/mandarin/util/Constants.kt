@@ -56,6 +56,9 @@ object Constants {
     const val DEFAULT_SAVED_ADDRESSES_NUMBER = 3
     const val SHOULD_REFRESH_ADDRESSES_KEY = "shouldRefreshAddresses"
     const val SHOULD_SELECT_ADDRESS_ID = "should_select_last_added"
+    const val PAYMENT_ONLINE_CODE = "ONLINE"
+    const val PAYMENT_BANK_CODE = "BANK"
+    const val PAYMENT_CASH_CODE = "CASH"
 
     // Map
     const val MAP_DEFAULT_ZOOM = 17.0f
@@ -68,17 +71,14 @@ object Constants {
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
     const val LOCAL_STORAGE_NAME = "local_storage"
     const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/spreadsheets/d/e/"
-    const val BANNERS_GOOGLE_DOCS_URL =
-        "2PACX-1vQ3-6HvveASGgkJk7RppqB25IlbRSGJGvdEnN_0_XTtIKtRcR6H-R4KS0L_39ifx1cnGWRUiCA2zPQZ/pub?gid=0&single=true&output=csv"
-    const val RECOMMENDATIONS_GOOGLE_DOCS_URL =
-        "2PACX-1vQ3-6HvveASGgkJk7RppqB25IlbRSGJGvdEnN_0_XTtIKtRcR6H-R4KS0L_39ifx1cnGWRUiCA2zPQZ/pub?gid=1629216186&single=true&output=csv"
+
 
     // Для обработки особых категорий по их названиям
-    const val CATEGORY_ADDS = "добавки"
+    const val CATEGORY_ADDS = "Добавки"
     const val CATEGORY_RECOMMENDS = "Рекомендованные (общие)"
+    const val DELIVERY_CATEGORY_NAME = "Доставка"
 
     // Внутренние теги для особой логики в меню
-    const val TAG_ADDS = "SHOW_ADDS"
     const val TAG_NO_ADDS = "NO_ADDS"
     const val TAG_NO_DISCOUNT = "NO_DISCOUNT"
     const val TAG_NO_DELIVERY = "NO_DELIVERY"

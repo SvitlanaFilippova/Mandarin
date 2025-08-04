@@ -6,8 +6,10 @@ import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_CONFIRMATION_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
 import java.net.URLEncoder
@@ -20,6 +22,12 @@ fun NavController.navigateToSearchScreen(focusInput: Boolean) {
         popUpTo(MENU_SCREEN_ROUTE) {
             saveState = true
         }
+    }
+}
+
+fun NavController.navigateToMenu() {
+    this.navigate(MENU_SCREEN_ROUTE) {
+        restoreState = true
     }
 }
 
@@ -52,4 +60,14 @@ fun NavController.navigateToAddressDetails(address: Address, isEditMode: Boolean
         URLEncoder.encode(gson.toJson(address), StandardCharsets.UTF_8.toString())
     val route = "$ADDRESS_DETAILS_ROUTE/$json/$isEditMode"
     this.navigate(route)
+}
+
+fun NavController.navigateToOrderConfirmation(orderId: String) {
+    this.navigate("$ORDER_CONFIRMATION_ROUTE/$orderId") {
+        popUpTo(MAIN_GRAPH) {
+            inclusive = true
+        }
+        launchSingleTop = true
+    }
+
 }

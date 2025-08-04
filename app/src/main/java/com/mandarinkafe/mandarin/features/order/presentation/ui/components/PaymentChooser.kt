@@ -22,20 +22,22 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
+import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
+import com.mandarinkafe.mandarin.features.order.presentation.models.toUI
 import com.mandarinkafe.mandarin.util.presentation.ui.components.RadiobuttonWithTextRow
 
 @Composable
 fun PaymentChooser(
-    chosen: PaymentType?,
+    chosen: UiPaymentType?,
     changeAmount: String,
     isError: Boolean,
     noChange: Boolean,
     onNoChangeToggled: (Boolean) -> Unit,
-    onPaymentTypeSelected: (PaymentType) -> Unit,
+    onPaymentTypeSelected: (UiPaymentType) -> Unit,
     onChangeEntered: (String) -> Unit,
+    paymentTypes: List<PaymentType>,
 ) {
-    val paymentTypes = remember { PaymentType.entries.toList() }
-    val showChangeInput by remember(chosen) { mutableStateOf(chosen == PaymentType.CASH) }
+    val showChangeInput by remember(chosen) { mutableStateOf(chosen == UiPaymentType.CASH) }
     val style = if (isError && chosen == null) {
         Typography.RegularTextStyle.copy(color = Colors.ErrorRed)
     } else {
@@ -50,10 +52,10 @@ fun PaymentChooser(
             text = stringResource(R.string.payment_type),
             style = style,
         )
-        paymentTypes.forEach { item ->
+        paymentTypes.toUI().forEach { item ->
             RadiobuttonWithTextRow(
                 label = stringResource(item.nameRes),
-                selected = chosen == item,
+                selected = chosen?.code == item.code,
                 onItemSelected = { onPaymentTypeSelected(item) }
             )
         }
