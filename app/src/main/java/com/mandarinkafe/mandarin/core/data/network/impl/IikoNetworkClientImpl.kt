@@ -5,12 +5,12 @@ import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.Response
-import com.mandarinkafe.mandarin.core.data.dto.order.OrderDto
 import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.LoyaltyCustomerByPhoneRequest
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.OderInfoRequest
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
@@ -115,7 +115,7 @@ class IikoNetworkClientImpl(
 
     private val logTagORDER = "DEBUG ORDER NetworkClient"
 
-    override suspend fun createDelivery(order: OrderDto): Response {
+    override suspend fun createDelivery(order: OutgoingOrderDto): Response {
         return try {
             val request = CreateDeliveryRequest(
                 order = order,

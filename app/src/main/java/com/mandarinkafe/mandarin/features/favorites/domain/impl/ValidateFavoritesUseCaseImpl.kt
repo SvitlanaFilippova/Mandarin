@@ -42,7 +42,7 @@ class ValidateFavoritesUseCaseImpl(
     }
 
     private suspend fun waitForMenu() {
-        menuCache.menu.first { it is Resource.Success }
+        menuCache.visibleMenu.first { it is Resource.Success }
     }
 
     private fun processRecords(

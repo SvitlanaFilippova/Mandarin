@@ -14,7 +14,7 @@ import com.mandarinkafe.mandarin.features.order.data.network.dto.loyalty.Loyalty
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesResponse
 import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.OderInfoRequest
-import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.dto.OrderInfoResponse
+import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.OrderInfoResponse
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST

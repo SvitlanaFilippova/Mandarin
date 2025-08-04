@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel
 
-import com.mandarinkafe.mandarin.features.order.domain.models.OrderInfo
+import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
@@ -18,6 +18,6 @@ sealed interface OrderConfirmationContract {
 
     data class OrderConfirmationState(
         val isLoading: Boolean = false,
-        val orderInfo: OrderInfo? = null
+        val incomingOrder: IncomingOrder? = null
     ) : BaseState
 }

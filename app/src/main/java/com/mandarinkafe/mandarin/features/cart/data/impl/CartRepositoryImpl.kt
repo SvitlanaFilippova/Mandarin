@@ -78,7 +78,7 @@ class CartRepositoryImpl @Inject constructor(
 
     private suspend fun awaitMenu(): Resource<List<MealCategory>> {
         // ждём первого финального состояния
-        val final = menuCache.menu
+        val final = menuCache.visibleMenu
             .filter { it !is Resource.Loading && it !is Resource.Idle }
             .first()
 

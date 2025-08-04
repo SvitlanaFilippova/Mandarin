@@ -1,16 +1,16 @@
 package com.mandarinkafe.mandarin.features.order.data.impl
 
 import android.util.Log
-import com.mandarinkafe.mandarin.core.data.dto.order.toDomain
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.order.data.mapper.toOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.OrderRepository
-import com.mandarinkafe.mandarin.features.order.domain.models.Order
-import com.mandarinkafe.mandarin.features.order.domain.models.OrderInfo
+import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
+import com.mandarinkafe.mandarin.features.orderconfirmation.data.toDomain
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
@@ -30,9 +30,9 @@ class OrderRepositoryImpl(private val networkClient: IikoNetworkClient) : OrderR
 
     private val logTag = "DEBUG ORDER API OrderRepository"
 
-    override suspend fun createOrder(order: Order): Resource<OrderInfo> {
+    override suspend fun createOrder(outgoingOrder: OutgoingOrder): Resource<IncomingOrder> {
         return try {
-            val orderDto = order.toOrderDto()
+            val orderDto = outgoingOrder.toOrderDto()
             val response = networkClient.createDelivery(orderDto)
             Log.d(
                 logTag,

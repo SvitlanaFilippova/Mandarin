@@ -165,13 +165,25 @@ fun NavGraph(navHostController: NavHostController) {
                 arguments = listOf(
                     navArgument(NavConstants.KEY_ORDER_ID) {
                         type = NavType.StringType
-                    }
+                    },
+                    boolNavArg(NavConstants.KEY_REQUIRE_CONFIRMATION)
                 )
             ) { backStackEntry ->
                 val orderId = backStackEntry.arguments?.getString(NavConstants.KEY_ORDER_ID) ?: ""
+                val requireConfirmation =
+                    backStackEntry.arguments?.getBoolean(NavConstants.KEY_REQUIRE_CONFIRMATION) == true
                 OrderConfirmationScreen(
                     orderID = orderId,
+                    requireConfirmation = requireConfirmation,
                     navController = navHostController
+                )
+            }
+
+            composable(NavConstants.ORDER_CONFIRMATION_ROUTE) {
+                OrderConfirmationScreen(
+                    orderID = "8b851ef5-3fb4-48b5-bd90-18d856a6a42d",
+                    navController = navHostController,
+                    requireConfirmation = true,
                 )
             }
         }

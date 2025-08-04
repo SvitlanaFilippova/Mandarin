@@ -25,7 +25,7 @@ class GetCommonRecommendsUseCaseImpl(
         cache.fetchMenuIfNeeded()
 
         // Ждём первого «не-Loading/Idle» состояния
-        val result = cache.menu
+        val result = cache.visibleMenu
             .filter { it !is Loading && it !is Idle }
             .first()
 

@@ -4,13 +4,10 @@ import com.mandarinkafe.mandarin.core.data.dto.order.AddressDto
 import com.mandarinkafe.mandarin.core.data.dto.order.Coordinates
 import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
-import com.mandarinkafe.mandarin.core.data.dto.order.ItemDto
-import com.mandarinkafe.mandarin.core.data.dto.order.OrderDto
-import com.mandarinkafe.mandarin.core.data.dto.order.OrderModifierDto
-import com.mandarinkafe.mandarin.core.data.dto.order.PaymentDto
 import com.mandarinkafe.mandarin.core.data.dto.order.StreetDto
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DEFAULT_AMOUNT
@@ -20,12 +17,14 @@ import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVID
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVIDER_FOR_USER_COMMENT
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.PRICE_DECIMALS
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.UTENSILS_NEED_PREFIX
-import com.mandarinkafe.mandarin.features.order.data.network.dto.ErrorInfoDto
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingPaymentDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.loyalty.LoyaltyCustomerResponse
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
-import com.mandarinkafe.mandarin.features.order.domain.models.ErrorInfo
 import com.mandarinkafe.mandarin.features.order.domain.models.LoyaltyCustomer
-import com.mandarinkafe.mandarin.features.order.domain.models.Order
+import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingModifier
+import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
+import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrderItem
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Utensils
@@ -39,7 +38,7 @@ fun LoyaltyCustomerResponse.toDomain(): LoyaltyCustomer {
     )
 }
 
-fun OrderState.toDomain(paymentType: PaymentType): Order {
+fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
     val cash = paymentType.code == OrderConstants.PAYMENT_CASH_CODE
     val fullComment = buildFullComment(
         userComment = comment.trim(),
@@ -49,7 +48,7 @@ fun OrderState.toDomain(paymentType: PaymentType): Order {
         discountCategory = cartSummary.discountCategory
     )
 
-    return Order(
+    return OutgoingOrder(
         name = userInfo.name.trim(),
         phone = userInfo.phone,
         deliveryType = deliveryInfo.deliveryType
@@ -57,7 +56,7 @@ fun OrderState.toDomain(paymentType: PaymentType): Order {
         chosenAddress = deliveryInfo.chosenAddress,
         paymentType = paymentType,
         comment = fullComment,
-        cartItems = cartSummary.items,
+        items = cartSummary.items.toOrderItemsRequest(discountCategory = cartSummary.discountCategory),
         deliveryRealCost = deliveryCost,
         totalOrderSum = totalOrderSum,
         discountCategory = cartSummary.discountCategory,
@@ -65,27 +64,23 @@ fun OrderState.toDomain(paymentType: PaymentType): Order {
     )
 }
 
-fun Order.toOrderDto(): OrderDto {
-    return OrderDto(
+fun OutgoingOrder.toOrderDto(): OutgoingOrderDto {
+    return OutgoingOrderDto(
         phone = OrderConstants.PHONE_PREFIX + phone,
         orderServiceType = if (deliveryType == DeliveryType.DELIVERY) {
             OrderConstants.DELIVERY_TYPE_DELIVERY
         } else {
             OrderConstants.DELIVERY_TYPE_PICKUP
         },
-        deliveryPoint = chosenAddress?.toDeliveryPoint(),
+        deliveryPoint = chosenAddress?.toDeliveryPointDto(),
         comment = comment,
         customer = CustomerDto(
             name = name,
             type = OrderConstants.CUSTOMER_TYPE_ONE_TIME
         ),
-        items = cartItems.flatMap { (customizedMeal, quantity) ->
-            val mealItem = customizedMeal.toItem(quantity, discountCategory)
-            val addsItems = customizedMeal.adds.map { it.toItem(quantity, discountCategory) }
-            listOf(mealItem) + addsItems
-        },
+        items = items,
         payments = listOf(
-            PaymentDto(
+            OutgoingPaymentDto(
                 paymentTypeKind = paymentType.paymentTypeKind,
                 paymentTypeId = paymentType.id,
                 sum = totalOrderSum,
@@ -94,7 +89,16 @@ fun Order.toOrderDto(): OrderDto {
     )
 }
 
-fun CustomizedMeal.toItem(quantity: Int, discountSize: Int): ItemDto {
+fun Map<CustomizedMeal, Int>.toOrderItemsRequest(discountCategory: Int): List<OutgoingOrderItem> {
+    return this.flatMap { (customizedMeal, quantity) ->
+        val mealItem = customizedMeal.toOutgoingOrderItem(quantity, discountCategory)
+        val addsItems =
+            customizedMeal.adds.map { it.toOutgoingOrderItem(quantity, discountCategory) }
+        listOf(mealItem) + addsItems
+    }
+}
+
+fun CustomizedMeal.toOutgoingOrderItem(quantity: Int, discountSize: Int): OutgoingOrderItem {
     val discountMultiplier =
         (OrderConstants.FULL_PERCENT - discountSize) / OrderConstants.FULL_PERCENT_DOUBLE
 
@@ -104,9 +108,9 @@ fun CustomizedMeal.toItem(quantity: Int, discountSize: Int): ItemDto {
         meal.price.toDouble()
     }
     val discountedModifiers =
-        modifiers.flatMap { group -> group.toOrderModifierDto(discountMultiplier) }
+        modifiers.flatMap { group -> group.toOutgoingModifier(discountMultiplier) }
 
-    return ItemDto(
+    return OutgoingOrderItem(
         productId = meal.id,
         modifiers = discountedModifiers,
         price = discountedPrice,
@@ -115,18 +119,7 @@ fun CustomizedMeal.toItem(quantity: Int, discountSize: Int): ItemDto {
     )
 }
 
-fun ModifierGroup.toOrderModifierDto(discountMultiplier: Double): List<OrderModifierDto> {
-    return items.map {
-        OrderModifierDto(
-            productId = it.id,
-            amount = DEFAULT_AMOUNT,
-            price = it.price * discountMultiplier,
-            productGroupId = this.id
-        )
-    }
-}
-
-fun MealAdditional.toItem(quantity: Int = 1, discountSize: Int): ItemDto {
+fun MealAdditional.toOutgoingOrderItem(quantity: Int = 1, discountSize: Int): OutgoingOrderItem {
     val discountMultiplier =
         (OrderConstants.FULL_PERCENT - discountSize) / OrderConstants.FULL_PERCENT_DOUBLE
 
@@ -136,7 +129,7 @@ fun MealAdditional.toItem(quantity: Int = 1, discountSize: Int): ItemDto {
         price.toDouble()
     }
 
-    return ItemDto(
+    return OutgoingOrderItem(
         productId = id,
         price = discountedPrice,
         amount = quantity.toDouble(),
@@ -144,7 +137,25 @@ fun MealAdditional.toItem(quantity: Int = 1, discountSize: Int): ItemDto {
     )
 }
 
-fun Address?.toDeliveryPoint(): DeliveryPointDto? {
+fun ModifierGroup.toOutgoingModifier(discountMultiplier: Double): List<OutgoingModifier> {
+    return items.map {
+        OutgoingModifier(
+            productId = it.id,
+            amount = DEFAULT_AMOUNT,
+            price = it.price * discountMultiplier,
+            productGroupId = this.id
+        )
+    }
+}
+
+fun Meal.toOutgoingOrderItem() = OutgoingOrderItem(
+    productId = id,
+    price = price.toDouble(),
+    amount = 1.0,
+    type = orderItemType,
+)
+
+fun Address?.toDeliveryPointDto(): DeliveryPointDto? {
     return if (this == null) {
         null
     } else {
@@ -181,7 +192,6 @@ private fun buildFullComment(
         utensils.noNeedUtensils -> OrderConstants.NO_UTENSILS_COMMENT
         utensils.chosenUtensils.isNotEmpty() -> UTENSILS_NEED_PREFIX +
                 utensils.chosenUtensils.joinToString { it.stringName }
-
         else -> null
     }
 
@@ -219,9 +229,3 @@ private fun buildFullComment(
     }.trim()
 }
 
-fun ErrorInfoDto.toDomain() = ErrorInfo(
-    code = code,
-    message = message,
-    errorReason = errorReason,
-    additionalData = additionalData
-)

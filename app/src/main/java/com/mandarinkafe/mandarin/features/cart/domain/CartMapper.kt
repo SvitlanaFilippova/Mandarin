@@ -16,7 +16,8 @@ object CartMapper {
             mealId = meal.id,
             quantity = quantity,
             addsIds = adds.map { it.id },
-            modifiers = modifiers
+            modifiers = modifiers,
+            comment = comment
         )
         return storedCartItem
     }
@@ -28,7 +29,8 @@ object CartMapper {
     ) = CustomizedMeal(
         meal = meal,
         adds = adds,
-        modifiers = modifiers
+        modifiers = modifiers,
+        comment = comment
     )
 
     fun Meal.toAddToCartEvent(): CartContract.CartEvent.AddToCart {

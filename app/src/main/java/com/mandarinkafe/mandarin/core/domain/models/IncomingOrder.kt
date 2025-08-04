@@ -1,31 +1,32 @@
-package com.mandarinkafe.mandarin.features.order.domain.models
+package com.mandarinkafe.mandarin.core.domain.models
 
-import com.mandarinkafe.mandarin.core.data.dto.order.CourierInfo
+import androidx.compose.runtime.Stable
 import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
-import com.mandarinkafe.mandarin.core.data.dto.order.ItemDto
 import com.mandarinkafe.mandarin.core.data.dto.order.OrderType
-import com.mandarinkafe.mandarin.core.data.dto.order.PaymentDto
-import com.mandarinkafe.mandarin.core.data.dto.order.Problem
+import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
+import com.mandarinkafe.mandarin.features.order.domain.models.ErrorInfo
+import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.dto.Problem
+import com.mandarinkafe.mandarin.features.orderconfirmation.domain.models.DeliveryStatus
+import com.mandarinkafe.mandarin.features.orderconfirmation.domain.models.IncomingOrderItem
 
-data class OrderInfo(
+@Stable
+data class IncomingOrder(
     val id: String,
     val number: String?,
     val timestamp: Long,
     val creationStatus: CreationStatus,
     val errorInfo: ErrorInfo?,
     val phone: String? = null,
-    val deliveryAddress: String? = null,
+    val deliveryAddress: Address? = null,
     val comment: String? = null,
     val customer: CustomerDto? = null,
-    val items: List<ItemDto?>,
-    val payments: List<PaymentDto>? = null,
-    val status: String? = null,
-    val deliveryDuration: Int? = null,
+    val items: List<IncomingOrderItem>,
+    val paymentName: String? = null,
+    val status: DeliveryStatus,
     val cancelInfo: String? = null,
-    val courierInfo: CourierInfo? = null,
     val orderType: OrderType? = null,
     val processedPaymentsSum: Int? = null,
-    val sum: Int? = null,
+    val sum: Double? = null,
     val whenClosed: String? = null,
     val whenConfirmed: String? = null,
     val whenCookingCompleted: String? = null,
@@ -33,6 +34,6 @@ data class OrderInfo(
     val whenDelivered: String? = null,
     val whenPacked: String? = null,
     val whenPrinted: String? = null,
-    val whenSended: String? = null,
+    val whenSent: String? = null,
     val problem: Problem? = null,
 )

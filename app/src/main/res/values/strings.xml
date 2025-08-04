@@ -23,6 +23,8 @@
     <string name="clear_cart_question">Очистить корзину?</string>
     <string name="clear_cart_confirmation">Вы действительно хотите удалить всё из корзины?</string>
     <string name="cart_total_cost_template">%d ₽</string>
+    <string name="float_price_template">%.2f ₽</string>
+    <string name="quantity_x_template">x%.0f</string>
 
     <!-- Избранное -->
     <string name="favorite">Избранное</string>
@@ -91,7 +93,6 @@
     <string name="delivery_request_validation">Нужно ввести адрес для расчёта стоимости доставки</string>
     <string name="delivery_validation_error">Не&#160;удалось найти выбранный адрес в&#160;пределах зон доставки. Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа.</string>
     <string name="submit_order">Оформить заказ</string>
-    <string name="order_total_cost_template">%.2f ₽</string>
     <string name="pickup_only">В&#160;заказе есть позиции, доступные только для самовывоза. Доставка невозможна.</string>
     <string name="pickup_both_title">Ваш заказ будет готов в&#160;двух точках самовывоза</string>
     <string name="pickup_both_description">В&#160;заказе есть блюда, которые готовятся в&#160;пиццерии, и&#160;те, что готовятся в&#160;основном кафе.
@@ -123,6 +124,10 @@
     <string name="address_type_other">Другое</string>
     <string name="addresses_hide">Скрыть</string>
     <string name="addresses_show_more">Показать ещё %1$d</string>
+
+    <!-- Оформление заказа -->
+    <string name="order">Заказ</string>
+    <string name="comment_for_meal">Комментарий: %1$s</string>
 
     <!-- Кнопки действий -->
     <string name="minus">-</string>

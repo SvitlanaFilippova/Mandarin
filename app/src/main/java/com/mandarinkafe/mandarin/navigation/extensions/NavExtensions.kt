@@ -62,12 +62,14 @@ fun NavController.navigateToAddressDetails(address: Address, isEditMode: Boolean
     this.navigate(route)
 }
 
-fun NavController.navigateToOrderConfirmation(orderId: String) {
-    this.navigate("$ORDER_CONFIRMATION_ROUTE/$orderId") {
+fun NavController.navigateToOrderConfirmation(
+    orderId: String,
+    requireConfirmation: Boolean = true
+) {
+    this.navigate("$ORDER_CONFIRMATION_ROUTE/$orderId/$requireConfirmation") {
         popUpTo(MAIN_GRAPH) {
             inclusive = true
         }
         launchSingleTop = true
     }
-
 }

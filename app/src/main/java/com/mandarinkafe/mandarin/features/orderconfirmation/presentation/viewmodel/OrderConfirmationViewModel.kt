@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.features.order.domain.models.OrderInfo
+import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.orderconfirmation.domain.api.ObserveOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEffect
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEffect.ShowError
@@ -53,8 +53,8 @@ class OrderConfirmationViewModel @Inject constructor(private val observeOrderSta
         }
     }
 
-    private fun setStatus(status: OrderInfo?) {
-        setState { copy(isLoading = false, orderInfo = status) }
+    private fun setStatus(status: IncomingOrder?) {
+        setState { copy(isLoading = false, incomingOrder = status) }
     }
 
     override fun setLoading(isLoading: Boolean) {

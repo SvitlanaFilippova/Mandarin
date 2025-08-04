@@ -20,16 +20,13 @@ data class Address(
 }
 
 fun Address.getDetailsString(): String {
-    if (addressType == AddressType.APARTMENT) {
-        val parts = listOfNotNull(
-            apartmentNumber.takeIf { it.isNotBlank() }?.let { "кв. $it" },
-            entrance.takeIf { it.isNotBlank() }?.let { "подъезд $it" },
-            intercom.takeIf { it.isNotBlank() }?.let { "домофон $it" },
-            floor.takeIf { it.isNotBlank() }?.let { "этаж $it" },
-            comment.takeIf { it.isNotBlank() },
-        )
-        return parts.joinToString(separator = ", ")
-    } else {
-        return comment.takeIf { it.isNotBlank() } ?: ""
-    }
+    val parts = listOfNotNull(
+        apartmentNumber.takeIf { it.isNotBlank() }?.let { "кв. $it" },
+        entrance.takeIf { it.isNotBlank() }?.let { "подъезд $it" },
+        intercom.takeIf { it.isNotBlank() }?.let { "домофон $it" },
+        floor.takeIf { it.isNotBlank() }?.let { "этаж $it" },
+        comment.takeIf { it.isNotBlank() },
+    )
+    return parts.joinToString(separator = ", ")
+
 }

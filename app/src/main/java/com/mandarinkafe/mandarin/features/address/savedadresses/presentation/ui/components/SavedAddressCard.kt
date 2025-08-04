@@ -54,7 +54,6 @@ fun SavedAddressCard(
         Column(
             modifier = Modifier
                 .weight(1f)
-
         ) {
             Text(
                 text = address.streetAndBuilding,

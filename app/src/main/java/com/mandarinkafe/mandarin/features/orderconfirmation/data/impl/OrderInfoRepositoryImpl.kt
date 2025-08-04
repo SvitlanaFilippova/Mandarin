@@ -1,10 +1,10 @@
 package com.mandarinkafe.mandarin.features.orderconfirmation.data.impl
 
 import android.util.Log
-import com.mandarinkafe.mandarin.core.data.dto.order.toDomain
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
-import com.mandarinkafe.mandarin.features.order.domain.models.OrderInfo
-import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.dto.OrderInfoResponse
+import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
+import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.OrderInfoResponse
+import com.mandarinkafe.mandarin.features.orderconfirmation.data.toDomain
 import com.mandarinkafe.mandarin.features.orderconfirmation.domain.api.OrderInfoRepository
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
@@ -16,11 +16,11 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
 class OrderInfoRepositoryImpl(private val networkClient: IikoNetworkClient) : OrderInfoRepository {
-    override fun observeOrderInfo(id: String, delay: Long): Flow<Resource<OrderInfo>> = flow {
+    override fun observeOrderInfo(id: String, delay: Long): Flow<Resource<IncomingOrder>> = flow {
         while (true) {
             val response = networkClient.getOrderStatusById(id)
             val result = when (response.resultCode) {
-                NO_CONNECTION -> Resource.ErrorNoInternet<OrderInfo>()
+                NO_CONNECTION -> Resource.ErrorNoInternet<IncomingOrder>()
                 HTTP_SUCCESS -> {
                     Log.d("DEBUG OBSERVE STATUS RepositoryImpl", "HTTP_SUCCESS")
                     val orderInfo = (response as OrderInfoResponse)

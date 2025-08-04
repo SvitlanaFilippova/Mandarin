@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.core.data.dto.order
+package com.mandarinkafe.mandarin.features.orderconfirmation.data.network.dto
 
 data class Problem(
     val description: String,

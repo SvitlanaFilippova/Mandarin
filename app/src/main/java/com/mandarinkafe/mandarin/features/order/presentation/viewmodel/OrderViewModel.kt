@@ -14,9 +14,7 @@ import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWit
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.ResolvePickupPointUseCase
-import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus.Error
-import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus.InProgress
-import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus.Success
+import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
@@ -279,17 +277,17 @@ class OrderViewModel @Inject constructor(
                     val orderInfo = result.data
                     val status = result.data?.creationStatus
                     when (status) {
-                        InProgress -> {
+                        CreationStatus.IN_PROGRESS -> {
                             setLoading()
                             // Сохраняем orderId и начинаем наблюдение
                             observeOrderUntilSuccess(orderInfo.id)
                         }
 
-                        Success -> {
+                        CreationStatus.SUCCESS -> {
                             onSuccessOrderCreation(orderInfo.id)
                         }
 
-                        Error -> {
+                        CreationStatus.ERROR -> {
                             sendErrorEffect(
                                 result.data.errorInfo?.message ?: "Не удалось создать заказ"
                             )
@@ -318,11 +316,11 @@ class OrderViewModel @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         when (result.data?.creationStatus) {
-                            Success -> {
+                            CreationStatus.SUCCESS -> {
                                 onSuccessOrderCreation(orderId)
                             }
 
-                            Error -> {
+                            CreationStatus.ERROR -> {
                                 sendErrorEffect(
                                     result.data.errorInfo?.message ?: "Не удалось создать заказ"
                                 )

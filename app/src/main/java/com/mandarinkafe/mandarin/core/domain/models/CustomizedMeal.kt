@@ -7,14 +7,16 @@ data class CustomizedMeal(
     val meal: Meal,
 
     /**
-    Выбранные добавки для пиццы
+    Выбранные добавки
      */
     val adds: List<MealAdditional> = emptyList<MealAdditional>(),
 
     /**
     Выбранные модификаторы (по группам)
      */
-    val modifiers: List<ModifierGroup> = emptyList<ModifierGroup>()
+    val modifiers: List<ModifierGroup> = emptyList<ModifierGroup>(),
+
+    val comment: String = ""
 )
 
 /**

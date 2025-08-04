@@ -1,6 +1,6 @@
-package com.mandarinkafe.mandarin.core.data.dto.order
+package com.mandarinkafe.mandarin.features.order.domain.models
 
-data class OrderModifierDto(
+data class OutgoingModifier(
     val productId: String,
     val amount: Double,
     val price: Double,

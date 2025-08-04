@@ -19,7 +19,7 @@ class GetFullMealListUseCaseImpl(
 ) : GetFullMealListUseCase {
 
     override fun invoke(): Flow<Resource<List<Meal>>> {
-        return menuCache.menu.map { result ->
+        return menuCache.visibleMenu.map { result ->
             when (result) {
                 is Success -> {
                     val visibleMenu = result.data?.filterNot { it.isHidden }.orEmpty()

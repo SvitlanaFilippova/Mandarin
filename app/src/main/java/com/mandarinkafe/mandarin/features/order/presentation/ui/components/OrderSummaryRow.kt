@@ -42,7 +42,7 @@ fun OrderSummaryRow(
 
         if (amount != null && !inProgress) {
             Text(
-                text = stringResource(R.string.order_total_cost_template, amount),
+                text = stringResource(R.string.float_price_template, amount),
                 style = Typography.RegularLightTextStyle
             )
 

@@ -1,20 +1,23 @@
-package com.mandarinkafe.mandarin.core.data.dto.order
+package com.mandarinkafe.mandarin.features.orderconfirmation.data.network.dto
 
-data class OrderDto(
+import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
+import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
+import com.mandarinkafe.mandarin.core.data.dto.order.OrderType
+
+data class IncomingOrderDto(
     val phone: String? = null,
     val orderServiceType: String? = null,
     val deliveryPoint: DeliveryPointDto? = null,
     val comment: String? = null,
     val customer: CustomerDto? = null,
-    val items: List<ItemDto?>,
+    val items: List<IncomingOrderItemDto> = emptyList(),
     val payments: List<PaymentDto>? = null,
     val status: String? = null,
     val deliveryDuration: Int? = null,
     val cancelInfo: CancelInfo? = null,
-    val courierInfo: CourierInfo? = null,
     val orderType: OrderType? = null,
     val processedPaymentsSum: Int? = null,
-    val sum: Int? = null,
+    val sum: Double? = null,
     val whenClosed: String? = null,
     val whenConfirmed: String? = null,
     val whenCookingCompleted: String? = null,

@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.features.order.data.network
 
-import com.mandarinkafe.mandarin.core.data.dto.order.OrderDto
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 
 data class CreateDeliveryRequest(
-    val order: OrderDto,
+    val order: OutgoingOrderDto,
     val organizationId: String,
 )
