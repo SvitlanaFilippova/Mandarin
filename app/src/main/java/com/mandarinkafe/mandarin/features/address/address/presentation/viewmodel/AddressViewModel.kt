@@ -72,8 +72,11 @@ class AddressViewModel @Inject constructor(
 
     private fun getDeliveryZones() {
         viewModelScope.launch {
-            val deliveryAreas = deliveryAreaRepository.getAllAreas().map { it.toUi() }
-            setState { copy(deliveryAreas = deliveryAreas) }
+            val deliveryAreasResource = deliveryAreaRepository.getAllAreas()
+            if (deliveryAreasResource is Resource.Success) {
+                val deliveryAreas = deliveryAreasResource.data?.map { it.toUi() }
+                deliveryAreas?.let { setState { copy(deliveryAreas = deliveryAreas) } }
+            }
         }
     }
 
@@ -92,8 +95,8 @@ class AddressViewModel @Inject constructor(
 
     private fun onCameraMoved(point: Point) {
         viewModelScope.launch {
-        fetchAddressWithDebounce(point)
-        checkDeliveryArea(point)
+            fetchAddressWithDebounce(point)
+            checkDeliveryArea(point)
         }
     }
 

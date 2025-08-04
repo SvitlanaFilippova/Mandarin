@@ -8,5 +8,4 @@ fun CustomerInfo(phone: String?, comment: String?, customerName: String?) {
     phone?.let { Text("Телефон: $it") }
     comment?.let { Text("Комментарий: $it") }
     customerName?.let { Text("Клиент: $it") }
-
 }
