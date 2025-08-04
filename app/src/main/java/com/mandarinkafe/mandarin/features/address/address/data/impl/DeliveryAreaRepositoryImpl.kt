@@ -8,6 +8,8 @@ import com.mandarinkafe.mandarin.core.domain.models.DeliveryZone
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.address.data.dto.ZoneMeta
 import com.mandarinkafe.mandarin.features.address.address.domain.api.DeliveryAreaRepository
+import com.mandarinkafe.mandarin.util.Resource
+import java.io.IOException
 
 class DeliveryAreaRepositoryImpl(
     private val networkClient: GoogleDocsNetworkClient,
@@ -16,36 +18,37 @@ class DeliveryAreaRepositoryImpl(
     private val logTag = "DeliveryZone Error"
     private var cachedZones: List<DeliveryZone>? = null
 
-    override suspend fun getAllAreas(): List<DeliveryZone> {
+    override suspend fun getAllAreas(): Resource<List<DeliveryZone>> {
         // Возвращаем из кеша, если уже загружено
-        cachedZones?.let { return it }
+        cachedZones?.let { return Resource.Success(it) }
 
-        val polygonResult = runCatching { networkClient.getDeliveryZonesPoints() }.getOrElse {
-            throw RuntimeException("Ошибка загрузки полигонов: ${it.message}")
+        return try {
+            val polygonResult = networkClient.getDeliveryZonesPoints()
+            val metaResult = networkClient.getDeliveryZonesMetaData()
+
+            val polygonCsv = (polygonResult as? CsvResponse)?.csv.orEmpty()
+            val metaCsv = (metaResult as? CsvResponse)?.csv.orEmpty()
+
+            val polygonsMap = parsePolygonCsv(polygonCsv)
+            val metaMap = parseMetaCsv(metaCsv)
+            // Извлекаем цены из deliveryCategory
+            val pricesCategory = menuCache.deliveryItems.value?.meals
+            val pricesMap = pricesCategory
+                ?.mapNotNull { meal ->
+                    val zoneId = extractZoneIdFromName(meal.name)
+                    if (zoneId != null) zoneId to meal.price else null
+                }
+                ?.toMap()
+                .orEmpty()
+
+            val zones = buildDeliveryZones(polygonsMap, metaMap, pricesMap)
+            cachedZones = zones
+            return Resource.Success(zones)
+        } catch (e: IOException) {
+            Resource.ErrorOther("Ошибка сети при загрузке зон доставки, $e")
+        } catch (e: Exception) {
+            Resource.ErrorOther("Неизвестная ошибка при получении зон доставки, $e")
         }
-        val metaResult = runCatching { networkClient.getDeliveryZonesMetaData() }.getOrElse {
-            throw RuntimeException("Ошибка загрузки метаинформации: ${it.message}")
-        }
-
-        val polygonCsv = (polygonResult as? CsvResponse)?.csv.orEmpty()
-        val metaCsv = (metaResult as? CsvResponse)?.csv.orEmpty()
-
-        val polygonsMap = parsePolygonCsv(polygonCsv)
-        val metaMap = parseMetaCsv(metaCsv)
-
-        // Извлекаем цены из deliveryCategory
-        val pricesCategory = menuCache.deliveryItems.value?.meals
-        val pricesMap = pricesCategory
-            ?.mapNotNull { meal ->
-                val zoneId = extractZoneIdFromName(meal.name)
-                if (zoneId != null) zoneId to meal.price else null
-            }
-            ?.toMap()
-            .orEmpty()
-
-        val zones = buildDeliveryZones(polygonsMap, metaMap, pricesMap)
-        cachedZones = zones
-        return zones
     }
 
     private fun buildDeliveryZones(

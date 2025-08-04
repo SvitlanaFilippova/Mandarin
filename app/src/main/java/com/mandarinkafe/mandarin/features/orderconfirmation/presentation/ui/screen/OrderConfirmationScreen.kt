@@ -20,6 +20,7 @@ import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.CustomerInfo
+import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.WhenInfo
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEvent
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel.OrderConfirmationViewModel
@@ -57,6 +58,7 @@ fun OrderConfirmationScreen(
                     Text("Ошибка: ${it.message}")
                 }
                 Text("Кол-во позиций: ${order.items.count()}")
+
                 Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
                 orderType?.let {
                     Text("Тип заказа: ${it.name}")
@@ -65,23 +67,30 @@ fun OrderConfirmationScreen(
                     Text("Курьер:")
                     Text("${it.courier.name}, ${it.courier.phone}")
                 }
+
                 Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
 
-                payments?.let { Text("Способы оплаты: $it") }
                 status?.let { Text("Статус заказа: $it") }
                 cancelInfo?.let { Text("Причина отмены: $it") }
 
+                Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
+
+                payments?.let { Text("Способы оплаты: $it") }
                 sum?.let { Text("Сумма заказа: $it") }
                 processedPaymentsSum?.let { Text("Оплачено: $it") }
-                whenCreated?.let { Text("Создан: $it") }
-                whenConfirmed?.let { Text("Подтверждён: $it") }
-                whenCookingCompleted?.let { Text("Готово: $it") }
-                whenPacked?.let { Text("Упаковано: $it") }
-                whenSended?.let { Text("Отправлено: $it") }
-                whenDelivered?.let { Text("Доставлено: $it") }
-                whenPrinted?.let { Text("Напечатано: $it") }
-                whenClosed?.let { Text("Закрыто: $it") }
 
+                Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
+
+                WhenInfo(
+                    whenCreated = whenCreated,
+                    whenConfirmed = whenConfirmed,
+                    whenCookingCompleted = whenCookingCompleted,
+                    whenPacked = whenPacked,
+                    whenSended = whenSended,
+                    whenDelivered = whenDelivered,
+                    whenPrinted = whenPrinted,
+                    whenClosed = whenClosed
+                )
 
                 Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
                 CustomerInfo(

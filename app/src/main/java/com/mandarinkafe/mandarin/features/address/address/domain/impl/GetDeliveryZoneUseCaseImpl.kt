@@ -1,10 +1,10 @@
 package com.mandarinkafe.mandarin.features.address.address.domain.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.domain.models.DeliveryZone
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
+import com.mandarinkafe.mandarin.util.Resource
 
 class GetDeliveryZoneUseCaseImpl(
     private val deliveryAreaRepository: DeliveryAreaRepository
@@ -12,17 +12,19 @@ class GetDeliveryZoneUseCaseImpl(
 
     override suspend fun invoke(location: GeoPoint?): DeliveryZone? {
         if (location == null) return null
-        Log.d("DEBUG DELIVERY AREA", "GetDeliveryZoneUseCaseImpl, location = $location")
-        val areas = deliveryAreaRepository.getAllAreas()
+        val areasResult = deliveryAreaRepository.getAllAreas()
+        return when (areasResult) {
+            is Resource.Success -> {
+                val matchedAreas = areasResult.data?.filter { area ->
+                    isPointInPolygon(location, area.polygon) &&
+                            area.parentArea?.let { !isPointInPolygon(location, it) } != false
+                }
 
-        val matchedAreas = areas.filter { area ->
-            isPointInPolygon(location, area.polygon) &&
-                    area.parentArea?.let { !isPointInPolygon(location, it) } != false
+                matchedAreas?.minByOrNull { it.id }
+            }
+
+            else -> null
         }
-
-        val bestArea = matchedAreas.minByOrNull { it.id }
-        Log.d("DEBUG DELIVERY AREA", "GetDeliveryZoneUseCaseImpl, bestArea = $bestArea")
-        return bestArea
     }
 
     // Определяет, находится ли точка внутри полигона (true — внутри, false — снаружи)
