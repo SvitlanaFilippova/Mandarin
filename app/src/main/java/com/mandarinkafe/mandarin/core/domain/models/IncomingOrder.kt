@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.core.domain.models
 import androidx.compose.runtime.Immutable
 import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
 import com.mandarinkafe.mandarin.core.data.dto.order.OrderType
+import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.ErrorInfo
 import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.dto.Problem
@@ -37,4 +38,11 @@ data class IncomingOrder(
     val whenPrinted: String? = null,
     val whenSent: String? = null,
     val problem: Problem? = null,
-)
+) {
+    val isClosed: Boolean
+        get() = status == DeliveryStatus.CANCELLED || status == DeliveryStatus.CLOSED || status == DeliveryStatus.DELIVERED
+    val needToConfirm: Boolean
+        get() = status == DeliveryStatus.UNCONFIRMED
+    val isDelivery: Boolean
+        get() = orderType?.orderServiceType == OrderConstants.DELIVERY_TYPE_DELIVERY
+}

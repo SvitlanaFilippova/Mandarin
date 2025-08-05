@@ -44,16 +44,12 @@ fun AddressInfo(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
             ) {
-
                 address?.let {
                     Spacer(Modifier.height(Dimens.MarginSmall8))
                     Label("Адрес")
                     Value(it.streetAndBuilding)
-
                     val details = remember { it.getDetailsString() }
                     if (details.isNotEmpty()) {
-                        Spacer(Modifier.height(Dimens.MarginSmall8))
-                        Label("Детали")
                         Value(details)
                     }
                 }

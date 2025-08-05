@@ -21,7 +21,8 @@ fun OrderStatusSection(order: IncomingOrder) {
         ) {
             order.errorInfo?.let { LabelValue("Ошибка", it.message.toString()) }
             LabelValue("Статус заказа", stringResource(order.status.labelResId))
-            order.cancelInfo?.let { LabelValue("Причина отмены", it) }
+            order.orderType?.let { LabelValue("Cпособ получения", it.name) }
+            order.paymentName?.let { LabelValue("Способ оплаты", it) }
         }
     }
 }

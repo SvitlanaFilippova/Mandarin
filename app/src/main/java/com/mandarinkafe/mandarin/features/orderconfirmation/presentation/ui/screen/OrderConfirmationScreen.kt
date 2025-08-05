@@ -20,6 +20,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.CustomerInfo
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.OrderInfoSection
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.OrderItemsSection
+import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.OrderNeedConfirmSection
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.OrderStatusSection
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.OrderTimesSection
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEvent
@@ -59,6 +60,12 @@ fun OrderConfirmationScreen(
 
             item { OrderStatusSection(order) }
 
+            if (order.needToConfirm && requireConfirmation) {
+                item {
+                    OrderNeedConfirmSection()
+                }
+            }
+
             if (order.items.isNotEmpty()) {
                 item {
                     OrderItemsSection(
@@ -68,9 +75,9 @@ fun OrderConfirmationScreen(
                 }
             }
 
-            item { AddressInfo(address = order.deliveryAddress) }
-
-            item { OrderTimesSection(order) }
+            if (order.isDelivery) {
+                item { AddressInfo(address = order.deliveryAddress) }
+            }
 
             item {
                 CustomerInfo(
@@ -79,6 +86,9 @@ fun OrderConfirmationScreen(
                     customerName = order.customer?.name,
                 )
             }
+
+            item { OrderTimesSection(order) }
+
             item {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     ButtonWithText(

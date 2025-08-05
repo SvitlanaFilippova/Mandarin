@@ -128,6 +128,7 @@
     <!-- Оформление заказа -->
     <string name="order">Заказ</string>
     <string name="comment_for_meal">Комментарий: %1$s</string>
+    <string name="order_need_to_be_confirmed">Заказ успешно создан. В&#160;ближайшее время оператор позвонит, чтобы подтвердить его.</string>
 
     <!-- Статусы заказа -->
     <string name="delivery_status_unconfirmed">Не подтверждён</string>
