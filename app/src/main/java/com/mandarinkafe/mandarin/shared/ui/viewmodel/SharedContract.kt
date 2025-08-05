@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.shared.ui.viewmodel
 
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.util.BaseEffect
@@ -21,11 +22,12 @@ sealed interface SharedContract {
         data class OnMealDetailsClick(
             val meal: Meal? = null,
             val item: CustomizedMeal? = null,
+            val cartItem: CartItem? = null,
             val isEditMode: Boolean = false
         ) : SharedEvent
 
         data class OnEditMealClick(
-            val item: CustomizedMeal
+            val item: CartItem
         ) : SharedEvent
 
         data object GoBack : SharedEvent
@@ -36,10 +38,12 @@ sealed interface SharedContract {
         data object GoBackEffect : SharedEffect
         data object OnPhoneClick : SharedEffect
         data class OpenMealDetailsBS(
+            val cartItem: CartItem? = null,
             val meal: Meal? = null,
             val item: CustomizedMeal? = null,
             val isEditMode: Boolean = false
         ) : SharedEffect
+
         data object FinishSplash : SharedEffect
     }
 

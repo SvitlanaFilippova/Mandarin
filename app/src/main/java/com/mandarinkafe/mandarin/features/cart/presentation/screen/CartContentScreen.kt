@@ -15,16 +15,17 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.id
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartClearTextButton
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartItemCard
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartRecommendsList
@@ -41,17 +42,15 @@ fun CartContentScreen(
     onClearCart: () -> Unit,
     onShowFavoriteDialog: (CustomizedMeal) -> Unit,
     onToggleFavorite: (CustomizedMeal) -> Unit,
-    onAddToCart: (CustomizedMeal) -> Unit,
-    onRemoveFromCart: (CustomizedMeal) -> Unit,
-    onDeletionCancel: (CustomizedMeal) -> Unit,
-    onMealDetailsClick: (CustomizedMeal) -> Unit,
-    onEditMealClick: (CustomizedMeal) -> Unit,
+    onAddToCart: (CartItem) -> Unit,
+    onRemoveFromCart: (CartItem) -> Unit,
+    onDeletionCancel: (CartItem) -> Unit,
+    onMealDetailsClick: (CartItem) -> Unit,
+    onEditMealClick: (CartItem) -> Unit,
     onProceedOrderClick: () -> Unit,
-    onCommentAdded: (CustomizedMeal, String) -> Unit,
+    onCommentAdded: (CartItem, String) -> Unit,
 ) {
-    val cartItemsList: List<Pair<CustomizedMeal, Int>> = remember(state.cartItems) {
-        state.cartItems.entries.map { it.toPair() }
-    }
+    val cartItemsList = state.cartItems
 
     Column(
         modifier = Modifier
@@ -82,16 +81,13 @@ fun CartContentScreen(
                 // Список элементов корзины
                 itemsIndexed(
                     items = cartItemsList,
-                    key = { _, pair -> pair.first.id }
-                ) { index, pair ->
-                    val cartItem = pair.first
-                    val itemInPendingDeletion =
-                        state.pendingDeletionMeals.contains(cartItem)
+                    key = { _, cartItem -> cartItem.customizedMeal.id }
+                ) { index, cartItem ->
+                    val itemInPendingDeletion = state.pendingDeletionMeals.contains(cartItem)
 
                     CartItemCard(
                         modifier = Modifier.animateItem(tween(Constants.ANIMATION_DURATION_FAST)),
                         item = cartItem,
-                        quantity = pair.second,
                         favorites = favorites,
                         itemInPendingDeletion = itemInPendingDeletion,
                         deletionProgress = state.mealDeletionProgress[cartItem] ?: 0f,
@@ -136,8 +132,8 @@ fun CartContentScreen(
                         CartRecommendsList(
                             recommendsList = state.recommends,
                             modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
-                            onAddToCart = onAddToCart,
-                            onMealDetailsClick = onMealDetailsClick,
+                            onAddToCart = { onAddToCart(it.toCartItem()) },
+                            onMealDetailsClick = { onMealDetailsClick(it.toCartItem()) },
                         )
                     }
                 }
@@ -148,7 +144,7 @@ fun CartContentScreen(
 
             // Кнопка оформления заказа
             val ifCartIsEmpty =
-                state.cartItems.keys.all { it in state.pendingDeletionMeals }
+                state.cartItems.all { it in state.pendingDeletionMeals }
             if (!ifCartIsEmpty) {
                 ProcessOrderButton(
                     onClick = onProceedOrderClick,

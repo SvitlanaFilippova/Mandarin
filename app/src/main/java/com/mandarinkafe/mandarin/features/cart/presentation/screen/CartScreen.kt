@@ -80,7 +80,13 @@ fun CartScreen(
                             )
                         )
                     },
-                    onMealDetailsClick = { item -> onSharedEvent(SharedEvent.OnMealDetailsClick(item = item)) },
+                    onMealDetailsClick = { item ->
+                        onSharedEvent(
+                            SharedEvent.OnMealDetailsClick(
+                                cartItem = item
+                            )
+                        )
+                    },
                     onEditMealClick = { item -> onSharedEvent(SharedEvent.OnEditMealClick(item = item)) },
                     onProceedOrderClick = { onCartEvent(CartEvent.OnProceedOrderClick) },
                     onCommentAdded = { item, text ->
@@ -120,8 +126,6 @@ fun CartScreen(
                     is CartEffect.ProceedOrder -> {
                         navController.navigateToOrder()
                     }
-
-                    else -> {}
                 }
             }
         }

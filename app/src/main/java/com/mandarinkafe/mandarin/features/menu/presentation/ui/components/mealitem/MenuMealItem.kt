@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -43,7 +43,7 @@ fun MenuMealItem(
     favoriteIds: Set<String>,
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
-    cartItems: Map<CustomizedMeal, Int>,
+    cartItems: List<CartItem>,
     imageSize: Dp,
     modifier: Modifier = Modifier
 ) {

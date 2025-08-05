@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.viewmodel
 
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.totalPrice
@@ -14,14 +15,19 @@ sealed interface CartContract {
         data object Init : CartEvent
 
         // Управление элементами корзины
-        data class AddToCart(val item: CustomizedMeal) : CartEvent
-        data class RemoveFromCartWithDelay(val item: CustomizedMeal) : CartEvent
-        data class RemoveFromCartByItem(val item: CustomizedMeal) : CartEvent
+        data class AddToCart(
+            val item: CartItem? = null,
+            val customizedMeal: CustomizedMeal? = null
+        ) : CartEvent
+
+        data class RemoveFromCartWithDelay(val item: CartItem) : CartEvent
+        data class RemoveFromCartByCustomizedMeal(val item: CustomizedMeal) : CartEvent
         data class RemoveFromCartByMeal(val meal: Meal) : CartEvent
-        data class AddCommentToItem(val item: CustomizedMeal, val comment: String) : CartEvent
-        data class ReplaceMealInCart(val newItem: CustomizedMeal, val oldItem: CustomizedMeal) :
+        data class AddCommentToItem(val item: CartItem, val comment: String) : CartEvent
+        data class ReplaceMealInCart(val newItem: CartItem, val oldItem: CartItem) :
             CartEvent
-        data class CancelRemove(val item: CustomizedMeal) : CartEvent
+
+        data class CancelRemove(val item: CartItem) : CartEvent
 
         // Очистка корзины
         data object ClearCart : CartEvent
@@ -39,18 +45,18 @@ sealed interface CartContract {
     data class CartState(
         val isLoading: Boolean = true,
         val error: UiError? = null,
-        val cartItems: Map<CustomizedMeal, Int> = emptyMap(),
+        val cartItems: List<CartItem> = emptyList(),
         val favoritesItems: Set<CustomizedMeal> = emptySet(),
-        val recommends: List<CustomizedMeal> = emptyList(),
+        val recommends: List<Meal> = emptyList(),
         val recommendsAreLoading: Boolean = true,
-        val pendingDeletionMeals: List<CustomizedMeal> = emptyList(),
-        val mealDeletionProgress: Map<CustomizedMeal, Float> = emptyMap(),
+        val pendingDeletionMeals: List<CartItem> = emptyList(),
+        val mealDeletionProgress: Map<CartItem, Float> = emptyMap(),
     ) : BaseState {
-        val actualCartItems: Map<CustomizedMeal, Int>
-            get() = cartItems.filter { (item, _) -> item !in pendingDeletionMeals }
+        val actualCartItems: List<CartItem>
+            get() = cartItems.filter { it !in pendingDeletionMeals }
 
         val totalCartPrice: Int
-            get() = actualCartItems.entries.sumOf { (item, quantity) ->
+            get() = actualCartItems.sumOf { (item, quantity) ->
                 item.totalPrice() * quantity
             }
     }

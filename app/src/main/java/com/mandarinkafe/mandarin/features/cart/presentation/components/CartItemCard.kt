@@ -9,6 +9,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -21,24 +22,23 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 @Composable
 fun CartItemCard(
     modifier: Modifier,
-    item: CustomizedMeal,
-    quantity: Int,
+    item: CartItem,
     itemInPendingDeletion: Boolean,
     favorites: List<CustomizedMeal>,
     deletionProgress: Float,
     onToggleFavorite: (CustomizedMeal) -> Unit,
     onShowFavoriteDialog: (CustomizedMeal) -> Unit,
-    onAddToCart: (CustomizedMeal) -> Unit,
-    onRemoveFromCart: (CustomizedMeal) -> Unit,
-    onMealDetailsClick: (CustomizedMeal) -> Unit,
-    onDeletionCancel: (CustomizedMeal) -> Unit,
-    onEditMealClick: (CustomizedMeal) -> Unit,
-    onCommentAdded: (CustomizedMeal, String) -> Unit,
+    onAddToCart: (CartItem) -> Unit,
+    onRemoveFromCart: (CartItem) -> Unit,
+    onMealDetailsClick: (CartItem) -> Unit,
+    onDeletionCancel: (CartItem) -> Unit,
+    onEditMealClick: (CartItem) -> Unit,
+    onCommentAdded: (CartItem, String) -> Unit,
 ) {
     val contentColor =
         remember(itemInPendingDeletion) { if (itemInPendingDeletion) Colors.LightGreyTransparent75 else Colors.White }
 
-    val onItemClick = if (item.isCustomized) {
+    val onItemClick = if (item.customizedMeal.isCustomized) {
         { onMealDetailsClick(item) }
     } else {
         { onEditMealClick(item) }
@@ -64,7 +64,6 @@ fun CartItemCard(
         PriceAndButtons(
             item = item,
             itemInPendingDeletion = itemInPendingDeletion,
-            quantity = quantity,
             deletionProgress = deletionProgress,
             contentColor = contentColor,
             onEditMealClick = { onEditMealClick(item) },

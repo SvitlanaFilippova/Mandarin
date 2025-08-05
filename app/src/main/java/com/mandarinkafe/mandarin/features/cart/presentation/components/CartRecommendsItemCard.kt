@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import coil3.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
@@ -28,17 +28,15 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 @Composable
 fun CartRecommendsItemCard(
     modifier: Modifier,
-    item: CustomizedMeal,
-    onAddToCart: (CustomizedMeal) -> Unit,
-    onMealDetailsClick: (CustomizedMeal) -> Unit,
+    meal: Meal,
+    onAddToCart: (Meal) -> Unit,
+    onMealDetailsClick: (Meal) -> Unit,
 ) {
-    val meal = item.meal
-
     Card(
         modifier = modifier
             .padding(horizontal = Dimens.MarginSuperSmall4)
             .width(Dimens.RecommendsItemWidth96)
-            .clickable(onClick = { onMealDetailsClick(item) }),
+            .clickable(onClick = { onMealDetailsClick(meal) }),
         border = BorderStroke(
             width = Dimens.Border1,
             color = Colors.DarkGrey
@@ -73,14 +71,14 @@ fun CartRecommendsItemCard(
                     .padding(vertical = Dimens.MarginSmall8)
             )
 
-            if (item.meal.requireSelection) {
+            if (meal.requireSelection) {
                 SelectSmallButton(
-                    onClick = { onMealDetailsClick(item) },
+                    onClick = { onMealDetailsClick(meal) },
                     modifier = Modifier.fillMaxWidth(),
                 )
             } else {
                 ToCartSmallButton(
-                    onClick = { onAddToCart(item) },
+                    onClick = { onAddToCart(meal) },
                     price = meal.price,
                     modifier = Modifier.fillMaxWidth(),
                 )

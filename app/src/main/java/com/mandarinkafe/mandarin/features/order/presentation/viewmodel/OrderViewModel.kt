@@ -105,13 +105,13 @@ class OrderViewModel @Inject constructor(
             observeCartItemsUseCase().collect { items ->
                 setState {
                     // проверяем, есть ли в корзине блюда, на которые не распространяется скидка
-                    val containNotDiscountable = items.keys.any { !it.meal.discountable }
+                    val containNotDiscountable = items.any { !it.customizedMeal.meal.discountable }
 
                     // прововеряем, откуда нужно будет забирать заказ в случае самовывоза
-                    val pickupPoint = resolvePickupPoint(items.keys)
+                    val pickupPoint = resolvePickupPoint(items.map { it.customizedMeal }.toSet())
 
                     // если была выбрана доставка, но заказ стал isPickupOnly - обнуляем данные доставки
-                    val isPickupOnly = items.keys.any { it.meal.isPickupOnly }
+                    val isPickupOnly = items.any { it.customizedMeal.meal.isPickupOnly }
 
                     // Обновляем инфо в стейте
                     val newDeliveryInfo =

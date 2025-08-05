@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -36,7 +36,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.SearchBarInputF
 fun SearchScreenContent(
     focusSearchBarInput: Boolean,
     searchState: SearchContract.SearchState,
-    cartItems: Map<CustomizedMeal, Int>,
+    cartItems: List<CartItem>,
     favoriteIds: Set<String>,
     onSearchEvent: (SearchContract.SearchEvent) -> Unit,
     onSearchDismiss: () -> Unit,

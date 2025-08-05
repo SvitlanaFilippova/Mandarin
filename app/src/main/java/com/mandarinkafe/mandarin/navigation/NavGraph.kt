@@ -15,7 +15,7 @@ import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.screen.AddressMapScreen
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.AddressDetailsScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.screen.CartScreen
@@ -110,13 +110,13 @@ fun NavGraph(navHostController: NavHostController) {
             ) { backStackEntry ->
                 val isEditMode =
                     backStackEntry.arguments?.getBoolean(NavConstants.KEY_IS_EDIT_MODE) == true
-                val meal =
-                    backStackEntry.decodeJsonArg<CustomizedMeal>(NavConstants.KEY_MEAL_JSON, gson)
+                val item =
+                    backStackEntry.decodeJsonArg<CartItem>(NavConstants.KEY_MEAL_JSON, gson)
 
                 MealDetailsBottomSheet(
                     sharedViewModel = sharedViewModel,
                     cartViewModel = cartViewModel,
-                    initItem = meal,
+                    initItem = item,
                     isEditMode = isEditMode,
                     onClose = { navHostController.popBackStack() }
                 )

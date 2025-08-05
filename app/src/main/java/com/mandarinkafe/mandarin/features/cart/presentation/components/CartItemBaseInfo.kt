@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.customizedText
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
@@ -35,7 +36,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 
 @Composable
 fun CartItemBaseInfo(
-    item: CustomizedMeal,
+    item: CartItem,
     itemInPendingDeletion: Boolean,
     favorites: List<CustomizedMeal>,
     contentColor: Color,
@@ -46,10 +47,12 @@ fun CartItemBaseInfo(
     var showCommentField by remember(item) { mutableStateOf(false) }
     val imageAlpha = remember(itemInPendingDeletion) { if (itemInPendingDeletion) ALPHA_50 else 1f }
 
+    val customizedMeal = item.customizedMeal
+    val meal = item.customizedMeal.meal
+
     val isFavorite by remember(item, favorites) {
-        derivedStateOf { item.isFavorite(favorites) }
+        derivedStateOf { item.customizedMeal.isFavorite(favorites) }
     }
-    val meal = item.meal
 
     Row(
         verticalAlignment = Alignment.Top,
@@ -64,10 +67,10 @@ fun CartItemBaseInfo(
             cardIsSmall = true,
             isFavorite = isFavorite,
             onToggleFavorite = {
-                if (!isFavorite && item.isCustomized) {
-                    onShowFavoriteDialog(item)
+                if (!isFavorite && customizedMeal.isCustomized) {
+                    onShowFavoriteDialog(customizedMeal)
                 } else {
-                    onToggleFavorite(item)
+                    onToggleFavorite(customizedMeal)
                 }
             },
 
@@ -91,9 +94,9 @@ fun CartItemBaseInfo(
                     .fillMaxWidth()
             )
             // Выбранные опции кастомизации
-            if (item.isCustomized) {
+            if (customizedMeal.isCustomized) {
                 Text(
-                    text = item.customizedText(),
+                    text = customizedMeal.customizedText(),
                     style = Typography.MealSmallTextStyle,
                     color = contentColor,
                     modifier = Modifier

@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.navigation.extensions
 import androidx.navigation.NavController
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
@@ -46,10 +46,10 @@ fun NavController.navigateToAddress(address: Address? = null) {
     }
 }
 
-fun NavController.navigateToMealDetails(meal: CustomizedMeal, isEditMode: Boolean) {
+fun NavController.navigateToMealDetails(item: CartItem, isEditMode: Boolean) {
     val gson = Gson()
     val json =
-        URLEncoder.encode(gson.toJson(meal), StandardCharsets.UTF_8.toString())
+        URLEncoder.encode(gson.toJson(item), StandardCharsets.UTF_8.toString())
     val route = "$MEAL_DETAILS_ROUTE/$json/$isEditMode"
     this.navigate(route)
 }

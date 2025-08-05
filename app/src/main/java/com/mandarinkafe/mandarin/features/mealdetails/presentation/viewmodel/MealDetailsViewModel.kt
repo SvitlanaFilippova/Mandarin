@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
@@ -55,10 +56,12 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun setInitData(item: CustomizedMeal) {
-        setMeal(item)
-        if (item.meal.isAddable) {
-            getAddons(path = item.meal.categoryPath)
+    private fun setInitData(item: CartItem) {
+        with(item.customizedMeal) {
+            setMeal(this)
+            if (meal.isAddable) {
+                getAddons(path = meal.categoryPath)
+            }
         }
     }
 

@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.cart.data.impl
 import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.models.sameAs
@@ -35,8 +35,8 @@ class CartRepositoryImpl @Inject constructor(
     private val _cartCount = MutableStateFlow(0)
     override fun observeCartItemsCount(): Flow<Int> = _cartCount.asStateFlow()
 
-    private val _cartItems = MutableStateFlow<Map<CustomizedMeal, Int>>(emptyMap())
-    override fun observeCartItems(): Flow<Map<CustomizedMeal, Int>> = _cartItems.asStateFlow()
+    private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
+    override fun observeCartItems(): Flow<List<CartItem>> = _cartItems.asStateFlow()
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -44,7 +44,7 @@ class CartRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCart(): Resource<Map<CustomizedMeal, Int>> {
+    override suspend fun getCart(): Resource<List<CartItem>> {
         // 1) дождёмся меню (или сразу вернём его ошибку)
         val menuResult = awaitMenu()
         if (menuResult !is Resource.Success) {
@@ -93,8 +93,8 @@ class CartRepositoryImpl @Inject constructor(
     private fun mapAndValidate(
         raw: List<StoredCartItem>,
         menu: List<MealCategory>
-    ): Pair<Map<CustomizedMeal, Int>, List<String>> {
-        val valid = mutableMapOf<CustomizedMeal, Int>()
+    ): Pair<List<CartItem>, List<String>> {
+        val valid = mutableListOf<CartItem>()
         val invalid = mutableListOf<String>()
 
         val allMeals = menu
@@ -119,12 +119,18 @@ class CartRepositoryImpl @Inject constructor(
 
                 val cm = item.toCustomizedMeal(meal, adds, mods)
                 Log.d(ERROR_TAG, "Mapped to CustomizedMeal: $cm")
-                valid[cm] = item.quantity
+
+                valid += CartItem(
+                    customizedMeal = cm,
+                    quantity = item.quantity,
+                    comment = item.comment
+                )
             } catch (e: Exception) {
                 Log.e(ERROR_TAG, "Mapping failed for item: $item", e)
                 invalid += item.mealId
             }
         }
+
         return valid to invalid
     }
 
@@ -135,7 +141,7 @@ class CartRepositoryImpl @Inject constructor(
         Log.d(ERROR_TAG, "Removed invalid items: $invalid")
     }
 
-    override fun addToCart(item: CustomizedMeal) {
+    override fun addToCart(item: CartItem) {
         val cart = storage.getCart().toMutableList()
         Log.d(ERROR_TAG, "Before add: $cart")
         val index = cart.indexOfFirst { it.sameAs(item.toStoredCartItem(0)) }
@@ -154,7 +160,7 @@ class CartRepositoryImpl @Inject constructor(
         Log.d(ERROR_TAG, "After add: $cart")
     }
 
-    override fun removeFromCart(item: CustomizedMeal) {
+    override fun removeFromCart(item: CartItem) {
         val cart = storage.getCart().toMutableList()
         val index = cart.indexOfFirst { it.sameAs(item.toStoredCartItem(0)) }
 
@@ -194,7 +200,7 @@ class CartRepositoryImpl @Inject constructor(
 
         val menu = awaitMenu()
         if (menu !is Resource.Success) {
-            _cartItems.value = emptyMap()
+            _cartItems.value = emptyList()
             _cartCount.value = 0
             return
         }
@@ -203,7 +209,7 @@ class CartRepositoryImpl @Inject constructor(
         cleanupInvalid(invalidIds, updatedRawCart)
 
         _cartItems.value = valid
-        _cartCount.value = valid.values.sum()
+        _cartCount.value = valid.sumOf { it.quantity }
     }
 
 

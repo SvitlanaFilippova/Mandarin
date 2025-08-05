@@ -15,8 +15,6 @@ data class CustomizedMeal(
     Выбранные модификаторы (по группам)
      */
     val modifiers: List<ModifierGroup> = emptyList<ModifierGroup>(),
-
-    val comment: String = ""
 )
 
 /**
@@ -45,16 +43,6 @@ fun CustomizedMeal.totalPrice(): Int {
     return meal.price + addsTotal + modifiersTotal
 }
 
-fun Map<CustomizedMeal, Int>.getTotalQuantityByMealId(mealId: String) =
-    this.filter { it.key.meal.id == mealId }
-        .values
-        .sum()
-
-fun Map<CustomizedMeal, Int>.getTotalPriceByMealId(mealId: String) =
-    this.filter { it.key.meal.id == mealId }.entries
-        .sumOf { (item, quantity) ->
-            item.totalPrice() * quantity
-        }
 
 fun CustomizedMeal.hasSelectedAllRequiredModifiers(): Boolean {
     return meal.modifiers

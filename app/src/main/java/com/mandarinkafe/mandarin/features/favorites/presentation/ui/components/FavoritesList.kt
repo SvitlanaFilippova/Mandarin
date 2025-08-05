@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.id
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -24,7 +25,7 @@ import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_SPACING_COUNT
 @Composable
 fun FavoritesContent(
     data: List<CustomizedMeal>,
-    cartItems: Map<CustomizedMeal, Int>,
+    cartItems: List<CartItem>,
     onToggleFavorite: (CustomizedMeal) -> Unit,
     onAddToCart: (CustomizedMeal) -> Unit,
     onRemoveFromCart: (CustomizedMeal) -> Unit,

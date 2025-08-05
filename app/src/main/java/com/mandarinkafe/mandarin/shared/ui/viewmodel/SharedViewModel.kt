@@ -76,15 +76,16 @@ class SharedViewModel @Inject constructor(
             is OnMealDetailsClick -> {
                 sendEffect(
                     OpenMealDetailsBS(
-                        event.meal,
-                        event.item,
+                        meal = event.meal,
+                        item = event.item,
+                        cartItem = event.cartItem,
                         isEditMode = false
                     )
                 )
             }
 
             is SharedEvent.OnEditMealClick -> {
-                sendEffect(OpenMealDetailsBS(item = event.item, isEditMode = true))
+                sendEffect(OpenMealDetailsBS(cartItem = event.item, isEditMode = true))
             }
 
             is SharedEvent.ToggleFavorite -> toggleFavorite(event.meal, event.item)

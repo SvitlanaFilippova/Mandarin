@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
 import com.mandarinkafe.mandarin.core.data.dto.order.StreetDto
 import com.mandarinkafe.mandarin.core.domain.models.Address
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
@@ -89,7 +90,7 @@ fun OutgoingOrder.toOrderDto(): OutgoingOrderDto {
     )
 }
 
-fun Map<CustomizedMeal, Int>.toOrderItemsRequest(discountCategory: Int): List<OutgoingOrderItem> {
+fun List<CartItem>.toOrderItemsRequest(discountCategory: Int): List<OutgoingOrderItem> {
     return this.flatMap { (customizedMeal, quantity) ->
         val mealItem = customizedMeal.toOutgoingOrderItem(quantity, discountCategory)
         val addsItems =

@@ -1,6 +1,8 @@
 package com.mandarinkafe.mandarin.features.cart.data
 
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+import com.mandarinkafe.mandarin.core.domain.models.totalPrice
 
 fun List<ModifierGroup>.validateBy(mealModifiers: List<ModifierGroup>): List<ModifierGroup> {
     return this.mapNotNull { selectedGroup ->
@@ -19,3 +21,11 @@ fun List<ModifierGroup>.validateBy(mealModifiers: List<ModifierGroup>): List<Mod
         }
     }
 }
+
+fun List<CartItem>.getTotalQuantityByMealId(mealId: String): Int =
+    this.filter { it.customizedMeal.meal.id == mealId }
+        .sumOf { it.quantity }
+
+fun List<CartItem>.getTotalPriceByMealId(mealId: String): Int =
+    this.filter { it.customizedMeal.meal.id == mealId }
+        .sumOf { it.customizedMeal.totalPrice() * it.quantity }

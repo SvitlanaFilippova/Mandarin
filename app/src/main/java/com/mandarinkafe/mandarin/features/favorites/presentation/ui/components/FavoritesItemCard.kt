@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.customizedText
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
@@ -37,7 +38,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBo
 fun FavoritesItemCard(
     modifier: Modifier,
     item: CustomizedMeal,
-    cartItems: Map<CustomizedMeal, Int>,
+    cartItems: List<CartItem>,
     imageSize: Dp,
     onToggleFavorite: (CustomizedMeal) -> Unit,
     onAddToCart: (CustomizedMeal) -> Unit,

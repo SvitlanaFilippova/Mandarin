@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel
 
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
@@ -14,7 +15,7 @@ import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SELECTED_FIRST_INDEX
 sealed interface MealDetailsContract {
     sealed interface MealDetailsEvent : BaseEvent {
         // Установка блюда при инициализации
-        data class SetInitItem(val item: CustomizedMeal) : MealDetailsEvent
+        data class SetInitItem(val item: CartItem) : MealDetailsEvent
 
         // Управление добавками
         data class ChangeAdds(val add: MealAdditional, val isChecked: Boolean) : MealDetailsEvent

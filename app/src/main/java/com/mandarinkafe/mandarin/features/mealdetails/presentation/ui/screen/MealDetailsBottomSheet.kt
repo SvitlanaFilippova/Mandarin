@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.isFavorite
@@ -42,7 +43,7 @@ fun MealDetailsBottomSheet(
     viewModel: MealDetailsViewModel = hiltViewModel(),
     sharedViewModel: SharedViewModel,
     cartViewModel: CartViewModel,
-    initItem: CustomizedMeal?,
+    initItem: CartItem?,
     onClose: () -> Unit,
     isEditMode: Boolean,
 ) {
@@ -59,7 +60,7 @@ fun MealDetailsBottomSheet(
     val onToggleFavorite = { item: CustomizedMeal ->
         onSharedEvent(SharedEvent.ToggleFavorite(item = item))
     }
-    val customizedMeal = state.customizedMeal ?: initItem
+    val customizedMeal = state.customizedMeal ?: initItem.customizedMeal
     var showFavoriteVariantChoiceDialog by remember { mutableStateOf(false) }
     var showRequiredModifiersDialog by remember { mutableStateOf(false) }
     var showMaxModifiersQuantity by remember { mutableStateOf(false) }
@@ -131,11 +132,11 @@ fun MealDetailsBottomSheet(
                     isFavorite = isFavorite,
                     isEditMode = isEditMode,
                     onClose = onClose,
-                    onAddToCart = { onCartEvent(AddToCart(customizedMeal)) },
+                    onAddToCart = { onCartEvent(AddToCart(initItem.copy(customizedMeal = customizedMeal))) },
                     onEdit = {
                         onCartEvent(
                             ReplaceMealInCart(
-                                newItem = customizedMeal,
+                                newItem = initItem.copy(customizedMeal = customizedMeal),
                                 oldItem = initItem
                             )
                         )

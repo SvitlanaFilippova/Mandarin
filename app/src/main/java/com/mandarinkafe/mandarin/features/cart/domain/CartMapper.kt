@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart.domain
 
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
@@ -10,17 +11,30 @@ import com.mandarinkafe.mandarin.features.cart.domain.model.RecommendsSchemaRule
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract
 
 object CartMapper {
-
-    fun CustomizedMeal.toStoredCartItem(quantity: Int): StoredCartItem {
+    fun CartItem.toStoredCartItem(quantity: Int): StoredCartItem {
         val storedCartItem = StoredCartItem(
-            mealId = meal.id,
+            mealId = customizedMeal.meal.id,
             quantity = quantity,
-            addsIds = adds.map { it.id },
-            modifiers = modifiers,
+            addsIds = customizedMeal.adds.map { it.id },
+            modifiers = customizedMeal.modifiers,
             comment = comment
         )
         return storedCartItem
     }
+
+    fun StoredCartItem.toCartItem(
+        meal: Meal,
+        adds: List<MealAdditional>,
+        modifiers: List<ModifierGroup>
+    ) = CartItem(
+        customizedMeal = toCustomizedMeal(
+            meal = meal,
+            adds = adds,
+            modifiers = modifiers
+        ),
+        quantity = quantity,
+        comment = comment
+    )
 
     fun StoredCartItem.toCustomizedMeal(
         meal: Meal,
@@ -30,12 +44,19 @@ object CartMapper {
         meal = meal,
         adds = adds,
         modifiers = modifiers,
-        comment = comment
     )
 
     fun Meal.toAddToCartEvent(): CartContract.CartEvent.AddToCart {
-        return CartContract.CartEvent.AddToCart(CustomizedMeal(meal = this))
+        return CartContract.CartEvent.AddToCart(CartItem(CustomizedMeal(meal = this)))
     }
+
+    fun Meal.toCartItem() = CartItem(
+        customizedMeal = CustomizedMeal(
+            meal = this
+        )
+    )
+
+    fun CustomizedMeal.toCartItem() = CartItem(customizedMeal = this)
 
     fun Meal.toRemoveFromCartNow(): CartContract.CartEvent.RemoveFromCartByMeal {
         return CartContract.CartEvent.RemoveFromCartByMeal(meal = this)
