@@ -113,8 +113,8 @@ fun SmallHorizontalMealItemCard(
                 Text(
                     text = stringResource(
                         R.string.quantity_x_template,
-                        item.amount * 2
-                    ), //TODO ременно ждя теста х2
+                        item.amount
+                    ),
                     style = Typography.MealPriceStyle,
                 )
                 Spacer(modifier = Modifier.weight(1f))

@@ -7,6 +7,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -19,7 +20,7 @@ fun OrderStatusSection(order: IncomingOrder) {
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
         ) {
             order.errorInfo?.let { LabelValue("Ошибка", it.message.toString()) }
-            LabelValue("Статус заказа", order.status.apiName)
+            LabelValue("Статус заказа", stringResource(order.status.labelResId))
             order.cancelInfo?.let { LabelValue("Причина отмены", it) }
         }
     }

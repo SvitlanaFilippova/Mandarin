@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.order.data.impl
 
 import android.util.Log
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.order.data.mapper.toOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
@@ -15,7 +16,10 @@ import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 
-class OrderRepositoryImpl(private val networkClient: IikoNetworkClient) : OrderRepository {
+class OrderRepositoryImpl(
+    private val networkClient: IikoNetworkClient,
+    private val menuCache: MenuCache,
+) : OrderRepository {
 
     override suspend fun getPaymentTypes(): List<PaymentType> {
         val response = networkClient.getPaymentTypes()
@@ -47,7 +51,8 @@ class OrderRepositoryImpl(private val networkClient: IikoNetworkClient) : OrderR
 
                 HTTP_SUCCESS -> {
                     Log.d(logTag, "Success response, converting to domain")
-                    val orderInfo = (response as CreateDeliveryResponse).orderInfo.toDomain()
+                    val addons = menuCache.addonsCategories.value
+                    val orderInfo = (response as CreateDeliveryResponse).orderInfo.toDomain(addons)
                     if (orderInfo.errorInfo == null) {
                         Resource.Success(data = orderInfo)
                     } else {

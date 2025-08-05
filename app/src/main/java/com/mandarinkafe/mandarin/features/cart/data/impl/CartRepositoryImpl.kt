@@ -48,7 +48,6 @@ class CartRepositoryImpl @Inject constructor(
         // 1) дождёмся меню (или сразу вернём его ошибку)
         val menuResult = awaitMenu()
         if (menuResult !is Resource.Success) {
-            // Resource.ErrorNoInternet, ErrorEmptyData или ErrorOther
             return when (menuResult) {
                 is Resource.ErrorNoInternet -> Resource.ErrorNoInternet()
                 is Resource.ErrorEmptyData -> Resource.ErrorEmptyData()
@@ -78,7 +77,7 @@ class CartRepositoryImpl @Inject constructor(
 
     private suspend fun awaitMenu(): Resource<List<MealCategory>> {
         // ждём первого финального состояния
-        val final = menuCache.visibleMenu
+        val final = menuCache.fullMenu
             .filter { it !is Resource.Loading && it !is Resource.Idle }
             .first()
 
@@ -119,9 +118,10 @@ class CartRepositoryImpl @Inject constructor(
                     .orEmpty()
 
                 val cm = item.toCustomizedMeal(meal, adds, mods)
+                Log.d(ERROR_TAG, "Mapped to CustomizedMeal: $cm")
                 valid[cm] = item.quantity
             } catch (e: Exception) {
-                Log.e(ERROR_TAG, "map failed for ${item.mealId}", e)
+                Log.e(ERROR_TAG, "Mapping failed for item: $item", e)
                 invalid += item.mealId
             }
         }
@@ -137,6 +137,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override fun addToCart(item: CustomizedMeal) {
         val cart = storage.getCart().toMutableList()
+        Log.d(ERROR_TAG, "Before add: $cart")
         val index = cart.indexOfFirst { it.sameAs(item.toStoredCartItem(0)) }
 
         if (index != -1) {
@@ -145,10 +146,12 @@ class CartRepositoryImpl @Inject constructor(
         } else {
             cart.add(item.toStoredCartItem(quantity = 1))
         }
+        Log.d(ERROR_TAG, "Saving cart: $cart")
         storage.saveCart(cart)
         CoroutineScope(Dispatchers.IO).launch {
             refreshCart(cart)
         }
+        Log.d(ERROR_TAG, "After add: $cart")
     }
 
     override fun removeFromCart(item: CustomizedMeal) {
@@ -203,14 +206,6 @@ class CartRepositoryImpl @Inject constructor(
         _cartCount.value = valid.values.sum()
     }
 
-//    private fun updateCartCount() {
-//        _cartCount.value = try {
-//            storage.getCart().sumOf { it.quantity }
-//        } catch (e: Exception) {
-//            Log.e(ERROR_TAG, ERROR_CART_READ, e)
-//            0
-//        }
-//    }
 
     companion object {
         private const val ERROR_TAG = "CartRepository"

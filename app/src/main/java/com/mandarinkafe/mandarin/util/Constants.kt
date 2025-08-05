@@ -39,6 +39,7 @@ object Constants {
     const val ANIMATION_REPEAT_NUMBER = 5
     const val ANIMATION_BOUNCE_STEP = 25f
     const val ANIMATION_BOUNCE_MODIFIER = 4
+    const val MIN_MODIFIER_LIMIT_TO_IGNORE = 50
 
     // common UI
     const val MAP_ANIMATION_DURATION = 1f

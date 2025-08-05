@@ -4,6 +4,7 @@ import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
+import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.dto.DeletionInfoDto
 import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.dto.IncomingModifierDto
@@ -11,12 +12,24 @@ import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.dto.Inc
 import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.dto.OrderInfoResponseDto
 import com.mandarinkafe.mandarin.features.orderconfirmation.domain.models.DeletionInfo
 import com.mandarinkafe.mandarin.features.orderconfirmation.domain.models.DeliveryStatus
+import com.mandarinkafe.mandarin.features.orderconfirmation.domain.models.IncomingMealAdditional
 import com.mandarinkafe.mandarin.features.orderconfirmation.domain.models.IncomingModifier
 import com.mandarinkafe.mandarin.features.orderconfirmation.domain.models.IncomingOrderItem
 import com.mandarinkafe.mandarin.util.DateTimeUtils.toHumanDateTimeOrNull
 import com.mandarinkafe.mandarin.util.applyTypography
 
-fun OrderInfoResponseDto.toDomain(): IncomingOrder {
+fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): IncomingOrder {
+    val cancelInfo = buildString {
+        val cause = order?.cancelInfo?.cause?.name.orEmpty().applyTypography()
+        val comment = order?.cancelInfo?.comment.orEmpty().applyTypography()
+
+        if (cause.isNotBlank()) append(cause)
+        if (comment.isNotBlank()) {
+            if (isNotEmpty()) append(": ")
+            append(comment)
+        }
+    }
+
     return IncomingOrder(
         id = id,
         number = order?.number,
@@ -28,13 +41,14 @@ fun OrderInfoResponseDto.toDomain(): IncomingOrder {
         deliveryAddress = order?.deliveryPoint?.toAddress(),
         comment = order?.comment,
         customer = order?.customer,
-        items = order?.items?.mapNotNull { it.toDomain() } ?: emptyList(),
+        items = order?.items?.toDomainWithAdds(addons) ?: emptyList(),
         paymentName = order?.payments?.firstOrNull()?.paymentType?.name,
         status = order?.status?.toDeliveryStatus() ?: DeliveryStatus.UNCONFIRMED,
-        cancelInfo = order?.cancelInfo?.comment,
+        cancelInfo = cancelInfo,
         orderType = order?.orderType,
         processedPaymentsSum = order?.processedPaymentsSum,
         sum = order?.sum,
+        whenCancelled = order?.cancelInfo?.whenCancelled?.toHumanDateTimeOrNull(),
         whenClosed = order?.whenClosed?.toHumanDateTimeOrNull(),
         whenConfirmed = order?.whenConfirmed?.toHumanDateTimeOrNull(),
         whenCookingCompleted = order?.whenCookingCompleted?.toHumanDateTimeOrNull(),
@@ -95,4 +109,94 @@ private fun DeletionInfoDto.toDomain() = DeletionInfo(
 private fun String.toDeliveryStatus(): DeliveryStatus {
     return DeliveryStatus.entries.find { it.apiName.equals(this, ignoreCase = true) }
         ?: DeliveryStatus.UNCONFIRMED
+}
+
+fun List<IncomingOrderItemDto>.toDomainWithAdds(
+    addonsCategories: List<MealAdditionalCategory>
+): List<IncomingOrderItem> {
+    // 1) Собираем все productId, которые считаем «добавками»
+    val addonIds: Set<String> = addonsCategories
+        .flatMap { it.items.map { add -> add.id } }
+        .toSet()
+
+    // 2) Результирующий список доменных сущностей
+    val result = mutableListOf<IncomingOrderItemBuilder>()
+
+    for (dto in this) {
+        val isAddon = dto.product.id in addonIds
+
+        if (!isAddon) {
+            // Новый основной элемент
+            result += IncomingOrderItemBuilder(
+                id = dto.product.id,
+                name = dto.product.name,
+                amount = dto.amount,
+                price = dto.price,
+                positionId = dto.positionId,
+                deleted = dto.deleted?.toDomain() ?: DeletionInfo(),
+                comment = dto.comment ?: ""
+            ).also { builder ->
+                // модификаторы сразу
+                builder.chosenModifiers = dto.modifiers?.map { it.toDomain() } ?: emptyList()
+            }
+        } else {
+            // DTO — это «добавка»: приклеиваем к последнему основному
+            val last = result.lastOrNull()
+            if (last != null) {
+                last.chosenAdds += IncomingMealAdditional(
+                    id = dto.product.id,
+                    name = dto.product.name,
+                    amount = dto.amount,
+                    price = dto.price
+                )
+            } else {
+                // Если вдруг встретилась добавка первой — создаём фиктивный «родитель»
+                result += IncomingOrderItemBuilder(
+                    id = "unknown",
+                    name = "Неизвестное блюдо",
+                    amount = 0.0,
+                    price = 0.0,
+                    positionId = null,
+                    deleted = DeletionInfo(),
+                    comment = ""
+                ).apply {
+                    chosenAdds += IncomingMealAdditional(
+                        id = dto.product.id,
+                        name = dto.product.name,
+                        amount = dto.amount,
+                        price = dto.price
+                    )
+                }
+            }
+        }
+    }
+
+    // 3) Строим финальный список immutable
+    return result.map { it.build() }
+}
+
+// Вспомогательный билдер, чтобы наращивать adds
+private class IncomingOrderItemBuilder(
+    val id: String,
+    val name: String,
+    val amount: Double,
+    val price: Double,
+    val positionId: String?,
+    val deleted: DeletionInfo,
+    val comment: String
+) {
+    var chosenModifiers: List<IncomingModifier> = emptyList()
+    val chosenAdds: MutableList<IncomingMealAdditional> = mutableListOf()
+
+    fun build() = IncomingOrderItem(
+        id = id,
+        name = name,
+        amount = amount,
+        chosenModifiers = chosenModifiers,
+        chosenAdds = chosenAdds.toList(),
+        price = price,
+        positionId = positionId,
+        deleted = deleted,
+        comment = comment
+    )
 }

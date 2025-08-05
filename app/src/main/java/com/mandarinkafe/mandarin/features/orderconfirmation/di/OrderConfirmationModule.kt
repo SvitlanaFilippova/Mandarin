@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.orderconfirmation.di
 
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.orderconfirmation.data.impl.OrderInfoRepositoryImpl
 import com.mandarinkafe.mandarin.features.orderconfirmation.domain.api.ObserveOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderconfirmation.domain.api.OrderInfoRepository
@@ -16,9 +17,11 @@ class OrderConfirmationModule {
     @Provides
     fun provideOrderInfoRepository(
         iikoNetworkClient: IikoNetworkClient,
+        menuCache: MenuCache
     ): OrderInfoRepository {
         return OrderInfoRepositoryImpl(
             networkClient = iikoNetworkClient,
+            menuCache = menuCache,
         )
     }
 

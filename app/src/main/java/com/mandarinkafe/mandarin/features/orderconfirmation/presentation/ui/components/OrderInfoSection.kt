@@ -18,8 +18,8 @@ fun OrderInfoSection(order: IncomingOrder) {
             Modifier.padding(Dimens.MarginStandard16),
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
         ) {
-            order.number?.let { LabelValue("Заказ №", it) }
-            order.orderType?.let { LabelValue("Тип заказа", it.name) }
+            order.number?.let { LabelValue("Номер заказа", it) }
+            order.orderType?.let { LabelValue("Cпособ получения", it.name) }
             order.paymentName?.let { LabelValue("Способ оплаты", it) }
         }
     }

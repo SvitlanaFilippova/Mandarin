@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components.buttons
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,7 +20,7 @@ fun BigButtonWithText(
     modifier: Modifier = Modifier,
     shouldBeActive: Boolean = true,
     text: String = "",
-    textResID: Int? = null,
+    @StringRes textResID: Int? = null,
     onMissingRequiredInfo: () -> Unit = {},
     onSubmit: () -> Unit,
     activeContainerColor: Color

@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.core.domain.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
 import com.mandarinkafe.mandarin.core.data.dto.order.OrderType
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
@@ -9,7 +9,7 @@ import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.dto.Pro
 import com.mandarinkafe.mandarin.features.orderconfirmation.domain.models.DeliveryStatus
 import com.mandarinkafe.mandarin.features.orderconfirmation.domain.models.IncomingOrderItem
 
-@Stable
+@Immutable
 data class IncomingOrder(
     val id: String,
     val number: String?,
@@ -27,6 +27,7 @@ data class IncomingOrder(
     val orderType: OrderType? = null,
     val processedPaymentsSum: Int? = null,
     val sum: Double? = null,
+    val whenCancelled: String? = null,
     val whenClosed: String? = null,
     val whenConfirmed: String? = null,
     val whenCookingCompleted: String? = null,

@@ -181,7 +181,7 @@ fun NavGraph(navHostController: NavHostController) {
 
             composable(NavConstants.ORDER_CONFIRMATION_ROUTE) {
                 OrderConfirmationScreen(
-                    orderID = "8b851ef5-3fb4-48b5-bd90-18d856a6a42d",
+                    orderID = "a0575ae7-a987-40f6-bbfa-41d8382b5255",
                     navController = navHostController,
                     requireConfirmation = true,
                 )

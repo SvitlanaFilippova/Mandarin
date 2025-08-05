@@ -15,6 +15,7 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.MIN_MODIFIER_LIMIT_TO_IGNORE
 
 @Composable
 fun ModifierGroupItem(
@@ -45,7 +46,7 @@ fun ModifierGroupItem(
             )
         }
 
-        if (modifierGroup.maxQuantity != null && modifierGroup.maxQuantity > 1) {
+        if (modifierGroup.maxQuantity in 2 until MIN_MODIFIER_LIMIT_TO_IGNORE) {
             Text(
                 modifier = Modifier.padding(start = Dimens.MarginSmall8),
                 text = stringResource(R.string.maximum_modifier_short, modifierGroup.maxQuantity),

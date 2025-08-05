@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
@@ -95,7 +96,9 @@ class CartViewModel @Inject constructor(
         removeItem(item)
     }
 
+
     private fun addItem(item: CustomizedMeal) {
+        Log.d(ERROR_TAG, "adding: $item")
         cartInteractor.addToCart(item)
         setState {
             val cartItems = cartItems
@@ -345,6 +348,7 @@ class CartViewModel @Inject constructor(
     }
 
     private companion object {
+        const val ERROR_TAG = "CartRepository VM"
         const val DELETE_FROM_CART_DEBOUNCE_DELAY: Long = 3000L
         const val INTERVAL_FOR_UPD_PROGRESSBAR: Long = 100L
         const val UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE: Long = 500L

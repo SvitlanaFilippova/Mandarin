@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components.buttons
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,7 +21,7 @@ fun RoundedButton(
     modifier: Modifier = Modifier,
     painter: Painter? = null,
     image: ImageVector? = null,
-    contentDescriptionResId: Int,
+    @StringRes contentDescriptionResId: Int,
     onClick: () -> Unit
 ) {
     IconButton(

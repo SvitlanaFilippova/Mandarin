@@ -1,26 +1,31 @@
-package com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components
+package com.mandarinkafe.mandarin.util.presentation.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.core.domain.models.Address
+import com.mandarinkafe.mandarin.core.domain.models.getDetailsString
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.Label
+import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.Value
 
 @Composable
-fun CustomerInfo(
-    phone: String?,
-    comment: String?,
-    customerName: String?,
+fun AddressInfo(
+    address: Address?
 ) {
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Row(
@@ -31,7 +36,7 @@ fun CustomerInfo(
         ) {
             Icon(
                 modifier = Modifier.padding(end = Dimens.MarginSmall8),
-                imageVector = Icons.Default.AccountCircle,
+                imageVector = Icons.Default.LocationOn,
                 tint = Colors.WhiteTransparent75,
                 contentDescription = null
             )
@@ -39,13 +44,21 @@ fun CustomerInfo(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
             ) {
-                phone?.let { LabelValue("Телефон", it) }
-                customerName?.let { LabelValue("Клиент", it) }
 
-                comment?.let {
-                    Label("Комментарий к заказу")
-                    Value(it)
+                address?.let {
+                    Spacer(Modifier.height(Dimens.MarginSmall8))
+                    Label("Адрес")
+                    Value(it.streetAndBuilding)
+
+                    val details = remember { it.getDetailsString() }
+                    if (details.isNotEmpty()) {
+                        Spacer(Modifier.height(Dimens.MarginSmall8))
+                        Label("Детали")
+                        Value(details)
+                    }
                 }
+                Spacer(Modifier.height(Dimens.MarginSmall8))
+
             }
         }
     }

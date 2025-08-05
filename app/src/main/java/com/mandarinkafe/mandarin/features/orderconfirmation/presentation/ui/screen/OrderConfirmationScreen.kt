@@ -26,6 +26,7 @@ import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmod
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel.OrderConfirmationViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
+import com.mandarinkafe.mandarin.util.presentation.ui.components.AddressInfo
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 
 @Composable
@@ -50,32 +51,34 @@ fun OrderConfirmationScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(Dimens.MarginStandard16),
-            verticalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
+                .padding(Dimens.MarginSmall8),
+            verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
 
             item { OrderInfoSection(order) }
 
             item { OrderStatusSection(order) }
 
-            item {
-                OrderItemsSection(
-                    items = order.items,
-                    sum = order.sum
-                )
+            if (order.items.isNotEmpty()) {
+                item {
+                    OrderItemsSection(
+                        items = order.items,
+                        sum = order.sum
+                    )
+                }
             }
+
+            item { AddressInfo(address = order.deliveryAddress) }
+
+            item { OrderTimesSection(order) }
 
             item {
                 CustomerInfo(
                     phone = order.phone,
                     comment = order.comment,
                     customerName = order.customer?.name,
-                    address = order.deliveryAddress
                 )
             }
-
-            item { OrderTimesSection(order) }
-
             item {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     ButtonWithText(
@@ -91,4 +94,3 @@ fun OrderConfirmationScreen(
         onDispose { onEvent(StopObservingStatus) }
     }
 }
-

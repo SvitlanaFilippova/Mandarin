@@ -70,10 +70,16 @@ class IikoNetworkClientImpl(
     }
 
     private suspend fun fetchMenu(): Response {
+        Log.d(logTag, "Запуск fetchMenu")
+
         return try {
             if (externalMenuId.isEmpty()) {
+                Log.d(logTag, "externalMenuId пустой, начинаем загрузку ID")
                 externalMenuId = getExternalMenuId()
+                Log.d(logTag, "externalMenuId получен: $externalMenuId")
             }
+
+            Log.d(logTag, "Отправка запроса на получение меню")
             val menuResponse = iikoService.getMenuById(
                 token = token,
                 body = MenuRequest(
@@ -81,9 +87,12 @@ class IikoNetworkClientImpl(
                     organizationIds = listOf(organizationId)
                 )
             )
+
+            Log.d(logTag, "Меню успешно получено.")
             menuResponse.apply { resultCode = HTTP_SUCCESS }
+
         } catch (e: Throwable) {
-            Log.d(logTag, ERROR + e.message)
+            Log.e(logTag, "Ошибка при получении меню: ${e.message}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
