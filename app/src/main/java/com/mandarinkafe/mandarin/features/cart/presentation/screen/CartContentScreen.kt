@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -46,6 +47,7 @@ fun CartContentScreen(
     onMealDetailsClick: (CustomizedMeal) -> Unit,
     onEditMealClick: (CustomizedMeal) -> Unit,
     onProceedOrderClick: () -> Unit,
+    onCommentAdded: (CustomizedMeal, String) -> Unit,
 ) {
     val cartItemsList: List<Pair<CustomizedMeal, Int>> = remember(state.cartItems) {
         state.cartItems.entries.map { it.toPair() }
@@ -67,6 +69,16 @@ fun CartContentScreen(
             LazyColumn(
                 state = listState
             ) {
+                item {
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(Dimens.MarginSmall8),
+                        thickness = Dimens.DividerHeight1,
+                        color = Colors.LightGrey.copy(alpha = 0.2f)
+                    )
+                }
+
                 // Список элементов корзины
                 itemsIndexed(
                     items = cartItemsList,
@@ -90,6 +102,7 @@ fun CartContentScreen(
                         onDeletionCancel = onDeletionCancel,
                         onMealDetailsClick = onMealDetailsClick,
                         onEditMealClick = onEditMealClick,
+                        onCommentAdded = onCommentAdded,
                     )
                 }
 

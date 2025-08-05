@@ -86,10 +86,10 @@ fun CustomizedMeal.customizedText(): String {
     }
     val optionalItems = buildList {
         optionalGroups.forEach { group ->
-            addAll(group.items.map { "+ ${it.name}" })
+            addAll(group.items.map { "+\u00A0${it.name}" })
         }
         adds.forEach { add ->
-            add("+ ${add.name}")
+            add("+\u00A0${add.name}")
         }
     }
     return buildString {

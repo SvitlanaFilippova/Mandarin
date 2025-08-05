@@ -60,8 +60,16 @@ class CartViewModel @Inject constructor(
                 newItem = event.newItem,
                 oldItem = event.oldItem
             )
-            CartEvent.OnProceedOrderClick -> onProceedOrderClick()
+            is CartEvent.OnProceedOrderClick -> onProceedOrderClick()
+            is CartEvent.AddCommentToItem -> setCommentToItem(event.item, event.comment)
         }
+    }
+
+    private fun setCommentToItem(
+        item: CustomizedMeal,
+        comment: String
+    ) {
+        // TODO
     }
 
     /** Вызывает диалог для подтверждения желания очистить корзину */

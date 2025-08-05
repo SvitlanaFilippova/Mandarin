@@ -33,6 +33,7 @@ fun CartItemCard(
     onMealDetailsClick: (CustomizedMeal) -> Unit,
     onDeletionCancel: (CustomizedMeal) -> Unit,
     onEditMealClick: (CustomizedMeal) -> Unit,
+    onCommentAdded: (CustomizedMeal, String) -> Unit,
 ) {
     val contentColor =
         remember(itemInPendingDeletion) { if (itemInPendingDeletion) Colors.LightGreyTransparent75 else Colors.White }
@@ -56,7 +57,8 @@ fun CartItemCard(
             favorites = favorites,
             contentColor = contentColor,
             onToggleFavorite = onToggleFavorite,
-            onShowFavoriteDialog = onShowFavoriteDialog
+            onShowFavoriteDialog = onShowFavoriteDialog,
+            onCommentAdded = { text -> onCommentAdded(item, text) }
         )
 
         PriceAndButtons(

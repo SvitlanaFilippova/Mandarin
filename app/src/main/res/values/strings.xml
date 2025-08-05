@@ -19,6 +19,7 @@
     <string name="question_add_to_cart">Добавить в корзину ?</string>
     <string name="add_to_favorite">Добавить в избранное</string>
     <string name="remove_from_cart">Убрать из корзины</string>
+    <string name="comment_for_meal">Комментарий к блюду</string>
     <string name="cancel_removing">Вернуть</string>
     <string name="clear_cart_question">Очистить корзину?</string>
     <string name="clear_cart_confirmation">Вы действительно хотите удалить всё из корзины?</string>
@@ -127,7 +128,7 @@
 
     <!-- Оформление заказа -->
     <string name="order">Заказ</string>
-    <string name="comment_for_meal">Комментарий: %1$s</string>
+    <string name="comment_template">Комментарий: %1$s</string>
     <string name="order_need_to_be_confirmed">Заказ успешно создан. В&#160;ближайшее время оператор позвонит, чтобы подтвердить его.</string>
 
     <!-- Статусы заказа -->

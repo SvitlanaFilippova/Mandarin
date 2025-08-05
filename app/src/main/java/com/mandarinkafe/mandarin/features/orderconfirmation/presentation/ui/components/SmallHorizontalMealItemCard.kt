@@ -97,7 +97,7 @@ fun SmallHorizontalMealItemCard(
             // Комментарий, если есть
             if (item.comment.isNotEmpty()) {
                 Text(
-                    text = stringResource(R.string.comment_for_meal, item.comment),
+                    text = stringResource(R.string.comment_template, item.comment),
                     style = Typography.MealSmallTextStyle,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 3,
