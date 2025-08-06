@@ -1,11 +1,9 @@
-package com.mandarinkafe.mandarin.util.presentation.ui.components
+package com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
@@ -20,8 +18,6 @@ import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.getDetailsString
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.Label
-import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.Value
 
 @Composable
 fun AddressInfo(
@@ -30,12 +26,12 @@ fun AddressInfo(
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Row(
             modifier = Modifier
-                .padding(Dimens.MarginSmall8)
+                .padding(Dimens.MarginStandard16)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                modifier = Modifier.padding(end = Dimens.MarginSmall8),
+                modifier = Modifier.padding(end = Dimens.MarginStandard16),
                 imageVector = Icons.Default.LocationOn,
                 tint = Colors.WhiteTransparent75,
                 contentDescription = null
@@ -45,7 +41,6 @@ fun AddressInfo(
                 verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
             ) {
                 address?.let {
-                    Spacer(Modifier.height(Dimens.MarginSmall8))
                     Label("Адрес")
                     Value(it.streetAndBuilding)
                     val details = remember { it.getDetailsString() }
@@ -53,8 +48,6 @@ fun AddressInfo(
                         Value(details)
                     }
                 }
-                Spacer(Modifier.height(Dimens.MarginSmall8))
-
             }
         }
     }

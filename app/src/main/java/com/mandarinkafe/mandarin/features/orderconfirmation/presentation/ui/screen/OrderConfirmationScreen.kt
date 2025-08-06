@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.AddressInfo
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.CustomerInfo
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.OrderInfoSection
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.components.OrderItemsSection
@@ -27,7 +28,6 @@ import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmod
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.viewmodel.OrderConfirmationViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
-import com.mandarinkafe.mandarin.util.presentation.ui.components.AddressInfo
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 
 @Composable
@@ -92,6 +92,7 @@ fun OrderConfirmationScreen(
             item {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     ButtonWithText(
+                        modifier = Modifier.padding(Dimens.MarginStandard16),
                         textResID = R.string.back_to_menu,
                         onClick = { navController.navigateToMenu() }
                     )

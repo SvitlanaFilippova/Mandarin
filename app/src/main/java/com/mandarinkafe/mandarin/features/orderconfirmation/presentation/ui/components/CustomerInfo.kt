@@ -25,12 +25,12 @@ fun CustomerInfo(
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Row(
             modifier = Modifier
-                .padding(Dimens.MarginSmall8)
+                .padding(Dimens.MarginStandard16)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                modifier = Modifier.padding(end = Dimens.MarginSmall8),
+                modifier = Modifier.padding(end = Dimens.MarginStandard16),
                 imageVector = Icons.Default.AccountCircle,
                 tint = Colors.WhiteTransparent75,
                 contentDescription = null
