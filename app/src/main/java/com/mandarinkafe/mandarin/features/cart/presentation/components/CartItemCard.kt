@@ -58,7 +58,7 @@ fun CartItemCard(
             contentColor = contentColor,
             onToggleFavorite = onToggleFavorite,
             onShowFavoriteDialog = onShowFavoriteDialog,
-            onCommentAdded = { text -> onCommentAdded(item, text) }
+            onCommentAdded = { text -> onCommentAdded(item, text) },
         )
 
         PriceAndButtons(

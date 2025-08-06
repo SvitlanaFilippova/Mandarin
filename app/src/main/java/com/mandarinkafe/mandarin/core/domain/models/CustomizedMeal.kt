@@ -51,7 +51,6 @@ fun CustomizedMeal.hasSelectedAllRequiredModifiers(): Boolean {
             val selectedGroup = modifiers.find { it.id == group.id }
             selectedGroup != null && selectedGroup.items.isNotEmpty()
         }
-
 }
 
 /**

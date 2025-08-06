@@ -102,41 +102,48 @@ class OrderViewModel @Inject constructor(
 
     private fun observeCartItems() {
         viewModelScope.launch {
-            observeCartItemsUseCase().collect { items ->
-                setState {
-                    // проверяем, есть ли в корзине блюда, на которые не распространяется скидка
-                    val containNotDiscountable = items.any { !it.customizedMeal.meal.discountable }
+            observeCartItemsUseCase().collect { response ->
+                if (response is Resource.Success) {
+                    val items = response.data
+                    items?.let {
+                        setState {
+                            // проверяем, есть ли в корзине блюда, на которые не распространяется скидка
+                            val containNotDiscountable =
+                                items.any { !it.customizedMeal.meal.discountable }
 
-                    // прововеряем, откуда нужно будет забирать заказ в случае самовывоза
-                    val pickupPoint = resolvePickupPoint(items.map { it.customizedMeal }.toSet())
+                            // прововеряем, откуда нужно будет забирать заказ в случае самовывоза
+                            val pickupPoint =
+                                resolvePickupPoint(items.map { it.customizedMeal }.toSet())
 
-                    // если была выбрана доставка, но заказ стал isPickupOnly - обнуляем данные доставки
-                    val isPickupOnly = items.any { it.customizedMeal.meal.isPickupOnly }
+                            // если была выбрана доставка, но заказ стал isPickupOnly - обнуляем данные доставки
+                            val isPickupOnly = items.any { it.customizedMeal.meal.isPickupOnly }
 
-                    // Обновляем инфо в стейте
-                    val newDeliveryInfo =
-                        if (isPickupOnly) {
-                            deliveryInfo.copy(
-                                deliveryType = DeliveryType.SELF_PICKUP,
-                                chosenAddress = null
+                            // Обновляем инфо в стейте
+                            val newDeliveryInfo =
+                                if (isPickupOnly) {
+                                    deliveryInfo.copy(
+                                        deliveryType = DeliveryType.SELF_PICKUP,
+                                        chosenAddress = null
+                                    )
+                                } else {
+                                    deliveryInfo
+                                }
+                            val newCartSummary = cartSummary.copy(
+                                items = items,
+                                containNotDiscountable = containNotDiscountable
                             )
-                        } else {
-                            deliveryInfo
+                            copy(
+                                cartSummary = newCartSummary,
+                                deliveryInfo = newDeliveryInfo,
+                                pickupPoint = pickupPoint,
+                                pickupOnly = isPickupOnly
+                            )
                         }
-                    val newCartSummary = cartSummary.copy(
-                        items = items,
-                        containNotDiscountable = containNotDiscountable
-                    )
-                    copy(
-                        cartSummary = newCartSummary,
-                        deliveryInfo = newDeliveryInfo,
-                        pickupPoint = pickupPoint,
-                        pickupOnly = isPickupOnly
-                    )
-                }
-                // вызываем перерасчёт скидки и стоимости доставки
-                recalculateCartSummary()
+                        // вызываем перерасчёт скидки и стоимости доставки
+                        recalculateCartSummary()
 
+                    }
+                }
             }
         }
     }
@@ -355,9 +362,11 @@ class OrderViewModel @Inject constructor(
 
     private fun onSuccessOrderCreation(id: String) {
         clearState()
-        clearCart()
         sendEffect(ShowSuccess(id))
         stopObservingOrderStatus()
+        viewModelScope.launch {
+            clearCart()
+        }
     }
 
     private fun sendErrorEffect(msg: String) {

@@ -21,11 +21,10 @@ import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.id
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCartItem
+import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartClearTextButton
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartItemCard
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartRecommendsList
@@ -81,10 +80,9 @@ fun CartContentScreen(
                 // Список элементов корзины
                 itemsIndexed(
                     items = cartItemsList,
-                    key = { _, cartItem -> cartItem.customizedMeal.id }
+                    key = { _, cartItem -> cartItem.id }
                 ) { index, cartItem ->
                     val itemInPendingDeletion = state.pendingDeletionMeals.contains(cartItem)
-
                     CartItemCard(
                         modifier = Modifier.animateItem(tween(Constants.ANIMATION_DURATION_FAST)),
                         item = cartItem,

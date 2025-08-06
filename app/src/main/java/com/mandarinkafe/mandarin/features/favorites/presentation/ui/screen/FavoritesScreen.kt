@@ -54,7 +54,7 @@ fun FavoritesScreen(
                 data = state.data,
                 cartItems = cartState.cartItems,
                 onAddToCart = { onCartEvent(CartEvent.AddToCart(customizedMeal = it)) },
-                onRemoveFromCart = { onCartEvent(CartEvent.RemoveFromCartByCustomizedMeal(it)) },
+                onRemoveFromCart = { onCartEvent(CartEvent.OnReduce(customizedMeal = it)) },
                 onMealDetailsClick = {
                     onSharedEvent(
                         SharedEvent.OnMealDetailsClick(

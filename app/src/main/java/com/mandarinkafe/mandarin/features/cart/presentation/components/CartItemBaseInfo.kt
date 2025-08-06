@@ -44,7 +44,9 @@ fun CartItemBaseInfo(
     onShowFavoriteDialog: (CustomizedMeal) -> Unit,
     onCommentAdded: (String) -> Unit
 ) {
-    var showCommentField by remember(item) { mutableStateOf(false) }
+
+    var showCommentField by remember(item) { mutableStateOf(item.comment.isNotEmpty()) }
+    var commentText by remember(item) { mutableStateOf(item.comment) }
     val imageAlpha = remember(itemInPendingDeletion) { if (itemInPendingDeletion) ALPHA_50 else 1f }
 
     val customizedMeal = item.customizedMeal
@@ -103,20 +105,15 @@ fun CartItemBaseInfo(
                         .fillMaxWidth()
                 )
             }
-            if (item.comment.isNotEmpty()) {
-                Text(
-                    text = item.comment,
-                    style = Typography.MealSmallTextStyle,
-                    color = contentColor,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
         }
 
         // Кнопка "Добавить комментарий"
         IconButton(
-            onClick = { showCommentField = !showCommentField },
+            onClick = {
+                if (item.comment.isEmpty()) {
+                    showCommentField = !showCommentField
+                } else showCommentField = true
+            },
             modifier = Modifier
                 .size(Dimens.ButtonBox32)
         ) {
@@ -132,9 +129,12 @@ fun CartItemBaseInfo(
     if (showCommentField) {
         MyTextField(
             modifier = Modifier.padding(vertical = MarginSmall8),
-            value = item.comment,
+            value = commentText,
             labelRes = R.string.comment_for_meal,
-            onValueChange = { onCommentAdded(it) }
+            onValueChange = {
+                commentText = it
+                onCommentAdded(it)
+            }
         )
     }
 }

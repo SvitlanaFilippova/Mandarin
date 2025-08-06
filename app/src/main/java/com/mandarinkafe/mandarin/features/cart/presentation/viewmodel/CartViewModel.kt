@@ -6,7 +6,6 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
-import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetAllRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
@@ -16,9 +15,8 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ClearCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ConfirmClearCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.Init
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.RemoveFromCartByCustomizedMeal
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.RemoveFromCartByMeal
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.RemoveFromCartWithDelay
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduce
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduceWithDelay
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ReplaceMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Resource
@@ -27,11 +25,8 @@ import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.debounce
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,65 +38,12 @@ class CartViewModel @Inject constructor(
     override fun setInitialState() = CartState()
     private val itemTimers = mutableMapOf<CartItem, Job>()
 
-    override fun onEvent(event: CartEvent) {
-        when (event) {
-            is Init -> {
-                updateCartState()
-                observeCartChanges()
-            }
-
-            is AddToCart -> addItem(item = event.item, customizedMeal = event.customizedMeal)
-            is RemoveFromCartWithDelay -> onReduceItem(item = event.item)
-            is RemoveFromCartByCustomizedMeal -> removeFromCartByMealOrCustomized(customizedMeal = event.item)
-            is RemoveFromCartByMeal -> removeFromCartByMealOrCustomized(meal = event.meal)
-            is CancelRemove -> cancelRemove(item = event.item)
-            is ClearCart -> clearConfirmation()
-            is ConfirmClearCart -> clear()
-            is ReplaceMealInCart -> replaceMealInCart(
-                newItem = event.newItem,
-                oldItem = event.oldItem
-            )
-
-            is CartEvent.OnProceedOrderClick -> onProceedOrderClick()
-            is CartEvent.AddCommentToItem -> setCommentToItem(event.item, event.comment)
-        }
-    }
-
-    private fun setCommentToItem(item: CartItem, comment: String) {
-        val newItem = item.copy(comment = comment)
-        replaceMealInCart(
-            newItem = newItem,
-            oldItem = item
-        )
-    }
-
-    /** Вызывает диалог для подтверждения желания очистить корзину */
-    private fun clearConfirmation() {
-        sendEffect(CartEffect.ShowClearCartConfirmDialog)
-    }
-
-    /** Вызывает эффект для перехода к оформлению заказа*/
-    private fun onProceedOrderClick() {
-        sendEffect(CartEffect.ProceedOrder)
-    }
-
-    /**  Заменяет в корзине отредактированное блюдо  */
-    private fun replaceMealInCart(newItem: CartItem, oldItem: CartItem) {
-        if (newItem == oldItem) return
-
-        val index = state.value.cartItems.indexOfFirst { it.customizedMeal == oldItem }
-        if (index == -1) return
-
-        cartInteractor.removeFromCart(oldItem)
-        cartInteractor.addToCart(newItem)
-
-        setState {
-            val updated = cartItems.toMutableList().apply {
-                removeAt(index)
-                add(index, newItem)
-            }
-            copy(cartItems = updated)
-        }
+    private val setCommentDebounce = debounce<Pair<CartItem, String>>(
+        DEBOUNCE_FOR_COMMENT_DELAY,
+        viewModelScope,
+        useLastParam = true
+    ) {
+        setCommentToItem(it.first, it.second)
     }
 
     private val removeDebounce = debounce<CartItem>(
@@ -112,50 +54,60 @@ class CartViewModel @Inject constructor(
         removeItem(item)
     }
 
-    private fun addItem(item: CartItem? = null, customizedMeal: CustomizedMeal? = null) {
-        val cartItem = when {
-            item != null -> item
-            customizedMeal != null -> customizedMeal.toCartItem()
-            else -> return
-        }
-        Log.d(ERROR_TAG, "adding: $item / $customizedMeal")
-        cartInteractor.addToCart(cartItem)
-
-        setState {
-            val existing = cartItems.find { it == cartItem }
-            val updatedList = if (existing != null) {
-                cartItems.map {
-                    if (it == cartItem)
-                        it.copy(quantity = it.quantity + 1)
-                    else it
-                }
-            } else {
-                cartItems + cartItem
+    override fun onEvent(event: CartEvent) {
+        when (event) {
+            is Init -> {
+                observeCartChanges()
             }
-            copy(cartItems = updatedList)
+
+            is AddToCart -> addItem(item = event.item, customizedMeal = event.customizedMeal)
+            is OnReduceWithDelay -> onReduceItemWithDelay(item = event.item)
+            is OnReduce -> removeItem(meal = event.meal, customizedMeal = event.customizedMeal)
+            is CancelRemove -> cancelRemove(item = event.item)
+            is ClearCart -> clearConfirmation()
+            is ConfirmClearCart -> clear()
+            is ReplaceMealInCart -> replaceMealInCart(
+                newItem = event.newItem,
+                oldItem = event.oldItem
+            )
+
+            is CartEvent.OnProceedOrderClick -> onProceedOrderClick()
+            is CartEvent.AddCommentToItem -> setCommentWithDebounce(event.item, event.comment)
+        }
+    }
+
+    private fun observeCartChanges() {
+        viewModelScope.launch {
+            cartInteractor.observeCartItems().collect { cartResource ->
+                when (cartResource) {
+                    is Resource.Success -> {
+                        setData(cartResource.data)
+                        updateRecommends(cartResource.data?.map { it.customizedMeal.meal }?.toSet())
+                    }
+
+                    is Loading -> setLoading()
+                    is Resource.Idle -> {}
+                    else -> setError(cartResource)
+                }
+            }
         }
     }
 
     /** «–» нажато: если количество >1 — просто уменьшаем, иначе — запускаем отложенное удаление с таймером. */
-    private fun onReduceItem(item: CartItem) {
-        val cartItem = state.value.cartItems.find { it.customizedMeal == item } ?: return
-        if (cartItem.quantity > 1) {
+    private fun onReduceItemWithDelay(item: CartItem) {
+        if (item.quantity > 1) {
             reduceQuantity(item)
         } else {
             scheduleRemoval(item)
         }
     }
 
+
     /** Уменьшить количество без таймера. */
     private fun reduceQuantity(item: CartItem) {
-        cartInteractor.removeFromCart(item)
-        setState {
-            val updatedList = cartItems.mapNotNull {
-                if (it.customizedMeal == item) {
-                    if (it.quantity > 1) it.copy(quantity = it.quantity - 1) else null
-                } else it
-            }
-            copy(cartItems = updatedList)
+        val currentQuantity = item.quantity
+        viewModelScope.launch {
+            cartInteractor.updateItem(item.copy(quantity = currentQuantity - 1))
         }
     }
 
@@ -180,9 +132,7 @@ class CartViewModel @Inject constructor(
         setState {
             val updatedPendingDeletionItems = pendingDeletionMeals.toMutableList() - item
             val updatedDeletionProgress = mealDeletionProgress.toMutableMap()
-
             updatedDeletionProgress.entries.removeIf { it.key == item }
-
             copy(
                 pendingDeletionMeals = updatedPendingDeletionItems,
                 mealDeletionProgress = updatedDeletionProgress,
@@ -190,76 +140,80 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    /** Окончательное удаление (вызов из debounce или из других экранов, если таймер на восстановление не нужен). */
-    private fun removeItem(item: CartItem) {
-        setState {
-            val updatedCart = cartItems.filterNot { it.customizedMeal == item }
-            cartInteractor.removeFromCart(item)
-            copy(
-                cartItems = updatedCart,
-                pendingDeletionMeals = pendingDeletionMeals - item,
-                mealDeletionProgress = mealDeletionProgress - item,
-            )
-        }
-    }
-
-    /**  Удаление без таймера, для вызова из экранов, где отображаются "базовые" блюда */
-    private fun removeFromCartByMealOrCustomized(
+    /** Уменьшение количества
+     *  ИЛИ окончательное удаление (вызов из debounce или из других экранов, если таймер на восстановление не нужен). */
+    private fun removeItem(
+        item: CartItem? = null,
         meal: Meal? = null,
         customizedMeal: CustomizedMeal? = null,
     ) {
-        setState {
-            val targetIndex = when {
-                customizedMeal != null -> cartItems.indexOfLast { it.customizedMeal == customizedMeal }
-                meal != null -> cartItems.indexOfLast { it.customizedMeal.meal.id == meal.id }
-                else -> return@setState this
-            }
-
-            if (targetIndex == -1) return@setState this
-
-            val targetItem = cartItems[targetIndex]
-            val updatedCart = cartItems.toMutableList()
-            val updatedPendingDeletion = pendingDeletionMeals.toMutableList()
-            val updatedProgress = mealDeletionProgress.toMutableMap()
-
-            if (targetItem.quantity > 1) {
-                updatedCart[targetIndex] = targetItem.copy(quantity = targetItem.quantity - 1)
-            } else {
-                updatedCart.removeAt(targetIndex)
-                updatedPendingDeletion.removeAll { it == targetItem }
-                updatedProgress.entries.removeIf { it.key == targetItem }
-            }
-
-            cartInteractor.removeFromCart(targetItem)
-
-            copy(
-                cartItems = updatedCart,
-                pendingDeletionMeals = updatedPendingDeletion,
-                mealDeletionProgress = updatedProgress,
-            )
-        }
-    }
-
-    private fun updateCartState() {
         viewModelScope.launch {
-            val cartResource = cartInteractor.getCart()
-            setLoading(cartResource is Loading)
-
-            when (cartResource) {
-                is Resource.Success -> setData(cartResource.data)
-                is Resource.Idle -> {}
-                is Loading -> {}
-                else -> setError(cartResource)
+            cartInteractor.removeFromCart(
+                cartItem = item,
+                customizedMeal = customizedMeal,
+                meal = meal
+            )
+            item?.let {
+                setState {
+                    copy(
+                        pendingDeletionMeals = pendingDeletionMeals - item,
+                        mealDeletionProgress = mealDeletionProgress - item,
+                    )
+                }
             }
         }
     }
 
     private fun clear() {
-        cartInteractor.clearCart()
-        cancelAllMealTimers()
-        setState {
-            copy(
-                cartItems = emptyList(),
+        viewModelScope.launch {
+            cartInteractor.clearCart()
+            cancelAllMealTimers()
+        }
+    }
+
+    private fun setCommentWithDebounce(item: CartItem, comment: String) {
+        setCommentDebounce.cancel()
+        setCommentDebounce.invoke(Pair(item, comment))
+    }
+
+    /** Вызывает диалог для подтверждения желания очистить корзину */
+    private fun clearConfirmation() {
+        sendEffect(CartEffect.ShowClearCartConfirmDialog)
+    }
+
+    /** Вызывает эффект для перехода к оформлению заказа*/
+    private fun onProceedOrderClick() {
+        sendEffect(CartEffect.ProceedOrder)
+    }
+
+    private fun setCommentToItem(item: CartItem, comment: String) {
+        val newItem = item.copy(comment = comment)
+        replaceMealInCart(
+            newItem = newItem,
+            oldItem = item
+        )
+    }
+
+    /**  Заменяет в корзине отредактированное блюдо  */
+    private fun replaceMealInCart(newItem: CartItem, oldItem: CartItem) {
+        if (newItem == oldItem) return
+        viewModelScope.launch {
+            cartInteractor.updateItem(cartItem = newItem)
+        }
+    }
+
+    private fun addItem(
+        item: CartItem? = null,
+        customizedMeal: CustomizedMeal? = null,
+        meal: Meal? = null
+    ) {
+
+        Log.d(ERROR_TAG, "adding: $item / $customizedMeal / $meal")
+        viewModelScope.launch {
+            cartInteractor.addItem(
+                cartItem = item,
+                customizedMeal = customizedMeal,
+                meal = meal
             )
         }
     }
@@ -308,28 +262,18 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    @OptIn(FlowPreview::class)
-    private fun observeCartChanges() {
-        viewModelScope.launch {
-            state
-                .debounce(UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE)
-                .distinctUntilChangedBy { it.cartItems }
-                .collect { currentState ->
-                    updateRecommends(currentState.cartItems.map { it.customizedMeal.meal }.toSet())
+    private suspend fun updateRecommends(cartItems: Set<Meal>?) {
+        cartItems?.let {
+            val resource = recommendsUseCase(cartItems)
+            setRecommendsLoading(resource is Loading)
+            val filteredRecommends =
+                when (resource) {
+                    is Resource.Success -> resource.data ?: emptyList()
+                    else -> emptyList()
                 }
-        }
-    }
-
-    private suspend fun updateRecommends(cartItems: Set<Meal>) {
-        val resource = recommendsUseCase(cartItems)
-        setRecommendsLoading(resource is Loading)
-        val filteredRecommends =
-            when (resource) {
-                is Resource.Success -> resource.data ?: emptyList()
-                else -> emptyList()
+            setState {
+                copy(recommends = filteredRecommends)
             }
-        setState {
-            copy(recommends = filteredRecommends)
         }
     }
 
@@ -338,7 +282,8 @@ class CartViewModel @Inject constructor(
             setState {
                 copy(
                     cartItems = data,
-                    error = null
+                    error = null,
+                    isLoading = false
                 )
             }
         }
@@ -359,13 +304,13 @@ class CartViewModel @Inject constructor(
             is ErrorOther -> UiError.OtherError
             else -> return
         }
-        setState { copy(error = error) }
+        setState { copy(error = error, isLoading = false) }
     }
 
     private companion object {
-        const val ERROR_TAG = "CartRepository VM"
+        const val ERROR_TAG = "Cart DEBUG VM"
+        const val DEBOUNCE_FOR_COMMENT_DELAY = 1000L
         const val DELETE_FROM_CART_DEBOUNCE_DELAY: Long = 3000L
         const val INTERVAL_FOR_UPD_PROGRESSBAR: Long = 100L
-        const val UPD_RECOMMEND_AFTER_CART_CHANGE_DEBOUNCE: Long = 500L
     }
 }

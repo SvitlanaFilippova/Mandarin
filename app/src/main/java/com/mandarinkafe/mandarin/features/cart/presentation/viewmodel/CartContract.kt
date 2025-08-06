@@ -19,15 +19,15 @@ sealed interface CartContract {
             val item: CartItem? = null,
             val customizedMeal: CustomizedMeal? = null
         ) : CartEvent
-
-        data class RemoveFromCartWithDelay(val item: CartItem) : CartEvent
-        data class RemoveFromCartByCustomizedMeal(val item: CustomizedMeal) : CartEvent
-        data class RemoveFromCartByMeal(val meal: Meal) : CartEvent
         data class AddCommentToItem(val item: CartItem, val comment: String) : CartEvent
         data class ReplaceMealInCart(val newItem: CartItem, val oldItem: CartItem) :
             CartEvent
-
+        data class OnReduceWithDelay(val item: CartItem) : CartEvent
         data class CancelRemove(val item: CartItem) : CartEvent
+        data class OnReduce(
+            val customizedMeal: CustomizedMeal? = null,
+            val meal: Meal? = null
+        ) : CartEvent
 
         // Очистка корзины
         data object ClearCart : CartEvent
@@ -56,8 +56,6 @@ sealed interface CartContract {
             get() = cartItems.filter { it !in pendingDeletionMeals }
 
         val totalCartPrice: Int
-            get() = actualCartItems.sumOf { (item, quantity) ->
-                item.totalPrice() * quantity
-            }
+            get() = actualCartItems.sumOf { it.customizedMeal.totalPrice() * it.quantity }
     }
 }

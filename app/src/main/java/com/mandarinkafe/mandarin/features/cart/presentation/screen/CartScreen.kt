@@ -70,7 +70,7 @@ fun CartScreen(
                     favorites = favorites,
                     onClearCart = { onCartEvent(CartEvent.ClearCart) },
                     onAddToCart = { item -> onCartEvent(CartEvent.AddToCart(item)) },
-                    onRemoveFromCart = { item -> onCartEvent(CartEvent.RemoveFromCartWithDelay(item)) },
+                    onRemoveFromCart = { item -> onCartEvent(CartEvent.OnReduceWithDelay(item)) },
                     onDeletionCancel = { item -> onCartEvent(CartEvent.CancelRemove(item)) },
                     onToggleFavorite = { item -> onSharedEvent(SharedEvent.ToggleFavorite(item = item)) },
                     onShowFavoriteDialog = { item ->

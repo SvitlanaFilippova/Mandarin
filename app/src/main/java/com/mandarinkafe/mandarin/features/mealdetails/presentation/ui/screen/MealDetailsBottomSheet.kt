@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -134,6 +135,10 @@ fun MealDetailsBottomSheet(
                     onClose = onClose,
                     onAddToCart = { onCartEvent(AddToCart(initItem.copy(customizedMeal = customizedMeal))) },
                     onEdit = {
+                        Log.d(
+                            "Cart DEBUG MealDetails",
+                            "call onEdit, newItemCustMeal: $customizedMeal "
+                        )
                         onCartEvent(
                             ReplaceMealInCart(
                                 newItem = initItem.copy(customizedMeal = customizedMeal),

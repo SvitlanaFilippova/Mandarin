@@ -10,8 +10,8 @@ data class CartSummary(
     val cartSumWithDiscount: Double = 0.0,
 ) {
     val totalCartSum: Int
-        get() = items.sumOf { (item, quantity) ->
-            item.totalPrice() * quantity
+        get() = items.sumOf {
+            it.customizedMeal.totalPrice() * it.quantity
         }
 
     val discountSum: Double

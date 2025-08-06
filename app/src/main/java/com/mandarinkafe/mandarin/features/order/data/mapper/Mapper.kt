@@ -91,10 +91,15 @@ fun OutgoingOrder.toOrderDto(): OutgoingOrderDto {
 }
 
 fun List<CartItem>.toOrderItemsRequest(discountCategory: Int): List<OutgoingOrderItem> {
-    return this.flatMap { (customizedMeal, quantity) ->
-        val mealItem = customizedMeal.toOutgoingOrderItem(quantity, discountCategory)
+    return this.flatMap { item ->
+        val mealItem = item.customizedMeal.toOutgoingOrderItem(item.quantity, discountCategory)
         val addsItems =
-            customizedMeal.adds.map { it.toOutgoingOrderItem(quantity, discountCategory) }
+            item.customizedMeal.adds.map { add ->
+                add.toOutgoingOrderItem(
+                    item.quantity,
+                    discountCategory
+                )
+            }
         listOf(mealItem) + addsItems
     }
 }
@@ -193,6 +198,7 @@ private fun buildFullComment(
         utensils.noNeedUtensils -> OrderConstants.NO_UTENSILS_COMMENT
         utensils.chosenUtensils.isNotEmpty() -> UTENSILS_NEED_PREFIX +
                 utensils.chosenUtensils.joinToString { it.stringName }
+
         else -> null
     }
 

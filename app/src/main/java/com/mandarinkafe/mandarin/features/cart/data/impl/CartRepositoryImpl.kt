@@ -5,88 +5,90 @@ import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
+import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCustomizedMeal
+import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toStoredCartItem
+import com.mandarinkafe.mandarin.features.cart.data.local.CartStorage
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
-import com.mandarinkafe.mandarin.features.cart.data.models.sameAs
-import com.mandarinkafe.mandarin.features.cart.data.sharedprefs.CartStorage
 import com.mandarinkafe.mandarin.features.cart.data.validateBy
-import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toCustomizedMeal
-import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toStoredCartItem
-import com.mandarinkafe.mandarin.features.cart.domain.api.CartRepository
+import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
 import com.mandarinkafe.mandarin.util.Resource
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @Singleton
 class CartRepositoryImpl @Inject constructor(
     private val storage: CartStorage,
     private val menuCache: MenuCache,
-) : CartRepository, CartReader {
+) : CartWriter, CartReader {
 
-    private var rawCart: List<StoredCartItem>? = null
     private val _cartCount = MutableStateFlow(0)
     override fun observeCartItemsCount(): Flow<Int> = _cartCount.asStateFlow()
 
-    private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
-    override fun observeCartItems(): Flow<List<CartItem>> = _cartItems.asStateFlow()
+    private val _cartItems = MutableStateFlow<Resource<List<CartItem>>>(Resource.Idle())
+    override fun observeCartItems(): Flow<Resource<List<CartItem>>> = _cartItems.asStateFlow()
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
-            refreshCart(storage.getCart())
-        }
+        observeCartWithMenu()
     }
 
-    override suspend fun getCart(): Resource<List<CartItem>> {
-        // 1) дождёмся меню (или сразу вернём его ошибку)
-        val menuResult = awaitMenu()
-        if (menuResult !is Resource.Success) {
-            return when (menuResult) {
-                is Resource.ErrorNoInternet -> Resource.ErrorNoInternet()
-                is Resource.ErrorEmptyData -> Resource.ErrorEmptyData()
-                is Resource.ErrorOther -> Resource.ErrorOther(menuResult.message.orEmpty())
-                else -> Resource.ErrorOther(ERROR_UNEXPECTED_STATE)
+    private fun observeCartWithMenu() {
+        scope.launch {
+            combine(
+                storage.observeCartItems(),
+                menuCache.fullMenu
+                    .filter { it !is Resource.Loading && it !is Resource.Idle }
+            ) { rawCart, menuResource ->
+                rawCart to menuResource
+            }.collect { (rawCart, menuResource) ->
+                _cartItems.value = when (menuResource) {
+                    is Resource.Success -> {
+                        val menu = menuResource.data.orEmpty()
+                        val (validItems, _) = mapAndValidate(rawCart, menu)
+                        _cartCount.value = validItems.sumOf { it.quantity }
+
+                        if (validItems.isEmpty()) {
+                            Resource.ErrorEmptyData()
+                        } else {
+                            Resource.Success(validItems)
+                        }
+                    }
+
+                    is Resource.ErrorNoInternet -> {
+                        _cartCount.value = 0
+                        Resource.ErrorNoInternet()
+                    }
+
+                    is Resource.ErrorEmptyData -> {
+                        _cartCount.value = 0
+                        Resource.ErrorEmptyData()
+                    }
+
+                    is Resource.ErrorOther -> {
+                        _cartCount.value = 0
+                        Resource.ErrorOther(menuResource.message ?: "Unknown error")
+                    }
+
+                    is Resource.Loading -> {
+                        Resource.Loading()
+                    }
+
+                    is Resource.Idle -> {
+                        Resource.Idle()
+                    }
+                }
             }
-        }
-        val categories = menuResult.data.orEmpty()
-
-        // 2) загрузим сырую корзину (или ErrorOther при исключении)
-        val loadedRawCart = rawCart ?: loadRawCart()
-        if (loadedRawCart == null) return Resource.ErrorOther(ERROR_CART_READ)
-
-        // 3) замапим и проверим каждый элемент
-        val (validCart, invalidIds) = mapAndValidate(loadedRawCart, categories)
-
-        // 4) почистим storage от невалидных
-        cleanupInvalid(invalidIds, loadedRawCart)
-
-        // 5) вернём результат
-        return if (validCart.isEmpty()) {
-            Resource.ErrorEmptyData()
-        } else {
-            Resource.Success(validCart)
-        }
-    }
-
-    private suspend fun awaitMenu(): Resource<List<MealCategory>> {
-        // ждём первого финального состояния
-        val final = menuCache.fullMenu
-            .filter { it !is Resource.Loading && it !is Resource.Idle }
-            .first()
-
-        return when (final) {
-            is Resource.Success -> Resource.Success(final.data.orEmpty())
-            is Resource.ErrorNoInternet -> Resource.ErrorNoInternet()
-            is Resource.ErrorEmptyData -> Resource.ErrorEmptyData()
-            is Resource.ErrorOther -> Resource.ErrorOther(final.message.orEmpty())
-            else -> Resource.ErrorOther(ERROR_UNKNOWN_MENU_STATE)
         }
     }
 
@@ -97,31 +99,27 @@ class CartRepositoryImpl @Inject constructor(
         val valid = mutableListOf<CartItem>()
         val invalid = mutableListOf<String>()
 
-        val allMeals = menu
-            .flatMap { cat ->
-                cat.meals.orEmpty() + cat.subCategories.orEmpty().flatMap { it.meals.orEmpty() }
-            }
-            .associateBy { it.id }
+        val allMeals = menu.flatMap { category ->
+            category.meals.orEmpty() +
+                    category.subCategories.orEmpty().flatMap { it.meals.orEmpty() }
+        }.associateBy { it.id }
 
-        raw.forEach { item ->
-            val meal = allMeals[item.mealId]
-            if (meal == null) {
+        for (item in raw) {
+            val baseMeal = allMeals[item.mealId]
+            if (baseMeal == null) {
                 invalid += item.mealId
-                return@forEach
+                continue
             }
-            try {
-                val adds = item.addsIds
-                    ?.mapNotNull { allMeals[it]?.toMealAdditional() }
-                    .orEmpty()
-                val mods = item.modifiers
-                    ?.validateBy(meal.modifiers)
-                    .orEmpty()
 
-                val cm = item.toCustomizedMeal(meal, adds, mods)
-                Log.d(ERROR_TAG, "Mapped to CustomizedMeal: $cm")
+            try {
+                val adds = item.addsIds.mapNotNull { allMeals[it]?.toMealAdditional() }
+                val mods = item.modifiers.validateBy(baseMeal.modifiers).orEmpty()
+                val customizedMeal = item.toCustomizedMeal(baseMeal, adds, mods)
 
                 valid += CartItem(
-                    customizedMeal = cm,
+                    id = item.id,
+                    name = item.name,
+                    customizedMeal = customizedMeal,
                     quantity = item.quantity,
                     comment = item.comment
                 )
@@ -134,89 +132,19 @@ class CartRepositoryImpl @Inject constructor(
         return valid to invalid
     }
 
-    private fun cleanupInvalid(invalid: List<String>, raw: List<StoredCartItem>) {
-        if (invalid.isEmpty()) return
-        val cleaned = raw.filterNot { it.mealId in invalid }
-        storage.saveCart(cleaned)
-        Log.d(ERROR_TAG, "Removed invalid items: $invalid")
+    override suspend fun addOrUpdateItem(item: CartItem) {
+        storage.addOrUpdateItem(item.toStoredCartItem())
     }
 
-    override fun addToCart(item: CartItem) {
-        val cart = storage.getCart().toMutableList()
-        Log.d(ERROR_TAG, "Before add: $cart")
-        val index = cart.indexOfFirst { it.sameAs(item.toStoredCartItem(0)) }
-
-        if (index != -1) {
-            val existingItem = cart[index]
-            cart[index] = existingItem.copy(quantity = existingItem.quantity + 1)
-        } else {
-            cart.add(item.toStoredCartItem(quantity = 1))
-        }
-        Log.d(ERROR_TAG, "Saving cart: $cart")
-        storage.saveCart(cart)
-        CoroutineScope(Dispatchers.IO).launch {
-            refreshCart(cart)
-        }
-        Log.d(ERROR_TAG, "After add: $cart")
+    override suspend fun deleteItemById(id: String) {
+        storage.deleteItemById(id)
     }
 
-    override fun removeFromCart(item: CartItem) {
-        val cart = storage.getCart().toMutableList()
-        val index = cart.indexOfFirst { it.sameAs(item.toStoredCartItem(0)) }
-
-        if (index != -1) {
-            val item = cart[index]
-            if (item.quantity > 1) {
-                cart[index] = item.copy(quantity = item.quantity - 1)
-            } else {
-                cart.removeAt(index)
-            }
-        }
-        storage.saveCart(cart)
-        CoroutineScope(Dispatchers.IO).launch {
-            refreshCart(cart)
-        }
-    }
-
-    override fun clearCart() {
+    override suspend fun clearCart() {
         storage.clearCart()
-        rawCart = null
-        CoroutineScope(Dispatchers.IO).launch {
-            refreshCart(emptyList())
-        }
     }
-
-    private fun loadRawCart(): List<StoredCartItem>? {
-        return try {
-            storage.getCart().also { rawCart = it }
-        } catch (e: Exception) {
-            Log.e(ERROR_TAG, "loadRawCart failed", e)
-            null
-        }
-    }
-
-    private suspend fun refreshCart(updatedRawCart: List<StoredCartItem>) {
-        rawCart = updatedRawCart
-
-        val menu = awaitMenu()
-        if (menu !is Resource.Success) {
-            _cartItems.value = emptyList()
-            _cartCount.value = 0
-            return
-        }
-
-        val (valid, invalidIds) = mapAndValidate(updatedRawCart, menu.data ?: emptyList())
-        cleanupInvalid(invalidIds, updatedRawCart)
-
-        _cartItems.value = valid
-        _cartCount.value = valid.sumOf { it.quantity }
-    }
-
 
     companion object {
-        private const val ERROR_TAG = "CartRepository"
-        private const val ERROR_CART_READ = "Ошибка чтения корзины"
-        private const val ERROR_UNEXPECTED_STATE = "Unexpected state"
-        private const val ERROR_UNKNOWN_MENU_STATE = "Unknown menu state"
+        private const val ERROR_TAG = "Cart DEBUG Repo"
     }
 }

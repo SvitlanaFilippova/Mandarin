@@ -69,6 +69,7 @@ object Constants {
     const val PIN_INDICATOR_Y_OFFSET_FACTOR = 0.09f
 
     // DI
+    const val DATABASE_NAME = "mandarin.db"
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
     const val LOCAL_STORAGE_NAME = "local_storage"
     const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/spreadsheets/d/e/"

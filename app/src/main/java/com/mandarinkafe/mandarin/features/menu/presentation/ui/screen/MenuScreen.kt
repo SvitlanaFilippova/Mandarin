@@ -7,8 +7,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toAddToCartEvent
-import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toRemoveFromCartNow
+import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuViewModel
@@ -57,8 +57,8 @@ fun MenuScreen(
             favoriteIds = favoriteIds,
             onMealDetailsClick = { meal -> onSharedEvent(SharedEvent.OnMealDetailsClick(meal)) },
             onToggleFavorite = { meal -> onSharedEvent(SharedEvent.ToggleFavorite(meal)) },
-            onAddToCart = { meal -> onCartEvent(meal.toAddToCartEvent()) },
-            onRemoveFromCart = { meal -> onCartEvent(meal.toRemoveFromCartNow()) },
+            onAddToCart = { meal -> onCartEvent(CartEvent.AddToCart(customizedMeal = meal.toCustomizedMeal())) },
+            onRemoveFromCart = { meal -> onCartEvent(CartEvent.OnReduce(meal = meal)) },
         )
 
     }

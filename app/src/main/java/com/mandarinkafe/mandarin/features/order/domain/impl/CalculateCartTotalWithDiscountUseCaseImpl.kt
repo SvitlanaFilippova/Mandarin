@@ -8,22 +8,22 @@ class CalculateCartTotalWithDiscountUseCaseImpl : CalculateCartTotalWithDiscount
         items: List<CartItem>,
         discountAmount: Int
     ): Double {
-        return items.sumOf { (customizedMeal, quantity) ->
-            val mealPrice = customizedMeal.meal.price.toDouble()
-            val addsPrice = customizedMeal.adds.sumOf { it.price.toDouble() }
-            val modifiersPrice = customizedMeal.modifiers.sumOf { group ->
+        return items.sumOf { item ->
+            val mealPrice = item.customizedMeal.meal.price.toDouble()
+            val addsPrice = item.customizedMeal.adds.sumOf { it.price.toDouble() }
+            val modifiersPrice = item.customizedMeal.modifiers.sumOf { group ->
                 group.items.sumOf { it.price.toDouble() }
             }
             val fullPricePerItem = mealPrice + addsPrice + modifiersPrice
             val discountModifier = 1 - discountAmount / PERCENT_DIVISOR
-            val discountedPricePerItem = if (customizedMeal.meal.discountable) {
+            val discountedPricePerItem = if (item.customizedMeal.meal.discountable) {
                 // если блюдо discountable, то скидка работает на всё
                 fullPricePerItem * discountModifier
             } else {
                 // иначе - только на добавки и модификаторы, но не на само блюдо
                 mealPrice + (addsPrice + modifiersPrice) * discountModifier
             }
-            val total = discountedPricePerItem * quantity
+            val total = discountedPricePerItem * item.quantity
             total
         }
 

@@ -157,6 +157,7 @@ dependencies {
     // SQLDelight
     implementation(libs.sqldelight)
     implementation(libs.sqldelight.android.driver)
+    implementation(libs.sqldelight.coroutines.extensions)
 
 }
 
@@ -166,7 +167,5 @@ sqldelight {
             packageName.set("com.mandarinkafe.mandarin.database")
         }
     }
-
-    // Для Android
     linkSqlite = true
 }
