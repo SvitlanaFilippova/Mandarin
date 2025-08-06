@@ -11,9 +11,6 @@ import com.mandarinkafe.mandarin.util.BaseState
 
 sealed interface CartContract {
     sealed interface CartEvent : BaseEvent {
-        // Инициализация
-        data object Init : CartEvent
-
         // Управление элементами корзины
         data class AddToCart(
             val item: CartItem? = null,

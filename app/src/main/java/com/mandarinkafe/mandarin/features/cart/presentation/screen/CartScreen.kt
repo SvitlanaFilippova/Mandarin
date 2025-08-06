@@ -41,10 +41,6 @@ fun CartScreen(
     val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
     var showClearCartDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        onCartEvent(CartEvent.Init)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()

@@ -57,12 +57,7 @@ class CartRepositoryImpl @Inject constructor(
                         val menu = menuResource.data.orEmpty()
                         val (validItems, _) = mapAndValidate(rawCart, menu)
                         _cartCount.value = validItems.sumOf { it.quantity }
-
-                        if (validItems.isEmpty()) {
-                            Resource.ErrorEmptyData()
-                        } else {
-                            Resource.Success(validItems)
-                        }
+                        Resource.Success(validItems)
                     }
 
                     is Resource.ErrorNoInternet -> {
@@ -113,7 +108,7 @@ class CartRepositoryImpl @Inject constructor(
 
             try {
                 val adds = item.addsIds.mapNotNull { allMeals[it]?.toMealAdditional() }
-                val mods = item.modifiers.validateBy(baseMeal.modifiers).orEmpty()
+                val mods = item.modifiers.validateBy(baseMeal.modifiers)
                 val customizedMeal = item.toCustomizedMeal(baseMeal, adds, mods)
 
                 valid += CartItem(
@@ -142,6 +137,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun clearCart() {
         storage.clearCart()
+        _cartItems.value = Resource.Success(emptyList())
     }
 
     companion object {

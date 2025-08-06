@@ -14,7 +14,6 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.CancelRemove
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ClearCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ConfirmClearCart
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.Init
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduce
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduceWithDelay
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ReplaceMealInCart
@@ -54,12 +53,12 @@ class CartViewModel @Inject constructor(
         removeItem(item)
     }
 
+    init {
+        observeCartChanges()
+    }
+
     override fun onEvent(event: CartEvent) {
         when (event) {
-            is Init -> {
-                observeCartChanges()
-            }
-
             is AddToCart -> addItem(item = event.item, customizedMeal = event.customizedMeal)
             is OnReduceWithDelay -> onReduceItemWithDelay(item = event.item)
             is OnReduce -> removeItem(meal = event.meal, customizedMeal = event.customizedMeal)
@@ -84,7 +83,6 @@ class CartViewModel @Inject constructor(
                         setData(cartResource.data)
                         updateRecommends(cartResource.data?.map { it.customizedMeal.meal }?.toSet())
                     }
-
                     is Loading -> setLoading()
                     is Resource.Idle -> {}
                     else -> setError(cartResource)
@@ -101,7 +99,6 @@ class CartViewModel @Inject constructor(
             scheduleRemoval(item)
         }
     }
-
 
     /** Уменьшить количество без таймера. */
     private fun reduceQuantity(item: CartItem) {
@@ -278,7 +275,7 @@ class CartViewModel @Inject constructor(
     }
 
     private fun setData(data: List<CartItem>?) {
-        if (!data.isNullOrEmpty()) {
+        data?.let {
             setState {
                 copy(
                     cartItems = data,
