@@ -16,7 +16,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ConfirmClearCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduce
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduceWithDelay
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ReplaceMealInCart
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.UpdateMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
@@ -36,14 +36,6 @@ class CartViewModel @Inject constructor(
 ) : BaseViewModel<CartEvent, CartEffect, CartState>() {
     override fun setInitialState() = CartState()
     private val itemTimers = mutableMapOf<CartItem, Job>()
-
-    private val setCommentDebounce = debounce<Pair<CartItem, String>>(
-        DEBOUNCE_FOR_COMMENT_DELAY,
-        viewModelScope,
-        useLastParam = true
-    ) {
-        setCommentToItem(it.first, it.second)
-    }
 
     private val removeDebounce = debounce<CartItem>(
         DELETE_FROM_CART_DEBOUNCE_DELAY,
@@ -65,13 +57,9 @@ class CartViewModel @Inject constructor(
             is CancelRemove -> cancelRemove(item = event.item)
             is ClearCart -> clearConfirmation()
             is ConfirmClearCart -> clear()
-            is ReplaceMealInCart -> replaceMealInCart(
-                newItem = event.newItem,
-                oldItem = event.oldItem
-            )
-
+            is UpdateMealInCart -> updateMealInCart(item = event.newItem)
             is CartEvent.OnProceedOrderClick -> onProceedOrderClick()
-            is CartEvent.AddCommentToItem -> setCommentWithDebounce(event.item, event.comment)
+            is CartEvent.AddCommentToItem -> setCommentToItem(event.item, event.comment)
         }
     }
 
@@ -83,6 +71,7 @@ class CartViewModel @Inject constructor(
                         setData(cartResource.data)
                         updateRecommends(cartResource.data?.map { it.customizedMeal.meal }?.toSet())
                     }
+
                     is Loading -> setLoading()
                     is Resource.Idle -> {}
                     else -> setError(cartResource)
@@ -168,11 +157,6 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private fun setCommentWithDebounce(item: CartItem, comment: String) {
-        setCommentDebounce.cancel()
-        setCommentDebounce.invoke(Pair(item, comment))
-    }
-
     /** Вызывает диалог для подтверждения желания очистить корзину */
     private fun clearConfirmation() {
         sendEffect(CartEffect.ShowClearCartConfirmDialog)
@@ -184,18 +168,18 @@ class CartViewModel @Inject constructor(
     }
 
     private fun setCommentToItem(item: CartItem, comment: String) {
+        Log.d("DEBUG COMMENTS", "VM setCommentToItem: $comment")
         val newItem = item.copy(comment = comment)
-        replaceMealInCart(
-            newItem = newItem,
-            oldItem = item
-        )
-    }
-
-    /**  Заменяет в корзине отредактированное блюдо  */
-    private fun replaceMealInCart(newItem: CartItem, oldItem: CartItem) {
-        if (newItem == oldItem) return
         viewModelScope.launch {
             cartInteractor.updateItem(cartItem = newItem)
+        }
+
+    }
+
+    /**  Обновляет в корзине отредактированное блюдо  */
+    private fun updateMealInCart(item: CartItem) {
+        viewModelScope.launch {
+            cartInteractor.updateItem(cartItem = item)
         }
     }
 
@@ -306,7 +290,6 @@ class CartViewModel @Inject constructor(
 
     private companion object {
         const val ERROR_TAG = "Cart DEBUG VM"
-        const val DEBOUNCE_FOR_COMMENT_DELAY = 1000L
         const val DELETE_FROM_CART_DEBOUNCE_DELAY: Long = 3000L
         const val INTERVAL_FOR_UPD_PROGRESSBAR: Long = 100L
     }

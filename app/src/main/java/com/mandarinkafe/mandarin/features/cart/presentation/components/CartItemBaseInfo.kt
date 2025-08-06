@@ -32,7 +32,6 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens.MarginSmall8
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants.ALPHA_50
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 
 @Composable
 fun CartItemBaseInfo(
@@ -45,10 +44,10 @@ fun CartItemBaseInfo(
     onCommentAdded: (String) -> Unit
 ) {
 
-    var showCommentField by remember(item) { mutableStateOf(item.comment.isNotEmpty()) }
-    var commentText by remember(item) { mutableStateOf(item.comment) }
+    var showCommentField by remember { mutableStateOf(false) }
     val imageAlpha = remember(itemInPendingDeletion) { if (itemInPendingDeletion) ALPHA_50 else 1f }
-
+    val iconRes =
+        remember(item) { if (item.comment.isEmpty()) R.drawable.ic_comment_add else R.drawable.ic_comment_edit }
     val customizedMeal = item.customizedMeal
     val meal = item.customizedMeal.meal
 
@@ -87,39 +86,45 @@ fun CartItemBaseInfo(
         ) {
             // Название блюда
             Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = meal.name,
                 style = Typography.RegularTextStyle,
                 color = contentColor,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+
+                )
             // Выбранные опции кастомизации
             if (customizedMeal.isCustomized) {
                 Text(
+                    modifier = Modifier.fillMaxWidth(),
                     text = customizedMeal.customizedText(),
                     style = Typography.MealSmallTextStyle,
                     color = contentColor,
+
+                    )
+            }
+            // Комментарий
+            if (item.comment.isNotEmpty())
+                Text(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(vertical = MarginSmall8),
+                    text = "Комментарий: ${item.comment}",
+                    style = Typography.MealSmallTextStyle,
+                    color = contentColor,
                 )
-            }
         }
 
         // Кнопка "Добавить комментарий"
         IconButton(
-            onClick = {
-                if (item.comment.isEmpty()) {
-                    showCommentField = !showCommentField
-                } else showCommentField = true
-            },
+            onClick = { showCommentField = !showCommentField },
             modifier = Modifier
                 .size(Dimens.ButtonBox32)
         ) {
             Icon(
                 modifier = Modifier.padding(Dimens.MarginSuperSmall4),
-                painter = painterResource(R.drawable.ic_add_comment),
+                painter = painterResource(iconRes),
                 tint = Colors.WhiteTransparent75,
                 contentDescription = null
             )
@@ -127,15 +132,14 @@ fun CartItemBaseInfo(
     }
 
     if (showCommentField) {
-        MyTextField(
+        MealCommentTextField(
             modifier = Modifier.padding(vertical = MarginSmall8),
-            value = commentText,
+            initialValue = item.comment,
             labelRes = R.string.comment_for_meal,
-            onValueChange = {
-                commentText = it
+            onCommentSubmitted = {
                 onCommentAdded(it)
+                showCommentField = false
             }
         )
     }
 }
-

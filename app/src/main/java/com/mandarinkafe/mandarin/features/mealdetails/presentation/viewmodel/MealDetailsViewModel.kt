@@ -53,14 +53,24 @@ class MealDetailsViewModel @Inject constructor(
             is MealDetailsEvent.OnToCartClickBeforeMandatoryChoice -> sendEffect(
                 ShowRequiredModifiersDialog
             )
+
+            is MealDetailsEvent.SetComment -> setComment(event.text)
         }
     }
 
+    private fun setComment(text: String) {
+        setState { copy(comment = text) }
+    }
+
     private fun setInitData(item: CartItem) {
-        with(item.customizedMeal) {
-            setMeal(this)
-            if (meal.isAddable) {
-                getAddons(path = meal.categoryPath)
+        viewModelScope.launch {
+            setState {
+                copy(customizedMeal = item.customizedMeal, comment = item.comment)
+            }
+            with(item.customizedMeal.meal) {
+                if (isAddable) {
+                    getAddons(path = categoryPath)
+                }
             }
         }
     }
@@ -173,14 +183,6 @@ class MealDetailsViewModel @Inject constructor(
                 copy(
                     selectedTabIndex = newIndex,
                 )
-            }
-        }
-    }
-
-    private fun setMeal(item: CustomizedMeal) {
-        viewModelScope.launch {
-            setState {
-                copy(customizedMeal = item)
             }
         }
     }

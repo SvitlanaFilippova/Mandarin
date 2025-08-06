@@ -26,7 +26,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.AddToCart
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ReplaceMealInCart
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.UpdateMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
@@ -133,16 +133,26 @@ fun MealDetailsBottomSheet(
                     isFavorite = isFavorite,
                     isEditMode = isEditMode,
                     onClose = onClose,
-                    onAddToCart = { onCartEvent(AddToCart(initItem.copy(customizedMeal = customizedMeal))) },
+                    onAddToCart = {
+                        onCartEvent(
+                            AddToCart(
+                                initItem.copy(
+                                    customizedMeal = customizedMeal,
+                                    comment = state.comment
+                                )
+                            )
+                        )
+                    },
                     onEdit = {
                         Log.d(
                             "Cart DEBUG MealDetails",
                             "call onEdit, newItemCustMeal: $customizedMeal "
                         )
                         onCartEvent(
-                            ReplaceMealInCart(
-                                newItem = initItem.copy(customizedMeal = customizedMeal),
-                                oldItem = initItem
+                            UpdateMealInCart(
+                                newItem = initItem.copy(
+                                    customizedMeal = customizedMeal, comment = state.comment
+                                )
                             )
                         )
                     },
@@ -153,6 +163,7 @@ fun MealDetailsBottomSheet(
                             onToggleFavorite(customizedMeal)
                         }
                     },
+                    comment = state.comment
                 )
             }
     }

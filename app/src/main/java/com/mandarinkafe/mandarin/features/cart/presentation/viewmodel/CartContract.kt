@@ -16,9 +16,9 @@ sealed interface CartContract {
             val item: CartItem? = null,
             val customizedMeal: CustomizedMeal? = null
         ) : CartEvent
+
         data class AddCommentToItem(val item: CartItem, val comment: String) : CartEvent
-        data class ReplaceMealInCart(val newItem: CartItem, val oldItem: CartItem) :
-            CartEvent
+        data class UpdateMealInCart(val newItem: CartItem) : CartEvent
         data class OnReduceWithDelay(val item: CartItem) : CartEvent
         data class CancelRemove(val item: CartItem) : CartEvent
         data class OnReduce(
