@@ -42,6 +42,7 @@
 | Coil                   | 
 | Gson                   | 
 | SharedPreferences      |
+|SQLDelight|
 | Yandex MapKit          |
 | Firebase Remote Config |
 
