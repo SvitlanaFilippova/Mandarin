@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.detekt)
+    alias(libs.plugins.sqldelight) apply false
 }
 
 

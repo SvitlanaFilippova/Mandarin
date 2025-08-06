@@ -32,6 +32,7 @@ navigationCompose = "2.9.2"
 parcelize = "2.1.20"
 retrofit = "2.11.0"
 runtimeLivedata = "1.8.3"
+sqldelight = "2.1.0"
 
 
 [libraries]
@@ -92,8 +93,12 @@ retrofit-converter-scalars = { module = "com.squareup.retrofit2:converter-scalar
 # Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
+# SQLDelight
+sqldelight = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
+sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 
 [plugins]
+
 android-application = { id = "com.android.application", version.ref = "agp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
@@ -103,4 +108,5 @@ jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = 
 jetbrains-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "parcelize" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 
