@@ -1,5 +1,7 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +19,12 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
-fun SegmentedButtonLabel(nameRes: Int, iconRes: Int, selected: Boolean, isEnabled: Boolean = true) {
+fun SegmentedButtonLabel(
+    @StringRes nameRes: Int,
+    @DrawableRes iconRes: Int,
+    selected: Boolean,
+    isEnabled: Boolean = true
+) {
     val color = if (selected) {
         Colors.Orange
     } else if (!isEnabled) {
