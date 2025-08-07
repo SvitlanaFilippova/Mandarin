@@ -48,7 +48,6 @@ fun CartItemBaseInfo(
     onShowFavoriteDialog: (CustomizedMeal) -> Unit,
     onCommentAdded: (String) -> Unit
 ) {
-
     var showCommentField by remember { mutableStateOf(false) }
     val imageAlpha = remember(itemInPendingDeletion) { if (itemInPendingDeletion) ALPHA_50 else 1f }
     val iconRes =

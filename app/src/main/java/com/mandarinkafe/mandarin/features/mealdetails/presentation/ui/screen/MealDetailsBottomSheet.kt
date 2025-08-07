@@ -151,7 +151,8 @@ fun MealDetailsBottomSheet(
                         onCartEvent(
                             UpdateMealInCart(
                                 newItem = initItem.copy(
-                                    customizedMeal = customizedMeal, comment = state.comment
+                                    customizedMeal = customizedMeal,
+                                    comment = state.comment
                                 )
                             )
                         )

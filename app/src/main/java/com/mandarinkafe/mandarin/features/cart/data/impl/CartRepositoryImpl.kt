@@ -102,7 +102,6 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addOrUpdateItem(item: CartItem) {
-
         val updated = cartItems.toMutableList()
         val index = updated.indexOfFirst { it.id == item.id }
         if (index != -1) {

@@ -94,7 +94,8 @@ fun List<CartItem>.toOrderItemsRequest(discountCategory: Int): List<OutgoingOrde
     return this.flatMap { item ->
         val mealItem = item.customizedMeal.toOutgoingOrderItem(
             quantity = item.quantity,
-            discountSize = discountCategory, comment = item.comment
+            discountSize = discountCategory,
+            comment = item.comment
         )
         val addsItems =
             item.customizedMeal.adds.map { add ->

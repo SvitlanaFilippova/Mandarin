@@ -113,7 +113,8 @@ private fun HandleOrderEffects(
                 is OrderEffect.AddNewAddress -> navController.navigateToAddress()
                 is OrderEffect.EditAddress ->
                     navController.navigateToAddressDetails(
-                        effect.address, isEditMode = true,
+                        effect.address,
+                        isEditMode = true,
                         backTargetRoute = NavConstants.ORDER_SCREEN_ROUTE
                     )
 

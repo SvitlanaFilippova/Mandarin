@@ -14,26 +14,25 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
     RecommendsSchemaRepository {
     override suspend fun getRecommendsSchema(): Resource<List<RecommendsSchemaRule>> {
         val response = networkClient.getRecommendations()
-        return if (response.resultCode == NO_CONNECTION) {
-            Resource.ErrorNoInternet()
-        } else {
-            if (response.resultCode == HTTP_SUCCESS) {
-                val csvText = (response as CsvResponse).csv
-                if (csvText == null) {
-                    Resource.ErrorOther("Нет валидной схемы")
-                } else {
-                    val recommendsSchemaDto = parseCsv(csvText)
-                    if (recommendsSchemaDto.isEmpty()) {
-                        Resource.ErrorOther("Нет валидной схемы")
-                    } else {
-                        val result = recommendsSchemaDto.map { it.toDomain() }
-                        Resource.Success(result)
-                    }
-                }
-            } else {
-                Resource.ErrorEmptyData()
-            }
+
+        if (response.resultCode == NO_CONNECTION) {
+            return Resource.ErrorNoInternet()
         }
+
+        if (response.resultCode != HTTP_SUCCESS) {
+            return Resource.ErrorEmptyData()
+        }
+
+        val csvText = (response as CsvResponse).csv
+            ?: return Resource.ErrorOther("Нет валидной схемы")
+
+        val recommendsSchemaDto = parseCsv(csvText)
+        if (recommendsSchemaDto.isEmpty()) {
+            return Resource.ErrorOther("Нет валидной схемы")
+        }
+
+        val result = recommendsSchemaDto.map { it.toDomain() }
+        return Resource.Success(result)
     }
 
     private fun parseCsv(csv: String): List<RecommendsSchemaDto> {

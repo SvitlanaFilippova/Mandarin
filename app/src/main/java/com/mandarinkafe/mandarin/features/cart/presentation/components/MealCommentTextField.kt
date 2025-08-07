@@ -76,7 +76,6 @@ fun MealCommentTextField(
         ),
         trailingIcon =
             {
-
                 Row {
                     if (text.isNotEmpty()) {
                         IconButton(onClick = { text = "" }) {

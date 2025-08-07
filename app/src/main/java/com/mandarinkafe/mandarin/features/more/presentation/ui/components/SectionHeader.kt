@@ -19,7 +19,6 @@ fun SectionHeader(title: String) {
             .fillMaxWidth()
             .padding(horizontal = Dimens.MarginStandard16)
     ) {
-
         Text(
             text = title.uppercase(),
             style = Typography.RegularLightTextStyle,

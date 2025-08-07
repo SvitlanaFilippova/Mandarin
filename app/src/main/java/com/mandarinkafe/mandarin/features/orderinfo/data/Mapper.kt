@@ -114,80 +114,54 @@ private fun String.toDeliveryStatus(): DeliveryStatus {
 fun List<IncomingOrderItemDto>.toDomainWithAdds(
     addonsCategories: List<MealAdditionalCategory>
 ): List<IncomingOrderItem> {
-    // 1) Собираем все productId, которые считаем «добавками»
-    val addonIds: Set<String> = addonsCategories
-        .flatMap { it.items.map { add -> add.id } }
-        .toSet()
+    val addonIds = collectAddonIds(addonsCategories)
+    val builders = associateItemsWithAdds(this, addonIds)
+    return builders.map { it.build() }
+}
 
-    // 2) Результирующий список доменных сущностей
+private fun collectAddonIds(addonsCategories: List<MealAdditionalCategory>): Set<String> =
+    addonsCategories.flatMap { it.items.map { add -> add.id } }.toSet()
+
+private fun associateItemsWithAdds(
+    dtos: List<IncomingOrderItemDto>,
+    addonIds: Set<String>
+): List<IncomingOrderItemBuilder> {
     val result = mutableListOf<IncomingOrderItemBuilder>()
 
-    for (dto in this) {
+    for (dto in dtos) {
         val isAddon = dto.product.id in addonIds
 
         if (!isAddon) {
-            // Новый основной элемент
-            result += IncomingOrderItemBuilder(
+            result += IncomingOrderItemBuilder.fromDto(dto)
+        } else {
+            val addon = IncomingMealAdditional(
                 id = dto.product.id,
                 name = dto.product.name,
                 amount = dto.amount,
-                price = dto.price,
-                positionId = dto.positionId,
-                deleted = dto.deleted?.toDomain() ?: DeletionInfo(),
-                comment = dto.comment ?: ""
-            ).also { builder ->
-                // модификаторы сразу
-                builder.chosenModifiers = dto.modifiers?.map { it.toDomain() } ?: emptyList()
-            }
-        } else {
-            // DTO — это «добавка»: приклеиваем к последнему основному
-            val last = result.lastOrNull()
-            if (last != null) {
-                last.chosenAdds += IncomingMealAdditional(
-                    id = dto.product.id,
-                    name = dto.product.name,
-                    amount = dto.amount,
-                    price = dto.price
-                )
+                price = dto.price
+            )
+            if (result.isNotEmpty()) {
+                result.last().chosenAdds += addon
             } else {
-                // Если вдруг встретилась добавка первой — создаём фиктивный «родитель»
-                result += IncomingOrderItemBuilder(
-                    id = "unknown",
-                    name = "Неизвестное блюдо",
-                    amount = 0.0,
-                    price = 0.0,
-                    positionId = null,
-                    deleted = DeletionInfo(),
-                    comment = ""
-                ).apply {
-                    chosenAdds += IncomingMealAdditional(
-                        id = dto.product.id,
-                        name = dto.product.name,
-                        amount = dto.amount,
-                        price = dto.price
-                    )
-                }
+                result += IncomingOrderItemBuilder.placeholderWithAddon(addon)
             }
         }
     }
 
-    // 3) Строим финальный список immutable
-    return result.map { it.build() }
+    return result
 }
 
-// Вспомогательный билдер, чтобы наращивать adds
-private class IncomingOrderItemBuilder(
+private data class IncomingOrderItemBuilder(
     val id: String,
     val name: String,
     val amount: Double,
     val price: Double,
     val positionId: String?,
     val deleted: DeletionInfo,
-    val comment: String
-) {
-    var chosenModifiers: List<IncomingModifier> = emptyList()
+    val comment: String,
+    var chosenModifiers: List<IncomingModifier> = emptyList(),
     val chosenAdds: MutableList<IncomingMealAdditional> = mutableListOf()
-
+) {
     fun build() = IncomingOrderItem(
         id = id,
         name = name,
@@ -199,4 +173,31 @@ private class IncomingOrderItemBuilder(
         deleted = deleted,
         comment = comment
     )
+
+    companion object {
+        fun fromDto(dto: IncomingOrderItemDto): IncomingOrderItemBuilder {
+            return IncomingOrderItemBuilder(
+                id = dto.product.id,
+                name = dto.product.name,
+                amount = dto.amount,
+                price = dto.price,
+                positionId = dto.positionId,
+                deleted = dto.deleted?.toDomain() ?: DeletionInfo(),
+                comment = dto.comment ?: "",
+                chosenModifiers = dto.modifiers?.map { it.toDomain() } ?: emptyList()
+            )
+        }
+
+        fun placeholderWithAddon(addon: IncomingMealAdditional): IncomingOrderItemBuilder {
+            return IncomingOrderItemBuilder(
+                id = "unknown",
+                name = "Неизвестное блюдо",
+                amount = 0.0,
+                price = 0.0,
+                positionId = null,
+                deleted = DeletionInfo(),
+                comment = ""
+            ).apply { chosenAdds += addon }
+        }
+    }
 }

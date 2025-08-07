@@ -55,7 +55,8 @@ fun OrderItemsSection(items: List<IncomingOrderItem>, sum: Double?) {
                     )
                     Text(
                         text = stringResource(
-                            R.string.float_price_template, it.toFloat()
+                            R.string.float_price_template,
+                            it.toFloat()
                         ),
                         style = Typography.RegularTextStyle
                     )

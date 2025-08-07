@@ -45,7 +45,6 @@ fun SavedAddressesScreen(
     navController: NavHostController,
     viewModel: SavedAddressesViewModel = hiltViewModel()
 ) {
-
     val state by viewModel.state.collectAsState()
     val effectFlow = viewModel.effect
     val addresses = state.data

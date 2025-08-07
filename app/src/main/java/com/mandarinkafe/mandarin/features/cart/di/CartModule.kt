@@ -73,7 +73,8 @@ object CartModule {
     @Singleton
     fun provideCartInteractor(writer: CartWriter, reader: CartReader): CartInteractor =
         CartInteractorImpl(
-            cartWriter = writer, cartReader = reader
+            cartWriter = writer,
+            cartReader = reader
         )
 
     @Provides

@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.navigation.extensions
 
+import android.util.Log
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.google.gson.Gson
@@ -93,6 +94,7 @@ fun NavController.tryGetBackStackEntry(route: String): NavBackStackEntry? {
     return try {
         getBackStackEntry(route)
     } catch (e: IllegalArgumentException) {
+        Log.d("Error tryGetBackStackEntry", "error: $e")
         null // экрана в стеке нет
     }
 }

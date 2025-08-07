@@ -189,7 +189,6 @@ class CartViewModel @Inject constructor(
         customizedMeal: CustomizedMeal? = null,
         meal: Meal? = null
     ) {
-
         Log.d(ERROR_TAG, "adding: $item / $customizedMeal / $meal")
         viewModelScope.launch {
             cartInteractor.addItem(
