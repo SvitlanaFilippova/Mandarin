@@ -150,15 +150,14 @@ private fun associateItemsWithAdds(
 
     return result
 }
-
-private data class IncomingOrderItemBuilder(
-    val id: String,
-    val name: String,
-    val amount: Double,
-    val price: Double,
-    val positionId: String?,
-    val deleted: DeletionInfo,
-    val comment: String,
+private class IncomingOrderItemBuilder private constructor(
+    private val id: String,
+    private val name: String,
+    private val amount: Double,
+    private val price: Double,
+    private val positionId: String?,
+    private val deleted: DeletionInfo,
+    private val comment: String,
     var chosenModifiers: List<IncomingModifier> = emptyList(),
     val chosenAdds: MutableList<IncomingMealAdditional> = mutableListOf()
 ) {
