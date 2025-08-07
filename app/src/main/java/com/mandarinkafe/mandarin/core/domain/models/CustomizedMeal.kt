@@ -7,14 +7,14 @@ data class CustomizedMeal(
     val meal: Meal,
 
     /**
-    Выбранные добавки для пиццы
+    Выбранные добавки
      */
     val adds: List<MealAdditional> = emptyList<MealAdditional>(),
 
     /**
     Выбранные модификаторы (по группам)
      */
-    val modifiers: List<ModifierGroup> = emptyList<ModifierGroup>()
+    val modifiers: List<ModifierGroup> = emptyList<ModifierGroup>(),
 )
 
 /**
@@ -43,16 +43,6 @@ fun CustomizedMeal.totalPrice(): Int {
     return meal.price + addsTotal + modifiersTotal
 }
 
-fun Map<CustomizedMeal, Int>.getTotalQuantityByMealId(mealId: String) =
-    this.filter { it.key.meal.id == mealId }
-        .values
-        .sum()
-
-fun Map<CustomizedMeal, Int>.getTotalPriceByMealId(mealId: String) =
-    this.filter { it.key.meal.id == mealId }.entries
-        .sumOf { (item, quantity) ->
-            item.totalPrice() * quantity
-        }
 
 fun CustomizedMeal.hasSelectedAllRequiredModifiers(): Boolean {
     return meal.modifiers
@@ -61,7 +51,6 @@ fun CustomizedMeal.hasSelectedAllRequiredModifiers(): Boolean {
             val selectedGroup = modifiers.find { it.id == group.id }
             selectedGroup != null && selectedGroup.items.isNotEmpty()
         }
-
 }
 
 /**
@@ -84,10 +73,10 @@ fun CustomizedMeal.customizedText(): String {
     }
     val optionalItems = buildList {
         optionalGroups.forEach { group ->
-            addAll(group.items.map { "+ ${it.name}" })
+            addAll(group.items.map { "+\u00A0${it.name}" })
         }
         adds.forEach { add ->
-            add("+ ${add.name}")
+            add("+\u00A0${add.name}")
         }
     }
     return buildString {

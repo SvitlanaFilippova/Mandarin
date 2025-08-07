@@ -1,0 +1,27 @@
+CREATE TABLE cart_items (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    mealId TEXT NOT NULL,
+    addsIds TEXT NOT NULL,
+    modifiers TEXT NOT NULL,
+    quantity INTEGER NOT NULL,
+    comment TEXT,
+    timestamp INTEGER NOT NULL
+);
+
+selectAll:
+SELECT * FROM cart_items
+ORDER BY timestamp ASC;
+
+selectById:
+SELECT * FROM cart_items WHERE id = ?;
+
+insertOrReplace:
+INSERT OR REPLACE INTO cart_items(id, name, mealId, addsIds, modifiers, quantity, comment, timestamp)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+deleteById:
+DELETE FROM cart_items WHERE id = ?;
+
+deleteAll:
+DELETE FROM cart_items;

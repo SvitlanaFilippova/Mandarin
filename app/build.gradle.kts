@@ -18,7 +18,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.compose)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
-
+    alias(libs.plugins.sqldelight)
 }
 
 android {
@@ -55,6 +55,7 @@ android {
         // iiko
         val iikoApiKey = properties.getProperty("IIKO_API_KEY") ?: ""
         buildConfigField("String", "IIKO_API_KEY", "\"$iikoApiKey\"")
+
     }
 
     buildTypes {
@@ -89,6 +90,8 @@ android {
         buildConfig = true
     }
 }
+
+
 
 dependencies {
     // Navigation for Compose
@@ -150,4 +153,19 @@ dependencies {
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.config.ktx)
+
+    // SQLDelight
+    implementation(libs.sqldelight)
+    implementation(libs.sqldelight.android.driver)
+    implementation(libs.sqldelight.coroutines.extensions)
+
+}
+
+sqldelight {
+    databases {
+        create("AppDatabase") {
+            packageName.set("com.mandarinkafe.mandarin.database")
+        }
+    }
+    linkSqlite = true
 }

@@ -22,10 +22,14 @@ import kotlinx.coroutines.launch
 
 @Singleton
 class MenuCacheImpl @Inject constructor(
-    private val fetcher: MenuFetcher
-) : MenuCache {
-    private val _menu = MutableStateFlow<Resource<List<MealCategory>>>(Resource.Idle())
-    override val menu: StateFlow<Resource<List<MealCategory>>> = _menu.asStateFlow()
+    private val fetcher: MenuFetcher,
+
+    ) : MenuCache {
+    private val _fullMenu = MutableStateFlow<Resource<List<MealCategory>>>(Resource.Idle())
+    override val fullMenu: StateFlow<Resource<List<MealCategory>>> = _fullMenu.asStateFlow()
+
+    private val _visibleMenu = MutableStateFlow<Resource<List<MealCategory>>>(Resource.Idle())
+    override val visibleMenu: StateFlow<Resource<List<MealCategory>>> = _visibleMenu.asStateFlow()
 
     private val _addonsCategories = MutableStateFlow<List<MealAdditionalCategory>>(emptyList())
     override val addonsCategories: StateFlow<List<MealAdditionalCategory>> =
@@ -35,7 +39,7 @@ class MenuCacheImpl @Inject constructor(
     override val deliveryItems: StateFlow<MealCategory?> = _deliveryItems.asStateFlow()
 
     override fun fetchMenuIfNeeded() {
-        val current = _menu.value
+        val current = _visibleMenu.value
         if (current is Resource.Success) {
             return
         }
@@ -45,9 +49,9 @@ class MenuCacheImpl @Inject constructor(
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            _menu.value = Resource.Loading()
+            _visibleMenu.value = Resource.Loading()
             val result = fetchWithRetries()
-            _menu.value = result
+            _visibleMenu.value = result
         }
     }
 
@@ -59,6 +63,7 @@ class MenuCacheImpl @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         val rootCategories = result.data ?: emptyList()
+                        _fullMenu.value = Resource.Success(rootCategories)
                         _addonsCategories.value = extractAddons(rootCategories)
                         _deliveryItems.value = extractDelivery(rootCategories)
                         val filteredMenu = filterVisibleCategories(rootCategories)
@@ -84,12 +89,12 @@ class MenuCacheImpl @Inject constructor(
     }
 
     override suspend fun forceRefresh(fetcher: suspend () -> Resource<List<MealCategory>>) {
-        _menu.value = fetcher()
+        _visibleMenu.value = fetcher()
     }
 
     // Методы для получения блюд по id / sku
     override fun getMealById(id: String): Meal? {
-        val current = _menu.value
+        val current = _fullMenu.value
         if (current is Resource.Success) {
             current.data?.forEach { category ->
                 val result = findMealById(category, id)
@@ -101,9 +106,9 @@ class MenuCacheImpl @Inject constructor(
 
     override fun getMealsBySku(sku: String): List<Meal> {
         val result = mutableListOf<Meal>()
-        val current = _menu.value
-        if (current is Resource.Success) {
-            current.data?.forEach { category ->
+        val currentMenu = _fullMenu.value
+        if (currentMenu is Resource.Success) {
+            currentMenu.data?.forEach { category ->
                 findMealsBySku(category, sku, result)
             }
         }
@@ -162,7 +167,7 @@ class MenuCacheImpl @Inject constructor(
     }
 
     private companion object {
-        const val MAX_ATTEMPTS = 3
+        const val MAX_ATTEMPTS = 5
         const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 100L
     }
 }

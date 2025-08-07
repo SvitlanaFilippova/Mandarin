@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,7 +21,7 @@ fun SwitchWithTextRow(
     modifier: Modifier = Modifier,
     value: Boolean,
     onValueChange: (Boolean) -> Unit,
-    textRes: Int
+    @StringRes textRes: Int
 ) {
     Row(
         modifier = modifier

@@ -24,8 +24,10 @@ import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.additionals.ChosenOptions
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.modifiers.ModifierGroupItem
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent.SetComment
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 
 @Composable
 fun MealDetailsMainContent(
@@ -36,6 +38,7 @@ fun MealDetailsMainContent(
     chosenModifiers: List<ModifierGroup>,
     onMakeMoreDeliciousClick: () -> Unit,
     onEvent: (MealDetailsEvent) -> Unit,
+    comment: String,
 ) {
     val meal = remember { customizedMeal.meal }
     val shouldShowChosen =
@@ -163,8 +166,16 @@ fun MealDetailsMainContent(
             }
         }
 
+        item {
+            MyTextField(
+                modifier = Modifier.padding(top = Dimens.MarginSmall8, bottom = Dimens.MarginBig24),
+                value = comment,
+                labelRes = R.string.comment_for_meal,
+                onValueChange = { onEvent(SetComment(it)) }
+            )
+        }
+
         // Отступ для кнопки "В корзину"
         item { Spacer(modifier = Modifier.height(Dimens.MarginForCartButton72)) }
-
     }
 }

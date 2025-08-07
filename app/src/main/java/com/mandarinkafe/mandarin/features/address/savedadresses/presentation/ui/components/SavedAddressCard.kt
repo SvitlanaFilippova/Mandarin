@@ -30,7 +30,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 @Composable
 fun SavedAddressCard(
     modifier: Modifier = Modifier,
-    selected: Boolean,
+    selected: Boolean? = null,
     address: Address,
     onAddressChosen: () -> Unit,
     onEditAddress: () -> Unit,
@@ -45,16 +45,17 @@ fun SavedAddressCard(
             .clickable(onClick = onAddressChosen),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        RadioButton(
-            modifier = Modifier.padding(horizontal = Dimens.Margin12),
-            colors = RadioButtonDefaults.colors(selectedColor = Colors.Orange),
-            selected = selected,
-            onClick = null
-        )
+        selected?.let {
+            RadioButton(
+                modifier = Modifier.padding(horizontal = Dimens.Margin12),
+                colors = RadioButtonDefaults.colors(selectedColor = Colors.Orange),
+                selected = selected,
+                onClick = null
+            )
+        }
         Column(
             modifier = Modifier
                 .weight(1f)
-
         ) {
             Text(
                 text = address.streetAndBuilding,

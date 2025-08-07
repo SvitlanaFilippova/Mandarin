@@ -59,10 +59,12 @@ class OrderModule {
     @Singleton
     @Provides
     fun provideOrderRepository(
-        networkClient: IikoNetworkClient
+        networkClient: IikoNetworkClient,
+        menuCache: MenuCache
     ): OrderRepository {
         return OrderRepositoryImpl(
-            networkClient = networkClient
+            networkClient = networkClient,
+            menuCache = menuCache
         )
     }
 

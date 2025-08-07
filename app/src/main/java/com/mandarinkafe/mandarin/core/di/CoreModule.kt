@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.core.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.impl.MenuCacheImpl
@@ -18,7 +19,9 @@ import com.mandarinkafe.mandarin.core.domain.api.ObserveCartItemsUseCase
 import com.mandarinkafe.mandarin.core.domain.impl.GetInitialDataUseCaseImpl
 import com.mandarinkafe.mandarin.core.domain.impl.ObserveCartCountUseCaseImpl
 import com.mandarinkafe.mandarin.core.domain.impl.ObserveCartItemsUseCaseImpl
+import com.mandarinkafe.mandarin.database.AppDatabase
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
+import com.mandarinkafe.mandarin.util.Constants.DATABASE_NAME
 import com.mandarinkafe.mandarin.util.Constants.GOOGLE_DOCS_BASE_URL
 import com.mandarinkafe.mandarin.util.Constants.IIKO_BASE_URL
 import com.mandarinkafe.mandarin.util.Constants.LOCAL_STORAGE_NAME
@@ -36,6 +39,17 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class CoreModule {
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext ctx: Context): AppDatabase {
+        val driver = AndroidSqliteDriver(
+            schema = AppDatabase.Schema,
+            context = ctx,
+            name = DATABASE_NAME
+        )
+        return AppDatabase(driver)
+    }
+
     @Provides
     @Singleton
     fun provideSharedPreferences(

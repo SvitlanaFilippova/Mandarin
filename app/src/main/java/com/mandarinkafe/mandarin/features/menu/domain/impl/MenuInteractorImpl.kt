@@ -14,11 +14,11 @@ class MenuInteractorImpl(
     private val repository: MenuRepository,
     private val cache: MenuCache
 ) : MenuInteractor {
-    override val menu: StateFlow<Resource<List<MealCategory>>> get() = cache.menu
+    override val menu: StateFlow<Resource<List<MealCategory>>> get() = cache.visibleMenu
 
     override fun getMenu(): Flow<Resource<List<MealCategory>>> {
         cache.fetchMenuIfNeeded()
-        return cache.menu.map { result ->
+        return cache.visibleMenu.map { result ->
             when (result) {
                 is Success -> {
                     val filtered = result.data?.filterNot { it.isHidden }

@@ -1,16 +1,20 @@
 package com.mandarinkafe.mandarin.navigation.extensions
 
+import android.util.Log
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_CONFIRMATION_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.ORDERS_HISTORY_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_INFO_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.SAVED_ADDRESSES_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -31,6 +35,14 @@ fun NavController.navigateToMenu() {
     }
 }
 
+fun NavController.navigateToSavedAddresses() {
+    this.navigate(SAVED_ADDRESSES_ROUTE)
+}
+
+fun NavController.navigateOrdersHistory() {
+    this.navigate(ORDERS_HISTORY_ROUTE)
+}
+
 fun NavController.navigateToOrder() {
     this.navigate(ORDER_SCREEN_ROUTE)
 }
@@ -46,28 +58,43 @@ fun NavController.navigateToAddress(address: Address? = null) {
     }
 }
 
-fun NavController.navigateToMealDetails(meal: CustomizedMeal, isEditMode: Boolean) {
+fun NavController.navigateToMealDetails(item: CartItem, isEditMode: Boolean) {
     val gson = Gson()
     val json =
-        URLEncoder.encode(gson.toJson(meal), StandardCharsets.UTF_8.toString())
+        URLEncoder.encode(gson.toJson(item), StandardCharsets.UTF_8.toString())
     val route = "$MEAL_DETAILS_ROUTE/$json/$isEditMode"
     this.navigate(route)
 }
 
-fun NavController.navigateToAddressDetails(address: Address, isEditMode: Boolean = false) {
+fun NavController.navigateToAddressDetails(
+    address: Address,
+    isEditMode: Boolean = false,
+    backTargetRoute: String
+) {
     val gson = Gson()
     val json =
         URLEncoder.encode(gson.toJson(address), StandardCharsets.UTF_8.toString())
-    val route = "$ADDRESS_DETAILS_ROUTE/$json/$isEditMode"
+    val route = "$ADDRESS_DETAILS_ROUTE/$json/$isEditMode/$backTargetRoute"
     this.navigate(route)
 }
 
-fun NavController.navigateToOrderConfirmation(orderId: String) {
-    this.navigate("$ORDER_CONFIRMATION_ROUTE/$orderId") {
+fun NavController.navigateToOrderInfo(
+    orderId: String,
+    requireConfirmation: Boolean = true
+) {
+    this.navigate("$ORDER_INFO_ROUTE/$orderId/$requireConfirmation") {
         popUpTo(MAIN_GRAPH) {
             inclusive = true
         }
         launchSingleTop = true
     }
+}
 
+fun NavController.tryGetBackStackEntry(route: String): NavBackStackEntry? {
+    return try {
+        getBackStackEntry(route)
+    } catch (e: IllegalArgumentException) {
+        Log.d("Error tryGetBackStackEntry", "error: $e")
+        null // экрана в стеке нет
+    }
 }

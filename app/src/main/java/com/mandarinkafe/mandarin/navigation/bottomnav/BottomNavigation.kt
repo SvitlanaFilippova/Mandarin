@@ -33,6 +33,7 @@ fun BottomNavigation(
         BottomNavigationItem.Favorites,
         BottomNavigationItem.Menu,
         BottomNavigationItem.Cart,
+        BottomNavigationItem.Other,
     )
 
     AnimatedVisibility(

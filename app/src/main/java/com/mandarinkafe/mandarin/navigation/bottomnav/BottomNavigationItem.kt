@@ -5,6 +5,11 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.navigation.NavConstants
 
 sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val route: String) {
+    object Other : BottomNavigationItem(
+        R.string.more_options,
+        R.drawable.ic_more,
+        NavConstants.MORE_MENU_SCREEN_ROUTE
+    )
 
     object Menu : BottomNavigationItem(
         R.string.menu,

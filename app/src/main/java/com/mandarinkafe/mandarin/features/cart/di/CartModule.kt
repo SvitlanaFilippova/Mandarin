@@ -1,15 +1,16 @@
 package com.mandarinkafe.mandarin.features.cart.di
 
-import android.content.SharedPreferences
 import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
+import com.mandarinkafe.mandarin.database.AppDatabase
+import com.mandarinkafe.mandarin.db.CartItemsQueries
 import com.mandarinkafe.mandarin.features.cart.data.impl.CartRepositoryImpl
 import com.mandarinkafe.mandarin.features.cart.data.impl.RecommendsSchemaRepositoryImpl
-import com.mandarinkafe.mandarin.features.cart.data.sharedprefs.CartStorage
-import com.mandarinkafe.mandarin.features.cart.data.sharedprefs.CartStorageImpl
-import com.mandarinkafe.mandarin.features.cart.domain.api.CartRepository
+import com.mandarinkafe.mandarin.features.cart.data.local.CartStorage
+import com.mandarinkafe.mandarin.features.cart.data.local.SQLDelightCartStorage
+import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
 import com.mandarinkafe.mandarin.features.cart.domain.impl.CartInteractorImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.ClearCartUseCaseImpl
@@ -33,11 +34,13 @@ import javax.inject.Singleton
 object CartModule {
 
     @Provides
+    fun provideCartQueries(db: AppDatabase): CartItemsQueries =
+        db.cartItemsQueries
+
+    @Provides
     @Singleton
-    fun provideCartStorage(sharedPreferences: SharedPreferences): CartStorage {
-        return CartStorageImpl(
-            sharedPreferences = sharedPreferences
-        )
+    fun provideCartStorage(queries: CartItemsQueries): CartStorage {
+        return SQLDelightCartStorage(queries = queries)
     }
 
     @Provides
@@ -45,7 +48,7 @@ object CartModule {
     fun provideCartRepository(
         cartStorage: CartStorage,
         menuCache: MenuCache,
-    ): CartRepository =
+    ): CartWriter =
         CartRepositoryImpl(
             storage = cartStorage,
             menuCache = menuCache,
@@ -54,8 +57,8 @@ object CartModule {
     @Provides
     @Singleton
     fun provideCartCountReader(
-        cartRepository: CartRepository
-    ): CartReader = cartRepository as CartReader
+        cartWriter: CartWriter
+    ): CartReader = cartWriter as CartReader
 
     @Provides
     @Singleton
@@ -68,9 +71,10 @@ object CartModule {
 
     @Provides
     @Singleton
-    fun provideCartInteractor(repository: CartRepository): CartInteractor =
+    fun provideCartInteractor(writer: CartWriter, reader: CartReader): CartInteractor =
         CartInteractorImpl(
-            repository = repository
+            cartWriter = writer,
+            cartReader = reader
         )
 
     @Provides
@@ -103,9 +107,9 @@ object CartModule {
 
     @Provides
     @Singleton
-    fun provideClearCartUseCase(cartRepository: CartRepository): ClearCartUseCase {
+    fun provideClearCartUseCase(cartWriter: CartWriter): ClearCartUseCase {
         return ClearCartUseCaseImpl(
-            repository = cartRepository
+            repository = cartWriter
         )
     }
 }

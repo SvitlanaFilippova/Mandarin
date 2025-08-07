@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,7 +25,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 fun MyTextField(
     modifier: Modifier = Modifier,
     value: String,
-    labelRes: Int,
+    @StringRes labelRes: Int,
     isError: Boolean = false,
     onValueChange: (String) -> Unit = {},
     visualTransformation: VisualTransformation = VisualTransformation.None,

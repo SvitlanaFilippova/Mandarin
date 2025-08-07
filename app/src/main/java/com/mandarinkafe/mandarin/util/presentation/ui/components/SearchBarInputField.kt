@@ -49,7 +49,7 @@ fun SearchBarInputField(
         modifier = modifier
             .fillMaxWidth()
             .focusRequester(focusRequester),
-        shape = RoundedCornerShape(Dimens.RadiusSearchField8),
+        shape = RoundedCornerShape(Dimens.CornerRadius8),
         value = query,
         onValueChange = onQueryChange,
         enabled = enabled,

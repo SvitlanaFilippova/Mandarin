@@ -5,14 +5,14 @@ import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.Response
-import com.mandarinkafe.mandarin.core.data.dto.order.OrderDto
 import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.LoyaltyCustomerByPhoneRequest
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesRequest
-import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.OderInfoRequest
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
@@ -70,10 +70,16 @@ class IikoNetworkClientImpl(
     }
 
     private suspend fun fetchMenu(): Response {
+        Log.d(logTag, "Запуск fetchMenu")
+
         return try {
             if (externalMenuId.isEmpty()) {
+                Log.d(logTag, "externalMenuId пустой, начинаем загрузку ID")
                 externalMenuId = getExternalMenuId()
+                Log.d(logTag, "externalMenuId получен: $externalMenuId")
             }
+
+            Log.d(logTag, "Отправка запроса на получение меню")
             val menuResponse = iikoService.getMenuById(
                 token = token,
                 body = MenuRequest(
@@ -81,9 +87,12 @@ class IikoNetworkClientImpl(
                     organizationIds = listOf(organizationId)
                 )
             )
+
+            Log.d(logTag, "Меню успешно получено.")
             menuResponse.apply { resultCode = HTTP_SUCCESS }
+
         } catch (e: Throwable) {
-            Log.d(logTag, ERROR + e.message)
+            Log.e(logTag, "Ошибка при получении меню: ${e.message}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -115,7 +124,7 @@ class IikoNetworkClientImpl(
 
     private val logTagORDER = "DEBUG ORDER NetworkClient"
 
-    override suspend fun createDelivery(order: OrderDto): Response {
+    override suspend fun createDelivery(order: OutgoingOrderDto): Response {
         return try {
             val request = CreateDeliveryRequest(
                 order = order,

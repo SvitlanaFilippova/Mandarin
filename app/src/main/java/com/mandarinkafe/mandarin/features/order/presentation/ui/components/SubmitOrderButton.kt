@@ -77,7 +77,7 @@ fun SubmitOrderButton(
 
                 false -> {
                     Text(
-                        text = stringResource(R.string.order_total_cost_template, totalOrderSum),
+                        text = stringResource(R.string.float_price_template, totalOrderSum),
                         style = Typography.ToCartButtonBigStyle,
                         color = contentColor
                     )

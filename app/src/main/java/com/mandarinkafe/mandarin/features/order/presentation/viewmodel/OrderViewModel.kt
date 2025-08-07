@@ -14,9 +14,7 @@ import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWit
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.ResolvePickupPointUseCase
-import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus.Error
-import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus.InProgress
-import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus.Success
+import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
@@ -29,7 +27,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
-import com.mandarinkafe.mandarin.features.orderconfirmation.domain.api.ObserveOrderStatusUseCase
+import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ObserveOrderStatusUseCase
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -99,46 +97,52 @@ class OrderViewModel @Inject constructor(
     private fun removeSavedAddress(id: String) {
         viewModelScope.launch { removeAddress(id) }
         getSavedAddresses()
-
     }
 
     private fun observeCartItems() {
         viewModelScope.launch {
-            observeCartItemsUseCase().collect { items ->
-                setState {
-                    // проверяем, есть ли в корзине блюда, на которые не распространяется скидка
-                    val containNotDiscountable = items.keys.any { !it.meal.discountable }
+            observeCartItemsUseCase().collect { response ->
+                if (response is Resource.Success) {
+                    val items = response.data
+                    items?.let {
+                        setState {
+                            // проверяем, есть ли в корзине блюда, на которые не распространяется скидка
+                            val containNotDiscountable =
+                                items.any { !it.customizedMeal.meal.discountable }
 
-                    // прововеряем, откуда нужно будет забирать заказ в случае самовывоза
-                    val pickupPoint = resolvePickupPoint(items.keys)
+                            // прововеряем, откуда нужно будет забирать заказ в случае самовывоза
+                            val pickupPoint =
+                                resolvePickupPoint(items.map { it.customizedMeal }.toSet())
 
-                    // если была выбрана доставка, но заказ стал isPickupOnly - обнуляем данные доставки
-                    val isPickupOnly = items.keys.any { it.meal.isPickupOnly }
+                            // если была выбрана доставка, но заказ стал isPickupOnly - обнуляем данные доставки
+                            val isPickupOnly = items.any { it.customizedMeal.meal.isPickupOnly }
 
-                    // Обновляем инфо в стейте
-                    val newDeliveryInfo =
-                        if (isPickupOnly) {
-                            deliveryInfo.copy(
-                                deliveryType = DeliveryType.SELF_PICKUP,
-                                chosenAddress = null
+                            // Обновляем инфо в стейте
+                            val newDeliveryInfo =
+                                if (isPickupOnly) {
+                                    deliveryInfo.copy(
+                                        deliveryType = DeliveryType.SELF_PICKUP,
+                                        chosenAddress = null
+                                    )
+                                } else {
+                                    deliveryInfo
+                                }
+                            val newCartSummary = cartSummary.copy(
+                                items = items,
+                                containNotDiscountable = containNotDiscountable
                             )
-                        } else {
-                            deliveryInfo
+                            copy(
+                                cartSummary = newCartSummary,
+                                deliveryInfo = newDeliveryInfo,
+                                pickupPoint = pickupPoint,
+                                pickupOnly = isPickupOnly
+                            )
                         }
-                    val newCartSummary = cartSummary.copy(
-                        items = items,
-                        containNotDiscountable = containNotDiscountable
-                    )
-                    copy(
-                        cartSummary = newCartSummary,
-                        deliveryInfo = newDeliveryInfo,
-                        pickupPoint = pickupPoint,
-                        pickupOnly = isPickupOnly
-                    )
-                }
-                // вызываем перерасчёт скидки и стоимости доставки
-                recalculateCartSummary()
+                        // вызываем перерасчёт скидки и стоимости доставки
+                        recalculateCartSummary()
 
+                    }
+                }
             }
         }
     }
@@ -154,11 +158,11 @@ class OrderViewModel @Inject constructor(
     }
 
     private fun setAddress(address: Address) {
+        setState { copy(deliveryInfo = deliveryInfo.copy(chosenAddress = address)) }
         viewModelScope.launch {
             val deliveryZone = getDeliveryZone(address.point)
             setState {
                 val newDeliveryInfo = deliveryInfo.copy(
-                    chosenAddress = address,
                     deliveryZone = deliveryZone,
                 )
                 copy(deliveryInfo = newDeliveryInfo)
@@ -279,17 +283,17 @@ class OrderViewModel @Inject constructor(
                     val orderInfo = result.data
                     val status = result.data?.creationStatus
                     when (status) {
-                        InProgress -> {
+                        CreationStatus.IN_PROGRESS -> {
                             setLoading()
                             // Сохраняем orderId и начинаем наблюдение
                             observeOrderUntilSuccess(orderInfo.id)
                         }
 
-                        Success -> {
+                        CreationStatus.SUCCESS -> {
                             onSuccessOrderCreation(orderInfo.id)
                         }
 
-                        Error -> {
+                        CreationStatus.ERROR -> {
                             sendErrorEffect(
                                 result.data.errorInfo?.message ?: "Не удалось создать заказ"
                             )
@@ -318,11 +322,11 @@ class OrderViewModel @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         when (result.data?.creationStatus) {
-                            Success -> {
+                            CreationStatus.SUCCESS -> {
                                 onSuccessOrderCreation(orderId)
                             }
 
-                            Error -> {
+                            CreationStatus.ERROR -> {
                                 sendErrorEffect(
                                     result.data.errorInfo?.message ?: "Не удалось создать заказ"
                                 )
@@ -357,9 +361,11 @@ class OrderViewModel @Inject constructor(
 
     private fun onSuccessOrderCreation(id: String) {
         clearState()
-        clearCart()
         sendEffect(ShowSuccess(id))
         stopObservingOrderStatus()
+        viewModelScope.launch {
+            clearCart()
+        }
     }
 
     private fun sendErrorEffect(msg: String) {

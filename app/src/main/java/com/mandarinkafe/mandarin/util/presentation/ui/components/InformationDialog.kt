@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -8,7 +9,10 @@ import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 
 @Composable
-fun InformationDialog(textRes: Int, onDismiss: () -> Unit) {
+fun InformationDialog(
+    @StringRes textRes: Int,
+    onDismiss: () -> Unit
+) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = null,

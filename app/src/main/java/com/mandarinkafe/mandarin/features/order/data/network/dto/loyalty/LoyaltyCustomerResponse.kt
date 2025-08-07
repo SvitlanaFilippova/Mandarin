@@ -10,4 +10,3 @@ data class LoyaltyCustomerResponse(
     val maxDiscount: Int
         get() = categories.maxOfOrNull { it.name.toIntOrNull() ?: 0 } ?: 0
 }
-

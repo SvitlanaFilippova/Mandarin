@@ -19,10 +19,13 @@
     <string name="question_add_to_cart">Добавить в корзину ?</string>
     <string name="add_to_favorite">Добавить в избранное</string>
     <string name="remove_from_cart">Убрать из корзины</string>
+    <string name="comment_for_meal">Комментарий к блюду</string>
     <string name="cancel_removing">Вернуть</string>
     <string name="clear_cart_question">Очистить корзину?</string>
     <string name="clear_cart_confirmation">Вы действительно хотите удалить всё из корзины?</string>
     <string name="cart_total_cost_template">%d ₽</string>
+    <string name="float_price_template">%.2f ₽</string>
+    <string name="quantity_x_template">x%.0f</string>
 
     <!-- Избранное -->
     <string name="favorite">Избранное</string>
@@ -91,7 +94,6 @@
     <string name="delivery_request_validation">Нужно ввести адрес для расчёта стоимости доставки</string>
     <string name="delivery_validation_error">Не&#160;удалось найти выбранный адрес в&#160;пределах зон доставки. Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа.</string>
     <string name="submit_order">Оформить заказ</string>
-    <string name="order_total_cost_template">%.2f ₽</string>
     <string name="pickup_only">В&#160;заказе есть позиции, доступные только для самовывоза. Доставка невозможна.</string>
     <string name="pickup_both_title">Ваш заказ будет готов в&#160;двух точках самовывоза</string>
     <string name="pickup_both_description">В&#160;заказе есть блюда, которые готовятся в&#160;пиццерии, и&#160;те, что готовятся в&#160;основном кафе.
@@ -123,6 +125,28 @@
     <string name="address_type_other">Другое</string>
     <string name="addresses_hide">Скрыть</string>
     <string name="addresses_show_more">Показать ещё %1$d</string>
+
+    <!-- Оформление заказа -->
+    <string name="order">Заказ</string>
+    <string name="comment_template">Комментарий: %1$s</string>
+    <string name="order_need_to_be_confirmed">Заказ успешно создан. В&#160;ближайшее время оператор позвонит, чтобы подтвердить его.</string>
+
+    <!-- Статусы заказа -->
+    <string name="delivery_status_unconfirmed">Не подтверждён</string>
+    <string name="delivery_status_wait_cooking">Ожидает готовки</string>
+    <string name="delivery_status_ready_for_cooking">Готов к приготовлению</string>
+    <string name="delivery_status_cooking_started">Приготовление началось</string>
+    <string name="delivery_status_cooking_completed">Готово</string>
+    <string name="delivery_status_waiting">Ожидает курьера</string>
+    <string name="delivery_status_on_way">В пути</string>
+    <string name="delivery_status_delivered">Доставлено</string>
+    <string name="delivery_status_closed">Закрыт</string>
+    <string name="delivery_status_cancelled">Отменён</string>
+
+    <!-- Заголовки экранов -->
+    <string name="more_options">Ещё</string>
+    <string name="order_history">История заказов</string>
+    <string name="saved_addresses">Сохранённые адреса</string>
 
     <!-- Кнопки действий -->
     <string name="minus">-</string>

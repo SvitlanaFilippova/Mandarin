@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.isCustomizable
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
@@ -23,13 +24,13 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ToCartB
 fun FavoriteItemButtonRow(
     modifier: Modifier = Modifier,
     item: CustomizedMeal,
-    cartItems: Map<CustomizedMeal, Int>,
+    cartItems: List<CartItem>,
     onAddToCart: (CustomizedMeal) -> Unit,
     onRemoveFromCart: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
 
     ) {
-    val isInTheCart = cartItems.keys.any { it == item }
+    val isInTheCart = cartItems.any { it.customizedMeal == item }
     val totalPrice = item.totalPrice()
     val isCustomized = item.isCustomized
 
@@ -51,7 +52,7 @@ fun FavoriteItemButtonRow(
         }
 
         if (isInTheCart) {
-            val numberInCart = cartItems[item] ?: 0
+            val numberInCart = cartItems.firstOrNull { it.customizedMeal == item }?.quantity ?: 0
             CartControls(
                 totalPrice = totalPrice * numberInCart,
                 numberInCart = numberInCart,

@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components.buttons
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -18,7 +19,7 @@ fun ButtonWithText(
     modifier: Modifier = Modifier,
     shouldBeActive: Boolean = true,
     text: String = "",
-    textResID: Int? = null,
+    @StringRes textResID: Int? = null,
     onMissingRequiredInfo: () -> Unit = {},
     onClick: () -> Unit,
 ) {

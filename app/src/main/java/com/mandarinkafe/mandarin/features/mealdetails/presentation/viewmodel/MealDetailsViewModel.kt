@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
@@ -52,13 +53,25 @@ class MealDetailsViewModel @Inject constructor(
             is MealDetailsEvent.OnToCartClickBeforeMandatoryChoice -> sendEffect(
                 ShowRequiredModifiersDialog
             )
+
+            is MealDetailsEvent.SetComment -> setComment(event.text)
         }
     }
 
-    private fun setInitData(item: CustomizedMeal) {
-        setMeal(item)
-        if (item.meal.isAddable) {
-            getAddons(path = item.meal.categoryPath)
+    private fun setComment(text: String) {
+        setState { copy(comment = text) }
+    }
+
+    private fun setInitData(item: CartItem) {
+        viewModelScope.launch {
+            setState {
+                copy(customizedMeal = item.customizedMeal, comment = item.comment)
+            }
+            with(item.customizedMeal.meal) {
+                if (isAddable) {
+                    getAddons(path = categoryPath)
+                }
+            }
         }
     }
 
@@ -170,14 +183,6 @@ class MealDetailsViewModel @Inject constructor(
                 copy(
                     selectedTabIndex = newIndex,
                 )
-            }
-        }
-    }
-
-    private fun setMeal(item: CustomizedMeal) {
-        viewModelScope.launch {
-            setState {
-                copy(customizedMeal = item)
             }
         }
     }

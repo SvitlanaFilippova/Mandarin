@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel
 
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
@@ -14,7 +15,7 @@ import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SELECTED_FIRST_INDEX
 sealed interface MealDetailsContract {
     sealed interface MealDetailsEvent : BaseEvent {
         // Установка блюда при инициализации
-        data class SetInitItem(val item: CustomizedMeal) : MealDetailsEvent
+        data class SetInitItem(val item: CartItem) : MealDetailsEvent
 
         // Управление добавками
         data class ChangeAdds(val add: MealAdditional, val isChecked: Boolean) : MealDetailsEvent
@@ -30,6 +31,9 @@ sealed interface MealDetailsContract {
         // Навигация по категориям
         data class ChooseCategory(val newIndex: Int) : MealDetailsEvent
 
+        // Комментарий
+        data class SetComment(val text: String) : MealDetailsEvent
+
         // Обработка действий с корзиной
         data object OnToCartClickBeforeMandatoryChoice : MealDetailsEvent
     }
@@ -43,6 +47,7 @@ sealed interface MealDetailsContract {
         val isLoading: Boolean = false,
         val error: UiError? = null,
         val customizedMeal: CustomizedMeal? = null,
+        val comment: String = "",
         val addons: List<MealAdditionalCategory> = emptyList(),
         val errorMessage: String? = null,
         val selectedTabIndex: Int = DEFAULT_SELECTED_FIRST_INDEX,

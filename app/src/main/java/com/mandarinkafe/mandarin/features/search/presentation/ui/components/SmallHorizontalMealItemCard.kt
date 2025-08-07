@@ -22,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -36,7 +36,7 @@ fun SmallHorizontalMealItemCard(
     modifier: Modifier = Modifier,
     meal: Meal,
     favoriteIds: Set<String>,
-    cartItems: Map<CustomizedMeal, Int>,
+    cartItems: List<CartItem>,
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,

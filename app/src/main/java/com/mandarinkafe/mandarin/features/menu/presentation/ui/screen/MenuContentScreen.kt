@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
@@ -24,7 +24,7 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 @Composable
 fun MenuContentScreen(
     listState: LazyListState,
-    cartItems: Map<CustomizedMeal, Int>,
+    cartItems: List<CartItem>,
     menuItems: List<MenuItem>,
     banners: List<Banner>,
     bannersAreLoading: Boolean,

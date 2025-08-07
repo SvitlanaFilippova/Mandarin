@@ -6,5 +6,5 @@ data class MealAdditionalCategory(
     val id: String,
     val name: String,
     val categoryPath: List<String>,
-    val items: List<MealAdditional>?,
+    val items: List<MealAdditional>,
 )

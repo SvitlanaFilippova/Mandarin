@@ -29,8 +29,8 @@ import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.vi
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsViewModel
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.ApartmentDetails
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.LocationIcon
-import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
+import com.mandarinkafe.mandarin.navigation.extensions.tryGetBackStackEntry
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_ADDRESS_ID
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
@@ -40,6 +40,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.BigButt
 @Composable
 fun AddressDetailsScreen(
     initAddress: Address?,
+    backTarget: String,
     isEditMode: Boolean,
     viewModel: AddressDetailsViewModel = hiltViewModel(),
     navController: NavHostController
@@ -57,16 +58,21 @@ fun AddressDetailsScreen(
 
     var showConfirmDeleteDialog by remember { mutableStateOf(false) }
 
-    val parentEntry = remember(navController.currentBackStackEntry) {
-        navController.getBackStackEntry(ORDER_SCREEN_ROUTE)
-    }
-    val parentSavedStateHandle = parentEntry.savedStateHandle
-    val backToOrderScreen: (String?) -> Unit =
+    val targetEntry = navController.tryGetBackStackEntry(backTarget)
+
+    val backToParentScreen: (String?) -> Unit = if (targetEntry != null) {
         { shouldSelectId ->
-            parentSavedStateHandle[SHOULD_REFRESH_ADDRESSES_KEY] = true
-            parentSavedStateHandle[SHOULD_SELECT_ADDRESS_ID] = shouldSelectId
-            navController.popBackStack(ORDER_SCREEN_ROUTE, inclusive = false)
+            targetEntry.savedStateHandle[SHOULD_REFRESH_ADDRESSES_KEY] = true
+            targetEntry.savedStateHandle[SHOULD_SELECT_ADDRESS_ID] = shouldSelectId
+
+            navController.popBackStack(backTarget, inclusive = false)
         }
+    } else {
+        { _ ->
+            navController.popBackStack()
+        }
+    }
+
     val noNeedAddressDetails =
         remember(state.address.addressType) { state.address.noNeedAddressDetails }
 
@@ -97,20 +103,20 @@ fun AddressDetailsScreen(
         )
 
         // Поле для ввода деталей адреса. Показывается только если выбран способ доставки в квартиру
-            with(state.address) {
-                ApartmentDetails(
-                    visible = !noNeedAddressDetails,
-                    isError = isError,
-                    apartmentNumberQuery = apartmentNumber,
-                    apartmentEntranceQuery = entrance,
-                    apartmentFloorQuery = floor,
-                    apartmentIntercomQuery = intercom,
-                    onApartmentNumberEntered = { onEvent(AddressDetailsEvent.SetApartmentNumber(it)) },
-                    onEntranceEntered = { onEvent(AddressDetailsEvent.SetEntrance(it)) },
-                    onFloorEntered = { onEvent(AddressDetailsEvent.SetFloor(it)) },
-                    onIntercomEntered = { onEvent(AddressDetailsEvent.SetIntercom(it)) }
-                )
-            }
+        with(state.address) {
+            ApartmentDetails(
+                visible = !noNeedAddressDetails,
+                isError = isError,
+                apartmentNumberQuery = apartmentNumber,
+                apartmentEntranceQuery = entrance,
+                apartmentFloorQuery = floor,
+                apartmentIntercomQuery = intercom,
+                onApartmentNumberEntered = { onEvent(AddressDetailsEvent.SetApartmentNumber(it)) },
+                onEntranceEntered = { onEvent(AddressDetailsEvent.SetEntrance(it)) },
+                onFloorEntered = { onEvent(AddressDetailsEvent.SetFloor(it)) },
+                onIntercomEntered = { onEvent(AddressDetailsEvent.SetIntercom(it)) }
+            )
+        }
         Spacer(Modifier.height(Dimens.MarginSmall8))
         // Опциональное поле для примечания к адресу
         MyTextField(
@@ -144,7 +150,7 @@ fun AddressDetailsScreen(
                 },
                 onSubmit = {
                     onEvent(AddressDetailsEvent.SaveAddress)
-                    backToOrderScreen(state.address.id)
+                    backToParentScreen(state.address.id)
 
                 },
                 activeContainerColor = Colors.Orange
@@ -159,7 +165,7 @@ fun AddressDetailsScreen(
             onConfirm = {
                 showConfirmDeleteDialog = false
                 onEvent(AddressDetailsEvent.RemoveAddress)
-                backToOrderScreen(null)
+                backToParentScreen(null)
 
             },
             onDismiss = {

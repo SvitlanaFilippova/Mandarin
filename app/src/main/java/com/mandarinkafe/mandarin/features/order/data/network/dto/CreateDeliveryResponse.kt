@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.features.order.data.network.dto
 
 import com.mandarinkafe.mandarin.core.data.dto.Response
-import com.mandarinkafe.mandarin.core.data.dto.order.OrderInfoDto
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.OrderInfoResponseDto
 
 data class CreateDeliveryResponse(
     val correlationId: String,
-    val orderInfo: OrderInfoDto
+    val orderInfo: OrderInfoResponseDto
 ) : Response()

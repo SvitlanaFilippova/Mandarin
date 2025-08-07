@@ -2,10 +2,11 @@ package com.mandarinkafe.mandarin.features.cart.data.impl
 
 import com.mandarinkafe.mandarin.core.data.dto.CsvResponse
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
+import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toDomain
 import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendsSchemaDto
-import com.mandarinkafe.mandarin.features.cart.domain.CartMapper.toDomain
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
 import com.mandarinkafe.mandarin.features.cart.domain.model.RecommendsSchemaRule
+import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 
@@ -14,23 +15,24 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
     override suspend fun getRecommendsSchema(): Resource<List<RecommendsSchemaRule>> {
         val response = networkClient.getRecommendations()
 
-        return if (response.resultCode == NO_CONNECTION) {
-            Resource.ErrorNoInternet()
-        } else {
-            val csvText = (response as CsvResponse).csv
-            if (csvText == null) {
-                Resource.ErrorOther("Нет валидной схемы")
-            } else {
-                val recommendsSchemaDto = parseCsv(csvText)
-                if (recommendsSchemaDto.isEmpty()) {
-                    Resource.ErrorOther("Нет валидной схемы")
-                } else {
-                    val result = recommendsSchemaDto.map { it.toDomain() }
-                    Resource.Success(result)
-                }
-            }
+        if (response.resultCode == NO_CONNECTION) {
+            return Resource.ErrorNoInternet()
         }
 
+        if (response.resultCode != HTTP_SUCCESS) {
+            return Resource.ErrorEmptyData()
+        }
+
+        val csvText = (response as CsvResponse).csv
+            ?: return Resource.ErrorOther("Нет валидной схемы")
+
+        val recommendsSchemaDto = parseCsv(csvText)
+        if (recommendsSchemaDto.isEmpty()) {
+            return Resource.ErrorOther("Нет валидной схемы")
+        }
+
+        val result = recommendsSchemaDto.map { it.toDomain() }
+        return Resource.Success(result)
     }
 
     private fun parseCsv(csv: String): List<RecommendsSchemaDto> {

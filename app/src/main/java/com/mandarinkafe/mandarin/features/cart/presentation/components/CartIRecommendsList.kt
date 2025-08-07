@@ -7,17 +7,16 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.id
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.util.Constants
 
 @Composable
 fun CartRecommendsList(
-    recommendsList: List<CustomizedMeal>,
-    onAddToCart: (CustomizedMeal) -> Unit,
-    onMealDetailsClick: (CustomizedMeal) -> Unit,
+    recommendsList: List<Meal>,
+    onAddToCart: (Meal) -> Unit,
+    onMealDetailsClick: (Meal) -> Unit,
     modifier: Modifier,
 ) {
     LazyRow(
@@ -31,7 +30,7 @@ fun CartRecommendsList(
         ) { item ->
             CartRecommendsItemCard(
                 modifier = Modifier.animateItem(tween(Constants.ANIMATION_DURATION_FAST)),
-                item = item,
+                meal = item,
                 onAddToCart = onAddToCart,
                 onMealDetailsClick = onMealDetailsClick,
             )

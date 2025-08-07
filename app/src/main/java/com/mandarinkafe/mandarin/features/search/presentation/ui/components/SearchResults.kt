@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -18,7 +18,7 @@ fun SearchResults(
     latestSearchText: String,
     favoriteIds: Set<String>,
     onSearchDismiss: () -> Unit,
-    cartItems: Map<CustomizedMeal, Int>,
+    cartItems: List<CartItem>,
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,

@@ -6,7 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.navigation.NavController
-import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
+import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
 import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMealDetails
@@ -33,9 +33,8 @@ fun HandleEffects(
 
                 is SharedEffect.OpenMealDetailsBS -> {
                     navController.navigateToMealDetails(
-                        meal = effect.item
-                            ?: effect.meal?.toCustomizedMeal()
-                            ?: return@collect,
+                        item = effect.cartItem ?: effect.item?.toCartItem()
+                        ?: effect.meal?.toCartItem() ?: return@collect,
                         isEditMode = effect.isEditMode
                     )
                 }

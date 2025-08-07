@@ -35,6 +35,7 @@ fun MealDetailsContentScreen(
     onAddToCart: () -> Unit,
     onEdit: () -> Unit,
     onToggleFavorite: () -> Unit,
+    comment: String,
 ) {
     val meal = remember(customizedMeal) { customizedMeal.meal }
     val chosenModifiers = remember(customizedMeal) { customizedMeal.modifiers }
@@ -76,7 +77,8 @@ fun MealDetailsContentScreen(
                 addons = addons,
                 chosenModifiers = chosenModifiers,
                 onMakeMoreDeliciousClick = onMakeMoreDeliciousClick,
-                onEvent = onEvent
+                onEvent = onEvent,
+                comment = comment,
             )
 
             // Кнопка "В корзину", закреплённая внизу

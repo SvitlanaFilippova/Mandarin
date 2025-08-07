@@ -39,6 +39,7 @@ object Constants {
     const val ANIMATION_REPEAT_NUMBER = 5
     const val ANIMATION_BOUNCE_STEP = 25f
     const val ANIMATION_BOUNCE_MODIFIER = 4
+    const val MIN_MODIFIER_LIMIT_TO_IGNORE = 50
 
     // common UI
     const val MAP_ANIMATION_DURATION = 1f
@@ -68,6 +69,7 @@ object Constants {
     const val PIN_INDICATOR_Y_OFFSET_FACTOR = 0.09f
 
     // DI
+    const val DATABASE_NAME = "mandarin.db"
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
     const val LOCAL_STORAGE_NAME = "local_storage"
     const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/spreadsheets/d/e/"

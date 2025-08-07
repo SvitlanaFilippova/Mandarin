@@ -16,7 +16,7 @@ class GetInitialDataUseCaseImpl(
         menuCache.fetchMenuIfNeeded()
         bannersRepository.loadBannersCsv()
 
-        return menuCache.menu.map { result ->
+        return menuCache.visibleMenu.map { result ->
             when (result) {
                 is Resource.Success -> {
                     val filtered = result.data?.filterNot { it.isHidden }

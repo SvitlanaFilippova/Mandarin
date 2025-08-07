@@ -50,6 +50,8 @@ fun String.applyTypography(): String {
         .replace(Regex(""",(?=\S)"""), ", ")
         // Удаление пробелов в начале и конце строки
         .trim()
+        // Удаление запятой в конце строки
+        .replace(Regex(""",\s*$"""), "")
         // Первая заглавная буква
         .replaceFirstChar { it.uppercaseChar() }
 }

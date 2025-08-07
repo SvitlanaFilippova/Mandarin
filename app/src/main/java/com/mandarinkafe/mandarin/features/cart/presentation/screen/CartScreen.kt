@@ -41,10 +41,6 @@ fun CartScreen(
     val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
     var showClearCartDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        onCartEvent(CartEvent.Init)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,7 +66,7 @@ fun CartScreen(
                     favorites = favorites,
                     onClearCart = { onCartEvent(CartEvent.ClearCart) },
                     onAddToCart = { item -> onCartEvent(CartEvent.AddToCart(item)) },
-                    onRemoveFromCart = { item -> onCartEvent(CartEvent.RemoveFromCartWithDelay(item)) },
+                    onRemoveFromCart = { item -> onCartEvent(CartEvent.OnReduceWithDelay(item)) },
                     onDeletionCancel = { item -> onCartEvent(CartEvent.CancelRemove(item)) },
                     onToggleFavorite = { item -> onSharedEvent(SharedEvent.ToggleFavorite(item = item)) },
                     onShowFavoriteDialog = { item ->
@@ -80,9 +76,23 @@ fun CartScreen(
                             )
                         )
                     },
-                    onMealDetailsClick = { item -> onSharedEvent(SharedEvent.OnMealDetailsClick(item = item)) },
+                    onMealDetailsClick = { item ->
+                        onSharedEvent(
+                            SharedEvent.OnMealDetailsClick(
+                                cartItem = item
+                            )
+                        )
+                    },
                     onEditMealClick = { item -> onSharedEvent(SharedEvent.OnEditMealClick(item = item)) },
                     onProceedOrderClick = { onCartEvent(CartEvent.OnProceedOrderClick) },
+                    onCommentAdded = { item, text ->
+                        onCartEvent(
+                            CartEvent.AddCommentToItem(
+                                item,
+                                text
+                            )
+                        )
+                    },
                 )
             }
         }
@@ -112,8 +122,6 @@ fun CartScreen(
                     is CartEffect.ProceedOrder -> {
                         navController.navigateToOrder()
                     }
-
-                    else -> {}
                 }
             }
         }
