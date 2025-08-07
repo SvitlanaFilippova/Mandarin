@@ -13,14 +13,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
+import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
-import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrderConfirmation
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrderInfo
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_ADDRESS_ID
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
@@ -43,9 +45,7 @@ fun OrderScreen(
     var showAllAddresses by remember { mutableStateOf(false) }
 
     // для корректного возврата с экрана добавления адреса
-    val currentBackStackEntry = remember(navController) {
-        navController.currentBackStackEntry
-    }
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
     ObserveNavBackstack(
         savedStateHandle = currentBackStackEntry?.savedStateHandle,
@@ -112,13 +112,17 @@ private fun HandleOrderEffects(
             when (effect) {
                 is OrderEffect.AddNewAddress -> navController.navigateToAddress()
                 is OrderEffect.EditAddress ->
-                    navController.navigateToAddressDetails(effect.address, isEditMode = true)
+                    navController.navigateToAddressDetails(
+                        effect.address,
+                        isEditMode = true,
+                        backTargetRoute = NavConstants.ORDER_SCREEN_ROUTE
+                    )
 
                 is OrderEffect.ShowError ->
                     snackbarHostState.showSnackbar("Ошибка: ${effect.message}")
 
                 is OrderEffect.ShowSuccess ->
-                    navController.navigateToOrderConfirmation(effect.orderId)
+                    navController.navigateToOrderInfo(effect.orderId)
             }
         }
     }
@@ -129,21 +133,34 @@ private fun ObserveNavBackstack(
     savedStateHandle: SavedStateHandle?,
     onEvent: (OrderEvent) -> Unit
 ) {
-    LaunchedEffect(savedStateHandle) {
-        savedStateHandle?.getLiveData<Boolean>(SHOULD_REFRESH_ADDRESSES_KEY)
-            ?.observeForever { shouldRefresh ->
-                if (shouldRefresh == true) {
-                    onEvent(OrderEvent.RefreshAddresses)
-                    savedStateHandle[SHOULD_REFRESH_ADDRESSES_KEY] = false
-                }
-            }
+    val shouldRefreshFlow = remember(savedStateHandle) {
+        savedStateHandle?.getStateFlow(SHOULD_REFRESH_ADDRESSES_KEY, false)
+    }
 
-        savedStateHandle?.getLiveData<String>(SHOULD_SELECT_ADDRESS_ID)
-            ?.observeForever { id ->
-                if (id != null) {
-                    onEvent(OrderEvent.SelectAddressById(id))
-                    savedStateHandle[SHOULD_SELECT_ADDRESS_ID] = null
-                }
-            }
+    val selectedAddressIdFlow = remember(savedStateHandle) {
+        savedStateHandle?.getStateFlow<String?>(SHOULD_SELECT_ADDRESS_ID, null)
+    }
+
+    val shouldRefresh by shouldRefreshFlow?.collectAsState() ?: remember { mutableStateOf(false) }
+    val selectedAddressId by selectedAddressIdFlow?.collectAsState() ?: remember {
+        mutableStateOf(
+            null
+        )
+    }
+
+    // Реагируем на refresh
+    LaunchedEffect(shouldRefresh) {
+        if (shouldRefresh) {
+            onEvent(OrderEvent.RefreshAddresses)
+            savedStateHandle?.set(SHOULD_REFRESH_ADDRESSES_KEY, false)
+        }
+    }
+
+    // Реагируем на выбор адреса
+    LaunchedEffect(selectedAddressId) {
+        selectedAddressId?.let { id ->
+            onEvent(OrderEvent.SelectAddressById(id))
+            savedStateHandle?.set(SHOULD_SELECT_ADDRESS_ID, null)
+        }
     }
 }

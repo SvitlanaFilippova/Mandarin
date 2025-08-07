@@ -1,36 +1,29 @@
 package com.mandarinkafe.mandarin.features.cart.data.local
 
 import android.util.Log
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
 import com.mandarinkafe.mandarin.db.CartItemsQueries
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toParams
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SQLDelightCartStorage @Inject constructor(private val queries: CartItemsQueries) :
     CartStorage {
-    override fun observeCartItems(): Flow<List<StoredCartItem>> = flow {
-        try {
-            emitAll(
+    override suspend fun getCartItems(): List<StoredCartItem> {
+        return try {
+            withContext(Dispatchers.IO) {
                 queries.selectAll()
-                    .asFlow()
-                    .mapToList(Dispatchers.IO)
-                    .map { rows -> rows.map { it.toStoredCartItem() } }
-            )
+                    .executeAsList()
+                    .map { it.toStoredCartItem() }
+            }
         } catch (e: Exception) {
             withContext(Dispatchers.IO) {
                 queries.deleteAll()
             }
-            Log.d("Error CartStorage", "Ошибка при получении корзины из БД. Очищаю корзину.$e")
-            emit(emptyList())
+            Log.d("Error CartStorage", "Ошибка при получении корзины из БД. Очищаю корзину. $e")
+            emptyList()
         }
     }
 

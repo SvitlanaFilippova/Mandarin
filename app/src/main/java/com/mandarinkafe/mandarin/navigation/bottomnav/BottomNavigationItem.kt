@@ -5,10 +5,10 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.navigation.NavConstants
 
 sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val route: String) {
-    object Confirm : BottomNavigationItem(
-        R.string.order,
-        R.drawable.ic_edit,
-        NavConstants.ORDER_CONFIRMATION_ROUTE
+    object Other : BottomNavigationItem(
+        R.string.more_options,
+        R.drawable.ic_more,
+        NavConstants.MORE_MENU_SCREEN_ROUTE
     )
 
     object Menu : BottomNavigationItem(

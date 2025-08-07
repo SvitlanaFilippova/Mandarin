@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
-
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract.SearchEffect

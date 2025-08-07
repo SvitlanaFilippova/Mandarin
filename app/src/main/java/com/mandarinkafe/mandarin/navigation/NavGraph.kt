@@ -18,18 +18,21 @@ import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.screen.AddressMapScreen
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.AddressDetailsScreen
+import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.screen.SavedAddressesScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.screen.CartScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.screen.MenuScreen
+import com.mandarinkafe.mandarin.features.more.presentation.ui.screen.MoreMenuScreen
 import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScreen
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
-import com.mandarinkafe.mandarin.features.orderconfirmation.presentation.ui.screen.OrderConfirmationScreen
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen.OrderInfoScreen
+import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.screen.OrdersHistoryScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.navigation.extensions.boolNavArg
 import com.mandarinkafe.mandarin.navigation.extensions.decodeJsonArg
-import com.mandarinkafe.mandarin.navigation.extensions.jsonNavArg
+import com.mandarinkafe.mandarin.navigation.extensions.stringNavArg
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
 
@@ -104,7 +107,7 @@ fun NavGraph(navHostController: NavHostController) {
             bottomSheet(
                 route = NavConstants.MEAL_DETAILS_ROUTE_WITH_ARGS,
                 arguments = listOf(
-                    jsonNavArg(NavConstants.KEY_MEAL_JSON),
+                    stringNavArg(NavConstants.KEY_MEAL_JSON),
                     boolNavArg(NavConstants.KEY_IS_EDIT_MODE)
                 )
             ) { backStackEntry ->
@@ -128,7 +131,7 @@ fun NavGraph(navHostController: NavHostController) {
             composable(
                 route = NavConstants.ADDRESS_SCREEN_ROUTE_WITH_ARGS,
                 arguments = listOf(
-                    jsonNavArg(NavConstants.KEY_ADDRESS_JSON)
+                    stringNavArg(NavConstants.KEY_ADDRESS_JSON)
                 )
             ) { backStackEntry ->
                 val address =
@@ -139,18 +142,23 @@ fun NavGraph(navHostController: NavHostController) {
             composable(
                 route = NavConstants.ADDRESS_DETAILS_ROUTE_WITH_ARGS,
                 arguments = listOf(
-                    jsonNavArg(NavConstants.KEY_ADDRESS_JSON),
-                    boolNavArg(NavConstants.KEY_IS_EDIT_MODE)
+                    stringNavArg(NavConstants.KEY_ADDRESS_JSON),
+                    boolNavArg(NavConstants.KEY_IS_EDIT_MODE),
+                    stringNavArg(NavConstants.KEY_BACK_TARGET),
                 )
             ) { backStackEntry ->
                 val isEditMode =
                     backStackEntry.arguments?.getBoolean(NavConstants.KEY_IS_EDIT_MODE) == true
                 val address =
                     backStackEntry.decodeJsonArg<Address>(NavConstants.KEY_ADDRESS_JSON, gson)
+                val backTarget =
+                    backStackEntry.arguments?.getString(NavConstants.KEY_BACK_TARGET) ?: ""
+
                 AddressDetailsScreen(
                     isEditMode = isEditMode,
                     initAddress = address,
-                    navController = navHostController
+                    navController = navHostController,
+                    backTarget = backTarget
                 )
             }
             composable(NavConstants.ORDER_SCREEN_ROUTE) {
@@ -161,7 +169,7 @@ fun NavGraph(navHostController: NavHostController) {
             }
 
             composable(
-                route = NavConstants.ORDER_CONFIRMATION_ROUTE_WITH_ARGS,
+                route = NavConstants.ORDER_INFO_ROUTE_WITH_ARGS,
                 arguments = listOf(
                     navArgument(NavConstants.KEY_ORDER_ID) {
                         type = NavType.StringType
@@ -172,18 +180,27 @@ fun NavGraph(navHostController: NavHostController) {
                 val orderId = backStackEntry.arguments?.getString(NavConstants.KEY_ORDER_ID) ?: ""
                 val requireConfirmation =
                     backStackEntry.arguments?.getBoolean(NavConstants.KEY_REQUIRE_CONFIRMATION) == true
-                OrderConfirmationScreen(
+                OrderInfoScreen(
                     orderID = orderId,
                     requireConfirmation = requireConfirmation,
                     navController = navHostController
                 )
             }
 
-            composable(NavConstants.ORDER_CONFIRMATION_ROUTE) {
-                OrderConfirmationScreen(
-                    orderID = "a0575ae7-a987-40f6-bbfa-41d8382b5255",
+            composable(NavConstants.MORE_MENU_SCREEN_ROUTE) {
+                MoreMenuScreen(
                     navController = navHostController,
-                    requireConfirmation = true,
+                )
+            }
+
+            composable(NavConstants.ORDERS_HISTORY_ROUTE) {
+                OrdersHistoryScreen(
+                    navController = navHostController,
+                )
+            }
+            composable(NavConstants.SAVED_ADDRESSES_ROUTE) {
+                SavedAddressesScreen(
+                    navController = navHostController,
                 )
             }
         }

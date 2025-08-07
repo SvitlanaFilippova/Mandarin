@@ -143,6 +143,11 @@
     <string name="delivery_status_closed">Закрыт</string>
     <string name="delivery_status_cancelled">Отменён</string>
 
+    <!-- Заголовки экранов -->
+    <string name="more_options">Ещё</string>
+    <string name="order_history">История заказов</string>
+    <string name="saved_addresses">Сохранённые адреса</string>
+
     <!-- Кнопки действий -->
     <string name="minus">-</string>
     <string name="plus">+</string>

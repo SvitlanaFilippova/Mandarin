@@ -11,7 +11,7 @@ import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.toD
 import com.mandarinkafe.mandarin.features.order.domain.api.OrderRepository
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
-import com.mandarinkafe.mandarin.features.orderconfirmation.data.toDomain
+import com.mandarinkafe.mandarin.features.orderinfo.data.toDomain
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource

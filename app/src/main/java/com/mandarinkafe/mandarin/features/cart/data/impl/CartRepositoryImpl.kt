@@ -21,9 +21,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Singleton
 class CartRepositoryImpl @Inject constructor(
@@ -31,68 +32,44 @@ class CartRepositoryImpl @Inject constructor(
     private val menuCache: MenuCache,
 ) : CartWriter, CartReader {
 
-    private val _cartCount = MutableStateFlow(0)
-    override fun observeCartItemsCount(): Flow<Int> = _cartCount.asStateFlow()
-
-    private val _cartItems = MutableStateFlow<Resource<List<CartItem>>>(Resource.Idle())
-    override fun observeCartItems(): Flow<Resource<List<CartItem>>> = _cartItems.asStateFlow()
-
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    private var cartItems: List<CartItem> = emptyList()
+    private val _cartItems = MutableStateFlow<Resource<List<CartItem>>>(Resource.Idle())
+    private val _cartCount = MutableStateFlow(0)
+
+    override fun observeCartItems(): Flow<Resource<List<CartItem>>> = _cartItems.asStateFlow()
+    override fun observeCartItemsCount(): Flow<Int> = _cartCount.asStateFlow()
+
     init {
-        observeCartWithMenu()
-    }
-
-    private fun observeCartWithMenu() {
         scope.launch {
-            combine(
-                storage.observeCartItems(),
-                menuCache.fullMenu
-                    .filter { it !is Resource.Loading && it !is Resource.Idle }
-            ) { rawCart, menuResource ->
-                rawCart to menuResource
-            }.collect { (rawCart, menuResource) ->
-                _cartItems.value = when (menuResource) {
-                    is Resource.Success -> {
-                        val menu = menuResource.data.orEmpty()
-                        val (validItems, _) = mapAndValidate(rawCart, menu)
-                        _cartCount.value = validItems.sumOf { it.quantity }
-                        Resource.Success(validItems)
-                    }
-
-                    is Resource.ErrorNoInternet -> {
-                        _cartCount.value = 0
-                        Resource.ErrorNoInternet()
-                    }
-
-                    is Resource.ErrorEmptyData -> {
-                        _cartCount.value = 0
-                        Resource.ErrorEmptyData()
-                    }
-
-                    is Resource.ErrorOther -> {
-                        _cartCount.value = 0
-                        Resource.ErrorOther(menuResource.message ?: "Unknown error")
-                    }
-
-                    is Resource.Loading -> {
-                        Resource.Loading()
-                    }
-
-                    is Resource.Idle -> {
-                        Resource.Idle()
-                    }
-                }
+            // 1. Получаем корзину из storage один раз
+            val storedCartItems = try {
+                storage.getCartItems()
+            } catch (e: Exception) {
+                Log.e(ERROR_TAG, "Ошибка при чтении корзины из storage", e)
+                emptyList()
             }
+
+            // 2. Ждём первое успешное меню
+            menuCache.fullMenu
+                .filterIsInstance<Resource.Success<List<MealCategory>>>()
+                .firstOrNull()
+                ?.let { menuResource ->
+                    val menu = menuResource.data.orEmpty()
+                    val validItems = mapAndValidate(storedCartItems, menu)
+                    cartItems = validItems
+                    _cartItems.value = Resource.Success(validItems)
+                    _cartCount.value = validItems.sumOf { it.quantity }
+                }
         }
     }
 
     private fun mapAndValidate(
         raw: List<StoredCartItem>,
         menu: List<MealCategory>
-    ): Pair<List<CartItem>, List<String>> {
+    ): List<CartItem> {
         val valid = mutableListOf<CartItem>()
-        val invalid = mutableListOf<String>()
 
         val allMeals = menu.flatMap { category ->
             category.meals.orEmpty() +
@@ -102,7 +79,6 @@ class CartRepositoryImpl @Inject constructor(
         for (item in raw) {
             val baseMeal = allMeals[item.mealId]
             if (baseMeal == null) {
-                invalid += item.mealId
                 continue
             }
 
@@ -120,24 +96,48 @@ class CartRepositoryImpl @Inject constructor(
                 )
             } catch (e: Exception) {
                 Log.e(ERROR_TAG, "Mapping failed for item: $item", e)
-                invalid += item.mealId
             }
         }
-
-        return valid to invalid
+        return valid
     }
 
     override suspend fun addOrUpdateItem(item: CartItem) {
-        storage.addOrUpdateItem(item.toStoredCartItem())
+        val updated = cartItems.toMutableList()
+        val index = updated.indexOfFirst { it.id == item.id }
+        if (index != -1) {
+            updated[index] = item
+        } else {
+            updated.add(item)
+        }
+        cartItems = updated
+
+        withContext(Dispatchers.Main) {
+            _cartItems.value = Resource.Success(cartItems)
+            _cartCount.value = cartItems.sumOf { it.quantity }
+        }
+
+        val stored = item.toStoredCartItem()
+        storage.addOrUpdateItem(stored)
     }
 
     override suspend fun deleteItemById(id: String) {
+        cartItems = cartItems.filterNot { it.id == id }
+
+        withContext(Dispatchers.Main) {
+            _cartItems.value = Resource.Success(cartItems)
+            _cartCount.value = cartItems.sumOf { it.quantity }
+        }
         storage.deleteItemById(id)
     }
 
     override suspend fun clearCart() {
+        cartItems = emptyList()
+
+        withContext(Dispatchers.Main) {
+            _cartItems.value = Resource.Success(emptyList())
+            _cartCount.value = 0
+        }
         storage.clearCart()
-        _cartItems.value = Resource.Success(emptyList())
     }
 
     companion object {
