@@ -42,7 +42,7 @@ fun FavoritesContent(
     Text(
         modifier = Modifier.padding(Dimens.MarginSmall8),
         text = stringResource(R.string.favorite),
-        style = Typography.MenuSubCategoryStyle,
+        style = Typography.TitleStyle,
     )
 
     LazyColumn(

@@ -17,7 +17,11 @@ fun HandleAddressEffects(
             when (effect) {
                 is AddressEffect.GoBack -> navController.popBackStack()
                 is AddressEffect.GoToAddressDetailsEffect -> {
-                    navController.navigateToAddressDetails(effect.address)
+                    navController.navigateToAddressDetails(
+                        address = effect.address,
+                        isEditMode = false,
+                        backTargetRoute = "",
+                    )
                 }
             }
         }

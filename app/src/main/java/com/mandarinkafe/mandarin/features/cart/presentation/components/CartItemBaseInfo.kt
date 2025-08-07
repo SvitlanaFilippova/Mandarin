@@ -1,5 +1,10 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -105,7 +110,11 @@ fun CartItemBaseInfo(
                     )
             }
             // Комментарий
-            if (item.comment.isNotEmpty())
+            AnimatedVisibility(
+                visible = item.comment.isNotEmpty(),
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -114,6 +123,8 @@ fun CartItemBaseInfo(
                     style = Typography.MealSmallTextStyle,
                     color = contentColor,
                 )
+            }
+
         }
 
         // Кнопка "Добавить комментарий"

@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toDomain
 import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendsSchemaDto
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
 import com.mandarinkafe.mandarin.features.cart.domain.model.RecommendsSchemaRule
+import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 
@@ -13,24 +14,26 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
     RecommendsSchemaRepository {
     override suspend fun getRecommendsSchema(): Resource<List<RecommendsSchemaRule>> {
         val response = networkClient.getRecommendations()
-
         return if (response.resultCode == NO_CONNECTION) {
             Resource.ErrorNoInternet()
         } else {
-            val csvText = (response as CsvResponse).csv
-            if (csvText == null) {
-                Resource.ErrorOther("Нет валидной схемы")
-            } else {
-                val recommendsSchemaDto = parseCsv(csvText)
-                if (recommendsSchemaDto.isEmpty()) {
+            if (response.resultCode == HTTP_SUCCESS) {
+                val csvText = (response as CsvResponse).csv
+                if (csvText == null) {
                     Resource.ErrorOther("Нет валидной схемы")
                 } else {
-                    val result = recommendsSchemaDto.map { it.toDomain() }
-                    Resource.Success(result)
+                    val recommendsSchemaDto = parseCsv(csvText)
+                    if (recommendsSchemaDto.isEmpty()) {
+                        Resource.ErrorOther("Нет валидной схемы")
+                    } else {
+                        val result = recommendsSchemaDto.map { it.toDomain() }
+                        Resource.Success(result)
+                    }
                 }
+            } else {
+                Resource.ErrorEmptyData()
             }
         }
-
     }
 
     private fun parseCsv(csv: String): List<RecommendsSchemaDto> {

@@ -92,7 +92,10 @@ fun OutgoingOrder.toOrderDto(): OutgoingOrderDto {
 
 fun List<CartItem>.toOrderItemsRequest(discountCategory: Int): List<OutgoingOrderItem> {
     return this.flatMap { item ->
-        val mealItem = item.customizedMeal.toOutgoingOrderItem(item.quantity, discountCategory)
+        val mealItem = item.customizedMeal.toOutgoingOrderItem(
+            quantity = item.quantity,
+            discountSize = discountCategory, comment = item.comment
+        )
         val addsItems =
             item.customizedMeal.adds.map { add ->
                 add.toOutgoingOrderItem(
@@ -104,7 +107,11 @@ fun List<CartItem>.toOrderItemsRequest(discountCategory: Int): List<OutgoingOrde
     }
 }
 
-fun CustomizedMeal.toOutgoingOrderItem(quantity: Int, discountSize: Int): OutgoingOrderItem {
+fun CustomizedMeal.toOutgoingOrderItem(
+    quantity: Int,
+    discountSize: Int,
+    comment: String
+): OutgoingOrderItem {
     val discountMultiplier =
         (OrderConstants.FULL_PERCENT - discountSize) / OrderConstants.FULL_PERCENT_DOUBLE
 
@@ -122,6 +129,7 @@ fun CustomizedMeal.toOutgoingOrderItem(quantity: Int, discountSize: Int): Outgoi
         price = discountedPrice,
         amount = quantity.toDouble(),
         type = meal.orderItemType,
+        comment = comment
     )
 }
 

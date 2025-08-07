@@ -139,6 +139,7 @@ class CartViewModel @Inject constructor(
                 customizedMeal = customizedMeal,
                 meal = meal
             )
+            delay(REMOVE_FROM_PENDING_DELETION_DELAY)
             item?.let {
                 setState {
                     copy(
@@ -290,6 +291,7 @@ class CartViewModel @Inject constructor(
 
     private companion object {
         const val ERROR_TAG = "Cart DEBUG VM"
+        const val REMOVE_FROM_PENDING_DELETION_DELAY: Long = 2000L
         const val DELETE_FROM_CART_DEBOUNCE_DELAY: Long = 3000L
         const val INTERVAL_FOR_UPD_PROGRESSBAR: Long = 100L
     }

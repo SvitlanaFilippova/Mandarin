@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.components
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -54,7 +53,6 @@ fun MealCommentTextField(
                 val currentlyFocused = focusState.isFocused
                 if (isFocused && !currentlyFocused) {
                     onCommentSubmitted(text)
-                    Log.d("DEBUG COMMENTS", "MealCommentTextField: focus lost")
                 }
                 isFocused = currentlyFocused
             }
@@ -85,7 +83,7 @@ fun MealCommentTextField(
                             Icon(
                                 Icons.Default.Close,
                                 contentDescription = stringResource(id = R.string.clear_text),
-                                tint = Colors.ErrorRed
+                                tint = Colors.WhiteTransparent75
                             )
                         }
                         Spacer(modifier = Modifier.size(Dimens.MarginSuperSmall4))

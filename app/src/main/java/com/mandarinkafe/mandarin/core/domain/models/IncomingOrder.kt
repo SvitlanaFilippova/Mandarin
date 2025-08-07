@@ -6,9 +6,9 @@ import com.mandarinkafe.mandarin.core.data.dto.order.OrderType
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.ErrorInfo
-import com.mandarinkafe.mandarin.features.orderconfirmation.data.network.dto.Problem
-import com.mandarinkafe.mandarin.features.orderconfirmation.domain.models.DeliveryStatus
-import com.mandarinkafe.mandarin.features.orderconfirmation.domain.models.IncomingOrderItem
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.Problem
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
 
 @Immutable
 data class IncomingOrder(
