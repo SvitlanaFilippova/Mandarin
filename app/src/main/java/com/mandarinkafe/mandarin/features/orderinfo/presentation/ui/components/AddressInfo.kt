@@ -15,7 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.getDetailsString
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -44,7 +46,7 @@ fun AddressInfo(
                 verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
             ) {
                 address?.let {
-                    Label("Адрес")
+                    Label(stringResource(R.string.label_address))
                     Value(it.streetAndBuilding)
                     val details = remember { it.getDetailsString() }
                     if (details.isNotEmpty()) {

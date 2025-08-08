@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
@@ -67,7 +68,11 @@ fun OrderInfoScreen(
                 ) {
                     order.number?.let {
                         Text(
-                            text = "Заказ №$it, создан ${order.whenCreated}",
+                            text = stringResource(
+                                R.string.order_number_created,
+                                it,
+                                order.whenCreated ?: ""
+                            ),
                             style = Typography.RegularLightTextStyle
                         )
                     }

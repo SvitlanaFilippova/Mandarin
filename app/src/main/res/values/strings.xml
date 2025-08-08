@@ -12,6 +12,11 @@
     <string name="remove">Удалить</string>
     <string name="rub">₽</string>
 
+    <!-- Заголовки экранов -->
+    <string name="more_options">Ещё</string>
+    <string name="order_history">История заказов</string>
+    <string name="saved_addresses">Сохранённые адреса</string>
+
     <!-- Корзина -->
     <string name="cart">Корзина</string>
     <string name="add_to_cart">Добавить в корзину</string>
@@ -154,11 +159,34 @@
     <string name="delivery_status_extra_delivered">Заказ доставлен. Приятного аппетита!</string>
     <string name="delivery_status_extra_closed">Заказ завершён. Спасибо, что вы&#160;с&#160;нами!</string>
     <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка&#160;&#8212; пожалуйста, позвоните.</string>
+    <!-- Order Info -->
+    <string name="order_number_created">Заказ №%1$s, создан %2$s</string>
+    <string name="label_error">Ошибка</string>
+    <string name="label_order_type">Способ получения</string>
+    <string name="label_payment_method">Способ оплаты</string>
 
-    <!-- Заголовки экранов -->
-    <string name="more_options">Ещё</string>
-    <string name="order_history">История заказов</string>
-    <string name="saved_addresses">Сохранённые адреса</string>
+    <!-- Order Items -->
+    <string name="label_order_items">Позиции заказа: %1$d</string>
+    <string name="label_total">Итого</string>
+
+    <!-- Address -->
+    <string name="label_address">Адрес</string>
+
+    <!-- Customer Info -->
+    <string name="label_phone">Телефон</string>
+    <string name="label_customer">Клиент</string>
+    <string name="label_comment">Комментарий к заказу</string>
+
+    <!-- Order Times -->
+    <string name="label_created">Создан</string>
+    <string name="label_confirmed">Подтверждён</string>
+    <string name="label_cancelled">Отменён</string>
+    <string name="label_cooking_completed">Готово</string>
+    <string name="label_packed">Упаковано</string>
+    <string name="label_sent">Отправлено</string>
+    <string name="label_delivered">Доставлено</string>
+    <string name="label_closed">Закрыто</string>
+
 
     <!-- Кнопки действий -->
     <string name="minus">-</string>

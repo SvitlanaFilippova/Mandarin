@@ -13,6 +13,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -37,14 +39,19 @@ fun OrderTimesSection(order: IncomingOrder) {
                 verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
             ) {
                 with(order) {
-                    whenCreated?.let { LabelValue("Создан", it) }
-                    whenConfirmed?.let { LabelValue("Подтверждён", it) }
-                    whenCancelled?.let { LabelValue("Отменён", it) }
-                    whenCookingCompleted?.let { LabelValue("Готово", it) }
-                    whenPacked?.let { LabelValue("Упаковано", it) }
-                    whenSent?.let { LabelValue("Отправлено", it) }
-                    whenDelivered?.let { LabelValue("Доставлено", it) }
-                    whenClosed?.let { LabelValue("Закрыто", it) }
+                    whenCreated?.let { LabelValue(stringResource(R.string.label_created), it) }
+                    whenConfirmed?.let { LabelValue(stringResource(R.string.label_confirmed), it) }
+                    whenCancelled?.let { LabelValue(stringResource(R.string.label_cancelled), it) }
+                    whenCookingCompleted?.let {
+                        LabelValue(
+                            stringResource(R.string.label_cooking_completed),
+                            it
+                        )
+                    }
+                    whenPacked?.let { LabelValue(stringResource(R.string.label_packed), it) }
+                    whenSent?.let { LabelValue(stringResource(R.string.label_sent), it) }
+                    whenDelivered?.let { LabelValue(stringResource(R.string.label_delivered), it) }
+                    whenClosed?.let { LabelValue(stringResource(R.string.label_closed), it) }
                 }
             }
         }
