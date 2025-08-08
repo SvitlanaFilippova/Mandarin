@@ -30,8 +30,7 @@ fun MealDto.toDomain(
     isAddable: Boolean
 ): Meal? {
     val firstSize = itemSizes?.firstOrNull() ?: return null
-
-    val baseInfo = extractBaseInfo(firstSize)
+    val baseInfo = extractBaseInfo(firstSize) ?: return null
     val safeModifiers = getSafeModifiers(firstSize)
 
     val mealLabels = (labels ?: emptyList()).map { it.toDomain() }
@@ -130,9 +129,9 @@ private data class BaseMealInfo(
     val imageUrl: String?,
 )
 
-private fun extractBaseInfo(firstSize: ItemSizeDto): BaseMealInfo {
+private fun extractBaseInfo(firstSize: ItemSizeDto): BaseMealInfo? {
     val weight = firstSize.portionWeightGrams.toInt()
-    val price = firstSize.prices.firstOrNull()?.price?.toInt() ?: 0
+    val price = firstSize.prices.firstOrNull()?.price?.toInt() ?: return null
     val imageUrl = firstSize.buttonImageUrl
     return BaseMealInfo(weight, price, imageUrl)
 }

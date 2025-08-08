@@ -15,7 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,6 +38,7 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickableText
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -48,6 +51,8 @@ fun SavedAddressesScreen(
     val state by viewModel.state.collectAsState()
     val effectFlow = viewModel.effect
     val addresses = state.data
+    var showConfirmDeleteDialog by remember { mutableStateOf(false) }
+    var addressIdToDelete by remember { mutableStateOf<String?>(null) }
 
     // для корректного возврата с экрана добавления адреса
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -86,7 +91,10 @@ fun SavedAddressesScreen(
                         address = it,
                         onAddressChosen = { onEvent(SavedAddressesEvent.EditAddress(it)) },
                         onEditAddress = { onEvent(SavedAddressesEvent.EditAddress(it)) },
-                        onRemoveAddress = { onEvent(SavedAddressesEvent.RemoveAddress(it.id)) },
+                        onRemoveAddress = {
+                            addressIdToDelete = it.id
+                            showConfirmDeleteDialog = true
+                        },
                     )
                 }
             }
@@ -110,6 +118,27 @@ fun SavedAddressesScreen(
             )
         }
     }
+
+    // Диалог для подтверждения желания удалить адрес
+    if (showConfirmDeleteDialog && addressIdToDelete != null) {
+        ConfirmationDialog(
+            titleRes = R.string.delete_address_question,
+            textRes = R.string.delete_address_text,
+            onConfirm = {
+                addressIdToDelete?.let { id ->
+                    onEvent(SavedAddressesEvent.RemoveAddress(id))
+                }
+                showConfirmDeleteDialog = false
+                addressIdToDelete = null
+            },
+            onDismiss = {
+                showConfirmDeleteDialog = false
+                addressIdToDelete = null
+            }
+        )
+    }
+
+
     val snackbarHostState = LocalSnackbarHostState.current
     HandleSavedAddressesEffects(
         effectFlow = effectFlow,

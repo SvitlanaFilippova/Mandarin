@@ -39,7 +39,7 @@ fun OrderScreen(
     val effectFlow = orderViewModel.effect
     val onEvent = orderViewModel::onEvent
     var showConfirmDeleteDialog by remember { mutableStateOf(false) }
-    var addressToDelete by remember { mutableStateOf<String?>(null) }
+    var addressIdToDelete by remember { mutableStateOf<String?>(null) }
     val scrollState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     var showAllAddresses by remember { mutableStateOf(false) }
@@ -64,26 +64,26 @@ fun OrderScreen(
         showAllAddresses = showAllAddresses,
         onToggleShowAll = { showAllAddresses = !showAllAddresses },
         onDeleteRequest = {
-            addressToDelete = it
+            addressIdToDelete = it
             showConfirmDeleteDialog = true
         }
     )
 
     // Диалог для подтверждения желания удалить адрес
-    if (showConfirmDeleteDialog && addressToDelete != null) {
+    if (showConfirmDeleteDialog && addressIdToDelete != null) {
         ConfirmationDialog(
             titleRes = R.string.delete_address_question,
             textRes = R.string.delete_address_text,
             onConfirm = {
-                addressToDelete?.let { id ->
+                addressIdToDelete?.let { id ->
                     onEvent(OrderEvent.RemoveAddress(id))
                 }
                 showConfirmDeleteDialog = false
-                addressToDelete = null
+                addressIdToDelete = null
             },
             onDismiss = {
                 showConfirmDeleteDialog = false
-                addressToDelete = null
+                addressIdToDelete = null
             }
         )
     }
