@@ -34,10 +34,16 @@ fun OrderHistoryCard(order: SavedOrder, onClick: () -> Unit) {
             Spacer(modifier = Modifier.height(Dimens.MarginSuperSmall4))
 
             // Адрес (если есть)
-            order.address?.let {
+            if (order.addressLine1.isNotEmpty()) {
                 Text(
-                    text = it,
+                    text = order.addressLine1,
                     style = Typography.RegularLightTextStyle,
+                )
+            }
+            if (order.addressDetails.isNotEmpty()) {
+                Text(
+                    text = order.addressDetails,
+                    style = Typography.SmallTextStyle,
                 )
             }
 
@@ -46,7 +52,7 @@ fun OrderHistoryCard(order: SavedOrder, onClick: () -> Unit) {
             // ID заказа (очень мелкий шрифт)
             Text(
                 text = "ID: ${order.id}",
-                style = Typography.SmallTextStyle,
+                style = Typography.ExtraSmallTextStyle,
                 color = Colors.LightGrey
             )
         }

@@ -1,0 +1,17 @@
+CREATE TABLE saved_order (
+    id TEXT NOT NULL PRIMARY KEY,
+    whenCreated TEXT NOT NULL,
+    orderType TEXT NOT NULL,
+    addressLine1 TEXT NOT NULL,
+    addressDetails TEXT NOT NULL,
+    timestamp INTEGER NOT NULL
+);
+
+selectAll:
+SELECT * FROM saved_order
+ORDER BY timestamp ASC;
+
+
+insert:
+INSERT INTO saved_order(id, whenCreated, orderType, addressLine1, addressDetails, timestamp)
+VALUES (?, ?, ?, ?, ?, ?);
