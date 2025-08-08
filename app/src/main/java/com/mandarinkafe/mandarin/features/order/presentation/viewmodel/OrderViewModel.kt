@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartItemsUseCase
 import com.mandarinkafe.mandarin.core.domain.models.Address
+import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
@@ -14,6 +15,7 @@ import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWit
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.ResolvePickupPointUseCase
+import com.mandarinkafe.mandarin.features.order.domain.api.SaveOrderToHistoryUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
@@ -47,7 +49,8 @@ class OrderViewModel @Inject constructor(
     private val observeOrderStatus: ObserveOrderStatusUseCase,
     private val calculateCartTotalWithDiscount: CalculateCartTotalWithDiscountUseCase,
     private val resolvePickupPoint: ResolvePickupPointUseCase,
-    private val applyPhoneDiscount: ApplyPhoneDiscountUseCase
+    private val applyPhoneDiscount: ApplyPhoneDiscountUseCase,
+    private val saveOrderToHistory: SaveOrderToHistoryUseCase
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     init {
@@ -290,7 +293,7 @@ class OrderViewModel @Inject constructor(
                         }
 
                         CreationStatus.SUCCESS -> {
-                            onSuccessOrderCreation(orderInfo.id)
+                            onSuccessOrderCreation(orderInfo)
                         }
 
                         CreationStatus.ERROR -> {
@@ -323,7 +326,7 @@ class OrderViewModel @Inject constructor(
                     is Resource.Success -> {
                         when (result.data?.creationStatus) {
                             CreationStatus.SUCCESS -> {
-                                onSuccessOrderCreation(orderId)
+                                onSuccessOrderCreation(result.data)
                             }
 
                             CreationStatus.ERROR -> {
@@ -359,12 +362,13 @@ class OrderViewModel @Inject constructor(
         observeStatusJob?.cancel()
     }
 
-    private fun onSuccessOrderCreation(id: String) {
+    private fun onSuccessOrderCreation(order: IncomingOrder) {
         clearState()
-        sendEffect(ShowSuccess(id))
+        sendEffect(ShowSuccess(order.id))
         stopObservingOrderStatus()
         viewModelScope.launch {
             clearCart()
+            saveOrderToHistory(order)
         }
     }
 

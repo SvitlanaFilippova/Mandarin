@@ -159,6 +159,12 @@
     <string name="delivery_status_extra_delivered">Заказ доставлен. Приятного аппетита!</string>
     <string name="delivery_status_extra_closed">Заказ завершён. Спасибо, что вы&#160;с&#160;нами!</string>
     <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка&#160;&#8212; пожалуйста, позвоните.</string>
+
+    <!-- История заказов -->
+    <string name="order_history_is_empty">В&#160;истории пока нет заказов</string>
+    <string name="order_history_is_empty_extra">Без авторизации по&#160;номеру телефона (мы&#160;над ней работаем!), история заказов хранится только локально, на&#160;вашем устройстве. А&#160;значит при переустановке приложения или пререходе на&#160;другое устрйоство, история будет потеряна.</string>
+
+
     <!-- Order Info -->
     <string name="order_number_created">Заказ №%1$s, создан %2$s</string>
     <string name="label_error">Ошибка</string>

@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -21,7 +22,11 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
-fun TooltipText(modifier: Modifier = Modifier, textRes: Int, extraTextRes: Int? = null) {
+fun TooltipText(
+    modifier: Modifier = Modifier,
+    @StringRes textRes: Int,
+    @StringRes extraTextRes: Int? = null
+) {
     Box(
         modifier = modifier
             .border(
@@ -43,7 +48,7 @@ fun TooltipText(modifier: Modifier = Modifier, textRes: Int, extraTextRes: Int? 
             Column(modifier = Modifier.padding(Dimens.MarginStandard16)) {
                 Text(
                     text = stringResource(textRes),
-                    style = Typography.SmallTextStyle.copy(color = Colors.WhiteTransparent75),
+                    style = Typography.RegularTextStyle.copy(color = Colors.WhiteTransparent75),
                 )
                 extraTextRes?.let {
                     Text(
