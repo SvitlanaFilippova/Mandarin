@@ -129,7 +129,6 @@
     <!-- Оформление заказа -->
     <string name="order">Заказ</string>
     <string name="comment_template">Комментарий: %1$s</string>
-    <string name="order_need_to_be_confirmed">Заказ успешно создан. В&#160;ближайшее время оператор позвонит, чтобы подтвердить его.</string>
 
     <!-- Статусы заказа -->
     <string name="delivery_status_unconfirmed">Не подтверждён</string>
@@ -142,6 +141,19 @@
     <string name="delivery_status_delivered">Доставлен</string>
     <string name="delivery_status_closed">Закрыт</string>
     <string name="delivery_status_cancelled">Отменён</string>
+
+    <!-- Пояснения к статусам доставки -->
+    <string name="delivery_status_extra_unconfirmed">Ожидаем подтверждение заказа. В&#160;ближайшее время оператор позвонит, чтобы подтвердить его. Пожалуйста, будьте на&#160;связи.</string>
+    <string name="delivery_status_extra_wait_cooking">Заказ принят и&#160;скоро поступит на&#160;кухню.</string>
+    <string name="delivery_status_extra_ready_for_cooking">Заказ принят и&#160;скоро поступит на&#160;кухню.</string>
+    <string name="delivery_status_extra_cooking_started">Готовим заказ. Это займёт немного времени.</string>
+    <string name="delivery_status_extra_cooking_completed">Блюда готовы. Скоро курьер получит заказ.</string>
+    <string name="delivery_status_extra_cooking_completed_selfpickup">Блюда готовы. Уже можно забирать!</string>
+    <string name="delivery_status_extra_waiting">Ожидаем курьера. Это может занять несколько минут.</string>
+    <string name="delivery_status_extra_on_way">Курьер уже забрал заказ и&#160;выдвинулся в&#160;путь.</string>
+    <string name="delivery_status_extra_delivered">Заказ доставлен. Приятного аппетита!</string>
+    <string name="delivery_status_extra_closed">Заказ завершён. Спасибо, что вы&#160;с&#160;нами!</string>
+    <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка&#160;&#8212; пожалуйста, позвоните.</string>
 
     <!-- Заголовки экранов -->
     <string name="more_options">Ещё</string>

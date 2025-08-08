@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ObserveOrderStatusUseCase
@@ -26,6 +27,7 @@ class OrderInfoViewModel @Inject constructor(private val observeOrderStatus: Obs
         }
     }
 
+    private val logTag = "OrderInfo DEBUG - VM"
     private var observeStatusJob: Job? = null
 
     private fun startObservingOrderStatus(orderId: String) {
@@ -33,6 +35,10 @@ class OrderInfoViewModel @Inject constructor(private val observeOrderStatus: Obs
         observeStatusJob = viewModelScope.launch {
             observeOrderStatus(orderId, ORDER_STATUS_UPD_DELAY)
                 .collect { result ->
+                    Log.d(
+                        logTag,
+                        "startObservingOrderStatus, ${System.currentTimeMillis()}, collected response: $result"
+                    )
                     when (result) {
                         is Resource.Loading -> setLoading()
                         is Resource.Success -> {

@@ -20,12 +20,10 @@ import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.orderinfo.domain.models.toUiStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.AddressInfo
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.CustomerInfo
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderInfoSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderItemsSection
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderNeedConfirmSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderStatusSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderTimesSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
@@ -77,18 +75,10 @@ fun OrderInfoScreen(
             }
 
             item {
-                OrderStatusSection(
-                    deliveryStatus = order.status.toUiStatus()
-                )
+                OrderStatusSection(deliveryStatus = state.deliveryStatus)
             }
 
             item { OrderInfoSection(order) }
-
-            if (order.needToConfirm && requireConfirmation) {
-                item {
-                    OrderNeedConfirmSection()
-                }
-            }
 
             if (order.items.isNotEmpty()) {
                 item {

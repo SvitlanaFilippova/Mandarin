@@ -40,6 +40,7 @@ fun OrderStatusSection(deliveryStatus: UiDeliveryStatus) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Value(stringResource(deliveryStatus.labelResId))
+                Label(stringResource(deliveryStatus.extraTextResId))
             }
 
         }
