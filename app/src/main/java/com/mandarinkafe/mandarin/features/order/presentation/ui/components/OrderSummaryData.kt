@@ -23,7 +23,6 @@ fun OrderSummaryData(
     containNotDiscountable: Boolean,
 ) {
     Column(modifier = Modifier.padding(Dimens.MarginSmall8)) {
-
         Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
         OrderSummaryRow(
             name = stringResource(R.string.total_cart_cost),

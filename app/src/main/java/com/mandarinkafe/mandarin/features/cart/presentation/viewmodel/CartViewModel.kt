@@ -101,7 +101,6 @@ class CartViewModel @Inject constructor(
     }
 
     private fun scheduleRemoval(item: CartItem) {
-
         // Если уже есть таймер — не дублируем
         if (itemRemoveJobs.containsKey(item)) return
 

@@ -79,7 +79,8 @@ fun CartScreen(
                     onMealDetailsClick = { item ->
                         onSharedEvent(
                             SharedEvent.OnMealDetailsClick(
-                                cartItem = item, isEditMode = true
+                                cartItem = item,
+                                isEditMode = true
                             )
                         )
                     },

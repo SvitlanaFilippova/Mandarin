@@ -40,7 +40,6 @@ fun ToCartButtonWithPrice(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
-
         Icon(
                 modifier = Modifier.size(Dimens.IconSize24),
                 painter = painterResource(R.drawable.ic_cart),
@@ -54,4 +53,3 @@ fun ToCartButtonWithPrice(
         }
     }
 }
-

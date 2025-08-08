@@ -25,7 +25,6 @@ fun OrderStatusSection(deliveryStatus: UiDeliveryStatus) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
     ) {
-
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             Icon(
                 modifier = Modifier
