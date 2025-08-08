@@ -39,7 +39,7 @@
     <string name="favorite_variant_base_button">Базовое блюдо</string>
     <string name="favorite_variant_custom_button">С выбранными опциями</string>
 
-    <!-- Кастомизация бюлюда -->
+    <!-- Кастомизация блюда -->
     <string name="adds">Добавки</string>
     <string name="add_additionals">Сделать вкуснее</string>
     <string name="make_more_delicious_description">Можно сделать ещё вкуснее!</string>
@@ -49,7 +49,7 @@
     <string name="chosen">Выбрано:</string>
     <string name="cancel_choice">Отменить выбор</string>
     <string name="mandatory">(обязательно)</string>
-    <string name="maximum_modifier">В этой группе уже выбрано максимально возможное количество добавок"</string>
+    <string name="maximum_modifier">В этой группе уже выбрано максимально возможное количество добавок</string>
     <string name="maximum_modifier_short">(максимум %d)</string>
     <string name="make_mandatory_choice_before_cart">Выбери нужные опции в обязательных модификаторах — только после этого можно добавить блюдо в корзину</string>
     <string name="for_selfpickup">для самовывоза</string>
@@ -116,7 +116,7 @@
     <string name="to_my_location">Вернуться к моей локации</string>
     <string name="save">Сохранить</string>
     <string name="delete">Удалить</string>
-    <string name="no_saved_addressed">Сохранённых адресов пока нет.</string>
+    <string name="no_saved_addresses">Сохранённых адресов пока нет.</string>
     <string name="add_address">+ Новый адрес</string>
     <string name="delete_address_question">Удалить адрес?</string>
     <string name="delete_address_text">Вы действительно хотите удалить сохранённый адрес?</string>
@@ -162,7 +162,7 @@
 
     <!-- История заказов -->
     <string name="order_history_is_empty">В&#160;истории пока нет заказов</string>
-    <string name="order_history_is_empty_extra">Без авторизации по&#160;номеру телефона (мы&#160;над ней работаем!), история заказов хранится только локально, на&#160;вашем устройстве. А&#160;значит при переустановке приложения или пререходе на&#160;другое устрйоство, история будет потеряна.</string>
+    <string name="order_history_is_empty_extra">Без авторизации по&#160;номеру телефона (мы&#160;над ней работаем!), история заказов хранится только локально, на&#160;вашем устройстве. А&#160;значит, при переустановке приложения или переходе на&#160;другое устройство история будет потеряна.</string>
 
 
     <!-- Order Info -->
