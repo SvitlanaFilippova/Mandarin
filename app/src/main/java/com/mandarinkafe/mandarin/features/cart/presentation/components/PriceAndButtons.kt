@@ -20,9 +20,9 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 fun PriceAndButtons(
     item: CartItem,
     itemInPendingDeletion: Boolean,
+    isInProgress: Boolean,
     deletionProgress: Float,
     contentColor: Color,
-    onEditMealClick: () -> Unit,
     onMealDetailsClick: () -> Unit,
     onAddToCart: () -> Unit,
     onRemoveFromCart: () -> Unit,
@@ -46,7 +46,7 @@ fun PriceAndButtons(
         if ((meal.isCustomizable || meal.requireSelection) && !itemInPendingDeletion) {
             MealDetailsButton(
                 isCustomized = item.customizedMeal.isCustomized,
-                onEditMealClick = onEditMealClick,
+                onEditMealClick = onMealDetailsClick,
                 onMealDetailsClick = onMealDetailsClick
             )
         }
@@ -54,6 +54,7 @@ fun PriceAndButtons(
         CartControlWithUndo(
             item = item,
             mealInPendingDeletion = itemInPendingDeletion,
+            isInProgress = isInProgress,
             deletionProgress = deletionProgress,
             onAddToCart = onAddToCart,
             onRemoveFromCart = onRemoveFromCart,

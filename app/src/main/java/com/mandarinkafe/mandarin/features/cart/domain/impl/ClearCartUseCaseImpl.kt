@@ -5,6 +5,6 @@ import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
 
 class ClearCartUseCaseImpl(private val repository: CartWriter) : ClearCartUseCase {
     override suspend fun invoke() {
-        repository.clearCart()
+        repository.clear()
     }
 }

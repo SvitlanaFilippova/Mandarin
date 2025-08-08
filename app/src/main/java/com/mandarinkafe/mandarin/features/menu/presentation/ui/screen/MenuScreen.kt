@@ -48,6 +48,7 @@ fun MenuScreen(
             onMenuEvent = onMenuEvent,
             onSharedEvent = onSharedEvent,
             cartItems = cartState.cartItems,
+            inProgressItems = cartState.inProgressItems,
             menuItems = menuSate.menuItems,
             banners = menuSate.banners,
             bannersAreLoading = menuSate.bannersAreLoading,

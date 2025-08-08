@@ -38,6 +38,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBo
 fun FavoritesItemCard(
     modifier: Modifier,
     item: CustomizedMeal,
+    isInProgress: Boolean,
     cartItems: List<CartItem>,
     imageSize: Dp,
     onToggleFavorite: (CustomizedMeal) -> Unit,
@@ -113,6 +114,7 @@ fun FavoritesItemCard(
             FavoriteItemButtonRow(
                 item = item,
                 cartItems = cartItems,
+                isInProgress = isInProgress,
                 onAddToCart = { onAddToCart(item) },
                 onRemoveFromCart = { onRemoveFromCart(item) },
                 onMealDetailsClick = { onMealDetailsClick(item) },

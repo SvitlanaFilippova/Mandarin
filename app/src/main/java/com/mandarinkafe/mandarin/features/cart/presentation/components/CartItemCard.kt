@@ -11,44 +11,36 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 
 /**
  * Компонент, который отвечает за отображение товара, который выбрали в меню
  */
-
 @Composable
 fun CartItemCard(
     modifier: Modifier,
     item: CartItem,
     itemInPendingDeletion: Boolean,
     favorites: List<CustomizedMeal>,
+    isInProgress: Boolean,
     deletionProgress: Float,
     onToggleFavorite: (CustomizedMeal) -> Unit,
     onShowFavoriteDialog: (CustomizedMeal) -> Unit,
-    onAddToCart: (CartItem) -> Unit,
-    onRemoveFromCart: (CartItem) -> Unit,
-    onMealDetailsClick: (CartItem) -> Unit,
-    onDeletionCancel: (CartItem) -> Unit,
-    onEditMealClick: (CartItem) -> Unit,
+    onAddToCart: () -> Unit,
+    onRemoveFromCart: () -> Unit,
+    onMealDetailsClick: () -> Unit,
+    onDeletionCancel: () -> Unit,
     onCommentAdded: (CartItem, String) -> Unit,
 ) {
     val contentColor =
         remember(itemInPendingDeletion) { if (itemInPendingDeletion) Colors.LightGreyTransparent75 else Colors.White }
 
-    val onItemClick = if (item.customizedMeal.isCustomized) {
-        { onMealDetailsClick(item) }
-    } else {
-        { onEditMealClick(item) }
-    }
-
     Column(
         modifier = modifier
             .background(Colors.AppBlack)
             .padding(horizontal = Dimens.MarginSmall8)
-            .clickable { onItemClick() }
+            .clickable { onMealDetailsClick() }
 
     ) {
         CartItemBaseInfo(
@@ -64,13 +56,13 @@ fun CartItemCard(
         PriceAndButtons(
             item = item,
             itemInPendingDeletion = itemInPendingDeletion,
+            isInProgress = isInProgress,
             deletionProgress = deletionProgress,
             contentColor = contentColor,
-            onEditMealClick = { onEditMealClick(item) },
-            onMealDetailsClick = { onMealDetailsClick(item) },
-            onAddToCart = { onAddToCart(item) },
-            onRemoveFromCart = { onRemoveFromCart(item) },
-            onDeletionCancel = { onDeletionCancel(item) }
+            onMealDetailsClick = onMealDetailsClick,
+            onAddToCart = onAddToCart,
+            onRemoveFromCart = onRemoveFromCart,
+            onDeletionCancel = onDeletionCancel
         )
 
         HorizontalDivider(

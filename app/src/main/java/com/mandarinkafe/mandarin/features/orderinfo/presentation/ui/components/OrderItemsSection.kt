@@ -30,7 +30,7 @@ fun OrderItemsSection(items: List<IncomingOrderItem>, sum: Double?) {
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
         ) {
-            Label("Позиции заказа: ${items.count()}")
+            Label(stringResource(R.string.label_order_items, items.count()))
             Spacer(Modifier.height(Dimens.MarginSmall8))
             items.forEach {
                 OrderMealItemCard(
@@ -50,7 +50,7 @@ fun OrderItemsSection(items: List<IncomingOrderItem>, sum: Double?) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Итого",
+                        text = stringResource(R.string.label_total),
                         style = Typography.RegularTextStyle
                     )
                     Text(

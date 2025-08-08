@@ -19,7 +19,7 @@ interface CartInteractor {
     suspend fun updateItem(cartItem: CartItem)
 
     suspend fun removeFromCart(
-        cartItem: CartItem? = null,
+        cartItemId: String? = null,
         customizedMeal: CustomizedMeal? = null,
         meal: Meal? = null
     )

@@ -26,6 +26,7 @@ import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_SPACING_COUNT
 fun FavoritesContent(
     data: List<CustomizedMeal>,
     cartItems: List<CartItem>,
+    inProgressItems: Set<String>,
     onToggleFavorite: (CustomizedMeal) -> Unit,
     onAddToCart: (CustomizedMeal) -> Unit,
     onRemoveFromCart: (CustomizedMeal) -> Unit,
@@ -56,6 +57,7 @@ fun FavoritesContent(
                 modifier = Modifier.animateItem(tween(Constants.ANIMATION_DURATION_FAST)),
                 item = item,
                 cartItems = cartItems,
+                isInProgress = item.meal.id in inProgressItems,
                 imageSize = imageSize,
                 onToggleFavorite = onToggleFavorite,
                 onAddToCart = onAddToCart,

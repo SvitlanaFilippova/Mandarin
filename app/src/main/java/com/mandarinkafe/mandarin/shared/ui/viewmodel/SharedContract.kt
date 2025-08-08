@@ -25,18 +25,14 @@ sealed interface SharedContract {
             val cartItem: CartItem? = null,
             val isEditMode: Boolean = false
         ) : SharedEvent
-
-        data class OnEditMealClick(
-            val item: CartItem
-        ) : SharedEvent
-
+        data class ShowSnackbar(val text: String) : SharedEvent
         data object GoBack : SharedEvent
-
     }
 
     sealed interface SharedEffect : BaseEffect {
         data object GoBackEffect : SharedEffect
         data object OnPhoneClick : SharedEffect
+
         data class OpenMealDetailsBS(
             val cartItem: CartItem? = null,
             val meal: Meal? = null,
@@ -45,6 +41,7 @@ sealed interface SharedContract {
         ) : SharedEffect
 
         data object FinishSplash : SharedEffect
+        data class ShowSnackbarEffect(val text: String) : SharedEffect
     }
 
     data class SharedState(

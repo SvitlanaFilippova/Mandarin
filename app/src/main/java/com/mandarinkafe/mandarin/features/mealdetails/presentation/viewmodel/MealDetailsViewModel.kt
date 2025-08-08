@@ -33,7 +33,11 @@ class MealDetailsViewModel @Inject constructor(
 
     override fun onEvent(event: MealDetailsEvent) {
         when (event) {
-            is MealDetailsEvent.SetInitItem -> setInitData(item = event.item)
+            is MealDetailsEvent.SetInitData -> setInitData(
+                item = event.item,
+                isEditMode = event.isEditMode
+            )
+
             is MealDetailsEvent.ChangeAdds -> changeAdds(
                 add = event.add,
                 isAdded = event.isChecked
@@ -62,10 +66,15 @@ class MealDetailsViewModel @Inject constructor(
         setState { copy(comment = text) }
     }
 
-    private fun setInitData(item: CartItem) {
+    private fun setInitData(item: CartItem, isEditMode: Boolean) {
         viewModelScope.launch {
             setState {
-                copy(customizedMeal = item.customizedMeal, comment = item.comment)
+                copy(
+                    initItem = item,
+                    customizedMeal = item.customizedMeal,
+                    comment = item.comment,
+                    isEditMode = isEditMode
+                )
             }
             with(item.customizedMeal.meal) {
                 if (isAddable) {

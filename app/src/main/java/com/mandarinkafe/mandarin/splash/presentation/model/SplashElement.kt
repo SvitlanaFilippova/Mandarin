@@ -1,11 +1,12 @@
 package com.mandarinkafe.mandarin.splash.presentation.model
 
+import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 
 @Immutable
 data class SplashElement(
-    val resId: Int,
+    @DrawableRes val resId: Int,
     val alignment: Alignment,
     val targetOffsetX: Float,
     val targetOffsetY: Float,

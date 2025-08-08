@@ -1,12 +1,13 @@
 package com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ObserveOrderStatusUseCase
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEffect
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEffect.ShowError
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEvent
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationState
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect.ShowError
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,17 +16,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OrderConfirmationViewModel @Inject constructor(private val observeOrderStatus: ObserveOrderStatusUseCase) :
-    BaseViewModel<OrderConfirmationEvent, OrderConfirmationEffect, OrderConfirmationState>() {
-    override fun setInitialState() = OrderConfirmationState()
+class OrderInfoViewModel @Inject constructor(private val observeOrderStatus: ObserveOrderStatusUseCase) :
+    BaseViewModel<OrderInfoEvent, OrderInfoEffect, OrderInfoState>() {
+    override fun setInitialState() = OrderInfoState()
 
-    override fun onEvent(event: OrderConfirmationEvent) {
+    override fun onEvent(event: OrderInfoEvent) {
         when (event) {
-            is OrderConfirmationEvent.SetInitId -> startObservingOrderStatus(event.id)
-            OrderConfirmationEvent.StopObservingStatus -> stopObservingOrderStatus()
+            is OrderInfoEvent.SetInitId -> startObservingOrderStatus(event.id)
+            is OrderInfoEvent.StopObservingStatus -> stopObservingOrderStatus()
         }
     }
 
+    private val logTag = "OrderInfo DEBUG - VM"
     private var observeStatusJob: Job? = null
 
     private fun startObservingOrderStatus(orderId: String) {
@@ -33,9 +35,21 @@ class OrderConfirmationViewModel @Inject constructor(private val observeOrderSta
         observeStatusJob = viewModelScope.launch {
             observeOrderStatus(orderId, ORDER_STATUS_UPD_DELAY)
                 .collect { result ->
+                    Log.d(
+                        logTag,
+                        "startObservingOrderStatus, ${System.currentTimeMillis()}, collected response: $result"
+                    )
                     when (result) {
                         is Resource.Loading -> setLoading()
-                        is Resource.Success -> setStatus(result.data)
+                        is Resource.Success -> {
+                            setStatus(result.data)
+                            result.data?.let {
+                                if (it.isClosed) {
+                                    stopObservingOrderStatus()
+                                }
+                            }
+                        }
+
                         is Resource.ErrorNoInternet -> showError("Нет подключения к интернету")
                         else -> showError(result.message ?: "Что-то пошло не так")
                     }

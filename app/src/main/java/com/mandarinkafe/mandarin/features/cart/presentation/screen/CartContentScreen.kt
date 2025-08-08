@@ -30,8 +30,8 @@ import com.mandarinkafe.mandarin.features.cart.presentation.components.CartItemC
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartRecommendsList
 import com.mandarinkafe.mandarin.features.cart.presentation.components.ProcessOrderButton
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
-import com.mandarinkafe.mandarin.util.Constants
-import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MyCircularProgressIndicator
+import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
 
 @Composable
 fun CartContentScreen(
@@ -45,7 +45,6 @@ fun CartContentScreen(
     onRemoveFromCart: (CartItem) -> Unit,
     onDeletionCancel: (CartItem) -> Unit,
     onMealDetailsClick: (CartItem) -> Unit,
-    onEditMealClick: (CartItem) -> Unit,
     onProceedOrderClick: () -> Unit,
     onCommentAdded: (CartItem, String) -> Unit,
 ) {
@@ -82,20 +81,21 @@ fun CartContentScreen(
                     items = cartItemsList,
                     key = { _, cartItem -> cartItem.id }
                 ) { index, cartItem ->
-                    val itemInPendingDeletion = state.pendingDeletionMeals.contains(cartItem)
+                    val itemInPendingDeletion = state.pendingDeletionItems.contains(cartItem.id)
+                    val isInProgress = cartItem.id in state.inProgressItems
                     CartItemCard(
-                        modifier = Modifier.animateItem(tween(Constants.ANIMATION_DURATION_FAST)),
+                        modifier = Modifier.animateItem(tween(ANIMATION_DURATION_FAST)),
                         item = cartItem,
                         favorites = favorites,
                         itemInPendingDeletion = itemInPendingDeletion,
-                        deletionProgress = state.mealDeletionProgress[cartItem] ?: 0f,
+                        deletionProgress = state.mealDeletionProgress[cartItem.id] ?: 0f,
+                        isInProgress = isInProgress,
                         onToggleFavorite = onToggleFavorite,
                         onShowFavoriteDialog = onShowFavoriteDialog,
-                        onAddToCart = onAddToCart,
-                        onRemoveFromCart = onRemoveFromCart,
-                        onDeletionCancel = onDeletionCancel,
-                        onMealDetailsClick = onMealDetailsClick,
-                        onEditMealClick = onEditMealClick,
+                        onAddToCart = { onAddToCart(cartItem) },
+                        onRemoveFromCart = { onRemoveFromCart(cartItem) },
+                        onDeletionCancel = { onDeletionCancel(cartItem) },
+                        onMealDetailsClick = { onMealDetailsClick(cartItem) },
                         onCommentAdded = onCommentAdded,
                     )
                 }
@@ -113,6 +113,7 @@ fun CartContentScreen(
                         )
                     }
                 }
+
                 // Горизонтальный список рекомендаций
                 item {
                     if (state.recommendsAreLoading) {
@@ -142,7 +143,7 @@ fun CartContentScreen(
 
             // Кнопка оформления заказа
             val ifCartIsEmpty =
-                state.cartItems.all { it in state.pendingDeletionMeals }
+                state.cartItems.all { it.id in state.pendingDeletionItems }
             if (!ifCartIsEmpty) {
                 ProcessOrderButton(
                     onClick = onProceedOrderClick,

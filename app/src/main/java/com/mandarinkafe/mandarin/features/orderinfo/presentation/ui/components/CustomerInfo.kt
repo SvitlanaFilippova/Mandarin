@@ -13,6 +13,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 
@@ -39,11 +41,14 @@ fun CustomerInfo(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
             ) {
-                phone?.let { LabelValue("Телефон", it) }
-                customerName?.let { LabelValue("Клиент", it) }
-
+                phone?.let {
+                    LabelValue(stringResource(R.string.label_phone), it)
+                }
+                customerName?.let {
+                    LabelValue(stringResource(R.string.label_customer), it)
+                }
                 comment?.let {
-                    Label("Комментарий к заказу")
+                    Label(stringResource(R.string.label_comment))
                     Value(it)
                 }
             }

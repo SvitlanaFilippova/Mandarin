@@ -18,6 +18,7 @@ fun SearchResultsLazyColumn(
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
+    inProgressItems: Set<String>
 ) {
     LazyColumn {
         items(
@@ -33,6 +34,7 @@ fun SearchResultsLazyColumn(
                 onAddToCart = onAddToCart,
                 onRemoveFromCart = onRemoveFromCart,
                 onMealDetailsClick = onMealDetailsClick,
+                isInProgress = meal.id in inProgressItems,
             )
         }
     }

@@ -29,6 +29,7 @@ fun MenuContentScreen(
     banners: List<Banner>,
     bannersAreLoading: Boolean,
     favoriteIds: Set<String>,
+    inProgressItems: Set<String>,
     selectedTabIndex: Int,
     selectedSubTabIndex: Int,
     selectedMenuItemIndex: Int,
@@ -98,6 +99,7 @@ fun MenuContentScreen(
                 onAddToCart = onAddToCart,
                 onRemoveFromCart = onRemoveFromCart,
                 favoriteIds = favoriteIds,
+                inProgressItems = inProgressItems,
             )
         }
 

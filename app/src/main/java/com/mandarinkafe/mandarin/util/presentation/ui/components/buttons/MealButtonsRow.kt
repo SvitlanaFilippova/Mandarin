@@ -15,11 +15,13 @@ import com.mandarinkafe.mandarin.core.domain.models.isCustomizable
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.data.getTotalPriceByMealId
 import com.mandarinkafe.mandarin.features.cart.data.getTotalQuantityByMealId
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ButtonWithCircularProgressIndicator
 
 @Composable
 fun MealButtonsRow(
     modifier: Modifier = Modifier,
     baseMeal: Meal,
+    isInProgress: Boolean,
     cartItems: List<CartItem>,
     onMealDetailsClick: () -> Unit,
     onAddToCart: () -> Unit,
@@ -43,29 +45,36 @@ fun MealButtonsRow(
             )
         }
 
-        if (isInTheCart) {
-            val totalPrice = cartItems.getTotalPriceByMealId(baseMeal.id)
-            val numberInCart = cartItems.getTotalQuantityByMealId(baseMeal.id)
+        when {
+            isInProgress -> ButtonWithCircularProgressIndicator(modifier = modifier)
 
-            CartControls(
-                totalPrice = totalPrice,
-                numberInCart = numberInCart,
-                onIncrease = onAddToCart,
-                onDecrease = onRemoveFromCart,
-                modifier = modifier
-            )
-        } else if (baseMeal.requireSelection) {
-            SelectButton(
-                text = stringResource(R.string.to_choose),
-                onClick = onMealDetailsClick,
-                modifier = modifier
-            )
-        } else {
-            ToCartButtonWithPrice(
-                price = baseMeal.price,
-                onClick = onAddToCart,
-                modifier = modifier
-            )
+            isInTheCart -> {
+                val totalPrice = cartItems.getTotalPriceByMealId(baseMeal.id)
+                val numberInCart = cartItems.getTotalQuantityByMealId(baseMeal.id)
+                CartControls(
+                    modifier = modifier,
+                    numberInCart = numberInCart,
+                    totalPrice = totalPrice,
+                    onIncrease = onAddToCart,
+                    onDecrease = onRemoveFromCart,
+                )
+            }
+
+            baseMeal.requireSelection -> {
+                SelectButton(
+                    text = stringResource(R.string.to_choose),
+                    onClick = onMealDetailsClick,
+                    modifier = modifier
+                )
+            }
+
+            else -> {
+                ToCartButtonWithPrice(
+                    price = baseMeal.price,
+                    onClick = onAddToCart,
+                    modifier = modifier,
+                )
+            }
         }
     }
 }

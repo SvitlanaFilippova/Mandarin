@@ -61,13 +61,11 @@ object CartMapper {
     )
 
     fun Meal.toCartItem() = CartItem(
-        customizedMeal = this.toCustomizedMeal(),
-        name = name
+        customizedMeal = this.toCustomizedMeal()
     )
 
     fun CustomizedMeal.toCartItem() = CartItem(
         customizedMeal = this,
-        name = meal.name
     )
 
     fun RecommendsSchemaDto.toDomain() = RecommendsSchemaRule(

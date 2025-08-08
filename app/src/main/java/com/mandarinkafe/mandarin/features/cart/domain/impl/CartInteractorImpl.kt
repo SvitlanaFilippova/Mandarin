@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart.domain.impl
 
+import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
@@ -15,7 +16,7 @@ class CartInteractorImpl(
     private val cartReader: CartReader, // чтобы получить текущие cartItems
 ) : CartInteractor {
     override fun observeCartItemsCount() = cartReader.observeCartItemsCount()
-
+    val logTag = "CART DEBUG Interactor"
     override fun observeCartItems() = cartReader.observeCartItems()
 
     private suspend fun getCurrentCartItems(): List<CartItem> {
@@ -81,14 +82,19 @@ class CartInteractorImpl(
     }
 
     override suspend fun removeFromCart(
-        cartItem: CartItem?,
+        cartItemId: String?,
         customizedMeal: CustomizedMeal?,
         meal: Meal?
     ) {
+        Log.d(
+            logTag,
+            "removeFromCart() called: cartItemId = $cartItemId, meal = $meal, customizedMeal = $customizedMeal"
+        )
+
         when {
-            cartItem != null -> {
+            cartItemId != null -> {
                 // Для CartItem — удаляем сразу
-                cartWriter.deleteItemById(cartItem.id)
+                cartWriter.deleteItemById(cartItemId)
             }
 
             customizedMeal != null -> {
@@ -126,6 +132,6 @@ class CartInteractorImpl(
     }
 
     override suspend fun clearCart() {
-        cartWriter.clearCart()
+        cartWriter.clear()
     }
 }

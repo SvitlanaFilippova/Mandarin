@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.address.address.presentation.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -24,7 +25,7 @@ fun ChosenLocationPin(
     isError: Boolean,
     addressFound: Boolean
 ) {
-    val iconRes = remember(isLoading, isError, addressFound) {
+    @DrawableRes val iconRes = remember(isLoading, isError, addressFound) {
         when {
             isLoading -> null
             addressFound -> R.drawable.ic_home

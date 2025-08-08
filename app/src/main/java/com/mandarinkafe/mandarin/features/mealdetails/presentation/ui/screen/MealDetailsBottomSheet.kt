@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +23,7 @@ import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.AddToCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.UpdateMealInCart
@@ -36,6 +36,7 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InformationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,7 +80,7 @@ fun MealDetailsBottomSheet(
         derivedStateOf { customizedMeal.isFavorite(favorites) }
     }
     LaunchedEffect(Unit) {
-        viewModel.onEvent(MealDetailsEvent.SetInitItem(initItem))
+        viewModel.onEvent(MealDetailsEvent.SetInitData(item = initItem, isEditMode = isEditMode))
     }
 
     LaunchedEffect(Unit) {
@@ -134,28 +135,18 @@ fun MealDetailsBottomSheet(
                     isEditMode = isEditMode,
                     onClose = onClose,
                     onAddToCart = {
-                        onCartEvent(
-                            AddToCart(
-                                initItem.copy(
-                                    customizedMeal = customizedMeal,
-                                    comment = state.comment
-                                )
+                        onCartEvent(AddToCart(state.actualCartItem))
+                        onSharedEvent(
+                            SharedEvent.ShowSnackbar(
+                                text = "Добавлено в корзину: ${customizedMeal.meal.name}"
                             )
                         )
                     },
                     onEdit = {
-                        Log.d(
-                            "Cart DEBUG MealDetails",
-                            "call onEdit, newItemCustMeal: $customizedMeal "
-                        )
                         onCartEvent(
-                            UpdateMealInCart(
-                                newItem = initItem.copy(
-                                    customizedMeal = customizedMeal,
-                                    comment = state.comment
-                                )
-                            )
+                            UpdateMealInCart(state.actualCartItem ?: customizedMeal.toCartItem())
                         )
+                        onSharedEvent(SharedEvent.ShowSnackbar(text = "Отредактировано: ${customizedMeal.meal.name}"))
                     },
                     onToggleFavorite = {
                         if (!isFavorite && customizedMeal.isCustomized) {
@@ -169,16 +160,30 @@ fun MealDetailsBottomSheet(
             }
     }
 
+    HandleMealDetailsEffects(
+        effectFlow = effectFlow,
+        onChangeShowRequiredModifiersDialog = { showRequiredModifiersDialog = it },
+        onChangeShowMaxModifiersQuantity = { showMaxModifiersQuantity = it }
+    )
+
+}
+
+@Composable
+private fun HandleMealDetailsEffects(
+    effectFlow: SharedFlow<MealDetailsEffect>,
+    onChangeShowRequiredModifiersDialog: (Boolean) -> Unit,
+    onChangeShowMaxModifiersQuantity: (Boolean) -> Unit,
+) {
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
             when (effect) {
-                is MealDetailsEffect.ShowRequiredModifiersDialog -> {
-                    showRequiredModifiersDialog = true
-                }
+                is MealDetailsEffect.ShowRequiredModifiersDialog -> onChangeShowRequiredModifiersDialog(
+                    true
+                )
 
-                is MealDetailsEffect.ShowMaxModifiersQuantity -> {
-                    showMaxModifiersQuantity = true
-                }
+                is MealDetailsEffect.ShowMaxModifiersQuantity -> onChangeShowMaxModifiersQuantity(
+                    true
+                )
             }
         }
     }

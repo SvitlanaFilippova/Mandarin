@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Singleton
 class CartRepositoryImpl @Inject constructor(
@@ -89,7 +88,6 @@ class CartRepositoryImpl @Inject constructor(
 
                 valid += CartItem(
                     id = item.id,
-                    name = item.name,
                     customizedMeal = customizedMeal,
                     quantity = item.quantity,
                     comment = item.comment
@@ -102,42 +100,39 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addOrUpdateItem(item: CartItem) {
-        val updated = cartItems.toMutableList()
-        val index = updated.indexOfFirst { it.id == item.id }
-        if (index != -1) {
-            updated[index] = item
-        } else {
-            updated.add(item)
-        }
-        cartItems = updated
-
-        withContext(Dispatchers.Main) {
-            _cartItems.value = Resource.Success(cartItems)
-            _cartCount.value = cartItems.sumOf { it.quantity }
+        cartItems = cartItems.toMutableList().apply {
+            val index = indexOfFirst { it.id == item.id }
+            if (index != -1) set(index, item) else add(item)
         }
 
-        val stored = item.toStoredCartItem()
-        storage.addOrUpdateItem(stored)
+        // Мгновенное обновление UI
+        _cartItems.value = Resource.Success(cartItems)
+        _cartCount.value = cartItems.sumOf { it.quantity }
+
+        // Фоновое сохранение
+        scope.launch(Dispatchers.IO) {
+            storage.addOrUpdateItem(item.toStoredCartItem())
+        }
     }
 
     override suspend fun deleteItemById(id: String) {
         cartItems = cartItems.filterNot { it.id == id }
-
-        withContext(Dispatchers.Main) {
-            _cartItems.value = Resource.Success(cartItems)
-            _cartCount.value = cartItems.sumOf { it.quantity }
+        _cartItems.value = Resource.Success(cartItems)
+        _cartCount.value = cartItems.sumOf { it.quantity }
+        scope.launch(Dispatchers.IO) {
+            storage.deleteItemById(id)
         }
-        storage.deleteItemById(id)
+
     }
 
-    override suspend fun clearCart() {
+    override suspend fun clear() {
         cartItems = emptyList()
+        _cartItems.value = Resource.Success(emptyList())
+        _cartCount.value = 0
 
-        withContext(Dispatchers.Main) {
-            _cartItems.value = Resource.Success(emptyList())
-            _cartCount.value = 0
+        scope.launch(Dispatchers.IO) {
+            storage.clearCart()
         }
-        storage.clearCart()
     }
 
     companion object {

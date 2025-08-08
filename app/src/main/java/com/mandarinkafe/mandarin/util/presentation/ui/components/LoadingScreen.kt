@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MyCircularProgressIndicator
 
 @Preview
 @Composable
@@ -24,7 +23,7 @@ fun LoadingScreen() {
         verticalArrangement = Arrangement.SpaceAround,
     ) {
         MyCircularProgressIndicator(
-            modifier = Modifier.size(Dimens.ProgressBarSize124),
+            modifier = Modifier.size(Dimens.ProgressBarBigSize124),
             strokeWidth = Dimens.ProgressBarWidth24,
         )
     }
