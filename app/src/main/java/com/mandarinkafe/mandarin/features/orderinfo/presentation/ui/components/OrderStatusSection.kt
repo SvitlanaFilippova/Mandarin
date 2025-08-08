@@ -18,30 +18,32 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDel
 
 @Composable
 fun OrderStatusSection(deliveryStatus: UiDeliveryStatus) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .padding(Dimens.MarginStandard16),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
-        ) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(Dimens.MarginStandard16),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
+    ) {
 
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Icon(
-                    modifier = Modifier
-                        .size(Dimens.IconHuge),
-                    painter = painterResource(deliveryStatus.iconResID),
-                    contentDescription = null
-                )
-            }
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Value(stringResource(deliveryStatus.labelResId))
-                Label(stringResource(deliveryStatus.extraTextResId))
-            }
-
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            Icon(
+                modifier = Modifier
+                    .size(Dimens.IconHuge),
+                painter = painterResource(deliveryStatus.iconResID),
+                contentDescription = null
+            )
         }
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) { Value(stringResource(deliveryStatus.labelResId)) }
+
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) { Label(stringResource(deliveryStatus.extraTextResId)) }
+    }
 }
