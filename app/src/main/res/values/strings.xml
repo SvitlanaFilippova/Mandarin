@@ -134,12 +134,12 @@
     <!-- Статусы заказа -->
     <string name="delivery_status_unconfirmed">Не подтверждён</string>
     <string name="delivery_status_wait_cooking">Ожидает готовки</string>
-    <string name="delivery_status_ready_for_cooking">Готов к приготовлению</string>
-    <string name="delivery_status_cooking_started">Приготовление началось</string>
-    <string name="delivery_status_cooking_completed">Готово</string>
+    <string name="delivery_status_ready_for_cooking">Ожидает готовки</string>
+    <string name="delivery_status_cooking_started">Начали готовить</string>
+    <string name="delivery_status_cooking_completed">Приготовлен</string>
     <string name="delivery_status_waiting">Ожидает курьера</string>
     <string name="delivery_status_on_way">В пути</string>
-    <string name="delivery_status_delivered">Доставлено</string>
+    <string name="delivery_status_delivered">Доставлен</string>
     <string name="delivery_status_closed">Закрыт</string>
     <string name="delivery_status_cancelled">Отменён</string>
 

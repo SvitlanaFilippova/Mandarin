@@ -2,10 +2,14 @@ package com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -17,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.AddressInfo
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.CustomerInfo
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderInfoSection
@@ -24,9 +29,10 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.O
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderNeedConfirmSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderStatusSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderTimesSection
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEvent
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderConfirmationContract.OrderConfirmationEvent.StopObservingStatus
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderConfirmationViewModel
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent.StopObservingStatus
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 
@@ -34,7 +40,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonW
 fun OrderInfoScreen(
     orderID: String?,
     requireConfirmation: Boolean,
-    viewModel: OrderConfirmationViewModel = hiltViewModel(),
+    viewModel: OrderInfoViewModel = hiltViewModel(),
     navController: NavHostController
 ) {
     if (orderID == null) return
@@ -43,7 +49,7 @@ fun OrderInfoScreen(
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        onEvent(OrderConfirmationEvent.SetInitId(orderID))
+        onEvent(OrderInfoEvent.SetInitId(orderID))
     }
 
     val order = state.incomingOrder
@@ -55,9 +61,34 @@ fun OrderInfoScreen(
                 .padding(Dimens.MarginSmall8),
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
-            item { OrderInfoSection(order) }
+            item {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(Dimens.MarginSmall8),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    order.number?.let {
+                        Text(
+                            text = "Заказ №$it, создан ${order.whenCreated}",
+                            style = Typography.RegularLightTextStyle
+                        )
+                    }
+                }
+            }
 
-            item { OrderStatusSection(order) }
+            item {
+                LazyRow {
+                    items(UiDeliveryStatus.entries) { uiStatus ->
+                        OrderStatusSection(
+                            deliveryStatus = uiStatus
+                        )
+                    }
+                }
+            }
+
+            item { OrderInfoSection(order) }
 
             if (order.needToConfirm && requireConfirmation) {
                 item {

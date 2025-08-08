@@ -1,20 +1,23 @@
 package com.mandarinkafe.mandarin.features.orderinfo.domain.models
 
-import androidx.annotation.StringRes
-import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus
 
 enum class DeliveryStatus(
     val apiName: String,
-    @StringRes val labelResId: Int
 ) {
-    UNCONFIRMED("Unconfirmed", R.string.delivery_status_unconfirmed),
-    WAIT_COOKING("WaitCooking", R.string.delivery_status_wait_cooking),
-    READY_FOR_COOKING("ReadyForCooking", R.string.delivery_status_ready_for_cooking),
-    COOKING_STARTED("CookingStarted", R.string.delivery_status_cooking_started),
-    COOKING_COMPLETED("CookingCompleted", R.string.delivery_status_cooking_completed),
-    WAITING("Waiting", R.string.delivery_status_waiting),
-    ON_WAY("OnWay", R.string.delivery_status_on_way),
-    DELIVERED("Delivered", R.string.delivery_status_delivered),
-    CLOSED("Closed", R.string.delivery_status_closed),
-    CANCELLED("Cancelled", R.string.delivery_status_cancelled)
+    UNCONFIRMED("Unconfirmed"),
+    WAIT_COOKING("WaitCooking"),
+    READY_FOR_COOKING("ReadyForCooking"),
+    COOKING_STARTED("CookingStarted"),
+    COOKING_COMPLETED("CookingCompleted"),
+    WAITING("Waiting"),
+    ON_WAY("OnWay"),
+    DELIVERED("Delivered"),
+    CLOSED("Closed"),
+    CANCELLED("Cancelled")
+}
+
+fun DeliveryStatus.toUiStatus(): UiDeliveryStatus {
+    return UiDeliveryStatus.entries.firstOrNull { it.apiName == this.apiName }
+        ?: error("Unknown DeliveryStatus: $this")
 }

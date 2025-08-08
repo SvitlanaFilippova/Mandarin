@@ -24,6 +24,7 @@ object Dimens {
     val SplashScreenBackgroundSize220 = 220.dp
     val IconSize20 = 20.dp
     val IconSize24 = 24.dp
+    val IconHuge = 48.dp
     val MarginStandard16 = 16.dp
     val Margin12 = 12.dp
     val MarginSmall8 = 8.dp
