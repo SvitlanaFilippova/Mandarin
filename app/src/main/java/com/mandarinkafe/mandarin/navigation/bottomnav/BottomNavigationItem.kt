@@ -13,7 +13,7 @@ sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val 
 
     object Menu : BottomNavigationItem(
         R.string.menu,
-        R.drawable.ic_food,
+        R.drawable.ic_menu_book,
         NavConstants.MENU_SCREEN_ROUTE
     )
 

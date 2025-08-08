@@ -32,5 +32,5 @@ enum class UiDeliveryStatus(
     ON_WAY("OnWay", R.string.delivery_status_on_way, R.drawable.ic_courier),
     DELIVERED("Delivered", R.string.delivery_status_delivered, R.drawable.ic_cottage),
     CLOSED("Closed", R.string.delivery_status_closed, R.drawable.ic_done),
-    CANCELLED("Cancelled", R.string.delivery_status_cancelled, R.drawable.ic_cancel)
+    CANCELLED("Cancelled", R.string.delivery_status_cancelled, R.drawable.ic_no_food)
 }
