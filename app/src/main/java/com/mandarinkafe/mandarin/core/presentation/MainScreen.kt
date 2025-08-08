@@ -44,14 +44,15 @@ fun MainScreen() {
             isSplashLoading = false
         }
     }
-    val showBottomBar = !isSplash
+
     val showTopBar = !isSplash && sharedState.shouldShowTopBar
     val onEvent = sharedViewModel::onEvent
     val selectedMeal = sharedState.selectedMealForFavoriteChoice
     val snackbarHostState = remember { SnackbarHostState() }
-    val showBackButton = currentRoute?.let { route ->
+    val isInnerScreen = currentRoute?.let { route ->
         RoutesWithBackButton.any { route.startsWith(it.substringBefore("/{")) }
     } == true
+    val showBottomBar = !isSplash && !isInnerScreen
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -59,7 +60,7 @@ fun MainScreen() {
         topBar = {
             AppTopBar(
                 showAppBar = showTopBar,
-                showBackButton = showBackButton,
+                showBackButton = isInnerScreen,
                 onEvent = onEvent,
             )
         },

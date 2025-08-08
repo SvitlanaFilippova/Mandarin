@@ -128,7 +128,11 @@ fun AddressDetailsScreen(
         // Отступ для кнопок
         Spacer(Modifier.weight(1f))
 
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = Dimens.MarginStandard16)
+        ) {
             if (isEditMode) {
                 BigButtonWithText(
                     modifier = Modifier.weight(1f),

@@ -77,7 +77,7 @@ fun SavedAddressesSection(
                             horizontal = Dimens.MarginSmall8,
                             vertical = Dimens.MarginStandard16
                         ),
-                    textRes = R.string.no_saved_addressed
+                    textRes = R.string.no_saved_addresses
                 )
             }
 

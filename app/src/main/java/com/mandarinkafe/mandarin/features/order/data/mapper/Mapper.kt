@@ -48,13 +48,14 @@ fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
         changeFrom = if (cash) paymentInfo.changeFrom else "",
         discountCategory = cartSummary.discountCategory
     )
+    val address = if (deliveryInfo.isPickup) null else deliveryInfo.chosenAddress
 
     return OutgoingOrder(
         name = userInfo.name.trim(),
         phone = userInfo.phone,
         deliveryType = deliveryInfo.deliveryType
             ?: error("deliveryType is null"),
-        chosenAddress = deliveryInfo.chosenAddress,
+        chosenAddress = address,
         paymentType = paymentType,
         comment = fullComment,
         items = cartSummary.items.toOrderItemsRequest(discountCategory = cartSummary.discountCategory),
