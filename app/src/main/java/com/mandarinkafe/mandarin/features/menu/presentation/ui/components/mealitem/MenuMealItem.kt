@@ -37,6 +37,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MealBut
 
 @Composable
 fun MenuMealItem(
+    modifier: Modifier = Modifier,
     meal: Meal,
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
@@ -44,8 +45,8 @@ fun MenuMealItem(
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
     cartItems: List<CartItem>,
+    isInProgress: Boolean,
     imageSize: Dp,
-    modifier: Modifier = Modifier
 ) {
     val isFavorite by remember(favoriteIds) {
         derivedStateOf { meal.isFavorite(favoriteIds) }
@@ -110,7 +111,6 @@ fun MenuMealItem(
             Spacer(
                 modifier = Modifier.weight(1f)
             )
-
             // Кнопки
             MealButtonsRow(
                 baseMeal = meal,
@@ -118,6 +118,7 @@ fun MenuMealItem(
                 onRemoveFromCart = { onRemoveFromCart(meal) },
                 cartItems = cartItems,
                 onMealDetailsClick = { onMealDetailsClick(meal) },
+                isInProgress = isInProgress,
             )
 
         }

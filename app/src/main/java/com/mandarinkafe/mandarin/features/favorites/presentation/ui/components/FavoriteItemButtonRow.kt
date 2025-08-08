@@ -15,6 +15,7 @@ import com.mandarinkafe.mandarin.core.domain.models.isCustomizable
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.totalPrice
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ButtonWithCircularProgressIndicator
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CartControls
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CustomizeButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.SelectButton
@@ -24,16 +25,15 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ToCartB
 fun FavoriteItemButtonRow(
     modifier: Modifier = Modifier,
     item: CustomizedMeal,
+    isInProgress: Boolean,
     cartItems: List<CartItem>,
     onAddToCart: (CustomizedMeal) -> Unit,
     onRemoveFromCart: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
-
-    ) {
+) {
     val isInTheCart = cartItems.any { it.customizedMeal == item }
     val totalPrice = item.totalPrice()
     val isCustomized = item.isCustomized
-
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -50,31 +50,37 @@ fun FavoriteItemButtonRow(
                 onClick = { onMealDetailsClick(item) }
             )
         }
+        when {
+            isInProgress -> ButtonWithCircularProgressIndicator(modifier = modifier)
+            isInTheCart -> {
+                val numberInCart =
+                    cartItems.firstOrNull { it.customizedMeal == item }?.quantity ?: 0
+                CartControls(
+                    modifier = modifier,
+                    totalPrice = totalPrice * numberInCart,
+                    numberInCart = numberInCart,
+                    onIncrease = { onAddToCart(item) },
+                    onDecrease = { onRemoveFromCart(item) },
+                )
+            }
 
-        if (isInTheCart) {
-            val numberInCart = cartItems.firstOrNull { it.customizedMeal == item }?.quantity ?: 0
-            CartControls(
-                totalPrice = totalPrice * numberInCart,
-                numberInCart = numberInCart,
-                onIncrease = { onAddToCart(item) },
-                onDecrease = { onRemoveFromCart(item) },
-                modifier = modifier
-            )
+            item.meal.requireSelection && !isCustomized -> {
+                SelectButton(
+                    text = stringResource(R.string.to_choose),
+                    onClick = { onMealDetailsClick(item) },
+                    modifier = modifier
+                )
+            }
 
-        } else if (item.meal.requireSelection && !isCustomized) {
-            SelectButton(
-                text = stringResource(R.string.to_choose),
-                onClick = { onMealDetailsClick(item) },
-                modifier = modifier
-            )
-        } else {
-            ToCartButtonWithPrice(
-                price = totalPrice,
-                onClick = {
-                    onAddToCart(item)
-                },
-                modifier = modifier
-            )
+            else -> {
+                ToCartButtonWithPrice(
+                    price = totalPrice,
+                    onClick = {
+                        onAddToCart(item)
+                    },
+                    modifier = modifier,
+                )
+            }
         }
     }
 }

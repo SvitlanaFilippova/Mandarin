@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -22,6 +20,7 @@ import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.toUiStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.AddressInfo
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.CustomerInfo
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderInfoSection
@@ -29,7 +28,6 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.O
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderNeedConfirmSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderStatusSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderTimesSection
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
@@ -79,13 +77,9 @@ fun OrderInfoScreen(
             }
 
             item {
-                LazyRow {
-                    items(UiDeliveryStatus.entries) { uiStatus ->
-                        OrderStatusSection(
-                            deliveryStatus = uiStatus
-                        )
-                    }
-                }
+                OrderStatusSection(
+                    deliveryStatus = order.status.toUiStatus()
+                )
             }
 
             item { OrderInfoSection(order) }

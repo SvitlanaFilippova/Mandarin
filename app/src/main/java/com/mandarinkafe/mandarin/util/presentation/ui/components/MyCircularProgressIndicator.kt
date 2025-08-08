@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.util.presentation.ui.components.buttons
+package com.mandarinkafe.mandarin.util.presentation.ui.components
 
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable

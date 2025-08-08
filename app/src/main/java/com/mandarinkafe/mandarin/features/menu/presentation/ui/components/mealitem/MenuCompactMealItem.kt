@@ -38,6 +38,7 @@ fun MenuCompactMealItem(
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
+    isInProgress: Boolean,
 ) {
     val isFavorite by remember(favoriteIds) { derivedStateOf { meal.isFavorite(favoriteIds) } }
 
@@ -74,7 +75,8 @@ fun MenuCompactMealItem(
                 onAddToCart = { onAddToCart(meal) },
                 onRemoveFromCart = { onRemoveFromCart(meal) },
                 cartItems = cartItems,
-                onMealDetailsClick = { onMealDetailsClick(meal) }
+                onMealDetailsClick = { onMealDetailsClick(meal) },
+                isInProgress = isInProgress
             )
         }
     }

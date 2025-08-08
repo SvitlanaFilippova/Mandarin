@@ -79,11 +79,10 @@ fun CartScreen(
                     onMealDetailsClick = { item ->
                         onSharedEvent(
                             SharedEvent.OnMealDetailsClick(
-                                cartItem = item
+                                cartItem = item, isEditMode = true
                             )
                         )
                     },
-                    onEditMealClick = { item -> onSharedEvent(SharedEvent.OnEditMealClick(item = item)) },
                     onProceedOrderClick = { onCartEvent(CartEvent.OnProceedOrderClick) },
                     onCommentAdded = { item, text ->
                         onCartEvent(

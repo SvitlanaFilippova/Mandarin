@@ -15,7 +15,7 @@ import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SELECTED_FIRST_INDEX
 sealed interface MealDetailsContract {
     sealed interface MealDetailsEvent : BaseEvent {
         // Установка блюда при инициализации
-        data class SetInitItem(val item: CartItem) : MealDetailsEvent
+        data class SetInitData(val item: CartItem, val isEditMode: Boolean) : MealDetailsEvent
 
         // Управление добавками
         data class ChangeAdds(val add: MealAdditional, val isChecked: Boolean) : MealDetailsEvent
@@ -46,10 +46,22 @@ sealed interface MealDetailsContract {
     data class MealDetailsState(
         val isLoading: Boolean = false,
         val error: UiError? = null,
+        val isEditMode: Boolean = false,
+        val initItem: CartItem? = null,
         val customizedMeal: CustomizedMeal? = null,
         val comment: String = "",
         val addons: List<MealAdditionalCategory> = emptyList(),
         val errorMessage: String? = null,
         val selectedTabIndex: Int = DEFAULT_SELECTED_FIRST_INDEX,
-    ) : BaseState
+    ) : BaseState {
+
+        val actualCartItem: CartItem?
+            get() = customizedMeal?.let { meal ->
+                if (isEditMode) {
+                    initItem?.copy(customizedMeal = meal, comment = comment)
+                } else {
+                    CartItem(customizedMeal = meal, comment = comment)
+                }
+            }
+    }
 }

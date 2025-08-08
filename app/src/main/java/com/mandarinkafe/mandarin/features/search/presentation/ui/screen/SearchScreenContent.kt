@@ -38,6 +38,7 @@ fun SearchScreenContent(
     searchState: SearchContract.SearchState,
     cartItems: List<CartItem>,
     favoriteIds: Set<String>,
+    inProgressItems: Set<String>,
     onSearchEvent: (SearchContract.SearchEvent) -> Unit,
     onSearchDismiss: () -> Unit,
     onAddToCart: (Meal) -> Unit,
@@ -105,6 +106,7 @@ fun SearchScreenContent(
             onAddToCart = onAddToCart,
             onRemoveFromCart = onRemoveFromCart,
             onMealDetailsClick = onMealDetailsClick,
+            inProgressItems = inProgressItems,
         )
     }
 }

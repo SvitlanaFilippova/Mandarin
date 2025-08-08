@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.util.Constants.BANNERS_ASPECT_RATIO
-import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MyCircularProgressIndicator
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
 
 @Composable
 fun BannersSection(

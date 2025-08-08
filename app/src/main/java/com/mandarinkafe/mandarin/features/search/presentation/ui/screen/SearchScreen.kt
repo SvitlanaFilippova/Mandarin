@@ -43,6 +43,7 @@ fun SearchScreen(
         onAddToCart = { meal -> onCartEvent(CartEvent.AddToCart(customizedMeal = meal.toCustomizedMeal())) },
         onRemoveFromCart = { meal -> onCartEvent(CartEvent.OnReduce(meal = meal)) },
         onSearchDismiss = { onEvent(SearchEvent.GoBackToMenu) },
+        inProgressItems = cartState.inProgressItems,
     )
 
     // Отлавливаем эффект возврата в меню

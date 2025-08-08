@@ -28,6 +28,7 @@ import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_SPACING_COUNT
 fun MenuList(
     menuItems: List<MenuItem>,
     favoriteIds: Set<String>,
+    inProgressItems: Set<String>,
     listState: LazyListState,
     modifier: Modifier,
     cartItems: List<CartItem>,
@@ -51,6 +52,7 @@ fun MenuList(
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
         itemsIndexed(menuItems) { index, item ->
+
             when (item) {
                 is MenuItem.HeaderItem -> MenuHeaderItem(item)
                 is MenuItem.SubHeaderItem -> {
@@ -60,6 +62,7 @@ fun MenuList(
                 }
 
                 is MenuItem.MealItem.SingleMealItem -> {
+                    val isInProgress = item.meal.id in inProgressItems
                     // Одинарный формат
                     MenuMealItem(
                         meal = item.meal,
@@ -70,6 +73,7 @@ fun MenuList(
                         imageSize = imageSize,
                         onMealDetailsClick = onMealDetailsClick,
                         favoriteIds = favoriteIds,
+                        isInProgress = isInProgress,
                     )
                 }
 
@@ -91,7 +95,8 @@ fun MenuList(
                             imageSize = imageSize,
                             modifier = Modifier.weight(1f),
                             onMealDetailsClick = onMealDetailsClick,
-                            favoriteIds = favoriteIds
+                            favoriteIds = favoriteIds,
+                            isInProgress = item.left.id in inProgressItems,
                         )
                         MenuCompactMealItem(
                             meal = item.right,
@@ -102,7 +107,8 @@ fun MenuList(
                             imageSize = imageSize,
                             modifier = Modifier.weight(1f),
                             onMealDetailsClick = onMealDetailsClick,
-                            favoriteIds = favoriteIds
+                            favoriteIds = favoriteIds,
+                            isInProgress = item.right.id in inProgressItems,
                         )
                     }
 

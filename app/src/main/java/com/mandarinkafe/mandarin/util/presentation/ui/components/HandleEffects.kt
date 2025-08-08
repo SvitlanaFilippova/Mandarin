@@ -1,6 +1,8 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components
 
 import android.content.Intent
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
@@ -18,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 fun HandleEffects(
     effectFlow: Flow<SharedEffect>,
     navController: NavController,
+    snackbarHostState: SnackbarHostState,
 ) {
     val context = LocalContext.current
 
@@ -47,6 +50,15 @@ fun HandleEffects(
 
                 is SharedEffect.GoBackEffect -> {
                     navController.popBackStack()
+                }
+
+                is SharedEffect.ShowSnackbarEffect -> {
+                    snackbarHostState.showSnackbar(
+                        message = effect.text,
+                        duration = SnackbarDuration.Short,
+                        withDismissAction = true
+                    )
+
                 }
             }
         }

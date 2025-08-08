@@ -16,7 +16,6 @@ sealed interface CartContract {
             val item: CartItem? = null,
             val customizedMeal: CustomizedMeal? = null
         ) : CartEvent
-
         data class AddCommentToItem(val item: CartItem, val comment: String) : CartEvent
         data class UpdateMealInCart(val newItem: CartItem) : CartEvent
         data class OnReduceWithDelay(val item: CartItem) : CartEvent
@@ -46,11 +45,12 @@ sealed interface CartContract {
         val favoritesItems: Set<CustomizedMeal> = emptySet(),
         val recommends: List<Meal> = emptyList(),
         val recommendsAreLoading: Boolean = true,
-        val pendingDeletionMeals: List<CartItem> = emptyList(),
-        val mealDeletionProgress: Map<CartItem, Float> = emptyMap(),
+        val pendingDeletionItems: List<String> = emptyList(),
+        val inProgressItems: Set<String> = emptySet(),
+        val mealDeletionProgress: Map<String, Float> = emptyMap(),
     ) : BaseState {
         val actualCartItems: List<CartItem>
-            get() = cartItems.filter { it !in pendingDeletionMeals }
+            get() = cartItems.filter { it.id !in pendingDeletionItems }
 
         val totalCartPrice: Int
             get() = actualCartItems.sumOf { it.customizedMeal.totalPrice() * it.quantity }

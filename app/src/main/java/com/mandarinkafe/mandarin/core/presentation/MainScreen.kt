@@ -110,6 +110,7 @@ fun MainScreen() {
 
     HandleEffects(
         effectFlow = sharedViewModel.effect,
+        snackbarHostState = snackbarHostState,
         navController = navController,
     )
 }

@@ -23,6 +23,7 @@ fun SearchResults(
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
+    inProgressItems: Set<String>
 ) {
     BackHandler {
         onSearchDismiss()
@@ -41,6 +42,7 @@ fun SearchResults(
                 onAddToCart = onAddToCart,
                 onRemoveFromCart = onRemoveFromCart,
                 onMealDetailsClick = onMealDetailsClick,
+                inProgressItems = inProgressItems,
             )
         } else if (latestSearchText.isNotEmpty()) {
             PlaceholderScreen(error = UiError.SearchEmpty)

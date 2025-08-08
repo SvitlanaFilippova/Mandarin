@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.order.presentation.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,7 +22,8 @@ fun OrderSummaryData(
     freeDeliveryThreshold: Int?,
     containNotDiscountable: Boolean,
 ) {
-    Column {
+    Column(modifier = Modifier.padding(Dimens.MarginSmall8)) {
+
         Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
         OrderSummaryRow(
             name = stringResource(R.string.total_cart_cost),

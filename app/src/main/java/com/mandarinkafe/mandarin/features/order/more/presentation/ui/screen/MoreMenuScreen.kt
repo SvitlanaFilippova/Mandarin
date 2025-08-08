@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.more.presentation.ui.screen
+package com.mandarinkafe.mandarin.features.order.more.presentation.ui.screen
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.more.presentation.ui.components.MenuItem
-import com.mandarinkafe.mandarin.features.more.presentation.ui.components.SectionHeader
+import com.mandarinkafe.mandarin.features.order.more.presentation.ui.components.MenuItem
+import com.mandarinkafe.mandarin.features.order.more.presentation.ui.components.SectionHeader
 import com.mandarinkafe.mandarin.navigation.extensions.navigateOrdersHistory
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToSavedAddresses
 

@@ -41,6 +41,7 @@ fun SmallHorizontalMealItemCard(
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
+    isInProgress: Boolean,
 ) {
     val isFavorite by remember(favoriteIds) {
         derivedStateOf { meal.isFavorite(favoriteIds) }
@@ -108,6 +109,7 @@ fun SmallHorizontalMealItemCard(
                         .padding(top = Dimens.MarginSmall8),
                     baseMeal = meal,
                     cartItems = cartItems,
+                    isInProgress = isInProgress,
                     onAddToCart = { onAddToCart(meal) },
                     onRemoveFromCart = { onRemoveFromCart(meal) },
                     onMealDetailsClick = { onMealDetailsClick(meal) },

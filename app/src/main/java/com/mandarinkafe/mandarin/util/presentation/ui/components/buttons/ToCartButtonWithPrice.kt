@@ -24,9 +24,10 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 fun ToCartButtonWithPrice(
     price: Int,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Button(
+        modifier = modifier,
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         contentPadding = PaddingValues(Dimens.MarginSuperSmall4),
@@ -34,13 +35,13 @@ fun ToCartButtonWithPrice(
             containerColor = Colors.Orange,
             contentColor = Color.White
         ),
-        modifier = modifier
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
-            Icon(
+
+        Icon(
                 modifier = Modifier.size(Dimens.IconSize24),
                 painter = painterResource(R.drawable.ic_cart),
                 contentDescription = stringResource(id = R.string.add_to_cart),
@@ -53,3 +54,4 @@ fun ToCartButtonWithPrice(
         }
     }
 }
+

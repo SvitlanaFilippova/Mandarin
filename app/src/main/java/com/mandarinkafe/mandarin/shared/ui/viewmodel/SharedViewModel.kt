@@ -79,13 +79,9 @@ class SharedViewModel @Inject constructor(
                         meal = event.meal,
                         item = event.item,
                         cartItem = event.cartItem,
-                        isEditMode = false
+                        isEditMode = event.isEditMode
                     )
                 )
-            }
-
-            is SharedEvent.OnEditMealClick -> {
-                sendEffect(OpenMealDetailsBS(cartItem = event.item, isEditMode = true))
             }
 
             is SharedEvent.ToggleFavorite -> toggleFavorite(event.meal, event.item)
@@ -105,6 +101,7 @@ class SharedViewModel @Inject constructor(
             }
 
             is SharedEvent.GoBack -> sendEffect(SharedEffect.GoBackEffect)
+            is SharedEvent.ShowSnackbar -> sendEffect(SharedEffect.ShowSnackbarEffect(text = event.text))
         }
     }
 
