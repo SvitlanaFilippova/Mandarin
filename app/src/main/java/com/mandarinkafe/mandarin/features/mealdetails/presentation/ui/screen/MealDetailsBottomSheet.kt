@@ -136,7 +136,11 @@ fun MealDetailsBottomSheet(
                     onClose = onClose,
                     onAddToCart = {
                         onCartEvent(AddToCart(state.actualCartItem))
-                        onSharedEvent(SharedEvent.ShowSnackbar(text = "Добавлено в корзину: ${customizedMeal.meal.name}"))
+                        onSharedEvent(
+                            SharedEvent.ShowSnackbar(
+                                text = "Добавлено в корзину: ${customizedMeal.meal.name}"
+                            )
+                        )
                     },
                     onEdit = {
                         onCartEvent(

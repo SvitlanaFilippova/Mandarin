@@ -113,6 +113,7 @@ fun CartContentScreen(
                         )
                     }
                 }
+
                 // Горизонтальный список рекомендаций
                 item {
                     if (state.recommendsAreLoading) {
