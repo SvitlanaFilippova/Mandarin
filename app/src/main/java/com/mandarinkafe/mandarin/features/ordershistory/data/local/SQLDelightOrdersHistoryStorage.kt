@@ -20,7 +20,8 @@ class SQLDelightOrdersHistoryStorage @Inject constructor(private val queries: Sa
             orderType = order.orderType,
             timestamp = order.timestamp,
             addressLine1 = order.addressLine1,
-            addressDetails = order.addressDetails
+            addressDetails = order.addressDetails,
+            mealNames = order.mealNames
         )
     }
 }

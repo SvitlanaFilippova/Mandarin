@@ -58,15 +58,7 @@
     <!-- Доставка -->
     <string name="delivery">Доставка</string>
     <string name="delivery_history">История заказов</string>
-    <string name="delivery_price">СТОИМОСТЬ ДОСТАВКИ</string>
-    <string name="delivery_price_from_beregovaya">(по "Береговой" 100 рублей)</string>
     <string name="free_delivery_at">Доставка %2$d ₽;\nПри заказе от %1$d ₽ — бесплатно.</string>
-    <string name="delivery_price_info">Доставка — БЕСПЛАТНО, при условии заказа на минимальную сумму. Чем дальше от Черноголовки, тем сумма выше. Все суммы указаны на карте ниже.</string>
-    <string name="delivery_price_info_other">Стоимость доставки в остальные населенные пункты и СНТ уточняйте у оператора.</string>
-    <string name="pickup">САМОВЫВОЗ</string>
-    <string name="pickup_info">Вы всегда можете воспользоваться услугой самовывоза из нашего кафе.\n\nМы находимся по адресу: г. Черноголовка, ул. Береговая, 24.</string>
-    <string name="pay">ОПЛАТА</string>
-    <string name="pay_info">- Наличными курьеру\n- Карточкой курьеру (через мобильный терминал)\n- Online-перевод на карту Сбербанка</string>
 
     <!-- Оформление заказа -->
     <string name="your_name">Имя</string>
@@ -163,7 +155,6 @@
     <!-- История заказов -->
     <string name="order_history_is_empty">В&#160;истории пока нет заказов</string>
     <string name="order_history_is_empty_extra">Без авторизации по&#160;номеру телефона (мы&#160;над ней работаем!), история заказов хранится только локально, на&#160;вашем устройстве. А&#160;значит, при переустановке приложения или переходе на&#160;другое устройство история будет потеряна.</string>
-
 
     <!-- Order Info -->
     <string name="order_number_created">Заказ №%1$s, создан %2$s</string>

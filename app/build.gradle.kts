@@ -165,6 +165,7 @@ sqldelight {
     databases {
         create("AppDatabase") {
             packageName.set("com.mandarinkafe.mandarin.database")
+            migrationOutputDirectory.set(file("src/main/sqldelight/migrations"))
         }
     }
     linkSqlite = true

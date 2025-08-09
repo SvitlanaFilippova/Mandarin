@@ -11,10 +11,29 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
+
+@Preview
+@Composable
+fun OrderHistoryCardPreview() {
+    OrderHistoryCard(
+        SavedOrder(
+            id = "Tw46twtwasfgvesdzfxcasdfcadf",
+            timestamp = TODO(),
+            whenCreated = "15:33, 09.08.25",
+            orderType = "Доставка курьеом",
+            addressLine1 = "Ул. Солнечная, 4, Черноголовка",
+            addressDetails = "кв. 82, п.2, этаж 10",
+            mealNames = "Пицца Маргарита, Ролл Филадельфия, Морс клюквенный, Васаби, Пиво "
+        ),
+        onClick = { }
+    )
+}
 
 @Composable
 fun OrderHistoryCard(order: SavedOrder, onClick: () -> Unit) {
@@ -31,9 +50,9 @@ fun OrderHistoryCard(order: SavedOrder, onClick: () -> Unit) {
                 style = Typography.RegularTextStyle,
             )
 
-            Spacer(modifier = Modifier.height(Dimens.MarginSuperSmall4))
+            Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
 
-            // Адрес (если есть)
+            // Адрес
             if (order.addressLine1.isNotEmpty()) {
                 Text(
                     text = order.addressLine1,
@@ -46,10 +65,21 @@ fun OrderHistoryCard(order: SavedOrder, onClick: () -> Unit) {
                     style = Typography.SmallTextStyle,
                 )
             }
+            Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
+
+            // Блюда в заказе одной строкой
+            if (order.mealNames.isNotEmpty()) {
+                Text(
+                    text = order.addressDetails,
+                    style = Typography.SmallTextStyle,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+            }
 
             Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
 
-            // ID заказа (очень мелкий шрифт)
+            // ID заказа
             Text(
                 text = "ID: ${order.id}",
                 style = Typography.ExtraSmallTextStyle,

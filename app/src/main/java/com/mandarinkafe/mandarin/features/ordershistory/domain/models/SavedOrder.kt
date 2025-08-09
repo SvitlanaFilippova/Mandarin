@@ -7,4 +7,5 @@ data class SavedOrder(
     val orderType: String = "", // доставка или самовывоз
     val addressLine1: String = "",
     val addressDetails: String = "",
+    val mealNames: String = "",
 )
