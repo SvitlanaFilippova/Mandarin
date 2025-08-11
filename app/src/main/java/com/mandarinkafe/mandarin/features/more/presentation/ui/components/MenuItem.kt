@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.features.more.presentation.ui.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -47,11 +46,10 @@ fun MenuItem(
                 )
             }
             Text(
+                modifier = Modifier.weight(1f),
                 text = title,
                 style = Typography.RegularTextStyle,
             )
-
-            Spacer(modifier = Modifier.weight(1f))
 
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,

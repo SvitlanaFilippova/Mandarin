@@ -28,7 +28,7 @@ fun ChosenLocationPin(
     @DrawableRes val iconRes = remember(isLoading, isError, addressFound) {
         when {
             isLoading -> null
-            addressFound -> R.drawable.ic_home
+            addressFound -> R.drawable.ic_home_for_pin
             isError -> R.drawable.ic_question
             else -> null
         }

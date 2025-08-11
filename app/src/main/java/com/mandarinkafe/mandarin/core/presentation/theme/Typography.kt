@@ -26,7 +26,7 @@ object Typography {
     val RegularLightTextStyle = TextStyle(
         fontSize = Dimens.TextSizeRegular14,
         fontWeight = FontWeight.Light,
-        color = Colors.LightGrey
+        color = Colors.WhiteTransparent75
     )
 
     val TitleStyle = TextStyle(
@@ -38,7 +38,7 @@ object Typography {
     val SmallTextStyle = TextStyle(
         fontSize = Dimens.TextSizeSmall12,
         fontWeight = FontWeight.Normal,
-        color = Colors.White
+        color = Colors.WhiteTransparent75
     )
 
     val ConsentSmallTextStyle = TextStyle(

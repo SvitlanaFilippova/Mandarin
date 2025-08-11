@@ -20,8 +20,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
-import com.mandarinkafe.mandarin.navigation.NavConstants.RoutesWithBackButton
 import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.bottomNavigationRoutes
 import com.mandarinkafe.mandarin.navigation.NavGraph
 import com.mandarinkafe.mandarin.navigation.bottomnav.BottomNavigation
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
@@ -49,9 +49,8 @@ fun MainScreen() {
     val onEvent = sharedViewModel::onEvent
     val selectedMeal = sharedState.selectedMealForFavoriteChoice
     val snackbarHostState = remember { SnackbarHostState() }
-    val isInnerScreen = currentRoute?.let { route ->
-        RoutesWithBackButton.any { route.startsWith(it.substringBefore("/{")) }
-    } == true
+    val isInnerScreen = currentRoute?.let { route -> route !in bottomNavigationRoutes } == true
+
     val showBottomBar = !isSplash && !isInnerScreen
 
     Scaffold(

@@ -9,6 +9,9 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.navigation.NavConstants.ABOUT_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.CONTACTS_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.LEGAL_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
@@ -48,6 +51,17 @@ fun NavController.navigateToOrder() {
     this.navigate(ORDER_SCREEN_ROUTE)
 }
 
+fun NavController.navigateToLegalScreen() {
+    this.navigate(LEGAL_SCREEN_ROUTE)
+}
+
+fun NavController.navigateToDeliveryScreen() {
+    this.navigate(DELIVERY_SCREEN_ROUTE)
+}
+
+fun NavController.navigateToContactsScreen() {
+    this.navigate(CONTACTS_SCREEN_ROUTE)
+}
 fun NavController.navigateToAddress(address: Address? = null) {
     if (address == null) {
         this.navigate(ADDRESS_SCREEN_ROUTE)

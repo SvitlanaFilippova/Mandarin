@@ -21,7 +21,9 @@ object NavConstants {
     const val ORDERS_HISTORY_ROUTE = "orders_history"
     const val SAVED_ADDRESSES_ROUTE = "saved_addresses"
     const val ABOUT_SCREEN_ROUTE = "about_screen"
-
+    const val LEGAL_SCREEN_ROUTE = "legal_screen"
+    const val DELIVERY_SCREEN_ROUTE = "delivery_screen"
+    const val CONTACTS_SCREEN_ROUTE = "contacts_screen"
 
     const val ADDRESS_SCREEN_ROUTE = "address"
     const val ADDRESS_SCREEN_ROUTE_WITH_ARGS =
@@ -43,13 +45,11 @@ object NavConstants {
     const val ORDER_INFO_ROUTE_WITH_ARGS =
         "$ORDER_INFO_ROUTE/{$KEY_ORDER_ID}/{$KEY_REQUIRE_CONFIRMATION}"
 
-    val RoutesWithBackButton = setOf(
-        ADDRESS_SCREEN_ROUTE,
-        ADDRESS_SCREEN_ROUTE_WITH_ARGS,
-        ADDRESS_DETAILS_ROUTE_WITH_ARGS,
-        ORDER_SCREEN_ROUTE,
-        ORDERS_HISTORY_ROUTE,
-        SAVED_ADDRESSES_ROUTE,
-        ABOUT_SCREEN_ROUTE
+    val bottomNavigationRoutes = setOf(
+        MORE_MENU_SCREEN_ROUTE,
+        MENU_SCREEN_ROUTE,
+        FAVORITES_SCREEN_ROUTE,
+        CART_SCREEN_ROUTE,
+        SEARCH_SCREEN_ROUTE
     )
 }

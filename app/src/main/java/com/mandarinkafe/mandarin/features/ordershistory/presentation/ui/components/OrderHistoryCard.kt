@@ -27,10 +27,10 @@ fun OrderHistoryCardPreview() {
             id = "Tw46twtwasfgvesdzfxcasdfcadf",
             timestamp = 24242424,
             whenCreated = "15:33, 09.08.25",
-            orderType = "Доставка курьеом",
+            orderType = "Доставка курьером",
             addressLine1 = "Ул. Солнечная, 4, Черноголовка",
             addressDetails = "кв. 82, п.2, этаж 10",
-            mealNames = "Пицца Маргарита x1, Ролл Филадельфия x2, Морс клюквенный 1x, Васаби, Пиво x99"
+            mealNames = "Пицца Маргарита x1, Ролл Филадельфия x2, Морс клюквенный 1x, Васаби, Пиво x199"
         ),
         onClick = { }
     )
@@ -69,11 +69,12 @@ fun OrderHistoryCard(order: SavedOrder, onClick: () -> Unit) {
             }
             Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
 
-            // Блюда в заказе одной строкой
+            // Блюда в заказе строкой
             if (order.mealNames.isNotEmpty()) {
                 Text(
                     text = order.mealNames,
                     style = Typography.SmallTextStyle,
+                    color = Colors.White,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2
                 )

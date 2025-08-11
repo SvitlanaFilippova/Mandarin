@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.AddressInfo
@@ -108,6 +109,18 @@ fun OrderInfoScreen(
 
             item { OrderTimesSection(order) }
 
+            // ID заказа
+            item {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "ID: ${order.id}",
+                        style = Typography.ExtraSmallTextStyle,
+                        color = Colors.LightGrey
+                    )
+                }
+            }
+
+            // Кнопка "Вернуться в меню"
             item {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     ButtonWithText(
