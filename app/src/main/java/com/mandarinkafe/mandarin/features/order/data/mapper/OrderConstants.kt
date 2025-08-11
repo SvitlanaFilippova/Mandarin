@@ -6,7 +6,7 @@ object OrderConstants {
     const val DELIVERY_TYPE_PICKUP = "DeliveryByClient"
     const val CUSTOMER_TYPE_ONE_TIME = "one-time"
     const val ADDRESS_TYPE_LEGACY = "legacy"
-    const val ADDRESS_TYPE_CITY = "city"
+    const val DISCOUNT_TYPE_CARD = "iikoCard"
     const val PAYMENT_CASH_CODE = "CASH"
     const val FULL_PERCENT = 100
     const val FULL_PERCENT_DOUBLE = 100.0

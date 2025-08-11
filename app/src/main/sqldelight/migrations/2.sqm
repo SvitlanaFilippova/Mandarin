@@ -1,0 +1,4 @@
+CREATE TABLE category_discount (
+    categoryId TEXT NOT NULL PRIMARY KEY,
+    discountId TEXT NOT NULL
+);

@@ -158,7 +158,7 @@ fun OrderContent(
                 OrderSummaryData(
                     cartSum = totalCartSum,
                     discountSum = discountSum,
-                    discountSize = discountCategory,
+                    discountSize = discountPercent,
                     deliveryCost = state.deliveryCost,
                     containNotDiscountable = containNotDiscountable,
                     addressInNotInDeliveryArea = state.deliveryInfo.addressOutOfDeliveryZone,

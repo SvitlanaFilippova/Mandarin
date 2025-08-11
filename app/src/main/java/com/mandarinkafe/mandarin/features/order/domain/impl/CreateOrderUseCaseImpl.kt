@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.order.domain.impl
 import android.util.Log
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
-import com.mandarinkafe.mandarin.features.order.data.mapper.toOutgoingOrderItem
+import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.OrderRepository
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
@@ -19,9 +19,8 @@ class CreateOrderUseCaseImpl(
         return repository.createOrder(updatedOrder)
     }
 
-
     private suspend fun withDeliveryItemIfNeeded(outgoingOrder: OutgoingOrder): OutgoingOrder {
-        Log.d("Create Order Debug", "${outgoingOrder}")
+        Log.d("Create Order Debug", "$outgoingOrder")
         if (outgoingOrder.deliveryRealCost <= 0) return outgoingOrder
 
         val deliveryCategory = menuCache.deliveryItems.firstOrNull()
@@ -29,10 +28,8 @@ class CreateOrderUseCaseImpl(
             it.name.contains("$DELIVERY_ZONE_STRING ${outgoingOrder.deliveryZoneID}")
         } ?: return outgoingOrder // не добавляем доставку, если не нашли
 
-        val deliveryItem = deliveryMeal.toOutgoingOrderItem()
+        val deliveryItem = deliveryMeal.toCartItem()
         val updatedItems = outgoingOrder.items + deliveryItem
-
-
 
         return outgoingOrder.copy(items = updatedItems)
     }

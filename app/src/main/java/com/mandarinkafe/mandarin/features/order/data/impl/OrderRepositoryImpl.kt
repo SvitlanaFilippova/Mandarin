@@ -3,9 +3,13 @@ package com.mandarinkafe.mandarin.features.order.data.impl
 import android.util.Log
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
+import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants
 import com.mandarinkafe.mandarin.features.order.data.mapper.toOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscountInfoDto
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscountTypeDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.OrderRepository
@@ -36,7 +40,12 @@ class OrderRepositoryImpl(
 
     override suspend fun createOrder(outgoingOrder: OutgoingOrder): Resource<IncomingOrder> {
         return try {
-            val orderDto = outgoingOrder.toOrderDto()
+            val orderDto = outgoingOrder.toOrderDto(
+                discountsInfo = createDiscountInfo(
+                    discountTypeId = outgoingOrder.discountTypeId,
+                    allItems = outgoingOrder.items
+                )
+            )
             val response = networkClient.createDelivery(orderDto)
             Log.d(
                 logTag,
@@ -68,6 +77,27 @@ class OrderRepositoryImpl(
         } catch (e: Exception) {
             Log.e(logTag, "Exception in createOrder: ${e.message}", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
+        }
+    }
+
+    private fun createDiscountInfo(
+        discountTypeId: String?,
+        allItems: List<CartItem>
+    ): OutgoingDiscountInfoDto? {
+        return if (discountTypeId == null) {
+            null
+        } else {
+            val selectivePositions = allItems.filterNot { it.customizedMeal.meal.discountable }
+                .map { it.customizedMeal.meal.id }
+            OutgoingDiscountInfoDto(
+                discounts = listOf(
+                    OutgoingDiscountTypeDto(
+                        discountTypeId = discountTypeId,
+                        selectivePositions = selectivePositions,
+                        type = OrderConstants.DISCOUNT_TYPE_CARD
+                    )
+                )
+            )
         }
     }
 }
