@@ -34,8 +34,7 @@ fun AboutScreen() {
     val aboutMainText = stringResource(id = R.string.about_main_text)
     stringResource(id = R.string.contact_title)
     val thanksText = stringResource(id = R.string.thanks_text)
-    val telegramLabel = stringResource(id = R.string.telegram_label)
-    val githubLabel = stringResource(id = R.string.github_label)
+
 
     Column(
         modifier = Modifier
@@ -65,14 +64,14 @@ fun AboutScreen() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             ContactLink(
-                url = "https://t.me/yourusername",
-                label = telegramLabel,
+                url = stringResource(R.string.telegram_url),
+                label = stringResource(id = R.string.telegram_label),
                 iconRes = R.drawable.ic_telegram
             )
 
             ContactLink(
-                url = "https://github.com/yourusername",
-                label = githubLabel,
+                url = stringResource(R.string.github_url),
+                label = stringResource(id = R.string.github_label),
                 iconRes = R.drawable.ic_github
             )
         }
