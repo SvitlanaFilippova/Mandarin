@@ -9,7 +9,6 @@ import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
-import com.mandarinkafe.mandarin.features.discounts.domain.api.CategoryDiscountRepository
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWithDiscountUseCase
@@ -53,13 +52,12 @@ class OrderViewModel @Inject constructor(
     private val resolvePickupPoint: ResolvePickupPointUseCase,
     private val applyPhoneDiscount: ApplyPhoneDiscountUseCase,
     private val saveOrderToHistory: SaveOrderToHistoryUseCase,
-    private val categoryDiscountRepository: CategoryDiscountRepository
+
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     init {
         getSavedAddresses()
         observeCartItems()
-        refreshDiscountCategories()
     }
 
     override fun setInitialState() = OrderState()
@@ -386,12 +384,6 @@ class OrderViewModel @Inject constructor(
         viewModelScope.launch {
             clearCart()
             saveOrderToHistory(order)
-        }
-    }
-
-    private fun refreshDiscountCategories() {
-        viewModelScope.launch {
-            categoryDiscountRepository.refreshFromApi()
         }
     }
 

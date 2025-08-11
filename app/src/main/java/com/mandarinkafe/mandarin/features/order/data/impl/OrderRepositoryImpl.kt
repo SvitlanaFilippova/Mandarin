@@ -59,7 +59,6 @@ class OrderRepositoryImpl(
                 }
 
                 HTTP_SUCCESS -> {
-                    Log.d(logTag, "Success response, converting to domain")
                     val addons = menuCache.addonsCategories.value
                     val orderInfo = (response as CreateDeliveryResponse).orderInfo.toDomain(addons)
                     if (orderInfo.errorInfo == null) {
@@ -84,17 +83,17 @@ class OrderRepositoryImpl(
         discountTypeId: String?,
         allItems: List<CartItem>
     ): OutgoingDiscountInfoDto? {
-        return if (discountTypeId == null) {
+        return if (discountTypeId.isNullOrBlank()) {
             null
         } else {
-            val selectivePositions = allItems.filterNot { it.customizedMeal.meal.discountable }
+            allItems.filterNot { it.customizedMeal.meal.discountable }
                 .map { it.customizedMeal.meal.id }
             OutgoingDiscountInfoDto(
                 discounts = listOf(
                     OutgoingDiscountTypeDto(
                         discountTypeId = discountTypeId,
-                        selectivePositions = selectivePositions,
-                        type = OrderConstants.DISCOUNT_TYPE_CARD
+//                        selectivePositions = selectivePositions,
+                        type = OrderConstants.DISCOUNT_TYPE_RMS
                     )
                 )
             )

@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -25,6 +27,9 @@ fun OrderMealItemCard(
     item: IncomingOrderItem,
     onMealDetailsClick: () -> Unit,
 ) {
+    val textDecoration = if (item.isDiscounted) {
+        TextDecoration.LineThrough
+    } else null
     Row(
         verticalAlignment = Alignment.Top,
         modifier = modifier
@@ -124,7 +129,18 @@ fun OrderMealItemCard(
                         item.totalPrice * item.amount
                     ),
                     style = Typography.RegularLightTextStyle,
+                    textDecoration = textDecoration
                 )
+                if (item.isDiscounted) {
+                    Spacer(modifier = Modifier.width(Dimens.MarginSmall8))
+                    Text(
+                        text = stringResource(
+                            R.string.float_price_template,
+                            item.totalDiscountedPrice * item.amount
+                        ),
+                        style = Typography.RegularLightTextStyle,
+                    )
+                }
             }
         }
 

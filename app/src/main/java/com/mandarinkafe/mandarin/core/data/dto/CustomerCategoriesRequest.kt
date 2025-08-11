@@ -1,5 +1,5 @@
 package com.mandarinkafe.mandarin.core.data.dto
 
-class SingleOrganizationDataRequest (
+class CustomerCategoriesRequest(
     val organizationId: String
 )

@@ -7,15 +7,14 @@ object OrderConstants {
     const val CUSTOMER_TYPE_ONE_TIME = "one-time"
     const val ADDRESS_TYPE_LEGACY = "legacy"
     const val DISCOUNT_TYPE_CARD = "iikoCard"
+    const val DISCOUNT_TYPE_RMS = "RMS"
     const val PAYMENT_CASH_CODE = "CASH"
-    const val FULL_PERCENT = 100
-    const val FULL_PERCENT_DOUBLE = 100.0
-    const val PRICE_DECIMALS = 2
     const val DEFAULT_AMOUNT = 1.0
 
     // Комментарии
     const val NO_UTENSILS_COMMENT = "БЕЗ ПРИБОРОВ"
     const val UTENSILS_NEED_PREFIX = "НУЖНЫ: "
+    const val PAYMENT_TYPE_COMMENT_PREFIX = "Способ оплаты: "
     const val NO_CHANGE_COMMENT = "Без сдачи"
     const val CHANGE_FROM_COMMENT_PREFIX = "НУЖНА СДАЧА С "
     const val DIVIDER_FOR_USER_COMMENT = " || "

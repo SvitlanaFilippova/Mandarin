@@ -70,7 +70,8 @@ fun IncomingOrderItemDto.toDomain() = IncomingOrderItem(
     price = price,
     positionId = positionId,
     deleted = deleted?.toDomain() ?: DeletionInfo(),
-    comment = comment ?: ""
+    comment = comment ?: "",
+    discountedPrice = resultSum
 )
 
 private fun DeliveryPointDto.toAddress(): Address {
@@ -97,7 +98,8 @@ private fun IncomingModifierDto.toDomain() = IncomingModifier(
     amount = amount,
     price = price,
     modifierGroupId = productGroup.id,
-    modifierGroupName = productGroup.name
+    modifierGroupName = productGroup.name,
+    discountedPrice = resultSum
 )
 
 private fun DeletionInfoDto.toDomain() = DeletionInfo(
@@ -138,7 +140,8 @@ private fun associateItemsWithAdds(
                 id = dto.product.id,
                 name = dto.product.name,
                 amount = dto.amount,
-                price = dto.price
+                price = dto.price,
+                discountedPrice = dto.resultSum
             )
             if (result.isNotEmpty()) {
                 result.last().chosenAdds += addon
@@ -150,11 +153,13 @@ private fun associateItemsWithAdds(
 
     return result
 }
+
 private class IncomingOrderItemBuilder private constructor(
     private val id: String,
     private val name: String,
     private val amount: Double,
     private val price: Double,
+    private val discountedPrice: Double?,
     private val positionId: String?,
     private val deleted: DeletionInfo,
     private val comment: String,
@@ -170,7 +175,8 @@ private class IncomingOrderItemBuilder private constructor(
         price = price,
         positionId = positionId,
         deleted = deleted,
-        comment = comment
+        comment = comment,
+        discountedPrice = discountedPrice
     )
 
     companion object {
@@ -183,7 +189,8 @@ private class IncomingOrderItemBuilder private constructor(
                 positionId = dto.positionId,
                 deleted = dto.deleted?.toDomain() ?: DeletionInfo(),
                 comment = dto.comment ?: "",
-                chosenModifiers = dto.modifiers?.map { it.toDomain() } ?: emptyList()
+                chosenModifiers = dto.modifiers?.map { it.toDomain() } ?: emptyList(),
+                discountedPrice = dto.resultSum,
             )
         }
 
@@ -195,7 +202,8 @@ private class IncomingOrderItemBuilder private constructor(
                 price = 0.0,
                 positionId = null,
                 deleted = DeletionInfo(),
-                comment = ""
+                comment = "",
+                discountedPrice = null,
             ).apply { chosenAdds += addon }
         }
     }

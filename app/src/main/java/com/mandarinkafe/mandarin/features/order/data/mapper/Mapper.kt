@@ -48,6 +48,7 @@ fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
     val fullComment = buildFullComment(
         userComment = comment.trim(),
         utensils = utensils,
+        paymentType = paymentInfo.chosenPaymentTypeDomain.paymentTypeKind,
         noChange = if (cash) paymentInfo.noChange else null,
         changeFrom = if (cash) paymentInfo.changeFrom else "",
     )
@@ -185,6 +186,7 @@ private fun buildFullComment(
     utensils: Utensils,
     noChange: Boolean?,
     changeFrom: String,
+    paymentType: String,
 ): String {
     val utensilsPart = when {
         utensils.noNeedUtensils -> OrderConstants.NO_UTENSILS_COMMENT
@@ -193,7 +195,7 @@ private fun buildFullComment(
 
         else -> null
     }
-
+    val paymentTypePart = OrderConstants.PAYMENT_TYPE_COMMENT_PREFIX + paymentType
     val changePart = when {
         noChange == null -> null
         noChange -> OrderConstants.NO_CHANGE_COMMENT
@@ -201,7 +203,7 @@ private fun buildFullComment(
         else -> null
     }
 
-    val techParts = listOfNotNull(utensilsPart, changePart)
+    val techParts = listOfNotNull(paymentTypePart, changePart, utensilsPart)
         .takeIf { it.isNotEmpty() }
         ?.joinToString(DIVIDER_FOR_TECH_PART)
 

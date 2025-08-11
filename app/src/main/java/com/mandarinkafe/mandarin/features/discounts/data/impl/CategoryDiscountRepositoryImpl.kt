@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.discounts.data.impl
 
+import android.util.Log
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.discounts.data.local.CategoryDiscountsStorage
 import com.mandarinkafe.mandarin.features.discounts.data.network.CustomerCategoriesResponse
@@ -9,7 +10,6 @@ import com.mandarinkafe.mandarin.features.discounts.data.network.dto.DiscountTyp
 import com.mandarinkafe.mandarin.features.discounts.domain.api.CategoryDiscountRepository
 import com.mandarinkafe.mandarin.features.discounts.domain.models.CategoryDiscountMap
 import com.mandarinkafe.mandarin.features.discounts.domain.models.toDomain
-import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.toDomain
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 
 class CategoryDiscountRepositoryImpl(
@@ -21,13 +21,13 @@ class CategoryDiscountRepositoryImpl(
     }
 
     override suspend fun getAllMappings(): List<CategoryDiscountMap> {
-        return storage.getAll().map { it.toDomain() }
+        val result = storage.getAll().map { it.toDomain() }
+        return result
     }
 
     override suspend fun refreshFromApi() {
         val categories = getCustomerCategories()
         val discounts = getDiscountTypes()
-
         val mapping = buildCategoryDiscountMap(categories, discounts)
         storage.deleteAll()
         mapping.forEach {
@@ -40,9 +40,19 @@ class CategoryDiscountRepositoryImpl(
         discounts: List<DiscountTypeDto>
     ): List<CategoryDiscountMap> {
         return categories.mapNotNull { category ->
-            val matchingDiscount = discounts.firstOrNull { discount ->
-                discount.name == category.name
+            val categoryPercent = category.name.toDoubleOrNull()
+            if (categoryPercent == null) {
+                Log.w(
+                    "DEBUG DISCOUNT Repository",
+                    "Category '${category.name}' is not a number, skipping"
+                )
+                return@mapNotNull null
             }
+
+            val matchingDiscount = discounts.firstOrNull { discount ->
+                discount.percent.toDouble() == categoryPercent
+            }
+
             matchingDiscount?.let {
                 CategoryDiscountMap(category.id, it.id)
             }
@@ -52,7 +62,8 @@ class CategoryDiscountRepositoryImpl(
     private suspend fun getDiscountTypes(): List<DiscountTypeDto> {
         val response = networkClient.getDiscounts()
         if (response.resultCode == HTTP_SUCCESS) {
-            val discounts = (response as DiscountsResponse).discounts.firstOrNull()?.discountTypes
+            val rawDiscounts = (response as DiscountsResponse).discounts
+            val discounts = rawDiscounts.firstOrNull()?.items
             val filtered = discounts?.filterNot { it.isDeleted } ?: emptyList()
             return filtered
         } else {

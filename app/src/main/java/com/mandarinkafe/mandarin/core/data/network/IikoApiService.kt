@@ -2,18 +2,19 @@ package com.mandarinkafe.mandarin.core.data.network
 
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
 import com.mandarinkafe.mandarin.core.data.dto.AuthResponse
+import com.mandarinkafe.mandarin.core.data.dto.CustomerCategoriesRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsResponse
-import com.mandarinkafe.mandarin.core.data.dto.SingleOrganizationDataRequest
+import com.mandarinkafe.mandarin.features.discounts.data.LoyaltyCustomerByPhoneRequest
+import com.mandarinkafe.mandarin.features.discounts.data.network.CustomerCategoriesResponse
+import com.mandarinkafe.mandarin.features.discounts.data.network.DiscountsRequest
+import com.mandarinkafe.mandarin.features.discounts.data.network.DiscountsResponse
+import com.mandarinkafe.mandarin.features.discounts.data.network.LoyaltyCustomerResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.MenuIdResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.MenuResponse
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
-import com.mandarinkafe.mandarin.features.discounts.data.LoyaltyCustomerByPhoneRequest
-import com.mandarinkafe.mandarin.features.discounts.data.network.CustomerCategoriesResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
-import com.mandarinkafe.mandarin.features.discounts.data.network.DiscountsResponse
-import com.mandarinkafe.mandarin.features.discounts.data.network.LoyaltyCustomerResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
@@ -70,12 +71,12 @@ interface IikoApiService {
     @POST("/api/1/discounts")
     suspend fun getDiscounts(
         @Header("Authorization") token: String,
-        @Body body: SingleOrganizationDataRequest
+        @Body body: DiscountsRequest
     ): DiscountsResponse
 
     @POST("/api/1/loyalty/iiko/customer_category")
     suspend fun getAllCustomerCategories(
         @Header("Authorization") token: String,
-        @Body body: SingleOrganizationDataRequest
+        @Body body: CustomerCategoriesRequest
     ): CustomerCategoriesResponse
 }

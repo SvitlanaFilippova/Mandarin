@@ -76,6 +76,6 @@ class OrderInfoViewModel @Inject constructor(private val observeOrderStatus: Obs
     }
 
     private companion object {
-        const val ORDER_STATUS_UPD_DELAY = 10000L
+        const val ORDER_STATUS_UPD_DELAY = 20000L
     }
 }

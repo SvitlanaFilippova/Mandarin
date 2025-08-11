@@ -3,14 +3,15 @@ package com.mandarinkafe.mandarin.core.data.network.impl
 import android.util.Log
 import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
+import com.mandarinkafe.mandarin.core.data.dto.CustomerCategoriesRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.Response
-import com.mandarinkafe.mandarin.core.data.dto.SingleOrganizationDataRequest
 import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.features.discounts.data.LoyaltyCustomerByPhoneRequest
+import com.mandarinkafe.mandarin.features.discounts.data.network.DiscountsRequest
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
-import com.mandarinkafe.mandarin.features.discounts.data.LoyaltyCustomerByPhoneRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
@@ -32,7 +33,7 @@ class IikoNetworkClientImpl(
 
     private val logTagORDER = "DEBUG ORDER NetworkClient"
 
-        private suspend fun authenticate() {
+    private suspend fun authenticate() {
         if (token.isNotEmpty() && organizationId.isNotEmpty()) {
             // Уже авторизованы
             return
@@ -125,14 +126,13 @@ class IikoNetworkClientImpl(
         }
     }
 
-
-
     override suspend fun createDelivery(order: OutgoingOrderDto): Response {
         return try {
             val request = CreateDeliveryRequest(
                 order = order,
                 organizationId = organizationId
             )
+            Log.d(logTagORDER, "Prepared request: $request")
 
             val response = iikoService.createDelivery(
                 token = token,
@@ -170,7 +170,6 @@ class IikoNetworkClientImpl(
         }
     }
 
-
     override suspend fun getOrderStatusById(id: String): Response {
         return try {
             val request = OderInfoRequest(
@@ -198,7 +197,7 @@ class IikoNetworkClientImpl(
         return try {
             val response = iikoService.getAllCustomerCategories(
                 token = token,
-                body = SingleOrganizationDataRequest(
+                body = CustomerCategoriesRequest(
                     organizationId = organizationId
                 )
             )
@@ -213,8 +212,8 @@ class IikoNetworkClientImpl(
         return try {
             val response = iikoService.getDiscounts(
                 token = token,
-                body = SingleOrganizationDataRequest(
-                    organizationId = organizationId
+                body = DiscountsRequest(
+                    organizationIds = listOf(organizationId)
                 )
             )
             response.apply { resultCode = HTTP_SUCCESS }
