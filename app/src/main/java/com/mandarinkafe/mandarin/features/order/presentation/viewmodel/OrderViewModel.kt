@@ -53,7 +53,7 @@ class OrderViewModel @Inject constructor(
     private val applyPhoneDiscount: ApplyPhoneDiscountUseCase,
     private val saveOrderToHistory: SaveOrderToHistoryUseCase,
 
-) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
+    ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     init {
         getSavedAddresses()
@@ -163,12 +163,19 @@ class OrderViewModel @Inject constructor(
     }
 
     private fun setAddress(address: Address) {
-        setState { copy(deliveryInfo = deliveryInfo.copy(chosenAddress = address)) }
+        setState {
+            copy(
+                deliveryInfo = deliveryInfo.copy(
+                    chosenAddress = address,
+                    isLoading = true
+                )
+            )
+        }
         viewModelScope.launch {
             val deliveryZone = getDeliveryZone(address.point)
             setState {
                 val newDeliveryInfo = deliveryInfo.copy(
-                    deliveryZone = deliveryZone,
+                    deliveryZone = deliveryZone, isLoading = false
                 )
                 copy(deliveryInfo = newDeliveryInfo)
             }

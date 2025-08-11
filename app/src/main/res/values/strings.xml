@@ -244,7 +244,7 @@
     <string name="cannot_open_link">Не удалось открыть ссылку</string>
 
     <!-- consent -->
-    <string name="consent_prefix">Соглашаюсь с</string>
+    <string name="consent_prefix">Нажимая на кнопку, подтверждаю своё согласаие с</string>
     <string name="consent_privacy">политикой конфиденциальности</string>
     <string name="consent_agreement">пользовательским соглашением</string>
     <string name="consent_yandex_terms">условиями использования «Яндекс.Карт»</string>

@@ -143,6 +143,5 @@ fun OrderMealItemCard(
                 }
             }
         }
-
     }
 }

@@ -162,6 +162,7 @@ fun OrderContent(
                     deliveryCost = state.deliveryCost,
                     containNotDiscountable = containNotDiscountable,
                     addressInNotInDeliveryArea = state.deliveryInfo.addressOutOfDeliveryZone,
+                    deliveryInfoIsLoading = state.deliveryInfo.isLoading,
                     freeDeliveryThreshold = state.deliveryInfo.deliveryZone?.freeDeliveryThreshold,
                     isPickup = state.deliveryInfo.isPickup
                 )
