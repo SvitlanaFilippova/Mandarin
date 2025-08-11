@@ -26,6 +26,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Submi
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.UtensilPreferences
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ConsentTextWithLinks
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -181,6 +182,7 @@ fun OrderContent(
                 onSubmitOrder = { onEvent(OrderEvent.SubmitOrder) },
                 totalOrderSum = state.totalOrderSum,
             )
+            ConsentTextWithLinks()
         }
 
         item { Spacer(Modifier.height(Dimens.MarginForCartButton72)) }

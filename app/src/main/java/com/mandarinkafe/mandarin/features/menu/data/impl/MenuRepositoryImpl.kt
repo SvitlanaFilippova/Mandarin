@@ -116,7 +116,7 @@ class MenuRepositoryImpl @Inject constructor(
         return MealCategory(
             id = dto?.id ?: UUID.nameUUIDFromBytes(builder.fullPath.joinToString("/").toByteArray())
                 .toString(),
-            name = builder.name,
+            name = builder.name.applyTypography(),
             meals = meals,
             subCategories = subCategories,
             tabIcon = dto?.buttonImageUrl,

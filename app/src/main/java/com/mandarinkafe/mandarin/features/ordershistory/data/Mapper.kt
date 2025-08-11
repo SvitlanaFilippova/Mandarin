@@ -4,6 +4,8 @@ import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.core.domain.models.getDetailsString
 import com.mandarinkafe.mandarin.db.Saved_order
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
+import com.mandarinkafe.mandarin.util.Constants.NON_BRAKING_SPACE
+import com.mandarinkafe.mandarin.util.applyTypography
 
 object Mapper {
     fun Saved_order.toSavedOrder() = SavedOrder(
@@ -20,7 +22,7 @@ object Mapper {
         val names = items
             .groupBy { it.name }
             .mapValues { entry -> entry.value.sumOf { it.amount } }
-            .map { (name, totalAmount) -> "$name x${totalAmount.toInt()}" }
+            .map { (name, totalAmount) -> "${name.applyTypography()}${NON_BRAKING_SPACE}x${totalAmount.toInt()}" }
             .joinToString(", ")
 
         return SavedOrder(

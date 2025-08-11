@@ -41,6 +41,12 @@ object Typography {
         color = Colors.White
     )
 
+    val ConsentSmallTextStyle = TextStyle(
+        fontSize = Dimens.TextSizeSmall11,
+        fontWeight = FontWeight.Light,
+        color = Colors.WhiteTransparent75
+    )
+
     val ExtraSmallTextStyle = TextStyle(
         fontSize = Dimens.TextSizeSuperSmall9,
         fontWeight = FontWeight.Light,

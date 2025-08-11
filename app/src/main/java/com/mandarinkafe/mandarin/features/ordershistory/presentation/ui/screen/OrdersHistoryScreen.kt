@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,10 +15,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.components.OrderHistoryCard
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrderInfo
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitle
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
 @Composable
@@ -37,13 +36,11 @@ fun OrdersHistoryScreen(
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
 
     ) {
+
         item {
-            Text(
-                modifier = Modifier.padding(Dimens.MarginSmall8),
-                text = stringResource(R.string.order_history),
-                style = Typography.TitleStyle,
-            )
+            ScreenTitle(name = stringResource(R.string.order_history))
         }
+
         if (orders.isNotEmpty()) {
             itemsIndexed(
                 items = orders,

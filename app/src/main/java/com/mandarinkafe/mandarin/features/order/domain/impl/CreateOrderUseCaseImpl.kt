@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.order.domain.impl
 
+import android.util.Log
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.order.data.mapper.toOutgoingOrderItem
@@ -18,7 +19,9 @@ class CreateOrderUseCaseImpl(
         return repository.createOrder(updatedOrder)
     }
 
+
     private suspend fun withDeliveryItemIfNeeded(outgoingOrder: OutgoingOrder): OutgoingOrder {
+        Log.d("Create Order Debug", "${outgoingOrder}")
         if (outgoingOrder.deliveryRealCost <= 0) return outgoingOrder
 
         val deliveryCategory = menuCache.deliveryItems.firstOrNull()
@@ -28,6 +31,8 @@ class CreateOrderUseCaseImpl(
 
         val deliveryItem = deliveryMeal.toOutgoingOrderItem()
         val updatedItems = outgoingOrder.items + deliveryItem
+
+
 
         return outgoingOrder.copy(items = updatedItems)
     }

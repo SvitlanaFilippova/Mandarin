@@ -11,7 +11,7 @@ CREATE TABLE saved_order (
 
 selectAll:
 SELECT * FROM saved_order
-ORDER BY timestamp ASC;
+ORDER BY timestamp DESC;
 
 insert:
 INSERT INTO saved_order(id, whenCreated, orderType, addressLine1, addressDetails, timestamp, mealNames)

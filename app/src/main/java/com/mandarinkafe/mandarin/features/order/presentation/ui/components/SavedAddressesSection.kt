@@ -17,7 +17,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.components.SavedAddressCard
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SAVED_ADDRESSES_NUMBER
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickableText
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MyClickableText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
 @Composable
@@ -56,7 +56,7 @@ fun SavedAddressesSection(
                 }
                 // Кнопка "Показать ещё" или "Скрыть"
                 if (allSavedAddresses.size > DEFAULT_SAVED_ADDRESSES_NUMBER) {
-                    ClickableText(
+                    MyClickableText(
                         onClick = onToggleShowAll,
                         text = if (showAllAddresses) {
                             stringResource(R.string.addresses_hide)
@@ -81,7 +81,7 @@ fun SavedAddressesSection(
                 )
             }
 
-            ClickableText(
+            MyClickableText(
                 textRes = R.string.add_address,
                 onClick = { onEvent(OrderEvent.AddNewAddress) }
             )

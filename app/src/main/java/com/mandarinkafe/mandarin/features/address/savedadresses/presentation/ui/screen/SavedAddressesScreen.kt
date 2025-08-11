@@ -37,8 +37,8 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickableText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MyClickableText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -112,7 +112,7 @@ fun SavedAddressesScreen(
             }
         }
         item {
-            ClickableText(
+            MyClickableText(
                 textRes = R.string.add_address,
                 onClick = { onEvent(SavedAddressesEvent.AddNewAddress) }
             )

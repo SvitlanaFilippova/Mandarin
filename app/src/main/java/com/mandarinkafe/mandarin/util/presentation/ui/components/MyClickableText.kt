@@ -14,14 +14,17 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
-fun ClickableText(text: String? = null, textRes: Int? = null, onClick: () -> Unit) {
+fun MyClickableText(
+    modifier: Modifier = Modifier,
+    text: String? = null, textRes: Int? = null, onClick: () -> Unit
+) {
     val resolvedText = when {
         text != null -> text
         textRes != null -> stringResource(id = textRes)
         else -> return
     }
     Text(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(
                 onClick = onClick,

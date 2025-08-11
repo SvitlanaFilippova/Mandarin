@@ -10,6 +10,7 @@ import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.LoyaltyCustomerByPhoneRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
+import com.mandarinkafe.mandarin.features.order.data.network.dto.loyalty.DiscountsResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.loyalty.LoyaltyCustomerResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesResponse
@@ -51,6 +52,12 @@ interface IikoApiService {
         @Header("Authorization") token: String,
         @Body body: PaymentTypesRequest
     ): PaymentTypesResponse
+
+    @POST("/api/1/discounts")
+    suspend fun getDiscounts(
+        @Header("Authorization") token: String,
+        @Body body: DiscountsRequest
+    ): DiscountsResponse
 
     @POST("/api/1/deliveries/create")
     suspend fun createDelivery(

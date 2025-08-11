@@ -127,6 +127,7 @@
     <string name="order">Заказ</string>
     <string name="comment_template">Комментарий: %1$s</string>
 
+
     <!-- Статусы заказа -->
     <string name="delivery_status_unconfirmed">Не подтверждён</string>
     <string name="delivery_status_wait_cooking">Ожидает готовки</string>
@@ -184,7 +185,6 @@
     <string name="label_delivered">Доставлено</string>
     <string name="label_closed">Закрыто</string>
 
-
     <!-- Кнопки действий -->
     <string name="minus">-</string>
     <string name="plus">+</string>
@@ -225,6 +225,36 @@
     <string name="error_empty_cart">В корзине пока ничего нет :(</string>
     <string name="error_empty_favorites">В избранных пока ничего нет.</string>
     <string name="error_empty_favorites_extra">Скорее добавь свои любимые блюда, чтобы заказывать их&#160;было ещё удобнее!</string>
+
+    <!-- More Menu -->
+    <string name="more_section_user_data">Ваши данные</string>
+    <string name="more_orders_history">История заказов</string>
+    <string name="more_saved_addresses">Сохранённые адреса</string>
+    <string name="more_section_legal_info">Правовая информация</string>
+    <string name="more_privacy_policy">Политика конфиденциальности</string>
+    <string name="more_user_agreement">Пользовательское соглашение</string>
+    <string name="more_personal_data_agreement">Соглашение об обработке персональных данных</string>
+    <string name="more_personal_data_agreement_url">https://example.com/personal-data</string>
+    <string name="more_yandex_maps_terms">Условия использования отдельных сервисов «Яндекс.Карт»</string>
+    <string name="cannot_open_link">Не удалось открыть ссылку</string>
+
+    <!-- consent -->
+    <string name="consent_prefix">Соглашаюсь с</string>
+    <string name="consent_privacy">политикой конфиденциальности</string>
+    <string name="consent_agreement">пользовательским соглашением</string>
+    <string name="consent_yandex_terms">условиями использования «Яндекс.Карт»</string>
+    <string name="privacy_policy_url">https://mandarin-kafe.ru/policy</string>
+    <string name="user_agreement_url">https://example.com/agreement</string>
+    <string name="yandex_maps_terms_url">https://yandex.ru/legal/maps_api/</string>
+
+    <!--     О приложении  -->
+    <string name="about_title">О приложении</string>
+    <string name="version_text">Версия приложения: %1$s</string>
+    <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана Филиппова&#160;&#8212; я&#160;разработчик этого приложения. \n\nЕсли у&#160;тебя есть идеи по&#160;улучшению или просто хочешь поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!\n\nP.S: отзывы в сторах тоже приветствуются 😊</string>
+    <string name="contact_title">Как со мной связаться:</string>
+    <string name="telegram_label">Telegram</string>
+    <string name="github_label">GitHub</string>
+    <string name="thanks_text">Спасибо, что пользуешься моим приложением! ❤️</string>
 
     <!-- Для contentDescription  -->
     <string name="picture_of_meal_template">Изображение %1$s</string>

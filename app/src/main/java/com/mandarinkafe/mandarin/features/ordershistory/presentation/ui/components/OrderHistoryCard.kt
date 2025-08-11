@@ -11,6 +11,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -24,12 +25,12 @@ fun OrderHistoryCardPreview() {
     OrderHistoryCard(
         SavedOrder(
             id = "Tw46twtwasfgvesdzfxcasdfcadf",
-            timestamp = TODO(),
+            timestamp = 24242424,
             whenCreated = "15:33, 09.08.25",
             orderType = "Доставка курьеом",
             addressLine1 = "Ул. Солнечная, 4, Черноголовка",
             addressDetails = "кв. 82, п.2, этаж 10",
-            mealNames = "Пицца Маргарита, Ролл Филадельфия, Морс клюквенный, Васаби, Пиво "
+            mealNames = "Пицца Маргарита x1, Ролл Филадельфия x2, Морс клюквенный 1x, Васаби, Пиво x99"
         ),
         onClick = { }
     )
@@ -63,6 +64,7 @@ fun OrderHistoryCard(order: SavedOrder, onClick: () -> Unit) {
                 Text(
                     text = order.addressDetails,
                     style = Typography.SmallTextStyle,
+                    fontWeight = FontWeight.ExtraLight,
                 )
             }
             Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
@@ -70,10 +72,10 @@ fun OrderHistoryCard(order: SavedOrder, onClick: () -> Unit) {
             // Блюда в заказе одной строкой
             if (order.mealNames.isNotEmpty()) {
                 Text(
-                    text = order.addressDetails,
+                    text = order.mealNames,
                     style = Typography.SmallTextStyle,
                     overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
+                    maxLines = 2
                 )
             }
 

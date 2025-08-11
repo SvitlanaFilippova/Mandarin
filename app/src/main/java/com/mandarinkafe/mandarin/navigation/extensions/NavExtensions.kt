@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.navigation.NavConstants.ABOUT_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
@@ -88,6 +89,10 @@ fun NavController.navigateToOrderInfo(
         }
         launchSingleTop = true
     }
+}
+
+fun NavController.navigateToAboutScreen() {
+    this.navigate(ABOUT_SCREEN_ROUTE)
 }
 
 fun NavController.tryGetBackStackEntry(route: String): NavBackStackEntry? {

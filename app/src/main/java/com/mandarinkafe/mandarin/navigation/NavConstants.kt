@@ -20,6 +20,8 @@ object NavConstants {
     const val MORE_MENU_SCREEN_ROUTE = "more"
     const val ORDERS_HISTORY_ROUTE = "orders_history"
     const val SAVED_ADDRESSES_ROUTE = "saved_addresses"
+    const val ABOUT_SCREEN_ROUTE = "about_screen"
+
 
     const val ADDRESS_SCREEN_ROUTE = "address"
     const val ADDRESS_SCREEN_ROUTE_WITH_ARGS =
@@ -47,6 +49,7 @@ object NavConstants {
         ADDRESS_DETAILS_ROUTE_WITH_ARGS,
         ORDER_SCREEN_ROUTE,
         ORDERS_HISTORY_ROUTE,
-        SAVED_ADDRESSES_ROUTE
+        SAVED_ADDRESSES_ROUTE,
+        ABOUT_SCREEN_ROUTE
     )
 }

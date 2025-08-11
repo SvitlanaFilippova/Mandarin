@@ -2,10 +2,8 @@ package com.mandarinkafe.mandarin.features.favorites.presentation.ui.components
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -17,10 +15,10 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.id
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_COLUMN_COUNT
 import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_SPACING_COUNT
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitle
 
 @Composable
 fun FavoritesContent(
@@ -40,11 +38,7 @@ fun FavoritesContent(
         (screenWidth - horizontalPadding * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
     }
 
-    Text(
-        modifier = Modifier.padding(Dimens.MarginSmall8),
-        text = stringResource(R.string.favorite),
-        style = Typography.TitleStyle,
-    )
+    ScreenTitle(name = stringResource(R.string.favorite))
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)

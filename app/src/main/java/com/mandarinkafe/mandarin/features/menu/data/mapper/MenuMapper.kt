@@ -87,7 +87,7 @@ fun ModifierGroupDto.toDomain(): ModifierGroup {
     val isSingleChoice = restrictions?.maxQuantity == 1
     return ModifierGroup(
         id = itemGroupId,
-        name = name ?: "",
+        name = name?.applyTypography() ?: "",
         items = items
             ?.map { it.toDomain() }
             ?.sortedBy { it.price != 0 }
