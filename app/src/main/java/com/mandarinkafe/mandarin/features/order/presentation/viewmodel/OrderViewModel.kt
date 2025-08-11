@@ -31,6 +31,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ObserveOrderStatusUseCase
+import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -401,6 +402,5 @@ class OrderViewModel @Inject constructor(
 
     private companion object {
         const val ORDER_STATUS_UPD_DELAY = 1000L
-        const val VALID_PHONE_LENGTH = 10
     }
 }

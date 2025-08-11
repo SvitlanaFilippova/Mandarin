@@ -86,7 +86,6 @@ object Constants {
     const val TAG_NO_DELIVERY = "NO_DELIVERY"
     const val TAG_PIZZERIA = "PIZZERIA"
     const val TAG_CAFE = "CAFE"
-
     const val LOCALE_RU = "ru_RU"
 
     // remoteConfig

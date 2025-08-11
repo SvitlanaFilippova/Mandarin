@@ -62,7 +62,7 @@
 
     <!-- Оформление заказа -->
     <string name="your_name">Имя</string>
-    <string name="your_phone">Номер телефона *</string>
+    <string name="your_phone_required">Номер телефона *</string>
     <string name="phone_prefix">+7 </string>
     <string name="phone_mask">(###) ###-##-##</string>
     <string name="phone_placeholder">(XXX) XXX-XX-XX</string>
@@ -100,6 +100,8 @@
     <string name="order_submit_success">Заказ №%1$s успешно создан</string>
     <string name="back_to_menu">Вернуться в меню</string>
     <string name="choose_address">Выберите адрес *</string>
+    <string name="order">Заказ</string>
+    <string name="comment_template">Комментарий: %1$s</string>
 
     <!-- Адрес -->
     <string name="location">Адрес</string>
@@ -123,10 +125,12 @@
     <string name="addresses_hide">Скрыть</string>
     <string name="addresses_show_more">Показать ещё %1$d</string>
 
-    <!-- Оформление заказа -->
-    <string name="order">Заказ</string>
-    <string name="comment_template">Комментарий: %1$s</string>
-
+    <!-- Форма обратной связи -->
+    <string name="your_phone">Номер телефона</string>
+    <string name="your_email">E-mail</string>
+    <string name="your_message">Сообщение *</string>
+    <string name="i_need_feedback">Мне нужна обратная связь</string>
+    <string name="contacts_are_required">Нужен email или номер телефона для связи</string>
 
     <!-- Статусы заказа -->
     <string name="delivery_status_unconfirmed">Не подтверждён</string>
@@ -268,5 +272,6 @@
     <string name="back_to_top">Вернуться в начало</string>
     <string name="is_selected">Выбрано</string>
     <string name="logo_cafe">Логотип кафе</string>
+    <string name="send">Отправить</string>
 
 </resources>

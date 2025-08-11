@@ -24,15 +24,13 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
-fun ConsentTextWithLinks() {
+fun ConsentTextWithLinks(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     val prefix = stringResource(id = R.string.consent_prefix) // "Соглашаюсь с"
     val privacy = stringResource(id = R.string.consent_privacy) // "политикой конфиденциальности"
     val agreement =
         stringResource(id = R.string.consent_agreement) // "пользовательским соглашением"
-    val yandex =
-        stringResource(id = R.string.consent_yandex_terms) // "условиями использования «Яндекс.Карт»"
     val linkStyle = TextLinkStyles(
         SpanStyle(
             fontSize = Dimens.TextSizeSmall11,
@@ -44,7 +42,6 @@ fun ConsentTextWithLinks() {
     )
     val privacyUrl = stringResource(id = R.string.privacy_policy_url)
     val agreementUrl = stringResource(id = R.string.user_agreement_url)
-    val yandexUrl = stringResource(id = R.string.yandex_maps_terms_url)
     val text = buildAnnotatedString {
         append("$prefix ")
 
@@ -58,7 +55,7 @@ fun ConsentTextWithLinks() {
             )
         ) { append(privacy) }
 
-        append(", ")
+        append(" и ")
 
         withLink(
             LinkAnnotation.Clickable(
@@ -70,21 +67,10 @@ fun ConsentTextWithLinks() {
             )
         ) { append(agreement) }
 
-        append(" и ")
-
-        withLink(
-            LinkAnnotation.Clickable(
-                tag = "YANDEX",
-                linkInteractionListener = {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, yandexUrl.toUri()))
-                },
-                styles = linkStyle
-            )
-        ) { append(yandex) }
     }
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center

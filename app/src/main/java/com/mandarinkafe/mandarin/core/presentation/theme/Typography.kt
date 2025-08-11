@@ -99,4 +99,9 @@ object Typography {
         color = Colors.White
     )
 
+    val ErrorTextStyle = TextStyle(
+        fontSize = Dimens.TextSizeSmall12,
+        fontWeight = FontWeight.Light,
+        color = Colors.ErrorRed
+    )
 }

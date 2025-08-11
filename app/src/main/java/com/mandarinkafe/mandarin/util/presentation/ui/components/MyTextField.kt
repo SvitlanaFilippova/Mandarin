@@ -10,6 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -35,8 +36,23 @@ fun MyTextField(
     prefix: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
-
+    colors: TextFieldColors? = null,
     ) {
+
+    val colors = colors ?: TextFieldDefaults.colors(
+        cursorColor = Colors.Orange,
+        focusedTextColor = Colors.White,
+        focusedContainerColor = Colors.DarkGrey,
+        focusedIndicatorColor = Colors.White,
+        unfocusedTextColor = Colors.White,
+        unfocusedContainerColor = Colors.DarkGrey,
+        unfocusedIndicatorColor = Colors.Transparent,
+        errorIndicatorColor = Colors.ErrorRed,
+        errorContainerColor = Colors.DarkGrey,
+        disabledTextColor = Colors.White,
+        disabledContainerColor = Colors.DarkGrey,
+        disabledIndicatorColor = Colors.Transparent,
+    )
     TextField(
         modifier = modifier
             .fillMaxWidth(),
@@ -45,20 +61,7 @@ fun MyTextField(
         minLines = minLines,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         onValueChange = { onValueChange(it) },
-        colors = TextFieldDefaults.colors(
-            cursorColor = Colors.Orange,
-            focusedTextColor = Colors.White,
-            focusedContainerColor = Colors.DarkGrey,
-            focusedIndicatorColor = Colors.White,
-            unfocusedTextColor = Colors.White,
-            unfocusedContainerColor = Colors.DarkGrey,
-            unfocusedIndicatorColor = Colors.Transparent,
-            errorIndicatorColor = Colors.ErrorRed,
-            errorContainerColor = Colors.DarkGrey,
-            disabledTextColor = Colors.White,
-            disabledContainerColor = Colors.DarkGrey,
-            disabledIndicatorColor = Colors.Transparent,
-        ),
+        colors = colors,
         placeholder = placeholder,
         label = {
             Text(

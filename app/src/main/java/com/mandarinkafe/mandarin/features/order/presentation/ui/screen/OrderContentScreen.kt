@@ -88,7 +88,7 @@ fun OrderContent(
                         .fillMaxWidth()
                         .padding(bottom = Dimens.MarginSuperSmall4),
                     text = stringResource(R.string.choose_address),
-                    style = Typography.RegularTextStyle.copy(color = Colors.ErrorRed),
+                    style = Typography.ErrorTextStyle
                 )
             }
         }
