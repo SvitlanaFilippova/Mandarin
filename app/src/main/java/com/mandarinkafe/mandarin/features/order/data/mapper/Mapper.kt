@@ -12,15 +12,15 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DEFAULT_AMOUNT
-import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DISCOUNT_APPLIED
-import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DISCOUNT_PERCENT
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVIDER_FOR_TECH_PART
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVIDER_FOR_USER_COMMENT
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.PRICE_DECIMALS
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.UTENSILS_NEED_PREFIX
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingPaymentDto
-import com.mandarinkafe.mandarin.features.order.data.network.dto.loyalty.LoyaltyCustomerResponse
+import com.mandarinkafe.mandarin.features.discounts.data.network.LoyaltyCustomerResponse
+import com.mandarinkafe.mandarin.features.discounts.data.network.dto.CustomerCategoryDto
+import com.mandarinkafe.mandarin.features.discounts.domain.models.CustomerCategory
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.LoyaltyCustomer
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingModifier
@@ -31,14 +31,18 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Utensils
 import com.mandarinkafe.mandarin.util.roundTo
 
-fun LoyaltyCustomerResponse.toDomain(): LoyaltyCustomer {
-    return LoyaltyCustomer(
-        id = id,
-        isDeleted = isDeleted == true,
-        maxDiscountPercent = maxDiscount
-    )
-}
+fun LoyaltyCustomerResponse.toDomain() = LoyaltyCustomer(
+    id = id,
+    isDeleted = isDeleted == true,
+    categories = categories.map { it.toDomain()},
+)
 
+fun CustomerCategoryDto.toDomain() = CustomerCategory(
+    id = id,
+    name = name,
+    discountPercent = name.toIntOrNull(),
+    isActive = isActive
+)
 fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
     val cash = paymentType.code == OrderConstants.PAYMENT_CASH_CODE
     val fullComment = buildFullComment(
@@ -46,7 +50,6 @@ fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
         utensils = utensils,
         noChange = if (cash) paymentInfo.noChange else null,
         changeFrom = if (cash) paymentInfo.changeFrom else "",
-        discountCategory = cartSummary.discountCategory
     )
     val address = if (deliveryInfo.isPickup) null else deliveryInfo.chosenAddress
 
@@ -58,10 +61,10 @@ fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
         chosenAddress = address,
         paymentType = paymentType,
         comment = fullComment,
-        items = cartSummary.items.toOrderItemsRequest(discountCategory = cartSummary.discountCategory),
+        items = cartSummary.items.toOrderItemsRequest(discountCategory = cartSummary.discountPercent),
         deliveryRealCost = deliveryCost,
         totalOrderSum = totalOrderSum,
-        discountCategory = cartSummary.discountCategory,
+        discountCategory = cartSummary.discountPercent,
         deliveryZoneID = deliveryInfo.deliveryZone?.id
     )
 }
@@ -202,7 +205,6 @@ private fun buildFullComment(
     utensils: Utensils,
     noChange: Boolean?,
     changeFrom: String,
-    discountCategory: Int
 ): String {
     val utensilsPart = when {
         utensils.noNeedUtensils -> OrderConstants.NO_UTENSILS_COMMENT
@@ -221,27 +223,18 @@ private fun buildFullComment(
 
     val techParts = listOfNotNull(utensilsPart, changePart)
         .takeIf { it.isNotEmpty() }
-        ?.joinToString()
-
-    val discountPart = if (discountCategory != 0) {
-        DISCOUNT_APPLIED + discountCategory + DISCOUNT_PERCENT
-    } else {
-        null
-    }
-
-    val fullTechnicalComment = listOfNotNull(techParts, discountPart)
-        .takeIf { it.isNotEmpty() }
         ?.joinToString(DIVIDER_FOR_TECH_PART)
+
 
     return buildString {
         append(userComment.trim())
 
-        if (userComment.isNotBlank() && !fullTechnicalComment.isNullOrBlank()) {
+        if (userComment.isNotBlank() && !techParts.isNullOrBlank()) {
             append(DIVIDER_FOR_USER_COMMENT)
         }
 
-        if (!fullTechnicalComment.isNullOrBlank()) {
-            append(fullTechnicalComment)
+        if (!techParts.isNullOrBlank()) {
+            append(techParts)
         }
     }.trim()
 }

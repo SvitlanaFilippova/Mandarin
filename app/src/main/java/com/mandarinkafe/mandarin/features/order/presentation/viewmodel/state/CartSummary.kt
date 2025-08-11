@@ -6,7 +6,8 @@ import com.mandarinkafe.mandarin.core.domain.models.totalPrice
 data class CartSummary(
     val items: List<CartItem> = emptyList(),
     val containNotDiscountable: Boolean = false,
-    val discountCategory: Int = 0,
+    val discountPercent: Int = 0,
+    val discountId: String? = null,
     val cartSumWithDiscount: Double = 0.0,
 ) {
     val totalCartSum: Int

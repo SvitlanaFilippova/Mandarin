@@ -1,12 +1,11 @@
-package com.mandarinkafe.mandarin.features.order.data.impl
+package com.mandarinkafe.mandarin.features.discounts.data.impl
 
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.features.discounts.data.network.LoyaltyCustomerResponse
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
-import com.mandarinkafe.mandarin.features.order.data.network.dto.loyalty.LoyaltyCustomerResponse
 import com.mandarinkafe.mandarin.features.order.domain.api.LoyaltyCustomerRepository
 import com.mandarinkafe.mandarin.features.order.domain.models.LoyaltyCustomer
-import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
-import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Resource
 
 class LoyaltyCustomerRepositoryImpl(private val networkClient: IikoNetworkClient) :
@@ -14,8 +13,8 @@ class LoyaltyCustomerRepositoryImpl(private val networkClient: IikoNetworkClient
     override suspend fun getLoyaltyCustomerInfo(phone: String): Resource<LoyaltyCustomer> {
         val response = networkClient.getLoyaltyCustomerInfo(CODE_FOR_PHONE + phone)
         return when (response.resultCode) {
-            NO_CONNECTION -> Resource.ErrorNoInternet<LoyaltyCustomer>()
-            HTTP_SUCCESS -> {
+            Constants.NO_CONNECTION -> Resource.ErrorNoInternet<LoyaltyCustomer>()
+            Constants.HTTP_SUCCESS -> {
                 Resource.Success<LoyaltyCustomer>(data = (response as LoyaltyCustomerResponse).toDomain())
             }
 

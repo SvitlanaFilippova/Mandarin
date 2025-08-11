@@ -9,4 +9,7 @@ interface IikoNetworkClient {
     suspend fun getPaymentTypes(): Response
     suspend fun createDelivery(order: OutgoingOrderDto): Response
     suspend fun getOrderStatusById(id: String): Response
+    suspend fun getAllCustomerCategories(): Response
+    suspend fun getDiscounts(): Response
+
 }

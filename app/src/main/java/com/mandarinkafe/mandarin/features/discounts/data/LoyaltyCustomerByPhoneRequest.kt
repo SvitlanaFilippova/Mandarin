@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.order.data.network
+package com.mandarinkafe.mandarin.features.discounts.data
 
 data class LoyaltyCustomerByPhoneRequest(
     val phone: String,

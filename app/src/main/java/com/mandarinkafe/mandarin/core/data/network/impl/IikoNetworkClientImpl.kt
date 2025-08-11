@@ -5,11 +5,12 @@ import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.Response
+import com.mandarinkafe.mandarin.core.data.dto.SingleOrganizationDataRequest
 import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
-import com.mandarinkafe.mandarin.features.order.data.network.LoyaltyCustomerByPhoneRequest
+import com.mandarinkafe.mandarin.features.discounts.data.LoyaltyCustomerByPhoneRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
@@ -29,7 +30,9 @@ class IikoNetworkClientImpl(
     private var organizationId = ""
     private var externalMenuId = ""
 
-    private suspend fun authenticate() {
+    private val logTagORDER = "DEBUG ORDER NetworkClient"
+
+        private suspend fun authenticate() {
         if (token.isNotEmpty() && organizationId.isNotEmpty()) {
             // Уже авторизованы
             return
@@ -122,7 +125,7 @@ class IikoNetworkClientImpl(
         }
     }
 
-    private val logTagORDER = "DEBUG ORDER NetworkClient"
+
 
     override suspend fun createDelivery(order: OutgoingOrderDto): Response {
         return try {
@@ -188,6 +191,36 @@ class IikoNetworkClientImpl(
                 resultCode = HTTP_SERVER_ERROR
                 Log.d(logTag, "Created error response with code $HTTP_SERVER_ERROR")
             }
+        }
+    }
+
+    override suspend fun getAllCustomerCategories(): Response {
+        return try {
+            val response = iikoService.getAllCustomerCategories(
+                token = token,
+                body = SingleOrganizationDataRequest(
+                    organizationId = organizationId
+                )
+            )
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.d(logTag, ERROR + e.message)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    override suspend fun getDiscounts(): Response {
+        return try {
+            val response = iikoService.getDiscounts(
+                token = token,
+                body = SingleOrganizationDataRequest(
+                    organizationId = organizationId
+                )
+            )
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.d(logTag, ERROR + e.message)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 

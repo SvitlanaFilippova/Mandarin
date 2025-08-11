@@ -9,6 +9,7 @@ import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
+import com.mandarinkafe.mandarin.features.discounts.domain.api.CategoryDiscountRepository
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWithDiscountUseCase
@@ -50,12 +51,14 @@ class OrderViewModel @Inject constructor(
     private val calculateCartTotalWithDiscount: CalculateCartTotalWithDiscountUseCase,
     private val resolvePickupPoint: ResolvePickupPointUseCase,
     private val applyPhoneDiscount: ApplyPhoneDiscountUseCase,
-    private val saveOrderToHistory: SaveOrderToHistoryUseCase
+    private val saveOrderToHistory: SaveOrderToHistoryUseCase,
+    private val categoryDiscountRepository: CategoryDiscountRepository
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     init {
         getSavedAddresses()
         observeCartItems()
+        refreshDiscountCategories()
     }
 
     override fun setInitialState() = OrderState()
@@ -234,16 +237,29 @@ class OrderViewModel @Inject constructor(
         }
     }
 
-    private fun setPhone(query: String) {
+    private fun setPhone(rawPhone: String) {
         viewModelScope.launch {
-            val result = applyPhoneDiscount(query, state.value.cartSummary.discountCategory)
+            val digitsOnly = rawPhone.filter { it.isDigit() }
+            val normalized = when {
+                digitsOnly.startsWith("7") -> digitsOnly.drop(1)
+                digitsOnly.startsWith("8") -> digitsOnly.drop(1)
+                else -> digitsOnly
+            }
+            val phone = normalized.take(VALID_PHONE_LENGTH)
+            setState { copy(userInfo = userInfo.copy(phone = phone)) }
 
-            setState { copy(userInfo = userInfo.copy(phone = result.phone)) }
-            if (result.shouldUpdate) {
+            val discount = applyPhoneDiscount(phone, state.value.cartSummary.discountPercent)
+
+            if (discount.shouldUpdate) {
                 setState {
-                    copy(cartSummary = cartSummary.copy(discountCategory = result.discountSize))
+                    copy(
+                        cartSummary = cartSummary.copy(
+                            discountPercent = discount.discountSize,
+                            discountId = discount.discountId
+                        )
+                    )
                 }
-                recalculateCartSummary(result.discountSize)
+                recalculateCartSummary(discount.discountSize)
             }
         }
     }
@@ -257,7 +273,7 @@ class OrderViewModel @Inject constructor(
 
     private fun recalculateCartSummary(discountSize: Int? = null) {
         setState {
-            val discountSize = discountSize ?: cartSummary.discountCategory
+            val discountSize = discountSize ?: cartSummary.discountPercent
             val cartSumWithDiscount =
                 calculateCartTotalWithDiscount(cartSummary.items, discountSize)
             copy(
@@ -372,6 +388,12 @@ class OrderViewModel @Inject constructor(
         }
     }
 
+    private fun refreshDiscountCategories() {
+        viewModelScope.launch {
+            categoryDiscountRepository.refreshFromApi()
+        }
+    }
+
     private fun sendErrorEffect(msg: String) {
         setLoading(false)
         sendEffect(ShowError(msg))
@@ -379,5 +401,6 @@ class OrderViewModel @Inject constructor(
 
     private companion object {
         const val ORDER_STATUS_UPD_DELAY = 1000L
+        const val VALID_PHONE_LENGTH = 10
     }
 }
