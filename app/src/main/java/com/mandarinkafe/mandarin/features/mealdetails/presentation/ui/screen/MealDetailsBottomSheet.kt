@@ -29,6 +29,8 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.UpdateMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowMaxModifiersQuantity
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowRequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsViewModel
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
@@ -48,9 +50,20 @@ fun MealDetailsBottomSheet(
     initItem: CartItem?,
     onClose: () -> Unit,
     isEditMode: Boolean,
+    mealId: String?,
 ) {
-    if (initItem == null) return
+    if (initItem == null && mealId == null) return
     val state by viewModel.state.collectAsState()
+    LaunchedEffect(initItem, mealId) {
+        viewModel.onEvent(
+            MealDetailsEvent.SetInitData(
+                item = initItem,
+                isEditMode = isEditMode,
+                mealId = mealId
+            )
+        )
+    }
+
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -62,7 +75,7 @@ fun MealDetailsBottomSheet(
     val onToggleFavorite = { item: CustomizedMeal ->
         onSharedEvent(SharedEvent.ToggleFavorite(item = item))
     }
-    val customizedMeal = state.customizedMeal ?: initItem.customizedMeal
+
     var showFavoriteVariantChoiceDialog by remember { mutableStateOf(false) }
     var showRequiredModifiersDialog by remember { mutableStateOf(false) }
     var showMaxModifiersQuantity by remember { mutableStateOf(false) }
@@ -76,88 +89,90 @@ fun MealDetailsBottomSheet(
             }
         }
     }
-    val isFavorite by remember(customizedMeal, favorites) {
-        derivedStateOf { customizedMeal.isFavorite(favorites) }
-    }
-    LaunchedEffect(Unit) {
-        viewModel.onEvent(MealDetailsEvent.SetInitData(item = initItem, isEditMode = isEditMode))
-    }
 
-    LaunchedEffect(Unit) {
-        sheetState.show()
-    }
+    val customizedMeal = state.customizedMeal ?: initItem?.customizedMeal
+    customizedMeal?.let {
 
+        val isFavorite by remember(customizedMeal, favorites) {
+            derivedStateOf { customizedMeal.isFavorite(favorites) }
+        }
 
-    RequiredModifiersDialog(
-        show = showRequiredModifiersDialog,
-        onDismiss = { showRequiredModifiersDialog = false }
-    )
-
-    MaxModifiersDialog(
-        show = showMaxModifiersQuantity,
-        onDismiss = { showMaxModifiersQuantity = false }
-    )
-
-    FavoriteVariantDialog(
-        show = showFavoriteVariantChoiceDialog,
-        onBaseSelected = {
-            onSharedEvent(SharedEvent.ToggleFavorite(meal = customizedMeal.meal))
-        },
-        onCustomSelected = {
-            onToggleFavorite(customizedMeal)
-        },
-        onDismiss = { showFavoriteVariantChoiceDialog = false }
-    )
-    when {
-        state.isLoading -> LoadingScreen()
-        error != null -> PlaceholderScreen(
-            error = error,
-            onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+        RequiredModifiersDialog(
+            show = showRequiredModifiersDialog,
+            onDismiss = { showRequiredModifiersDialog = false }
         )
 
-        else ->
-            ModalBottomSheet(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = Dimens.BSMarginForStatusBar40),
-                onDismissRequest = onClose,
-                sheetState = sheetState,
-                containerColor = Colors.AppBlack,
-                tonalElevation = Dimens.Elevation2,
-                scrimColor = Colors.LightGreyTransparent75,
-            ) {
-                MealDetailsContentScreen(
-                    customizedMeal = customizedMeal,
-                    onEvent = viewModel::onEvent,
-                    selectedTabIndex = state.selectedTabIndex,
-                    addons = state.addons,
-                    isFavorite = isFavorite,
-                    isEditMode = isEditMode,
-                    onClose = onClose,
-                    onAddToCart = {
-                        onCartEvent(AddToCart(state.actualCartItem))
-                        onSharedEvent(
-                            SharedEvent.ShowSnackbar(
-                                text = "Добавлено в корзину: ${customizedMeal.meal.name}"
+        MaxModifiersDialog(
+            show = showMaxModifiersQuantity,
+            onDismiss = { showMaxModifiersQuantity = false }
+        )
+
+        FavoriteVariantDialog(
+            show = showFavoriteVariantChoiceDialog,
+            onBaseSelected = {
+                onSharedEvent(SharedEvent.ToggleFavorite(meal = customizedMeal.meal))
+            },
+            onCustomSelected = {
+                onToggleFavorite(customizedMeal)
+            },
+            onDismiss = { showFavoriteVariantChoiceDialog = false }
+        )
+        when {
+            state.isLoading -> LoadingScreen()
+            error != null -> PlaceholderScreen(
+                error = error,
+                onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+            )
+
+            else ->
+                ModalBottomSheet(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = Dimens.BSMarginForStatusBar40),
+                    onDismissRequest = onClose,
+                    sheetState = sheetState,
+                    containerColor = Colors.AppBlack,
+                    tonalElevation = Dimens.Elevation2,
+                    scrimColor = Colors.LightGreyTransparent75,
+                ) {
+                    MealDetailsContentScreen(
+                        customizedMeal = customizedMeal,
+                        onEvent = viewModel::onEvent,
+                        selectedTabIndex = state.selectedTabIndex,
+                        addons = state.addons,
+                        isFavorite = isFavorite,
+                        isEditMode = isEditMode,
+                        onClose = onClose,
+                        onAddToCart = {
+                            onCartEvent(AddToCart(state.actualCartItem))
+                            onSharedEvent(
+                                SharedEvent.ShowSnackbar(
+                                    text = "Добавлено в корзину: ${customizedMeal.meal.name}"
+                                )
                             )
-                        )
-                    },
-                    onEdit = {
-                        onCartEvent(
-                            UpdateMealInCart(state.actualCartItem ?: customizedMeal.toCartItem())
-                        )
-                        onSharedEvent(SharedEvent.ShowSnackbar(text = "Отредактировано: ${customizedMeal.meal.name}"))
-                    },
-                    onToggleFavorite = {
-                        if (!isFavorite && customizedMeal.isCustomized) {
-                            onSharedEvent(SharedEvent.ShowFavoriteDialog(customizedMeal))
-                        } else {
-                            onToggleFavorite(customizedMeal)
-                        }
-                    },
-                    comment = state.comment
-                )
-            }
+                        },
+                        onEdit = {
+                            onCartEvent(
+                                UpdateMealInCart(
+                                    state.actualCartItem ?: customizedMeal.toCartItem()
+                                )
+                            )
+                            onSharedEvent(SharedEvent.ShowSnackbar(text = "Отредактировано: ${customizedMeal.meal.name}"))
+                        },
+                        onToggleFavorite = {
+                            if (!isFavorite && customizedMeal.isCustomized) {
+                                onSharedEvent(SharedEvent.ShowFavoriteDialog(customizedMeal))
+                            } else {
+                                onToggleFavorite(customizedMeal)
+                            }
+                        },
+                        comment = state.comment
+                    )
+                }
+        }
+    }
+    LaunchedEffect(Unit) {
+        sheetState.show()
     }
 
     HandleMealDetailsEffects(
@@ -177,11 +192,11 @@ private fun HandleMealDetailsEffects(
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
             when (effect) {
-                is MealDetailsEffect.ShowRequiredModifiersDialog -> onChangeShowRequiredModifiersDialog(
+                is ShowRequiredModifiersDialog -> onChangeShowRequiredModifiersDialog(
                     true
                 )
 
-                is MealDetailsEffect.ShowMaxModifiersQuantity -> onChangeShowMaxModifiersQuantity(
+                is ShowMaxModifiersQuantity -> onChangeShowMaxModifiersQuantity(
                     true
                 )
             }

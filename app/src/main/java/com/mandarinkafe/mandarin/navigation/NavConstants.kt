@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.navigation
 object NavConstants {
     // Keys for args
     const val KEY_MEAL_JSON = "mealJson"
+    const val KEY_MEAL_ID = "mealID"
     const val KEY_IS_EDIT_MODE = "isEditMode"
     const val KEY_ADDRESS_JSON = "addressJson"
     const val KEY_FOCUS_INPUT = "focusInput"
@@ -35,7 +36,7 @@ object NavConstants {
 
     const val MEAL_DETAILS_ROUTE = "meal_details"
     const val MEAL_DETAILS_ROUTE_WITH_ARGS =
-        "$MEAL_DETAILS_ROUTE/{$KEY_MEAL_JSON}/{$KEY_IS_EDIT_MODE}"
+        "$MEAL_DETAILS_ROUTE/{$KEY_MEAL_JSON}/{$KEY_MEAL_ID}/{$KEY_IS_EDIT_MODE}"
 
     const val SEARCH_SCREEN_ROUTE = "search"
     const val SEARCH_SCREEN_ROUTE_WITH_ARGS =

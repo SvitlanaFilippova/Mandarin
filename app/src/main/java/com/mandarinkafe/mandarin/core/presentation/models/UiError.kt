@@ -30,8 +30,8 @@ sealed class UiError(
         needRetry = true,
     )
 
-    object AddonsEmpty : UiError(
-        msgRes = R.string.error_empty_addons,
+    object DataEmpty : UiError(
+        msgRes = R.string.error_empty_data,
         extraMsgRes = R.string.placeholder_message_call_us,
         imgRes = R.drawable.placeholder_server_error,
         needRetry = true,

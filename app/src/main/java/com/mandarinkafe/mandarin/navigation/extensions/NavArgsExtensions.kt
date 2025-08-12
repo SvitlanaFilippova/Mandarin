@@ -15,6 +15,10 @@ inline fun <reified T> NavBackStackEntry.decodeJsonArg(key: String, gson: Gson):
     return gson.fromJson<T>(decoded, object : TypeToken<T>() {}.type)
 }
 
-fun stringNavArg(key: String) = navArgument(key) { type = NavType.StringType }
+fun stringNavArg(key: String, nullable: Boolean = false) =
+    navArgument(key) {
+        type = NavType.StringType
+        this.nullable = nullable
+    }
 
 fun boolNavArg(key: String) = navArgument(key) { type = NavType.BoolType }

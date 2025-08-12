@@ -111,7 +111,8 @@ fun NavGraph(navHostController: NavHostController) {
             bottomSheet(
                 route = NavConstants.MEAL_DETAILS_ROUTE_WITH_ARGS,
                 arguments = listOf(
-                    stringNavArg(NavConstants.KEY_MEAL_JSON),
+                    stringNavArg(NavConstants.KEY_MEAL_JSON, nullable = true),
+                    stringNavArg(NavConstants.KEY_MEAL_ID, nullable = true),
                     boolNavArg(NavConstants.KEY_IS_EDIT_MODE)
                 )
             ) { backStackEntry ->
@@ -119,13 +120,15 @@ fun NavGraph(navHostController: NavHostController) {
                     backStackEntry.arguments?.getBoolean(NavConstants.KEY_IS_EDIT_MODE) == true
                 val item =
                     backStackEntry.decodeJsonArg<CartItem>(NavConstants.KEY_MEAL_JSON, gson)
+                val mealId = backStackEntry.arguments?.getString(NavConstants.KEY_MEAL_ID)
 
                 MealDetailsBottomSheet(
                     sharedViewModel = sharedViewModel,
                     cartViewModel = cartViewModel,
+                    mealId = if (mealId != "null") mealId else null,
                     initItem = item,
                     isEditMode = isEditMode,
-                    onClose = { navHostController.popBackStack() }
+                    onClose = { navHostController.popBackStack() },
                 )
             }
 
@@ -187,7 +190,8 @@ fun NavGraph(navHostController: NavHostController) {
                 OrderInfoScreen(
                     orderID = orderId,
                     requireConfirmation = requireConfirmation,
-                    navController = navHostController
+                    navController = navHostController,
+                    sharedViewModel = sharedViewModel,
                 )
             }
 

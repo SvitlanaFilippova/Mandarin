@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.shared.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
@@ -74,11 +75,16 @@ class SharedViewModel @Inject constructor(
             is ResetTopBar -> setState { copy(shouldShowTopBar = true) }
             is OnPhoneClick -> sendEffect(SharedEffect.OnPhoneClick)
             is OnMealDetailsClick -> {
+                Log.d(
+                    "DEBUG OnMealDetailsClick",
+                    "OnMealDetailsClick clicked for event.mealId: ${event.mealId}"
+                )
                 sendEffect(
                     OpenMealDetailsBS(
                         meal = event.meal,
                         item = event.item,
                         cartItem = event.cartItem,
+                        mealId = event.mealId,
                         isEditMode = event.isEditMode
                     )
                 )

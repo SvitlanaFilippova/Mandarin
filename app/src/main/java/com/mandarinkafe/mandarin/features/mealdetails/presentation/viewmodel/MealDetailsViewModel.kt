@@ -7,7 +7,9 @@ import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
+import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetAddonsUseCase
+import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetMealByIdUseCase
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowMaxModifiersQuantity
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowRequiredModifiersDialog
@@ -28,6 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MealDetailsViewModel @Inject constructor(
     private val getAddonsUseCase: GetAddonsUseCase,
+    private val getMealById: GetMealByIdUseCase
 ) : BaseViewModel<MealDetailsEvent, MealDetailsEffect, MealDetailsState>() {
     override fun setInitialState() = MealDetailsState()
 
@@ -35,6 +38,7 @@ class MealDetailsViewModel @Inject constructor(
         when (event) {
             is MealDetailsEvent.SetInitData -> setInitData(
                 item = event.item,
+                mealId = event.mealId,
                 isEditMode = event.isEditMode
             )
 
@@ -62,24 +66,46 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun setComment(text: String) {
-        setState { copy(comment = text) }
+    private fun loadMealById(mealId: String, isEditMode: Boolean) {
+        viewModelScope.launch {
+            setLoading()
+            val result = getMealById(mealId)
+            when (result) {
+                is Success -> {
+                    val meal = result.data
+                    if (meal != null) {
+                        val item = meal.toCartItem()
+                        applyMealData(item, isEditMode)
+                    } else {
+                        setError(result)
+                    }
+                }
+
+                else -> setError(result)
+            }
+        }
     }
 
-    private fun setInitData(item: CartItem, isEditMode: Boolean) {
-        viewModelScope.launch {
-            setState {
-                copy(
-                    initItem = item,
-                    customizedMeal = item.customizedMeal,
-                    comment = item.comment,
-                    isEditMode = isEditMode
-                )
-            }
-            with(item.customizedMeal.meal) {
-                if (isAddable) {
-                    getAddons(path = categoryPath)
-                }
+    private fun setInitData(item: CartItem?, mealId: String?, isEditMode: Boolean) {
+        when {
+            item != null -> viewModelScope.launch { applyMealData(item, isEditMode) }
+            mealId != null -> loadMealById(mealId, isEditMode)
+        }
+    }
+
+    private fun applyMealData(item: CartItem, isEditMode: Boolean) {
+        setState {
+            copy(
+                isLoading = false,
+                initItem = item,
+                customizedMeal = item.customizedMeal,
+                comment = item.comment,
+                isEditMode = isEditMode
+            )
+        }
+        with(item.customizedMeal.meal) {
+            if (isAddable) {
+                getAddons(path = categoryPath)
             }
         }
     }
@@ -220,7 +246,7 @@ class MealDetailsViewModel @Inject constructor(
             getAddonsUseCase(categoryPath = path).collectLatest { result ->
                 setLoading(result is Loading)
                 when (result) {
-                    is Success -> setData(result.data)
+                    is Success -> setAddonsData(result.data)
                     is Loading -> {}
                     is Idle -> {}
                     else -> setError(result)
@@ -229,7 +255,7 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun setData(data: List<MealAdditionalCategory>?) {
+    private fun setAddonsData(data: List<MealAdditionalCategory>?) {
         if (!data.isNullOrEmpty()) {
             setState {
                 copy(
@@ -240,10 +266,14 @@ class MealDetailsViewModel @Inject constructor(
         }
     }
 
+    private fun setComment(text: String) {
+        setState { copy(comment = text) }
+    }
+
     private fun setError(resource: Resource<*>) {
         val error = when (resource) {
             is Resource.ErrorNoInternet<*> -> UiError.NoInternet
-            is Resource.ErrorEmptyData<*> -> UiError.AddonsEmpty
+            is Resource.ErrorEmptyData<*> -> UiError.DataEmpty
             is ErrorOther<*> -> UiError.OtherError
             else -> return
         }

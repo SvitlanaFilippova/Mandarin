@@ -27,19 +27,21 @@ fun HandleEffects(
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
             when (effect) {
+                is SharedEffect.OpenMealDetailsBS -> {
+                    navController.navigateToMealDetails(
+                        item = effect.cartItem
+                            ?: effect.item?.toCartItem()
+                            ?: effect.meal?.toCartItem(),
+                        mealId = effect.mealId,
+                        isEditMode = effect.isEditMode
+                    )
+                }
+
                 is SharedEffect.OnPhoneClick -> {
                     val intent = Intent(Intent.ACTION_DIAL).apply {
                         data = PHONE_NUMBER_DEFAULT.toUri()
                     }
                     context.startActivity(intent)
-                }
-
-                is SharedEffect.OpenMealDetailsBS -> {
-                    navController.navigateToMealDetails(
-                        item = effect.cartItem ?: effect.item?.toCartItem()
-                        ?: effect.meal?.toCartItem() ?: return@collect,
-                        isEditMode = effect.isEditMode
-                    )
                 }
 
                 is SharedEffect.FinishSplash -> {

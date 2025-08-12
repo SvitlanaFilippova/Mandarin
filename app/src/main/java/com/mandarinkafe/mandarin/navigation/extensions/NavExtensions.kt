@@ -73,11 +73,18 @@ fun NavController.navigateToAddress(address: Address? = null) {
     }
 }
 
-fun NavController.navigateToMealDetails(item: CartItem, isEditMode: Boolean) {
+fun NavController.navigateToMealDetails(
+    item: CartItem? = null,
+    mealId: String? = null,
+    isEditMode: Boolean = false
+) {
     val gson = Gson()
-    val json =
-        URLEncoder.encode(gson.toJson(item), StandardCharsets.UTF_8.toString())
-    val route = "$MEAL_DETAILS_ROUTE/$json/$isEditMode"
+    val json = item?.let { URLEncoder.encode(gson.toJson(it), StandardCharsets.UTF_8.toString()) }
+    // Для навигации передаем либо json, либо "null"
+    val itemParam = json ?: "null"
+    val mealIdParam = mealId ?: "null"
+
+    val route = "$MEAL_DETAILS_ROUTE/$itemParam/$mealIdParam/$isEditMode"
     this.navigate(route)
 }
 

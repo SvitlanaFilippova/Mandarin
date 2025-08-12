@@ -64,7 +64,6 @@ fun MenuScreen(
 
     }
 
-    // Отлавливаем эффект перехода на поиск
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
             if (effect is MenuContract.MenuEffect.OpenSearch

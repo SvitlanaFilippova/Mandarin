@@ -228,7 +228,7 @@
     <string name="nothing_found_extra">Попробуй написать по-другому или просто полистай наше меню. Там точно найдутся нужные вкусности!</string>
     <string name="error_no_internet">Проверь подключение к&#160;интернету</string>
     <string name="error_empty_menu">Сервер вернул пустые данные меню</string>
-    <string name="error_empty_addons">Не удалось загрузить добавки</string>
+    <string name="error_empty_data">Не удалось загрузить данные</string>
     <string name="error_server_error">Ошибка сервера</string>
     <string name="error_something_wrong">Что-то пошло не так :(</string>
     <string name="error_empty_cart">В корзине пока ничего нет :(</string>
