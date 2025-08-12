@@ -29,7 +29,6 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
             append(comment)
         }
     }
-
     return IncomingOrder(
         id = id,
         number = order?.number,
@@ -48,6 +47,7 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         orderType = order?.orderType,
         processedPaymentsSum = order?.processedPaymentsSum,
         sum = order?.sum,
+        discountReason = order?.discounts?.firstOrNull()?.discountType?.name,
         whenCancelled = order?.cancelInfo?.whenCancelled?.toHumanDateTimeOrNull(),
         whenClosed = order?.whenClosed?.toHumanDateTimeOrNull(),
         whenConfirmed = order?.whenConfirmed?.toHumanDateTimeOrNull(),
@@ -58,8 +58,7 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         whenPrinted = order?.whenPrinted?.toHumanDateTimeOrNull(),
         whenSent = order?.whenSended?.toHumanDateTimeOrNull(),
         problem = order?.problem,
-
-        )
+    )
 }
 
 fun IncomingOrderItemDto.toDomain() = IncomingOrderItem(

@@ -37,7 +37,7 @@ class OrderInfoViewModel @Inject constructor(private val observeOrderStatus: Obs
                 .collect { result ->
                     Log.d(
                         logTag,
-                        "startObservingOrderStatus, ${System.currentTimeMillis()}, collected response: $result"
+                        "startObservingOrderStatus, collected response, status: ${result.data?.status} "
                     )
                     when (result) {
                         is Resource.Loading -> setLoading()

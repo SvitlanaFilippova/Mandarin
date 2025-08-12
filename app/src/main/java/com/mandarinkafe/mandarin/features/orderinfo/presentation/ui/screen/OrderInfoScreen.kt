@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -42,7 +43,7 @@ fun OrderInfoScreen(
     navController: NavHostController
 ) {
     if (orderID == null) return
-
+    Log.d("DEBUG Order info", "orderID: $orderID")
     val onEvent = viewModel::onEvent
     val state by viewModel.state.collectAsState()
 
@@ -90,7 +91,8 @@ fun OrderInfoScreen(
                 item {
                     OrderItemsSection(
                         items = order.items,
-                        sum = order.sum
+                        sum = order.sum,
+                        discountName = order.discountReason,
                     )
                 }
             }

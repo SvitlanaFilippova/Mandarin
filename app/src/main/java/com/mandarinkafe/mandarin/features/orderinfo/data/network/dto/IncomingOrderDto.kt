@@ -15,6 +15,7 @@ data class IncomingOrderDto(
     val status: String? = null,
     val deliveryDuration: Int? = null,
     val cancelInfo: CancelInfo? = null,
+    val discounts: List<IncomingDiscountInfoDto>? = null,
     val orderType: OrderType? = null,
     val processedPaymentsSum: Int? = null,
     val sum: Double? = null,

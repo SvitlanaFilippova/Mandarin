@@ -196,9 +196,9 @@ private fun buildFullComment(
         else -> null
     }
 
-    val paymentType = when (rawPaymentType) {
-        OrderConstants.PAYMENT_CASH_CODE -> "Наличными"
-        OrderConstants.PAYMENT_CARD_CODE -> "Картой при получении"
+    val paymentType = when (rawPaymentType.lowercase()) {
+        OrderConstants.PAYMENT_CASH_NAME -> "Наличными"
+        OrderConstants.PAYMENT_CARD_NAME -> "Картой при получении"
         else -> rawPaymentType
     }
 

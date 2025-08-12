@@ -136,7 +136,7 @@ fun OrderMealItemCard(
                     Text(
                         text = stringResource(
                             R.string.float_price_template,
-                            item.totalDiscountedPrice * item.amount
+                            item.totalDiscountedPrice
                         ),
                         style = Typography.RegularLightTextStyle,
                     )

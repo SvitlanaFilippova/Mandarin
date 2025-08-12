@@ -18,6 +18,7 @@ data class IncomingOrderItem(
         get() = (discountedPrice ?: price) +
                 chosenModifiers.sumOf { it.discountedPrice ?: it.price } +
                 chosenAdds.sumOf { it.discountedPrice ?: it.price }
+
     val isDiscounted = totalPrice != totalDiscountedPrice
 }
 

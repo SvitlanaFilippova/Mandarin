@@ -22,7 +22,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
 
 @Composable
-fun OrderItemsSection(items: List<IncomingOrderItem>, sum: Double?) {
+fun OrderItemsSection(items: List<IncomingOrderItem>, sum: Double?, discountName: String?) {
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Column(
             modifier = Modifier
@@ -42,6 +42,22 @@ fun OrderItemsSection(items: List<IncomingOrderItem>, sum: Double?) {
                 )
                 Spacer(Modifier.height(Dimens.MarginSmall8))
             }
+
+            discountName?.let {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Label(
+                        text = stringResource(R.string.discount_applied),
+                    )
+                    Label(
+                        text = discountName,
+                    )
+                }
+            }
+
 
             sum?.let {
                 Row(

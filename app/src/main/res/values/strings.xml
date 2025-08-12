@@ -169,6 +169,7 @@
 
     <!-- Order Items -->
     <string name="label_order_items">Позиции заказа: %1$d</string>
+    <string name="discount_applied">Применена скидка</string>
     <string name="label_total">Итого</string>
 
     <!-- Address -->
