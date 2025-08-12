@@ -70,6 +70,7 @@ fun OrderMealItemCard(
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,
                         )
+
                         Text(
                             text = stringResource(R.string.float_price_template, it.price),
                             style = Typography.MealSmallTextStyle,

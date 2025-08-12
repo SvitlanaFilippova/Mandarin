@@ -14,6 +14,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,6 +36,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 
 @Composable
@@ -43,15 +47,18 @@ fun OrderInfoScreen(
     navController: NavHostController
 ) {
     if (orderID == null) return
-    Log.d("DEBUG Order info", "orderID: $orderID")
     val onEvent = viewModel::onEvent
     val state by viewModel.state.collectAsState()
-
+    Log.d(
+        "DEBUG Order info",
+        "orderID: $orderID, status:${state.deliveryStatus}, isClosed: ${state.incomingOrder?.isClosed} canBeCanceled:${state.incomingOrder?.canBeCanceled}"
+    )
     LaunchedEffect(Unit) {
         onEvent(OrderInfoEvent.SetInitId(orderID))
     }
 
     val order = state.incomingOrder
+    var showCancelDialog by remember { mutableStateOf(false) }
 
     order?.let {
         LazyColumn(
@@ -122,17 +129,63 @@ fun OrderInfoScreen(
                 }
             }
 
-            // Кнопка "Вернуться в меню"
+            // Кнопки
+
             item {
-                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    when {
+                        order.isClosed -> {
+                            ButtonWithText(
+                                modifier = Modifier
+                                    .padding(Dimens.MarginSmall8)
+                                    .weight(1f),
+                                textResID = R.string.repeat_order,
+                                containerColor = Colors.LabelVegGreen,
+                                onClick = { onEvent(OrderInfoEvent.RepeatOrder) }
+                            )
+                        }
+
+                        order.canBeCanceled -> {
+                            ButtonWithText(
+                                modifier = Modifier
+                                    .padding(Dimens.MarginSmall8)
+                                    .weight(1f),
+                                textResID = R.string.cancel_order,
+                                containerColor = Colors.ErrorRed,
+                                onClick = { showCancelDialog = true }
+
+                            )
+                        }
+                    }
+
                     ButtonWithText(
-                        modifier = Modifier.padding(Dimens.MarginStandard16),
+                        modifier = Modifier
+                            .padding(Dimens.MarginSmall8)
+                            .weight(1f),
                         textResID = R.string.back_to_menu,
                         onClick = { navController.navigateToMenu() }
                     )
                 }
             }
         }
+    }
+
+    // Диалог для подтверждения желания отменить заказ
+    if (showCancelDialog) {
+        ConfirmationDialog(
+            titleRes = R.string.cancel_order_question,
+            textRes = R.string.cancel_order_confirmation,
+            onConfirm = {
+                showCancelDialog = false
+                viewModel.onEvent(OrderInfoEvent.CancelOrder)
+            },
+            onDismiss = {
+                showCancelDialog = false
+            }
+        )
     }
 
     DisposableEffect(Unit) {

@@ -46,4 +46,6 @@ data class IncomingOrder(
         get() = status == DeliveryStatus.UNCONFIRMED
     val isDelivery: Boolean
         get() = orderType?.orderServiceType == OrderConstants.DELIVERY_TYPE_DELIVERY
+    val canBeCanceled: Boolean
+        get() = status == DeliveryStatus.UNCONFIRMED || status == DeliveryStatus.WAIT_COOKING || status == DeliveryStatus.READY_FOR_COOKING
 }

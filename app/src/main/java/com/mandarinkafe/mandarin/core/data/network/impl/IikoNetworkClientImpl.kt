@@ -14,6 +14,7 @@ import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesRequest
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
@@ -214,6 +215,22 @@ class IikoNetworkClientImpl(
                 token = token,
                 body = DiscountsRequest(
                     organizationIds = listOf(organizationId)
+                )
+            )
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.d(logTag, ERROR + e.message)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    override suspend fun cancelOrder(id: String): Response {
+        return try {
+            val response = iikoService.cancelOrderById(
+                token = token,
+                body = CancelOrderRequest(
+                    organizationId = organizationId,
+                    orderId = id
                 )
             )
             response.apply { resultCode = HTTP_SUCCESS }

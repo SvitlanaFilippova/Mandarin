@@ -1,19 +1,24 @@
 package com.mandarinkafe.mandarin.features.order.data.impl
 
 import android.util.Log
+import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
-import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants
-import com.mandarinkafe.mandarin.features.order.data.mapper.toOrderDto
+import com.mandarinkafe.mandarin.features.order.data.mapper.toDeliveryPointDto
+import com.mandarinkafe.mandarin.features.order.data.mapper.toOrderItems
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscountInfoDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscountTypeDto
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingPaymentDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.OrderRepository
+import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
+import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrderItem
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.orderinfo.data.toDomain
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
@@ -40,13 +45,44 @@ class OrderRepositoryImpl(
 
     override suspend fun createOrder(outgoingOrder: OutgoingOrder): Resource<IncomingOrder> {
         return try {
-            val orderDto = outgoingOrder.toOrderDto(
-                discountsInfo = createDiscountInfo(
-                    discountTypeId = outgoingOrder.discountTypeId,
-                    allItems = outgoingOrder.items
-                )
-            )
+
+            val orderItems = outgoingOrder.items.toOrderItems()
+
+            val discountInfo =
+                createDiscountInfo(outgoingOrder.discountTypeId, orderItems)
+
+            val orderDto =
+                with(outgoingOrder) {
+                    OutgoingOrderDto(
+                        phone = OrderConstants.PHONE_PREFIX + phone,
+                        orderServiceType = if (deliveryType == DeliveryType.DELIVERY) {
+                            OrderConstants.DELIVERY_TYPE_DELIVERY
+                        } else {
+                            OrderConstants.DELIVERY_TYPE_PICKUP
+                        },
+                        deliveryPoint = chosenAddress?.toDeliveryPointDto(),
+                        comment = comment,
+                        customer = CustomerDto(
+                            name = name,
+                            type = OrderConstants.CUSTOMER_TYPE_ONE_TIME
+                        ),
+                        items = orderItems,
+                        payments = listOf(
+                            OutgoingPaymentDto(
+                                paymentTypeKind = paymentType.paymentTypeKind,
+                                paymentTypeId = paymentType.id,
+                                sum = totalOrderSum,
+                                isPrepay = false,
+                                isProcessedExternally = false,
+                                isFiscalizedExternally = false,
+                            )
+                        ),
+                        discountsInfo = discountInfo
+                    )
+                }
+
             val response = networkClient.createDelivery(orderDto)
+
             Log.d(
                 logTag,
                 "response code: ${response.resultCode}, full response: $response"
@@ -81,22 +117,26 @@ class OrderRepositoryImpl(
 
     private fun createDiscountInfo(
         discountTypeId: String?,
-        allItems: List<CartItem>
+        items: List<OutgoingOrderItem>
     ): OutgoingDiscountInfoDto? {
-        return if (discountTypeId.isNullOrBlank()) {
-            null
-        } else {
-            allItems.filterNot { it.customizedMeal.meal.discountable }
-                .map { it.customizedMeal.meal.id }
-            OutgoingDiscountInfoDto(
-                discounts = listOf(
-                    OutgoingDiscountTypeDto(
-                        discountTypeId = discountTypeId,
-//                        selectivePositions = selectivePositions,
-                        type = OrderConstants.DISCOUNT_TYPE_RMS
-                    )
+        if (discountTypeId.isNullOrBlank()) return null
+
+        val selectivePositions = items
+            .filter { it.discountable }
+            .flatMap { item ->
+                val mealPosId = listOf(item.positionId)
+                val modifiersPosIds = item.modifiers?.mapNotNull { it.positionId } ?: emptyList()
+                mealPosId + modifiersPosIds
+            }
+
+        return OutgoingDiscountInfoDto(
+            discounts = listOf(
+                OutgoingDiscountTypeDto(
+                    discountTypeId = discountTypeId,
+                    selectivePositions = selectivePositions,
+                    type = OrderConstants.DISCOUNT_TYPE_RMS
                 )
             )
-        }
+        )
     }
 }

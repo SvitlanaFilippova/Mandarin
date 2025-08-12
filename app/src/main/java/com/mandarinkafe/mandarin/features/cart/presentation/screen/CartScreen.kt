@@ -97,7 +97,7 @@ fun CartScreen(
             }
         }
 
-        // Диалог для подтверждения желания очяистить корзину
+        // Диалог для подтверждения желания очистить корзину
         if (showClearCartDialog) {
             ConfirmationDialog(
                 titleRes = R.string.clear_cart_question,

@@ -11,5 +11,5 @@ interface IikoNetworkClient {
     suspend fun getOrderStatusById(id: String): Response
     suspend fun getAllCustomerCategories(): Response
     suspend fun getDiscounts(): Response
-
+    suspend fun cancelOrder(id: String): Response
 }

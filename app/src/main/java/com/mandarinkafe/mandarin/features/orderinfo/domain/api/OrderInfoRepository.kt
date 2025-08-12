@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface OrderInfoRepository {
     fun observeOrderInfo(id: String, delay: Long): Flow<Resource<IncomingOrder>>
+    suspend fun getCurrentStatus(id: String): Resource<IncomingOrder>
 }

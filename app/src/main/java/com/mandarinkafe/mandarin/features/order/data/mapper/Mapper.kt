@@ -2,13 +2,11 @@ package com.mandarinkafe.mandarin.features.order.data.mapper
 
 import com.mandarinkafe.mandarin.core.data.dto.order.AddressDto
 import com.mandarinkafe.mandarin.core.data.dto.order.Coordinates
-import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
 import com.mandarinkafe.mandarin.core.data.dto.order.StreetDto
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.discounts.data.network.LoyaltyCustomerResponse
@@ -18,10 +16,6 @@ import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DEFAU
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVIDER_FOR_TECH_PART
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVIDER_FOR_USER_COMMENT
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.UTENSILS_NEED_PREFIX
-import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscountInfoDto
-import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
-import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingPaymentDto
-import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.LoyaltyCustomer
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingModifier
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
@@ -29,6 +23,7 @@ import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrderItem
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Utensils
+import java.util.UUID
 
 fun LoyaltyCustomerResponse.toDomain() = LoyaltyCustomer(
     id = id,
@@ -71,69 +66,52 @@ fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
     )
 }
 
-fun OutgoingOrder.toOrderDto(discountsInfo: OutgoingDiscountInfoDto?): OutgoingOrderDto {
-    return OutgoingOrderDto(
-        phone = OrderConstants.PHONE_PREFIX + phone,
-        orderServiceType = if (deliveryType == DeliveryType.DELIVERY) {
-            OrderConstants.DELIVERY_TYPE_DELIVERY
-        } else {
-            OrderConstants.DELIVERY_TYPE_PICKUP
-        },
-        deliveryPoint = chosenAddress?.toDeliveryPointDto(),
-        comment = comment,
-        customer = CustomerDto(
-            name = name,
-            type = OrderConstants.CUSTOMER_TYPE_ONE_TIME
-        ),
-        items = items.toOrderItemsRequest(),
-        payments = listOf(
-            OutgoingPaymentDto(
-                paymentTypeKind = paymentType.paymentTypeKind,
-                paymentTypeId = paymentType.id,
-                sum = totalOrderSum,
-                isPrepay = false,
-                isProcessedExternally = false,
-                isFiscalizedExternally = false,
-            )
-        ),
-        discountsInfo = discountsInfo
-    )
-}
+fun List<CartItem>.toOrderItems(): List<OutgoingOrderItem> {
 
-fun List<CartItem>.toOrderItemsRequest(): List<OutgoingOrderItem> {
-    return this.flatMap { item ->
+    val items = this.flatMap { item ->
+        val modifiersWithPosIds = item.customizedMeal.modifiers.map {
+            it.toOutgoingModifier()
+        }.flatten()
+
         val mealItem = item.customizedMeal.toOutgoingOrderItem(
             quantity = item.quantity,
-            comment = item.comment
-        )
-        val addsItems =
-            item.customizedMeal.adds.map { add ->
-                add.toOutgoingOrderItem(item.quantity)
-            }
+            comment = item.comment,
+        ).copy(modifiers = modifiersWithPosIds)
+
+        val addsItems = item.customizedMeal.adds.map { add ->
+            add.toOutgoingOrderItem(item.quantity)
+        }
+
         listOf(mealItem) + addsItems
     }
+    return items
 }
 
 fun CustomizedMeal.toOutgoingOrderItem(
     quantity: Int,
-    comment: String
+    comment: String,
 ): OutgoingOrderItem {
     return OutgoingOrderItem(
         productId = meal.id,
-        modifiers = modifiers.flatMap { group -> group.toOutgoingModifier() },
         price = meal.price.toDouble(),
         amount = quantity.toDouble(),
         type = meal.orderItemType,
-        comment = comment
+        comment = comment,
+        positionId = UUID.randomUUID().toString(),
+        discountable = meal.discountable
     )
 }
 
-fun MealAdditional.toOutgoingOrderItem(quantity: Int = 1): OutgoingOrderItem {
+fun MealAdditional.toOutgoingOrderItem(
+    quantity: Int,
+): OutgoingOrderItem {
     return OutgoingOrderItem(
         productId = id,
         price = price.toDouble(),
         amount = quantity.toDouble(),
-        type = orderItemType
+        type = orderItemType,
+        positionId = UUID.randomUUID().toString(),
+
     )
 }
 
@@ -143,17 +121,11 @@ fun ModifierGroup.toOutgoingModifier(): List<OutgoingModifier> {
             productId = it.id,
             amount = DEFAULT_AMOUNT,
             price = it.price.toDouble(),
-            productGroupId = this.id
+            productGroupId = this.id,
+            positionId = UUID.randomUUID().toString(),
         )
     }
 }
-
-fun Meal.toOutgoingOrderItem() = OutgoingOrderItem(
-    productId = id,
-    price = price.toDouble(),
-    amount = 1.0,
-    type = orderItemType,
-)
 
 fun Address?.toDeliveryPointDto(): DeliveryPointDto? {
     return if (this == null) {

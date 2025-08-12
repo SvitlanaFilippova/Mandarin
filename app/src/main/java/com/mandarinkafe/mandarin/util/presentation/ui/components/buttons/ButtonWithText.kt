@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.core.presentation.theme.Typography.ToCartButtonBigStyle
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography.ToCartButtonStyle
 
 @Composable
 fun ButtonWithText(
@@ -22,6 +22,7 @@ fun ButtonWithText(
     @StringRes textResID: Int? = null,
     onMissingRequiredInfo: () -> Unit = {},
     onClick: () -> Unit,
+    containerColor: Color = Colors.Orange
 ) {
     val contentColor = if (shouldBeActive) {
         Color.White
@@ -29,7 +30,7 @@ fun ButtonWithText(
         Color.White.copy(alpha = 0.6f)
     }
     val containerColor = if (shouldBeActive) {
-        Colors.Orange
+        containerColor
     } else {
         Colors.LightGrey.copy(alpha = 0.6f)
     }
@@ -49,18 +50,13 @@ fun ButtonWithText(
             contentColor = contentColor
         ),
     ) {
-        if (textResID != null) {
-            Text(
-                text = stringResource(textResID),
-                style = ToCartButtonBigStyle,
-                color = contentColor
-            )
-        } else {
-            Text(
-                text = text,
-                style = ToCartButtonBigStyle,
-                color = contentColor
-            )
-        }
+        val text = if (textResID != null) stringResource(textResID) else text
+
+        Text(
+            text = text,
+            style = ToCartButtonStyle,
+            color = contentColor
+        )
+
     }
 }

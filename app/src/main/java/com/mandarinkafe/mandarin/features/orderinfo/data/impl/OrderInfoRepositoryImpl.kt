@@ -22,32 +22,38 @@ class OrderInfoRepositoryImpl(
 ) : OrderInfoRepository {
     override fun observeOrderInfo(id: String, delay: Long): Flow<Resource<IncomingOrder>> = flow {
         while (true) {
-            val response = networkClient.getOrderStatusById(id)
-            val result = when (response.resultCode) {
-                NO_CONNECTION -> Resource.ErrorNoInternet<IncomingOrder>()
-                HTTP_SUCCESS -> {
-                    Log.d("DEBUG OBSERVE STATUS RepositoryImpl", "HTTP_SUCCESS")
-                    val addons = menuCache.addonsCategories.value
-                    val orderInfo = (response as OrderInfoResponse)
-                        .orders
-                        .firstOrNull { it.id == id }
-                        ?.toDomain(addons)
-
-                    if (orderInfo != null) {
-                        Resource.Success(data = orderInfo)
-                    } else {
-                        Resource.ErrorOther(
-                            "Ошибка сервера или пустой ответ"
-                        )
-                    }
-                }
-
-                else -> Resource.ErrorOther("Ошибка сервера или пустой ответ")
-            }
-
+            val result = getStatusFromApi(id)
             emit(result)
             delay(delay)
         }
     }.flowOn(Dispatchers.IO)
 
+    override suspend fun getCurrentStatus(id: String): Resource<IncomingOrder> {
+        return getStatusFromApi(id)
+    }
+
+    private suspend fun getStatusFromApi(id: String): Resource<IncomingOrder> {
+        val response = networkClient.getOrderStatusById(id)
+        return when (response.resultCode) {
+            NO_CONNECTION -> Resource.ErrorNoInternet<IncomingOrder>()
+            HTTP_SUCCESS -> {
+                Log.d("DEBUG OBSERVE STATUS RepositoryImpl", "HTTP_SUCCESS")
+                val addons = menuCache.addonsCategories.value
+                val orderInfo = (response as OrderInfoResponse)
+                    .orders
+                    .firstOrNull { it.id == id }
+                    ?.toDomain(addons)
+
+                if (orderInfo != null) {
+                    Resource.Success(data = orderInfo)
+                } else {
+                    Resource.ErrorOther(
+                        "Ошибка сервера или пустой ответ"
+                    )
+                }
+            }
+
+            else -> Resource.ErrorOther("Ошибка сервера или пустой ответ")
+        }
+    }
 }

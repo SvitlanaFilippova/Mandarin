@@ -12,6 +12,9 @@ sealed interface OrderInfoContract {
     sealed interface OrderInfoEvent : BaseEvent {
         data class SetInitId(val id: String) : OrderInfoEvent
         data object StopObservingStatus : OrderInfoEvent
+        data object CancelOrder : OrderInfoEvent
+        data object RepeatOrder : OrderInfoEvent
+        data object RefreshNow : OrderInfoEvent
     }
 
     sealed interface OrderInfoEffect : BaseEffect {
@@ -19,6 +22,7 @@ sealed interface OrderInfoContract {
     }
 
     data class OrderInfoState(
+        val orderId: String? = null,
         val isLoading: Boolean = false,
         val incomingOrder: IncomingOrder? = null
     ) : BaseState {
