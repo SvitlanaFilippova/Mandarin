@@ -20,7 +20,7 @@ import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.Pay
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
-import com.mandarinkafe.mandarin.features.orderinfo.data.network.OrderInfoResponse
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.OrdersInfoResponse
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -68,7 +68,7 @@ interface IikoApiService {
     suspend fun getOrdersStatusById(
         @Header("Authorization") token: String,
         @Body body: OderInfoRequest
-    ): OrderInfoResponse
+    ): OrdersInfoResponse
 
     @POST("/api/1/deliveries/cancel")
     suspend fun cancelOrderById(

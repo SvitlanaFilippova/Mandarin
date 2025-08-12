@@ -1,5 +1,6 @@
 [versions]
 coroutinesExtensionsVersion = "2.1.0"
+material3PullrefreshVersion = "<version>"
 versionCode = "1"
 versionName = "1.0"
 compileSdk = "35"

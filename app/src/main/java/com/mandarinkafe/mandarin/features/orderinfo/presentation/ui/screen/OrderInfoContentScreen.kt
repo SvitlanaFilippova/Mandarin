@@ -127,7 +127,7 @@ fun OrderInfoContentScreen(
                                 .padding(Dimens.MarginSmall8)
                                 .weight(1f),
                             textResID = R.string.repeat_order,
-                            containerColor = Colors.LabelVegGreen,
+                            containerColor = Colors.Green,
                             onClick = { onEvent(OrderInfoEvent.RepeatOrder) }
                         )
                     }

@@ -8,7 +8,8 @@ interface IikoNetworkClient {
     suspend fun getLoyaltyCustomerInfo(phone: String): Response
     suspend fun getPaymentTypes(): Response
     suspend fun createDelivery(order: OutgoingOrderDto): Response
-    suspend fun getOrderStatusById(id: String): Response
+    suspend fun getSingleOrderInfoById(id: String): Response
+    suspend fun getOrdersStatusesByIds(ids: List<String>): Response
     suspend fun getAllCustomerCategories(): Response
     suspend fun getDiscounts(): Response
     suspend fun cancelOrder(id: String): Response

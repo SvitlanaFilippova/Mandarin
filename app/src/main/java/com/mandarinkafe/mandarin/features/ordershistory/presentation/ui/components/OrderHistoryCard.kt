@@ -2,20 +2,30 @@ package com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.compone
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus.CANCELLED
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus.CLOSED
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus.UNCONFIRMED
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 
 @Preview
@@ -29,7 +39,8 @@ fun OrderHistoryCardPreview() {
             orderType = "Доставка курьером",
             addressLine1 = "Ул. Солнечная, 4, Черноголовка",
             addressDetails = "кв. 82, п.2, этаж 10",
-            mealNames = "Пицца Маргарита x1, Ролл Филадельфия x2, Морс клюквенный 1x, Васаби, Пиво x199"
+            mealNames = "Пицца Маргарита x1, Ролл Филадельфия x2, Морс клюквенный 1x, Васаби, Пиво x199",
+            status = UiDeliveryStatus.READY_FOR_COOKING
         ),
         onClick = { }
     )
@@ -44,14 +55,44 @@ fun OrderHistoryCard(order: SavedOrder, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey),
     ) {
         Column(modifier = Modifier.padding(Dimens.MarginStandard16)) {
-            // Дата + тип заказа
+            // Дата + статус, если есть
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Text(
+                    text = order.whenCreated,
+                    style = Typography.RegularTextStyle,
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                order.status?.let {
+                    val color =
+                        when (it) {
+                            UNCONFIRMED -> Colors.White
+                            CLOSED -> Colors.White
+                            CANCELLED -> Colors.ErrorRed
+                            else -> Colors.Green
+                        }
+                    Icon(
+                        painterResource(it.iconResID),
+                        contentDescription = stringResource(it.labelResId),
+                        tint = color
+                    )
+                    Spacer(modifier = Modifier.width(Dimens.MarginSmall8))
+                    Text(
+                        text = stringResource(it.labelResId),
+                        style = Typography.RegularTextStyle,
+                        color = color
+                    )
+                }
+
+            }
+            // Тип заказа
+            Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
             Text(
-                text = "${order.whenCreated} • ${order.orderType}",
+                text = order.orderType,
                 style = Typography.RegularTextStyle,
             )
-
-            Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
-
             // Адрес
             if (order.addressLine1.isNotEmpty()) {
                 Text(

@@ -171,11 +171,19 @@ class IikoNetworkClientImpl(
         }
     }
 
-    override suspend fun getOrderStatusById(id: String): Response {
+    override suspend fun getSingleOrderInfoById(id: String): Response {
+        return fetchOrderStatuses(listOf(id))
+    }
+
+    override suspend fun getOrdersStatusesByIds(ids: List<String>): Response {
+        return fetchOrderStatuses(ids)
+    }
+
+    private suspend fun fetchOrderStatuses(ids: List<String>): Response {
         return try {
             val request = OderInfoRequest(
                 organizationId = organizationId,
-                orderIds = listOf(id)
+                orderIds = ids
             )
 
             val response = iikoService.getOrdersStatusById(

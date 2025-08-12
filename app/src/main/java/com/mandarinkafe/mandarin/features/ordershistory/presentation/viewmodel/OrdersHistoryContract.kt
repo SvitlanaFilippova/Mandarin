@@ -6,7 +6,9 @@ import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
 
 sealed interface OrdersHistoryContract {
-    sealed interface OrdersHistoryEvent : BaseEvent
+    sealed interface OrdersHistoryEvent : BaseEvent {
+        data object ForceRefresh : OrdersHistoryEvent
+    }
 
     sealed interface OrdersHistoryEffect : BaseEffect
 
