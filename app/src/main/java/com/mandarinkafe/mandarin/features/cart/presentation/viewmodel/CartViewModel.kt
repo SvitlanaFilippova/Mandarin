@@ -18,6 +18,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduceWithDelay
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.UpdateMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
+import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Loading
@@ -32,6 +33,7 @@ import javax.inject.Inject
 class CartViewModel @Inject constructor(
     private val cartInteractor: CartInteractor,
     private val recommendsUseCase: GetAllRecommendsUseCase,
+    private val checkIfTerminalIsAlive: CheckIfTerminalIsAliveUseCase
 ) : BaseViewModel<CartEvent, CartEffect, CartState>() {
     override fun setInitialState() = CartState()
     private val itemTimers = mutableMapOf<CartItem, Job>()
@@ -172,7 +174,39 @@ class CartViewModel @Inject constructor(
     }
 
     private fun onProceedOrderClick() {
-        sendEffect(CartEffect.ProceedOrder)
+        viewModelScope.launch {
+            setState { copy(proceedOrderIsLoading = true) }
+            val terminalResponse = checkIfTerminalIsAlive()
+
+            setState { copy(proceedOrderIsLoading = false) }
+            when (terminalResponse) {
+                is Resource.Success -> {
+                    if (terminalResponse.data == true) {
+                        sendEffect(CartEffect.ProceedOrder)
+                    } else {
+                        sendEffect(
+                            CartEffect.ShowSnackbar(
+                                "Упс, кажется, сейчас мы не работаем — заказ оформить не получится :(. Возвращайся в рабочее время!"
+                            )
+                        )
+                    }
+                }
+
+                is Resource.ErrorNoInternet -> {
+                    sendEffect(
+                        CartEffect.ShowSnackbar(
+                            "Нет подключения к интернету."
+                        )
+                    )
+                }
+
+                else -> sendEffect(
+                    CartEffect.ShowSnackbar(
+                        "Что-то пошло не так — не удалось проверить, работает ли сейчас доставка."
+                    )
+                )
+            }
+        }
     }
 
     private fun setCommentToItem(item: CartItem, comment: String) {

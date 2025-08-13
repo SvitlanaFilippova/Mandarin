@@ -9,9 +9,9 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
-import com.mandarinkafe.mandarin.features.discounts.data.network.LoyaltyCustomerResponse
-import com.mandarinkafe.mandarin.features.discounts.data.network.dto.CustomerCategoryDto
-import com.mandarinkafe.mandarin.features.discounts.domain.models.CustomerCategory
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCustomerResponse
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.discounts.CustomerCategoryDto
+import com.mandarinkafe.mandarin.features.infrastructure.domain.models.CustomerCategory
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DEFAULT_AMOUNT
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVIDER_FOR_TECH_PART
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVIDER_FOR_USER_COMMENT

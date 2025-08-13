@@ -1,11 +1,11 @@
 package com.mandarinkafe.mandarin.core.data.network.api
 
 import com.mandarinkafe.mandarin.core.data.dto.CustomerCategoriesRequest
-import com.mandarinkafe.mandarin.features.discounts.data.LoyaltyCustomerByPhoneRequest
-import com.mandarinkafe.mandarin.features.discounts.data.network.CustomerCategoriesResponse
-import com.mandarinkafe.mandarin.features.discounts.data.network.DiscountsRequest
-import com.mandarinkafe.mandarin.features.discounts.data.network.DiscountsResponse
-import com.mandarinkafe.mandarin.features.discounts.data.network.LoyaltyCustomerResponse
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.CustomerCategoriesResponse
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.DiscountsRequest
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.DiscountsResponse
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCustomerByPhoneRequest
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCustomerResponse
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST

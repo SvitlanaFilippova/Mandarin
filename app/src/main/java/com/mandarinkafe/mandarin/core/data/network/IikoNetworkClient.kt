@@ -13,4 +13,6 @@ interface IikoNetworkClient {
     suspend fun getAllCustomerCategories(): Response
     suspend fun getDiscounts(): Response
     suspend fun cancelOrder(id: String): Response
+    suspend fun getTerminalGroupsIds(): Response
+    suspend fun getAliveTerminalGroups(terminalGroupIds: List<String>): Response
 }

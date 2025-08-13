@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.core.data.network.api
 
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesRequest
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesResponse
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
-import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesRequest
-import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest

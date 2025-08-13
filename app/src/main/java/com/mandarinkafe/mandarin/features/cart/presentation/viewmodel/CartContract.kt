@@ -35,11 +35,13 @@ sealed interface CartContract {
 
     sealed interface CartEffect : BaseEffect {
         data object ProceedOrder : CartEffect
+        data class ShowSnackbar(val message: String) : CartEffect
         data object ShowClearCartConfirmDialog : CartEffect
     }
 
     data class CartState(
         val isLoading: Boolean = true,
+        val proceedOrderIsLoading: Boolean = false,
         val error: UiError? = null,
         val cartItems: List<CartItem> = emptyList(),
         val favoritesItems: Set<CustomizedMeal> = emptySet(),

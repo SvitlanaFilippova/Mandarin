@@ -8,10 +8,11 @@ import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
+import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
+import com.mandarinkafe.mandarin.features.infrastructure.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWithDiscountUseCase
-import com.mandarinkafe.mandarin.features.order.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.ResolvePickupPointUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.SaveOrderToHistoryUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
@@ -48,6 +49,7 @@ class OrderViewModel @Inject constructor(
     private val calculateCartTotalWithDiscount: CalculateCartTotalWithDiscountUseCase,
     private val applyPhoneDiscount: ApplyPhoneDiscountUseCase,
     private val saveOrderToHistory: SaveOrderToHistoryUseCase,
+    private val checkIfTerminalIsAlive: CheckIfTerminalIsAliveUseCase
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     private val cartObserver = CartObserver(
@@ -82,7 +84,7 @@ class OrderViewModel @Inject constructor(
             is OrderEvent.RemoveAddress -> removeSavedAddress(event.id)
             is OrderEvent.SelectAddressById -> selectAddressById(event.id)
             is OrderEvent.OnMissingRequiredInfo -> showMissingRequiredInfo()
-            is OrderEvent.SubmitOrder -> submitOrder()
+            is OrderEvent.SubmitOrder -> checkIfOrderCanBeSubmitted()
             is OrderEvent.StopObservingStatus -> orderCreator.stopObserving()
         }
     }
@@ -290,6 +292,34 @@ class OrderViewModel @Inject constructor(
 
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
+    }
+
+    private fun checkIfOrderCanBeSubmitted() {
+        viewModelScope.launch {
+            setLoading()
+            val terminalResponse = checkIfTerminalIsAlive()
+            when (terminalResponse) {
+                is Resource.Success -> {
+                    if (terminalResponse.data == true) {
+                        submitOrder()
+                    } else {
+                        sendErrorEffect("Упс, кажется, сейчас мы не работаем — заказ оформить не получится :(. Возвращайся в рабочее время!")
+
+                    }
+                }
+
+                is Resource.ErrorNoInternet -> {
+                    sendErrorEffect(
+                        "Нет подключения к интернету."
+                    )
+                }
+
+                else -> sendErrorEffect(
+                    "Что-то пошло не так — не удалось проверить, работает ли сейчас доставка."
+                )
+
+            }
+        }
     }
 
     private fun submitOrder() {

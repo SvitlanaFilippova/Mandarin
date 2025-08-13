@@ -38,6 +38,7 @@ fun CartContentScreen(
     state: CartState,
     listState: LazyListState,
     favorites: List<CustomizedMeal>,
+    proceedOrderIsLoading: Boolean,
     onClearCart: () -> Unit,
     onShowFavoriteDialog: (CustomizedMeal) -> Unit,
     onToggleFavorite: (CustomizedMeal) -> Unit,
@@ -150,7 +151,8 @@ fun CartContentScreen(
                     totalPrice = state.totalCartPrice,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .background(color = Colors.Transparent)
+                        .background(color = Colors.Transparent),
+                    proceedOrderIsLoading = proceedOrderIsLoading
                 )
             }
         }

@@ -14,13 +14,10 @@ import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscoun
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscountTypeDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingPaymentDto
-import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesResponse
-import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.OrderRepository
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrderItem
-import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.orderinfo.data.toDomain
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
@@ -30,20 +27,6 @@ class OrderRepositoryImpl(
     private val networkClient: IikoNetworkClient,
     private val menuCache: MenuCache,
 ) : OrderRepository {
-    override suspend fun getPaymentTypes(): Resource<List<PaymentType>> {
-        val response = networkClient.getPaymentTypes()
-        return when (response.resultCode) {
-            NO_CONNECTION -> Resource.ErrorNoInternet()
-            HTTP_SUCCESS -> {
-                val iikoTypes = (response as PaymentTypesResponse).paymentTypes
-                val domainTypes = iikoTypes.filterNot { it.isDeleted }.map { it.toDomain() }
-                Resource.Success(domainTypes)
-            }
-
-            else -> Resource.ErrorOther("Не удалось получить от сервера доступные способы оплаты")
-        }
-    }
-
     private val logTag = "DEBUG ORDER API OrderRepository"
     override suspend fun createOrder(outgoingOrder: OutgoingOrder): Resource<IncomingOrder> {
         return try {

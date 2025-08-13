@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,8 +23,8 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewMo
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrder
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
-import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.collectLatest
 
@@ -40,6 +41,7 @@ fun CartScreen(
     val onCartEvent = cartViewModel::onEvent
     val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
     var showClearCartDialog by remember { mutableStateOf(false) }
+    val snackbarHostState = LocalSnackbarHostState.current
 
     Column(
         modifier = Modifier
@@ -48,7 +50,6 @@ fun CartScreen(
     ) {
         val error = state.error
         when {
-            state.isLoading -> LoadingScreen()
             error != null -> PlaceholderScreen(
                 error = error,
                 onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
@@ -64,6 +65,7 @@ fun CartScreen(
                     listState = listState,
                     state = state,
                     favorites = favorites,
+                    proceedOrderIsLoading = state.proceedOrderIsLoading,
                     onClearCart = { onCartEvent(CartEvent.ClearCart) },
                     onAddToCart = { item -> onCartEvent(CartEvent.AddToCart(item)) },
                     onRemoveFromCart = { item -> onCartEvent(CartEvent.OnReduceWithDelay(item)) },
@@ -112,6 +114,7 @@ fun CartScreen(
             )
         }
 
+
         LaunchedEffect(Unit) {
             effectFlow.collectLatest { effect ->
                 when (effect) {
@@ -121,6 +124,14 @@ fun CartScreen(
 
                     is CartEffect.ProceedOrder -> {
                         navController.navigateToOrder()
+                    }
+
+                    is CartEffect.ShowSnackbar -> {
+                        snackbarHostState.showSnackbar(
+                            message = effect.message,
+                            duration = SnackbarDuration.Long,
+                            withDismissAction = true,
+                        )
                     }
                 }
             }

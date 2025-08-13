@@ -12,12 +12,14 @@ import com.mandarinkafe.mandarin.core.data.network.api.IikoDiscountApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoMenuApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoOrderApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoTerminalApi
-import com.mandarinkafe.mandarin.features.discounts.data.LoyaltyCustomerByPhoneRequest
-import com.mandarinkafe.mandarin.features.discounts.data.network.DiscountsRequest
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.AliveTerminalGroupsRequest
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.DiscountsRequest
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCustomerByPhoneRequest
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.TerminalGroupsIdsRequest
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
-import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
@@ -247,6 +249,37 @@ class IikoNetworkClientImpl(
                 body = CancelOrderRequest(
                     organizationId = organizationId,
                     orderId = id
+                )
+            )
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.d(logTag, ERROR + e.message)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    override suspend fun getTerminalGroupsIds(): Response {
+        return try {
+            val response = terminalApi.getTerminalGroupsIds(
+                token = token,
+                body = TerminalGroupsIdsRequest(
+                    organizationIds = listOf(organizationId)
+                )
+            )
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.d(logTag, ERROR + e.message)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    override suspend fun getAliveTerminalGroups(terminalGroupIds: List<String>): Response {
+        return try {
+            val response = terminalApi.getAliveTerminalGroups(
+                token = token,
+                body = AliveTerminalGroupsRequest(
+                    organizationIds = listOf(organizationId),
+                    terminalGroupIds = terminalGroupIds,
                 )
             )
             response.apply { resultCode = HTTP_SUCCESS }
