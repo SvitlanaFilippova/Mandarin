@@ -6,8 +6,12 @@ import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
 import com.mandarinkafe.mandarin.core.data.dto.CustomerCategoriesRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.Response
-import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoDiscountApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoMenuApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoOrderApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoTerminalApi
 import com.mandarinkafe.mandarin.features.discounts.data.LoyaltyCustomerByPhoneRequest
 import com.mandarinkafe.mandarin.features.discounts.data.network.DiscountsRequest
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
@@ -25,7 +29,11 @@ import kotlinx.coroutines.withContext
 
 class IikoNetworkClientImpl(
     private val networkMonitor: NetworkMonitor,
-    private val iikoService: IikoApiService,
+    private val authApi: IikoAuthApi,
+    private val menuApi: IikoMenuApi,
+    private val orderApi: IikoOrderApi,
+    private val terminalApi: IikoTerminalApi,
+    private val discountApi: IikoDiscountApi
 ) : IikoNetworkClient {
     private val logTag = "IIKO NetworkClient"
     private var token = ""
@@ -40,10 +48,10 @@ class IikoNetworkClientImpl(
             return
         }
         try {
-            val authResponse = iikoService.authenticate(AuthRequest(BuildConfig.IIKO_API_KEY))
+            val authResponse = authApi.authenticate(AuthRequest(BuildConfig.IIKO_API_KEY))
             token = BEARER_PREFIX + authResponse.token
 
-            val organizationsResponse = iikoService.getOrganizations(
+            val organizationsResponse = authApi.getOrganizations(
                 token = token,
                 body = OrganizationsRequest()
             )
@@ -59,7 +67,7 @@ class IikoNetworkClientImpl(
     }
 
     private suspend fun getExternalMenuId(): String {
-        val menuIdResponse = iikoService.getMenuId(token)
+        val menuIdResponse = menuApi.getMenuId(token)
         return menuIdResponse.externalMenus.firstOrNull()?.id
             ?: error("Menu ID not found")
     }
@@ -85,7 +93,7 @@ class IikoNetworkClientImpl(
             }
 
             Log.d(logTag, "Отправка запроса на получение меню")
-            val menuResponse = iikoService.getMenuById(
+            val menuResponse = menuApi.getMenuById(
                 token = token,
                 body = MenuRequest(
                     externalMenuId = externalMenuId,
@@ -114,7 +122,7 @@ class IikoNetworkClientImpl(
 
     override suspend fun getPaymentTypes(): Response {
         return try {
-            val response = iikoService.getPaymentTypes(
+            val response = orderApi.getPaymentTypes(
                 token = token,
                 body = PaymentTypesRequest(
                     organizationIds = listOf(organizationId)
@@ -135,7 +143,7 @@ class IikoNetworkClientImpl(
             )
             Log.d(logTagORDER, "Prepared request: $request")
 
-            val response = iikoService.createDelivery(
+            val response = orderApi.createDelivery(
                 token = token,
                 body = request
             )
@@ -160,7 +168,7 @@ class IikoNetworkClientImpl(
                 organizationId = organizationId,
                 phone = phone
             )
-            val response = iikoService.getLoyaltyCustomerInfo(
+            val response = discountApi.getLoyaltyCustomerInfo(
                 token = token,
                 body = request
             )
@@ -186,7 +194,7 @@ class IikoNetworkClientImpl(
                 orderIds = ids
             )
 
-            val response = iikoService.getOrdersStatusById(
+            val response = orderApi.getOrdersStatusById(
                 token = token,
                 body = request
             )
@@ -204,7 +212,7 @@ class IikoNetworkClientImpl(
 
     override suspend fun getAllCustomerCategories(): Response {
         return try {
-            val response = iikoService.getAllCustomerCategories(
+            val response = discountApi.getAllCustomerCategories(
                 token = token,
                 body = CustomerCategoriesRequest(
                     organizationId = organizationId
@@ -219,7 +227,7 @@ class IikoNetworkClientImpl(
 
     override suspend fun getDiscounts(): Response {
         return try {
-            val response = iikoService.getDiscounts(
+            val response = discountApi.getDiscounts(
                 token = token,
                 body = DiscountsRequest(
                     organizationIds = listOf(organizationId)
@@ -234,7 +242,7 @@ class IikoNetworkClientImpl(
 
     override suspend fun cancelOrder(id: String): Response {
         return try {
-            val response = iikoService.cancelOrderById(
+            val response = orderApi.cancelOrderById(
                 token = token,
                 body = CancelOrderRequest(
                     organizationId = organizationId,

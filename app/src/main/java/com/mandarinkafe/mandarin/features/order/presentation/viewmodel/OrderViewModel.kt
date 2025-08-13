@@ -172,7 +172,8 @@ class OrderViewModel @Inject constructor(
             val deliveryZone = getDeliveryZone(address.point)
             setState {
                 val newDeliveryInfo = deliveryInfo.copy(
-                    deliveryZone = deliveryZone, isLoading = false
+                    deliveryZone = deliveryZone,
+                    isLoading = false
                 )
                 copy(deliveryInfo = newDeliveryInfo)
             }

@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.order.domain.impl
 
-import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
 import com.mandarinkafe.mandarin.features.discounts.domain.api.CheckDiscountByPhoneUseCase
+import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DiscountByPhoneResult
 import com.mandarinkafe.mandarin.util.Resource
 

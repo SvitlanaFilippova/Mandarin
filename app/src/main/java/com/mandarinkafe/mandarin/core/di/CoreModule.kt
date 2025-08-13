@@ -8,8 +8,12 @@ import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.impl.MenuCacheImpl
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
-import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoDiscountApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoMenuApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoOrderApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoTerminalApi
 import com.mandarinkafe.mandarin.core.data.network.impl.GoogleDocsNetworkClientImpl
 import com.mandarinkafe.mandarin.core.data.network.impl.IikoNetworkClientImpl
 import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
@@ -24,7 +28,6 @@ import com.mandarinkafe.mandarin.features.discounts.domain.api.CategoryDiscountR
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.util.Constants.DATABASE_NAME
 import com.mandarinkafe.mandarin.util.Constants.GOOGLE_DOCS_BASE_URL
-import com.mandarinkafe.mandarin.util.Constants.IIKO_BASE_URL
 import com.mandarinkafe.mandarin.util.Constants.LOCAL_STORAGE_NAME
 import com.mandarinkafe.mandarin.util.NetworkMonitor
 import dagger.Module
@@ -33,7 +36,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import javax.inject.Singleton
 
@@ -62,18 +64,6 @@ class CoreModule {
 
     @Provides
     @Singleton
-    fun provideIikoApiService(): IikoApiService {
-        return Retrofit.Builder()
-            .baseUrl(IIKO_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(
-                IikoApiService::class.java
-            )
-    }
-
-    @Provides
-    @Singleton
     fun provideGoogleDocsApiService(): GoogleDocsApiService {
         return Retrofit.Builder()
             .baseUrl(GOOGLE_DOCS_BASE_URL)
@@ -85,12 +75,20 @@ class CoreModule {
     @Provides
     @Singleton
     fun provideIikoNetworkClient(
-        ikkoService: IikoApiService,
+        authApi: IikoAuthApi,
+        menuApi: IikoMenuApi,
+        orderApi: IikoOrderApi,
+        discountApi: IikoDiscountApi,
+        terminalApi: IikoTerminalApi,
         networkMonitor: NetworkMonitor
     ): IikoNetworkClient {
         return IikoNetworkClientImpl(
+            authApi = authApi,
+            menuApi = menuApi,
+            orderApi = orderApi,
+            discountApi = discountApi,
+            terminalApi = terminalApi,
             networkMonitor = networkMonitor,
-            iikoService = ikkoService,
         )
     }
 
