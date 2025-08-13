@@ -11,6 +11,7 @@
     <string name="edit">Редактировать</string>
     <string name="remove">Удалить</string>
     <string name="rub">₽</string>
+    <string name="close">Закрыть</string>
 
     <!-- Заголовки экранов -->
     <string name="more_options">Ещё</string>
