@@ -24,10 +24,11 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
-fun ConsentTextWithLinks(modifier: Modifier = Modifier) {
+fun ConsentTextWithLinks(modifier: Modifier = Modifier, buttonName: String? = null) {
     val context = LocalContext.current
 
-    val prefix = stringResource(id = R.string.consent_prefix) // "Соглашаюсь с"
+    val finalButtonName = if (buttonName == null) "" else " \"$buttonName\""
+    val prefix = stringResource(id = R.string.consent_prefix, finalButtonName) // "Соглашаюсь с"
     val privacy = stringResource(id = R.string.consent_privacy) // "политикой конфиденциальности"
     val agreement =
         stringResource(id = R.string.consent_agreement) // "пользовательским соглашением"

@@ -183,7 +183,7 @@ fun OrderContent(
                 onSubmitOrder = { onEvent(OrderEvent.SubmitOrder) },
                 totalOrderSum = state.totalOrderSum,
             )
-            ConsentTextWithLinks()
+            ConsentTextWithLinks(buttonName = stringResource(R.string.submit_order))
         }
 
         item { Spacer(Modifier.height(Dimens.MarginForCartButton72)) }

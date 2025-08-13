@@ -252,10 +252,9 @@
     <string name="cannot_open_link">Не удалось открыть ссылку</string>
 
     <!-- consent -->
-    <string name="consent_prefix">Нажимая на кнопку, подтверждаю своё согласие с</string>
+    <string name="consent_prefix">Нажимая на кнопку%s, подтверждаю своё согласие с</string>
     <string name="consent_privacy">политикой конфиденциальности</string>
-    <string name="consent_agreement">пользовательским соглашением</string>
-    <string name="consent_yandex_terms">условиями использования «Яндекс.Карт»</string>
+    <string name="consent_agreement">пользовательским соглашением.</string>
     <string name="privacy_policy_url">https://mandarin-kafe.ru/policy</string>
     <string name="user_agreement_url">https://example.com/agreement</string>
     <string name="yandex_maps_terms_url">https://yandex.ru/legal/maps_api/</string>

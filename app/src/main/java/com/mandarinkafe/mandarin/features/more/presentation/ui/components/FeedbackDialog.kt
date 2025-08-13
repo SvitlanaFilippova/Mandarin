@@ -146,7 +146,10 @@ fun FeedbackDialog(
                     )
                     Spacer(Modifier.height(Dimens.MarginSmall8))
                 }
-                ConsentTextWithLinks(modifier = Modifier.padding(start = Dimens.MarginStandard16))
+                ConsentTextWithLinks(
+                    modifier = Modifier.padding(start = Dimens.MarginStandard16),
+                    buttonName = stringResource(R.string.send)
+                )
             }
         },
 
