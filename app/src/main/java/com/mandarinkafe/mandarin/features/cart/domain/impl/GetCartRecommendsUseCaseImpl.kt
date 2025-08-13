@@ -1,56 +1,66 @@
 package com.mandarinkafe.mandarin.features.cart.domain.impl
 
+import android.util.Log
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
 import com.mandarinkafe.mandarin.features.cart.domain.model.RecommendsSchemaRule
-import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetCartRecommendsUseCase
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
 import com.mandarinkafe.mandarin.util.Resource.ErrorNoInternet
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
+import com.mandarinkafe.mandarin.util.Resource.Success
 import com.mandarinkafe.mandarin.util.normalize
 
-class GetRecommendsUseCaseImpl(
+class GetCartRecommendsUseCaseImpl(
     private val schemaRepository: RecommendsSchemaRepository,
     private val menuCache: MenuCache,
-) :
-    GetRecommendsUseCase {
+) : GetCartRecommendsUseCase {
     override suspend fun invoke(cartItems: Set<Meal>): Resource<List<Meal>> {
-        // 1. Получаем правила из репозитория
+        Log.d("GetCartRecommendsUC", "Cart items size: ${cartItems.size}")
         val schemaResult = schemaRepository.getRecommendsSchema()
+        Log.d("GetCartRecommendsUC", "Schema result: $schemaResult")
+
         return when (schemaResult) {
             is ErrorEmptyData -> ErrorEmptyData()
             is ErrorNoInternet -> ErrorNoInternet()
             is ErrorOther -> ErrorOther(schemaResult.message.orEmpty())
             is Idle -> Idle<List<Meal>>()
             is Loading -> Loading()
-            is Resource.Success<*> -> {
+            is Success -> {
                 val rules = schemaResult.data ?: return ErrorEmptyData()
+                Log.d("GetCartRecommendsUC", "Rules loaded: ${rules.size}")
 
-                // 2. Нормализуем названия блюд и их категорий из корзины
                 val cartItemsWithNorm = normalizeCartItems(cartItems)
-
-                // 3. Фильтруем правила
-                val matchingRules = filterRules(
-                    rules = rules,
-                    cartItemsWithNorm = cartItemsWithNorm
+                Log.d(
+                    "GetCartRecommendsUC",
+                    "Normalized cart items: ${cartItemsWithNorm.map { it.name }}"
                 )
 
-                // 4. Собираем сет рекомендованных артикулов
-                val recommendedSkus: List<String> = matchingRules
+                val matchingRules = filterRules(rules, cartItemsWithNorm)
+                Log.d(
+                    "GetCartRecommendsUC",
+                    "Matching rules: ${matchingRules.map { it.sourceName }}"
+                )
+
+                val recommendedSkus = matchingRules
                     .flatMap { it.recommendedSku }
                     .map { it.trim() }
                     .filter { it.isNotEmpty() }
+                Log.d("GetCartRecommendsUC", "Recommended SKUs: $recommendedSkus")
 
-                // 5. По каждому артикулу получаем блюда и убираем дубликаты по id
-                return Resource.Success(
-                    recommendedSkus
-                        .flatMap { sku -> menuCache.getMealsBySku(sku) }
-                        .distinctBy { it.id }
+                val meals = recommendedSkus
+                    .flatMap { sku -> menuCache.getMealsBySku(sku) }
+                    .distinctBy { it.id }
+                Log.d(
+                    "GetCartRecommendsUC",
+                    "Meals found by SKUs: ${meals.size} -> ${meals.map { it.name }}"
                 )
+
+                Success(meals)
             }
         }
     }

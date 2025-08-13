@@ -8,6 +8,7 @@ class KeywordCategoryFilter @Inject constructor(
     private val keyword: String
 ) : CategoryFilter {
     override fun isMatch(category: MealCategory): Boolean {
-        return category.name.contains(keyword, ignoreCase = true)
+        val result = category.name.contains(keyword, ignoreCase = true)
+        return result
     }
 }

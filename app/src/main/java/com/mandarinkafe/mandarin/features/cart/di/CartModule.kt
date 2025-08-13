@@ -15,12 +15,12 @@ import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaReposi
 import com.mandarinkafe.mandarin.features.cart.domain.impl.CartInteractorImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.ClearCartUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.GetAllRecommendsUseCaseImpl
+import com.mandarinkafe.mandarin.features.cart.domain.impl.GetCartRecommendsUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.GetCommonRecommendsUseCaseImpl
-import com.mandarinkafe.mandarin.features.cart.domain.impl.GetRecommendsUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetAllRecommendsUseCase
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetCartRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetCommonRecommendsUseCase
-import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.CategoryFilter
 import com.mandarinkafe.mandarin.util.di.Recommends
 import dagger.Module
@@ -82,7 +82,7 @@ object CartModule {
     fun provideGetRecommendsUseCase(
         menuCache: MenuCache,
         schemaRepository: RecommendsSchemaRepository
-    ): GetRecommendsUseCase = GetRecommendsUseCaseImpl(
+    ): GetCartRecommendsUseCase = GetCartRecommendsUseCaseImpl(
         schemaRepository = schemaRepository,
         menuCache = menuCache,
     )
@@ -102,7 +102,7 @@ object CartModule {
     @Provides
     fun provideGetAllRecommendsUseCase(
         common: GetCommonRecommendsUseCase,
-        cartBased: GetRecommendsUseCase
+        cartBased: GetCartRecommendsUseCase
     ): GetAllRecommendsUseCase = GetAllRecommendsUseCaseImpl(common = common, cartBased = cartBased)
 
     @Provides

@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.util.Constants.GOOGLE_DOCS_BASE_URL
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
+import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.NetworkMonitor
 
@@ -42,8 +43,9 @@ class GoogleDocsNetworkClientImpl(
         } else {
             try {
                 val csvString = googleDocsApi.getCsv(finalUrl)
-                return CsvResponse(csv = csvString)
-
+                return CsvResponse(csv = csvString).apply {
+                    resultCode = HTTP_SUCCESS
+                }
             } catch (e: Throwable) {
                 Log.d("getSheet", "Не удалось прочитать csv. ${e.message}")
                 Response().apply { resultCode = HTTP_SERVER_ERROR }

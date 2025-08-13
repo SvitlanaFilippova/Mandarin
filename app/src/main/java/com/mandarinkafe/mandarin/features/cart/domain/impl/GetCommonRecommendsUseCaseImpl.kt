@@ -21,22 +21,16 @@ class GetCommonRecommendsUseCaseImpl(
 ) : GetCommonRecommendsUseCase {
 
     override suspend operator fun invoke(): Resource<List<Meal>> {
-        // Запрашиваем меню (если нужно)
         cache.fetchMenuIfNeeded()
-
-        // Ждём первого «не-Loading/Idle» состояния
-        val result = cache.visibleMenu
+        val result = cache.fullMenu
             .filter { it !is Loading && it !is Idle }
             .first()
 
-        // Мапим на Resource<List<Meal>>
         return when (result) {
             is Success -> {
-                // фильтруем категории, разворачиваем все meals
-                val meals = result.data
-                    .orEmpty()
-                    .filter { recommendsFilter.isMatch(it) }
-                    .flatMap { it.meals.orEmpty() }
+                val categories = result.data.orEmpty()
+                val filteredCategories = categories.filter { recommendsFilter.isMatch(it) }
+                val meals = filteredCategories.flatMap { it.meals.orEmpty() }
                 Success(meals)
             }
 

@@ -168,6 +168,6 @@ class MenuCacheImpl @Inject constructor(
 
     private companion object {
         const val MAX_ATTEMPTS = 5
-        const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 100L
+        const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 200L
     }
 }
