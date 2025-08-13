@@ -1,9 +1,14 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
@@ -28,6 +34,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDia
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CartScreen(
     cartViewModel: CartViewModel,
@@ -43,100 +50,113 @@ fun CartScreen(
     var showClearCartDialog by remember { mutableStateOf(false) }
     val snackbarHostState = LocalSnackbarHostState.current
 
-    Column(
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isLoading,
+        onRefresh = { onCartEvent(CartEvent.ForceRefresh) }
+    )
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Colors.AppBlack)
+            .pullRefresh(pullRefreshState)
     ) {
-        val error = state.error
-        when {
-            error != null -> PlaceholderScreen(
-                error = error,
-                onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
-            )
-
-            state.cartItems.isEmpty() -> PlaceholderScreen(
-                UiError.CartEmpty,
-                onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
-            )
-
-            else -> {
-                CartContentScreen(
-                    listState = listState,
-                    state = state,
-                    favorites = favorites,
-                    proceedOrderIsLoading = state.proceedOrderIsLoading,
-                    onClearCart = { onCartEvent(CartEvent.ClearCart) },
-                    onAddToCart = { item -> onCartEvent(CartEvent.AddToCart(item)) },
-                    onRemoveFromCart = { item -> onCartEvent(CartEvent.OnReduceWithDelay(item)) },
-                    onDeletionCancel = { item -> onCartEvent(CartEvent.CancelRemove(item)) },
-                    onToggleFavorite = { item -> onSharedEvent(SharedEvent.ToggleFavorite(item = item)) },
-                    onShowFavoriteDialog = { item ->
-                        onSharedEvent(
-                            SharedEvent.ShowFavoriteDialog(
-                                item = item
-                            )
-                        )
-                    },
-                    onMealDetailsClick = { item ->
-                        onSharedEvent(
-                            SharedEvent.OnMealDetailsClick(
-                                cartItem = item,
-                                isEditMode = true
-                            )
-                        )
-                    },
-                    onProceedOrderClick = { onCartEvent(CartEvent.OnProceedOrderClick) },
-                    onCommentAdded = { item, text ->
-                        onCartEvent(
-                            CartEvent.AddCommentToItem(
-                                item,
-                                text
-                            )
-                        )
-                    },
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Colors.AppBlack)
+        ) {
+            val error = state.error
+            when {
+                error != null -> PlaceholderScreen(
+                    error = error,
+                    onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
                 )
+
+                state.cartItems.isEmpty() -> PlaceholderScreen(
+                    UiError.CartEmpty,
+                    onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+                )
+
+                else -> {
+                    CartContentScreen(
+                        listState = listState,
+                        state = state,
+                        favorites = favorites,
+                        proceedOrderIsLoading = state.proceedOrderIsLoading,
+                        onClearCart = { onCartEvent(CartEvent.ClearCart) },
+                        onAddToCart = { item -> onCartEvent(CartEvent.AddToCart(item)) },
+                        onRemoveFromCart = { item -> onCartEvent(CartEvent.OnReduceWithDelay(item)) },
+                        onDeletionCancel = { item -> onCartEvent(CartEvent.CancelRemove(item)) },
+                        onToggleFavorite = { item -> onSharedEvent(SharedEvent.ToggleFavorite(item = item)) },
+                        onShowFavoriteDialog = { item ->
+                            onSharedEvent(
+                                SharedEvent.ShowFavoriteDialog(
+                                    item = item
+                                )
+                            )
+                        },
+                        onMealDetailsClick = { item ->
+                            onSharedEvent(
+                                SharedEvent.OnMealDetailsClick(
+                                    cartItem = item,
+                                    isEditMode = true
+                                )
+                            )
+                        },
+                        onProceedOrderClick = { onCartEvent(CartEvent.OnProceedOrderClick) },
+                        onCommentAdded = { item, text ->
+                            onCartEvent(
+                                CartEvent.AddCommentToItem(
+                                    item,
+                                    text
+                                )
+                            )
+                        },
+                    )
+                }
             }
         }
+        PullRefreshIndicator(
+            refreshing = state.isLoading,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
+    }
 
-        // Диалог для подтверждения желания очистить корзину
-        if (showClearCartDialog) {
-            ConfirmationDialog(
-                titleRes = R.string.clear_cart_question,
-                textRes = R.string.clear_cart_confirmation,
-                onConfirm = {
-                    showClearCartDialog = false
-                    cartViewModel.onEvent(CartEvent.ConfirmClearCart)
-                },
-                onDismiss = {
-                    showClearCartDialog = false
+    // Диалог для подтверждения желания очистить корзину
+    if (showClearCartDialog) {
+        ConfirmationDialog(
+            titleRes = R.string.clear_cart_question,
+            textRes = R.string.clear_cart_confirmation,
+            onConfirm = {
+                showClearCartDialog = false
+                cartViewModel.onEvent(CartEvent.ConfirmClearCart)
+            },
+            onDismiss = {
+                showClearCartDialog = false
+            }
+        )
+    }
+
+
+    LaunchedEffect(Unit) {
+        effectFlow.collectLatest { effect ->
+            when (effect) {
+                is CartEffect.ShowClearCartConfirmDialog -> {
+                    showClearCartDialog = true
                 }
-            )
-        }
 
+                is CartEffect.ProceedOrder -> {
+                    navController.navigateToOrder()
+                }
 
-        LaunchedEffect(Unit) {
-            effectFlow.collectLatest { effect ->
-                when (effect) {
-                    is CartEffect.ShowClearCartConfirmDialog -> {
-                        showClearCartDialog = true
-                    }
-
-                    is CartEffect.ProceedOrder -> {
-                        navController.navigateToOrder()
-                    }
-
-                    is CartEffect.ShowSnackbar -> {
-                        snackbarHostState.showSnackbar(
-                            message = effect.message,
-                            duration = SnackbarDuration.Long,
-                            withDismissAction = true,
-                        )
-                    }
+                is CartEffect.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = effect.message,
+                        duration = SnackbarDuration.Long,
+                        withDismissAction = true,
+                    )
                 }
             }
         }
     }
 }
-
-

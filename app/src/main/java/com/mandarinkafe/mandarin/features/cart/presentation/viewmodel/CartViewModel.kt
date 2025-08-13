@@ -56,6 +56,13 @@ class CartViewModel @Inject constructor(
             is UpdateMealInCart -> updateMealInCart(item = event.newItem)
             is CartEvent.OnProceedOrderClick -> onProceedOrderClick()
             is CartEvent.AddCommentToItem -> setCommentToItem(event.item, event.comment)
+            is CartEvent.ForceRefresh -> forceRefresh()
+        }
+    }
+
+    private fun forceRefresh() {
+        viewModelScope.launch {
+            updateRecommends(state.value.cartItems.map { it.customizedMeal.meal }.toSet())
         }
     }
 

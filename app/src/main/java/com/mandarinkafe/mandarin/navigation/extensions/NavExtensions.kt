@@ -107,9 +107,8 @@ fun NavController.navigateToMealDetails(
 
 fun NavController.navigateToOrderInfo(
     orderId: String,
-    requireConfirmation: Boolean = true
 ) {
-    this.navigate("$ORDER_INFO_ROUTE/$orderId/$requireConfirmation") {
+    this.navigate("$ORDER_INFO_ROUTE/$orderId") {
         popUpTo(MAIN_GRAPH) {
             inclusive = true
         }

@@ -24,6 +24,7 @@ sealed interface CartContract {
             val customizedMeal: CustomizedMeal? = null,
             val meal: Meal? = null
         ) : CartEvent
+        data object ForceRefresh : CartEvent
 
         // Очистка корзины
         data object ClearCart : CartEvent
