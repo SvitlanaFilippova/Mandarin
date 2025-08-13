@@ -45,8 +45,6 @@ class SearchViewModel @Inject constructor(
                 label = event.labelName,
                 isChecked = event.isChecked
             )
-
-            is SearchEvent.GoBackToMenu -> sendEffect(SearchEffect.GoBackToMenuEffect)
         }
     }
 
@@ -59,7 +57,6 @@ class SearchViewModel @Inject constructor(
                 copy(allLabels = allLabels)
             }
         }
-
     }
 
     private fun setLabels(label: String, isChecked: Boolean) {

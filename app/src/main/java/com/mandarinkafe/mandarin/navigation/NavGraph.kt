@@ -87,7 +87,6 @@ fun NavGraph(navHostController: NavHostController) {
                         backStackEntry.arguments?.getBoolean(NavConstants.KEY_FOCUS_INPUT) == true
                     SearchScreen(
                         focusSearchBarInput = focusInput,
-                        navController = navHostController,
                         cartViewModel = cartViewModel,
                         sharedViewModel = sharedViewModel
                     )

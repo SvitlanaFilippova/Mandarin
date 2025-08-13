@@ -40,7 +40,6 @@ fun SearchScreenContent(
     favoriteIds: Set<String>,
     inProgressItems: Set<String>,
     onSearchEvent: (SearchContract.SearchEvent) -> Unit,
-    onSearchDismiss: () -> Unit,
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
@@ -71,7 +70,6 @@ fun SearchScreenContent(
                 }
             },
             onClear = { handleOnClear() },
-            onDismiss = { onSearchDismiss() },
             autoFocus = focusSearchBarInput,
             placeholderRes = R.string.search_in_menu,
             enabled = true,
@@ -101,7 +99,6 @@ fun SearchScreenContent(
             latestSearchText = latestSearchText,
             cartItems = cartItems,
             favoriteIds = favoriteIds,
-            onSearchDismiss = onSearchDismiss,
             onToggleFavorite = onToggleFavorite,
             onAddToCart = onAddToCart,
             onRemoveFromCart = onRemoveFromCart,

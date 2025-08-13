@@ -29,7 +29,6 @@ fun BottomNavigation(
     cartCount: Int,
 ) {
     val arrayOFItems = arrayOf(
-        BottomNavigationItem.Search,
         BottomNavigationItem.Favorites,
         BottomNavigationItem.Menu,
         BottomNavigationItem.Cart,

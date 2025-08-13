@@ -12,14 +12,11 @@ interface SearchContract {
     sealed interface SearchEvent : BaseEvent {
         data class OnLabelClick(val labelName: String, val isChecked: Boolean) :
             SearchEvent
-        data object GoBackToMenu : SearchEvent
         data class SearchMealsByText(val searchText: String) : SearchEvent
         data object ClearSearchInput : SearchEvent
     }
 
-    sealed interface SearchEffect : BaseEffect {
-        data object GoBackToMenuEffect : SearchEffect
-    }
+    sealed interface SearchEffect : BaseEffect
 
     data class SearchState(
         val fullMealList: List<Meal> = emptyList(),

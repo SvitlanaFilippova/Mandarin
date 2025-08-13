@@ -47,10 +47,9 @@ object NavConstants {
         "$ORDER_INFO_ROUTE/{$KEY_ORDER_ID}/{$KEY_REQUIRE_CONFIRMATION}"
 
     val bottomNavigationRoutes = setOf(
-        MORE_MENU_SCREEN_ROUTE,
-        MENU_SCREEN_ROUTE,
         FAVORITES_SCREEN_ROUTE,
+        MENU_SCREEN_ROUTE,
         CART_SCREEN_ROUTE,
-        SEARCH_SCREEN_ROUTE
+        MORE_MENU_SCREEN_ROUTE,
     )
 }

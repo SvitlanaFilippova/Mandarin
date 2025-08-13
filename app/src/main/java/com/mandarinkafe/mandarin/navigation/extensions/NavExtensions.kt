@@ -26,7 +26,6 @@ import java.nio.charset.StandardCharsets
 fun NavController.navigateToSearchScreen(focusInput: Boolean) {
     this.navigate("$SEARCH_SCREEN_ROUTE?focusInput=$focusInput") {
         launchSingleTop = true
-        restoreState = true
         popUpTo(MENU_SCREEN_ROUTE) {
             saveState = true
         }
@@ -34,9 +33,7 @@ fun NavController.navigateToSearchScreen(focusInput: Boolean) {
 }
 
 fun NavController.navigateToMenu() {
-    this.navigate(MENU_SCREEN_ROUTE) {
-        restoreState = true
-    }
+    this.navigate(MENU_SCREEN_ROUTE)
 }
 
 fun NavController.navigateToSavedAddresses() {

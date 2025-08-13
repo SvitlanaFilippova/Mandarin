@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.util.presentation.ui.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,7 +30,6 @@ fun SearchBarInputField(
     autoFocus: Boolean = false,
     onQueryChange: (String) -> Unit = { },
     onClear: () -> Unit = { },
-    onDismiss: (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -76,28 +74,15 @@ fun SearchBarInputField(
         leadingIcon = leadingIcon,
 
         trailingIcon = {
-            if (enabled) {
-                if (query.isNotEmpty()) { // если в поле есть текст - очистить его
-                    IconButton(onClick = { onClear() }) {
-                        Icon(
-                            Icons.Default.Close,
-                            contentDescription = stringResource(id = R.string.clear_text),
-                            tint = Colors.White
-                        )
-                    }
-                } else {
-                    onDismiss?.let {
-                        IconButton(onClick = onDismiss) { // если поле пустое - возврат назад
-                            Icon(
-                                Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(id = R.string.back),
-                                tint = Colors.White
-                            )
-                        }
-                    }
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onClear() }) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.clear_text),
+                        tint = Colors.White
+                    )
                 }
             }
         },
-
         )
 }
