@@ -39,11 +39,17 @@ class AddressDetailsViewModel @Inject constructor(
     }
 
     private fun saveAddress() {
-        viewModelScope.launch { saveAddressUseCase(state.value.address) }
+        viewModelScope.launch {
+            saveAddressUseCase(state.value.address)
+            sendEffect(AddressDetailsEffect.GoToParentScreen)
+        }
     }
 
     private fun removeSavedAddress() {
-        viewModelScope.launch { removeAddressUseCase(state.value.address.id) }
+        viewModelScope.launch {
+            removeAddressUseCase(state.value.address.id)
+            sendEffect(AddressDetailsEffect.GoToParentScreen)
+        }
     }
 
     private fun setError() {

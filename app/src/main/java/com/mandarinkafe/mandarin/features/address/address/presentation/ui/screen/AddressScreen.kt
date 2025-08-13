@@ -49,7 +49,8 @@ import com.yandex.mapkit.mapview.MapView
 fun AddressMapScreen(
     viewModel: AddressViewModel = hiltViewModel(),
     navController: NavHostController,
-    initAddress: Address?
+    initAddress: Address?,
+    returnToRoute: String
 ) {
     val state by viewModel.state.collectAsState()
     val onEvent = viewModel::onEvent
@@ -159,7 +160,8 @@ fun AddressMapScreen(
     }
     HandleAddressEffects(
         effectFlow = viewModel.effect,
-        navController = navController
+        navController = navController,
+        returnToRoute = returnToRoute
     )
 
     // Lifecycle observer для вызова onStart/onStop у MapKitFactory

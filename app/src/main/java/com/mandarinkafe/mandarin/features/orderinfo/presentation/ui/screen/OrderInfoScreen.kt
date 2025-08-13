@@ -27,7 +27,6 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 @Composable
 fun OrderInfoScreen(
     orderID: String?,
-    requireConfirmation: Boolean,
     sharedViewModel: SharedViewModel,
     viewModel: OrderInfoViewModel = hiltViewModel(),
     navController: NavHostController

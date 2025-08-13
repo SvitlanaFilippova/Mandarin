@@ -34,6 +34,7 @@ sealed interface AddressDetailsContract {
 
     sealed interface AddressDetailsEffect : BaseEffect {
         data class EditLocation(val address: Address) : AddressDetailsEffect
+        data object GoToParentScreen : AddressDetailsEffect
         data object ShowDeleteConfirmDialog : AddressDetailsEffect
     }
 

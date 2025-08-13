@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 fun HandleAddressEffects(
     effectFlow: Flow<AddressEffect>,
     navController: NavController,
+    returnToRoute: String,
 ) {
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
@@ -20,7 +21,7 @@ fun HandleAddressEffects(
                     navController.navigateToAddressDetails(
                         address = effect.address,
                         isEditMode = false,
-                        backTargetRoute = "",
+                        returnToRoute = returnToRoute,
                     )
                 }
             }

@@ -67,7 +67,7 @@ class OrderViewModel @Inject constructor(
 
     override fun onEvent(event: OrderEvent) {
         when (event) {
-            is OrderEvent.GetPaymentTypes -> getPaymentTypes()
+            is OrderEvent.GetInitData -> getInitData()
             is OrderEvent.RefreshAddresses -> getSavedAddresses()
             is OrderEvent.SetName -> setName(event.query)
             is OrderEvent.SetPhone -> setPhone(event.query)
@@ -89,6 +89,10 @@ class OrderViewModel @Inject constructor(
         }
     }
 
+    private fun getInitData() {
+        getPaymentTypes()
+        getSavedAddresses()
+    }
     private fun getPaymentTypes() {
         viewModelScope.launch {
             val response = getPaymentTypesUseCase()

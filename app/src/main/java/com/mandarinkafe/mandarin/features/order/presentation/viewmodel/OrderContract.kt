@@ -32,7 +32,7 @@ sealed interface OrderContract {
         data class SetDeliveryType(val deliveryType: DeliveryType) : OrderEvent
 
         // Настройки оплаты
-        data object GetPaymentTypes : OrderEvent
+        data object GetInitData : OrderEvent
         data class SetPaymentType(val paymentType: UiPaymentType) : OrderEvent
 
         // Настройки сдачи и приборов

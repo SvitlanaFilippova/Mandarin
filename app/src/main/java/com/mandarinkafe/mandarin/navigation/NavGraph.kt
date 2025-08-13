@@ -34,11 +34,16 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderView
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen.OrderInfoScreen
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.screen.OrdersHistoryScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_ADDRESS_JSON
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_RETURN_TO_ROUTE
 import com.mandarinkafe.mandarin.navigation.extensions.boolNavArg
 import com.mandarinkafe.mandarin.navigation.extensions.decodeJsonArg
 import com.mandarinkafe.mandarin.navigation.extensions.stringNavArg
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
@@ -112,11 +117,11 @@ fun NavGraph(navHostController: NavHostController) {
                 arguments = listOf(
                     stringNavArg(NavConstants.KEY_MEAL_JSON, nullable = true),
                     stringNavArg(NavConstants.KEY_MEAL_ID, nullable = true),
-                    boolNavArg(NavConstants.KEY_IS_EDIT_MODE)
+                    boolNavArg(KEY_IS_EDIT_MODE)
                 )
             ) { backStackEntry ->
                 val isEditMode =
-                    backStackEntry.arguments?.getBoolean(NavConstants.KEY_IS_EDIT_MODE) == true
+                    backStackEntry.arguments?.getBoolean(KEY_IS_EDIT_MODE) == true
                 val item =
                     backStackEntry.decodeJsonArg<CartItem>(NavConstants.KEY_MEAL_JSON, gson)
                 val mealId = backStackEntry.arguments?.getString(NavConstants.KEY_MEAL_ID)
@@ -131,40 +136,57 @@ fun NavGraph(navHostController: NavHostController) {
                 )
             }
 
-            composable(route = NavConstants.ADDRESS_SCREEN_ROUTE) {
-                AddressMapScreen(navController = navHostController, initAddress = null)
-            }
+//            composable(route = NavConstants.ADDRESS_SCREEN_ROUTE) {
+//                AddressMapScreen(
+//                    navController = navHostController,
+//                    initAddress = null,
+//                    returnToRoute = returnToRoute
+//                )
+//            }
+
             composable(
                 route = NavConstants.ADDRESS_SCREEN_ROUTE_WITH_ARGS,
                 arguments = listOf(
-                    stringNavArg(NavConstants.KEY_ADDRESS_JSON)
+                    stringNavArg(KEY_ADDRESS_JSON),
+                    stringNavArg(KEY_RETURN_TO_ROUTE)
                 )
             ) { backStackEntry ->
                 val address =
-                    backStackEntry.decodeJsonArg<Address?>(NavConstants.KEY_ADDRESS_JSON, gson)
-                AddressMapScreen(navController = navHostController, initAddress = address)
+                    backStackEntry.decodeJsonArg<Address?>(KEY_ADDRESS_JSON, gson)
+                val returnToRoute = backStackEntry.arguments
+                    ?.getString(KEY_RETURN_TO_ROUTE)
+                    ?.let { URLDecoder.decode(it, StandardCharsets.UTF_8.toString()) }
+                    ?: ""
+
+                AddressMapScreen(
+                    navController = navHostController,
+                    initAddress = address,
+                    returnToRoute = returnToRoute
+                )
             }
 
             composable(
                 route = NavConstants.ADDRESS_DETAILS_ROUTE_WITH_ARGS,
                 arguments = listOf(
-                    stringNavArg(NavConstants.KEY_ADDRESS_JSON),
-                    boolNavArg(NavConstants.KEY_IS_EDIT_MODE),
-                    stringNavArg(NavConstants.KEY_BACK_TARGET),
+                    stringNavArg(KEY_ADDRESS_JSON),
+                    boolNavArg(KEY_IS_EDIT_MODE),
+                    stringNavArg(KEY_RETURN_TO_ROUTE),
                 )
             ) { backStackEntry ->
                 val isEditMode =
-                    backStackEntry.arguments?.getBoolean(NavConstants.KEY_IS_EDIT_MODE) == true
+                    backStackEntry.arguments?.getBoolean(KEY_IS_EDIT_MODE) == true
                 val address =
-                    backStackEntry.decodeJsonArg<Address>(NavConstants.KEY_ADDRESS_JSON, gson)
-                val backTarget =
-                    backStackEntry.arguments?.getString(NavConstants.KEY_BACK_TARGET) ?: ""
+                    backStackEntry.decodeJsonArg<Address>(KEY_ADDRESS_JSON, gson)
+                val returnToRoute = backStackEntry.arguments?.getString(KEY_RETURN_TO_ROUTE)
+                    ?.let { URLDecoder.decode(it, StandardCharsets.UTF_8.toString()) }
+                    ?: ""
 
                 AddressDetailsScreen(
-                    isEditMode = isEditMode,
                     initAddress = address,
+                    returnToRoute = returnToRoute,
+                    isEditMode = isEditMode,
                     navController = navHostController,
-                    backTarget = backTarget
+                    callerEntry = backStackEntry
                 )
             }
             composable(NavConstants.ORDER_SCREEN_ROUTE) {
@@ -179,16 +201,12 @@ fun NavGraph(navHostController: NavHostController) {
                 arguments = listOf(
                     navArgument(NavConstants.KEY_ORDER_ID) {
                         type = NavType.StringType
-                    },
-                    boolNavArg(NavConstants.KEY_REQUIRE_CONFIRMATION)
+                    }
                 )
             ) { backStackEntry ->
                 val orderId = backStackEntry.arguments?.getString(NavConstants.KEY_ORDER_ID) ?: ""
-                val requireConfirmation =
-                    backStackEntry.arguments?.getBoolean(NavConstants.KEY_REQUIRE_CONFIRMATION) == true
                 OrderInfoScreen(
                     orderID = orderId,
-                    requireConfirmation = requireConfirmation,
                     navController = navHostController,
                     sharedViewModel = sharedViewModel,
                 )

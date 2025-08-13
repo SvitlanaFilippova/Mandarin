@@ -63,15 +63,32 @@ fun NavController.navigateToDeliveryScreen() {
 fun NavController.navigateToContactsScreen() {
     this.navigate(CONTACTS_SCREEN_ROUTE)
 }
-fun NavController.navigateToAddress(address: Address? = null) {
+
+fun NavController.navigateToAddress(address: Address? = null, returnToRoute: String) {
+    val encodedReturnRoute = URLEncoder.encode(returnToRoute, StandardCharsets.UTF_8.toString())
+
     if (address == null) {
-        this.navigate(ADDRESS_SCREEN_ROUTE)
+        // Новый адрес → карта
+        val emptyAddress = URLEncoder.encode("", StandardCharsets.UTF_8.toString())
+        navigate("$ADDRESS_SCREEN_ROUTE/$emptyAddress/$encodedReturnRoute")
     } else {
+        // Есть уже выбранный адрес,(например, редактирование)
         val gson = Gson()
         val json = URLEncoder.encode(gson.toJson(address), StandardCharsets.UTF_8.toString())
-        val route = "$ADDRESS_SCREEN_ROUTE/$json"
-        this.navigate(route)
+        navigate("$ADDRESS_SCREEN_ROUTE/$json/$encodedReturnRoute")
     }
+}
+
+fun NavController.navigateToAddressDetails(
+    address: Address,
+    isEditMode: Boolean = false,
+    returnToRoute: String
+) {
+    val gson = Gson()
+    val json =
+        URLEncoder.encode(gson.toJson(address), StandardCharsets.UTF_8.toString())
+    val route = "$ADDRESS_DETAILS_ROUTE/$json/$isEditMode/$returnToRoute"
+    this.navigate(route)
 }
 
 fun NavController.navigateToMealDetails(
@@ -85,18 +102,6 @@ fun NavController.navigateToMealDetails(
     val mealIdParam = mealId ?: "null"
 
     val route = "$MEAL_DETAILS_ROUTE/$itemParam/$mealIdParam/$isEditMode"
-    this.navigate(route)
-}
-
-fun NavController.navigateToAddressDetails(
-    address: Address,
-    isEditMode: Boolean = false,
-    backTargetRoute: String
-) {
-    val gson = Gson()
-    val json =
-        URLEncoder.encode(gson.toJson(address), StandardCharsets.UTF_8.toString())
-    val route = "$ADDRESS_DETAILS_ROUTE/$json/$isEditMode/$backTargetRoute"
     this.navigate(route)
 }
 
