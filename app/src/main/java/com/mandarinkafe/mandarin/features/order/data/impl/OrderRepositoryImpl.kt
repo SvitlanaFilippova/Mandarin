@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.order.data.impl
 
 import android.util.Log
+import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
@@ -29,89 +30,98 @@ class OrderRepositoryImpl(
     private val networkClient: IikoNetworkClient,
     private val menuCache: MenuCache,
 ) : OrderRepository {
-
-    override suspend fun getPaymentTypes(): List<PaymentType> {
+    override suspend fun getPaymentTypes(): Resource<List<PaymentType>> {
         val response = networkClient.getPaymentTypes()
-        if (response.resultCode == HTTP_SUCCESS) {
-            val iikoTypes = (response as PaymentTypesResponse).paymentTypes
-            val domainTypes = iikoTypes.filterNot { it.isDeleted }.map { it.toDomain() }
-            return domainTypes
-        } else {
-            return emptyList()
+        return when (response.resultCode) {
+            NO_CONNECTION -> Resource.ErrorNoInternet()
+            HTTP_SUCCESS -> {
+                val iikoTypes = (response as PaymentTypesResponse).paymentTypes
+                val domainTypes = iikoTypes.filterNot { it.isDeleted }.map { it.toDomain() }
+                Resource.Success(domainTypes)
+            }
+
+            else -> Resource.ErrorOther("Не удалось получить от сервера доступные способы оплаты")
         }
     }
 
     private val logTag = "DEBUG ORDER API OrderRepository"
-
     override suspend fun createOrder(outgoingOrder: OutgoingOrder): Resource<IncomingOrder> {
         return try {
-
-            val orderItems = outgoingOrder.items.toOrderItems()
-
-            val discountInfo =
-                createDiscountInfo(outgoingOrder.discountTypeId, orderItems)
-
-            val orderDto =
-                with(outgoingOrder) {
-                    OutgoingOrderDto(
-                        phone = OrderConstants.PHONE_PREFIX + phone,
-                        orderServiceType = if (deliveryType == DeliveryType.DELIVERY) {
-                            OrderConstants.DELIVERY_TYPE_DELIVERY
-                        } else {
-                            OrderConstants.DELIVERY_TYPE_PICKUP
-                        },
-                        deliveryPoint = chosenAddress?.toDeliveryPointDto(),
-                        comment = comment,
-                        customer = CustomerDto(
-                            name = name,
-                            type = OrderConstants.CUSTOMER_TYPE_ONE_TIME
-                        ),
-                        items = orderItems,
-                        payments = listOf(
-                            OutgoingPaymentDto(
-                                paymentTypeKind = paymentType.paymentTypeKind,
-                                paymentTypeId = paymentType.id,
-                                sum = totalOrderSum,
-                                isPrepay = false,
-                                isProcessedExternally = false,
-                                isFiscalizedExternally = false,
-                            )
-                        ),
-                        discountsInfo = discountInfo
-                    )
-                }
+            val orderItems = prepareOrderItems(outgoingOrder)
+            val discountInfo = createDiscountInfo(outgoingOrder.discountTypeId, orderItems)
+            val orderDto = buildOrderDto(outgoingOrder, orderItems, discountInfo)
 
             val response = networkClient.createDelivery(orderDto)
 
-            Log.d(
-                logTag,
-                "response code: ${response.resultCode}, full response: $response"
-            )
+            Log.d(logTag, "response code: ${response.resultCode}, full response: $response")
 
-            when (response.resultCode) {
-                NO_CONNECTION -> {
-                    Log.d(logTag, "No connection error")
-                    Resource.ErrorNoInternet()
-                }
-
-                HTTP_SUCCESS -> {
-                    val addons = menuCache.addonsCategories.value
-                    val orderInfo = (response as CreateDeliveryResponse).orderInfo.toDomain(addons)
-                    if (orderInfo.errorInfo == null) {
-                        Resource.Success(data = orderInfo)
-                    } else {
-                        Resource.ErrorOther(orderInfo.errorInfo.message ?: "Неизвестная ошибка")
-                    }
-                }
-
-                else -> {
-                    Log.e(logTag, "Server error or empty response. Code: ${response.resultCode}")
-                    Resource.ErrorOther("Ошибка сервера или пустой ответ")
-                }
-            }
+            handleCreateOrderResponse(response)
         } catch (e: Exception) {
             Log.e(logTag, "Exception in createOrder: ${e.message}", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
+        }
+    }
+
+    private fun prepareOrderItems(outgoingOrder: OutgoingOrder): List<OutgoingOrderItem> {
+        return outgoingOrder.items.toOrderItems()
+    }
+
+    private fun buildOrderDto(
+        outgoingOrder: OutgoingOrder,
+        orderItems: List<OutgoingOrderItem>,
+        discountInfo: OutgoingDiscountInfoDto?
+    ): OutgoingOrderDto {
+        return with(outgoingOrder) {
+            OutgoingOrderDto(
+                phone = OrderConstants.PHONE_PREFIX + phone,
+                orderServiceType = if (deliveryType == DeliveryType.DELIVERY) {
+                    OrderConstants.DELIVERY_TYPE_DELIVERY
+                } else {
+                    OrderConstants.DELIVERY_TYPE_PICKUP
+                },
+                deliveryPoint = chosenAddress?.toDeliveryPointDto(),
+                comment = comment,
+                customer = CustomerDto(
+                    name = name,
+                    type = OrderConstants.CUSTOMER_TYPE_ONE_TIME
+                ),
+                items = orderItems,
+                payments = listOf(
+                    OutgoingPaymentDto(
+                        paymentTypeKind = paymentType.paymentTypeKind,
+                        paymentTypeId = paymentType.id,
+                        sum = totalOrderSum,
+                        isPrepay = false,
+                        isProcessedExternally = false,
+                        isFiscalizedExternally = false,
+                    )
+                ),
+                discountsInfo = discountInfo
+            )
+        }
+    }
+
+    private fun handleCreateOrderResponse(response: Response): Resource<IncomingOrder> {
+        return when (response.resultCode) {
+            NO_CONNECTION -> {
+                Log.d(logTag, "No connection error")
+                Resource.ErrorNoInternet()
+            }
+
+            HTTP_SUCCESS -> {
+                val addons = menuCache.addonsCategories.value
+                val orderInfo = (response as CreateDeliveryResponse).orderInfo.toDomain(addons)
+                if (orderInfo.errorInfo == null) {
+                    Resource.Success(data = orderInfo)
+                } else {
+                    Resource.ErrorOther(orderInfo.errorInfo.message ?: "Неизвестная ошибка")
+                }
+            }
+
+            else -> {
+                Log.e(logTag, "Server error or empty response. Code: ${response.resultCode}")
+                Resource.ErrorOther("Ошибка сервера или пустой ответ")
+            }
         }
     }
 

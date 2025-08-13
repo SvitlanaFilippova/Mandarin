@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.order.domain.models
 
-import com.mandarinkafe.mandarin.features.discounts.data.network.dto.CustomerCategoryDto
 import com.mandarinkafe.mandarin.features.discounts.domain.models.CustomerCategory
 
 data class LoyaltyCustomer(

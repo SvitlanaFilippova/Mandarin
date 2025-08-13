@@ -37,7 +37,8 @@ fun CustomSnackbarHost(
                         ButtonWithText(
                             modifier = Modifier.padding(Dimens.MarginSmall8),
                             text = actionLabel,
-                            onClick = { snackbarData.performAction() })
+                            onClick = { snackbarData.performAction() }
+                        )
                     }
                 },
                 dismissAction = {

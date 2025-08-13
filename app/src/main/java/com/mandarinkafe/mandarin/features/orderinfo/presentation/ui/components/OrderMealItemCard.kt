@@ -29,7 +29,9 @@ fun OrderMealItemCard(
 ) {
     val textDecoration = if (item.isDiscounted) {
         TextDecoration.LineThrough
-    } else null
+    } else {
+        null
+    }
     Row(
         verticalAlignment = Alignment.Top,
         modifier = modifier

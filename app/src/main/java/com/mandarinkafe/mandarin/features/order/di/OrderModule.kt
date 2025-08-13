@@ -3,10 +3,10 @@ package com.mandarinkafe.mandarin.features.order.di
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.discounts.data.impl.LoyaltyCustomerRepositoryImpl
+import com.mandarinkafe.mandarin.features.discounts.domain.api.CheckDiscountByPhoneUseCase
 import com.mandarinkafe.mandarin.features.order.data.impl.OrderRepositoryImpl
 import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWithDiscountUseCase
-import com.mandarinkafe.mandarin.features.discounts.domain.api.CheckDiscountByPhoneUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.LoyaltyCustomerRepository
@@ -35,7 +35,6 @@ class OrderModule {
             networkClient = iikoNetworkClient,
         )
     }
-
 
     @Singleton
     @Provides
@@ -90,6 +89,5 @@ class OrderModule {
             checkDiscountByPhone = checkDiscountByPhone
         )
     }
-
 
 }

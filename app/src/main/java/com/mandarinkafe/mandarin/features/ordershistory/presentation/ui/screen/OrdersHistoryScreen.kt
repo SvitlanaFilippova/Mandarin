@@ -55,7 +55,6 @@ fun OrdersHistoryScreen(
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
 
         ) {
-
             item {
                 ScreenTitle(name = stringResource(R.string.order_history))
             }

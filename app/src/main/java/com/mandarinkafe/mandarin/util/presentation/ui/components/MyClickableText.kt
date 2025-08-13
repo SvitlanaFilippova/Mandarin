@@ -16,13 +16,16 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 @Composable
 fun MyClickableText(
     modifier: Modifier = Modifier,
-    text: String? = null, textRes: Int? = null, onClick: () -> Unit
+    text: String? = null,
+    textRes: Int? = null,
+    onClick: () -> Unit
 ) {
     val resolvedText = when {
         text != null -> text
         textRes != null -> stringResource(id = textRes)
         else -> return
     }
+
     Text(
         modifier = modifier
             .fillMaxWidth()

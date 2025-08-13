@@ -67,7 +67,6 @@ fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
 }
 
 fun List<CartItem>.toOrderItems(): List<OutgoingOrderItem> {
-
     val items = this.flatMap { item ->
         val modifiersWithPosIds = item.customizedMeal.modifiers.map {
             it.toOutgoingModifier()

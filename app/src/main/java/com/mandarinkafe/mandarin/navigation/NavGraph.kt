@@ -215,7 +215,9 @@ fun NavGraph(navHostController: NavHostController) {
                 AboutScreen()
             }
             composable(NavConstants.LEGAL_SCREEN_ROUTE) {
-                LegalScreen()
+                LegalScreen(
+                    onSharedEvent = sharedViewModel::onEvent
+                )
             }
             composable(NavConstants.DELIVERY_SCREEN_ROUTE) {
                 DeliveryScreen()

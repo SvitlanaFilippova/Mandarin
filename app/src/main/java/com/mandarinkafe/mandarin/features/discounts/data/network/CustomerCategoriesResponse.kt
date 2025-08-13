@@ -5,4 +5,4 @@ import com.mandarinkafe.mandarin.features.discounts.data.network.dto.CustomerCat
 
 data class CustomerCategoriesResponse(
     val guestCategories: List<CustomerCategoryDto>
-) :Response()
+) : Response()

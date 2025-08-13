@@ -36,7 +36,6 @@ fun MenuList(
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
-
     ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
@@ -45,7 +44,6 @@ fun MenuList(
         (screenWidth - horizontalPadding * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
     }
 
-
     LazyColumn(
         state = listState,
         modifier = modifier,
@@ -53,7 +51,8 @@ fun MenuList(
     ) {
         itemsIndexed(
             items = menuItems,
-            key = { _, item -> item.id }) { index, item ->
+            key = { _, item -> item.id }
+        ) { index, item ->
 
             when (item) {
                 is MenuItem.HeaderItem -> MenuHeaderItem(item)

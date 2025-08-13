@@ -12,30 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
-
-@Preview
-@Composable
-fun OrderHistoryCardPreview() {
-    OrderHistoryCard(
-        SavedOrder(
-            id = "Tw46twtwasfgvesdzfxcasdfcadf",
-            timestamp = 24242424,
-            whenCreated = "15:33, 09.08.25",
-            orderType = "Доставка курьером",
-            addressLine1 = "Ул. Солнечная, 4, Черноголовка",
-            addressDetails = "кв. 82, п.2, этаж 10",
-            mealNames = "Пицца Маргарита x1, Ролл Филадельфия x2, Морс клюквенный 1x, Васаби, Пиво x199",
-            status = UiDeliveryStatus.READY_FOR_COOKING
-        ),
-        onClick = { }
-    )
-}
 
 @Composable
 fun OrderHistoryCard(order: SavedOrder, onClick: () -> Unit) {

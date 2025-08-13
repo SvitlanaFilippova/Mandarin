@@ -227,7 +227,7 @@
     <string name="placeholder_call">Позвонить</string>
     <string name="nothing_found">Ничего не найдено :(</string>
     <string name="nothing_found_extra">Попробуй написать по-другому или просто полистай наше меню. Там точно найдутся нужные вкусности!</string>
-    <string name="error_no_internet">Проверь подключение к&#160;интернету</string>
+    <string name="error_no_internet">Нет подключения к&#160;интернету</string>
     <string name="error_empty_menu">Сервер вернул пустые данные меню</string>
     <string name="error_empty_data">Не удалось загрузить данные</string>
     <string name="error_server_error">Ошибка сервера</string>

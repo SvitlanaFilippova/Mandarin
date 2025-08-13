@@ -51,7 +51,7 @@ fun FeedbackDialog(
     // Валидация
     val isMessageValid = message.isNotBlank()
     val isContactValid =
-        !needFeedback || (phone.length == Constants.VALID_PHONE_LENGTH || email.isNotBlank())
+        !needFeedback || phone.length == Constants.VALID_PHONE_LENGTH || email.isNotBlank()
 
     val isFormValid = isMessageValid && isContactValid
     val mask = MaskVisualTransformation(stringResource(R.string.phone_mask))

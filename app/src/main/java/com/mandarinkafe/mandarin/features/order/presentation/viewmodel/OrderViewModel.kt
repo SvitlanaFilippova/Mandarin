@@ -29,6 +29,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.O
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
+import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -55,14 +56,12 @@ class OrderViewModel @Inject constructor(
         recalculateCartSummary = ::recalculateCartSummary
     )
 
-
     init {
         getSavedAddresses()
         observeCartItems()
     }
 
     override fun setInitialState() = OrderState()
-
 
     override fun onEvent(event: OrderEvent) {
         when (event) {
@@ -90,8 +89,23 @@ class OrderViewModel @Inject constructor(
 
     private fun getPaymentTypes() {
         viewModelScope.launch {
-            val types = getPaymentTypesUseCase()
-            setState { copy(paymentInfo = paymentInfo.copy(availablePaymentTypes = types)) }
+            val response = getPaymentTypesUseCase()
+            when (response) {
+                is Resource.ErrorNoInternet -> sendErrorEffect(msg = "Нет подключения к интернету")
+                is Resource.Success -> {
+                    if (response.data != null) {
+                        setState { copy(paymentInfo = paymentInfo.copy(availablePaymentTypes = response.data)) }
+                    } else {
+                        sendErrorEffect(msg = "Не удалось получить от сервера доступные способы оплаты")
+                    }
+                }
+
+                else -> {
+                    sendErrorEffect(msg = "Не удалось получить от сервера доступные способы оплаты")
+                }
+
+            }
+
         }
     }
 
@@ -137,7 +151,9 @@ class OrderViewModel @Inject constructor(
         viewModelScope.launch {
             val addressList = getSavedAddressesUseCase().reversed()
             setState {
-                val newDeliveryInfo = deliveryInfo.copy(savedAddresses = addressList)
+                val newDeliveryInfo = deliveryInfo.copy(
+                    savedAddresses = addressList
+                )
                 copy(deliveryInfo = newDeliveryInfo)
             }
         }
@@ -255,7 +271,7 @@ class OrderViewModel @Inject constructor(
         setState {
             copy(isError = true)
         }
-        sendErrorEffect("Заполните все обязательные поля")
+        sendErrorEffect("Нужно заполнить все обязательные поля")
     }
 
     private fun recalculateCartSummary(discountSize: Int? = null) {

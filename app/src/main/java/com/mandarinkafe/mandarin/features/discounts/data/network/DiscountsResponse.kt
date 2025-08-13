@@ -5,4 +5,4 @@ import com.mandarinkafe.mandarin.features.discounts.data.network.dto.DiscountDat
 
 data class DiscountsResponse(
     val discounts: List<DiscountDataDto>
-): Response()
+) : Response()

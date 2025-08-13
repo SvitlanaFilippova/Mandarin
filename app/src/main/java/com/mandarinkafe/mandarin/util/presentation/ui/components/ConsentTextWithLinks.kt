@@ -76,7 +76,6 @@ fun ConsentTextWithLinks(modifier: Modifier = Modifier, buttonName: String? = nu
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-
         BasicText(
             text = text,
             style = Typography.ConsentSmallTextStyle,

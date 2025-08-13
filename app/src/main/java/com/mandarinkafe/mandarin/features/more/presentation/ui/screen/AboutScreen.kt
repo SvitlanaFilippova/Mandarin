@@ -43,7 +43,6 @@ fun AboutScreen() {
             .padding(Dimens.MarginStandard16),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         ScreenTitle(name = aboutTitle)
 
         Spacer(modifier = Modifier.height(Dimens.MarginBig32))

@@ -2,7 +2,6 @@ package com.mandarinkafe.mandarin.features.more.presentation.ui.screen
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,16 +13,17 @@ import androidx.core.net.toUri
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.more.presentation.ui.components.MenuItem
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 
 @Composable
-fun LegalScreen() {
+fun LegalScreen(onSharedEvent: (SharedEvent) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(vertical = Dimens.MarginStandard16)
     ) {
         val context = LocalContext.current
-        val cannotOpenToast = stringResource(id = R.string.cannot_open_link)
+        val cannotOpenLinkMessage = stringResource(id = R.string.cannot_open_link)
         val privacyLabel = stringResource(id = R.string.more_privacy_policy)
         val privacyUrl = stringResource(id = R.string.privacy_policy_url)
         val userAgreementLabel = stringResource(id = R.string.more_user_agreement)
@@ -38,7 +38,11 @@ fun LegalScreen() {
                 val intent = Intent(Intent.ACTION_VIEW, url.toUri())
                 context.startActivity(intent)
             } catch (e: ActivityNotFoundException) {
-                Toast.makeText(context, cannotOpenToast, Toast.LENGTH_SHORT).show()
+                onSharedEvent(
+                    SharedEvent.ShowSnackbar(
+                        message = cannotOpenLinkMessage + ": ${e.message}"
+                    )
+                )
             }
         }
 

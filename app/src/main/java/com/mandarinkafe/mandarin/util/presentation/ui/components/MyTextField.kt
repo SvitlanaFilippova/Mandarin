@@ -38,7 +38,6 @@ fun MyTextField(
     placeholder: @Composable (() -> Unit)? = null,
     colors: TextFieldColors? = null,
     ) {
-
     val colors = colors ?: TextFieldDefaults.colors(
         cursorColor = Colors.Orange,
         focusedTextColor = Colors.White,

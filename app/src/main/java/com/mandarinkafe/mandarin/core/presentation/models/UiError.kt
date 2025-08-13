@@ -1,11 +1,13 @@
 package com.mandarinkafe.mandarin.core.presentation.models
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.mandarinkafe.mandarin.R
 
 sealed class UiError(
-    val msgRes: Int,
-    val extraMsgRes: Int? = null,
-    val imgRes: Int,
+    @StringRes val msgRes: Int,
+    @StringRes val extraMsgRes: Int? = null,
+    @DrawableRes val imgRes: Int,
     val needRetry: Boolean
 ) {
 

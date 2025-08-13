@@ -93,7 +93,6 @@ fun MealDetailsBottomSheet(
 
     val customizedMeal = state.customizedMeal ?: initItem?.customizedMeal
     customizedMeal?.let {
-
         val isFavorite by remember(customizedMeal, favorites) {
             derivedStateOf { customizedMeal.isFavorite(favorites) }
         }
