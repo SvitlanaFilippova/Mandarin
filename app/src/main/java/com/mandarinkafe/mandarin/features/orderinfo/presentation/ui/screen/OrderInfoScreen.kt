@@ -76,7 +76,7 @@ fun OrderInfoScreen(
                 when (effect) {
                     is OrderInfoEffect.ShowError -> onSharedEvent(
                         SharedEvent.ShowSnackbar(
-                            text = effect.message
+                            message = effect.message
                         )
                     )
                 }

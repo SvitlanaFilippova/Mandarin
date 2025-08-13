@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.util.presentation.ui.components
 import android.content.Intent
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
@@ -11,6 +12,7 @@ import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
 import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMealDetails
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER_DEFAULT
@@ -54,14 +56,20 @@ fun HandleEffects(
                     navController.popBackStack()
                 }
 
-                is SharedEffect.ShowSnackbarEffect -> {
-                    snackbarHostState.showSnackbar(
+                is SharedEffect.SnackbarEffect -> {
+                    val actionLabel =
+                        if (effect.showToCartButton) "В корзину" else null
+                    val result = snackbarHostState.showSnackbar(
                         message = effect.text,
                         duration = SnackbarDuration.Short,
-                        withDismissAction = true
+                        withDismissAction = true,
+                        actionLabel = actionLabel
                     )
-
+                    if (result == SnackbarResult.ActionPerformed) {
+                        navController.navigateToCart()
+                    }
                 }
+
             }
         }
     }

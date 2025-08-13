@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -132,7 +133,7 @@ fun MealDetailsBottomSheet(
                     onDismissRequest = onClose,
                     sheetState = sheetState,
                     containerColor = Colors.AppBlack,
-                    tonalElevation = Dimens.Elevation2,
+                    tonalElevation = Dimens.Elevation4,
                     scrimColor = Colors.LightGreyTransparent75,
                 ) {
                     MealDetailsContentScreen(
@@ -143,21 +144,26 @@ fun MealDetailsBottomSheet(
                         isFavorite = isFavorite,
                         isEditMode = isEditMode,
                         onClose = onClose,
-                        onAddToCart = {
+                        onAddToCart = { message ->
+                            Log.d("DEBUG SNACKBAR", "message: $message ")
                             onCartEvent(AddToCart(state.actualCartItem))
                             onSharedEvent(
                                 SharedEvent.ShowSnackbar(
-                                    text = "Добавлено в корзину: ${customizedMeal.meal.name}"
+                                    message = message,
+                                    showToCartButton = true
                                 )
                             )
                         },
-                        onEdit = {
+                        onEdit = { message ->
+                            Log.d("DEBUG SNACKBAR", "message: $message ")
                             onCartEvent(
                                 UpdateMealInCart(
                                     state.actualCartItem ?: customizedMeal.toCartItem()
                                 )
                             )
-                            onSharedEvent(SharedEvent.ShowSnackbar(text = "Отредактировано: ${customizedMeal.meal.name}"))
+                            onSharedEvent(
+                                SharedEvent.ShowSnackbar(message = message)
+                            )
                         },
                         onToggleFavorite = {
                             if (!isFavorite && customizedMeal.isCustomized) {

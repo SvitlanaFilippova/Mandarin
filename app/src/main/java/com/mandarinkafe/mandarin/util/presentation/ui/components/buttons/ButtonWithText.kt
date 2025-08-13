@@ -57,6 +57,5 @@ fun ButtonWithText(
             style = ToCartButtonStyle,
             color = contentColor
         )
-
     }
 }

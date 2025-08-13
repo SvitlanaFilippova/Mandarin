@@ -41,7 +41,7 @@ fun BottomNavigation(
         exit = fadeOut() + shrinkVertically()
     ) {
         BottomAppBar(
-            tonalElevation = Dimens.Elevation2,
+            tonalElevation = Dimens.Elevation4,
             containerColor = Colors.AppBlack,
         ) {
             val backStackEntry = navController.currentBackStackEntryAsState().value

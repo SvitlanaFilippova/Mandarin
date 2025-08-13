@@ -231,9 +231,11 @@
     <string name="error_empty_data">Не удалось загрузить данные</string>
     <string name="error_server_error">Ошибка сервера</string>
     <string name="error_something_wrong">Что-то пошло не так :(</string>
-    <string name="error_empty_cart">В корзине пока ничего нет :(</string>
+    <string name="error_empty_cart">В корзине пока ничего нет</string>
     <string name="error_empty_favorites">В избранных пока ничего нет.</string>
     <string name="error_empty_favorites_extra">Скорее добавь свои любимые блюда, чтобы заказывать их&#160;было ещё удобнее!</string>
+    <string name="added_to_cart_template">Добавлено в корзину:\n%s</string>
+    <string name="edited">Отредактировано:\n%s</string>
 
     <!-- More Menu -->
     <string name="more_orders_history">История заказов</string>
@@ -249,7 +251,7 @@
     <string name="cannot_open_link">Не удалось открыть ссылку</string>
 
     <!-- consent -->
-    <string name="consent_prefix">Нажимая на кнопку, подтверждаю своё согласаие с</string>
+    <string name="consent_prefix">Нажимая на кнопку, подтверждаю своё согласие с</string>
     <string name="consent_privacy">политикой конфиденциальности</string>
     <string name="consent_agreement">пользовательским соглашением</string>
     <string name="consent_yandex_terms">условиями использования «Яндекс.Карт»</string>
@@ -257,10 +259,10 @@
     <string name="user_agreement_url">https://example.com/agreement</string>
     <string name="yandex_maps_terms_url">https://yandex.ru/legal/maps_api/</string>
 
-    <!--     О приложении  -->
+    <!-- О приложении  -->
     <string name="about_title">О приложении</string>
     <string name="version_text">Версия приложения: %1$s</string>
-    <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана Филиппова&#160;&#8212; я&#160;разработчик этого приложения. \n\nЕсли у&#160;тебя есть идеи по&#160;улучшению или просто хочешь поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!\n\nP.S: отзывы в сторах тоже приветствуются 😊</string>
+    <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана Филиппова&#160;&#8212; я&#160;разработчик этого приложения.\n\nЕсли у&#160;тебя есть идеи по&#160;улучшению или просто хочешь поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!\n\nP.S: отзывы в сторах тоже приветствуются 😊</string>
     <string name="contact_title">Как со мной связаться:</string>
     <string name="telegram_label">Telegram</string>
     <string name="telegram_url">https://t.me/SvitlanaFilippova</string>

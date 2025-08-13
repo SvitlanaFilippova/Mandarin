@@ -9,6 +9,7 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.navigation.NavConstants.ABOUT_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.CONTACTS_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.LEGAL_SCREEN_ROUTE
@@ -34,6 +35,9 @@ fun NavController.navigateToSearchScreen(focusInput: Boolean) {
 
 fun NavController.navigateToMenu() {
     this.navigate(MENU_SCREEN_ROUTE)
+}
+fun NavController.navigateToCart() {
+    this.navigate(CART_SCREEN_ROUTE)
 }
 
 fun NavController.navigateToSavedAddresses() {
@@ -77,7 +81,6 @@ fun NavController.navigateToMealDetails(
 ) {
     val gson = Gson()
     val json = item?.let { URLEncoder.encode(gson.toJson(it), StandardCharsets.UTF_8.toString()) }
-    // Для навигации передаем либо json, либо "null"
     val itemParam = json ?: "null"
     val mealIdParam = mealId ?: "null"
 

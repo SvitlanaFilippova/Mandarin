@@ -45,7 +45,7 @@ fun UndoIndicator(
             CircularProgressIndicator(
                 progress = { progress },
                 color = Colors.White,
-                strokeWidth = Dimens.Elevation2,
+                strokeWidth = Dimens.Elevation4,
                 trackColor = Colors.Transparent,
                 modifier = Modifier
                     .size(Dimens.ButtonToCartSmall32)

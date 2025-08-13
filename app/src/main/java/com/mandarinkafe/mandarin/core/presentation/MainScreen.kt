@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -28,6 +27,7 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.AppTopBar
+import com.mandarinkafe.mandarin.util.presentation.ui.components.CustomSnackbarHost
 import com.mandarinkafe.mandarin.util.presentation.ui.components.HandleEffects
 
 @Composable
@@ -54,7 +54,7 @@ fun MainScreen() {
     val showBottomBar = !isSplash && !isInnerScreen
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { CustomSnackbarHost(snackbarHostState) },
 
         topBar = {
             AppTopBar(

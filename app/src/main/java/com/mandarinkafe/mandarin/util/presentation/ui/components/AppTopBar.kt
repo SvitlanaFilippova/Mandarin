@@ -1,10 +1,5 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -31,13 +26,8 @@ fun AppTopBar(
     onEvent: (SharedEvent) -> Unit,
     showAppBar: Boolean,
     showBackButton: Boolean,
-
-    ) {
-    AnimatedVisibility(
-        visible = showAppBar,
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically()
-    ) {
+) {
+    if (showAppBar) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -71,7 +61,6 @@ fun AppTopBar(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(Dimens.MarginSuperSmall4)
-                    .clickable { }
             )
 
             // Иконка звонка
