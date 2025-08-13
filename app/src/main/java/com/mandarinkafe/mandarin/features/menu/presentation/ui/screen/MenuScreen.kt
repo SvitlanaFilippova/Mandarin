@@ -3,9 +3,9 @@ package com.mandarinkafe.mandarin.features.menu.presentation.ui.screen
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
@@ -17,6 +17,7 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun MenuScreen(
@@ -25,36 +26,50 @@ fun MenuScreen(
     sharedViewModel: SharedViewModel,
     navController: NavHostController
 ) {
-    val menuSate by menuViewModel.state.collectAsState()
-    val cartState by cartViewModel.state.collectAsState()
-    val effectFlow = menuViewModel.effect
-    val listState = rememberLazyListState()
+    val cartItems by cartViewModel.state.map { it.cartItems }
+        .collectAsStateWithLifecycle(emptyList())
+    val cartInProgressItems by cartViewModel.state.map { it.inProgressItems }
+        .collectAsStateWithLifecycle(emptySet())
+    val state by menuViewModel.state.collectAsStateWithLifecycle()
+    val favoriteIds by sharedViewModel.favoritesIDs.collectAsStateWithLifecycle(emptySet())
 
-    val favoriteIds by sharedViewModel.favoritesIDs.collectAsState()
-    val error = menuSate.error
+    val menuItems = state.menuItems
+    val banners = state.banners
+    val bannersAreLoading = state.bannersAreLoading
+    val selectedTabIndex = state.selectedTabIndex
+    val selectedSubTabIndex = state.selectedSubTabIndex
+    val selectedMenuItemIndex = state.selectedMenuItemIndex
+    val error = state.error
+    val isLoading = state.isLoading
+
+
     val onSharedEvent = sharedViewModel::onEvent
     val onMenuEvent = menuViewModel::onEvent
     val onCartEvent = cartViewModel::onEvent
 
+    val effectFlow = menuViewModel.effect
+    val listState = rememberLazyListState()
+
     when {
-        menuSate.isLoading -> LoadingScreen()
+        isLoading -> LoadingScreen()
         error != null -> PlaceholderScreen(
             error = error,
             onRetryClick = { onMenuEvent(MenuContract.MenuEvent.ForceRefresh) },
             onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
         )
+
         else -> MenuContentScreen(
             listState = listState,
             onMenuEvent = onMenuEvent,
             onSharedEvent = onSharedEvent,
-            cartItems = cartState.cartItems,
-            inProgressItems = cartState.inProgressItems,
-            menuItems = menuSate.menuItems,
-            banners = menuSate.banners,
-            bannersAreLoading = menuSate.bannersAreLoading,
-            selectedTabIndex = menuSate.selectedTabIndex,
-            selectedSubTabIndex = menuSate.selectedSubTabIndex,
-            selectedMenuItemIndex = menuSate.selectedMenuItemIndex,
+            cartItems = cartItems,
+            inProgressItems = cartInProgressItems,
+            menuItems = menuItems,
+            banners = banners,
+            bannersAreLoading = bannersAreLoading,
+            selectedTabIndex = selectedTabIndex,
+            selectedSubTabIndex = selectedSubTabIndex,
+            selectedMenuItemIndex = selectedMenuItemIndex,
             favoriteIds = favoriteIds,
             onMealDetailsClick = { meal -> onSharedEvent(SharedEvent.OnMealDetailsClick(meal)) },
             onToggleFavorite = { meal -> onSharedEvent(SharedEvent.ToggleFavorite(meal)) },

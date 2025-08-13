@@ -23,13 +23,14 @@ object MenuItemMapper {
                         subCategoriesNames = visibleSubcategories.map { it.name }
                             .takeIf { it.isNotEmpty() },
                         tabIcon = category.tabIcon,
-                        description = category.description
+                        description = category.description,
+                        id = "header_${category.id}"
                     )
                 }
 
                 // Добавляем блюда самой категории
                 if (hasMeals) {
-                    this += groupMealsToItems(category.meals)
+                    addAll(groupMealsToItems(category.meals))
                 }
 
                 // Добавляем подкатегории (если есть)
@@ -37,9 +38,12 @@ object MenuItemMapper {
                     this += MenuItem.SubHeaderItem(
                         categoryName = subCategory.name,
                         sku = subCategory.id,
-                        description = subCategory.description
+                        description = subCategory.description,
+                        id = "sub_${subCategory.id}"
                     )
-                    this += groupMealsToItems(subCategory.meals!!)
+                    subCategory.meals?.let { meals ->
+                        addAll(groupMealsToItems(meals))
+                    }
                 }
             }
         }
@@ -56,10 +60,17 @@ object MenuItemMapper {
             val nextIsCompact = next?.description?.isBlank() == true
 
             if (currentIsCompact && nextIsCompact) {
-                result += MenuItem.MealItem.MealRow(current, next)
+                result += MenuItem.MealItem.MealRow(
+                    left = current,
+                    right = next,
+                    id = "row_${current.id}_${next.id}"
+                )
                 i += 2
             } else {
-                result += MenuItem.MealItem.SingleMealItem(current)
+                result += MenuItem.MealItem.SingleMealItem(
+                    meal = current,
+                    id = "meal_${current.id}"
+                )
                 i += 1
             }
         }

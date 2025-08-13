@@ -51,7 +51,9 @@ fun MenuList(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
-        itemsIndexed(menuItems) { index, item ->
+        itemsIndexed(
+            items = menuItems,
+            key = { _, item -> item.id }) { index, item ->
 
             when (item) {
                 is MenuItem.HeaderItem -> MenuHeaderItem(item)
