@@ -303,8 +303,9 @@ class OrderViewModel @Inject constructor(
                     if (terminalResponse.data == true) {
                         submitOrder()
                     } else {
-                        sendErrorEffect("Упс, кажется, сейчас мы не работаем — заказ оформить не получится :(. Возвращайся в рабочее время!")
-
+                        sendErrorEffect(
+                            "Упс, кажется, сейчас мы не работаем — заказ оформить не получится :(. Возвращайся в рабочее время!"
+                        )
                     }
                 }
 
@@ -317,7 +318,6 @@ class OrderViewModel @Inject constructor(
                 else -> sendErrorEffect(
                     "Что-то пошло не так — не удалось проверить, работает ли сейчас доставка."
                 )
-
             }
         }
     }

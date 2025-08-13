@@ -12,7 +12,7 @@ class CheckIfTerminalIsAliveUseCaseImpl(private val repository: AliveTerminalRep
 
     override suspend fun invoke(): Resource<Boolean> {
         val now = System.currentTimeMillis()
-        val useCache = cachedStatus != null && (now - lastCacheTime) < CACHE_TTL_MS
+        val useCache = cachedStatus != null && now - lastCacheTime < CACHE_TTL_MS
 
         return if (useCache) {
             Resource.Success(cachedStatus!!)
@@ -30,5 +30,4 @@ class CheckIfTerminalIsAliveUseCaseImpl(private val repository: AliveTerminalRep
         private const val CACHE_TTL_MS = 60 * 1000L // 1 минута
         private const val INITIAL_CACHE_TIME = 0L
     }
-
 }

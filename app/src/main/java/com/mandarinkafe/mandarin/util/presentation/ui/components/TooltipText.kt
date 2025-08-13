@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
@@ -48,7 +49,10 @@ fun TooltipText(
             Column(modifier = Modifier.padding(Dimens.MarginStandard16)) {
                 Text(
                     text = stringResource(textRes),
-                    style = Typography.RegularTextStyle.copy(color = Colors.WhiteTransparent75),
+                    style = Typography.SmallTextStyle.copy(
+                        color = Colors.WhiteTransparent75,
+                        fontWeight = FontWeight.Medium
+                    ),
                 )
                 extraTextRes?.let {
                     Text(
