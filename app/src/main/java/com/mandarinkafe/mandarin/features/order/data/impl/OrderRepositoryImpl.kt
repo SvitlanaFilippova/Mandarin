@@ -28,6 +28,7 @@ class OrderRepositoryImpl(
     private val menuCache: MenuCache,
 ) : OrderRepository {
     private val logTag = "DEBUG ORDER API OrderRepository"
+
     override suspend fun createOrder(outgoingOrder: OutgoingOrder): Resource<IncomingOrder> {
         return try {
             val orderItems = prepareOrderItems(outgoingOrder)

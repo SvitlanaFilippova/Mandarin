@@ -147,7 +147,7 @@ private fun ObserveNavBackstack(
     onEvent: (SavedAddressesEvent) -> Unit
 ) {
     val shouldRefreshFlow = remember(savedStateHandle) {
-        savedStateHandle?.getStateFlow(SHOULD_REFRESH_ADDRESSES_KEY, false)
+        savedStateHandle?.getStateFlow(SHOULD_REFRESH_ADDRESSES_KEY, true)
     }
 
     shouldRefreshFlow?.let { flow ->

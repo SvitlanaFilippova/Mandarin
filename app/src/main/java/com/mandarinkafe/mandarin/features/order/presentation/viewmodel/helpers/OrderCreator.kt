@@ -4,16 +4,20 @@ import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
-import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ObserveOrderStatusUseCase
+import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.tickerFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 class OrderCreator @Inject constructor(
     private val createOrder: CreateOrderUseCase,
-    private val observeStatus: ObserveOrderStatusUseCase
+    private val getOrderStatus: GetOrderStatusUseCase
 ) {
     private var observeJob: Job? = null
 
@@ -57,31 +61,39 @@ class OrderCreator @Inject constructor(
     ) {
         stopObserving()
         observeJob = scope.launch {
-            observeStatus(orderId, ORDER_STATUS_UPD_DELAY).collect { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        when (result.data?.creationStatus) {
-                            CreationStatus.SUCCESS -> {
-                                onSuccess(result.data)
-                                stopObserving()
-                            }
-
-                            CreationStatus.ERROR -> {
-                                onError(
-                                    result.data.errorInfo?.message ?: "Не удалось создать заказ"
-                                )
-                                stopObserving()
-                            }
-
-                            else -> onLoading()
-                        }
-                    }
-
-                    is Resource.ErrorNoInternet -> onError("Нет подключения к интернету")
-                    is Resource.ErrorOther -> onError(result.message ?: "Ошибка получения статуса")
-                    else -> Unit
+            tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds) // периодичность тиков
+                .onStart { emit(Unit) }    // сразу первый запрос
+                .map {
+                    getOrderStatus(orderId)
                 }
-            }
+                .collect { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            when (result.data?.creationStatus) {
+                                CreationStatus.SUCCESS -> {
+                                    onSuccess(result.data)
+                                    stopObserving()
+                                }
+
+                                CreationStatus.ERROR -> {
+                                    onError(
+                                        result.data.errorInfo?.message ?: "Не удалось создать заказ"
+                                    )
+                                    stopObserving()
+                                }
+
+                                else -> onLoading()
+                            }
+                        }
+
+                        is Resource.ErrorNoInternet -> onError("Нет подключения к интернету")
+                        is Resource.ErrorOther -> onError(
+                            result.message ?: "Ошибка получения статуса"
+                        )
+
+                        else -> Unit
+                    }
+                }
         }
     }
 
@@ -91,6 +103,6 @@ class OrderCreator @Inject constructor(
     }
 
     private companion object {
-        const val ORDER_STATUS_UPD_DELAY = 1000L
+        const val ORDER_STATUS_UPD_DELAY = 1
     }
 }

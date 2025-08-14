@@ -37,12 +37,11 @@ class IikoNetworkClientImpl(
     private val terminalApi: IikoTerminalApi,
     private val discountApi: IikoDiscountApi
 ) : IikoNetworkClient {
-    private val logTag = "IIKO NetworkClient"
     private var token = ""
     private var organizationId = ""
     private var externalMenuId = ""
 
-    private val logTagORDER = "DEBUG ORDER NetworkClient"
+    private val logTag = "DEBUG ORDER API NetworkClient"
 
     private suspend fun authenticate() {
         if (token.isNotEmpty() && organizationId.isNotEmpty()) {
@@ -78,6 +77,7 @@ class IikoNetworkClientImpl(
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
+        logRequest("getMenu", null)
         return withContext(Dispatchers.IO) {
             ensureAuthenticated()
             fetchMenu()
@@ -116,6 +116,7 @@ class IikoNetworkClientImpl(
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
+        logRequest("getLoyaltyCustomerInfo", phone)
         return withContext(Dispatchers.IO) {
             ensureAuthenticated()
             fetchLoyaltyCustomerInfo(phone)
@@ -123,6 +124,7 @@ class IikoNetworkClientImpl(
     }
 
     override suspend fun getPaymentTypes(): Response {
+        logRequest("getPaymentTypes", null)
         return try {
             val response = orderApi.getPaymentTypes(
                 token = token,
@@ -138,28 +140,29 @@ class IikoNetworkClientImpl(
     }
 
     override suspend fun createDelivery(order: OutgoingOrderDto): Response {
+        logRequest("createDelivery", order)
         return try {
             val request = CreateDeliveryRequest(
                 order = order,
                 organizationId = organizationId
             )
-            Log.d(logTagORDER, "Prepared request: $request")
+            Log.d(logTag, "Prepared request: $request")
 
             val response = orderApi.createDelivery(
                 token = token,
                 body = request
             )
-            Log.d(logTagORDER, "Received response: $response")
+            Log.d(logTag, "Received response: $response")
 
             response.apply {
                 resultCode = HTTP_SUCCESS
-                Log.d(logTagORDER, "Modified response code to HTTP_SUCCESS")
+                Log.d(logTag, "Modified response code to HTTP_SUCCESS")
             }
         } catch (e: Throwable) {
-            Log.e(logTagORDER, "Error in createDelivery: ${e.message}", e)
+            Log.e(logTag, "Error in createDelivery: ${e.message}", e)
             Response().apply {
                 resultCode = HTTP_SERVER_ERROR
-                Log.d(logTagORDER, "Created error response with code $HTTP_SERVER_ERROR")
+                Log.d(logTag, "Created error response with code $HTTP_SERVER_ERROR")
             }
         }
     }
@@ -182,10 +185,12 @@ class IikoNetworkClientImpl(
     }
 
     override suspend fun getSingleOrderInfoById(id: String): Response {
+        logRequest("getSingleOrderInfoById", id)
         return fetchOrderStatuses(listOf(id))
     }
 
     override suspend fun getOrdersStatusesByIds(ids: List<String>): Response {
+        logRequest("getOrdersStatusesByIds", ids)
         return fetchOrderStatuses(ids)
     }
 
@@ -213,6 +218,7 @@ class IikoNetworkClientImpl(
     }
 
     override suspend fun getAllCustomerCategories(): Response {
+        logRequest("getAllCustomerCategories", null)
         return try {
             val response = discountApi.getAllCustomerCategories(
                 token = token,
@@ -228,6 +234,7 @@ class IikoNetworkClientImpl(
     }
 
     override suspend fun getDiscounts(): Response {
+        logRequest("getDiscounts", null)
         return try {
             val response = discountApi.getDiscounts(
                 token = token,
@@ -243,6 +250,7 @@ class IikoNetworkClientImpl(
     }
 
     override suspend fun cancelOrder(id: String): Response {
+        logRequest("cancelOrder", id)
         return try {
             val response = orderApi.cancelOrderById(
                 token = token,
@@ -259,6 +267,7 @@ class IikoNetworkClientImpl(
     }
 
     override suspend fun getTerminalGroupsIds(): Response {
+        logRequest("getTerminalGroupsIds", null)
         return try {
             val response = terminalApi.getTerminalGroupsIds(
                 token = token,
@@ -274,6 +283,7 @@ class IikoNetworkClientImpl(
     }
 
     override suspend fun getAliveTerminalGroups(terminalGroupIds: List<String>): Response {
+        logRequest("getAliveTerminalGroups", terminalGroupIds)
         return try {
             val response = terminalApi.getAliveTerminalGroups(
                 token = token,
@@ -287,6 +297,11 @@ class IikoNetworkClientImpl(
             Log.d(logTag, ERROR + e.message)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
+    }
+
+    private fun logRequest(method: String, params: Any?) {
+        val timestamp = System.currentTimeMillis()
+        Log.d(logTag, "➡️ [$timestamp] $method params=$params")
     }
 
     private fun isConnected(): Boolean {
