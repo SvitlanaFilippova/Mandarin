@@ -38,8 +38,8 @@ class AliveTerminalRepositoryImpl(
         if (aliveResponse.resultCode != Constants.HTTP_SUCCESS) {
             return Resource.ErrorOther(
                 "Ошибка проверки статуса терминалов"
+            )
         }
-        )
 
         val isAlive = (aliveResponse as? AliveTerminalGroupsResponse)
             ?.isAliveStatus
