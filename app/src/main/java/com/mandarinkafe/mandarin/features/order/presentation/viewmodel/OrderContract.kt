@@ -86,7 +86,8 @@ sealed interface OrderContract {
             get() = cartSummary.cartSumWithDiscount + deliveryCost.toDouble()
 
         val canBeSubmitted: Boolean
-            get() = userInfo.phoneIsValid &&
+            get() = !isLoading &&
+                    userInfo.phoneIsValid &&
                     deliveryInfo.addressIsValid &&
                     paymentInfo.paymentTypeIsChosen
     }

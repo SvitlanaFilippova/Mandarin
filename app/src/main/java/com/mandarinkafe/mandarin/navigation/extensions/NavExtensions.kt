@@ -13,7 +13,6 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.CONTACTS_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.LEGAL_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDERS_HISTORY_ROUTE
@@ -36,6 +35,7 @@ fun NavController.navigateToSearchScreen(focusInput: Boolean) {
 fun NavController.navigateToMenu() {
     this.navigate(MENU_SCREEN_ROUTE)
 }
+
 fun NavController.navigateToCart() {
     this.navigate(CART_SCREEN_ROUTE)
 }
@@ -108,8 +108,8 @@ fun NavController.navigateToMealDetails(
 fun NavController.navigateToOrderInfo(
     orderId: String,
 ) {
-    this.navigate("$ORDER_INFO_ROUTE/$orderId") {
-        popUpTo(MAIN_GRAPH) {
+    navigate("$ORDER_INFO_ROUTE/$orderId") {
+        popUpTo(CART_SCREEN_ROUTE) {
             inclusive = true
         }
         launchSingleTop = true
@@ -128,3 +128,4 @@ fun NavController.tryGetBackStackEntry(route: String): NavBackStackEntry? {
         null // экрана в стеке нет
     }
 }
+

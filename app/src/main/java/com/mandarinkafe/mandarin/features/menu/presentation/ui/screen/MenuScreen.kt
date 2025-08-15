@@ -16,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
+import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract
@@ -67,6 +68,12 @@ fun MenuScreen(
         when {
             error != null -> PlaceholderScreen(
                 error = error,
+                onRetryClick = { onMenuEvent(MenuContract.MenuEvent.ForceRefresh) },
+                onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+            )
+
+            menuItems.isEmpty() -> PlaceholderScreen(
+                error = UiError.MenuEmpty,
                 onRetryClick = { onMenuEvent(MenuContract.MenuEvent.ForceRefresh) },
                 onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
             )

@@ -136,14 +136,6 @@ fun NavGraph(navHostController: NavHostController) {
                 )
             }
 
-//            composable(route = NavConstants.ADDRESS_SCREEN_ROUTE) {
-//                AddressMapScreen(
-//                    navController = navHostController,
-//                    initAddress = null,
-//                    returnToRoute = returnToRoute
-//                )
-//            }
-
             composable(
                 route = NavConstants.ADDRESS_SCREEN_ROUTE_WITH_ARGS,
                 arguments = listOf(
