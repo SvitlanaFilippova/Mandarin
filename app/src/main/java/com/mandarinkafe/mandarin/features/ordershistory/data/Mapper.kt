@@ -12,6 +12,7 @@ object Mapper {
     fun Saved_order.toSavedOrder() = SavedOrder(
         id = id,
         timestamp = timestamp,
+        number = number,
         whenCreated = whenCreated,
         orderType = orderType.toDeliveryTypeOrNull(),
         addressLine1 = addressLine1,
@@ -28,6 +29,7 @@ object Mapper {
 
         return SavedOrder(
             id = id,
+            number = number ?: "",
             timestamp = timestamp,
             whenCreated = whenCreated ?: "",
             orderType = orderType?.name.toDeliveryTypeOrNull(),

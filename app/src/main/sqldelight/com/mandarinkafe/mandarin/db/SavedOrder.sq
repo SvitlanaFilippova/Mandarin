@@ -5,7 +5,8 @@ CREATE TABLE saved_order (
     addressLine1 TEXT NOT NULL DEFAULT '',
     addressDetails TEXT NOT NULL DEFAULT '',
     timestamp INTEGER NOT NULL,
-    mealNames TEXT NOT NULL DEFAULT ''
+    mealNames TEXT NOT NULL DEFAULT '',
+    number TEXT NOT NULL DEFAULT ''
 );
 
 
@@ -14,5 +15,5 @@ SELECT * FROM saved_order
 ORDER BY timestamp DESC;
 
 insert:
-INSERT INTO saved_order(id, whenCreated, orderType, addressLine1, addressDetails, timestamp, mealNames)
-VALUES (?, ?, ?, ?, ?, ?, ?);
+INSERT INTO saved_order(id, whenCreated, orderType, addressLine1, addressDetails, timestamp, mealNames, number)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
