@@ -19,7 +19,6 @@ class AliveTerminalRepositoryImpl(
         if (response.resultCode != Constants.HTTP_SUCCESS) return Resource.ErrorOther(
             "Ошибка получения терминальных групп"
         )
-
         val terminalGroupIds = (response as? TerminalGroupsIdsResponse)
             ?.terminalGroups
             ?.flatMap { it.items }
