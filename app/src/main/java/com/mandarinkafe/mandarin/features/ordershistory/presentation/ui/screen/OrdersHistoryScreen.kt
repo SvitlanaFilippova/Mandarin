@@ -24,7 +24,7 @@ import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.O
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryContract.OrdersHistoryEvent
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitle
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -42,14 +42,16 @@ fun OrdersHistoryScreen(
         refreshing = state.isLoading == true,
         onRefresh = { onEvent(OrdersHistoryEvent.ForceRefresh) }
     )
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .pullRefresh(pullRefreshState)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            ScreenTitle(name = stringResource(R.string.order_history))
+            ScreenTitleWithBackButton(
+                name = stringResource(R.string.order_history),
+                onBackClick = { navController.popBackStack() }
+            )
 
             FiltersSection(
                 chosenOrderTypes = state.chosenOrderTypes,

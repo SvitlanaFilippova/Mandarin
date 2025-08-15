@@ -59,7 +59,11 @@ fun OrdersHistoryList(
                 OrderHistoryCard(
                     modifier = Modifier.animateItem(tween(ANIMATION_DURATION_FAST)),
                     order = order,
-                    onClick = { navController.navigateToOrderInfo(order.id) }
+                    onClick = {
+                        navController.navigateToOrderInfo(
+                            orderId = order.id,
+                        )
+                    }
                 )
             }
         }

@@ -1,10 +1,12 @@
 package com.mandarinkafe.mandarin.features.more.presentation.ui.screen
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 
 @Composable
-fun ContactsScreen() {
-    Column { Text(text = "ContactsScreen") }
+fun ContactsScreen(onBackClick: () -> Boolean) {
+    ScreenTitleWithBackButton(
+        name = "ContactsScreen",
+        onBackClick = { onBackClick() },
+    )
 }

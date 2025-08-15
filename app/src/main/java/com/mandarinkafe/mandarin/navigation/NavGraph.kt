@@ -197,10 +197,11 @@ fun NavGraph(navHostController: NavHostController) {
                 )
             ) { backStackEntry ->
                 val orderId = backStackEntry.arguments?.getString(NavConstants.KEY_ORDER_ID) ?: ""
+
                 OrderInfoScreen(
                     orderID = orderId,
-                    navController = navHostController,
                     sharedViewModel = sharedViewModel,
+                    navController = navHostController,
                 )
             }
 
@@ -222,18 +223,19 @@ fun NavGraph(navHostController: NavHostController) {
             }
 
             composable(NavConstants.ABOUT_SCREEN_ROUTE) {
-                AboutScreen()
+                AboutScreen(onBackClick = { navHostController.popBackStack() })
             }
             composable(NavConstants.LEGAL_SCREEN_ROUTE) {
                 LegalScreen(
+                    onBackClick = { navHostController.popBackStack() },
                     onSharedEvent = sharedViewModel::onEvent
                 )
             }
             composable(NavConstants.DELIVERY_SCREEN_ROUTE) {
-                DeliveryScreen()
+                DeliveryScreen(onBackClick = { navHostController.popBackStack() })
             }
             composable(NavConstants.CONTACTS_SCREEN_ROUTE) {
-                ContactsScreen()
+                ContactsScreen(onBackClick = { navHostController.popBackStack() })
             }
 
         }

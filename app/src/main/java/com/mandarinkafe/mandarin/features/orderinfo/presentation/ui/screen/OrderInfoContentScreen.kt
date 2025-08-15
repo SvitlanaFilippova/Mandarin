@@ -41,7 +41,7 @@ fun OrderInfoContentScreen(
     state: OrderInfoState,
     onEvent: (OrderInfoEvent) -> Unit,
     navController: NavHostController,
-    onOrderItemClick: (String) -> Unit
+    onOrderItemClick: (String) -> Unit,
 ) {
     if (order == null) return
     var showCancelDialog by remember { mutableStateOf(false) }

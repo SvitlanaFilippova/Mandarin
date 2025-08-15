@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.menu.presentation.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,6 +34,7 @@ internal fun createMenuScrollUi(
     onMenuEvent: (MenuEvent) -> Unit,
     onSharedEvent: (SharedEvent) -> Unit,
 ): ScrollUi {
+    Log.d("DEBUG Scroll", "createMenuScrollUi created")
     var isScrollingUp by remember { mutableStateOf(false) }
     var isScrollingDown by remember { mutableStateOf(false) }
     var previousIndex by remember { mutableIntStateOf(0) }

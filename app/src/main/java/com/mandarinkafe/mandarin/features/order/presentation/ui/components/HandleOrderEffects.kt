@@ -37,7 +37,9 @@ fun HandleOrderEffects(
                     snackbarHostState.showSnackbar("Ошибка: ${effect.message}")
 
                 is OrderEffect.ShowSuccess ->
-                    navController.navigateToOrderInfo(effect.orderId)
+                    navController.navigateToOrderInfo(
+                        orderId = effect.orderId,
+                    )
             }
         }
     }

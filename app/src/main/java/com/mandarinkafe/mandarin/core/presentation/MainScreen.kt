@@ -55,11 +55,9 @@ fun MainScreen() {
 
     Scaffold(
         snackbarHost = { CustomSnackbarHost(snackbarHostState) },
-
         topBar = {
             AppTopBar(
                 showAppBar = showTopBar,
-                showBackButton = isInnerScreen,
                 onEvent = onEvent,
             )
         },

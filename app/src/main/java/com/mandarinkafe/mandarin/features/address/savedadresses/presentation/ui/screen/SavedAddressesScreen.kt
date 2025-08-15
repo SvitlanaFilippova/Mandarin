@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -26,7 +25,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.components.HandleSavedAddressesEffects
 import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.components.SavedAddressCard
 import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesEvent
@@ -35,6 +33,7 @@ import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyClickableText
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
 @Composable
@@ -65,10 +64,9 @@ fun SavedAddressesScreen(
 
     ) {
         item {
-            Text(
-                modifier = Modifier.padding(Dimens.MarginSmall8),
-                text = stringResource(R.string.saved_addresses),
-                style = Typography.TitleStyle,
+            ScreenTitleWithBackButton(
+                name = stringResource(R.string.saved_addresses),
+                onBackClick = { navController.popBackStack() }
             )
         }
 

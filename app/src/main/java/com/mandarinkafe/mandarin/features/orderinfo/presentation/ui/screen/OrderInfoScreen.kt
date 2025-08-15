@@ -31,7 +31,7 @@ fun OrderInfoScreen(
     orderID: String?,
     sharedViewModel: SharedViewModel,
     viewModel: OrderInfoViewModel = hiltViewModel(),
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     if (orderID == null) return
     val onEvent = viewModel::onEvent

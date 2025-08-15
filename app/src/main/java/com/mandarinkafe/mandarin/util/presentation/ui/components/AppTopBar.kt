@@ -25,7 +25,6 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 fun AppTopBar(
     onEvent: (SharedEvent) -> Unit,
     showAppBar: Boolean,
-    showBackButton: Boolean,
 ) {
     if (showAppBar) {
         Box(
@@ -34,26 +33,6 @@ fun AppTopBar(
                 .padding(WindowInsets.statusBars.asPaddingValues())
                 .height(Dimens.ToolbarHeadHeight40)
         ) {
-            // Кнопка "назад" - показывается только на "вложенных" экранах
-            if (showBackButton) {
-                Box(
-                    modifier = Modifier
-                        .size(Dimens.ToolbarHeadHeight40)
-                        .align(Alignment.CenterStart)
-                        .padding(start = Dimens.MarginSmall8)
-                        .clickable { onEvent(SharedEvent.GoBack) }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_back),
-                        tint = Colors.White,
-                        contentDescription = stringResource(R.string.placeholder_call),
-                        modifier = Modifier
-                            .size(Dimens.IconSize24)
-                            .align(Alignment.Center)
-                    )
-                }
-            }
-
             // Логотип
             Image(
                 painter = painterResource(R.drawable.logo_text_mandarin),

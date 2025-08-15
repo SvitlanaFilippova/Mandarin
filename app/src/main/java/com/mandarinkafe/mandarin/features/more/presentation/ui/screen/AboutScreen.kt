@@ -16,34 +16,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.more.presentation.ui.components.ContactLink
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitle
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 
-@Preview
 @Composable
-fun AboutScreen() {
+fun AboutScreen(onBackClick: () -> Boolean) {
     val appVersion: String = BuildConfig.VERSION_NAME
-    val aboutTitle = stringResource(id = R.string.about_title)
     val versionText = stringResource(id = R.string.version_text, appVersion)
     val aboutMainText = stringResource(id = R.string.about_main_text)
     stringResource(id = R.string.contact_title)
     val thanksText = stringResource(id = R.string.thanks_text)
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(Dimens.MarginStandard16),
+            .padding(horizontal = Dimens.MarginStandard16),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ScreenTitle(name = aboutTitle)
+        ScreenTitleWithBackButton(
+            name = stringResource(id = R.string.about_title),
+            onBackClick = { onBackClick() },
+        )
 
         Spacer(modifier = Modifier.height(Dimens.MarginBig32))
 

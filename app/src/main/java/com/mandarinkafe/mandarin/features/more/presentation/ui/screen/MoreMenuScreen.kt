@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.more.presentation.ui.components.FeedbackDialog
+import com.mandarinkafe.mandarin.features.more.presentation.ui.components.MandarinDeliveryInfo
 import com.mandarinkafe.mandarin.features.more.presentation.ui.components.MenuItem
 import com.mandarinkafe.mandarin.navigation.extensions.navigateOrdersHistory
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAboutScreen
@@ -38,6 +39,10 @@ fun MoreMenuScreen(navController: NavHostController) {
             .fillMaxSize()
             .padding(vertical = Dimens.MarginStandard16)
     ) {
+        item {
+            MandarinDeliveryInfo()
+        }
+
         item {
             MenuItem(title = ordersHistory, iconRes = R.drawable.ic_history, onClick = {
                 navController.navigateOrdersHistory()

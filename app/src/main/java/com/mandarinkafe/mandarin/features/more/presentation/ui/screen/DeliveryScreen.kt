@@ -1,10 +1,12 @@
 package com.mandarinkafe.mandarin.features.more.presentation.ui.screen
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 
 @Composable
-fun DeliveryScreen() {
-    Column { Text(text = "DeliveryScreen") }
+fun DeliveryScreen(onBackClick: () -> Boolean) {
+    ScreenTitleWithBackButton(
+        name = "DeliveryScreen",
+        onBackClick = { onBackClick() },
+    )
 }

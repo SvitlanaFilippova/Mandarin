@@ -17,6 +17,7 @@
     <string name="more_options">Ещё</string>
     <string name="order_history">История заказов</string>
     <string name="saved_addresses">Сохранённые адреса</string>
+    <string name="order_info_screen_title">Статус заказа</string>
 
     <!-- Корзина -->
     <string name="cart">Корзина</string>
@@ -255,13 +256,16 @@
     <string name="more_personal_data_agreement">Соглашение об обработке персональных данных</string>
     <string name="more_yandex_maps_terms">Условия использования отдельных сервисов «Яндекс.Карт»</string>
     <string name="cannot_open_link">Не удалось открыть ссылку</string>
+    <string name="mandarin_info">Доставляем по&#160;Черноголовке и&#160;ближайшим населенным пунктам</string>
+    <string name="mandarin_info_when">Ежедневно с 11:00 по 22:00</string>
+
 
     <!-- consent -->
     <string name="consent_prefix">Нажимая на кнопку%s, подтверждаю своё согласие с</string>
     <string name="consent_privacy">политикой конфиденциальности</string>
     <string name="consent_agreement">пользовательским соглашением.</string>
     <string name="privacy_policy_url">https://mandarin-kafe.ru/policy</string>
-    <string name="user_agreement_url">https://example.com/agreement</string>
+    <string name="user_agreement_url">https://mandarin-kafe.ru/agreement</string>
     <string name="yandex_maps_terms_url">https://yandex.ru/legal/maps_api/</string>
 
     <!-- О приложении  -->
