@@ -26,8 +26,7 @@ import kotlin.time.Duration.Companion.seconds
 class OrdersHistoryViewModel @Inject constructor(
     private val getHistory: GetOrdersHistoryUseCase,
     private val getOrdersStatuses: GetOrdersStatusesUseCase
-) :
-    BaseViewModel<OrdersHistoryEvent, OrdersHistoryEffect, OrdersHistoryState>() {
+) : BaseViewModel<OrdersHistoryEvent, OrdersHistoryEffect, OrdersHistoryState>() {
     override fun setInitialState() = OrdersHistoryState()
 
     init {
@@ -79,7 +78,7 @@ class OrdersHistoryViewModel @Inject constructor(
         viewModelScope.launch {
             val history = getHistory()
             setData(history)
-
+            setLoading()
             val statusesResponse = getOrdersStatuses(history)
             val data = statusesResponse.data
             if (data != null) {

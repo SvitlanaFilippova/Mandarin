@@ -48,7 +48,7 @@ object Dimens {
     val TabActivatedIndicatorHeight2 = 2.dp
     val ZeroDp0 = 0.dp
     val TextSizeRegular16 = 16.sp
-    val TextSizeSuperSmall9 = 9.sp
+    val TextSizeSuperSmall10 = 10.sp
     val TextSizeSmall11 = 11.sp
     val TextSizeSmall12 = 12.sp
     val TextSizeBig24 = 24.sp

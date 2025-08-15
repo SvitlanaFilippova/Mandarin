@@ -81,14 +81,8 @@ fun OrderHistoryCard(modifier: Modifier = Modifier, order: SavedOrder, onClick: 
                 )
             }
 
-            Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
+            Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
 
-            // ID заказа
-            Text(
-                text = "ID: ${order.id}",
-                style = Typography.ExtraSmallTextStyle,
-                color = Colors.LightGrey
-            )
         }
     }
 }

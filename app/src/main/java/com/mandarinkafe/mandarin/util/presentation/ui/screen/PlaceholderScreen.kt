@@ -29,7 +29,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 @Composable
 fun PlaceholderScreen(
     error: UiError?,
-    onRetryClick: () -> Unit = { },
+    onRetryClick: (() -> Unit)? = null,
     onCallClick: () -> Unit = { }
 ) {
     error?.let {
@@ -65,7 +65,7 @@ fun PlaceholderScreen(
                 )
             }
 
-            if (error.needRetry) {
+            onRetryClick?.let {
                 // Кнопка "Обновить"
                 Button(
                     onClick = onRetryClick,

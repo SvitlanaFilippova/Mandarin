@@ -59,7 +59,9 @@ class CartRepositoryImpl @Inject constructor(
                     val validItems = mapAndValidate(storedCartItems, menu)
                     cartItems = validItems
                     _cartItems.value = Resource.Success(validItems)
-                    _cartCount.value = validItems.sumOf { it.quantity }
+                    _cartCount.value = validItems.sumOf {
+                        it.quantity
+                    }
                 }
         }
     }

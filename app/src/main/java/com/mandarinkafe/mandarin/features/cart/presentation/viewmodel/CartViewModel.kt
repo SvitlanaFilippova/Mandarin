@@ -82,6 +82,15 @@ class CartViewModel @Inject constructor(
                         setLoading()
                     }
 
+                    is Resource.ErrorNoInternet -> {
+                        if (state.value.cartItems.isEmpty()) {
+                            setError(cartResource)
+                        } else {
+                            Log.w(logTag, "No internet, but cart already has items, skip error")
+                            setLoading(false)
+                        }
+                    }
+
                     is Resource.Idle -> {}
                     else -> {
                         Log.e(logTag, "Error loading cart: $cartResource")
@@ -326,14 +335,19 @@ class CartViewModel @Inject constructor(
     }
 
     private fun setError(resource: Resource<*>) {
+        val hasItems = state.value.cartItems.isNotEmpty()
         setLoading(false)
+
         val error = when (resource) {
             is Resource.ErrorEmptyData -> UiError.CartEmpty
-            is Resource.ErrorNoInternet -> UiError.NoInternet
+            is Resource.ErrorNoInternet -> if (hasItems) null else UiError.NoInternet
             is ErrorOther -> UiError.OtherError
             else -> return
         }
-        setState { copy(error = error, isLoading = false) }
+
+        if (error != null) {
+            setState { copy(error = error, isLoading = false) }
+        }
     }
 
     private companion object {

@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen
 
+import ClickToCopyText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -103,9 +104,15 @@ fun OrderInfoContentScreen(
         item { OrderTimesSection(order) }
 
         // ID заказа
+
         item {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Text(
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Dimens.MarginSmall8),
+                contentAlignment = Alignment.Center
+            ) {
+                ClickToCopyText(
                     text = "ID: ${order.id}",
                     style = Typography.ExtraSmallTextStyle,
                     color = Colors.LightGrey

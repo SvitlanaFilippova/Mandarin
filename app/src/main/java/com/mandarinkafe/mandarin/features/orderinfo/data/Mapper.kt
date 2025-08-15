@@ -141,7 +141,7 @@ private fun associateItemsWithAdds(
         } else {
             val addon = IncomingMealAdditional(
                 id = dto.product.id,
-                name = dto.product.name,
+                name = dto.product.name.applyTypography(),
                 amount = dto.amount,
                 price = dto.price,
                 discountedPrice = dto.resultSum
@@ -186,7 +186,7 @@ private class IncomingOrderItemBuilder private constructor(
         fun fromDto(dto: IncomingOrderItemDto): IncomingOrderItemBuilder {
             return IncomingOrderItemBuilder(
                 id = dto.product.id,
-                name = dto.product.name,
+                name = dto.product.name.applyTypography(),
                 amount = dto.amount,
                 price = dto.price,
                 positionId = dto.positionId,

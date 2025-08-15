@@ -17,6 +17,7 @@ class CartInteractorImpl(
 ) : CartInteractor {
     override fun observeCartItemsCount() = cartReader.observeCartItemsCount()
     val logTag = "CART DEBUG Interactor"
+
     override fun observeCartItems() = cartReader.observeCartItems()
 
     private suspend fun getCurrentCartItems(): List<CartItem> {
