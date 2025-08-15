@@ -290,4 +290,5 @@
     <string name="logo_cafe">Логотип кафе</string>
     <string name="send">Отправить</string>
 
+    <string name="search_by_meal_or_category">Блюдо или категория</string>
 </resources>

@@ -11,11 +11,6 @@ import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 sealed interface MenuContract {
 
     sealed interface MenuEvent : BaseEvent {
-        // Скроллинг
-        data object ScrollToTop : MenuEvent
-        data class ScrollToCategory(val newIndex: Int) : MenuEvent
-        data class ScrollToSubCategory(val newIndex: Int) : MenuEvent
-
         // Действия с баннерами
         data class BannerClick(val banner: Banner) : MenuEvent
 

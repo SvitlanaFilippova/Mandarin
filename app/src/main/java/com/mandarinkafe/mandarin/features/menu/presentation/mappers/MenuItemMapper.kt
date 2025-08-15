@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.menu.presentation.mappers
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
+import java.util.UUID
 
 object MenuItemMapper {
 
@@ -24,7 +25,7 @@ object MenuItemMapper {
                             .takeIf { it.isNotEmpty() },
                         tabIcon = category.tabIcon,
                         description = category.description,
-                        id = "header_${category.id}"
+                        id = "header_${UUID.randomUUID()}"
                     )
                 }
 
@@ -39,7 +40,7 @@ object MenuItemMapper {
                         categoryName = subCategory.name,
                         sku = subCategory.id,
                         description = subCategory.description,
-                        id = "sub_${subCategory.id}"
+                        id = "sub_${UUID.randomUUID()}"
                     )
                     subCategory.meals?.let { meals ->
                         addAll(groupMealsToItems(meals))
@@ -63,13 +64,13 @@ object MenuItemMapper {
                 result += MenuItem.MealItem.MealRow(
                     left = current,
                     right = next,
-                    id = "row_${current.id}_${next.id}"
+                    id = "row_${UUID.randomUUID()}"
                 )
                 i += 2
             } else {
                 result += MenuItem.MealItem.SingleMealItem(
                     meal = current,
-                    id = "meal_${current.id}"
+                    id = "meal_${UUID.randomUUID()}"
                 )
                 i += 1
             }

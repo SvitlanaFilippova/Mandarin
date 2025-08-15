@@ -39,9 +39,8 @@ fun MenuList(
     ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
-    val horizontalPadding = Dimens.MarginSmall8
     val imageSize = remember(screenWidth) {
-        (screenWidth - horizontalPadding * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
+        (screenWidth - Dimens.MarginSmall8 * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
     }
 
     LazyColumn(

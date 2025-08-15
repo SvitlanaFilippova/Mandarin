@@ -43,16 +43,12 @@ class MenuViewModel @Inject constructor(
 
     override fun onEvent(event: MenuEvent) {
         when (event) {
-            is MenuEvent.ScrollToCategory -> scrollToCategory(event.newIndex)
-            is MenuEvent.ScrollToSubCategory -> scrollToSubCategory(event.newIndex)
-            is MenuEvent.ScrollToTop -> scrollToTop()
             is MenuEvent.BannerClick -> findMenuItemByBanner(event.banner)
             is MenuEvent.ResetSelectedMenuItemIndex -> resetSelectedMenuItemIndex()
             is MenuEvent.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
             is MenuEvent.ForceRefresh -> forceRefresh()
         }
     }
-
     private fun forceRefresh() {
         viewModelScope.launch {
             setLoading()
@@ -115,33 +111,6 @@ class MenuViewModel @Inject constructor(
         setState { copy(error = error) }
     }
 
-    // Методы управлением скроллом
-    private fun scrollToCategory(newIndex: Int) {
-        if (newIndex >= 0) {
-            setState {
-                copy(
-                    selectedTabIndex = newIndex,
-                    selectedSubTabIndex = DEFAULT_UNSELECTED_INDEX
-                )
-            }
-        }
-    }
-
-    private fun scrollToSubCategory(newIndex: Int) {
-        if (newIndex >= 0) {
-            setState { copy(selectedSubTabIndex = newIndex) }
-        }
-    }
-
-    private fun scrollToTop() {
-        setState {
-            copy(
-                selectedTabIndex = DEFAULT_UNSELECTED_INDEX,
-                selectedSubTabIndex = DEFAULT_UNSELECTED_INDEX,
-                selectedMenuItemIndex = DEFAULT_UNSELECTED_INDEX
-            )
-        }
-    }
 
     // Обработка кликов по баннерам - поиск подходящей категории/блюда в меню и скролл к нему
     private fun findMenuItemByBanner(banner: Banner) {

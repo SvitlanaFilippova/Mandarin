@@ -14,31 +14,28 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgr
 
 @Composable
 fun BannersSection(
-    visible: Boolean,
     bannersAreLoading: Boolean,
     banners: List<Banner>,
     onBannerClick: (Banner) -> Unit
 ) {
-    if (visible) {
-        if (bannersAreLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(Dimens.MarginStandard16)
-                    .aspectRatio(BANNERS_ASPECT_RATIO),
-                contentAlignment = Alignment.Center
-            ) {
-                MyCircularProgressIndicator(
-                    strokeWidth = Dimens.ProgressBarStroke6,
-                )
-            }
-        } else {
-            if (!banners.isEmpty()) {
-                BannerCarousel(
-                    banners = banners,
-                    onBannerClick = { banner -> onBannerClick(banner) }
-                )
-            }
+    if (bannersAreLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimens.MarginStandard16)
+                .aspectRatio(BANNERS_ASPECT_RATIO),
+            contentAlignment = Alignment.Center
+        ) {
+            MyCircularProgressIndicator(
+                strokeWidth = Dimens.ProgressBarStroke6,
+            )
+        }
+    } else {
+        if (!banners.isEmpty()) {
+            BannerCarousel(
+                banners = banners,
+                onBannerClick = { banner -> onBannerClick(banner) }
+            )
         }
     }
 }

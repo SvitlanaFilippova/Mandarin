@@ -62,7 +62,7 @@ fun SearchScreenContent(
             .padding(horizontal = Dimens.MarginSmall8),
     ) {
         ScreenTitleWithBackButton(
-            name = stringResource(id = R.string.more_section_legal_info),
+            name = stringResource(id = R.string.search_in_menu),
             onBackClick = onBackClick,
         )
 
@@ -78,7 +78,7 @@ fun SearchScreenContent(
             },
             onClear = { handleOnClear() },
             autoFocus = focusSearchBarInput,
-            placeholderRes = R.string.search_in_menu,
+            placeholderRes = R.string.search_by_meal_or_category,
             enabled = true,
             leadingIcon = {
                 Icon(
