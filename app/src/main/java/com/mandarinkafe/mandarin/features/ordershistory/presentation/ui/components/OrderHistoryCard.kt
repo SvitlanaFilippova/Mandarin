@@ -11,29 +11,36 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.order.presentation.models.toUi
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 
 @Composable
-fun OrderHistoryCard(order: SavedOrder, onClick: () -> Unit) {
+fun OrderHistoryCard(modifier: Modifier = Modifier, order: SavedOrder, onClick: () -> Unit) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey),
     ) {
         Column(modifier = Modifier.padding(Dimens.MarginStandard16)) {
-            DateAndStatusSection(order = order)
+            DateAndStatusSection(
+                orderStatus = order.status,
+                whenCreated = order.whenCreated
+            )
 
             // Тип заказа
             Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
-            Text(
-                text = order.orderType,
-                style = Typography.RegularTextStyle,
-            )
+            order.orderType?.let {
+                Text(
+                    text = stringResource(it.toUi().nameRes),
+                    style = Typography.RegularTextStyle,
+                )
+            }
             // Адрес
             if (order.addressLine1.isNotEmpty()) {
                 Text(

@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel
 
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
-import com.mandarinkafe.mandarin.features.orderinfo.domain.models.toUiStatus
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.toUi
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
@@ -28,6 +28,6 @@ sealed interface OrderInfoContract {
     ) : BaseState {
 
         val deliveryStatus: UiDeliveryStatus
-            get() = incomingOrder?.status?.toUiStatus() ?: UiDeliveryStatus.UNCONFIRMED
+            get() = incomingOrder?.status?.toUi() ?: UiDeliveryStatus.UNCONFIRMED
     }
 }

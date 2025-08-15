@@ -35,15 +35,11 @@ data class IncomingOrder(
     val whenCookingCompleted: String? = null,
     val whenCreated: String? = null,
     val whenDelivered: String? = null,
-    val whenPacked: String? = null,
-    val whenPrinted: String? = null,
     val whenSent: String? = null,
     val problem: Problem? = null,
 ) {
     val isClosed: Boolean
-        get() = status == DeliveryStatus.CANCELLED || status == DeliveryStatus.CLOSED || status == DeliveryStatus.DELIVERED
-    val needToConfirm: Boolean
-        get() = status == DeliveryStatus.UNCONFIRMED
+        get() = status == DeliveryStatus.CANCELLED || status == DeliveryStatus.CLOSED
     val isDelivery: Boolean
         get() = orderType?.orderServiceType == OrderConstants.DELIVERY_TYPE_DELIVERY
     val canBeCanceled: Boolean

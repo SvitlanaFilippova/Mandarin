@@ -48,7 +48,6 @@ fun OrderTimesSection(order: IncomingOrder) {
                             it
                         )
                     }
-                    whenPacked?.let { LabelValue(stringResource(R.string.label_packed), it) }
                     whenSent?.let { LabelValue(stringResource(R.string.label_sent), it) }
                     whenDelivered?.let { LabelValue(stringResource(R.string.label_delivered), it) }
                     whenClosed?.let { LabelValue(stringResource(R.string.label_closed), it) }

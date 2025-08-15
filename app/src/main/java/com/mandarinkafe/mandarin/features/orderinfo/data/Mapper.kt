@@ -60,8 +60,6 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         whenCookingCompleted = order?.whenCookingCompleted?.toHumanDateTimeOrNull(),
         whenCreated = order?.whenCreated?.toHumanDateTimeOrNull(),
         whenDelivered = order?.whenDelivered?.toHumanDateTimeOrNull(),
-        whenPacked = order?.whenPacked?.toHumanDateTimeOrNull(),
-        whenPrinted = order?.whenPrinted?.toHumanDateTimeOrNull(),
         whenSent = order?.whenSended?.toHumanDateTimeOrNull(),
         problem = order?.problem,
     )

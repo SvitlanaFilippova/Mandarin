@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.ordershistory.domain.impl
 
-import com.mandarinkafe.mandarin.features.orderinfo.domain.models.toUiStatus
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.GetOrdersStatusesUseCase
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersStatusesRepository
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.OrderStatus
@@ -24,7 +23,7 @@ class GetOrdersStatusesUseCaseImpl(private val repository: OrdersStatusesReposit
                 val updatedOrders = orders.map { savedOrder ->
                     val deliveryStatus = statusMap[savedOrder.id]
                     savedOrder.copy(
-                        status = deliveryStatus?.toUiStatus()
+                        status = deliveryStatus
                     )
                 }
 

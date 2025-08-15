@@ -17,7 +17,7 @@ class SQLDelightOrdersHistoryStorage @Inject constructor(private val queries: Sa
         queries.insert(
             id = order.id,
             whenCreated = order.whenCreated,
-            orderType = order.orderType,
+            orderType = order.orderType?.name ?: "",
             timestamp = order.timestamp,
             addressLine1 = order.addressLine1,
             addressDetails = order.addressDetails,

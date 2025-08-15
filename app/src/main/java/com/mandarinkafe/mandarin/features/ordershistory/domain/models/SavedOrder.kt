@@ -1,14 +1,18 @@
 package com.mandarinkafe.mandarin.features.ordershistory.domain.models
 
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus
+import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 
 data class SavedOrder(
     val id: String, // внутренний ID заказа
     val timestamp: Long,
     val whenCreated: String = "",
-    val orderType: String = "", // доставка или самовывоз
+    val orderType: DeliveryType? = null,
     val addressLine1: String = "",
     val addressDetails: String = "",
     val mealNames: String = "",
-    val status: UiDeliveryStatus? = null
-)
+    val status: DeliveryStatus? = null
+) {
+    val isActive: Boolean
+        get() = status != DeliveryStatus.CANCELLED && status != DeliveryStatus.CLOSED
+}

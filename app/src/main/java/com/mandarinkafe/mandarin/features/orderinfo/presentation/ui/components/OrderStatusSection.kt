@@ -37,7 +37,7 @@ fun OrderStatusSection(deliveryStatus: UiDeliveryStatus) {
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
-        ) { Value(stringResource(deliveryStatus.labelResId)) }
+        ) { Value(stringResource(deliveryStatus.nameRes)) }
 
         Row(
             Modifier.fillMaxWidth(),

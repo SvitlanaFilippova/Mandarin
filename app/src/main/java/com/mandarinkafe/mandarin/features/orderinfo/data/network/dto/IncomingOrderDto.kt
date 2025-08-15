@@ -24,8 +24,6 @@ data class IncomingOrderDto(
     val whenCookingCompleted: String? = null,
     val whenCreated: String? = null,
     val whenDelivered: String? = null,
-    val whenPacked: String? = null,
-    val whenPrinted: String? = null,
     val whenSended: String? = null,
     val problem: Problem? = null,
     val number: String? = null

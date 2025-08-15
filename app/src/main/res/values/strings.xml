@@ -141,7 +141,7 @@
     <string name="delivery_status_ready_for_cooking">Ожидает готовки</string>
     <string name="delivery_status_cooking_started">Начали готовить</string>
     <string name="delivery_status_cooking_completed">Приготовлен</string>
-    <string name="delivery_status_waiting">Ожидает курьера</string>
+    <string name="delivery_status_waiting">Упакован</string>
     <string name="delivery_status_on_way">В пути</string>
     <string name="delivery_status_delivered">Доставлен</string>
     <string name="delivery_status_closed">Закрыт</string>
@@ -162,7 +162,21 @@
 
     <!-- История заказов -->
     <string name="order_history_is_empty">В&#160;истории пока нет заказов</string>
-    <string name="order_history_is_empty_extra">Без авторизации по&#160;номеру телефона (мы&#160;над ней работаем!), история заказов хранится только локально, на&#160;вашем устройстве. А&#160;значит, при переустановке приложения или переходе на&#160;другое устройство история будет потеряна.</string>
+    <string name="order_history_is_empty_extra">Сейчас история заказов хранится только на&#160;этом устройстве.
+    После переустановки приложения или перехода на&#160;другое устройство данные будут потеряны.
+    Мы работаем над авторизацией по&#160;номеру телефона, чтобы ваша история сохранялась всегда.</string>
+    <string name="order_history_is_empty_by_filters">По&#160;таким фильтрам заказов нет</string>
+    <string name="order_history_is_empty_by_filters_extra">Попробуй изменить или сбросить фильтры, чтобы увидеть другие заказы.</string>
+    <string name="filter_by_type">Тип заказа</string>
+    <string name="date_filter_today">Сегодня</string>
+    <string name="date_filter_yesterday">Вчера</string>
+    <string name="date_filter_last_7_days">Последние 7 дней</string>
+    <string name="date_filter_current_month">Текущий месяц</string>
+    <string name="date_filter_custom_range">Выбрать диапазон</string>
+    <string name="choose_period">Выберите период</string>
+    <string name="filter_by_date">Период</string>
+    <string name="filter_by_date_start">Начало</string>
+    <string name="filter_by_date_end">Конец</string>
 
     <!-- Order Info -->
     <string name="order_number_created">Заказ №%1$s, создан %2$s</string>
@@ -171,21 +185,13 @@
     <string name="label_payment_method">Способ оплаты</string>
     <string name="cancel_order_question">Отменить заказ?</string>
     <string name="cancel_order_confirmation">Вы действительно хотите отменить оформленный заказ?</string>
-
-    <!-- Order Items -->
     <string name="label_order_items">Позиции заказа: %1$d</string>
     <string name="discount_applied">Применена скидка</string>
     <string name="label_total">Итого</string>
-
-    <!-- Address -->
     <string name="label_address">Адрес</string>
-
-    <!-- Customer Info -->
     <string name="label_phone">Телефон</string>
     <string name="label_customer">Клиент</string>
     <string name="label_comment">Комментарий к заказу</string>
-
-    <!-- Order Times -->
     <string name="label_created">Создан</string>
     <string name="label_confirmed">Подтверждён</string>
     <string name="label_cancelled">Отменён</string>

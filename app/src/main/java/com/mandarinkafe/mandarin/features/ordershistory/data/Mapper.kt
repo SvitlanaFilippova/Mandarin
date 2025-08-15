@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.ordershistory.data
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.core.domain.models.getDetailsString
 import com.mandarinkafe.mandarin.db.Saved_order
+import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 import com.mandarinkafe.mandarin.util.Constants.NON_BRAKING_SPACE
 import com.mandarinkafe.mandarin.util.applyTypography
@@ -12,7 +13,7 @@ object Mapper {
         id = id,
         timestamp = timestamp,
         whenCreated = whenCreated,
-        orderType = orderType,
+        orderType = orderType.toDeliveryTypeOrNull(),
         addressLine1 = addressLine1,
         addressDetails = addressDetails,
         mealNames = mealNames,
@@ -29,10 +30,19 @@ object Mapper {
             id = id,
             timestamp = timestamp,
             whenCreated = whenCreated ?: "",
-            orderType = orderType?.name ?: "",
+            orderType = orderType?.name.toDeliveryTypeOrNull(),
             addressLine1 = deliveryAddress?.streetAndBuilding ?: "",
             addressDetails = deliveryAddress?.getDetailsString() ?: "",
             mealNames = names
         )
+    }
+
+    private fun String?.toDeliveryTypeOrNull(): DeliveryType? {
+        if (this.isNullOrBlank()) return null
+        return when (trim().lowercase()) {
+            "delivery", "доставка", "доставка курьером" -> DeliveryType.DELIVERY
+            "self_pickup", "selfpickup", "самовывоз" -> DeliveryType.SELF_PICKUP
+            else -> null
+        }
     }
 }

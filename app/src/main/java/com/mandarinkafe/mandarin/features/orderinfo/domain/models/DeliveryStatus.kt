@@ -17,7 +17,7 @@ enum class DeliveryStatus(
     CANCELLED("Cancelled")
 }
 
-fun DeliveryStatus.toUiStatus(): UiDeliveryStatus {
+fun DeliveryStatus.toUi(): UiDeliveryStatus {
     return UiDeliveryStatus.entries.firstOrNull { it.apiName == this.apiName }
         ?: error("Unknown DeliveryStatus: $this")
 }

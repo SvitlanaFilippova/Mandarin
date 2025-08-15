@@ -4,4 +4,3 @@ enum class DeliveryType {
     DELIVERY,
     SELF_PICKUP,
 }
-

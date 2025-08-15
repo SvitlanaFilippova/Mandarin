@@ -100,13 +100,8 @@ class OrderInfoViewModel @Inject constructor(
         observeJob = viewModelScope.launch {
             tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds) // периодичность тиков
                 .onStart { emit(Unit) }    // сразу первый запрос
-                .map {
-                    getOrderStatus(orderId)
-                }
-                .collect {
-
-                    proceedOrderStatusResult(it)
-                }
+                .map { getOrderStatus(orderId) }
+                .collect { proceedOrderStatusResult(it) }
         }
     }
 
