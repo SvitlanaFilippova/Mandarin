@@ -62,41 +62,44 @@ class CartViewModel @Inject constructor(
 
     private fun forceRefresh() {
         viewModelScope.launch {
+            cartInteractor.forceRetry()
             updateRecommends(state.value.cartItems.map { it.customizedMeal.meal }.toSet())
         }
     }
 
     private fun observeCartChanges() {
         viewModelScope.launch {
-            cartInteractor.observeCartItems().collect { cartResource ->
-                Log.d(logTag, "observeCartItems emitted: $cartResource")
-                when (cartResource) {
-                    is Resource.Success -> {
-                        Log.d(logTag, "Cart updated: ${cartResource.data?.size} items")
-                        setData(cartResource.data)
-                        updateRecommends(cartResource.data?.map { it.customizedMeal.meal }?.toSet())
-                    }
+            cartInteractor.observeCartItems().collect { proceedCartResult(it) }
+        }
+    }
 
-                    is Loading -> {
-                        Log.d(logTag, "Loading cart data")
-                        setLoading()
-                    }
+    private suspend fun proceedCartResult(cartResource: Resource<List<CartItem>>) {
+        Log.d(logTag, "observeCartItems emitted: $cartResource")
+        when (cartResource) {
+            is Resource.Success -> {
+                Log.d(logTag, "Cart updated: ${cartResource.data?.size} items")
+                setData(cartResource.data)
+                updateRecommends(cartResource.data?.map { it.customizedMeal.meal }?.toSet())
+            }
 
-                    is Resource.ErrorNoInternet -> {
-                        if (state.value.cartItems.isEmpty()) {
-                            setError(cartResource)
-                        } else {
-                            Log.w(logTag, "No internet, but cart already has items, skip error")
-                            setLoading(false)
-                        }
-                    }
+            is Loading -> {
+                Log.d(logTag, "Loading cart data")
+                setLoading()
+            }
 
-                    is Resource.Idle -> {}
-                    else -> {
-                        Log.e(logTag, "Error loading cart: $cartResource")
-                        setError(cartResource)
-                    }
+            is Resource.ErrorNoInternet -> {
+                if (state.value.cartItems.isEmpty()) {
+                    setError(cartResource)
+                } else {
+                    Log.w(logTag, "No internet, but cart already has items, skip error")
+                    setLoading(false)
                 }
+            }
+
+            is Resource.Idle -> {}
+            else -> {
+                Log.e(logTag, "Error loading cart: $cartResource")
+                setError(cartResource)
             }
         }
     }

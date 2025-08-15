@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.features.ordershistory.domain.api.GetOrdersHistoryUseCase
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.GetOrdersStatusesUseCase
+import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryInteractor
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.models.DateFilterType
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.models.DateRange
@@ -24,7 +24,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class OrdersHistoryViewModel @Inject constructor(
-    private val getHistory: GetOrdersHistoryUseCase,
+    private val historyInteractor: OrdersHistoryInteractor,
     private val getOrdersStatuses: GetOrdersStatusesUseCase
 ) : BaseViewModel<OrdersHistoryEvent, OrdersHistoryEffect, OrdersHistoryState>() {
     override fun setInitialState() = OrdersHistoryState()
@@ -53,6 +53,14 @@ class OrdersHistoryViewModel @Inject constructor(
                 setState { copy(chosenDateRange = event.range) }
                 applyFilters()
             }
+
+            is OrdersHistoryEvent.RemoveOrderFromHistory -> removeOrder(event.id)
+        }
+    }
+
+    private fun removeOrder(id: String) {
+        viewModelScope.launch {
+            historyInteractor.removeOrderById(id)
         }
     }
 
@@ -76,7 +84,7 @@ class OrdersHistoryViewModel @Inject constructor(
 
     private fun refreshData() {
         viewModelScope.launch {
-            val history = getHistory()
+            val history = historyInteractor.getHistory()
             setData(history)
             setLoading()
             val statusesResponse = getOrdersStatuses(history)

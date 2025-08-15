@@ -24,46 +24,62 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 @Singleton
 class CartRepositoryImpl @Inject constructor(
     private val storage: CartStorage,
     private val menuCache: MenuCache,
 ) : CartWriter, CartReader {
-
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private var cartItems: List<CartItem> = emptyList()
     private val _cartItems = MutableStateFlow<Resource<List<CartItem>>>(Resource.Idle())
-    private val _cartCount = MutableStateFlow(0)
-
     override fun observeCartItems(): Flow<Resource<List<CartItem>>> = _cartItems.asStateFlow()
+
+    private val _cartCount = MutableStateFlow(0)
     override fun observeCartItemsCount(): Flow<Int> = _cartCount.asStateFlow()
 
     init {
+        getInitData()
+    }
+
+    private fun getInitData() {
         scope.launch {
-            // 1. Получаем корзину из storage один раз
+            // 1. Получаем корзину из storage
             val storedCartItems = try {
                 storage.getCartItems()
             } catch (e: Exception) {
                 Log.e(ERROR_TAG, "Ошибка при чтении корзины из storage", e)
+                storage.clearCart()
+                _cartItems.value =
+                    Resource.ErrorOther("Ошибка при чтении корзины из локального хранилища. Корзина будет очищена.")
                 emptyList()
             }
 
-            // 2. Ждём первое успешное меню
-            menuCache.fullMenu
-                .filterIsInstance<Resource.Success<List<MealCategory>>>()
-                .firstOrNull()
-                ?.let { menuResource ->
-                    val menu = menuResource.data.orEmpty()
-                    val validItems = mapAndValidate(storedCartItems, menu)
-                    cartItems = validItems
-                    _cartItems.value = Resource.Success(validItems)
-                    _cartCount.value = validItems.sumOf {
-                        it.quantity
-                    }
-                }
+            // 2. Ждём первое успешное меню, но не дольше 5 секунд
+            val menuResource = withTimeoutOrNull(MENU_WAIT_TIMEOUT) {
+                menuCache.fullMenu
+                    .filterIsInstance<Resource.Success<List<MealCategory>>>()
+                    .firstOrNull()
+            }
+            if (menuResource == null) {
+                _cartItems.value =
+                    Resource.ErrorOther("Не удалось загрузить меню. Попробуйте позже.")
+                return@launch
+            } else {
+                val menu = menuResource.data.orEmpty()
+                val validItems = mapAndValidate(storedCartItems, menu)
+                cartItems = validItems
+                _cartItems.value = Resource.Success(validItems)
+                _cartCount.value = validItems.sumOf { it.quantity }
+            }
         }
+    }
+
+    override suspend fun forceRetry() {
+        _cartItems.value = Resource.Loading()
+        getInitData()
     }
 
     private fun mapAndValidate(
@@ -138,6 +154,7 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     companion object {
+        private const val MENU_WAIT_TIMEOUT = 5000L
         private const val ERROR_TAG = "Cart DEBUG Repo"
     }
 }

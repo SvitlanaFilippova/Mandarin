@@ -11,4 +11,8 @@ class OrdersHistoryRepositoryImpl(private val storage: OrdersHistoryStorage) :
     override suspend fun saveOrder(order: SavedOrder) {
         storage.saveOrder(order)
     }
+
+    override suspend fun removeOrderById(id: String) {
+        storage.removeOrderById(id)
+    }
 }

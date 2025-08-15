@@ -11,6 +11,7 @@ import com.mandarinkafe.mandarin.util.BaseState
 sealed interface OrdersHistoryContract {
     sealed interface OrdersHistoryEvent : BaseEvent {
         data object ForceRefresh : OrdersHistoryEvent
+        data class RemoveOrderFromHistory(val id: String) : OrdersHistoryEvent
         data class SetChosenOrderTypes(val filter: List<DeliveryType>) : OrdersHistoryEvent
         data class SetChosenDateFilter(val filter: DateFilterType?) : OrdersHistoryEvent
         data class SetChosenDateRange(val range: DateRange) : OrdersHistoryEvent

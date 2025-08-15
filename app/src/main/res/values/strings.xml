@@ -184,7 +184,7 @@
     <string name="label_order_type">Способ получения</string>
     <string name="label_payment_method">Способ оплаты</string>
     <string name="cancel_order_question">Отменить заказ?</string>
-    <string name="cancel_order_confirmation">Вы действительно хотите отменить оформленный заказ?</string>
+    <string name="cancel_order_confirmation">Действительно отменить оформленный заказ?</string>
     <string name="label_order_items">Позиции заказа: %1$d</string>
     <string name="discount_applied">Применена скидка</string>
     <string name="label_total">Итого</string>
@@ -195,11 +195,10 @@
     <string name="label_created">Создан</string>
     <string name="label_confirmed">Подтверждён</string>
     <string name="label_cancelled">Отменён</string>
-    <string name="label_cooking_completed">Готово</string>
-    <string name="label_packed">Упаковано</string>
-    <string name="label_sent">Отправлено</string>
-    <string name="label_delivered">Доставлено</string>
-    <string name="label_closed">Закрыто</string>
+    <string name="label_cooking_completed">Готов</string>
+    <string name="label_sent">Отправлен</string>
+    <string name="label_delivered">Доставлен</string>
+    <string name="label_closed">Закрыт</string>
 
     <!-- Кнопки действий -->
     <string name="minus">-</string>

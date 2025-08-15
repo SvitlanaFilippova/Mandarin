@@ -17,3 +17,6 @@ ORDER BY timestamp DESC;
 insert:
 INSERT INTO saved_order(id, whenCreated, orderType, addressLine1, addressDetails, timestamp, mealNames, number)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+remove:
+DELETE FROM saved_order WHERE id = ?;

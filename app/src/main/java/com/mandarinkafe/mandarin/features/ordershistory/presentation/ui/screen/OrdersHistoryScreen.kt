@@ -66,7 +66,6 @@ fun OrdersHistoryScreen(
                 filteredData = state.filteredData,
                 anyFiltersAreApplied = state.anyFiltersAreApplied
             )
-
         }
 
         PullRefreshIndicator(

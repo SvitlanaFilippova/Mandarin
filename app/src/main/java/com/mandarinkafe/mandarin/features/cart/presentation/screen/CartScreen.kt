@@ -69,6 +69,7 @@ fun CartScreen(
                 error != null -> PlaceholderScreen(
                     error = error,
                     onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+                    onRetryClick = { onCartEvent(CartEvent.ForceRefresh) }
                 )
 
                 state.cartItems.isEmpty() -> PlaceholderScreen(

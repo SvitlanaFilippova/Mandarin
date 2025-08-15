@@ -77,7 +77,7 @@ fun OrderHistoryCard(modifier: Modifier = Modifier, order: SavedOrder, onClick: 
                     style = Typography.SmallTextStyle,
                     color = Colors.White,
                     overflow = TextOverflow.Ellipsis,
-                    maxLines = 2
+                    maxLines = 3
                 )
             }
 

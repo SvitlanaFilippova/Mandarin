@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.first
 
 class CartInteractorImpl(
     private val cartWriter: CartWriter,
-    private val cartReader: CartReader, // чтобы получить текущие cartItems
+    private val cartReader: CartReader,
 ) : CartInteractor {
     override fun observeCartItemsCount() = cartReader.observeCartItemsCount()
     val logTag = "CART DEBUG Interactor"
@@ -27,7 +27,9 @@ class CartInteractorImpl(
             else -> emptyList()
         }
     }
-
+    override suspend fun forceRetry() {
+        cartReader.forceRetry()
+    }
     override suspend fun addItem(
         cartItem: CartItem?,
         customizedMeal: CustomizedMeal?,
@@ -35,7 +37,6 @@ class CartInteractorImpl(
     ) {
         when {
             cartItem != null -> {
-                // Если пришёл готовый CartItem, ищем его по id и обновляем/добавляем
                 val existing = getCurrentCartItems().find { it.id == cartItem.id }
                 if (existing != null) {
                     // увеличиваем количество

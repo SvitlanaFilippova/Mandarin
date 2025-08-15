@@ -25,4 +25,8 @@ class SQLDelightOrdersHistoryStorage @Inject constructor(private val queries: Sa
             number = order.number
         )
     }
+
+    override suspend fun removeOrderById(id: String) {
+        queries.remove(id)
+    }
 }
