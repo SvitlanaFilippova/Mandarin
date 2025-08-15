@@ -98,11 +98,13 @@ fun FilterByDateChipDropdown(
                         }
                     },
                     trailingIcon = {
-                        if (isSelectedItem) Icon(
-                            Icons.Default.Check,
-                            tint = Colors.WhiteTransparent75,
-                            contentDescription = null
-                        )
+                        if (isSelectedItem) {
+                            Icon(
+                                Icons.Default.Check,
+                                tint = Colors.WhiteTransparent75,
+                                contentDescription = null
+                            )
+                        }
                     }
                 )
             }

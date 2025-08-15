@@ -61,8 +61,8 @@ class OrderCreator @Inject constructor(
     ) {
         stopObserving()
         observeJob = scope.launch {
-            tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds) // периодичность тиков
-                .onStart { emit(Unit) }    // сразу первый запрос
+            tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds)
+                .onStart { emit(Unit) }
                 .map {
                     getOrderStatus(orderId)
                 }

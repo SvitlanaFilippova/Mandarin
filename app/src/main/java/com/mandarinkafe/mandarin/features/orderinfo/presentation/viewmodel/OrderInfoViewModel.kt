@@ -96,10 +96,10 @@ class OrderInfoViewModel @Inject constructor(
     }
 
     private fun observeOrderStatus(orderId: String) {
-        stopObservingOrderInfo() // отменяем предыдущий тикер, если был
+        stopObservingOrderInfo()
         observeJob = viewModelScope.launch {
-            tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds) // периодичность тиков
-                .onStart { emit(Unit) }    // сразу первый запрос
+            tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds)
+                .onStart { emit(Unit) }
                 .map { getOrderStatus(orderId) }
                 .collect { proceedOrderStatusResult(it) }
         }

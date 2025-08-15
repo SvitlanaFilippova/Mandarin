@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.cart.domain.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
@@ -20,9 +19,7 @@ class GetCartRecommendsUseCaseImpl(
     private val menuCache: MenuCache,
 ) : GetCartRecommendsUseCase {
     override suspend fun invoke(cartItems: Set<Meal>): Resource<List<Meal>> {
-        Log.d("GetCartRecommendsUC", "Cart items size: ${cartItems.size}")
         val schemaResult = schemaRepository.getRecommendsSchema()
-        Log.d("GetCartRecommendsUC", "Schema result: $schemaResult")
 
         return when (schemaResult) {
             is ErrorEmptyData -> ErrorEmptyData()
@@ -32,33 +29,19 @@ class GetCartRecommendsUseCaseImpl(
             is Loading -> Loading()
             is Success -> {
                 val rules = schemaResult.data ?: return ErrorEmptyData()
-                Log.d("GetCartRecommendsUC", "Rules loaded: ${rules.size}")
 
                 val cartItemsWithNorm = normalizeCartItems(cartItems)
-                Log.d(
-                    "GetCartRecommendsUC",
-                    "Normalized cart items: ${cartItemsWithNorm.map { it.name }}"
-                )
 
                 val matchingRules = filterRules(rules, cartItemsWithNorm)
-                Log.d(
-                    "GetCartRecommendsUC",
-                    "Matching rules: ${matchingRules.map { it.sourceName }}"
-                )
 
                 val recommendedSkus = matchingRules
                     .flatMap { it.recommendedSku }
                     .map { it.trim() }
                     .filter { it.isNotEmpty() }
-                Log.d("GetCartRecommendsUC", "Recommended SKUs: $recommendedSkus")
 
                 val meals = recommendedSkus
                     .flatMap { sku -> menuCache.getMealsBySku(sku) }
                     .distinctBy { it.id }
-                Log.d(
-                    "GetCartRecommendsUC",
-                    "Meals found by SKUs: ${meals.size} -> ${meals.map { it.name }}"
-                )
 
                 Success(meals)
             }

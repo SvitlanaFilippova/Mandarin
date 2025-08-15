@@ -170,7 +170,9 @@ class OrdersHistoryViewModel @Inject constructor(
         // Фильтруем по типу
         val filteredByType = if (state.value.chosenOrderTypes.isNotEmpty()) {
             data.filter { it.orderType in state.value.chosenOrderTypes }
-        } else data
+        } else {
+            data
+        }
 
         // Фильтруем по дате
         return applyDateFilter(
@@ -199,7 +201,9 @@ class OrdersHistoryViewModel @Inject constructor(
             DateFilterType.CUSTOM_RANGE -> {
                 if (dateRange != null) {
                     OrdersFilter.betweenDates(orders, dateRange.start, dateRange.end)
-                } else orders
+                } else {
+                    orders
+                }
             }
         }
     }

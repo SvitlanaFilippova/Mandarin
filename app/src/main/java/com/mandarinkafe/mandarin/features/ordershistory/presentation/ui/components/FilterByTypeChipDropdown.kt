@@ -41,8 +41,11 @@ fun FilterByTypeChipDropdown(
                 .copy(selectedContainerColor = Colors.Brown),
             label = {
                 Text(
-                    if (!isSelected) stringResource(R.string.filter_by_type)
-                    else selectedItems.map { stringResource(it.toUi().nameRes) }.joinToString(", ")
+                    if (!isSelected) {
+                        stringResource(R.string.filter_by_type)
+                    } else {
+                        selectedItems.map { stringResource(it.toUi().nameRes) }.joinToString(", ")
+                    }
                 )
             },
             leadingIcon = {
@@ -64,7 +67,8 @@ fun FilterByTypeChipDropdown(
                     tint = Colors.WhiteTransparent75
                 )
 
-            })
+            }
+        )
         DropdownMenu(
             expanded = expanded,
             containerColor = Colors.Brown,
@@ -88,11 +92,13 @@ fun FilterByTypeChipDropdown(
                         onSelectionChange(newSelection)
                     },
                     trailingIcon = {
-                        if (isSelected) Icon(
-                            Icons.Default.Check,
-                            tint = Colors.WhiteTransparent75,
-                            contentDescription = null
-                        )
+                        if (isSelected) {
+                            Icon(
+                                Icons.Default.Check,
+                                tint = Colors.WhiteTransparent75,
+                                contentDescription = null
+                            )
+                        }
                     }
                 )
             }
