@@ -1,9 +1,17 @@
 package com.mandarinkafe.mandarin.features.menu.presentation.ui.screen
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -15,10 +23,10 @@ import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuViewMo
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToSearchScreen
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
-import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.map
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MenuScreen(
     menuViewModel: MenuViewModel = hiltViewModel(),
@@ -40,9 +48,6 @@ fun MenuScreen(
     val selectedSubTabIndex = state.selectedSubTabIndex
     val selectedMenuItemIndex = state.selectedMenuItemIndex
     val error = state.error
-    val isLoading = state.isLoading
-
-
     val onSharedEvent = sharedViewModel::onEvent
     val onMenuEvent = menuViewModel::onEvent
     val onCartEvent = cartViewModel::onEvent
@@ -50,41 +55,55 @@ fun MenuScreen(
     val effectFlow = menuViewModel.effect
     val listState = rememberLazyListState()
 
-    when {
-        isLoading -> LoadingScreen()
-        error != null -> PlaceholderScreen(
-            error = error,
-            onRetryClick = { onMenuEvent(MenuContract.MenuEvent.ForceRefresh) },
-            onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
-        )
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isLoading,
+        onRefresh = { onMenuEvent(MenuContract.MenuEvent.ForceRefresh) }
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(pullRefreshState)
+    ) {
+        when {
+            error != null -> PlaceholderScreen(
+                error = error,
+                onRetryClick = { onMenuEvent(MenuContract.MenuEvent.ForceRefresh) },
+                onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+            )
 
-        else -> MenuContentScreen(
-            listState = listState,
-            onMenuEvent = onMenuEvent,
-            onSharedEvent = onSharedEvent,
-            cartItems = cartItems,
-            inProgressItems = cartInProgressItems,
-            menuItems = menuItems,
-            banners = banners,
-            bannersAreLoading = bannersAreLoading,
-            selectedTabIndex = selectedTabIndex,
-            selectedSubTabIndex = selectedSubTabIndex,
-            selectedMenuItemIndex = selectedMenuItemIndex,
-            favoriteIds = favoriteIds,
-            onMealDetailsClick = { meal -> onSharedEvent(SharedEvent.OnMealDetailsClick(meal)) },
-            onToggleFavorite = { meal -> onSharedEvent(SharedEvent.ToggleFavorite(meal)) },
-            onAddToCart = { meal -> onCartEvent(CartEvent.AddToCart(customizedMeal = meal.toCustomizedMeal())) },
-            onRemoveFromCart = { meal -> onCartEvent(CartEvent.OnReduce(meal = meal)) },
-        )
+            else -> MenuContentScreen(
+                listState = listState,
+                onMenuEvent = onMenuEvent,
+                onSharedEvent = onSharedEvent,
+                cartItems = cartItems,
+                inProgressItems = cartInProgressItems,
+                menuItems = menuItems,
+                banners = banners,
+                bannersAreLoading = bannersAreLoading,
+                selectedTabIndex = selectedTabIndex,
+                selectedSubTabIndex = selectedSubTabIndex,
+                selectedMenuItemIndex = selectedMenuItemIndex,
+                favoriteIds = favoriteIds,
+                onMealDetailsClick = { meal -> onSharedEvent(SharedEvent.OnMealDetailsClick(meal)) },
+                onToggleFavorite = { meal -> onSharedEvent(SharedEvent.ToggleFavorite(meal)) },
+                onAddToCart = { meal -> onCartEvent(CartEvent.AddToCart(customizedMeal = meal.toCustomizedMeal())) },
+                onRemoveFromCart = { meal -> onCartEvent(CartEvent.OnReduce(meal = meal)) },
+            )
 
-    }
+        }
 
-    LaunchedEffect(effectFlow) {
-        effectFlow.collect { effect ->
-            if (effect is MenuContract.MenuEffect.OpenSearch
-            ) {
-                navController.navigateToSearchScreen(effect.focusSearch)
+        LaunchedEffect(effectFlow) {
+            effectFlow.collect { effect ->
+                if (effect is MenuContract.MenuEffect.OpenSearch
+                ) {
+                    navController.navigateToSearchScreen(effect.focusSearch)
+                }
             }
         }
+        PullRefreshIndicator(
+            refreshing = state.isLoading,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
     }
 }

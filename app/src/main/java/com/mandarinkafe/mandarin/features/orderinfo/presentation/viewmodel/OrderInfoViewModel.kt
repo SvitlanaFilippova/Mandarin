@@ -100,7 +100,10 @@ class OrderInfoViewModel @Inject constructor(
         observeJob = viewModelScope.launch {
             tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds)
                 .onStart { emit(Unit) }
-                .map { getOrderStatus(orderId) }
+                .map {
+                    setLoading()
+                    getOrderStatus(orderId)
+                }
                 .collect { proceedOrderStatusResult(it) }
         }
     }
@@ -114,6 +117,7 @@ class OrderInfoViewModel @Inject constructor(
         msg?.let {
             sendEffect(ShowError(msg))
         }
+        setLoading(false)
     }
 
     private fun setStatus(status: IncomingOrder?) {

@@ -47,10 +47,12 @@ fun OrderHistoryCard(modifier: Modifier = Modifier, order: SavedOrder, onClick: 
                         text = stringResource(it.toUi().nameRes),
                         style = Typography.RegularTextStyle,
                     )
-                    Text(
-                        text = "№${order.number}",
-                        style = Typography.RegularTextStyle,
-                    )
+                    if (order.number.isNotEmpty()) {
+                        Text(
+                            text = "№${order.number}",
+                            style = Typography.RegularTextStyle,
+                        )
+                    }
                 }
             }
             // Адрес

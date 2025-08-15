@@ -55,7 +55,10 @@ class MenuViewModel @Inject constructor(
 
     private fun forceRefresh() {
         viewModelScope.launch {
+            setLoading()
             menuInteractor.forceRefresh()
+            loadMenu()
+            getBanners()
         }
     }
 
@@ -178,9 +181,15 @@ class MenuViewModel @Inject constructor(
         viewModelScope.launch {
             setState { copy(bannersAreLoading = true) }
             val result = getBannersUseCase()
-            if (result is Success) {
-                val banners = result.data ?: emptyList()
-                setState { copy(banners = banners, bannersAreLoading = false) }
+            when (result) {
+                is Success -> {
+                    val banners = result.data ?: emptyList()
+                    setState { copy(banners = banners, bannersAreLoading = false) }
+                }
+
+                else -> {
+                    setState { copy(bannersAreLoading = false) }
+                }
             }
         }
     }

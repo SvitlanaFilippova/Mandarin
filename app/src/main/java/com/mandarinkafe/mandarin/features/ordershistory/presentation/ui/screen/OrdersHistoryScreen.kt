@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -16,9 +18,12 @@ import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.components.FiltersSection
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.components.OrdersHistoryList
+import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryContract.OrdersHistoryEffect
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryContract.OrdersHistoryEvent
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryViewModel
+import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitle
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -28,6 +33,8 @@ fun OrdersHistoryScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val onEvent = viewModel::onEvent
+    val effectFlow = viewModel.effect
+    val snackbarHostState = LocalSnackbarHostState.current
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isLoading == true,
@@ -58,6 +65,20 @@ fun OrdersHistoryScreen(
                 anyFiltersAreApplied = state.anyFiltersAreApplied
             )
 
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        effectFlow.collectLatest { effect ->
+            when (effect) {
+                is OrdersHistoryEffect.ShowError -> {
+                    snackbarHostState.showSnackbar(
+                        message = effect.message,
+                        duration = SnackbarDuration.Long,
+                        withDismissAction = true,
+                    )
+                }
+            }
         }
     }
 }

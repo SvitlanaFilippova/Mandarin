@@ -326,6 +326,7 @@ class CartViewModel @Inject constructor(
     }
 
     private fun setError(resource: Resource<*>) {
+        setLoading(false)
         val error = when (resource) {
             is Resource.ErrorEmptyData -> UiError.CartEmpty
             is Resource.ErrorNoInternet -> UiError.NoInternet

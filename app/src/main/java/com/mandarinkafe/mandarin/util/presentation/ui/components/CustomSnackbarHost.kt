@@ -28,7 +28,10 @@ fun CustomSnackbarHost(
         modifier = modifier,
         snackbar = { snackbarData ->
             Snackbar(
-                modifier = Modifier.padding(Dimens.MarginStandard16),
+                modifier = Modifier.padding(
+                    horizontal = Dimens.MarginStandard16,
+                    vertical = Dimens.MarginBig32
+                ),
                 containerColor = Colors.White.copy(alpha = 0.9f),
                 contentColor = Colors.AppBlack,
                 action = {

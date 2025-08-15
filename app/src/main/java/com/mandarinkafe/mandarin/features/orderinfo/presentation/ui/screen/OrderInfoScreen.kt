@@ -6,6 +6,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -19,9 +20,10 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
-import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.OnMealDetailsClick
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -36,6 +38,7 @@ fun OrderInfoScreen(
     val state by viewModel.state.collectAsState()
     val effectFlow = viewModel.effect
     val onSharedEvent = sharedViewModel::onEvent
+    val snackbarHostState = LocalSnackbarHostState.current
 
     LaunchedEffect(Unit) {
         onEvent(OrderInfoEvent.SetInitId(orderID))
@@ -70,14 +73,16 @@ fun OrderInfoScreen(
         }
 
 
-        LaunchedEffect(effectFlow) {
-            effectFlow.collect { effect ->
+        LaunchedEffect(Unit) {
+            effectFlow.collectLatest { effect ->
                 when (effect) {
-                    is OrderInfoEffect.ShowError -> onSharedEvent(
-                        SharedEvent.ShowSnackbar(
-                            message = effect.message
+                    is OrderInfoEffect.ShowError -> {
+                        snackbarHostState.showSnackbar(
+                            message = effect.message,
+                            duration = SnackbarDuration.Long,
+                            withDismissAction = true,
                         )
-                    )
+                    }
                 }
             }
         }

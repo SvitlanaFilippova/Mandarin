@@ -1,10 +1,5 @@
 package com.mandarinkafe.mandarin.features.menu.presentation.ui.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,11 +19,7 @@ fun BannersSection(
     banners: List<Banner>,
     onBannerClick: (Banner) -> Unit
 ) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically()
-    ) {
+    if (visible) {
         if (bannersAreLoading) {
             Box(
                 modifier = Modifier
