@@ -93,7 +93,8 @@ fun NavGraph(navHostController: NavHostController) {
                     SearchScreen(
                         focusSearchBarInput = focusInput,
                         cartViewModel = cartViewModel,
-                        sharedViewModel = sharedViewModel
+                        sharedViewModel = sharedViewModel,
+                        onBackClick = { navHostController.popBackStack() }
                     )
                 }
                 composable(NavConstants.FAVORITES_SCREEN_ROUTE) {

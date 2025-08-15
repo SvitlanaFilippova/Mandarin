@@ -24,7 +24,6 @@ import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuViewMo
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToSearchScreen
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
-import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.map
 
@@ -61,6 +60,8 @@ fun MenuScreen(
         refreshing = state.isLoading,
         onRefresh = { onMenuEvent(MenuContract.MenuEvent.ForceRefresh) }
     )
+    val isLoading = state.isLoading
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -73,15 +74,13 @@ fun MenuScreen(
                 onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
             )
 
-            state.isLoading -> LoadingScreen()
-
-            menuItems.isEmpty() -> PlaceholderScreen(
+            menuItems.isEmpty() && !isLoading -> PlaceholderScreen(
                 error = UiError.MenuEmpty,
                 onRetryClick = { onMenuEvent(MenuContract.MenuEvent.ForceRefresh) },
                 onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
             )
 
-            else -> MenuContentScreen(
+            menuItems.isNotEmpty() -> MenuContentScreen(
                 listState = listState,
                 onMenuEvent = onMenuEvent,
                 onSharedEvent = onSharedEvent,
@@ -99,7 +98,6 @@ fun MenuScreen(
                 onAddToCart = { meal -> onCartEvent(CartEvent.AddToCart(customizedMeal = meal.toCustomizedMeal())) },
                 onRemoveFromCart = { meal -> onCartEvent(CartEvent.OnReduce(meal = meal)) },
             )
-
         }
 
         LaunchedEffect(effectFlow) {

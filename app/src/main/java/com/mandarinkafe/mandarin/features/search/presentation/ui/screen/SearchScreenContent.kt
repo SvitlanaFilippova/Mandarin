@@ -26,6 +26,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.search.presentation.ui.components.LabelChipsRow
 import com.mandarinkafe.mandarin.features.search.presentation.ui.components.SearchResults
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.SearchBarInputField
 
 /**
@@ -44,6 +45,7 @@ fun SearchScreenContent(
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
     onToggleFavorite: (Meal) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val filteredMenuItems = searchState.filteredMealList
     val latestSearchText = searchState.latestSearchText
@@ -57,8 +59,13 @@ fun SearchScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Colors.AppBlack)
-            .padding(Dimens.MarginSmall8),
+            .padding(horizontal = Dimens.MarginSmall8),
     ) {
+        ScreenTitleWithBackButton(
+            name = stringResource(id = R.string.more_section_legal_info),
+            onBackClick = onBackClick,
+        )
+
         SearchBarInputField(
             query = latestSearchText,
             onQueryChange = { text ->
