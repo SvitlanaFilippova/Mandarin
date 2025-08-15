@@ -41,8 +41,7 @@ fun OrderHistoryCard(modifier: Modifier = Modifier, order: SavedOrder, onClick: 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
-            )
-            {
+            ) {
                 order.orderType?.let {
                     Text(
                         text = stringResource(it.toUi().nameRes),
