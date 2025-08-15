@@ -15,10 +15,14 @@ class AliveTerminalRepositoryImpl(
     override suspend fun checkAliveTerminals(): Resource<Boolean> {
         // Получаем все группы терминалов
         val response = networkClient.getTerminalGroupsIds()
-        if (response.resultCode == NO_CONNECTION) return Resource.ErrorNoInternet()
-        if (response.resultCode != Constants.HTTP_SUCCESS) return Resource.ErrorOther(
-            "Ошибка получения терминальных групп"
-        )
+        if (response.resultCode == NO_CONNECTION) {
+            return Resource.ErrorNoInternet()
+        }
+        if (response.resultCode != Constants.HTTP_SUCCESS) {
+            return Resource.ErrorOther(
+                "Ошибка получения терминальных групп"
+            )
+        }
         val terminalGroupIds = (response as? TerminalGroupsIdsResponse)
             ?.terminalGroups
             ?.flatMap { it.items }
@@ -31,8 +35,10 @@ class AliveTerminalRepositoryImpl(
 
         // Проверяем статус терминалов
         val aliveResponse = networkClient.getAliveTerminalGroups(terminalGroupIds)
-        if (aliveResponse.resultCode != Constants.HTTP_SUCCESS) return Resource.ErrorOther(
-            "Ошибка проверки статуса терминалов"
+        if (aliveResponse.resultCode != Constants.HTTP_SUCCESS) {
+            return Resource.ErrorOther(
+                "Ошибка проверки статуса терминалов"
+        }
         )
 
         val isAlive = (aliveResponse as? AliveTerminalGroupsResponse)
