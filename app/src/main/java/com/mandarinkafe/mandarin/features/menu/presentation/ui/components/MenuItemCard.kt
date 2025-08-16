@@ -29,7 +29,6 @@ fun MenuItemCard(
     onMealDetailsClick: (Meal) -> Unit,
     imageSize: Dp,
 ) {
-
     when (item) {
         is MenuItem.HeaderItem -> MenuHeaderItem(item)
         is MenuItem.SubHeaderItem -> {
