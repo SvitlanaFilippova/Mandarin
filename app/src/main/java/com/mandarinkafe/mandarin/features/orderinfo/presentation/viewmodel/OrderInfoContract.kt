@@ -18,13 +18,15 @@ sealed interface OrderInfoContract {
     }
 
     sealed interface OrderInfoEffect : BaseEffect {
+        data class RepeatOrder(val hasInvalidItems: Boolean) : OrderInfoEffect
         data class ShowError(val message: String) : OrderInfoEffect
     }
 
     data class OrderInfoState(
         val orderId: String? = null,
         val isLoading: Boolean = false,
-        val incomingOrder: IncomingOrder? = null
+        val incomingOrder: IncomingOrder? = null,
+        val orderRepeatingInProgress: Boolean = false,
     ) : BaseState {
 
         val deliveryStatus: UiDeliveryStatus

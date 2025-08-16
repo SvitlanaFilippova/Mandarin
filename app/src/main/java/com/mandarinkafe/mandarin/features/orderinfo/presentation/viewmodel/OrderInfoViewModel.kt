@@ -2,8 +2,10 @@ package com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.CancelOrderUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
+import com.mandarinkafe.mandarin.features.orderinfo.domain.api.RepeatOrderInteractor
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect.ShowError
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
@@ -24,6 +26,8 @@ import kotlin.time.Duration.Companion.seconds
 class OrderInfoViewModel @Inject constructor(
     private val getOrderStatus: GetOrderStatusUseCase,
     private val cancelOrderUseCase: CancelOrderUseCase,
+    private val repeatOrderInteractor: RepeatOrderInteractor,
+    private val cartInteractor: CartInteractor
 ) : BaseViewModel<OrderInfoEvent, OrderInfoEffect, OrderInfoState>() {
     override fun setInitialState() = OrderInfoState()
 
@@ -57,7 +61,20 @@ class OrderInfoViewModel @Inject constructor(
     }
 
     private fun repeatOrder() {
-        TODO("Not yet implemented")
+        viewModelScope.launch {
+            setOrderRepeatingInProgress(true)
+            val incomingOrder = state.value.incomingOrder
+            incomingOrder?.let {
+                val result = repeatOrderInteractor.mapToCartItems(it.items)
+                result.cartItems.forEach { cartInteractor.addItem(it) }
+                setOrderRepeatingInProgress(false)
+                sendEffect(OrderInfoEffect.RepeatOrder(result.hasInvalidItems))
+            }
+        }
+    }
+
+    private fun setOrderRepeatingInProgress(isActive: Boolean) {
+        setState { copy(orderRepeatingInProgress = isActive) }
     }
 
     private fun cancel() {

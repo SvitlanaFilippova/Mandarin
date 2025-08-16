@@ -26,5 +26,4 @@ interface CartInteractor {
     )
 
     suspend fun clearCart()
-
 }

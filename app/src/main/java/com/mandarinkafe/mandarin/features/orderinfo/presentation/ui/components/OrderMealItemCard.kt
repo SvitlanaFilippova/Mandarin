@@ -67,7 +67,7 @@ fun OrderMealItemCard(
                     ) {
                         Text(
                             modifier = Modifier.weight(1f),
-                            text = "${it.modifierGroupName}: ${it.name}",
+                            text = "${it.groupName}: ${it.name}",
                             style = Typography.MealSmallTextStyle,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,

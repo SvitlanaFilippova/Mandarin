@@ -32,6 +32,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.O
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ButtonWithCircularProgressIndicator
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 
@@ -42,6 +43,7 @@ fun OrderInfoContentScreen(
     onEvent: (OrderInfoEvent) -> Unit,
     navController: NavHostController,
     onOrderItemClick: (String) -> Unit,
+    orderRepeatingInProgress: Boolean,
 ) {
     if (order == null) return
     var showCancelDialog by remember { mutableStateOf(false) }
@@ -103,7 +105,6 @@ fun OrderInfoContentScreen(
 
         item { OrderTimesSection(order) }
 
-
         // Кнопки
         item {
             Row(
@@ -112,14 +113,18 @@ fun OrderInfoContentScreen(
             ) {
                 when {
                     order.isClosed -> {
-                        ButtonWithText(
-                            modifier = Modifier
-                                .padding(Dimens.MarginSmall8)
-                                .weight(1f),
-                            textResID = R.string.repeat_order,
-                            containerColor = Colors.Green,
-                            onClick = { onEvent(OrderInfoEvent.RepeatOrder) }
-                        )
+                        if (orderRepeatingInProgress) {
+                            ButtonWithCircularProgressIndicator()
+                        } else {
+                            ButtonWithText(
+                                modifier = Modifier
+                                    .padding(Dimens.MarginSmall8)
+                                    .weight(1f),
+                                textResID = R.string.repeat_order,
+                                containerColor = Colors.Green,
+                                onClick = { onEvent(OrderInfoEvent.RepeatOrder) }
+                            )
+                        }
                     }
 
                     order.canBeCanceled -> {

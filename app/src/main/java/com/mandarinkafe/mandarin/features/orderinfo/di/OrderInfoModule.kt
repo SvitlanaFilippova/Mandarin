@@ -8,8 +8,10 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.api.CancelOrderUseCas
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ChangeOrderRepository
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.OrderInfoRepository
+import com.mandarinkafe.mandarin.features.orderinfo.domain.api.RepeatOrderInteractor
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.CancelOrderUseCaseImpl
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.GetOrderStatusUseCaseImpl
+import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.RepeatOrderInteractorImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,6 +55,15 @@ class OrderInfoModule {
     ): CancelOrderUseCase {
         return CancelOrderUseCaseImpl(
             repository = repository,
+        )
+    }
+
+    @Provides
+    fun provideRepeatOrderInteractor(
+        menuCache: MenuCache
+    ): RepeatOrderInteractor {
+        return RepeatOrderInteractorImpl(
+            menuCache = menuCache,
         )
     }
 }

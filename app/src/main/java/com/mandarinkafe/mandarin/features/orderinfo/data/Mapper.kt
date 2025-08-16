@@ -2,8 +2,13 @@ package com.mandarinkafe.mandarin.features.orderinfo.data
 
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
 import com.mandarinkafe.mandarin.core.domain.models.Address
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
+import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.DeletionInfoDto
@@ -65,6 +70,22 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
     )
 }
 
+fun IncomingOrderItem.toCartItem(
+    baseMeal: Meal,
+    adds: List<MealAdditional>,
+    modifiers: List<ModifierGroup>
+): CartItem {
+    return CartItem(
+        customizedMeal = CustomizedMeal(
+            meal = baseMeal,
+            adds = adds,
+            modifiers = modifiers
+        ),
+        quantity = amount.toInt(),
+        comment = comment
+    )
+}
+
 fun IncomingOrderItemDto.toDomain() = IncomingOrderItem(
     id = product.id,
     name = product.name.applyTypography(),
@@ -76,6 +97,14 @@ fun IncomingOrderItemDto.toDomain() = IncomingOrderItem(
     comment = comment ?: "",
     discountedPrice = resultSum
 )
+
+fun List<IncomingOrderItemDto>.toDomainWithAdds(
+    addonsCategories: List<MealAdditionalCategory>
+): List<IncomingOrderItem> {
+    val addonIds = collectAddonIds(addonsCategories)
+    val builders = associateItemsWithAdds(this, addonIds)
+    return builders.map { it.build() }
+}
 
 private fun DeliveryPointDto.toAddress(): Address {
     val point = coordinates?.let {
@@ -100,8 +129,8 @@ private fun IncomingModifierDto.toDomain() = IncomingModifier(
     name = product.name.applyTypography(),
     amount = amount,
     price = price,
-    modifierGroupId = productGroup.id,
-    modifierGroupName = productGroup.name,
+    groupId = productGroup.id,
+    groupName = productGroup.name,
     discountedPrice = resultSum
 )
 
@@ -116,13 +145,6 @@ private fun String.toDeliveryStatus(): DeliveryStatus {
         ?: DeliveryStatus.UNCONFIRMED
 }
 
-fun List<IncomingOrderItemDto>.toDomainWithAdds(
-    addonsCategories: List<MealAdditionalCategory>
-): List<IncomingOrderItem> {
-    val addonIds = collectAddonIds(addonsCategories)
-    val builders = associateItemsWithAdds(this, addonIds)
-    return builders.map { it.build() }
-}
 
 private fun collectAddonIds(addonsCategories: List<MealAdditionalCategory>): Set<String> =
     addonsCategories.flatMap { it.items.map { add -> add.id } }.toSet()

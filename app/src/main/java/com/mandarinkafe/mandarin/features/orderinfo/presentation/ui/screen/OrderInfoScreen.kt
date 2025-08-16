@@ -20,6 +20,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.OnMealDetailsClick
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
@@ -58,6 +59,7 @@ fun OrderInfoScreen(
                 state = state,
                 onEvent = onEvent,
                 navController = navController,
+                orderRepeatingInProgress = state.orderRepeatingInProgress,
                 onOrderItemClick = { mealId -> onSharedEvent(OnMealDetailsClick(mealId = mealId)) }
             )
         }
@@ -82,6 +84,17 @@ fun OrderInfoScreen(
                             duration = SnackbarDuration.Long,
                             withDismissAction = true,
                         )
+                    }
+
+                    is OrderInfoEffect.RepeatOrder -> {
+                        if (effect.hasInvalidItems) {
+                            snackbarHostState.showSnackbar(
+                                message = "Некоторые блюда недоступны. Остальное добавлено в корзину.",
+                                duration = SnackbarDuration.Long,
+                                withDismissAction = true,
+                            )
+                        }
+                        navController.navigateToCart()
                     }
                 }
             }

@@ -6,6 +6,6 @@ data class IncomingModifier(
     val amount: Double,
     val price: Double,
     val discountedPrice: Double?,
-    val modifierGroupId: String,
-    val modifierGroupName: String
+    val groupId: String,
+    val groupName: String
 )

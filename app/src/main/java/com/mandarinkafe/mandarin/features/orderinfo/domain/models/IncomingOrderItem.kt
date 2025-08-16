@@ -22,4 +22,3 @@ data class IncomingOrderItem(
     val isDiscounted = totalPrice != totalDiscountedPrice
 }
 
-
