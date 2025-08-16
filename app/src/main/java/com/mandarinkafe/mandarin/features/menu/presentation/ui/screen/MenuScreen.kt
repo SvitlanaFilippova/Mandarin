@@ -84,11 +84,13 @@ fun MenuScreen(
                 cartItems = cartItems,
                 banners = banners,
                 bannersAreLoading = bannersAreLoading,
+                selectedMenuItemIndex = state.selectedMenuItemIndex,
                 onAddToCart = { meal -> onCartEvent(CartEvent.AddToCart(customizedMeal = meal.toCustomizedMeal())) },
                 onRemoveFromCart = { meal -> onCartEvent(CartEvent.OnReduce(meal = meal)) },
                 onToggleFavorite = { meal -> onSharedEvent(SharedEvent.ToggleFavorite(meal)) },
                 onMealDetailsClick = { meal -> onSharedEvent(SharedEvent.OnMealDetailsClick(meal)) },
-                onSearchClick = { onMenuEvent(MenuEvent.SearchOnOpenSearchClick) }
+                onSearchClick = { onMenuEvent(MenuEvent.SearchOnOpenSearchClick) },
+                onBannersClick = { onMenuEvent(MenuEvent.BannerClick(it)) },
             )
         }
 

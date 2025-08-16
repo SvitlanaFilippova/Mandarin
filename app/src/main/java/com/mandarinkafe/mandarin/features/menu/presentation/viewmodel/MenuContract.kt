@@ -35,8 +35,6 @@ sealed interface MenuContract {
         val error: UiError? = null,
         val banners: List<Banner> = emptyList(),
         val bannersAreLoading: Boolean = false,
-        val selectedTabIndex: Int = DEFAULT_UNSELECTED_INDEX,
-        val selectedSubTabIndex: Int = DEFAULT_UNSELECTED_INDEX,
         val selectedMenuItemIndex: Int = DEFAULT_UNSELECTED_INDEX,
     ) : BaseState
 }

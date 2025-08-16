@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.menu.presentation.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -14,10 +15,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
@@ -27,6 +31,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
+import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BannersSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuHeaderItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuSubHeaderItem
@@ -35,8 +40,11 @@ import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.catego
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.mealitem.MenuCompactMealItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.mealitem.MenuMealItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.rememberScrollUiState
+import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
+import com.mandarinkafe.mandarin.util.Constants.FORCE_SHOW_FAB_DURATION_MS
 import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_COLUMN_COUNT
 import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_SPACING_COUNT
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -47,13 +55,14 @@ fun MenuContentScreen(
     cartItems: List<CartItem>,
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
+    onBannersClick: (Banner) -> Unit,
     onToggleFavorite: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
     onSearchClick: () -> Unit,
     bannersAreLoading: Boolean,
+    selectedMenuItemIndex: Int,
     banners: List<Banner>,
 ) {
-    // 1. Вычисляем позиции категорий
     val categoryPositions = remember(menuItems) {
         menuItems.mapIndexedNotNull { index, item ->
             if (item is MenuItem.HeaderItem) index else null
@@ -71,6 +80,7 @@ fun MenuContentScreen(
     val scope = rememberCoroutineScope()
     val activeTabIndex = remember { mutableStateOf(0) }
     val activeSubTabIndex = remember { mutableStateOf(-1) }
+    var fabVisible by remember { mutableStateOf(false) }
 
     // Обновляем активную табу при скролле
     LaunchedEffect(scrollUi.listState) {
@@ -89,128 +99,150 @@ fun MenuContentScreen(
             }
     }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        state = scrollUi.listState,
-        verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8),
-    ) {
-        // 1. Баннеры (скроллятся вместе с контентом)
-        item {
-            BannersSection(
-                banners = banners,
-                bannersAreLoading = bannersAreLoading,
-                onBannerClick = { } // TODO
-            )
+    // Скроллим к баннеру и показываем FAB
+    LaunchedEffect(selectedMenuItemIndex) {
+        if (selectedMenuItemIndex != DEFAULT_UNSELECTED_INDEX) {
+            scrollUi.listState.scrollToItem(selectedMenuItemIndex)
+            fabVisible = true
+            delay(FORCE_SHOW_FAB_DURATION_MS)
+            fabVisible = false
         }
-        // Табы категорий
-        val headers = menuItems.filterIsInstance<MenuItem.HeaderItem>()
-        stickyHeader {
-            Column(Modifier.background(Colors.AppBlack)) {
-                CategoryTabsRow(
-                    categories = headers,
-                    selectedTabIndex = activeTabIndex.value,
-                    onTabSelected = { index ->
-                        activeTabIndex.value = index
-                        activeSubTabIndex.value = 0
-                        scope.launch { scrollUi.scrollToCategory(index) }
-                    },
-                    onSearchClick = onSearchClick
+    }
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = scrollUi.listState,
+            verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8),
+        ) {
+            // 1. Баннеры (скроллятся вместе с контентом)
+            item {
+                BannersSection(
+                    banners = banners,
+                    bannersAreLoading = bannersAreLoading,
+                    onBannerClick = onBannersClick
                 )
+            }
+            // Табы категорий
+            val headers = menuItems.filterIsInstance<MenuItem.HeaderItem>()
+            stickyHeader {
+                Column(Modifier.background(Colors.AppBlack)) {
+                    CategoryTabsRow(
+                        categories = headers,
+                        selectedTabIndex = activeTabIndex.value,
+                        onTabSelected = { index ->
+                            activeTabIndex.value = index
+                            activeSubTabIndex.value = 0
+                            scope.launch { scrollUi.scrollToCategory(index) }
+                        },
+                        onSearchClick = onSearchClick
+                    )
 
-                // 2. Табы субкатегорий
-                val activeHeaderIndex = activeTabIndex.value
-                val subCategoriesForActive =
-                    headers.getOrNull(activeHeaderIndex)?.subCategoriesNames.orEmpty()
-                if (subCategoriesForActive.isNotEmpty()) {
-                    SubCategoryTabsRow(
-                        categories = subCategoriesForActive,
-                        selectedTabIndex = activeSubTabIndex.value,
-                        onTabSelected = { subIndex ->
-                            activeSubTabIndex.value = subIndex
-                            scope.launch {
-                                scrollUi.scrollToSubCategory(
-                                    activeHeaderIndex,
-                                    subIndex
-                                )
+                    // 2. Табы субкатегорий
+                    val activeHeaderIndex = activeTabIndex.value
+                    val subCategoriesForActive =
+                        headers.getOrNull(activeHeaderIndex)?.subCategoriesNames.orEmpty()
+                    if (subCategoriesForActive.isNotEmpty()) {
+                        SubCategoryTabsRow(
+                            categories = subCategoriesForActive,
+                            selectedTabIndex = activeSubTabIndex.value,
+                            onTabSelected = { subIndex ->
+                                activeSubTabIndex.value = subIndex
+                                scope.launch {
+                                    scrollUi.scrollToSubCategory(
+                                        activeHeaderIndex,
+                                        subIndex
+                                    )
+                                }
                             }
-                        }
-                    )
-                }
-            }
-        }
-
-        itemsIndexed(
-            items = menuItems,
-            key = { _, item -> item.id }
-        ) { index, item ->
-            val configuration = LocalConfiguration.current
-            val screenWidth = configuration.screenWidthDp.dp
-            val imageSize = remember(screenWidth) {
-                (screenWidth - Dimens.MarginSmall8 * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
-            }
-            when (item) {
-                is MenuItem.HeaderItem -> MenuHeaderItem(item)
-                is MenuItem.SubHeaderItem -> {
-                    val previousItem = if (index > 0) menuItems[index - 1] else null
-                    val hasHeaderBefore = previousItem is MenuItem.HeaderItem
-                    MenuSubHeaderItem(item, hasHeaderBefore)
-                }
-
-                is MenuItem.MealItem.SingleMealItem -> {
-                    val isInProgress = item.meal.id in inProgressItems
-                    // Одинарный формат
-                    MenuMealItem(
-                        meal = item.meal,
-                        onToggleFavorite = onToggleFavorite,
-                        onAddToCart = onAddToCart,
-                        onRemoveFromCart = onRemoveFromCart,
-                        cartItems = cartItems,
-                        imageSize = imageSize,
-                        onMealDetailsClick = onMealDetailsClick,
-                        favoriteIds = favoriteIds,
-                        isInProgress = isInProgress,
-                    )
-                }
-
-                is MenuItem.MealItem.MealRow -> {
-                    // Пара компактных карточек
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(IntrinsicSize.Min)
-                            .padding(horizontal = Dimens.MarginSmall8)
-                    ) {
-                        MenuCompactMealItem(
-                            meal = item.left,
-                            onToggleFavorite = onToggleFavorite,
-                            onAddToCart = onAddToCart,
-                            onRemoveFromCart = onRemoveFromCart,
-                            cartItems = cartItems,
-                            imageSize = imageSize,
-                            modifier = Modifier.weight(1f),
-                            onMealDetailsClick = onMealDetailsClick,
-                            favoriteIds = favoriteIds,
-                            isInProgress = item.left.id in inProgressItems,
                         )
-                        MenuCompactMealItem(
-                            meal = item.right,
+                    }
+                }
+            }
+
+            itemsIndexed(
+                items = menuItems,
+                key = { _, item -> item.id }
+            ) { index, item ->
+                val configuration = LocalConfiguration.current
+                val screenWidth = configuration.screenWidthDp.dp
+                val imageSize = remember(screenWidth) {
+                    (screenWidth - Dimens.MarginSmall8 * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
+                }
+                when (item) {
+                    is MenuItem.HeaderItem -> MenuHeaderItem(item)
+                    is MenuItem.SubHeaderItem -> {
+                        val previousItem = if (index > 0) menuItems[index - 1] else null
+                        val hasHeaderBefore = previousItem is MenuItem.HeaderItem
+                        MenuSubHeaderItem(item, hasHeaderBefore)
+                    }
+
+                    is MenuItem.MealItem.SingleMealItem -> {
+                        val isInProgress = item.meal.id in inProgressItems
+                        // Одинарный формат
+                        MenuMealItem(
+                            meal = item.meal,
                             onToggleFavorite = onToggleFavorite,
                             onAddToCart = onAddToCart,
                             onRemoveFromCart = onRemoveFromCart,
                             cartItems = cartItems,
                             imageSize = imageSize,
-                            modifier = Modifier.weight(1f),
                             onMealDetailsClick = onMealDetailsClick,
                             favoriteIds = favoriteIds,
-                            isInProgress = item.right.id in inProgressItems,
+                            isInProgress = isInProgress,
                         )
                     }
 
+                    is MenuItem.MealItem.MealRow -> {
+                        // Пара компактных карточек
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Min)
+                                .padding(horizontal = Dimens.MarginSmall8)
+                        ) {
+                            MenuCompactMealItem(
+                                meal = item.left,
+                                onToggleFavorite = onToggleFavorite,
+                                onAddToCart = onAddToCart,
+                                onRemoveFromCart = onRemoveFromCart,
+                                cartItems = cartItems,
+                                imageSize = imageSize,
+                                modifier = Modifier.weight(1f),
+                                onMealDetailsClick = onMealDetailsClick,
+                                favoriteIds = favoriteIds,
+                                isInProgress = item.left.id in inProgressItems,
+                            )
+                            MenuCompactMealItem(
+                                meal = item.right,
+                                onToggleFavorite = onToggleFavorite,
+                                onAddToCart = onAddToCart,
+                                onRemoveFromCart = onRemoveFromCart,
+                                cartItems = cartItems,
+                                imageSize = imageSize,
+                                modifier = Modifier.weight(1f),
+                                onMealDetailsClick = onMealDetailsClick,
+                                favoriteIds = favoriteIds,
+                                isInProgress = item.right.id in inProgressItems,
+                            )
+                        }
+
+                    }
+                }
+
+            }
+            // Отступ внизу
+            item { Spacer(modifier = Modifier.height(Dimens.MarginBig32)) }
+        }
+        BackToTopFAB(
+            modifier = Modifier
+                .align(Alignment.BottomStart),
+            visible = fabVisible,
+            onClick = {
+                scope.launch {
+                    scrollUi.listState.animateScrollToItem(0)
                 }
             }
-        }
-        // Отступ внизу
-        item { Spacer(modifier = Modifier.height(Dimens.MarginBig32)) }
+        )
     }
 }

@@ -128,11 +128,9 @@ class MenuViewModel @Inject constructor(
 
     private fun findMenuItemIndex(banner: Banner, menuItems: List<MenuItem>): Int {
         val name = banner.targetName.trim()
-
         // Поиск по имени (точное совпадение)
         menuItems.indexOfFirst { it.getName()?.equals(name, ignoreCase = true) == true }
             .takeIf { it >= 0 }?.let { return it }
-
         // Поиск по имени (частичное совпадение)
         menuItems.indexOfFirst { it.getName()?.contains(name, ignoreCase = true) == true }
             .takeIf { it >= 0 }?.let { return it }

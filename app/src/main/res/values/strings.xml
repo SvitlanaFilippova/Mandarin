@@ -162,7 +162,7 @@
     <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка&#160;&#8212; пожалуйста, позвоните.</string>
 
     <!-- История заказов -->
-    <string name="order_history_is_empty">В&#160;истории пока нет заказов</string>
+    <string name="order_history_is_empty">Здесь будут ваши заказы</string>
     <string name="order_history_is_empty_extra">Сейчас история заказов хранится только на&#160;этом устройстве.
     После переустановки приложения или перехода на&#160;другое устройство данные будут потеряны.
     Мы работаем над авторизацией по&#160;номеру телефона, чтобы ваша история сохранялась всегда.</string>
@@ -258,7 +258,6 @@
     <string name="cannot_open_link">Не удалось открыть ссылку</string>
     <string name="mandarin_info">Доставляем по&#160;Черноголовке и&#160;ближайшим населенным пунктам</string>
     <string name="mandarin_info_when">Ежедневно с 11:00 по 22:00</string>
-
 
     <!-- consent -->
     <string name="consent_prefix">Нажимая на кнопку%s, подтверждаю своё согласие с</string>
