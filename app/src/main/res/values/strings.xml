@@ -17,7 +17,6 @@
     <string name="more_options">Ещё</string>
     <string name="order_history">История заказов</string>
     <string name="saved_addresses">Сохранённые адреса</string>
-    <string name="order_info_screen_title">Статус заказа</string>
 
     <!-- Корзина -->
     <string name="cart">Корзина</string>
@@ -179,8 +178,8 @@
     <string name="filter_by_date_start">Начало</string>
     <string name="filter_by_date_end">Конец</string>
 
-    <!-- Order Info -->
-    <string name="order_number_created">Заказ №%1$s, создан %2$s</string>
+    <!-- Детали заказа -->
+    <string name="order_info_screen_title_with_number">Заказ №%1$s</string>
     <string name="label_error">Ошибка</string>
     <string name="label_order_type">Способ получения</string>
     <string name="label_payment_method">Способ оплаты</string>

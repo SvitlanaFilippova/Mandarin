@@ -23,19 +23,16 @@ class RepeatOrderInteractorImpl(
         for (item in incoming) {
             val baseMeal = menuCache.getMealById(item.id)
 
-            // ⬇️ Пропускаем доставку
-            if (baseMeal?.isDelivery == true) {
-                continue
-            }
-
-            if (baseMeal == null) {
-                invalidFound = true
+            val shouldSkip = baseMeal?.isDelivery == true || baseMeal == null
+            if (shouldSkip) {
+                if (baseMeal == null) invalidFound = true
                 continue
             }
 
             val validAdds = item.chosenAdds.mapNotNull { add ->
                 menuCache.getMealById(add.id)?.toMealAdditional()
-            }.also { if (it.size < item.chosenAdds.size) invalidFound = true }
+            }
+            if (validAdds.size < item.chosenAdds.size) invalidFound = true
 
             val validMods =
                 item.chosenModifiers.groupBy { it.groupId }.mapNotNull { (groupId, incomingMods) ->
@@ -43,10 +40,8 @@ class RepeatOrderInteractorImpl(
                     referenceGroup?.copy(
                         items = incomingMods.mapNotNull { m -> referenceGroup.items.find { it.id == m.id } }
                     )?.takeIf { it.items.isNotEmpty() }
-                }.also {
-                    if (it.size < item.chosenModifiers.distinctBy { it.id }.size) invalidFound =
-                        true
                 }
+            if (validMods.size < item.chosenModifiers.distinctBy { it.id }.size) invalidFound = true
 
             validItems += item.toCartItem(
                 baseMeal = baseMeal,

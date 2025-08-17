@@ -10,6 +10,7 @@ object NavConstants {
     const val MAIN_GRAPH = "main_graph"
     const val KEY_ORDER_ID = "orderId"
     const val KEY_RETURN_TO_ROUTE = "return_to_route"
+    const val KEY_FROM_ORDER_CREATION = "fromOrderCreation"
 
     // Screen routes
     const val MENU_SCREEN_ROUTE = "menu"
@@ -43,7 +44,7 @@ object NavConstants {
 
     const val ORDER_INFO_ROUTE = "order_info"
     const val ORDER_INFO_ROUTE_WITH_ARGS =
-        "$ORDER_INFO_ROUTE/{$KEY_ORDER_ID}"
+        "$ORDER_INFO_ROUTE/{$KEY_ORDER_ID}/{$KEY_FROM_ORDER_CREATION}"
 
     val bottomNavigationRoutes = setOf(
         FAVORITES_SCREEN_ROUTE,

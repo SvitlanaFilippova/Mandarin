@@ -107,10 +107,11 @@ fun NavController.navigateToMealDetails(
 
 fun NavController.navigateToOrderInfo(
     orderId: String,
+    fromOrderCreation: Boolean = false,
 ) {
-    navigate("$ORDER_INFO_ROUTE/$orderId") {
-        popUpTo(CART_SCREEN_ROUTE) {
-            inclusive = true
+    navigate("$ORDER_INFO_ROUTE/$orderId/$fromOrderCreation") {
+        if (fromOrderCreation) {
+            popUpTo(CART_SCREEN_ROUTE) { inclusive = true }
         }
         launchSingleTop = true
     }

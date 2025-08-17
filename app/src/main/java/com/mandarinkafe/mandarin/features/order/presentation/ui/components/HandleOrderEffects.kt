@@ -39,6 +39,7 @@ fun HandleOrderEffects(
                 is OrderEffect.ShowSuccess ->
                     navController.navigateToOrderInfo(
                         orderId = effect.orderId,
+                        fromOrderCreation = true
                     )
             }
         }

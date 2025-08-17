@@ -13,11 +13,12 @@ data class CartItem(
     val name: String
         get() = customizedMeal.meal.name
 
-    /**
-     * Проверка эквивалентности по содержимому (без учёта id и quantity).
-     */
-    fun equalsByContent(other: CartItem): Boolean {
-        return customizedMeal == other.customizedMeal &&
-                comment == other.comment
-    }
+}
+
+/**
+ * Проверка эквивалентности по содержимому (без учёта id и quantity).
+ */
+fun CartItem.equalsByContent(other: CartItem): Boolean {
+    return customizedMeal == other.customizedMeal &&
+            comment == other.comment
 }

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +33,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ButtonWithCircularProgressIndicator
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 
 @Composable
@@ -44,6 +44,7 @@ fun OrderInfoContentScreen(
     navController: NavHostController,
     onOrderItemClick: (String) -> Unit,
     orderRepeatingInProgress: Boolean,
+    fromOrderCreation: Boolean,
 ) {
     if (order == null) return
     var showCancelDialog by remember { mutableStateOf(false) }
@@ -53,25 +54,16 @@ fun OrderInfoContentScreen(
             .padding(Dimens.MarginSmall8),
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
+
         item {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(Dimens.MarginSmall8),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                order.number?.let {
-                    Text(
-                        text = stringResource(
-                            R.string.order_number_created,
-                            it,
-                            order.whenCreated ?: ""
-                        ),
-                        style = Typography.RegularLightTextStyle
-                    )
-                }
-            }
+            ScreenTitleWithBackButton(
+                name = stringResource(
+                    R.string.order_info_screen_title_with_number,
+                    order.number ?: ""
+                ),
+                showBackButton = !fromOrderCreation,
+                onBackClick = { navController.popBackStack() }
+            )
         }
 
         item {
@@ -139,14 +131,15 @@ fun OrderInfoContentScreen(
                         )
                     }
                 }
-
-                ButtonWithText(
-                    modifier = Modifier
-                        .padding(Dimens.MarginSmall8)
-                        .weight(1f),
-                    textResID = R.string.back_to_menu,
-                    onClick = { navController.navigateToMenu() }
-                )
+                if (fromOrderCreation) {
+                    ButtonWithText(
+                        modifier = Modifier
+                            .padding(Dimens.MarginSmall8)
+                            .weight(1f),
+                        textResID = R.string.back_to_menu,
+                        onClick = { navController.navigateToMenu() }
+                    )
+                }
             }
         }
 

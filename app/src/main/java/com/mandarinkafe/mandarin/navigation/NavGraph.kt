@@ -192,15 +192,17 @@ fun NavGraph(navHostController: NavHostController) {
             composable(
                 route = NavConstants.ORDER_INFO_ROUTE_WITH_ARGS,
                 arguments = listOf(
-                    navArgument(NavConstants.KEY_ORDER_ID) {
-                        type = NavType.StringType
-                    }
+                    navArgument(NavConstants.KEY_ORDER_ID) { type = NavType.StringType },
+                    navArgument(NavConstants.KEY_FROM_ORDER_CREATION) { type = NavType.BoolType }
                 )
             ) { backStackEntry ->
                 val orderId = backStackEntry.arguments?.getString(NavConstants.KEY_ORDER_ID) ?: ""
+                val fromOrderCreation =
+                    backStackEntry.arguments?.getBoolean(NavConstants.KEY_FROM_ORDER_CREATION) == true
 
                 OrderInfoScreen(
                     orderID = orderId,
+                    fromOrderCreation = fromOrderCreation,
                     sharedViewModel = sharedViewModel,
                     navController = navHostController,
                 )

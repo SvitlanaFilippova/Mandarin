@@ -32,6 +32,7 @@ fun OrderInfoScreen(
     orderID: String?,
     sharedViewModel: SharedViewModel,
     viewModel: OrderInfoViewModel = hiltViewModel(),
+    fromOrderCreation: Boolean = false,
     navController: NavHostController,
 ) {
     if (orderID == null) return
@@ -60,6 +61,7 @@ fun OrderInfoScreen(
                 onEvent = onEvent,
                 navController = navController,
                 orderRepeatingInProgress = state.orderRepeatingInProgress,
+                fromOrderCreation = fromOrderCreation,
                 onOrderItemClick = { mealId -> onSharedEvent(OnMealDetailsClick(mealId = mealId)) }
             )
         }
