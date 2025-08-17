@@ -82,6 +82,7 @@ object Constants {
     const val TAG_NO_ADDS = "NO_ADDS"
     const val TAG_NO_DISCOUNT = "NO_DISCOUNT"
     const val TAG_NO_DELIVERY = "NO_DELIVERY"
+    const val TAG_IS_DELIVERY_POSITION = "IS_DELIVERY_POSITION"
     const val TAG_PIZZERIA = "PIZZERIA"
     const val TAG_CAFE = "CAFE"
     const val LOCALE_RU = "ru_RU"

@@ -27,7 +27,7 @@ fun DateAndStatusSection(orderStatus: DeliveryStatus?, whenCreated: String) {
         when (orderStatus) {
             null -> Colors.White
             DeliveryStatus.UNCONFIRMED -> Colors.White
-            DeliveryStatus.CLOSED -> Colors.Orange
+            DeliveryStatus.CLOSED -> Colors.White
             DeliveryStatus.CANCELLED -> Colors.ErrorRed
             else -> Colors.Green
         }

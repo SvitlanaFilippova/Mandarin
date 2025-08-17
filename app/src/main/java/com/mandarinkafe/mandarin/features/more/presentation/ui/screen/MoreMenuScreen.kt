@@ -1,6 +1,8 @@
 package com.mandarinkafe.mandarin.features.more.presentation.ui.screen
 
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
@@ -41,6 +43,7 @@ fun MoreMenuScreen(navController: NavHostController) {
     ) {
         item {
             MandarinDeliveryInfo()
+            Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
         }
 
         item {

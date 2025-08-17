@@ -37,10 +37,18 @@ class CartInteractorImpl(
     ) {
         when {
             cartItem != null -> {
-                val existing = getCurrentCartItems().find { it.id == cartItem.id }
-                if (existing != null) {
-                    // увеличиваем количество
-                    val updated = existing.copy(quantity = existing.quantity + 1)
+                val currentItems = getCurrentCartItems()
+
+                val existingById = currentItems.find { it.id == cartItem.id }
+                if (existingById != null) {
+                    val updated = existingById.copy(quantity = existingById.quantity + 1)
+                    cartWriter.addOrUpdateItem(updated)
+                    return
+                }
+
+                val existingByContent = currentItems.find { it.equalsByContent(cartItem) }
+                if (existingByContent != null) {
+                    val updated = existingByContent.copy(quantity = existingByContent.quantity + 1)
                     cartWriter.addOrUpdateItem(updated)
                 } else {
                     cartWriter.addOrUpdateItem(cartItem)
@@ -48,9 +56,8 @@ class CartInteractorImpl(
             }
 
             customizedMeal != null -> {
-                // Ищем последний CartItem с таким же customizedMeal
-                val existing =
-                    getCurrentCartItems().lastOrNull { it.customizedMeal == customizedMeal }
+                val existing = getCurrentCartItems()
+                    .lastOrNull { it.customizedMeal == customizedMeal }
                 if (existing != null) {
                     val updated = existing.copy(quantity = existing.quantity + 1)
                     cartWriter.addOrUpdateItem(updated)
@@ -61,8 +68,8 @@ class CartInteractorImpl(
             }
 
             meal != null -> {
-                // Ищем последний CartItem с таким meal внутри customizedMeal
-                val existing = getCurrentCartItems().lastOrNull { it.customizedMeal.meal == meal }
+                val existing = getCurrentCartItems()
+                    .lastOrNull { it.customizedMeal.meal == meal }
                 if (existing != null) {
                     val updated = existing.copy(quantity = existing.quantity + 1)
                     cartWriter.addOrUpdateItem(updated)

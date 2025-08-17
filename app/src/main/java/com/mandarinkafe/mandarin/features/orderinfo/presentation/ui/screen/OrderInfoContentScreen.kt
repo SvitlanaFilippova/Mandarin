@@ -112,7 +112,7 @@ fun OrderInfoContentScreen(
                 horizontalArrangement = Arrangement.Center
             ) {
                 when {
-                    order.isClosed -> {
+                    order.isClosed && order.items.isNotEmpty() -> {
                         if (orderRepeatingInProgress) {
                             ButtonWithCircularProgressIndicator()
                         } else {

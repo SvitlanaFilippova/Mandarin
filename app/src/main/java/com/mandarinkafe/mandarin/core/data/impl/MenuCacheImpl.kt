@@ -166,6 +166,15 @@ class MenuCacheImpl @Inject constructor(
             }
     }
 
+    override fun isDeliveryMeal(meal: Meal): Boolean {
+        val deliveryCategory = deliveryItems.value ?: return false
+        fun dfs(cat: MealCategory): Boolean {
+            if (cat.meals?.any { it.id == meal.id } == true) return true
+            return cat.subCategories?.any { dfs(it) } == true
+        }
+        return dfs(deliveryCategory)
+    }
+
     private companion object {
         const val MAX_ATTEMPTS = 5
         const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 200L

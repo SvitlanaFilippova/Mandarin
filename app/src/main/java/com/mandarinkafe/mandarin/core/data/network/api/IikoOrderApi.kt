@@ -36,4 +36,5 @@ interface IikoOrderApi {
         @Header("Authorization") token: String,
         @Body body: PaymentTypesRequest
     ): PaymentTypesResponse
+
 }

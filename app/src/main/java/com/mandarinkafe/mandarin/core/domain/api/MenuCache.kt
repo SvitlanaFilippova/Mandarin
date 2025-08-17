@@ -17,5 +17,6 @@ interface MenuCache {
     fun getMealById(id: String): Meal?
     fun getMealsBySku(sku: String): List<Meal>
     fun fetchMenuIfNeeded()
+    fun isDeliveryMeal(meal: Meal): Boolean
     suspend fun forceRefresh(fetcher: suspend () -> Resource<List<MealCategory>>)
 }

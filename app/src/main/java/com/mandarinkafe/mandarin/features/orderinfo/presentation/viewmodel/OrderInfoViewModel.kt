@@ -81,11 +81,15 @@ class OrderInfoViewModel @Inject constructor(
         viewModelScope.launch {
             val id = state.value.incomingOrder?.id
             id?.let {
-                cancelOrderUseCase.invoke(it)
                 setLoading()
-                delay(ORDER_STATUS_UPD_DELAY_AFTER_CANCEL)
-                val result = getOrderStatus(it)
-                proceedOrderStatusResult(result)
+                val cancelResult = cancelOrderUseCase.invoke(it)
+                if (cancelResult is Resource.Success) {
+                    delay(ORDER_STATUS_UPD_DELAY_AFTER_CANCEL)
+                    val result = getOrderStatus(it)
+                    proceedOrderStatusResult(result)
+                } else {
+                    showError()
+                }
             }
         }
     }
@@ -97,7 +101,7 @@ class OrderInfoViewModel @Inject constructor(
             is Resource.Success -> {
                 val order = result.data
                 if (order == null) {
-                    showError("Что-то пошло не так")
+                    showError()
                     return
                 }
                 setStatus(order)
@@ -130,7 +134,7 @@ class OrderInfoViewModel @Inject constructor(
         observeJob = null
     }
 
-    private fun showError(msg: String?) {
+    private fun showError(msg: String? = "Что-то пошло не так") {
         msg?.let {
             sendEffect(ShowError(msg))
         }

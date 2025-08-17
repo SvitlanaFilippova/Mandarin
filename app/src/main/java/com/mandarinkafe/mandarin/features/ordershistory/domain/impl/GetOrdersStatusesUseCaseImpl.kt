@@ -9,7 +9,8 @@ import com.mandarinkafe.mandarin.util.Resource
 class GetOrdersStatusesUseCaseImpl(private val repository: OrdersStatusesRepository) :
     GetOrdersStatusesUseCase {
     override suspend fun invoke(orders: List<SavedOrder>): Resource<List<SavedOrder>> {
-        val response = repository.getStatuses(orders.map { it.id })
+        val response =
+            repository.getStatuses(orders.take(MAX_ORDERS_AMOUNT_TO_REQUEST).map { it.id })
 
         return if (response is Resource.Success) {
             if (response.data != null) {
@@ -34,5 +35,10 @@ class GetOrdersStatusesUseCaseImpl(private val repository: OrdersStatusesReposit
         } else {
             Resource.ErrorEmptyData()
         }
+    }
+
+    private companion object {
+        const val MAX_ORDERS_AMOUNT_TO_REQUEST =
+            200 // Сервер принимает не более 200 id, так что запрашиваем информацию о последних 200
     }
 }

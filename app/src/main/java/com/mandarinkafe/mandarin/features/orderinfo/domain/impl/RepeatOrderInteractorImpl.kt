@@ -22,6 +22,12 @@ class RepeatOrderInteractorImpl(
 
         for (item in incoming) {
             val baseMeal = menuCache.getMealById(item.id)
+
+            // ⬇️ Пропускаем доставку
+            if (baseMeal?.isDelivery == true) {
+                continue
+            }
+
             if (baseMeal == null) {
                 invalidFound = true
                 continue

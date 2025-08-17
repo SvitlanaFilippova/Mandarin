@@ -18,7 +18,7 @@ class ScrollUiState(
     }
 
     suspend fun scrollToCategory(index: Int) {
-        listState.scrollToItem(categoryPositions[index])
+        listState.scrollToItem(categoryPositions[index] + 1)
     }
 
     fun getActiveSubTabIndexForHeader(headerIndex: Int): Int {
@@ -31,7 +31,10 @@ class ScrollUiState(
     suspend fun scrollToSubCategory(headerIndex: Int, subIndex: Int) {
         val subPositions =
             subCategoryPositionsMap[categoryPositions.getOrNull(headerIndex)] ?: return
-        listState.scrollToItem(subPositions.getOrNull(subIndex) ?: return)
+        val target = subPositions.getOrNull(subIndex) ?: return
+        listState.scrollToItem(
+            index = target + 1
+        )
     }
 }
 

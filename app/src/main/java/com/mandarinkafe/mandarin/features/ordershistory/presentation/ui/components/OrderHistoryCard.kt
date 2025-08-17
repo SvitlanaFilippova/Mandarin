@@ -1,9 +1,7 @@
 package com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,26 +33,21 @@ fun OrderHistoryCard(modifier: Modifier = Modifier, order: SavedOrder, onClick: 
                 whenCreated = order.whenCreated
             )
 
-            // Тип заказа
             Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                order.orderType?.let {
-                    Text(
-                        text = stringResource(it.toUi().nameRes),
-                        style = Typography.RegularTextStyle,
-                    )
-                    if (order.number.isNotEmpty()) {
-                        Text(
-                            text = "№${order.number}",
-                            style = Typography.RegularTextStyle,
-                        )
-                    }
+            // Тип и номер заказа
+            order.orderType?.let {
+                val text = if (order.number.isNotEmpty()) {
+                    stringResource(it.toUi().nameRes) + " • №${order.number}"
+                } else {
+                    stringResource(it.toUi().nameRes)
                 }
+                Text(
+                    text = text,
+                    style = Typography.RegularTextStyle,
+                )
             }
+
             // Адрес
             if (order.addressLine1.isNotEmpty()) {
                 Text(

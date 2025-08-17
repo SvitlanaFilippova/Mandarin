@@ -97,8 +97,8 @@
     <string name="pickup_both_title">Ваш заказ будет готов в&#160;двух точках самовывоза</string>
     <string name="pickup_both_description">В&#160;заказе есть блюда, которые готовятся в&#160;пиццерии, и&#160;те, что готовятся в&#160;основном кафе.
 Их&#160;нужно будет забрать по&#160;двум адресам. Это соседние здания.</string>
-    <string name="pickup_cafe_address">Кафе&#160;&#8212; Черноголовка, ул. Береговая, 24</string>
-    <string name="pickup_pizzeria_address">Пиццерия&#160;&#8212; Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
+    <string name="pickup_cafe_address">Кафе: Черноголовка, ул. Береговая, 24</string>
+    <string name="pickup_pizzeria_address">Пиццерия: Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
     <string name="order_submit_success">Заказ №%1$s успешно создан</string>
     <string name="back_to_menu">Вернуться в меню</string>
     <string name="choose_address">Выберите адрес *</string>
@@ -270,13 +270,24 @@
     <!-- О приложении  -->
     <string name="about_title">О приложении</string>
     <string name="version_text">Версия приложения: %1$s</string>
-    <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана Филиппова&#160;&#8212; я&#160;разработчик этого приложения.\n\nЕсли у&#160;тебя есть идеи по&#160;улучшению или просто хочешь поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!\n\nP.S: отзывы в сторах тоже приветствуются 😊</string>
+    <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана Филиппова&#160;&#8212; я&#160;разработчик этого приложения.\n\nЕсли у&#160;тебя есть идеи по&#160;улучшению или просто хочешь поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!</string>
     <string name="contact_title">Как со мной связаться:</string>
     <string name="telegram_label">Telegram</string>
     <string name="telegram_url">https://t.me/SvitlanaFilippova</string>
     <string name="github_label">GitHub</string>
     <string name="github_url">https://github.com/SvitlanaFilippova</string>
-    <string name="thanks_text">Спасибо, что пользуешься моим приложением! ❤️</string>
+    <string name="thanks_text">P.S: отзывы в сторах тоже приветствуются 😊\n\n**тут будут ссылки, чтобы оставить отзыв**</string>
+
+    <!-- Контакты -->
+    <string name="contacts_screen_title">Контакты</string>
+    <string name="working_hours_title">График работы</string>
+    <string name="working_hours_value">Ежедневно с 11:00 до 22:00</string>
+    <string name="addresses_title">Адреса</string>
+    <string name="contacts_cafe_title">Кафе</string>
+    <string name="contacts_cafe_address">Черноголовка, ул. Береговая, 24</string>
+    <string name="contacts_pizzeria_title">Пиццерия</string>
+    <string name="contacts_pizzeria_address">Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
+    <string name="phone_title">Телефон</string>
 
     <!-- Для contentDescription  -->
     <string name="picture_of_meal_template">Изображение %1$s</string>

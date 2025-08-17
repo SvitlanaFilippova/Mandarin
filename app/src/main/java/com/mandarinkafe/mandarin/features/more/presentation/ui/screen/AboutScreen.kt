@@ -31,7 +31,6 @@ fun AboutScreen(onBackClick: () -> Boolean) {
     val aboutMainText = stringResource(id = R.string.about_main_text)
     stringResource(id = R.string.contact_title)
     val thanksText = stringResource(id = R.string.thanks_text)
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,7 +73,7 @@ fun AboutScreen(onBackClick: () -> Boolean) {
             )
         }
 
-        Spacer(modifier = Modifier.height(Dimens.MarginHuge80))
+        Spacer(modifier = Modifier.height(Dimens.MarginBig32))
 
         // Спасибо
         Text(
@@ -92,6 +91,6 @@ fun AboutScreen(onBackClick: () -> Boolean) {
             style = Typography.SmallTextStyle,
             color = Colors.LightGrey
         )
-        Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
+        Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
     }
 }

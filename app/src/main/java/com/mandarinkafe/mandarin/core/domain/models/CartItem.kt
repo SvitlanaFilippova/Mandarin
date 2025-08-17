@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.core.domain.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import java.util.UUID
 
-@Stable
+@Immutable
 data class CartItem(
     val id: String = UUID.randomUUID().toString(),
     val customizedMeal: CustomizedMeal,
@@ -12,4 +12,12 @@ data class CartItem(
 ) {
     val name: String
         get() = customizedMeal.meal.name
+
+    /**
+     * Проверка эквивалентности по содержимому (без учёта id и quantity).
+     */
+    fun equalsByContent(other: CartItem): Boolean {
+        return customizedMeal == other.customizedMeal &&
+                comment == other.comment
+    }
 }
