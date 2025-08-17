@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen
 import ClickToCopyText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,6 +23,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.AddressInfo
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.CustomerInfo
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderActionsButtons
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderInfoSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderItemsSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderStatusSection
@@ -31,10 +31,8 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.O
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ButtonWithCircularProgressIndicator
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
-import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 
 @Composable
 fun OrderInfoContentScreen(
@@ -54,7 +52,6 @@ fun OrderInfoContentScreen(
             .padding(Dimens.MarginSmall8),
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
-
         item {
             ScreenTitleWithBackButton(
                 name = stringResource(
@@ -99,48 +96,16 @@ fun OrderInfoContentScreen(
 
         // Кнопки
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                when {
-                    order.isClosed && order.items.isNotEmpty() -> {
-                        if (orderRepeatingInProgress) {
-                            ButtonWithCircularProgressIndicator()
-                        } else {
-                            ButtonWithText(
-                                modifier = Modifier
-                                    .padding(Dimens.MarginSmall8)
-                                    .weight(1f),
-                                textResID = R.string.repeat_order,
-                                containerColor = Colors.Green,
-                                onClick = { onEvent(OrderInfoEvent.RepeatOrder) }
-                            )
-                        }
-                    }
-
-                    order.canBeCanceled -> {
-                        ButtonWithText(
-                            modifier = Modifier
-                                .padding(Dimens.MarginSmall8)
-                                .weight(1f),
-                            textResID = R.string.cancel_order,
-                            containerColor = Colors.ErrorRed,
-                            onClick = { showCancelDialog = true }
-
-                        )
-                    }
-                }
-                if (fromOrderCreation) {
-                    ButtonWithText(
-                        modifier = Modifier
-                            .padding(Dimens.MarginSmall8)
-                            .weight(1f),
-                        textResID = R.string.back_to_menu,
-                        onClick = { navController.navigateToMenu() }
-                    )
-                }
-            }
+            OrderActionsButtons(
+                isClosed = order.isClosed,
+                hasItems = order.items.isNotEmpty(),
+                canBeCanceled = order.canBeCanceled,
+                fromOrderCreation = fromOrderCreation,
+                onCancelClick = { showCancelDialog = true },
+                orderRepeatingInProgress = orderRepeatingInProgress,
+                onRepeatOrderCLick = { onEvent(OrderInfoEvent.RepeatOrder) },
+                onBackToMenuCLick = { navController.navigateToMenu() }
+            )
         }
 
         // ID заказа
