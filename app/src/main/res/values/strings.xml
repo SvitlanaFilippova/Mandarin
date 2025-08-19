@@ -56,11 +56,6 @@
     <string name="for_selfpickup">для самовывоза</string>
     <string name="for_selfpickup_details">Позиция доступна только для заказа самовывозом. Доставка невозможна.</string>
 
-    <!-- Доставка -->
-    <string name="delivery">Доставка</string>
-    <string name="delivery_history">История заказов</string>
-    <string name="free_delivery_at">Доставка %2$d ₽;\nПри заказе от %1$d ₽ — бесплатно.</string>
-
     <!-- Оформление заказа -->
     <string name="your_name">Имя</string>
     <string name="your_phone_required">Номер телефона *</string>
@@ -111,6 +106,8 @@
     <string name="deliver_to_this_location">Доставить сюда</string>
     <string name="to_init_location">Вернуться к изначальному адресу</string>
     <string name="to_my_location">Вернуться к моей локации</string>
+    <string name="zoom_minus">Отдалить</string>
+    <string name="zoom_plus">Приблизить</string>
     <string name="save">Сохранить</string>
     <string name="delete">Удалить</string>
     <string name="no_saved_addresses">Сохранённых адресов пока нет.</string>
@@ -161,6 +158,7 @@
     <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка&#160;&#8212; пожалуйста, позвоните.</string>
 
     <!-- История заказов -->
+    <string name="delivery_history">История заказов</string>
     <string name="order_history_is_empty">Здесь будут ваши заказы</string>
     <string name="order_history_is_empty_extra">Сейчас история заказов хранится только на&#160;этом устройстве.
     После переустановки приложения или перехода на&#160;другое устройство данные будут потеряны.
@@ -247,7 +245,7 @@
     <string name="more_orders_history">История заказов</string>
     <string name="more_saved_addresses">Сохранённые адреса</string>
     <string name="more_section_legal_info">Правовая информация</string>
-    <string name="more_delivery_info">Информация о доставке</string>
+    <string name="more_delivery_info">Условия доставки</string>
     <string name="more_contacts">Контакты</string>
     <string name="more_message_manager">Написать директору</string>
     <string name="more_privacy_policy">Политика конфиденциальности</string>
@@ -287,6 +285,17 @@
     <string name="contacts_pizzeria_title">Пиццерия</string>
     <string name="contacts_pizzeria_address">Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
     <string name="phone_title">Телефон</string>
+
+    <!-- Доставка -->
+    <string name="delivery">Доставка</string>
+    <string name="delivery_areas">Все зоны доставки</string>
+    <string name="delivery_free_from">0&#160;₽ от&#160;%1$d&#160;₽</string>
+    <string name="delivery_price">Иначе %1$d&#160;₽</string>
+    <string name="delivery_price_and_free_from">Доставка %2$d&#160;₽;\nПри заказе от&#160;%1$d&#160;₽ — бесплатно</string>
+    <string name="delivery_duration_title">Время доставки</string>
+    <string name="delivery_zones_text">Доставим&#160;&#8212; бесплатно при условии заказа на&#160;минимальную сумму. Чем дальше от&#160;Черноголовки, тем сумма выше.</string>
+    <string name="delivery_duration_value">Время доставки зависит от&#160;удалённости адреса и&#160;загруженности ресторана.
+Актуальную информацию можно уточнить у&#160;оператора по&#160;телефону.</string>
 
     <!-- Для contentDescription  -->
     <string name="picture_of_meal_template">Изображение %1$s</string>

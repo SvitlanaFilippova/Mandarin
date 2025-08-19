@@ -60,7 +60,8 @@ object Constants {
     const val PAYMENT_CASH_CODE = "CASH"
 
     // Map
-    const val MAP_DEFAULT_ZOOM = 17.0f
+    const val MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN = 17.0f
+    const val MAP_DEFAULT_ZOOM_FOR_DELIVERY_SCREEN = 11.0f
     const val MAP_DEFAULT_TILT = 30.0f
     const val MAP_DEFAULT_AZIMUTH = 0.0f
     const val PIN_INDICATOR_SCALE = 0.45f
@@ -71,7 +72,6 @@ object Constants {
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
     const val LOCAL_STORAGE_NAME = "local_storage"
     const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/spreadsheets/d/e/"
-
 
     // Для обработки особых категорий по их названиям
     const val CATEGORY_ADDS = "Добавки"
@@ -98,4 +98,7 @@ object Constants {
     const val NEW_LABEL_KEY = "new_label_key"
     const val HIT_LABEL_DEFAULT = "hit"
     const val HIT_LABEL_KEY = "hit_label_key"
+
+    const val MANDARIN_LATITUDE = 55.998040
+    const val MANDARIN_LONGITUDE = 38.375328
 }

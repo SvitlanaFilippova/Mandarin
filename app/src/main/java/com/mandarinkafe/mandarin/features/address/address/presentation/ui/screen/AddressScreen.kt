@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,9 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Address
@@ -36,11 +32,11 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Locat
 import com.mandarinkafe.mandarin.util.Constants.MAP_ANIMATION_DURATION
 import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_AZIMUTH
 import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_TILT
-import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_ZOOM
+import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN
 import com.mandarinkafe.mandarin.util.Constants.MIN_LINES_FOR_ADDRESS_INPUT
+import com.mandarinkafe.mandarin.util.presentation.ui.components.BindMapViewToLifecycle
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import com.yandex.mapkit.Animation
-import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
@@ -62,7 +58,6 @@ fun AddressMapScreen(
         }
     }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
     val initLocation = state.initPinPoint
     val userLocation = state.userLocation
@@ -164,40 +159,20 @@ fun AddressMapScreen(
         returnToRoute = returnToRoute
     )
 
-    // Lifecycle observer для вызова onStart/onStop у MapKitFactory
-    DisposableEffect(lifecycleOwner) {
-        val lifecycle = lifecycleOwner.lifecycle
-
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_START -> {
-                    MapKitFactory.getInstance().onStart()
-                    mapView?.onStart()
-                }
-
-                Lifecycle.Event.ON_STOP -> {
-                    mapView?.onStop()
-                    MapKitFactory.getInstance().onStop()
-                }
-
-                else -> Unit
-            }
-        }
-        lifecycle.addObserver(observer)
-        onDispose {
-            lifecycle.removeObserver(observer)
-        }
-    }
+    BindMapViewToLifecycle(mapView)
 }
 
 private fun moveCamera(point: Point?, mapView: MapView?) {
     if (point != null) {
         mapView?.mapWindow?.map?.move(
-            CameraPosition(point, MAP_DEFAULT_ZOOM, MAP_DEFAULT_AZIMUTH, MAP_DEFAULT_TILT),
+            CameraPosition(
+                point,
+                MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN,
+                MAP_DEFAULT_AZIMUTH,
+                MAP_DEFAULT_TILT
+            ),
             Animation(Animation.Type.SMOOTH, MAP_ANIMATION_DURATION),
             null
         )
     }
 }
-
-

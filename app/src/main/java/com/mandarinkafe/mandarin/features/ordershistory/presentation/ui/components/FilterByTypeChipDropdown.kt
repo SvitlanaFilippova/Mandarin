@@ -71,7 +71,7 @@ fun FilterByTypeChipDropdown(
         )
         DropdownMenu(
             expanded = expanded,
-            containerColor = Colors.Brown,
+            containerColor = Colors.AppBlack,
             onDismissRequest = { expanded = false }
         ) {
             allItems.forEach { item ->

@@ -10,58 +10,70 @@ import com.mandarinkafe.mandarin.features.favorites.data.models.isBase
 import com.mandarinkafe.mandarin.features.favorites.data.models.sameAs
 import javax.inject.Inject
 
-class FavoritesStorageImpl @Inject constructor(private val sharedPreferences: SharedPreferences) :
-    FavoritesStorage {
+class FavoritesStorageImpl @Inject constructor(
+    private val sharedPreferences: SharedPreferences
+) : FavoritesStorage {
 
     override suspend fun toggleFavorite(meal: StoredFavoriteMeal): Boolean {
-        // Получаем текущее множество избранного
+        Log.d("FavoritesStorage", "toggleFavorite called with meal=$meal")
+
         val currentSet = getFavorites().toMutableSet()
+        Log.d("FavoritesStorage", "Current favorites before toggle: $currentSet")
 
-        // Определяем, базовая это запись или кастомная
         val isBase = meal.isBase()
-
-        // Проверяем, есть ли уже запись в текущем множестве
         val alreadyExists = if (isBase) {
-            // для базового — ищем именно Base по mealId
             currentSet.any { it.mealId == meal.mealId && it.isBase() }
         } else {
-            // для кастомного — полное совпадение всех полей, кроме timestamp
             currentSet.any { it.sameAs(meal) }
         }
+        Log.d("FavoritesStorage", "isBase=$isBase, alreadyExists=$alreadyExists")
 
         val isNowFavorite = if (alreadyExists) {
-            // Если уже есть — удаляем
             if (isBase) {
                 currentSet.removeAll { it.mealId == meal.mealId && it.isBase() }
             } else {
                 currentSet.removeAll { it.sameAs(meal) }
             }
+            Log.d("FavoritesStorage", "Removed meal=$meal")
             false
         } else {
-            // Если нет — добавляем
             currentSet.add(meal)
+            Log.d("FavoritesStorage", "Added meal=$meal")
             true
         }
 
-        // Сохраняем обновлённый сет
         saveFavorites(currentSet)
+        Log.d(
+            "FavoritesStorage",
+            "Favorites after toggle: $currentSet, isNowFavorite=$isNowFavorite"
+        )
         return isNowFavorite
     }
 
     override fun saveFavorites(favorites: Set<StoredFavoriteMeal>) {
+        val json = Gson().toJson(favorites)
+        Log.d("FavoritesStorage", "Saving favorites JSON=$json")
         sharedPreferences.edit {
-            putString(FAVORITES_KEY, Gson().toJson(favorites))
+            putString(FAVORITES_KEY, json)
         }
     }
 
     override suspend fun getFavorites(): Set<StoredFavoriteMeal> {
         val json = sharedPreferences.getString(FAVORITES_KEY, null)
-        return try {
-            val listType = object : TypeToken<Set<StoredFavoriteMeal>>() {}.type
-            Gson().fromJson(json, listType) ?: emptySet()
+        Log.d("FavoritesStorage", "Reading favorites raw JSON=$json")
 
+        return try {
+            if (json == null) {
+                Log.w("FavoritesStorage", "Favorites key is null, returning emptySet()")
+                emptySet()
+            } else {
+                val listType = object : TypeToken<Set<StoredFavoriteMeal>>() {}.type
+                val result: Set<StoredFavoriteMeal> = Gson().fromJson(json, listType) ?: emptySet()
+                Log.d("FavoritesStorage", "Parsed favorites=$result")
+                result
+            }
         } catch (e: Exception) {
-            Log.e("FavoritesStorage", "Ошибка чтения избранного: ${e.message}")
+            Log.e("FavoritesStorage", "Ошибка чтения избранного: ${e.message}, json=$json", e)
             sharedPreferences.edit { remove(FAVORITES_KEY) }
             emptySet()
         }

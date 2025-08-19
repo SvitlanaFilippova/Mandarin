@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.address.address.presentation.ui.compo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,10 +17,13 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.models.UiDeliveryArea
+import com.mandarinkafe.mandarin.util.Constants.MAP_ANIMATION_DURATION
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.RoundedButton
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraListener
+import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
 
 @Composable
@@ -29,13 +33,13 @@ fun MapWithButtons(
     displayAddress: String?,
     deliveryArea: UiDeliveryArea?,
     isLoading: Boolean,
-    locationChosen: Boolean,
+    onMapReady: (MapView) -> Unit,
     isError: Boolean,
     onCameraMoved: (Point) -> Unit,
-    onDeliverHereClick: () -> Unit,
-    onMapReady: (MapView) -> Unit,
+    onDeliverHereClick: (() -> Unit)? = null,
+    locationChosen: Boolean,
     onBackToInitLocationClick: (() -> Unit)?,
-    onBackToUserLocationClick: (() -> Unit)?
+    onBackToUserLocationClick: (() -> Unit)? = null
 ) {
     val cameraListener = remember {
         CameraListener { _, cameraPosition, _, finished ->
@@ -44,6 +48,7 @@ fun MapWithButtons(
             }
         }
     }
+
     mapView?.let {
         DeliveryAreasOnMap(
             mapView = it,
@@ -68,7 +73,9 @@ fun MapWithButtons(
         if (displayAddress != null && !isLoading) {
             // Окно с информацией о текущей зоне доставки
             DeliveryAreaInfo(
-                modifier = Modifier.align(Alignment.TopCenter),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth(),
                 deliveryArea = deliveryArea
             )
         }
@@ -81,7 +88,6 @@ fun MapWithButtons(
             // Кнопка "Вернуться к стартовой позиции"
             onBackToInitLocationClick?.let {
                 RoundedButton(
-
                     onClick = onBackToInitLocationClick,
                     painter = painterResource(R.drawable.ic_undo),
                     contentDescriptionResId = R.string.to_my_location
@@ -98,6 +104,20 @@ fun MapWithButtons(
                 )
             }
 
+            RoundedButton(
+                modifier = Modifier.padding(top = Dimens.MarginSmall8),
+                onClick = { changeZoom(mapView = mapView, delta = +1f) },
+                painter = painterResource(R.drawable.ic_plus),
+                contentDescriptionResId = R.string.zoom_plus
+            )
+
+            RoundedButton(
+                modifier = Modifier.padding(top = Dimens.MarginSmall8),
+                onClick = { changeZoom(mapView = mapView, delta = -1f) },
+                painter = painterResource(R.drawable.ic_minus),
+                contentDescriptionResId = R.string.zoom_minus
+            )
+
         }
 
         // Центральный маркер
@@ -112,16 +132,32 @@ fun MapWithButtons(
         )
 
         // Кнопка "Доставить сюда"
-        ButtonWithText(
-            modifier = Modifier
-                .padding(Dimens.MarginBig24)
-                .align(Alignment.BottomCenter),
-            shouldBeActive = locationChosen,
-            textResID = R.string.deliver_to_this_location,
-            onClick = onDeliverHereClick
-        )
+        onDeliverHereClick?.let {
+            ButtonWithText(
+                modifier = Modifier
+                    .padding(Dimens.MarginBig24)
+                    .align(Alignment.BottomCenter),
+                shouldBeActive = locationChosen,
+                textResID = R.string.deliver_to_this_location,
+                onClick = onDeliverHereClick
+            )
+        }
 
     }
 }
 
+private fun changeZoom(mapView: MapView?, delta: Float) {
+    val position = mapView?.mapWindow?.map?.cameraPosition ?: return
+    val newZoom = (position.zoom + delta).coerceIn(2f, 20f)
 
+    mapView.mapWindow.map.move(
+        CameraPosition(
+            position.target,
+            newZoom,
+            position.azimuth,
+            position.tilt
+        ),
+        Animation(Animation.Type.SMOOTH, MAP_ANIMATION_DURATION),
+        null
+    )
+}
