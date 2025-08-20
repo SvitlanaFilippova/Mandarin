@@ -54,7 +54,7 @@ fun DeliveryAreaCompactInfo(
                         style = Typography.RegularLightTextStyle,
                         color = Colors.White
                     )
-                    Spacer(modifier = Modifier.size(Dimens.MarginSuperSmall4))
+                    Spacer(modifier = Modifier.size(Dimens.MarginSmall8))
                     Text( // цена доставки
                         text =
                             stringResource(

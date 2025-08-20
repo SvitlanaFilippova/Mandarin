@@ -24,6 +24,7 @@ import com.mandarinkafe.mandarin.core.domain.impl.GetInitialDataUseCaseImpl
 import com.mandarinkafe.mandarin.core.domain.impl.ObserveCartCountUseCaseImpl
 import com.mandarinkafe.mandarin.core.domain.impl.ObserveCartItemsUseCaseImpl
 import com.mandarinkafe.mandarin.database.AppDatabase
+import com.mandarinkafe.mandarin.features.address.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CategoryDiscountRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.util.Constants.DATABASE_NAME
@@ -117,12 +118,14 @@ class CoreModule {
     fun provideGetInitialDataUseCase(
         menuCache: MenuCache,
         bannersRepository: BannersRepository,
-        categoryDiscountRepository: CategoryDiscountRepository
+        categoryDiscountRepository: CategoryDiscountRepository,
+        deliveryAreaRepository: DeliveryAreaRepository,
     ): GetInitialDataUseCase {
         return GetInitialDataUseCaseImpl(
             menuCache = menuCache,
             bannersRepository = bannersRepository,
             categoryDiscountRepository = categoryDiscountRepository,
+            deliveryAreaRepository = deliveryAreaRepository
         )
     }
 

@@ -20,7 +20,9 @@ class DeliveryAreaRepositoryImpl(
 
     override suspend fun getAllAreas(): Resource<List<DeliveryZone>> {
         // Возвращаем из кеша, если уже загружено
-        cachedZones?.let { return Resource.Success(it) }
+        cachedZones?.let {
+            return Resource.Success(it)
+        }
 
         return try {
             val polygonResult = networkClient.getDeliveryZonesPoints()

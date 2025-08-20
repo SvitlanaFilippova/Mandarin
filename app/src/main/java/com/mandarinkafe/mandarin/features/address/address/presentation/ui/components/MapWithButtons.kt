@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.address.address.presentation.ui.components
 
+import android.view.MotionEvent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -65,7 +66,28 @@ fun MapWithButtons(
         AndroidView(
             // Карта
             modifier = Modifier.fillMaxSize(),
-            factory = { MapView(it) },
+            factory = { context ->
+                MapView(context).apply {
+                    // Запрещаем родителю перехватывать свайпы, пока обрабатывает карта
+                    setOnTouchListener { v, event ->
+                        when (event.actionMasked) {
+                            MotionEvent.ACTION_DOWN,
+                            MotionEvent.ACTION_MOVE,
+                            MotionEvent.ACTION_POINTER_DOWN -> {
+                                v.parent?.requestDisallowInterceptTouchEvent(true)
+                            }
+
+                            MotionEvent.ACTION_UP,
+                            MotionEvent.ACTION_CANCEL,
+                            MotionEvent.ACTION_POINTER_UP -> {
+                                v.parent?.requestDisallowInterceptTouchEvent(false)
+                            }
+                        }
+                        // ВАЖНО: возвращаем false, чтобы событие дошло до карты
+                        false
+                    }
+                }
+            },
         ) {
             it.mapWindow.map.addCameraListener(cameraListener)
             onMapReady(it)
@@ -82,8 +104,8 @@ fun MapWithButtons(
 
         Column(
             modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(bottom = Dimens.MarginHuge80, end = Dimens.MarginSmall8),
+                .align(Alignment.CenterEnd)
+                .padding(end = Dimens.MarginSmall8),
         ) {
             // Кнопка "Вернуться к стартовой позиции"
             onBackToInitLocationClick?.let {

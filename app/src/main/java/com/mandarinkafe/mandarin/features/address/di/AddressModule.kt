@@ -136,6 +136,7 @@ class AddressModule {
         )
     }
 
+    @Singleton
     @Provides
     fun provideDeliveryAreaRepository(
         networkClient: GoogleDocsNetworkClient,

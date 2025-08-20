@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.more.presentation.ui.screen
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,76 +49,96 @@ fun DeliveryScreen(
     var mapView by remember { mutableStateOf<MapView?>(null) }
     val initLocation = state.initPinPoint
     val onEvent = viewModel::onEvent
+    var mapShouldBeVisible by remember { mutableStateOf(true) }
 
     LaunchedEffect(initLocation, mapView) {
         moveCamera(initLocation, mapView)
     }
-
-    if (state.isLoading) {
-        LoadingScreen()
-    } else {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = Dimens.MarginSmall8)
-        ) {
-            item {
-                // Заголовок экрана и стрелка "Назад"
-                ScreenTitleWithBackButton(
-                    name = stringResource(id = string.more_delivery_info),
-                    onBackClick = { onBackClick() },
-                )
-            }
-
-            item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }
-
-            item {
-                // Время доставки
-                InfoCard(
-                    iconPainter = painterResource(drawable.ic_clock),
-                    title = stringResource(string.delivery_duration_title),
-                    lines = listOf(
-                        stringResource(string.delivery_duration_value) to null
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        if (state.isLoading) {
+            LoadingScreen()
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = Dimens.MarginSmall8)
+            ) {
+                item {
+                    // Заголовок экрана и стрелка "Назад"
+                    ScreenTitleWithBackButton(
+                        name = stringResource(id = string.more_delivery_info),
+                        onBackClick = {
+                            onBackClick()
+                            mapShouldBeVisible = false
+                        },
                     )
-                )
-            }
+                }
 
-            item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }
+                item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }
 
-            item {
-                with(state) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(500.dp)
-                    ) {
-                        MapWithButtons(
-                            mapView = mapView,
-                            deliveryAreas = deliveryAreas,
-                            displayAddress = displayAddress,
-                            deliveryArea = deliveryArea,
-                            isLoading = fetchAddressInProgress,
-                            isError = error != null,
-                            onMapReady = { mapView = it },
-                            onCameraMoved = { onEvent(DeliveryContract.DeliveryEvent.CameraMoved(it)) },
-                            onBackToInitLocationClick = { moveCamera(initLocation, mapView) },
-                            locationChosen = locationChosen
+                item {
+                    // Время доставки
+                    InfoCard(
+                        iconPainter = painterResource(drawable.ic_clock),
+                        title = stringResource(string.delivery_duration_title),
+                        lines = listOf(
+                            stringResource(string.delivery_duration_value) to null
                         )
+                    )
+                }
+                item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }
+
+                if (mapShouldBeVisible) {
+                    item {
+                        with(state) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(500.dp)
+                            ) {
+                                MapWithButtons(
+                                    mapView = mapView,
+                                    deliveryAreas = deliveryAreas,
+                                    displayAddress = displayAddress,
+                                    deliveryArea = deliveryArea,
+                                    isLoading = fetchAddressInProgress,
+                                    isError = error != null,
+                                    onMapReady = { mapView = it },
+                                    onCameraMoved = {
+                                        onEvent(
+                                            DeliveryContract.DeliveryEvent.CameraMoved(
+                                                it
+                                            )
+                                        )
+                                    },
+                                    onBackToInitLocationClick = {
+                                        moveCamera(
+                                            initLocation,
+                                            mapView
+                                        )
+                                    },
+                                    locationChosen = locationChosen
+                                )
+                            }
+                        }
                     }
                 }
-            }
-            item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }
+                item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }
+                item {
+                    // Зоны доставки
+                    DeliveryZonesSection(
+                        deliveryAreas = state.deliveryAreas
+                    )
+                }
 
-            item {
-                // Зоны доставки
-                DeliveryZonesSection(
-                    deliveryAreas = state.deliveryAreas
-                )
+                item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }
+
             }
 
-            item { Spacer(modifier = Modifier.height(Dimens.MarginHuge80)) }
         }
-
         BindMapViewToLifecycle(mapView)
     }
 }

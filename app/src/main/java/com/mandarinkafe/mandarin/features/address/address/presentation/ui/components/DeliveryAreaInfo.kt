@@ -30,7 +30,7 @@ fun DeliveryAreaInfo(
         modifier = modifier
             .padding(Dimens.MarginSmall8)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
-            .background(Colors.WhiteTransparent75)
+            .background(Colors.AppBlack80)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -50,7 +50,7 @@ fun DeliveryAreaInfo(
                             deliveryArea.deliveryPrice
                         ),
                     style = Typography.RegularLightTextStyle,
-                    color = Colors.AppBlack
+                    color = Colors.White
                 )
             } else {
                 Row(
@@ -61,7 +61,7 @@ fun DeliveryAreaInfo(
                         modifier = Modifier
                             .padding(Dimens.MarginSmall8),
                         imageVector = Icons.Default.Info,
-                        tint = Colors.AppBlack.copy(alpha = 0.5f),
+                        tint = Colors.White.copy(alpha = 0.5f),
                         contentDescription = null
                     )
                     Text(
@@ -71,7 +71,7 @@ fun DeliveryAreaInfo(
                             R.string.delivery_validation_error
                         ),
                         style = Typography.RegularLightTextStyle,
-                        color = Colors.AppBlack
+                        color = Colors.White
                     )
                 }
             }

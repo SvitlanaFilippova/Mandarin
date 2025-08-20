@@ -83,18 +83,7 @@ class AddressViewModel @Inject constructor(
         }
     }
 
-    private fun changeSearchQuery(query: String) {
-        setState { copy(displayAddress = query) }
-        fetchAddressDebounce.cancel()
-        searchWithDebounce.cancel()
-        if (query.isNotEmpty()) {
-            searchWithDebounce.invoke(query)
-            setSearchLoading()
-        } else {
-            setState { copy(searchError = null) }
-        }
 
-    }
 
     private fun onCameraMoved(point: Point) {
         val oldPoint = state.value.currentPinPoint
@@ -128,14 +117,25 @@ class AddressViewModel @Inject constructor(
         }
     }
 
+    private fun changeSearchQuery(query: String) {
+        setState { copy(displayAddress = query) }
+        fetchAddressDebounce.cancel()
+        searchWithDebounce.cancel()
+        if (query.isNotEmpty()) {
+            searchWithDebounce.invoke(query)
+            setSearchLoading()
+        } else {
+            setState { copy(searchError = null) }
+        }
+
+    }
+
     private fun startSearch(searchText: String) {
         searchWithDebounce.cancel()
         val point = state.value.currentPinPoint
         if (point == null) {
             return
         } else {
-            setSearchLoading()
-
             viewModelScope.launch {
                 searchInteractor.searchAddressByText(searchText, point.toGeoPoint())
             }
