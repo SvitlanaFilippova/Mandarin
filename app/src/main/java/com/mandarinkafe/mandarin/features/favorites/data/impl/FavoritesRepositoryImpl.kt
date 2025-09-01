@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.core.domain.models.FavoriteRecord
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteRecords
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toStored
 import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorage
+import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorageResult
 import com.mandarinkafe.mandarin.util.NetworkMonitor
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
@@ -73,21 +74,28 @@ class FavoritesRepositoryImpl(
     }
 
     private suspend fun refreshFavorites() {
-        val stored = storage.getFavorites()
-        val records = stored.toFavoriteRecords()
+        when (val stored = storage.getFavorites()) {
+            is FavoritesStorageResult.Success -> {
+                val records = stored.favorites.toFavoriteRecords()
 
-        // Обновляем основной поток
-        _favoritesFlow.value = if (isConnected()) {
-            Resource.Success(records)
-        } else {
-            Resource.ErrorNoInternet()
+                _favoritesFlow.value = if (isConnected()) {
+                    Resource.Success(records)
+                } else {
+                    Resource.ErrorNoInternet()
+                }
+
+                _baseIdsFlow.value = records
+                    .filterIsInstance<FavoriteRecord.Base>()
+                    .map { it.mealId }
+                    .toSet()
+            }
+
+            is FavoritesStorageResult.Corrupted -> {
+                _favoritesFlow.value =
+                    Resource.ErrorOther("Произошла критическая ошибка при попытке получения избранных. Пришлось их обнулить :( ")
+                _baseIdsFlow.value = emptySet()
+            }
         }
-
-        // Обновляем поток ID
-        _baseIdsFlow.value = records
-            .filterIsInstance<FavoriteRecord.Base>()
-            .map { it.mealId }
-            .toSet()
     }
 
     private fun isConnected(): Boolean {

@@ -84,9 +84,9 @@ class OrdersHistoryViewModel @Inject constructor(
 
     private fun refreshData() {
         viewModelScope.launch {
+            setLoading()
             val history = historyInteractor.getHistory()
             setData(history)
-            setLoading()
             val statusesResponse = getOrdersStatuses(history)
             val data = statusesResponse.data
             if (data != null) {
@@ -105,10 +105,8 @@ class OrdersHistoryViewModel @Inject constructor(
                 .map {
                     val activeOrders = data.filter { it.isActive }
                     if (activeOrders.isNotEmpty()) {
-                        setLoading()
                         getOrdersStatuses(activeOrders)
                     } else {
-                        setLoading()
                         stopObservingOrderInfo()
                         null
                     }

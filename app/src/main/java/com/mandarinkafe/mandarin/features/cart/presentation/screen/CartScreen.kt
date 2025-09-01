@@ -29,6 +29,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewMo
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrder
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.util.Constants.SNACKBAR_MESSAGE_KEY
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
@@ -49,6 +50,21 @@ fun CartScreen(
     val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
     var showClearCartDialog by remember { mutableStateOf(false) }
     val snackbarHostState = LocalSnackbarHostState.current
+    val backStackEntry = navController.currentBackStackEntry
+    val snackbarMessage = backStackEntry
+        ?.savedStateHandle
+        ?.get<String>(SNACKBAR_MESSAGE_KEY)
+
+    snackbarMessage?.let { message ->
+        LaunchedEffect(message) {
+            snackbarHostState.showSnackbar(
+                message = message,
+                withDismissAction = true,
+            )
+
+            backStackEntry.savedStateHandle.remove<String>(SNACKBAR_MESSAGE_KEY)
+        }
+    }
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isLoading,

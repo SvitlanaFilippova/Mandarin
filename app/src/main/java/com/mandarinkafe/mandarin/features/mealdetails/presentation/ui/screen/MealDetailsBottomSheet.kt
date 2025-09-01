@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -144,7 +143,6 @@ fun MealDetailsBottomSheet(
                         isEditMode = isEditMode,
                         onClose = onClose,
                         onAddToCart = { message ->
-                            Log.d("DEBUG SNACKBAR", "message: $message ")
                             onCartEvent(AddToCart(state.actualCartItem))
                             onSharedEvent(
                                 SharedEvent.ShowSnackbar(
@@ -154,15 +152,16 @@ fun MealDetailsBottomSheet(
                             )
                         },
                         onEdit = { message ->
-                            Log.d("DEBUG SNACKBAR", "message: $message ")
                             onCartEvent(
                                 UpdateMealInCart(
                                     state.actualCartItem ?: customizedMeal.toCartItem()
                                 )
                             )
-                            onSharedEvent(
-                                SharedEvent.ShowSnackbar(message = message)
-                            )
+                            if (initItem != state.actualCartItem) {
+                                onSharedEvent(
+                                    SharedEvent.ShowSnackbar(message = message)
+                                )
+                            }
                         },
                         onToggleFavorite = {
                             if (!isFavorite && customizedMeal.isCustomized) {

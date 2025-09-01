@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -87,10 +86,6 @@ fun MealDetailsContentScreen(
             // Кнопка "В корзину", закреплённая внизу
             val messageOnAddToCart = stringResource(R.string.added_to_cart_template, meal.name)
             val messageOnEdit = stringResource(R.string.edited, meal.name)
-            Log.d(
-                "DEBUG SNACKBAR",
-                "meal.name: ${meal.name} messageOnAddToCart: $messageOnAddToCart "
-            )
             ToCartButton(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

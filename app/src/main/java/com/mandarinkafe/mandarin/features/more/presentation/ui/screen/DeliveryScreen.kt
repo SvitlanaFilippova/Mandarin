@@ -25,7 +25,7 @@ import com.mandarinkafe.mandarin.R.string
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.components.MapWithButtons
 import com.mandarinkafe.mandarin.features.more.presentation.ui.components.DeliveryZonesSection
-import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DeliveryContract
+import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DeliveryContract.DeliveryEvent
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DeliveryViewModel
 import com.mandarinkafe.mandarin.util.Constants.MAP_ANIMATION_DURATION
 import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_AZIMUTH
@@ -93,6 +93,7 @@ fun DeliveryScreen(
 
                 if (mapShouldBeVisible) {
                     item {
+                        // Карта
                         with(state) {
                             Box(
                                 modifier = Modifier
@@ -107,17 +108,11 @@ fun DeliveryScreen(
                                     isLoading = fetchAddressInProgress,
                                     isError = error != null,
                                     onMapReady = { mapView = it },
-                                    onCameraMoved = {
-                                        onEvent(
-                                            DeliveryContract.DeliveryEvent.CameraMoved(
-                                                it
-                                            )
-                                        )
-                                    },
+                                    onCameraMoved = { onEvent(DeliveryEvent.CameraMoved(it)) },
                                     onBackToInitLocationClick = {
                                         moveCamera(
-                                            initLocation,
-                                            mapView
+                                            point = initLocation,
+                                            mapView = mapView
                                         )
                                     },
                                     locationChosen = locationChosen
@@ -128,7 +123,7 @@ fun DeliveryScreen(
                 }
                 item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }
                 item {
-                    // Зоны доставки
+                    // Все зоны доставки
                     DeliveryZonesSection(
                         deliveryAreas = state.deliveryAreas
                     )

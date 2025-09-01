@@ -46,9 +46,15 @@ class FavoritesViewModel @Inject constructor(private val favoritesApi: Favorites
                         is Success -> {
                             setData(resource.data)
                         }
+
                         is Loading -> {}
                         is Idle -> {}
-                        else -> setError(resource)
+                        else -> {
+                            setError(resource)
+                            if (resource.message?.isNotEmpty() == true) {
+                                sendEffect(FavoritesEffect.ShowSnackbar(message = resource.message))
+                            }
+                        }
                     }
                 }
         }

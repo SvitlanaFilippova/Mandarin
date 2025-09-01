@@ -20,6 +20,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_INFO_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SAVED_ADDRESSES_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.util.Constants.SNACKBAR_MESSAGE_KEY
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -36,9 +37,15 @@ fun NavController.navigateToMenu() {
     this.navigate(MENU_SCREEN_ROUTE)
 }
 
-fun NavController.navigateToCart() {
-    this.navigate(CART_SCREEN_ROUTE)
+fun NavController.navigateToCart(snackbarMessage: String? = null) {
+    this.navigate(CART_SCREEN_ROUTE) {
+        launchSingleTop = true
+    }
+    this.currentBackStackEntry
+        ?.savedStateHandle
+        ?.set(SNACKBAR_MESSAGE_KEY, snackbarMessage)
 }
+
 
 fun NavController.navigateToSavedAddresses() {
     this.navigate(SAVED_ADDRESSES_ROUTE)

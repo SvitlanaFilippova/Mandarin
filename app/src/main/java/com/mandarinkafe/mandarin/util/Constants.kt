@@ -49,6 +49,7 @@ object Constants {
     const val ALPHA_50 = 0.5f
     const val TITLE_FONT_WEIGHT = 800
     const val NON_BRAKING_SPACE = "\u00A0"
+    const val SNACKBAR_MESSAGE_KEY = "snackbarMessage"
 
     // Order
     const val VALID_PHONE_LENGTH = 10

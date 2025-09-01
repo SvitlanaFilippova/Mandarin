@@ -89,14 +89,12 @@ fun OrderInfoScreen(
                     }
 
                     is OrderInfoEffect.RepeatOrder -> {
-                        if (effect.hasInvalidItems) {
-                            snackbarHostState.showSnackbar(
-                                message = "Некоторые блюда недоступны. Остальное добавлено в корзину.",
-                                duration = SnackbarDuration.Long,
-                                withDismissAction = true,
-                            )
+                        val message = if (effect.hasInvalidItems) {
+                            "Некоторые блюда недоступны. Остальное добавлено в корзину."
+                        } else {
+                            "Все позиции из заказа добавлены в корзину"
                         }
-                        navController.navigateToCart()
+                        navController.navigateToCart(message)
                     }
                 }
             }

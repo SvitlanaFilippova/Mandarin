@@ -122,7 +122,6 @@ class OrderInfoViewModel @Inject constructor(
             tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds)
                 .onStart { emit(Unit) }
                 .map {
-                    setLoading()
                     getOrderStatus(orderId)
                 }
                 .collect { proceedOrderStatusResult(it) }
