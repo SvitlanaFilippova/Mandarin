@@ -18,7 +18,8 @@ sealed interface DeliveryContract {
     data class DeliveryState(
         val isLoading: Boolean = true,
         val initPinPoint: Point = Point(
-            MANDARIN_LATITUDE, MANDARIN_LONGITUDE
+            MANDARIN_LATITUDE,
+            MANDARIN_LONGITUDE
         ),
         val deliveryAreas: List<UiDeliveryArea> = listOf(),
         val currentPinPoint: Point? = null,
@@ -31,5 +32,4 @@ sealed interface DeliveryContract {
         val locationChosen: Boolean
             get() = displayAddress?.isNotEmpty() == true && error == null && !fetchAddressInProgress
     }
-
 }

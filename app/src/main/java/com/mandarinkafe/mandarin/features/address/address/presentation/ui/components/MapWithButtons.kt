@@ -21,6 +21,8 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.models.UiDeliveryArea
 import com.mandarinkafe.mandarin.util.Constants.MAP_ANIMATION_DURATION
+import com.mandarinkafe.mandarin.util.Constants.MAX_ZOOM
+import com.mandarinkafe.mandarin.util.Constants.MIN_ZOOM
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.RoundedButton
 import com.yandex.mapkit.Animation
@@ -157,7 +159,7 @@ fun MapWithButtons(
 
 private fun changeZoom(mapView: MapView?, delta: Float) {
     val position = mapView?.mapWindow?.map?.cameraPosition ?: return
-    val newZoom = (position.zoom + delta).coerceIn(2f, 20f)
+    val newZoom = (position.zoom + delta).coerceIn(MIN_ZOOM, MAX_ZOOM)
 
     mapView.mapWindow.map.move(
         CameraPosition(
@@ -169,4 +171,5 @@ private fun changeZoom(mapView: MapView?, delta: Float) {
         Animation(Animation.Type.SMOOTH, MAP_ANIMATION_DURATION),
         null
     )
+
 }

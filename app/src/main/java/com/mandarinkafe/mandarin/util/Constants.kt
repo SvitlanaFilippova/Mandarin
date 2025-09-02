@@ -68,6 +68,8 @@ object Constants {
     const val MAP_DEFAULT_AZIMUTH = 0.0f
     const val PIN_INDICATOR_SCALE = 0.45f
     const val PIN_INDICATOR_Y_OFFSET_FACTOR = 0.09f
+    const val MIN_ZOOM = 2f
+    const val MAX_ZOOM = 20f
 
     // DI
     const val DATABASE_NAME = "mandarin.db"

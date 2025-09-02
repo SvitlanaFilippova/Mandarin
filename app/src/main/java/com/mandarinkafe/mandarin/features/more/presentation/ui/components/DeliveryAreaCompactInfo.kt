@@ -44,7 +44,6 @@ fun DeliveryAreaCompactInfo(
                 DeliveryAreaColorIndicator(deliveryArea)
 
                 Column(modifier = Modifier.padding(start = Dimens.MarginSmall8)) {
-
                     Text( // бесплатно от
                         text =
                             stringResource(

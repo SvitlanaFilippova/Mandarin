@@ -102,99 +102,87 @@ class DeliveryAreaRepositoryImpl(
         val zonesMap = mutableMapOf<Int, List<GeoPoint>>()
 
         csv.lineSequence()
-            .drop(1) // Пропускаем заголовок "WKT,название,описание"
+            .drop(1) // Пропускаем заголовок
             .forEach { line ->
-                try {
-                    // Разделяем строку на колонки (учитываем, что WKT может содержать запятые)
-                    val columns = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)".toRegex())
+                val columns = splitCsvLine(line) ?: return@forEach
+                val (wkt, name) = columns
 
-                    if (columns.size >= 2) {
-                        val wkt = columns[0].trim()
-                        val name = columns[1].trim()
-
-                        // Извлекаем ID из названия
-                        val zoneId = extractZoneIdFromName(name) ?: run {
-                            Log.w(logTag, "Cannot extract zone ID from name: $name")
-                            return@forEach
-                        }
-
-                        // Парсим WKT в список точек
-                        val points = parseWktToGeoPoints(wkt)
-                        if (points.isNotEmpty()) {
-                            zonesMap[zoneId] = points
-                        } else {
-                            Log.w(logTag, "No points parsed for zone $zoneId, WKT: $wkt")
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.e(logTag, "Error parsing line: $line, error: ${e.message}")
+                val zoneId = extractZoneIdFromName(name)
+                if (zoneId == null) {
+                    Log.w(logTag, "Cannot extract zone ID from name: $name")
+                    return@forEach
                 }
+
+                val points = runCatching { parseWktToGeoPoints(wkt) }
+                    .getOrElse {
+                        Log.e(logTag, "Error parsing WKT for line: $line, error: ${it.message}")
+                        emptyList()
+                    }
+
+                if (points.isEmpty()) {
+                    Log.w(logTag, "No points parsed for zone $zoneId, WKT: $wkt")
+                    return@forEach
+                }
+
+                zonesMap[zoneId] = points
             }
 
         return zonesMap
     }
 
-    private fun parseWktToGeoPoints(wkt: String): List<GeoPoint> {
-        val points = mutableListOf<GeoPoint>()
-
-        try {
-            // Убираем лишние пробелы и приводим к верхнему регистру для удобства
-            val cleanWkt = wkt.trim().uppercase()
-
-            // Ищем основной полигон в WKT
-            val polygonRegex = """POLYGON\s*\(\(([^)]+)\)\)""".toRegex()
-            val polygonMatch = polygonRegex.find(cleanWkt)
-
-            if (polygonMatch != null) {
-                // Извлекаем координаты полигона
-                val coordinates = polygonMatch.groupValues[1]
-                parseCoordinatesString(coordinates, points)
-            } else {
-                // Пробуем найти GEOMETRYCOLLECTION
-                val geometryCollectionRegex = """GEOMETRYCOLLECTION\s*\((.+)\)""".toRegex()
-                val geometryMatch = geometryCollectionRegex.find(cleanWkt)
-
-                if (geometryMatch != null) {
-                    val geometryContent = geometryMatch.groupValues[1]
-                    // Ищем все полигоны в коллекции
-                    val polygons = geometryContent.split("(?=POLYGON)".toRegex())
-
-                    polygons.forEach { polygonPart ->
-                        val polyMatch = polygonRegex.find(polygonPart)
-                        if (polyMatch != null) {
-                            val coords = polyMatch.groupValues[1]
-                            parseCoordinatesString(coords, points)
-                        }
-                    }
-                }
-            }
+    private fun splitCsvLine(line: String): Pair<String, String>? {
+        return try {
+            val columns = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)".toRegex())
+            if (columns.size >= 2) {
+                columns[0].trim() to columns[1].trim()
+            } else null
         } catch (e: Exception) {
-            Log.e(logTag, "Error parsing WKT: $wkt, error: ${e.message}")
+            Log.e(logTag, "Error splitting CSV line: $line, error: ${e.message}")
+            null
         }
-
-        return points
     }
 
-    private fun parseCoordinatesString(coordinates: String, points: MutableList<GeoPoint>) {
-        // Разделяем пары координат
-        val coordinatePairs = coordinates.split(",")
+    private fun parseWktToGeoPoints(wkt: String): List<GeoPoint> {
+        val cleanWkt = wkt.trim().uppercase()
 
-        coordinatePairs.forEach { pair ->
-            val trimmedPair = pair.trim()
-            if (trimmedPair.isNotBlank()) {
-                // Разделяем longitude и latitude (в WKT порядок: долгота широта)
-                val coords = trimmedPair.split("\\s+".toRegex())
-                if (coords.size == 2) {
-                    try {
-                        val longitude = coords[0].toDouble()
-                        val latitude = coords[1].toDouble()
-                        points.add(GeoPoint(latitude, longitude))
-                    } catch (e: NumberFormatException) {
-                        Log.w(logTag, "Invalid coordinates: $trimmedPair")
-                    }
+        parsePolygon(cleanWkt)?.let { return it }
+        parseGeometryCollection(cleanWkt)?.let { return it }
+
+        return emptyList()
+    }
+
+    private fun parsePolygon(wkt: String): List<GeoPoint>? {
+        val polygonRegex = """POLYGON\s*\(\(([^)]+)\)\)""".toRegex()
+        val match = polygonRegex.find(wkt) ?: return null
+        return parseCoordinates(match.groupValues[1])
+    }
+
+    private fun parseGeometryCollection(wkt: String): List<GeoPoint>? {
+        val geometryCollectionRegex = """GEOMETRYCOLLECTION\s*\((.+)\)""".toRegex()
+        val match = geometryCollectionRegex.find(wkt) ?: return null
+
+        val polygonRegex = """POLYGON\s*\(\(([^)]+)\)\)""".toRegex()
+        return match.groupValues[1]
+            .split("(?=POLYGON)".toRegex())
+            .mapNotNull { polygonRegex.find(it)?.groupValues?.get(1) }
+            .flatMap { parseCoordinates(it) }
+    }
+
+    private fun parseCoordinates(coordinates: String): List<GeoPoint> {
+        return coordinates
+            .split(",")
+            .mapNotNull { pair ->
+                val coords = pair.trim().split("\\s+".toRegex())
+                if (coords.size != 2) return@mapNotNull null
+                runCatching {
+                    val lon = coords[0].toDouble()
+                    val lat = coords[1].toDouble()
+                    GeoPoint(lat, lon)
+                }.getOrElse {
+                    Log.w(logTag, "Invalid coordinates: $pair")
+                    null
                 }
             }
-        }
     }
 
     private fun parseMetaCsv(csv: String): Map<Int, ZoneMeta> {
