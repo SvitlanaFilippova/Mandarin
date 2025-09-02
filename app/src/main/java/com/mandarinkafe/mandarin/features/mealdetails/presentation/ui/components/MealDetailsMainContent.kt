@@ -39,6 +39,7 @@ fun MealDetailsMainContent(
     onMakeMoreDeliciousClick: () -> Unit,
     onEvent: (MealDetailsEvent) -> Unit,
     comment: String,
+    isEditMode: Boolean,
 ) {
     val meal = remember { customizedMeal.meal }
     val shouldShowChosen =
@@ -166,13 +167,19 @@ fun MealDetailsMainContent(
             }
         }
 
-        item {
-            MyTextField(
-                modifier = Modifier.padding(top = Dimens.MarginSmall8, bottom = Dimens.MarginBig24),
-                value = comment,
-                labelRes = R.string.comment_for_meal,
-                onValueChange = { onEvent(SetComment(it)) }
-            )
+        // Поле для комментария показываем только в режиме редактирования блюда из корзины. Иначе оно выглядит неоднозначно.
+        if (isEditMode) {
+            item {
+                MyTextField(
+                    modifier = Modifier.padding(
+                        top = Dimens.MarginSmall8,
+                        bottom = Dimens.MarginBig24
+                    ),
+                    value = comment,
+                    labelRes = R.string.comment_for_meal,
+                    onValueChange = { onEvent(SetComment(it)) }
+                )
+            }
         }
 
         // Отступ для кнопки "В корзину"

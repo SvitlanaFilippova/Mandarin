@@ -16,6 +16,7 @@ import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
+import com.mandarinkafe.mandarin.util.debounce
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -31,6 +32,12 @@ class SearchViewModel @Inject constructor(
 ) : BaseViewModel<SearchEvent, SearchEffect, SearchState>() {
     override fun setInitialState() = SearchState()
 
+    private val searchDebounce = debounce<String>(
+        SEARCH_DELAY,
+        viewModelScope,
+        useLastParam = true
+    ) { filterMenu() }
+
     init {
         getLabels()
         loadMenu()
@@ -40,7 +47,7 @@ class SearchViewModel @Inject constructor(
     override fun onEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.ClearSearchInput -> clearSearchInput()
-            is SearchEvent.SearchMealsByText -> searchByText(event.searchText)
+            is SearchEvent.SearchMealsByText -> searchWithDebounce(event.searchText)
             is SearchEvent.OnLabelClick -> setLabels(
                 label = event.labelName,
                 isChecked = event.isChecked
@@ -78,6 +85,7 @@ class SearchViewModel @Inject constructor(
 
     // Очистить поле поиска
     private fun clearSearchInput() {
+        searchDebounce.cancel()
         setState {
             copy(
                 filteredMealList = fullMealList.sortedWith(compareByDescending {
@@ -91,10 +99,11 @@ class SearchViewModel @Inject constructor(
         filterMenu()
     }
 
-    // Поисковый запрос
-    private fun searchByText(searchText: String) {
+    // Поиск с дебаунсом для плавности
+    private fun searchWithDebounce(searchText: String) {
         setState { copy(latestSearchText = searchText) }
-        filterMenu()
+        searchDebounce.cancel()
+        searchDebounce.invoke(searchText)
     }
 
     // Поиск по меню
@@ -160,5 +169,9 @@ class SearchViewModel @Inject constructor(
 
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
+    }
+
+    private companion object {
+        private const val SEARCH_DELAY = 500L
     }
 }

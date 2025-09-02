@@ -81,6 +81,7 @@ fun MealDetailsContentScreen(
                 onMakeMoreDeliciousClick = onMakeMoreDeliciousClick,
                 onEvent = onEvent,
                 comment = comment,
+                isEditMode = isEditMode
             )
 
             // Кнопка "В корзину", закреплённая внизу

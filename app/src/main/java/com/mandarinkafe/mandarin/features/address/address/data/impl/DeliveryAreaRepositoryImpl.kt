@@ -9,13 +9,14 @@ import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.address.data.dto.ZoneMeta
 import com.mandarinkafe.mandarin.features.address.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.util.Resource
+import kotlinx.coroutines.flow.first
 import java.io.IOException
 
 class DeliveryAreaRepositoryImpl(
     private val networkClient: GoogleDocsNetworkClient,
     private val menuCache: MenuCache
 ) : DeliveryAreaRepository {
-    private val logTag = "DeliveryZone Error"
+    private val logTag = "DeliveryZone Debug"
     private var cachedZones: List<DeliveryZone>? = null
 
     override suspend fun getAllAreas(): Resource<List<DeliveryZone>> {
@@ -33,15 +34,26 @@ class DeliveryAreaRepositoryImpl(
 
             val polygonsMap = parsePolygonCsv(polygonCsv)
             val metaMap = parseMetaCsv(metaCsv)
+
+            // Ждём, пока меню загрузится
+            menuCache.visibleMenu.first { it is Resource.Success }
+
             // Извлекаем цены из deliveryCategory
             val pricesCategory = menuCache.deliveryItems.value?.meals
-            val pricesMap = pricesCategory
-                ?.mapNotNull { meal ->
+            val pricesMap = if (pricesCategory != null) {
+                pricesCategory.mapNotNull { meal ->
                     val zoneId = extractZoneIdFromDeliveryName(meal.name)
-                    if (zoneId != null) zoneId to meal.price else null
-                }
-                ?.toMap()
-                .orEmpty()
+                    if (zoneId != null) {
+                        zoneId to meal.price
+                    } else {
+                        Log.d("DeliveryDebug", "Meal '${meal.name}' -> no zoneId extracted")
+                        null
+                    }
+                }.toMap()
+            } else {
+                Log.d("DeliveryDebug", "No delivery category found")
+                emptyMap()
+            }
 
             val zones = buildDeliveryZones(polygonsMap, metaMap, pricesMap)
             cachedZones = zones
@@ -205,7 +217,9 @@ class DeliveryAreaRepositoryImpl(
 
     private fun extractZoneIdFromDeliveryName(name: String): Int? {
         val regex = Regex("Доставка зона (\\d+)")
-        return regex.find(name)?.groupValues?.getOrNull(1)?.toIntOrNull()
+        val zoneId = regex.find(name)?.groupValues?.getOrNull(1)?.toIntOrNull()
+        Log.d("DeliveryDebug", "Extracting zoneId from '$name': found '$zoneId'")
+        return zoneId
     }
 
     private fun extractZoneIdFromName(name: String): Int? {

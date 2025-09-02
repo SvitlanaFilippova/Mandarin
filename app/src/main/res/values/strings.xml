@@ -25,7 +25,7 @@
     <string name="question_add_to_cart">Добавить в корзину ?</string>
     <string name="add_to_favorite">Добавить в избранное</string>
     <string name="remove_from_cart">Убрать из корзины</string>
-    <string name="comment_for_meal">Комментарий к блюду</string>
+    <string name="comment_for_meal">Комментарий к блюду для повара</string>
     <string name="cancel_removing">Вернуть</string>
     <string name="clear_cart_question">Очистить корзину?</string>
     <string name="clear_cart_confirmation">Действительно удалить всё из корзины?</string>
