@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartItemsUseCase
@@ -93,6 +94,7 @@ class OrderViewModel @Inject constructor(
         getPaymentTypes()
         getSavedAddresses()
     }
+
     private fun getPaymentTypes() {
         viewModelScope.launch {
             val response = getPaymentTypesUseCase()
@@ -259,7 +261,10 @@ class OrderViewModel @Inject constructor(
             setState { copy(userInfo = userInfo.copy(phone = phone)) }
 
             val discount = applyPhoneDiscount(phone, state.value.cartSummary.discountPercent)
-
+            Log.d(
+                "DEBUG DISCOUNT OrderVM",
+                "discountId: ${discount.discountId}, discountPercent: ${discount.discountSize}"
+            )
             if (discount.shouldUpdate) {
                 setState {
                     copy(
