@@ -129,7 +129,7 @@ class DeliveryViewModel @Inject constructor(
     }
 
     private companion object {
-        private const val FETCH_ADDRESS_DELAY = 1000L
+        private const val FETCH_ADDRESS_DELAY = 200L
         private const val MAX_ADDRESS_LENGTH = 250
     }
 }

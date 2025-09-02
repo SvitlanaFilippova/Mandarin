@@ -1,5 +1,7 @@
 package com.mandarinkafe.mandarin.features.address.address.presentation.ui.screen
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +31,7 @@ import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressContract.AddressEvent.CameraMoved
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressViewModel
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.LocationIcon
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.MAP_ANIMATION_DURATION
 import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_AZIMUTH
 import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_TILT
@@ -93,7 +96,10 @@ fun AddressMapScreen(
         // Строка с адресом
         MyTextField(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .animateContentSize(
+                    animationSpec = tween(durationMillis = Constants.ANIMATION_DURATION_FAST)
+                ),
             minLines = MIN_LINES_FOR_ADDRESS_INPUT,
             value = addressValue,
             labelRes = R.string.street_and_building,

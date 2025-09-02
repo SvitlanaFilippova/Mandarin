@@ -288,13 +288,13 @@
 
     <!-- Доставка -->
     <string name="delivery">Доставка</string>
-    <string name="delivery_areas">Все зоны доставки</string>
+    <string name="delivery_areas">Ззоны доставки</string>
     <string name="delivery_free_from">0&#160;₽ от&#160;%1$d&#160;₽</string>
     <string name="delivery_price">Иначе %1$d&#160;₽</string>
     <string name="delivery_price_and_free_from">Доставка %2$d&#160;₽;\nПри заказе от&#160;%1$d&#160;₽ — бесплатно</string>
     <string name="delivery_duration_title">Время доставки</string>
     <string name="delivery_zones_text">Доставим бесплатно при условии заказа на&#160;минимальную сумму. Чем дальше от&#160;Черноголовки, тем сумма выше.</string>
-    <string name="delivery_duration_value">Время доставки зависит от&#160;удалённости адреса и&#160;загруженности ресторана.
+    <string name="delivery_duration_value">Время зависит от&#160;удалённости адреса и&#160;загруженности ресторана.
 Актуальную информацию можно уточнить у&#160;оператора по&#160;телефону.</string>
 
     <!-- Для contentDescription  -->

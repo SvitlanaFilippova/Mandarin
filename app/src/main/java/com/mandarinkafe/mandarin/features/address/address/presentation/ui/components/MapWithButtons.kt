@@ -1,6 +1,9 @@
 package com.mandarinkafe.mandarin.features.address.address.presentation.ui.components
 
 import android.view.MotionEvent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -83,7 +86,6 @@ fun MapWithButtons(
                                 v.parent?.requestDisallowInterceptTouchEvent(false)
                             }
                         }
-                        // ВАЖНО: возвращаем false, чтобы событие дошло до карты
                         false
                     }
                 }
@@ -92,8 +94,13 @@ fun MapWithButtons(
             it.mapWindow.map.addCameraListener(cameraListener)
             onMapReady(it)
         }
-        if (displayAddress != null && !isLoading) {
-            // Окно с информацией о текущей зоне доставки
+
+        // Окно с информацией о текущей зоне доставки
+        AnimatedVisibility(
+            visible = displayAddress != null && !isLoading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             DeliveryAreaInfo(
                 modifier = Modifier
                     .align(Alignment.TopCenter)

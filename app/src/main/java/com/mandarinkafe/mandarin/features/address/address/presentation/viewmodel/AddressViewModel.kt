@@ -264,7 +264,8 @@ class AddressViewModel @Inject constructor(
 
     private companion object {
         private const val SEARCH_DELAY = 1000L
-        private const val FETCH_ADDRESS_DELAY = 1000L
-        private const val MAX_ADDRESS_LENGTH = 250
+        private const val FETCH_ADDRESS_DELAY = 300L
+        private const val MAX_ADDRESS_LENGTH =
+            250 // вынуждены обрезать слишком длинные адреса, чтобы iiko при оформлении заказа не вернул ошибку
     }
 }
