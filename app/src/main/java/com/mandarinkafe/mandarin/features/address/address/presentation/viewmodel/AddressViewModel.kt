@@ -78,12 +78,10 @@ class AddressViewModel @Inject constructor(
             val deliveryAreasResource = deliveryAreaRepository.getAllAreas()
             if (deliveryAreasResource is Resource.Success) {
                 val deliveryAreas = deliveryAreasResource.data?.map { it.toUi() }
-                deliveryAreas?.let { setState { copy(deliveryAreas = deliveryAreas) } }
+                deliveryAreas?.let { setState { copy(allDeliveryAreas = deliveryAreas) } }
             }
         }
     }
-
-
 
     private fun onCameraMoved(point: Point) {
         val oldPoint = state.value.currentPinPoint
@@ -245,7 +243,7 @@ class AddressViewModel @Inject constructor(
 
     private suspend fun checkDeliveryArea(point: Point) {
         val deliveryArea = getDeliveryZone(point.toGeoPoint())
-        setState { copy(deliveryArea = deliveryArea?.toUi()) }
+        setState { copy(currentDeliveryArea = deliveryArea?.toUi()) }
     }
 
     private fun setSearchLoading() {

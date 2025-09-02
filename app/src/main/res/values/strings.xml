@@ -28,10 +28,13 @@
     <string name="comment_for_meal">Комментарий к блюду</string>
     <string name="cancel_removing">Вернуть</string>
     <string name="clear_cart_question">Очистить корзину?</string>
-    <string name="clear_cart_confirmation">Вы действительно хотите удалить всё из корзины?</string>
+    <string name="clear_cart_confirmation">Действительно удалить всё из корзины?</string>
     <string name="cart_total_cost_template">%d ₽</string>
     <string name="float_price_template">%.2f ₽</string>
     <string name="quantity_x_template">x%.0f</string>
+    <string name="some_items_unavailable">Некоторые блюда недоступны. Остальные добавлены в&#160;корзину</string>
+    <string name="all_items_added_to_cart">Все позиции из&#160;заказа добавлены в&#160;корзину</string>
+
 
     <!-- Избранное -->
     <string name="favorite">Избранное</string>
@@ -85,7 +88,7 @@
     <string name="delivery_cost_hint">Для выбранного адреса доставка бесплатна при заказе от&#160;%1&#36;d&#8381; (с&#160;учётом скидок).</string>
     <string name="why_is_that_number">Почему такая цифра</string>
     <string name="delivery_request_validation">Нужно ввести адрес для расчёта стоимости доставки</string>
-    <string name="delivery_validation_error">Не&#160;удалось найти выбранный адрес в&#160;пределах зон доставки. Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа.</string>
+    <string name="delivery_validation_error">Не&#160;удалось найти адрес в&#160;пределах зон доставки. Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа.</string>
     <string name="submit_order">Оформить заказ</string>
     <string name="pickup_only">В&#160;заказе есть позиции, доступные только для самовывоза. Доставка невозможна.</string>
     <string name="pickup_both_title">Ваш заказ будет готов в&#160;двух точках самовывоза</string>
@@ -288,7 +291,7 @@
 
     <!-- Доставка -->
     <string name="delivery">Доставка</string>
-    <string name="delivery_areas">Ззоны доставки</string>
+    <string name="delivery_areas">Зоны доставки</string>
     <string name="delivery_free_from">0&#160;₽ от&#160;%1$d&#160;₽</string>
     <string name="delivery_price">Иначе %1$d&#160;₽</string>
     <string name="delivery_price_and_free_from">Доставка %2$d&#160;₽;\nПри заказе от&#160;%1$d&#160;₽ — бесплатно</string>

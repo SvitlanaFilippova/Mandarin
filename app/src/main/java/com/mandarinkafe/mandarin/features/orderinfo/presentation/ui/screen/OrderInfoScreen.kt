@@ -14,8 +14,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent.StopObservingStatus
@@ -41,6 +43,8 @@ fun OrderInfoScreen(
     val effectFlow = viewModel.effect
     val onSharedEvent = sharedViewModel::onEvent
     val snackbarHostState = LocalSnackbarHostState.current
+    val someItemsUnavailableText = stringResource(R.string.some_items_unavailable)
+    val allItemsAddedText = stringResource(R.string.all_items_added_to_cart)
 
     LaunchedEffect(Unit) {
         onEvent(OrderInfoEvent.SetInitId(orderID))
@@ -90,9 +94,9 @@ fun OrderInfoScreen(
 
                     is OrderInfoEffect.RepeatOrder -> {
                         val message = if (effect.hasInvalidItems) {
-                            "Некоторые блюда недоступны. Остальное добавлено в корзину."
+                            someItemsUnavailableText
                         } else {
-                            "Все позиции из заказа добавлены в корзину"
+                            allItemsAddedText
                         }
                         navController.navigateToCart(message)
                     }

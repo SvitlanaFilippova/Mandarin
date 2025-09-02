@@ -80,15 +80,12 @@ fun DeliveryScreen(
                 item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }
 
                 item {
-                    // Время доставки
-                    InfoCard(
-                        iconPainter = painterResource(drawable.ic_clock),
-                        title = stringResource(string.delivery_duration_title),
-                        lines = listOf(
-                            stringResource(string.delivery_duration_value) to null
-                        )
+                    // Все зоны доставки
+                    DeliveryZonesSection(
+                        deliveryAreas = state.deliveryAreas
                     )
                 }
+
                 item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }
 
                 if (mapShouldBeVisible) {
@@ -122,15 +119,19 @@ fun DeliveryScreen(
                     }
                 }
                 item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }
+
+
                 item {
-                    // Все зоны доставки
-                    DeliveryZonesSection(
-                        deliveryAreas = state.deliveryAreas
+                    // Время доставки
+                    InfoCard(
+                        iconPainter = painterResource(drawable.ic_clock),
+                        title = stringResource(string.delivery_duration_title),
+                        lines = listOf(
+                            stringResource(string.delivery_duration_value) to null
+                        )
                     )
                 }
-
-                item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }
-
+                item { Spacer(modifier = Modifier.height(Dimens.MarginBig32)) }
             }
 
         }

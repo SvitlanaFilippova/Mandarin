@@ -119,9 +119,9 @@ fun AddressMapScreen(
 
                     MapWithButtons(
                         mapView = mapView,
-                        deliveryAreas = deliveryAreas,
+                        deliveryAreas = allDeliveryAreas,
                         displayAddress = displayAddress,
-                        deliveryArea = deliveryArea,
+                        deliveryArea = currentDeliveryArea,
                         isLoading = fetchAddressInProgress,
                         locationChosen = locationChosen,
                         isError = error != null,
