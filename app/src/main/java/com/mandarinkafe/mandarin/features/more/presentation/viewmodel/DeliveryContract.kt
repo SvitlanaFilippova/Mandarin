@@ -1,0 +1,35 @@
+package com.mandarinkafe.mandarin.features.more.presentation.viewmodel
+
+import com.mandarinkafe.mandarin.features.address.address.presentation.ui.models.UiDeliveryArea
+import com.mandarinkafe.mandarin.util.BaseEffect
+import com.mandarinkafe.mandarin.util.BaseEvent
+import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.Constants.MANDARIN_LATITUDE
+import com.mandarinkafe.mandarin.util.Constants.MANDARIN_LONGITUDE
+import com.yandex.mapkit.geometry.Point
+
+sealed interface DeliveryContract {
+    sealed interface DeliveryEvent : BaseEvent {
+        data class CameraMoved(val center: Point) : DeliveryEvent
+    }
+
+    sealed interface DeliveryEffect : BaseEffect
+
+    data class DeliveryState(
+        val isLoading: Boolean = true,
+        val initPinPoint: Point = Point(
+            MANDARIN_LATITUDE,
+            MANDARIN_LONGITUDE
+        ),
+        val deliveryAreas: List<UiDeliveryArea> = listOf(),
+        val currentPinPoint: Point? = null,
+        val displayAddress: String? = null,
+        val deliveryArea: UiDeliveryArea? = null,
+        val error: String? = null,
+        val fetchAddressInProgress: Boolean = false,
+
+        ) : BaseState {
+        val locationChosen: Boolean
+            get() = displayAddress?.isNotEmpty() == true && error == null && !fetchAddressInProgress
+    }
+}

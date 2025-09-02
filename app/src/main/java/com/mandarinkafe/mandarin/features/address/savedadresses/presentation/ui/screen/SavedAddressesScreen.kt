@@ -9,8 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -27,21 +25,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.components.HandleSavedAddressesEffects
 import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.components.SavedAddressCard
-import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesEffect
 import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesEvent
 import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.viewmodel.SavedAddressesViewModel
-import com.mandarinkafe.mandarin.navigation.NavConstants
-import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
-import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickableText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MyClickableText
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SavedAddressesScreen(
@@ -71,10 +64,9 @@ fun SavedAddressesScreen(
 
     ) {
         item {
-            Text(
-                modifier = Modifier.padding(Dimens.MarginSmall8),
-                text = stringResource(R.string.saved_addresses),
-                style = Typography.TitleStyle,
+            ScreenTitleWithBackButton(
+                name = stringResource(R.string.saved_addresses),
+                onBackClick = { navController.popBackStack() }
             )
         }
 
@@ -112,7 +104,7 @@ fun SavedAddressesScreen(
             }
         }
         item {
-            ClickableText(
+            MyClickableText(
                 textRes = R.string.add_address,
                 onClick = { onEvent(SavedAddressesEvent.AddNewAddress) }
             )
@@ -138,8 +130,8 @@ fun SavedAddressesScreen(
         )
     }
 
-
     val snackbarHostState = LocalSnackbarHostState.current
+
     HandleSavedAddressesEffects(
         effectFlow = effectFlow,
         navController = navController,
@@ -148,35 +140,12 @@ fun SavedAddressesScreen(
 }
 
 @Composable
-private fun HandleSavedAddressesEffects(
-    effectFlow: Flow<SavedAddressesEffect>,
-    navController: NavHostController,
-    snackbarHostState: SnackbarHostState
-) {
-    LaunchedEffect(Unit) {
-        effectFlow.collectLatest { effect ->
-            when (effect) {
-                is SavedAddressesEffect.ShowError ->
-                    snackbarHostState.showSnackbar("Ошибка: ${effect.message}")
-
-                is SavedAddressesEffect.AddNewAddress -> navController.navigateToAddress()
-                is SavedAddressesEffect.EditAddress -> navController.navigateToAddressDetails(
-                    address = effect.address,
-                    isEditMode = true,
-                    backTargetRoute = NavConstants.SAVED_ADDRESSES_ROUTE
-                )
-            }
-        }
-    }
-}
-
-@Composable
 private fun ObserveNavBackstack(
     savedStateHandle: SavedStateHandle?,
     onEvent: (SavedAddressesEvent) -> Unit
 ) {
     val shouldRefreshFlow = remember(savedStateHandle) {
-        savedStateHandle?.getStateFlow(SHOULD_REFRESH_ADDRESSES_KEY, false)
+        savedStateHandle?.getStateFlow(SHOULD_REFRESH_ADDRESSES_KEY, true)
     }
 
     shouldRefreshFlow?.let { flow ->

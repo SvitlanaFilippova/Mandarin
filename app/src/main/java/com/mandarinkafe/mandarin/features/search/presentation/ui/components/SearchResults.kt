@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.search.presentation.ui.components
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +16,6 @@ fun SearchResults(
     filteredMenuItems: List<Meal>,
     latestSearchText: String,
     favoriteIds: Set<String>,
-    onSearchDismiss: () -> Unit,
     cartItems: List<CartItem>,
     onToggleFavorite: (Meal) -> Unit,
     onAddToCart: (Meal) -> Unit,
@@ -25,9 +23,6 @@ fun SearchResults(
     onMealDetailsClick: (Meal) -> Unit,
     inProgressItems: Set<String>
 ) {
-    BackHandler {
-        onSearchDismiss()
-    }
     Column(
         modifier = Modifier
             .fillMaxWidth()

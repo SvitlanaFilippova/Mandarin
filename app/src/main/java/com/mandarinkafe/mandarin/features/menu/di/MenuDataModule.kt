@@ -66,5 +66,4 @@ class MenuDataModule {
     fun provideImageValidator(): ImageValidator {
         return ImageValidatorImpl()
     }
-
 }

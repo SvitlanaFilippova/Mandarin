@@ -19,39 +19,46 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ButtonWithCircularProgressIndicator
 
 @Composable
 fun ProcessOrderButton(
-    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     totalPrice: Int,
-    modifier: Modifier = Modifier
+    proceedOrderIsLoading: Boolean,
+    onClick: () -> Unit,
 ) {
-    Button(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = Dimens.MarginSmall8)
-            .height(Dimens.BigButtonWithTextHeight),
-        onClick = onClick,
-        shape = RoundedCornerShape(Dimens.CornerRadius8),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Colors.Orange,
-            contentColor = Color.White,
-        ),
+    val modifier = modifier
+        .fillMaxWidth()
+        .padding(horizontal = Dimens.MarginSmall8)
+        .height(Dimens.BigButtonWithTextHeight)
 
-        ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
-        ) {
-            Text(
-                text = stringResource(R.string.submit_order),
-                style = Typography.ToCartButtonBigStyle,
+    if (proceedOrderIsLoading) {
+        ButtonWithCircularProgressIndicator(modifier = modifier)
+    } else {
+        Button(
+            modifier = modifier,
+            onClick = onClick,
+            shape = RoundedCornerShape(Dimens.CornerRadius8),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Colors.Orange,
+                contentColor = Color.White,
             )
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = stringResource(R.string.cart_total_cost_template, totalPrice),
-                style = Typography.ToCartButtonBigStyle,
-            )
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
+            ) {
+                Text(
+                    text = stringResource(R.string.submit_order),
+                    style = Typography.ToCartButtonBigStyle,
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = stringResource(R.string.cart_total_cost_template, totalPrice),
+                    style = Typography.ToCartButtonBigStyle,
+                )
+            }
         }
     }
 }

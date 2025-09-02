@@ -11,29 +11,44 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.order.presentation.models.toUi
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 
 @Composable
-fun OrderHistoryCard(order: SavedOrder, onClick: () -> Unit) {
+fun OrderHistoryCard(modifier: Modifier = Modifier, order: SavedOrder, onClick: () -> Unit) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey),
     ) {
         Column(modifier = Modifier.padding(Dimens.MarginStandard16)) {
-            // Дата + тип заказа
-            Text(
-                text = "${order.whenCreated} • ${order.orderType}",
-                style = Typography.RegularTextStyle,
+            DateAndStatusSection(
+                orderStatus = order.status,
+                whenCreated = order.whenCreated
             )
 
-            Spacer(modifier = Modifier.height(Dimens.MarginSuperSmall4))
+            Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
 
-            // Адрес (если есть)
+            // Тип и номер заказа
+            order.orderType?.let {
+                val text = if (order.number.isNotEmpty()) {
+                    stringResource(it.toUi().nameRes) + " • №${order.number}"
+                } else {
+                    stringResource(it.toUi().nameRes)
+                }
+                Text(
+                    text = text,
+                    style = Typography.RegularTextStyle,
+                )
+            }
+
+            // Адрес
             if (order.addressLine1.isNotEmpty()) {
                 Text(
                     text = order.addressLine1,
@@ -43,18 +58,24 @@ fun OrderHistoryCard(order: SavedOrder, onClick: () -> Unit) {
             if (order.addressDetails.isNotEmpty()) {
                 Text(
                     text = order.addressDetails,
+                    style = Typography.RegularLightTextStyle,
+                )
+            }
+            Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
+
+            // Блюда в заказе строкой
+            if (order.mealNames.isNotEmpty()) {
+                Text(
+                    text = order.mealNames,
                     style = Typography.SmallTextStyle,
+                    color = Colors.White,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 3
                 )
             }
 
-            Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
+            Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
 
-            // ID заказа (очень мелкий шрифт)
-            Text(
-                text = "ID: ${order.id}",
-                style = Typography.ExtraSmallTextStyle,
-                color = Colors.LightGrey
-            )
         }
     }
 }

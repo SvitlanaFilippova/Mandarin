@@ -22,7 +22,7 @@ fun DeliveryAreasOnMap(
             mapView = mapView,
             outer = area.polygon,
             hole = parent?.polygon,
-            color = area.color.toArgb()
+            color = area.color.copy(alpha = 0.3f).toArgb()
         )
     }
 }

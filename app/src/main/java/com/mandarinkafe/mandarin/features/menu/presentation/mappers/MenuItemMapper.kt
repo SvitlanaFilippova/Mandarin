@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.menu.presentation.mappers
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
+import java.util.UUID
 
 object MenuItemMapper {
 
@@ -23,13 +24,14 @@ object MenuItemMapper {
                         subCategoriesNames = visibleSubcategories.map { it.name }
                             .takeIf { it.isNotEmpty() },
                         tabIcon = category.tabIcon,
-                        description = category.description
+                        description = category.description,
+                        id = "header_${UUID.randomUUID()}"
                     )
                 }
 
                 // Добавляем блюда самой категории
                 if (hasMeals) {
-                    this += groupMealsToItems(category.meals)
+                    addAll(groupMealsToItems(category.meals))
                 }
 
                 // Добавляем подкатегории (если есть)
@@ -37,9 +39,12 @@ object MenuItemMapper {
                     this += MenuItem.SubHeaderItem(
                         categoryName = subCategory.name,
                         sku = subCategory.id,
-                        description = subCategory.description
+                        description = subCategory.description,
+                        id = "sub_${UUID.randomUUID()}"
                     )
-                    this += groupMealsToItems(subCategory.meals!!)
+                    subCategory.meals?.let { meals ->
+                        addAll(groupMealsToItems(meals))
+                    }
                 }
             }
         }
@@ -56,10 +61,17 @@ object MenuItemMapper {
             val nextIsCompact = next?.description?.isBlank() == true
 
             if (currentIsCompact && nextIsCompact) {
-                result += MenuItem.MealItem.MealRow(current, next)
+                result += MenuItem.MealItem.MealRow(
+                    left = current,
+                    right = next,
+                    id = "row_${UUID.randomUUID()}"
+                )
                 i += 2
             } else {
-                result += MenuItem.MealItem.SingleMealItem(current)
+                result += MenuItem.MealItem.SingleMealItem(
+                    meal = current,
+                    id = "meal_${UUID.randomUUID()}"
+                )
                 i += 1
             }
         }

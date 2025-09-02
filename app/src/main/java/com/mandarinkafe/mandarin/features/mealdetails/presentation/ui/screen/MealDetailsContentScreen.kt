@@ -10,6 +10,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.hasSelectedAllRequiredModifiers
 import com.mandarinkafe.mandarin.core.domain.models.totalPrice
@@ -32,8 +34,8 @@ fun MealDetailsContentScreen(
     isEditMode: Boolean,
     onClose: () -> Unit,
     onEvent: (MealDetailsEvent) -> Unit,
-    onAddToCart: () -> Unit,
-    onEdit: () -> Unit,
+    onAddToCart: (String) -> Unit,
+    onEdit: (String) -> Unit,
     onToggleFavorite: () -> Unit,
     comment: String,
 ) {
@@ -79,22 +81,25 @@ fun MealDetailsContentScreen(
                 onMakeMoreDeliciousClick = onMakeMoreDeliciousClick,
                 onEvent = onEvent,
                 comment = comment,
+                isEditMode = isEditMode
             )
 
             // Кнопка "В корзину", закреплённая внизу
+            val messageOnAddToCart = stringResource(R.string.added_to_cart_template, meal.name)
+            val messageOnEdit = stringResource(R.string.edited, meal.name)
             ToCartButton(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .background(Colors.Transparent),
                 totalPrice = customizedMeal.totalPrice(),
                 onAddToCart = {
-                    onAddToCart()
+                    onAddToCart(messageOnAddToCart)
                     onClose()
                 },
                 shouldBeActive = toCartShouldBeActive,
                 isEditMode = isEditMode,
                 onEdit = {
-                    onEdit()
+                    onEdit(messageOnEdit)
                     onClose()
                 },
                 onMissingRequiredOptions = { onEvent(MealDetailsEvent.OnToCartClickBeforeMandatoryChoice) }

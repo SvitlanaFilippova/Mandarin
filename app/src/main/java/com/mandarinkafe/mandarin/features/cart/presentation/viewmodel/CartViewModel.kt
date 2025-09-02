@@ -18,6 +18,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduceWithDelay
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.UpdateMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
+import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Loading
@@ -32,6 +33,7 @@ import javax.inject.Inject
 class CartViewModel @Inject constructor(
     private val cartInteractor: CartInteractor,
     private val recommendsUseCase: GetAllRecommendsUseCase,
+    private val checkIfTerminalIsAlive: CheckIfTerminalIsAliveUseCase
 ) : BaseViewModel<CartEvent, CartEffect, CartState>() {
     override fun setInitialState() = CartState()
     private val itemTimers = mutableMapOf<CartItem, Job>()
@@ -54,31 +56,50 @@ class CartViewModel @Inject constructor(
             is UpdateMealInCart -> updateMealInCart(item = event.newItem)
             is CartEvent.OnProceedOrderClick -> onProceedOrderClick()
             is CartEvent.AddCommentToItem -> setCommentToItem(event.item, event.comment)
+            is CartEvent.ForceRefresh -> forceRefresh()
+        }
+    }
+
+    private fun forceRefresh() {
+        viewModelScope.launch {
+            cartInteractor.forceRetry()
+            updateRecommends(state.value.cartItems.map { it.customizedMeal.meal }.toSet())
         }
     }
 
     private fun observeCartChanges() {
         viewModelScope.launch {
-            cartInteractor.observeCartItems().collect { cartResource ->
-                Log.d(logTag, "observeCartItems emitted: $cartResource")
-                when (cartResource) {
-                    is Resource.Success -> {
-                        Log.d(logTag, "Cart updated: ${cartResource.data?.size} items")
-                        setData(cartResource.data)
-                        updateRecommends(cartResource.data?.map { it.customizedMeal.meal }?.toSet())
-                    }
+            cartInteractor.observeCartItems().collect { proceedCartResult(it) }
+        }
+    }
 
-                    is Loading -> {
-                        Log.d(logTag, "Loading cart data")
-                        setLoading()
-                    }
+    private suspend fun proceedCartResult(cartResource: Resource<List<CartItem>>) {
+        Log.d(logTag, "observeCartItems emitted: $cartResource")
+        when (cartResource) {
+            is Resource.Success -> {
+                Log.d(logTag, "Cart updated: ${cartResource.data?.size} items")
+                setData(cartResource.data)
+                updateRecommends(cartResource.data?.map { it.customizedMeal.meal }?.toSet())
+            }
 
-                    is Resource.Idle -> {}
-                    else -> {
-                        Log.e(logTag, "Error loading cart: $cartResource")
-                        setError(cartResource)
-                    }
+            is Loading -> {
+                Log.d(logTag, "Loading cart data")
+                setLoading()
+            }
+
+            is Resource.ErrorNoInternet -> {
+                if (state.value.cartItems.isEmpty()) {
+                    setError(cartResource)
+                } else {
+                    Log.w(logTag, "No internet, but cart already has items, skip error")
+                    setLoading(false)
                 }
+            }
+
+            is Resource.Idle -> {}
+            else -> {
+                Log.e(logTag, "Error loading cart: $cartResource")
+                setError(cartResource)
             }
         }
     }
@@ -172,7 +193,39 @@ class CartViewModel @Inject constructor(
     }
 
     private fun onProceedOrderClick() {
-        sendEffect(CartEffect.ProceedOrder)
+        viewModelScope.launch {
+            setState { copy(proceedOrderIsLoading = true) }
+            val terminalResponse = checkIfTerminalIsAlive()
+
+            setState { copy(proceedOrderIsLoading = false) }
+            when (terminalResponse) {
+                is Resource.Success -> {
+                    if (terminalResponse.data == true) {
+                        sendEffect(CartEffect.ProceedOrder)
+                    } else {
+                        sendEffect(
+                            CartEffect.ShowSnackbar(
+                                "Упс, кажется, сейчас мы не работаем — заказ оформить не получится\uD83E\uDD37\nВозвращайся в рабочее время!"
+                            )
+                        )
+                    }
+                }
+
+                is Resource.ErrorNoInternet -> {
+                    sendEffect(
+                        CartEffect.ShowSnackbar(
+                            "Нет подключения к интернету."
+                        )
+                    )
+                }
+
+                else -> sendEffect(
+                    CartEffect.ShowSnackbar(
+                        "Что-то пошло не так — не удалось проверить, работает ли сейчас доставка."
+                    )
+                )
+            }
+        }
     }
 
     private fun setCommentToItem(item: CartItem, comment: String) {
@@ -285,13 +338,19 @@ class CartViewModel @Inject constructor(
     }
 
     private fun setError(resource: Resource<*>) {
+        val hasItems = state.value.cartItems.isNotEmpty()
+        setLoading(false)
+
         val error = when (resource) {
             is Resource.ErrorEmptyData -> UiError.CartEmpty
-            is Resource.ErrorNoInternet -> UiError.NoInternet
+            is Resource.ErrorNoInternet -> if (hasItems) null else UiError.NoInternet
             is ErrorOther -> UiError.OtherError
             else -> return
         }
-        setState { copy(error = error, isLoading = false) }
+
+        if (error != null) {
+            setState { copy(error = error, isLoading = false) }
+        }
     }
 
     private companion object {

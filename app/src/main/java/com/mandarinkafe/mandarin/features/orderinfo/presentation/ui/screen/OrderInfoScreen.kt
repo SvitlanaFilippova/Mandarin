@@ -1,13 +1,12 @@
 package com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Text
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -19,108 +18,90 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.AddressInfo
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.CustomerInfo
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderInfoSection
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderItemsSection
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderStatusSection
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderTimesSection
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
-import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
-import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.OnMealDetailsClick
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
+import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun OrderInfoScreen(
     orderID: String?,
-    requireConfirmation: Boolean,
+    sharedViewModel: SharedViewModel,
     viewModel: OrderInfoViewModel = hiltViewModel(),
-    navController: NavHostController
+    fromOrderCreation: Boolean = false,
+    navController: NavHostController,
 ) {
     if (orderID == null) return
-
     val onEvent = viewModel::onEvent
     val state by viewModel.state.collectAsState()
+    val effectFlow = viewModel.effect
+    val onSharedEvent = sharedViewModel::onEvent
+    val snackbarHostState = LocalSnackbarHostState.current
+    val someItemsUnavailableText = stringResource(R.string.some_items_unavailable)
+    val allItemsAddedText = stringResource(R.string.all_items_added_to_cart)
 
     LaunchedEffect(Unit) {
         onEvent(OrderInfoEvent.SetInitId(orderID))
     }
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isLoading,
+        onRefresh = { onEvent(OrderInfoEvent.RefreshNow) }
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(pullRefreshState)
+    ) {
+        if (state.incomingOrder != null) {
+            OrderInfoContentScreen(
+                order = state.incomingOrder,
+                state = state,
+                onEvent = onEvent,
+                navController = navController,
+                orderRepeatingInProgress = state.orderRepeatingInProgress,
+                fromOrderCreation = fromOrderCreation,
+                onOrderItemClick = { mealId -> onSharedEvent(OnMealDetailsClick(mealId = mealId)) }
+            )
+        }
 
-    val order = state.incomingOrder
+        PullRefreshIndicator(
+            refreshing = state.isLoading,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
 
-    order?.let {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(Dimens.MarginSmall8),
-            verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
-        ) {
-            item {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(Dimens.MarginSmall8),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    order.number?.let {
-                        Text(
-                            text = stringResource(
-                                R.string.order_number_created,
-                                it,
-                                order.whenCreated ?: ""
-                            ),
-                            style = Typography.RegularLightTextStyle
+        DisposableEffect(Unit) {
+            onDispose { onEvent(StopObservingStatus) }
+        }
+
+
+        LaunchedEffect(Unit) {
+            effectFlow.collectLatest { effect ->
+                when (effect) {
+                    is OrderInfoEffect.ShowError -> {
+                        snackbarHostState.showSnackbar(
+                            message = effect.message,
+                            duration = SnackbarDuration.Long,
+                            withDismissAction = true,
                         )
+                    }
+
+                    is OrderInfoEffect.RepeatOrder -> {
+                        val message = if (effect.hasInvalidItems) {
+                            someItemsUnavailableText
+                        } else {
+                            allItemsAddedText
+                        }
+                        navController.navigateToCart(message)
                     }
                 }
             }
-
-            item {
-                OrderStatusSection(deliveryStatus = state.deliveryStatus)
-            }
-
-            item { OrderInfoSection(order) }
-
-            if (order.items.isNotEmpty()) {
-                item {
-                    OrderItemsSection(
-                        items = order.items,
-                        sum = order.sum
-                    )
-                }
-            }
-
-            if (order.isDelivery) {
-                item { AddressInfo(address = order.deliveryAddress) }
-            }
-
-            item {
-                CustomerInfo(
-                    phone = order.phone,
-                    comment = order.comment,
-                    customerName = order.customer?.name,
-                )
-            }
-
-            item { OrderTimesSection(order) }
-
-            item {
-                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    ButtonWithText(
-                        modifier = Modifier.padding(Dimens.MarginStandard16),
-                        textResID = R.string.back_to_menu,
-                        onClick = { navController.navigateToMenu() }
-                    )
-                }
-            }
         }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose { onEvent(StopObservingStatus) }
     }
 }

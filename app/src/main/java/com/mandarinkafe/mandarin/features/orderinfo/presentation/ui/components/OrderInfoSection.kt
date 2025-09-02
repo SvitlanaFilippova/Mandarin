@@ -26,9 +26,6 @@ fun OrderInfoSection(order: IncomingOrder) {
             order.orderType?.let {
                 LabelValue(stringResource(R.string.label_order_type), it.name)
             }
-            order.paymentName?.let {
-                LabelValue(stringResource(R.string.label_payment_method), it)
-            }
         }
     }
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -29,10 +28,9 @@ fun DeliveryAreaInfo(
 ) {
     Box(
         modifier = modifier
-            .fillMaxWidth()
             .padding(Dimens.MarginSmall8)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
-            .background(Colors.WhiteTransparent75)
+            .background(Colors.AppBlack80)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -41,31 +39,18 @@ fun DeliveryAreaInfo(
                 .padding(Dimens.MarginSmall8),
         ) {
             if (deliveryArea != null) {
-                // Цвет и номер зоны доставки
-                Box(
-                    modifier = Modifier
-                        .size(Dimens.IconSize24)
-                        .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                        .background(deliveryArea.color),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = deliveryArea.id.toString(),
-                        style = Typography.RegularLightTextStyle,
-                        color = Colors.White
-                    )
-                }
+                DeliveryAreaColorIndicator(deliveryArea)
 
                 Text( // Мин сумма заказа и цена доставки
                     modifier = Modifier.padding(start = Dimens.MarginSmall8),
                     text =
                         stringResource(
-                            R.string.free_delivery_at,
+                            R.string.delivery_price_and_free_from,
                             deliveryArea.freeDeliveryThreshold,
                             deliveryArea.deliveryPrice
                         ),
                     style = Typography.RegularLightTextStyle,
-                    color = Colors.AppBlack
+                    color = Colors.White
                 )
             } else {
                 Row(
@@ -76,7 +61,7 @@ fun DeliveryAreaInfo(
                         modifier = Modifier
                             .padding(Dimens.MarginSmall8),
                         imageVector = Icons.Default.Info,
-                        tint = Colors.AppBlack.copy(alpha = 0.5f),
+                        tint = Colors.White.copy(alpha = 0.5f),
                         contentDescription = null
                     )
                     Text(
@@ -86,7 +71,7 @@ fun DeliveryAreaInfo(
                             R.string.delivery_validation_error
                         ),
                         style = Typography.RegularLightTextStyle,
-                        color = Colors.AppBlack
+                        color = Colors.White
                     )
                 }
             }

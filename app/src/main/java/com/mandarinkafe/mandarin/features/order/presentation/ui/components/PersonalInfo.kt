@@ -33,9 +33,9 @@ fun PersonalInfo(
 
     MyTextField(
         value = phoneQuery,
-        labelRes = R.string.your_phone,
+        labelRes = R.string.your_phone_required,
         isError = isError && !phoneIsValid,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
         onValueChange = { onPhoneChanged(it) },
         visualTransformation = mask,
         placeholder = {

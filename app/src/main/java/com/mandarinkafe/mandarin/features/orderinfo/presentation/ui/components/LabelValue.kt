@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
@@ -25,6 +26,7 @@ fun LabelValue(label: String, value: String) {
 @Composable
 fun Label(text: String) {
     Text(
+        textAlign = TextAlign.Center,
         text = text,
         style = Typography.RegularLightTextStyle.copy(color = Color.Gray)
     )

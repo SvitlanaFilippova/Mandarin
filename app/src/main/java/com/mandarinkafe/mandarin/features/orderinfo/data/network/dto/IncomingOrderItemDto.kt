@@ -5,7 +5,8 @@ data class IncomingOrderItemDto(
     val amount: Double,
     val modifiers: List<IncomingModifierDto>?,
     val price: Double,
-    val positionId: String?, // WTF?
+    val resultSum: Double?,
+    val positionId: String?,
     val deleted: DeletionInfoDto?,
     val comment: String?
 )

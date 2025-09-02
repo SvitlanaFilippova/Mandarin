@@ -11,6 +11,7 @@
     <string name="edit">Редактировать</string>
     <string name="remove">Удалить</string>
     <string name="rub">₽</string>
+    <string name="close">Закрыть</string>
 
     <!-- Заголовки экранов -->
     <string name="more_options">Ещё</string>
@@ -24,13 +25,16 @@
     <string name="question_add_to_cart">Добавить в корзину ?</string>
     <string name="add_to_favorite">Добавить в избранное</string>
     <string name="remove_from_cart">Убрать из корзины</string>
-    <string name="comment_for_meal">Комментарий к блюду</string>
+    <string name="comment_for_meal">Комментарий к блюду для повара</string>
     <string name="cancel_removing">Вернуть</string>
     <string name="clear_cart_question">Очистить корзину?</string>
-    <string name="clear_cart_confirmation">Вы действительно хотите удалить всё из корзины?</string>
+    <string name="clear_cart_confirmation">Действительно удалить всё из корзины?</string>
     <string name="cart_total_cost_template">%d ₽</string>
     <string name="float_price_template">%.2f ₽</string>
     <string name="quantity_x_template">x%.0f</string>
+    <string name="some_items_unavailable">Некоторые блюда недоступны. Остальные добавлены в&#160;корзину</string>
+    <string name="all_items_added_to_cart">Все позиции из&#160;заказа добавлены в&#160;корзину</string>
+
 
     <!-- Избранное -->
     <string name="favorite">Избранное</string>
@@ -55,22 +59,9 @@
     <string name="for_selfpickup">для самовывоза</string>
     <string name="for_selfpickup_details">Позиция доступна только для заказа самовывозом. Доставка невозможна.</string>
 
-    <!-- Доставка -->
-    <string name="delivery">Доставка</string>
-    <string name="delivery_history">История заказов</string>
-    <string name="delivery_price">СТОИМОСТЬ ДОСТАВКИ</string>
-    <string name="delivery_price_from_beregovaya">(по "Береговой" 100 рублей)</string>
-    <string name="free_delivery_at">Доставка %2$d ₽;\nПри заказе от %1$d ₽ — бесплатно.</string>
-    <string name="delivery_price_info">Доставка — БЕСПЛАТНО, при условии заказа на минимальную сумму. Чем дальше от Черноголовки, тем сумма выше. Все суммы указаны на карте ниже.</string>
-    <string name="delivery_price_info_other">Стоимость доставки в остальные населенные пункты и СНТ уточняйте у оператора.</string>
-    <string name="pickup">САМОВЫВОЗ</string>
-    <string name="pickup_info">Вы всегда можете воспользоваться услугой самовывоза из нашего кафе.\n\nМы находимся по адресу: г. Черноголовка, ул. Береговая, 24.</string>
-    <string name="pay">ОПЛАТА</string>
-    <string name="pay_info">- Наличными курьеру\n- Карточкой курьеру (через мобильный терминал)\n- Online-перевод на карту Сбербанка</string>
-
     <!-- Оформление заказа -->
     <string name="your_name">Имя</string>
-    <string name="your_phone">Номер телефона *</string>
+    <string name="your_phone_required">Номер телефона *</string>
     <string name="phone_prefix">+7 </string>
     <string name="phone_mask">(###) ###-##-##</string>
     <string name="phone_placeholder">(XXX) XXX-XX-XX</string>
@@ -97,23 +88,29 @@
     <string name="delivery_cost_hint">Для выбранного адреса доставка бесплатна при заказе от&#160;%1&#36;d&#8381; (с&#160;учётом скидок).</string>
     <string name="why_is_that_number">Почему такая цифра</string>
     <string name="delivery_request_validation">Нужно ввести адрес для расчёта стоимости доставки</string>
-    <string name="delivery_validation_error">Не&#160;удалось найти выбранный адрес в&#160;пределах зон доставки. Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа.</string>
+    <string name="delivery_validation_error">Не&#160;удалось найти адрес в&#160;пределах зон доставки. Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа.</string>
     <string name="submit_order">Оформить заказ</string>
     <string name="pickup_only">В&#160;заказе есть позиции, доступные только для самовывоза. Доставка невозможна.</string>
     <string name="pickup_both_title">Ваш заказ будет готов в&#160;двух точках самовывоза</string>
     <string name="pickup_both_description">В&#160;заказе есть блюда, которые готовятся в&#160;пиццерии, и&#160;те, что готовятся в&#160;основном кафе.
 Их&#160;нужно будет забрать по&#160;двум адресам. Это соседние здания.</string>
-    <string name="pickup_cafe_address">Кафе&#160;&#8212; Черноголовка, ул. Береговая, 24</string>
-    <string name="pickup_pizzeria_address">Пиццерия&#160;&#8212; Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
+    <string name="pickup_cafe_address">Кафе: Черноголовка, ул. Береговая, 24</string>
+    <string name="pickup_pizzeria_address">Пиццерия: Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
     <string name="order_submit_success">Заказ №%1$s успешно создан</string>
     <string name="back_to_menu">Вернуться в меню</string>
     <string name="choose_address">Выберите адрес *</string>
+    <string name="cancel_order">Отменить заказ</string>
+    <string name="repeat_order">Повторить заказ</string>
+    <string name="order">Заказ</string>
+    <string name="comment_template">Комментарий: %1$s</string>
 
     <!-- Адрес -->
     <string name="location">Адрес</string>
     <string name="deliver_to_this_location">Доставить сюда</string>
     <string name="to_init_location">Вернуться к изначальному адресу</string>
     <string name="to_my_location">Вернуться к моей локации</string>
+    <string name="zoom_minus">Отдалить</string>
+    <string name="zoom_plus">Приблизить</string>
     <string name="save">Сохранить</string>
     <string name="delete">Удалить</string>
     <string name="no_saved_addresses">Сохранённых адресов пока нет.</string>
@@ -131,9 +128,12 @@
     <string name="addresses_hide">Скрыть</string>
     <string name="addresses_show_more">Показать ещё %1$d</string>
 
-    <!-- Оформление заказа -->
-    <string name="order">Заказ</string>
-    <string name="comment_template">Комментарий: %1$s</string>
+    <!-- Форма обратной связи -->
+    <string name="your_phone">Номер телефона</string>
+    <string name="your_email">E-mail</string>
+    <string name="your_message">Сообщение *</string>
+    <string name="i_need_feedback">Мне нужна обратная связь</string>
+    <string name="contacts_are_required">Нужен email или номер телефона для связи</string>
 
     <!-- Статусы заказа -->
     <string name="delivery_status_unconfirmed">Не подтверждён</string>
@@ -141,7 +141,7 @@
     <string name="delivery_status_ready_for_cooking">Ожидает готовки</string>
     <string name="delivery_status_cooking_started">Начали готовить</string>
     <string name="delivery_status_cooking_completed">Приготовлен</string>
-    <string name="delivery_status_waiting">Ожидает курьера</string>
+    <string name="delivery_status_waiting">Упакован</string>
     <string name="delivery_status_on_way">В пути</string>
     <string name="delivery_status_delivered">Доставлен</string>
     <string name="delivery_status_closed">Закрыт</string>
@@ -161,38 +161,45 @@
     <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка&#160;&#8212; пожалуйста, позвоните.</string>
 
     <!-- История заказов -->
-    <string name="order_history_is_empty">В&#160;истории пока нет заказов</string>
-    <string name="order_history_is_empty_extra">Без авторизации по&#160;номеру телефона (мы&#160;над ней работаем!), история заказов хранится только локально, на&#160;вашем устройстве. А&#160;значит, при переустановке приложения или переходе на&#160;другое устройство история будет потеряна.</string>
+    <string name="delivery_history">История заказов</string>
+    <string name="order_history_is_empty">Здесь будут ваши заказы</string>
+    <string name="order_history_is_empty_extra">Сейчас история заказов хранится только на&#160;этом устройстве.
+    После переустановки приложения или перехода на&#160;другое устройство данные будут потеряны.
+    Мы работаем над авторизацией по&#160;номеру телефона, чтобы ваша история сохранялась всегда.</string>
+    <string name="order_history_is_empty_by_filters">По&#160;таким фильтрам заказов нет</string>
+    <string name="order_history_is_empty_by_filters_extra">Попробуй изменить или сбросить фильтры, чтобы увидеть другие заказы.</string>
+    <string name="filter_by_type">Тип заказа</string>
+    <string name="date_filter_today">Сегодня</string>
+    <string name="date_filter_yesterday">Вчера</string>
+    <string name="date_filter_last_7_days">Последние 7 дней</string>
+    <string name="date_filter_current_month">Текущий месяц</string>
+    <string name="date_filter_custom_range">Выбрать диапазон</string>
+    <string name="choose_period">Выберите период</string>
+    <string name="filter_by_date">Период</string>
+    <string name="filter_by_date_start">Начало</string>
+    <string name="filter_by_date_end">Конец</string>
 
-
-    <!-- Order Info -->
-    <string name="order_number_created">Заказ №%1$s, создан %2$s</string>
+    <!-- Детали заказа -->
+    <string name="order_info_screen_title_with_number">Заказ №%1$s</string>
     <string name="label_error">Ошибка</string>
     <string name="label_order_type">Способ получения</string>
     <string name="label_payment_method">Способ оплаты</string>
-
-    <!-- Order Items -->
+    <string name="cancel_order_question">Отменить заказ?</string>
+    <string name="cancel_order_confirmation">Действительно отменить оформленный заказ?</string>
     <string name="label_order_items">Позиции заказа: %1$d</string>
+    <string name="discount_applied">Применена скидка</string>
     <string name="label_total">Итого</string>
-
-    <!-- Address -->
     <string name="label_address">Адрес</string>
-
-    <!-- Customer Info -->
     <string name="label_phone">Телефон</string>
     <string name="label_customer">Клиент</string>
     <string name="label_comment">Комментарий к заказу</string>
-
-    <!-- Order Times -->
     <string name="label_created">Создан</string>
     <string name="label_confirmed">Подтверждён</string>
     <string name="label_cancelled">Отменён</string>
-    <string name="label_cooking_completed">Готово</string>
-    <string name="label_packed">Упаковано</string>
-    <string name="label_sent">Отправлено</string>
-    <string name="label_delivered">Доставлено</string>
-    <string name="label_closed">Закрыто</string>
-
+    <string name="label_cooking_completed">Готов</string>
+    <string name="label_sent">Отправлен</string>
+    <string name="label_delivered">Доставлен</string>
+    <string name="label_closed">Закрыт</string>
 
     <!-- Кнопки действий -->
     <string name="minus">-</string>
@@ -226,14 +233,72 @@
     <string name="placeholder_call">Позвонить</string>
     <string name="nothing_found">Ничего не найдено :(</string>
     <string name="nothing_found_extra">Попробуй написать по-другому или просто полистай наше меню. Там точно найдутся нужные вкусности!</string>
-    <string name="error_no_internet">Проверь подключение к&#160;интернету</string>
+    <string name="error_no_internet">Нет подключения к&#160;интернету</string>
     <string name="error_empty_menu">Сервер вернул пустые данные меню</string>
-    <string name="error_empty_addons">Не удалось загрузить добавки</string>
+    <string name="error_empty_data">Не удалось загрузить данные</string>
     <string name="error_server_error">Ошибка сервера</string>
     <string name="error_something_wrong">Что-то пошло не так :(</string>
-    <string name="error_empty_cart">В корзине пока ничего нет :(</string>
+    <string name="error_empty_cart">В корзине пока ничего нет</string>
     <string name="error_empty_favorites">В избранных пока ничего нет.</string>
     <string name="error_empty_favorites_extra">Скорее добавь свои любимые блюда, чтобы заказывать их&#160;было ещё удобнее!</string>
+    <string name="added_to_cart_template">Добавлено в корзину:\n%s</string>
+    <string name="edited">Отредактировано:\n%s</string>
+
+    <!-- More Menu -->
+    <string name="more_orders_history">История заказов</string>
+    <string name="more_saved_addresses">Сохранённые адреса</string>
+    <string name="more_section_legal_info">Правовая информация</string>
+    <string name="more_delivery_info">Условия доставки</string>
+    <string name="more_contacts">Контакты</string>
+    <string name="more_message_manager">Написать директору</string>
+    <string name="more_privacy_policy">Политика конфиденциальности</string>
+    <string name="more_user_agreement">Пользовательское соглашение</string>
+    <string name="more_personal_data_agreement">Соглашение об обработке персональных данных</string>
+    <string name="more_yandex_maps_terms">Условия использования отдельных сервисов «Яндекс.Карт»</string>
+    <string name="cannot_open_link">Не удалось открыть ссылку</string>
+    <string name="mandarin_info">Доставляем по&#160;Черноголовке и&#160;ближайшим населенным пунктам</string>
+    <string name="mandarin_info_when">Ежедневно с 11:00 по 22:00</string>
+
+    <!-- consent -->
+    <string name="consent_prefix">Нажимая на кнопку%s, подтверждаю своё согласие с</string>
+    <string name="consent_privacy">политикой конфиденциальности</string>
+    <string name="consent_agreement">пользовательским соглашением.</string>
+    <string name="privacy_policy_url">https://mandarin-kafe.ru/policy</string>
+    <string name="user_agreement_url">https://mandarin-kafe.ru/agreement</string>
+    <string name="yandex_maps_terms_url">https://yandex.ru/legal/maps_api/</string>
+
+    <!-- О приложении  -->
+    <string name="about_title">О приложении</string>
+    <string name="version_text">Версия приложения: %1$s</string>
+    <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана Филиппова&#160;&#8212; я&#160;разработчик этого приложения.\n\nЕсли у&#160;тебя есть идеи по&#160;улучшению или просто хочешь поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!</string>
+    <string name="contact_title">Как со мной связаться:</string>
+    <string name="telegram_label">Telegram</string>
+    <string name="telegram_url">https://t.me/SvitlanaFilippova</string>
+    <string name="github_label">GitHub</string>
+    <string name="github_url">https://github.com/SvitlanaFilippova</string>
+    <string name="thanks_text">P.S: отзывы в сторах тоже приветствуются 😊\n\n**тут будут ссылки, чтобы оставить отзыв**</string>
+
+    <!-- Контакты -->
+    <string name="contacts_screen_title">Контакты</string>
+    <string name="working_hours_title">График работы</string>
+    <string name="working_hours_value">Ежедневно с 11:00 до 22:00</string>
+    <string name="addresses_title">Адреса</string>
+    <string name="contacts_cafe_title">Кафе</string>
+    <string name="contacts_cafe_address">Черноголовка, ул. Береговая, 24</string>
+    <string name="contacts_pizzeria_title">Пиццерия</string>
+    <string name="contacts_pizzeria_address">Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
+    <string name="phone_title">Телефон</string>
+
+    <!-- Доставка -->
+    <string name="delivery">Доставка</string>
+    <string name="delivery_areas">Зоны доставки</string>
+    <string name="delivery_free_from">0&#160;₽ от&#160;%1$d&#160;₽</string>
+    <string name="delivery_price">Иначе %1$d&#160;₽</string>
+    <string name="delivery_price_and_free_from">Доставка %2$d&#160;₽;\nПри заказе от&#160;%1$d&#160;₽ — бесплатно</string>
+    <string name="delivery_duration_title">Время доставки</string>
+    <string name="delivery_zones_text">Доставим бесплатно при условии заказа на&#160;минимальную сумму. Чем дальше от&#160;Черноголовки, тем сумма выше.</string>
+    <string name="delivery_duration_value">Время зависит от&#160;удалённости адреса и&#160;загруженности ресторана.
+Актуальную информацию можно уточнить у&#160;оператора по&#160;телефону.</string>
 
     <!-- Для contentDescription  -->
     <string name="picture_of_meal_template">Изображение %1$s</string>
@@ -244,5 +309,7 @@
     <string name="back_to_top">Вернуться в начало</string>
     <string name="is_selected">Выбрано</string>
     <string name="logo_cafe">Логотип кафе</string>
+    <string name="send">Отправить</string>
 
+    <string name="search_by_meal_or_category">Блюдо или категория</string>
 </resources>

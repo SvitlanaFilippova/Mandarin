@@ -2,8 +2,13 @@ package com.mandarinkafe.mandarin.features.orderinfo.data
 
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
 import com.mandarinkafe.mandarin.core.domain.models.Address
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
+import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.DeletionInfoDto
@@ -15,8 +20,14 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingMealAdditional
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingModifier
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
+import com.mandarinkafe.mandarin.features.ordershistory.domain.models.OrderStatus
 import com.mandarinkafe.mandarin.util.DateTimeUtils.toHumanDateTimeOrNull
 import com.mandarinkafe.mandarin.util.applyTypography
+
+fun OrderInfoResponseDto.toOrderStatus() = OrderStatus(
+    orderId = id,
+    status = order?.status?.toDeliveryStatus(),
+)
 
 fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): IncomingOrder {
     val cancelInfo = buildString {
@@ -29,7 +40,6 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
             append(comment)
         }
     }
-
     return IncomingOrder(
         id = id,
         number = order?.number,
@@ -48,18 +58,32 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         orderType = order?.orderType,
         processedPaymentsSum = order?.processedPaymentsSum,
         sum = order?.sum,
+        discountReason = order?.discounts?.firstOrNull()?.discountType?.name,
         whenCancelled = order?.cancelInfo?.whenCancelled?.toHumanDateTimeOrNull(),
         whenClosed = order?.whenClosed?.toHumanDateTimeOrNull(),
         whenConfirmed = order?.whenConfirmed?.toHumanDateTimeOrNull(),
         whenCookingCompleted = order?.whenCookingCompleted?.toHumanDateTimeOrNull(),
         whenCreated = order?.whenCreated?.toHumanDateTimeOrNull(),
         whenDelivered = order?.whenDelivered?.toHumanDateTimeOrNull(),
-        whenPacked = order?.whenPacked?.toHumanDateTimeOrNull(),
-        whenPrinted = order?.whenPrinted?.toHumanDateTimeOrNull(),
         whenSent = order?.whenSended?.toHumanDateTimeOrNull(),
         problem = order?.problem,
+    )
+}
 
-        )
+fun IncomingOrderItem.toCartItem(
+    baseMeal: Meal,
+    adds: List<MealAdditional>,
+    modifiers: List<ModifierGroup>
+): CartItem {
+    return CartItem(
+        customizedMeal = CustomizedMeal(
+            meal = baseMeal,
+            adds = adds,
+            modifiers = modifiers
+        ),
+        quantity = amount.toInt(),
+        comment = comment
+    )
 }
 
 fun IncomingOrderItemDto.toDomain() = IncomingOrderItem(
@@ -70,8 +94,17 @@ fun IncomingOrderItemDto.toDomain() = IncomingOrderItem(
     price = price,
     positionId = positionId,
     deleted = deleted?.toDomain() ?: DeletionInfo(),
-    comment = comment ?: ""
+    comment = comment ?: "",
+    discountedPrice = resultSum
 )
+
+fun List<IncomingOrderItemDto>.toDomainWithAdds(
+    addonsCategories: List<MealAdditionalCategory>
+): List<IncomingOrderItem> {
+    val addonIds = collectAddonIds(addonsCategories)
+    val builders = associateItemsWithAdds(this, addonIds)
+    return builders.map { it.build() }
+}
 
 private fun DeliveryPointDto.toAddress(): Address {
     val point = coordinates?.let {
@@ -96,8 +129,9 @@ private fun IncomingModifierDto.toDomain() = IncomingModifier(
     name = product.name.applyTypography(),
     amount = amount,
     price = price,
-    modifierGroupId = productGroup.id,
-    modifierGroupName = productGroup.name
+    groupId = productGroup.id,
+    groupName = productGroup.name,
+    discountedPrice = resultSum
 )
 
 private fun DeletionInfoDto.toDomain() = DeletionInfo(
@@ -111,13 +145,6 @@ private fun String.toDeliveryStatus(): DeliveryStatus {
         ?: DeliveryStatus.UNCONFIRMED
 }
 
-fun List<IncomingOrderItemDto>.toDomainWithAdds(
-    addonsCategories: List<MealAdditionalCategory>
-): List<IncomingOrderItem> {
-    val addonIds = collectAddonIds(addonsCategories)
-    val builders = associateItemsWithAdds(this, addonIds)
-    return builders.map { it.build() }
-}
 
 private fun collectAddonIds(addonsCategories: List<MealAdditionalCategory>): Set<String> =
     addonsCategories.flatMap { it.items.map { add -> add.id } }.toSet()
@@ -136,9 +163,10 @@ private fun associateItemsWithAdds(
         } else {
             val addon = IncomingMealAdditional(
                 id = dto.product.id,
-                name = dto.product.name,
+                name = dto.product.name.applyTypography(),
                 amount = dto.amount,
-                price = dto.price
+                price = dto.price,
+                discountedPrice = dto.resultSum
             )
             if (result.isNotEmpty()) {
                 result.last().chosenAdds += addon
@@ -150,11 +178,13 @@ private fun associateItemsWithAdds(
 
     return result
 }
+
 private class IncomingOrderItemBuilder private constructor(
     private val id: String,
     private val name: String,
     private val amount: Double,
     private val price: Double,
+    private val discountedPrice: Double?,
     private val positionId: String?,
     private val deleted: DeletionInfo,
     private val comment: String,
@@ -170,20 +200,22 @@ private class IncomingOrderItemBuilder private constructor(
         price = price,
         positionId = positionId,
         deleted = deleted,
-        comment = comment
+        comment = comment,
+        discountedPrice = discountedPrice
     )
 
     companion object {
         fun fromDto(dto: IncomingOrderItemDto): IncomingOrderItemBuilder {
             return IncomingOrderItemBuilder(
                 id = dto.product.id,
-                name = dto.product.name,
+                name = dto.product.name.applyTypography(),
                 amount = dto.amount,
                 price = dto.price,
                 positionId = dto.positionId,
                 deleted = dto.deleted?.toDomain() ?: DeletionInfo(),
                 comment = dto.comment ?: "",
-                chosenModifiers = dto.modifiers?.map { it.toDomain() } ?: emptyList()
+                chosenModifiers = dto.modifiers?.map { it.toDomain() } ?: emptyList(),
+                discountedPrice = dto.resultSum,
             )
         }
 
@@ -195,7 +227,8 @@ private class IncomingOrderItemBuilder private constructor(
                 price = 0.0,
                 positionId = null,
                 deleted = DeletionInfo(),
-                comment = ""
+                comment = "",
+                discountedPrice = null,
             ).apply { chosenAdds += addon }
         }
     }

@@ -32,7 +32,7 @@ sealed interface OrderContract {
         data class SetDeliveryType(val deliveryType: DeliveryType) : OrderEvent
 
         // Настройки оплаты
-        data object GetPaymentTypes : OrderEvent
+        data object GetInitData : OrderEvent
         data class SetPaymentType(val paymentType: UiPaymentType) : OrderEvent
 
         // Настройки сдачи и приборов
@@ -86,7 +86,8 @@ sealed interface OrderContract {
             get() = cartSummary.cartSumWithDiscount + deliveryCost.toDouble()
 
         val canBeSubmitted: Boolean
-            get() = userInfo.phoneIsValid &&
+            get() = !isLoading &&
+                    userInfo.phoneIsValid &&
                     deliveryInfo.addressIsValid &&
                     paymentInfo.paymentTypeIsChosen
     }

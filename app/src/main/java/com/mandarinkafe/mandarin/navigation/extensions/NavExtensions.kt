@@ -6,9 +6,13 @@ import androidx.navigation.NavController
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.navigation.NavConstants.ABOUT_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
+import com.mandarinkafe.mandarin.navigation.NavConstants.CART_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.CONTACTS_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.LEGAL_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDERS_HISTORY_ROUTE
@@ -16,13 +20,13 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_INFO_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SAVED_ADDRESSES_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.util.Constants.SNACKBAR_MESSAGE_KEY
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 fun NavController.navigateToSearchScreen(focusInput: Boolean) {
     this.navigate("$SEARCH_SCREEN_ROUTE?focusInput=$focusInput") {
         launchSingleTop = true
-        restoreState = true
         popUpTo(MENU_SCREEN_ROUTE) {
             saveState = true
         }
@@ -30,10 +34,18 @@ fun NavController.navigateToSearchScreen(focusInput: Boolean) {
 }
 
 fun NavController.navigateToMenu() {
-    this.navigate(MENU_SCREEN_ROUTE) {
-        restoreState = true
-    }
+    this.navigate(MENU_SCREEN_ROUTE)
 }
+
+fun NavController.navigateToCart(snackbarMessage: String? = null) {
+    this.navigate(CART_SCREEN_ROUTE) {
+        launchSingleTop = true
+    }
+    this.currentBackStackEntry
+        ?.savedStateHandle
+        ?.set(SNACKBAR_MESSAGE_KEY, snackbarMessage)
+}
+
 
 fun NavController.navigateToSavedAddresses() {
     this.navigate(SAVED_ADDRESSES_ROUTE)
@@ -47,47 +59,73 @@ fun NavController.navigateToOrder() {
     this.navigate(ORDER_SCREEN_ROUTE)
 }
 
-fun NavController.navigateToAddress(address: Address? = null) {
-    if (address == null) {
-        this.navigate(ADDRESS_SCREEN_ROUTE)
-    } else {
-        val gson = Gson()
-        val json = URLEncoder.encode(gson.toJson(address), StandardCharsets.UTF_8.toString())
-        val route = "$ADDRESS_SCREEN_ROUTE/$json"
-        this.navigate(route)
-    }
+fun NavController.navigateToLegalScreen() {
+    this.navigate(LEGAL_SCREEN_ROUTE)
 }
 
-fun NavController.navigateToMealDetails(item: CartItem, isEditMode: Boolean) {
-    val gson = Gson()
-    val json =
-        URLEncoder.encode(gson.toJson(item), StandardCharsets.UTF_8.toString())
-    val route = "$MEAL_DETAILS_ROUTE/$json/$isEditMode"
-    this.navigate(route)
+fun NavController.navigateToDeliveryScreen() {
+    this.navigate(DELIVERY_SCREEN_ROUTE)
+}
+
+fun NavController.navigateToContactsScreen() {
+    this.navigate(CONTACTS_SCREEN_ROUTE)
+}
+
+fun NavController.navigateToAddress(address: Address? = null, returnToRoute: String) {
+    val encodedReturnRoute = URLEncoder.encode(returnToRoute, StandardCharsets.UTF_8.toString())
+
+    if (address == null) {
+        // Новый адрес → карта
+        val emptyAddress = URLEncoder.encode("", StandardCharsets.UTF_8.toString())
+        navigate("$ADDRESS_SCREEN_ROUTE/$emptyAddress/$encodedReturnRoute")
+    } else {
+        // Есть уже выбранный адрес,(например, редактирование)
+        val gson = Gson()
+        val json = URLEncoder.encode(gson.toJson(address), StandardCharsets.UTF_8.toString())
+        navigate("$ADDRESS_SCREEN_ROUTE/$json/$encodedReturnRoute")
+    }
 }
 
 fun NavController.navigateToAddressDetails(
     address: Address,
     isEditMode: Boolean = false,
-    backTargetRoute: String
+    returnToRoute: String
 ) {
     val gson = Gson()
     val json =
         URLEncoder.encode(gson.toJson(address), StandardCharsets.UTF_8.toString())
-    val route = "$ADDRESS_DETAILS_ROUTE/$json/$isEditMode/$backTargetRoute"
+    val route = "$ADDRESS_DETAILS_ROUTE/$json/$isEditMode/$returnToRoute"
+    this.navigate(route)
+}
+
+fun NavController.navigateToMealDetails(
+    item: CartItem? = null,
+    mealId: String? = null,
+    isEditMode: Boolean = false
+) {
+    val gson = Gson()
+    val json = item?.let { URLEncoder.encode(gson.toJson(it), StandardCharsets.UTF_8.toString()) }
+    val itemParam = json ?: "null"
+    val mealIdParam = mealId ?: "null"
+
+    val route = "$MEAL_DETAILS_ROUTE/$itemParam/$mealIdParam/$isEditMode"
     this.navigate(route)
 }
 
 fun NavController.navigateToOrderInfo(
     orderId: String,
-    requireConfirmation: Boolean = true
+    fromOrderCreation: Boolean = false,
 ) {
-    this.navigate("$ORDER_INFO_ROUTE/$orderId/$requireConfirmation") {
-        popUpTo(MAIN_GRAPH) {
-            inclusive = true
+    navigate("$ORDER_INFO_ROUTE/$orderId/$fromOrderCreation") {
+        if (fromOrderCreation) {
+            popUpTo(CART_SCREEN_ROUTE) { inclusive = true }
         }
         launchSingleTop = true
     }
+}
+
+fun NavController.navigateToAboutScreen() {
+    this.navigate(ABOUT_SCREEN_ROUTE)
 }
 
 fun NavController.tryGetBackStackEntry(route: String): NavBackStackEntry? {
@@ -98,3 +136,4 @@ fun NavController.tryGetBackStackEntry(route: String): NavBackStackEntry? {
         null // экрана в стеке нет
     }
 }
+

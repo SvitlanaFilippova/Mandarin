@@ -1,14 +1,19 @@
 package com.mandarinkafe.mandarin.features.ordershistory.di
 
+import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.database.AppDatabase
 import com.mandarinkafe.mandarin.db.SavedOrderQueries
 import com.mandarinkafe.mandarin.features.order.domain.api.SaveOrderToHistoryUseCase
 import com.mandarinkafe.mandarin.features.ordershistory.data.impl.OrdersHistoryRepositoryImpl
+import com.mandarinkafe.mandarin.features.ordershistory.data.impl.OrdersStatusesRepositoryImpl
 import com.mandarinkafe.mandarin.features.ordershistory.data.local.OrdersHistoryStorage
 import com.mandarinkafe.mandarin.features.ordershistory.data.local.SQLDelightOrdersHistoryStorage
-import com.mandarinkafe.mandarin.features.ordershistory.domain.api.GetOrdersHistoryUseCase
+import com.mandarinkafe.mandarin.features.ordershistory.domain.api.GetOrdersStatusesUseCase
+import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryInteractor
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryRepository
-import com.mandarinkafe.mandarin.features.ordershistory.domain.impl.GetOrdersHistoryUseCaseImpl
+import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersStatusesRepository
+import com.mandarinkafe.mandarin.features.ordershistory.domain.impl.GetOrdersStatusesUseCaseImpl
+import com.mandarinkafe.mandarin.features.ordershistory.domain.impl.OrdersHistoryInteractorImpl
 import com.mandarinkafe.mandarin.features.ordershistory.domain.impl.SaveOrderToHistoryUseCaseImpl
 import dagger.Module
 import dagger.Provides
@@ -52,9 +57,26 @@ class OrderHistoryModule {
     @Singleton
     fun provideGetOrdersHistoryUseCase(
         repository: OrdersHistoryRepository
-    ): GetOrdersHistoryUseCase =
-        GetOrdersHistoryUseCaseImpl(
+    ): OrdersHistoryInteractor =
+        OrdersHistoryInteractorImpl(
             repository = repository,
         )
 
+    @Provides
+    @Singleton
+    fun provideOrdersStatusesRepository(
+        networkClient: IikoNetworkClient
+    ): OrdersStatusesRepository =
+        OrdersStatusesRepositoryImpl(
+            networkClient = networkClient
+        )
+
+    @Provides
+    @Singleton
+    fun provideGetOrdersStatusesUseCase(
+        repository: OrdersStatusesRepository
+    ): GetOrdersStatusesUseCase =
+        GetOrdersStatusesUseCaseImpl(
+            repository = repository,
+        )
 }

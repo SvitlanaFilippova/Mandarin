@@ -28,78 +28,80 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
 fun PlaceholderScreen(
-    error: UiError,
-    onRetryClick: () -> Unit = { },
+    error: UiError?,
+    onRetryClick: (() -> Unit)? = null,
     onCallClick: () -> Unit = { }
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(Dimens.MarginStandard16)
-            .background(Colors.Transparent),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(error.imgRes),
-            contentDescription = stringResource(error.msgRes),
+    error?.let {
+        Column(
             modifier = Modifier
-                .width(Dimens.PlaceholderImageSize200)
-                .padding(bottom = Dimens.MarginStandard16)
-        )
-
-        Text(
-            text = stringResource(error.msgRes),
-            style = Typography.PlaceholderTitleStyle,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(Dimens.MarginSmall8)
-        )
-
-        if (error.extraMsgRes != null) {
-            Text(
-                text = stringResource(error.extraMsgRes),
-                style = Typography.RegularTextStyle,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(Dimens.MarginStandard16)
-            )
-        }
-
-        if (error.needRetry) {
-            // Кнопка "Обновить"
-            Button(
-                onClick = onRetryClick,
-                shape = RoundedCornerShape(Dimens.CornerRadius8),
+                .fillMaxSize()
+                .padding(Dimens.MarginStandard16)
+                .background(Colors.Transparent),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(error.imgRes),
+                contentDescription = stringResource(error.msgRes),
                 modifier = Modifier
-                    .width(Dimens.ButtonPlaceholderSize200),
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = Colors.White,
-                    containerColor = Colors.Orange
-                )
-            ) {
-                Text(text = stringResource(id = R.string.placeholder_retry))
+                    .width(Dimens.PlaceholderImageSize200)
+                    .padding(bottom = Dimens.MarginStandard16)
+            )
 
+            Text(
+                text = stringResource(error.msgRes),
+                style = Typography.PlaceholderTitleStyle,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(Dimens.MarginSmall8)
+            )
+
+            if (error.extraMsgRes != null) {
+                Text(
+                    text = stringResource(error.extraMsgRes),
+                    style = Typography.RegularTextStyle,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(Dimens.MarginStandard16)
+                )
             }
 
-            Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
+            onRetryClick?.let {
+                // Кнопка "Обновить"
+                Button(
+                    onClick = onRetryClick,
+                    shape = RoundedCornerShape(Dimens.CornerRadius8),
+                    modifier = Modifier
+                        .width(Dimens.ButtonPlaceholderSize200),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Colors.White,
+                        containerColor = Colors.Orange
+                    )
+                ) {
+                    Text(text = stringResource(id = R.string.placeholder_retry))
 
-            // Кнопка "Позвонить"
-            Button(
-                onClick = onCallClick,
-                shape = RoundedCornerShape(Dimens.CornerRadius8),
-                modifier = Modifier.width(Dimens.ButtonPlaceholderSize200),
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = Colors.White,
-                    containerColor = Colors.Orange
-                )
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_call),
-                    contentDescription = null
-                )
-                Spacer(modifier = Modifier.width(Dimens.MarginSmall8))
-                Text(text = stringResource(id = R.string.placeholder_call))
+                }
+
+                Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
+
+                // Кнопка "Позвонить"
+                Button(
+                    onClick = onCallClick,
+                    shape = RoundedCornerShape(Dimens.CornerRadius8),
+                    modifier = Modifier.width(Dimens.ButtonPlaceholderSize200),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Colors.White,
+                        containerColor = Colors.Orange
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_call),
+                        contentDescription = null
+                    )
+                    Spacer(modifier = Modifier.width(Dimens.MarginSmall8))
+                    Text(text = stringResource(id = R.string.placeholder_call))
+                }
+
             }
-
         }
     }
 }

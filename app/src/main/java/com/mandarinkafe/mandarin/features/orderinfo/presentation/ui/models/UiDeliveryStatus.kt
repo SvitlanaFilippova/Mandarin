@@ -8,7 +8,7 @@ import com.mandarinkafe.mandarin.R
 @Stable
 enum class UiDeliveryStatus(
     val apiName: String,
-    @StringRes val labelResId: Int,
+    @StringRes val nameRes: Int,
     @StringRes val extraTextResId: Int,
     @DrawableRes val iconResID: Int
 ) {

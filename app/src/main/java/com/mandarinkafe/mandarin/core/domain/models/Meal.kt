@@ -65,11 +65,15 @@ data class Meal(
      */
     val categoryPath: List<String>,
 
+    /**
+    Точка самовывоза блюда
+     */
+    val pickupPoint: MealPickupPoint,
 
     /**
-    Название прародительской категории, если есть
+    Является ли позиция доставкой
      */
-    val pickupPoint: MealPickupPoint
+    val isDelivery: Boolean
 )
 
 /**

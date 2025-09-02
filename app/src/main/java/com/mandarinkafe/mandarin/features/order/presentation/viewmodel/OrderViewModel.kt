@@ -9,14 +9,13 @@ import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
 import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
+import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
+import com.mandarinkafe.mandarin.features.infrastructure.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWithDiscountUseCase
-import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
-import com.mandarinkafe.mandarin.features.order.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.ResolvePickupPointUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.SaveOrderToHistoryUseCase
-import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
@@ -27,31 +26,38 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowSuccess
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.CartObserver
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.OrderCreator
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
-import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ObserveOrderStatusUseCase
+import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class OrderViewModel @Inject constructor(
+    observeCartItemsUseCase: ObserveCartItemsUseCase,
+    resolvePickupPoint: ResolvePickupPointUseCase,
+    private val orderCreator: OrderCreator,
     private val getDeliveryZone: GetDeliveryZoneUseCase,
     private val getSavedAddressesUseCase: GetSavedAddressesUseCase,
     private val removeAddress: RemoveAddressUseCase,
-    private val observeCartItemsUseCase: ObserveCartItemsUseCase,
     private val getPaymentTypesUseCase: GetPaymentTypesUseCase,
-    private val createOrderUseCase: CreateOrderUseCase,
     private val clearCart: ClearCartUseCase,
-    private val observeOrderStatus: ObserveOrderStatusUseCase,
     private val calculateCartTotalWithDiscount: CalculateCartTotalWithDiscountUseCase,
-    private val resolvePickupPoint: ResolvePickupPointUseCase,
     private val applyPhoneDiscount: ApplyPhoneDiscountUseCase,
-    private val saveOrderToHistory: SaveOrderToHistoryUseCase
+    private val saveOrderToHistory: SaveOrderToHistoryUseCase,
+    private val checkIfTerminalIsAlive: CheckIfTerminalIsAliveUseCase
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
+
+    private val cartObserver = CartObserver(
+        observeCartItems = observeCartItemsUseCase,
+        resolvePickupPoint = resolvePickupPoint,
+        recalculateCartSummary = ::recalculateCartSummary
+    )
 
     init {
         getSavedAddresses()
@@ -59,11 +65,10 @@ class OrderViewModel @Inject constructor(
     }
 
     override fun setInitialState() = OrderState()
-    private var observeStatusJob: Job? = null
 
     override fun onEvent(event: OrderEvent) {
         when (event) {
-            is OrderEvent.GetPaymentTypes -> getPaymentTypes()
+            is OrderEvent.GetInitData -> getInitData()
             is OrderEvent.RefreshAddresses -> getSavedAddresses()
             is OrderEvent.SetName -> setName(event.query)
             is OrderEvent.SetPhone -> setPhone(event.query)
@@ -80,15 +85,35 @@ class OrderViewModel @Inject constructor(
             is OrderEvent.RemoveAddress -> removeSavedAddress(event.id)
             is OrderEvent.SelectAddressById -> selectAddressById(event.id)
             is OrderEvent.OnMissingRequiredInfo -> showMissingRequiredInfo()
-            is OrderEvent.SubmitOrder -> submitOrder()
-            is OrderEvent.StopObservingStatus -> stopObservingOrderStatus()
+            is OrderEvent.SubmitOrder -> checkIfOrderCanBeSubmitted()
+            is OrderEvent.StopObservingStatus -> orderCreator.stopObserving()
         }
+    }
+
+    private fun getInitData() {
+        getPaymentTypes()
+        getSavedAddresses()
     }
 
     private fun getPaymentTypes() {
         viewModelScope.launch {
-            val types = getPaymentTypesUseCase()
-            setState { copy(paymentInfo = paymentInfo.copy(availablePaymentTypes = types)) }
+            val response = getPaymentTypesUseCase()
+            when (response) {
+                is Resource.ErrorNoInternet -> sendErrorEffect(msg = "Нет подключения к интернету")
+                is Resource.Success -> {
+                    if (response.data != null) {
+                        setState { copy(paymentInfo = paymentInfo.copy(availablePaymentTypes = response.data)) }
+                    } else {
+                        sendErrorEffect(msg = "Не удалось получить от сервера доступные способы оплаты")
+                    }
+                }
+
+                else -> {
+                    sendErrorEffect(msg = "Не удалось получить от сервера доступные способы оплаты")
+                }
+
+            }
+
         }
     }
 
@@ -104,47 +129,27 @@ class OrderViewModel @Inject constructor(
 
     private fun observeCartItems() {
         viewModelScope.launch {
-            observeCartItemsUseCase().collect { response ->
-                if (response is Resource.Success) {
-                    val items = response.data
-                    items?.let {
-                        setState {
-                            // проверяем, есть ли в корзине блюда, на которые не распространяется скидка
-                            val containNotDiscountable =
-                                items.any { !it.customizedMeal.meal.discountable }
-
-                            // прововеряем, откуда нужно будет забирать заказ в случае самовывоза
-                            val pickupPoint =
-                                resolvePickupPoint(items.map { it.customizedMeal }.toSet())
-
-                            // если была выбрана доставка, но заказ стал isPickupOnly - обнуляем данные доставки
-                            val isPickupOnly = items.any { it.customizedMeal.meal.isPickupOnly }
-
-                            // Обновляем инфо в стейте
-                            val newDeliveryInfo =
-                                if (isPickupOnly) {
-                                    deliveryInfo.copy(
-                                        deliveryType = DeliveryType.SELF_PICKUP,
-                                        chosenAddress = null
-                                    )
-                                } else {
-                                    deliveryInfo
-                                }
-                            val newCartSummary = cartSummary.copy(
-                                items = items,
-                                containNotDiscountable = containNotDiscountable
+            cartObserver.observe { items, containNotDiscountable, isPickupOnly, pickupPoint ->
+                setState {
+                    val newDeliveryInfo =
+                        if (isPickupOnly) {
+                            deliveryInfo.copy(
+                                deliveryType = DeliveryType.SELF_PICKUP,
+                                chosenAddress = null
                             )
-                            copy(
-                                cartSummary = newCartSummary,
-                                deliveryInfo = newDeliveryInfo,
-                                pickupPoint = pickupPoint,
-                                pickupOnly = isPickupOnly
-                            )
+                        } else {
+                            deliveryInfo
                         }
-                        // вызываем перерасчёт скидки и стоимости доставки
-                        recalculateCartSummary()
-
-                    }
+                    val newCartSummary = cartSummary.copy(
+                        items = items,
+                        containNotDiscountable = containNotDiscountable
+                    )
+                    copy(
+                        cartSummary = newCartSummary,
+                        deliveryInfo = newDeliveryInfo,
+                        pickupPoint = pickupPoint,
+                        pickupOnly = isPickupOnly
+                    )
                 }
             }
         }
@@ -154,19 +159,29 @@ class OrderViewModel @Inject constructor(
         viewModelScope.launch {
             val addressList = getSavedAddressesUseCase().reversed()
             setState {
-                val newDeliveryInfo = deliveryInfo.copy(savedAddresses = addressList)
+                val newDeliveryInfo = deliveryInfo.copy(
+                    savedAddresses = addressList
+                )
                 copy(deliveryInfo = newDeliveryInfo)
             }
         }
     }
 
     private fun setAddress(address: Address) {
-        setState { copy(deliveryInfo = deliveryInfo.copy(chosenAddress = address)) }
+        setState {
+            copy(
+                deliveryInfo = deliveryInfo.copy(
+                    chosenAddress = address,
+                    isLoading = true
+                )
+            )
+        }
         viewModelScope.launch {
             val deliveryZone = getDeliveryZone(address.point)
             setState {
                 val newDeliveryInfo = deliveryInfo.copy(
                     deliveryZone = deliveryZone,
+                    isLoading = false
                 )
                 copy(deliveryInfo = newDeliveryInfo)
             }
@@ -234,16 +249,32 @@ class OrderViewModel @Inject constructor(
         }
     }
 
-    private fun setPhone(query: String) {
+    private fun setPhone(rawPhone: String) {
         viewModelScope.launch {
-            val result = applyPhoneDiscount(query, state.value.cartSummary.discountCategory)
+            val digitsOnly = rawPhone.filter { it.isDigit() }
+            val normalized = when {
+                digitsOnly.startsWith("7") -> digitsOnly.drop(1)
+                digitsOnly.startsWith("8") -> digitsOnly.drop(1)
+                else -> digitsOnly
+            }
+            val phone = normalized.take(VALID_PHONE_LENGTH)
+            setState { copy(userInfo = userInfo.copy(phone = phone)) }
 
-            setState { copy(userInfo = userInfo.copy(phone = result.phone)) }
-            if (result.shouldUpdate) {
+            val discount = applyPhoneDiscount(phone, state.value.cartSummary.discountPercent)
+            Log.d(
+                "DEBUG DISCOUNT OrderVM",
+                "discountId: ${discount.discountId}, discountPercent: ${discount.discountSize}"
+            )
+            if (discount.shouldUpdate) {
                 setState {
-                    copy(cartSummary = cartSummary.copy(discountCategory = result.discountSize))
+                    copy(
+                        cartSummary = cartSummary.copy(
+                            discountPercent = discount.discountSize,
+                            discountId = discount.discountId
+                        )
+                    )
                 }
-                recalculateCartSummary(result.discountSize)
+                recalculateCartSummary(discount.discountSize)
             }
         }
     }
@@ -252,12 +283,12 @@ class OrderViewModel @Inject constructor(
         setState {
             copy(isError = true)
         }
-        sendErrorEffect("Заполните все обязательные поля")
+        sendErrorEffect("Нужно заполнить все обязательные поля")
     }
 
     private fun recalculateCartSummary(discountSize: Int? = null) {
         setState {
-            val discountSize = discountSize ?: cartSummary.discountCategory
+            val discountSize = discountSize ?: cartSummary.discountPercent
             val cartSumWithDiscount =
                 calculateCartTotalWithDiscount(cartSummary.items, discountSize)
             copy(
@@ -272,100 +303,54 @@ class OrderViewModel @Inject constructor(
         setState { copy(isLoading = isLoading) }
     }
 
+    private fun checkIfOrderCanBeSubmitted() {
+        viewModelScope.launch {
+            setLoading()
+            val terminalResponse = checkIfTerminalIsAlive()
+            when (terminalResponse) {
+                is Resource.Success -> {
+                    if (terminalResponse.data == true) {
+                        submitOrder()
+                    } else {
+                        sendErrorEffect(
+                            "Упс, кажется, сейчас мы не работаем — заказ оформить не получится\uD83E\uDD37\nВозвращайся в рабочее время!"
+                        )
+                    }
+                }
+
+                is Resource.ErrorNoInternet -> {
+                    sendErrorEffect(
+                        "Нет подключения к интернету."
+                    )
+                }
+
+                else -> sendErrorEffect(
+                    "Что-то пошло не так — не удалось проверить, работает ли сейчас доставка."
+                )
+            }
+        }
+    }
+
     private fun submitOrder() {
         viewModelScope.launch {
-            //  началась загрузка
             setLoading()
             val order = state.value.toDomain(
                 paymentType = state.value.paymentInfo.chosenPaymentTypeDomain
             )
 
-            when (val result = createOrderUseCase(order)) {
-                is Resource.Loading -> setLoading()
-                is Resource.Success -> {
-                    val orderInfo = result.data
-                    val status = result.data?.creationStatus
-                    when (status) {
-                        CreationStatus.IN_PROGRESS -> {
-                            setLoading()
-                            // Сохраняем orderId и начинаем наблюдение
-                            observeOrderUntilSuccess(orderInfo.id)
-                        }
-
-                        CreationStatus.SUCCESS -> {
-                            onSuccessOrderCreation(orderInfo)
-                        }
-
-                        CreationStatus.ERROR -> {
-                            sendErrorEffect(
-                                result.data.errorInfo?.message ?: "Не удалось создать заказ"
-                            )
-                        }
-
-                        null -> {
-                            sendErrorEffect("Ошибка: пустой ответ от сервера")
-                        }
-                    }
-                }
-
-                is Resource.ErrorNoInternet -> sendErrorEffect("Нет подключения к интернету")
-
-                else -> {
-                    val msg = result.message ?: "Не удалось отправить заказ"
-                    sendErrorEffect(msg)
-                }
-            }
+            orderCreator.submit(
+                scope = viewModelScope,
+                order = order,
+                onSuccess = ::onSuccessOrderCreation,
+                onError = ::sendErrorEffect,
+                onLoading = ::setLoading
+            )
         }
-    }
-
-    private fun observeOrderUntilSuccess(orderId: String) {
-        stopObservingOrderStatus()
-        observeStatusJob = viewModelScope.launch {
-            observeOrderStatus(orderId, ORDER_STATUS_UPD_DELAY).collect { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        when (result.data?.creationStatus) {
-                            CreationStatus.SUCCESS -> {
-                                onSuccessOrderCreation(result.data)
-                            }
-
-                            CreationStatus.ERROR -> {
-                                sendErrorEffect(
-                                    result.data.errorInfo?.message ?: "Не удалось создать заказ"
-                                )
-                                Log.d(
-                                    "DEBUG ORDER CREATE VM",
-                                    "Error: ${result.data.errorInfo?.errorReason} ${result.data.errorInfo?.message}"
-                                )
-                                stopObservingOrderStatus()
-                            }
-
-                            else -> {
-                                // Всё ещё в процессе — продолжаем крутить прелоадер
-                                setLoading()
-                            }
-                        }
-                    }
-
-                    is Resource.ErrorNoInternet -> sendErrorEffect("Нет подключения к интернету")
-                    is Resource.ErrorOther -> sendErrorEffect(
-                        result.message ?: "Ошибка получения статуса"
-                    )
-
-                    else -> Unit
-                }
-            }
-        }
-    }
-
-    private fun stopObservingOrderStatus() {
-        observeStatusJob?.cancel()
     }
 
     private fun onSuccessOrderCreation(order: IncomingOrder) {
         clearState()
         sendEffect(ShowSuccess(order.id))
-        stopObservingOrderStatus()
         viewModelScope.launch {
             clearCart()
             saveOrderToHistory(order)
@@ -377,7 +362,4 @@ class OrderViewModel @Inject constructor(
         sendEffect(ShowError(msg))
     }
 
-    private companion object {
-        const val ORDER_STATUS_UPD_DELAY = 1000L
-    }
 }

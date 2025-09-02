@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Address
@@ -40,10 +41,11 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.BigButt
 @Composable
 fun AddressDetailsScreen(
     initAddress: Address?,
-    backTarget: String,
+    returnToRoute: String,
     isEditMode: Boolean,
     viewModel: AddressDetailsViewModel = hiltViewModel(),
-    navController: NavHostController
+    navController: NavHostController,
+    callerEntry: NavBackStackEntry
 ) {
     if (initAddress == null) return
 
@@ -58,19 +60,8 @@ fun AddressDetailsScreen(
 
     var showConfirmDeleteDialog by remember { mutableStateOf(false) }
 
-    val targetEntry = navController.tryGetBackStackEntry(backTarget)
-
-    val backToParentScreen: (String?) -> Unit = if (targetEntry != null) {
-        { shouldSelectId ->
-            targetEntry.savedStateHandle[SHOULD_REFRESH_ADDRESSES_KEY] = true
-            targetEntry.savedStateHandle[SHOULD_SELECT_ADDRESS_ID] = shouldSelectId
-
-            navController.popBackStack(backTarget, inclusive = false)
-        }
-    } else {
-        { _ ->
-            navController.popBackStack()
-        }
+    val targetEntry = remember(callerEntry, returnToRoute) {
+        navController.tryGetBackStackEntry(returnToRoute)
     }
 
     val noNeedAddressDetails =
@@ -154,8 +145,6 @@ fun AddressDetailsScreen(
                 },
                 onSubmit = {
                     onEvent(AddressDetailsEvent.SaveAddress)
-                    backToParentScreen(state.address.id)
-
                 },
                 activeContainerColor = Colors.Orange
             )
@@ -169,7 +158,6 @@ fun AddressDetailsScreen(
             onConfirm = {
                 showConfirmDeleteDialog = false
                 onEvent(AddressDetailsEvent.RemoveAddress)
-                backToParentScreen(null)
 
             },
             onDismiss = {
@@ -181,8 +169,26 @@ fun AddressDetailsScreen(
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
             when (effect) {
-                is AddressDetailsEffect.EditLocation -> navController.navigateToAddress(effect.address)
+                is AddressDetailsEffect.EditLocation -> navController.navigateToAddress(
+                    effect.address,
+                    returnToRoute
+                )
+
                 is AddressDetailsEffect.ShowDeleteConfirmDialog -> showConfirmDeleteDialog = true
+                is AddressDetailsEffect.GoToParentScreen -> {
+                    val selectedId = initAddress.id
+                    // Прокидываем флаги в экран-цель, если он в стеке
+                    targetEntry?.savedStateHandle?.set(SHOULD_REFRESH_ADDRESSES_KEY, true)
+                    if (!isEditMode && selectedId.isNotBlank()) {
+                        targetEntry?.savedStateHandle?.set(SHOULD_SELECT_ADDRESS_ID, selectedId)
+                    } else {
+                        // на всякий случай очищаем, если редактировали
+                        targetEntry?.savedStateHandle?.set(SHOULD_SELECT_ADDRESS_ID, null)
+                    }
+                    // Возврат на нужный экран
+                    navController.popBackStack(returnToRoute, inclusive = false)
+
+                }
             }
         }
     }

@@ -1,17 +1,22 @@
 CREATE TABLE saved_order (
     id TEXT NOT NULL PRIMARY KEY,
-    whenCreated TEXT NOT NULL,
-    orderType TEXT NOT NULL,
-    addressLine1 TEXT NOT NULL,
-    addressDetails TEXT NOT NULL,
-    timestamp INTEGER NOT NULL
+    whenCreated TEXT NOT NULL DEFAULT '',
+    orderType TEXT NOT NULL DEFAULT '',
+    addressLine1 TEXT NOT NULL DEFAULT '',
+    addressDetails TEXT NOT NULL DEFAULT '',
+    timestamp INTEGER NOT NULL,
+    mealNames TEXT NOT NULL DEFAULT '',
+    number TEXT NOT NULL DEFAULT ''
 );
+
 
 selectAll:
 SELECT * FROM saved_order
-ORDER BY timestamp ASC;
-
+ORDER BY timestamp DESC;
 
 insert:
-INSERT INTO saved_order(id, whenCreated, orderType, addressLine1, addressDetails, timestamp)
-VALUES (?, ?, ?, ?, ?, ?);
+INSERT INTO saved_order(id, whenCreated, orderType, addressLine1, addressDetails, timestamp, mealNames, number)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+remove:
+DELETE FROM saved_order WHERE id = ?;

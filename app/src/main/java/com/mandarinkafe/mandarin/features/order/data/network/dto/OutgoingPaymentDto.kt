@@ -4,4 +4,7 @@ data class OutgoingPaymentDto(
     val paymentTypeKind: String,
     val sum: Double,
     val paymentTypeId: String,
+    val isPrepay: Boolean,
+    val isProcessedExternally: Boolean,
+    val isFiscalizedExternally: Boolean
 )

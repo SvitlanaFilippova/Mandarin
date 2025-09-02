@@ -4,6 +4,6 @@ import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMe
 
 interface FavoritesStorage {
     suspend fun toggleFavorite(meal: StoredFavoriteMeal): Boolean
-    suspend fun getFavorites(): Set<StoredFavoriteMeal>
+    suspend fun getFavorites(): FavoritesStorageResult
     fun saveFavorites(updatedFavorites: Set<StoredFavoriteMeal>)
 }

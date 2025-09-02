@@ -16,6 +16,7 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.TagDto
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealPickupPoint
 import com.mandarinkafe.mandarin.util.Constants.TAG_CAFE
+import com.mandarinkafe.mandarin.util.Constants.TAG_IS_DELIVERY_POSITION
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_ADDS
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_DELIVERY
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_DISCOUNT
@@ -60,6 +61,12 @@ fun MealDto.toDomain(
         pickupPoint = resolvePickupPoint(finalMealTags),
         orderItemType = orderItemType,
         categoryPath = categoryPath,
+        isDelivery = finalMealTags.any {
+            it.name.equals(
+                TAG_IS_DELIVERY_POSITION,
+                ignoreCase = true
+            )
+        },
     )
 }
 
@@ -87,7 +94,7 @@ fun ModifierGroupDto.toDomain(): ModifierGroup {
     val isSingleChoice = restrictions?.maxQuantity == 1
     return ModifierGroup(
         id = itemGroupId,
-        name = name ?: "",
+        name = name?.applyTypography() ?: "",
         items = items
             ?.map { it.toDomain() }
             ?.sortedBy { it.price != 0 }

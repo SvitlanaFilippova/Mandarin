@@ -15,8 +15,11 @@ import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressContract.AddressEffect.GoToAddressDetailsEffect
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressContract.AddressEvent
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressContract.AddressState
+import com.mandarinkafe.mandarin.util.Constants.MANDARIN_LATITUDE
+import com.mandarinkafe.mandarin.util.Constants.MANDARIN_LONGITUDE
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.debounce
+import com.mandarinkafe.mandarin.util.isSameAs
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.yandex.mapkit.geometry.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -75,28 +78,18 @@ class AddressViewModel @Inject constructor(
             val deliveryAreasResource = deliveryAreaRepository.getAllAreas()
             if (deliveryAreasResource is Resource.Success) {
                 val deliveryAreas = deliveryAreasResource.data?.map { it.toUi() }
-                deliveryAreas?.let { setState { copy(deliveryAreas = deliveryAreas) } }
+                deliveryAreas?.let { setState { copy(allDeliveryAreas = deliveryAreas) } }
             }
         }
     }
 
-    private fun changeSearchQuery(query: String) {
-        setState { copy(displayAddress = query) }
-        fetchAddressDebounce.cancel()
-        searchWithDebounce.cancel()
-        if (query.isNotEmpty()) {
-            searchWithDebounce.invoke(query)
-            setSearchLoading()
-        } else {
-            setState { copy(searchError = null) }
-        }
-
-    }
-
     private fun onCameraMoved(point: Point) {
-        viewModelScope.launch {
-            fetchAddressWithDebounce(point)
-            checkDeliveryArea(point)
+        val oldPoint = state.value.currentPinPoint
+        if (oldPoint == null || !point.isSameAs(oldPoint)) {
+            viewModelScope.launch {
+                fetchAddressWithDebounce(point)
+                checkDeliveryArea(point)
+            }
         }
     }
 
@@ -122,14 +115,25 @@ class AddressViewModel @Inject constructor(
         }
     }
 
+    private fun changeSearchQuery(query: String) {
+        setState { copy(displayAddress = query) }
+        fetchAddressDebounce.cancel()
+        searchWithDebounce.cancel()
+        if (query.isNotEmpty()) {
+            searchWithDebounce.invoke(query)
+            setSearchLoading()
+        } else {
+            setState { copy(searchError = null) }
+        }
+
+    }
+
     private fun startSearch(searchText: String) {
         searchWithDebounce.cancel()
         val point = state.value.currentPinPoint
         if (point == null) {
             return
         } else {
-            setSearchLoading()
-
             viewModelScope.launch {
                 searchInteractor.searchAddressByText(searchText, point.toGeoPoint())
             }
@@ -239,7 +243,7 @@ class AddressViewModel @Inject constructor(
 
     private suspend fun checkDeliveryArea(point: Point) {
         val deliveryArea = getDeliveryZone(point.toGeoPoint())
-        setState { copy(deliveryArea = deliveryArea?.toUi()) }
+        setState { copy(currentDeliveryArea = deliveryArea?.toUi()) }
     }
 
     private fun setSearchLoading() {
@@ -257,10 +261,9 @@ class AddressViewModel @Inject constructor(
     }
 
     private companion object {
-        private const val MANDARIN_LATITUDE = 55.998040
-        private const val MANDARIN_LONGITUDE = 38.375328
         private const val SEARCH_DELAY = 1000L
-        private const val FETCH_ADDRESS_DELAY = 1000L
-        private const val MAX_ADDRESS_LENGTH = 250
+        private const val FETCH_ADDRESS_DELAY = 300L
+        private const val MAX_ADDRESS_LENGTH =
+            250 // вынуждены обрезать слишком длинные адреса, чтобы iiko при оформлении заказа не вернул ошибку
     }
 }

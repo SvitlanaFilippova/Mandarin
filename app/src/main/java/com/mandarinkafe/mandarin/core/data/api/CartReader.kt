@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface CartReader {
+    suspend fun forceRetry()
     fun observeCartItemsCount(): Flow<Int>
     fun observeCartItems(): Flow<Resource<List<CartItem>>>
 }

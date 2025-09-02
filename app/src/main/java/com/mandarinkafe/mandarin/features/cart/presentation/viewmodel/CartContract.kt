@@ -24,6 +24,7 @@ sealed interface CartContract {
             val customizedMeal: CustomizedMeal? = null,
             val meal: Meal? = null
         ) : CartEvent
+        data object ForceRefresh : CartEvent
 
         // Очистка корзины
         data object ClearCart : CartEvent
@@ -35,11 +36,13 @@ sealed interface CartContract {
 
     sealed interface CartEffect : BaseEffect {
         data object ProceedOrder : CartEffect
+        data class ShowSnackbar(val message: String) : CartEffect
         data object ShowClearCartConfirmDialog : CartEffect
     }
 
     data class CartState(
         val isLoading: Boolean = true,
+        val proceedOrderIsLoading: Boolean = false,
         val error: UiError? = null,
         val cartItems: List<CartItem> = emptyList(),
         val favoritesItems: Set<CustomizedMeal> = emptySet(),

@@ -5,6 +5,7 @@ object Constants {
     const val NO_CONNECTION = -1
     const val HTTP_SUCCESS = 200
     const val HTTP_SERVER_ERROR = 500
+    const val HTTP_UNAUTHORIZED = 401
     const val IMAGE_VALIDATOR_TIMEOUT = 1000
 
     // Menu UI
@@ -22,8 +23,6 @@ object Constants {
     const val IMAGE_SIZE_IN_MENU = 300
     const val MENU_IMAGE_SPACING_COUNT = 3
     const val MENU_IMAGE_COLUMN_COUNT = 2
-    const val OFFSET_THRESHOLD = 8
-    const val SOUS_DLYA_KOROCHEK_SKU = "00130"
 
     // Splash screen
     const val SPLASH_SCREEN_DURATION = 5000L
@@ -51,6 +50,7 @@ object Constants {
     const val ALPHA_50 = 0.5f
     const val TITLE_FONT_WEIGHT = 800
     const val NON_BRAKING_SPACE = "\u00A0"
+    const val SNACKBAR_MESSAGE_KEY = "snackbarMessage"
 
     // Order
     const val VALID_PHONE_LENGTH = 10
@@ -62,18 +62,20 @@ object Constants {
     const val PAYMENT_CASH_CODE = "CASH"
 
     // Map
-    const val MAP_DEFAULT_ZOOM = 17.0f
+    const val MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN = 17.0f
+    const val MAP_DEFAULT_ZOOM_FOR_DELIVERY_SCREEN = 11.0f
     const val MAP_DEFAULT_TILT = 30.0f
     const val MAP_DEFAULT_AZIMUTH = 0.0f
     const val PIN_INDICATOR_SCALE = 0.45f
     const val PIN_INDICATOR_Y_OFFSET_FACTOR = 0.09f
+    const val MIN_ZOOM = 2f
+    const val MAX_ZOOM = 20f
 
     // DI
     const val DATABASE_NAME = "mandarin.db"
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
     const val LOCAL_STORAGE_NAME = "local_storage"
     const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/spreadsheets/d/e/"
-
 
     // Для обработки особых категорий по их названиям
     const val CATEGORY_ADDS = "Добавки"
@@ -84,9 +86,9 @@ object Constants {
     const val TAG_NO_ADDS = "NO_ADDS"
     const val TAG_NO_DISCOUNT = "NO_DISCOUNT"
     const val TAG_NO_DELIVERY = "NO_DELIVERY"
+    const val TAG_IS_DELIVERY_POSITION = "IS_DELIVERY_POSITION"
     const val TAG_PIZZERIA = "PIZZERIA"
     const val TAG_CAFE = "CAFE"
-
     const val LOCALE_RU = "ru_RU"
 
     // remoteConfig
@@ -100,4 +102,7 @@ object Constants {
     const val NEW_LABEL_KEY = "new_label_key"
     const val HIT_LABEL_DEFAULT = "hit"
     const val HIT_LABEL_KEY = "hit_label_key"
+
+    const val MANDARIN_LATITUDE = 55.998040
+    const val MANDARIN_LONGITUDE = 38.375328
 }

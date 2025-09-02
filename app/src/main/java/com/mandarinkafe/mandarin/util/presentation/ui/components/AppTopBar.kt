@@ -1,10 +1,5 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -30,40 +25,14 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 fun AppTopBar(
     onEvent: (SharedEvent) -> Unit,
     showAppBar: Boolean,
-    showBackButton: Boolean,
-
-    ) {
-    AnimatedVisibility(
-        visible = showAppBar,
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically()
-    ) {
+) {
+    if (showAppBar) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(WindowInsets.statusBars.asPaddingValues())
                 .height(Dimens.ToolbarHeadHeight40)
         ) {
-            // Кнопка "назад" - показывается только на "вложенных" экранах
-            if (showBackButton) {
-                Box(
-                    modifier = Modifier
-                        .size(Dimens.ToolbarHeadHeight40)
-                        .align(Alignment.CenterStart)
-                        .padding(start = Dimens.MarginSmall8)
-                        .clickable { onEvent(SharedEvent.GoBack) }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_back),
-                        tint = Colors.White,
-                        contentDescription = stringResource(R.string.placeholder_call),
-                        modifier = Modifier
-                            .size(Dimens.IconSize24)
-                            .align(Alignment.Center)
-                    )
-                }
-            }
-
             // Логотип
             Image(
                 painter = painterResource(R.drawable.logo_text_mandarin),
@@ -71,7 +40,6 @@ fun AppTopBar(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(Dimens.MarginSuperSmall4)
-                    .clickable { }
             )
 
             // Иконка звонка

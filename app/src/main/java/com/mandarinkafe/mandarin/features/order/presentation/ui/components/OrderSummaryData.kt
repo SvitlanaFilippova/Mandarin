@@ -21,6 +21,7 @@ fun OrderSummaryData(
     addressInNotInDeliveryArea: Boolean,
     freeDeliveryThreshold: Int?,
     containNotDiscountable: Boolean,
+    deliveryInfoIsLoading: Boolean,
 ) {
     Column(modifier = Modifier.padding(Dimens.MarginSmall8)) {
         Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
@@ -41,7 +42,7 @@ fun OrderSummaryData(
         }
 
         // Стоимость доставки показываем только если НЕ выбран самовывоз
-        if (!isPickup) {
+        if (!isPickup && !deliveryInfoIsLoading) {
             when (addressInNotInDeliveryArea) {
                 true -> {
                     TooltipText(textRes = R.string.delivery_validation_error)

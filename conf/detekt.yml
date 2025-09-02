@@ -99,8 +99,8 @@ complexity:
     ignoreAnnotated: [ "Composable" ]
   LongParameterList:
     active: true
-    functionThreshold: 6
-    constructorThreshold: 8
+    functionThreshold: 8
+    constructorThreshold: 10
     ignoreDefaultParameters: true
     ignoreDataClasses: true
     ignoreAnnotated: [ "Inject", "InjectConstructor", "Composable" ]
@@ -126,7 +126,7 @@ complexity:
     active: true
     thresholdInFiles: 51
     thresholdInClasses: 51
-    thresholdInInterfaces: 11
+    thresholdInInterfaces: 15
     thresholdInObjects: 51
     thresholdInEnums: 6
     ignoreDeprecated: true

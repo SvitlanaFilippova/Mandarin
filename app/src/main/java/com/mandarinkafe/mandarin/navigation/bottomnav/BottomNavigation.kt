@@ -29,7 +29,6 @@ fun BottomNavigation(
     cartCount: Int,
 ) {
     val arrayOFItems = arrayOf(
-        BottomNavigationItem.Search,
         BottomNavigationItem.Favorites,
         BottomNavigationItem.Menu,
         BottomNavigationItem.Cart,
@@ -42,7 +41,7 @@ fun BottomNavigation(
         exit = fadeOut() + shrinkVertically()
     ) {
         BottomAppBar(
-            tonalElevation = Dimens.Elevation2,
+            tonalElevation = Dimens.Elevation4,
             containerColor = Colors.AppBlack,
         ) {
             val backStackEntry = navController.currentBackStackEntryAsState().value
@@ -80,7 +79,7 @@ fun BottomNavigation(
                     label = {
                         Text(
                             text = stringResource(item.title),
-                            fontSize = Dimens.TextSizeSuperSmall9
+                            fontSize = Dimens.TextSizeSuperSmall10
                         )
                     },
                     colors = NavigationBarItemDefaults.colors(

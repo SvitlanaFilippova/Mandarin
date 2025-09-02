@@ -26,16 +26,16 @@ fun String.applyTypography(): String {
     return this
         // Удаление лишних пробелов (2 и более)
         .replace(Regex("""\s{2,}"""), " ")
-        // Нормализация граммов и сантиметров
-        .normalizeWeightAndUnits()
         // Исправляем дефис без пробела после переноса
         .replace(Regex("""(?<=^|\s)-(?=\S)""")) { "- " }
         // Неразрывный пробел после коротких слов
         .replace(shortWordRegex) { matchResult ->
             matchResult.groupValues[1] + NON_BRAKING_SPACE
         }
-        // Неразрывные числа (десятичные дроби типа 0,33 и числа с разрядами типа 12 500)
+        // Неразрывные числа (десятичные дроби с разрядами типа 12 500)
         .normalizeNumbers()
+        // Нормализация граммов и сантиметров
+        .normalizeUnits()
         // Многоточие
         .replace("...", "…")
         // Тире (если дефис окружён пробелами)
@@ -46,8 +46,8 @@ fun String.applyTypography(): String {
 
         // Удаление пробелов перед запятыми
         .replace(Regex("""\s+,"""), ",")
-        // Пробел после запятой (если пропущен)
-        .replace(Regex(""",(?=\S)"""), ", ")
+        // Пробел после запятой (если пропущен), кроме случаев с числами (0,5)
+        .replace(Regex(""",(?=\S)(?<!\d,)(?!\d)"""), ", ")
         // Удаление пробелов в начале и конце строки
         .trim()
         // Удаление запятой в конце строки
@@ -57,19 +57,19 @@ fun String.applyTypography(): String {
 }
 
 /**
- * Нормализация записи веса (граммов) и размера (в см) в строках
+ * Нормализация единиц измерения (граммы, сантиметры и т.п.)
  */
-private fun String.normalizeWeightAndUnits(): String {
+private fun String.normalizeUnits(): String {
     return this
-        // "гр" после числа -> "г" с неразрывным пробелом
+        // "гр" → "г"
         .replace(Regex("""\b(\d+)\s*(гр|ГР|Гр|гР)\.?\b""")) {
-            "${it.groupValues[1]}$NON_BRAKING_SPACE${"г"}"
+            "${it.groupValues[1]}${NON_BRAKING_SPACE}г"
         }
-        // "г" после числа -> "г" с неразрывным пробелом
+        // "г" после числа → неразрывный пробел
         .replace(Regex("""(\d+)\s*(г|Г)\.?""")) {
             "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}"
         }
-        // сантиметры (с сохранением точки, если она есть)
+        // сантиметры
         .replace(Regex("""(\d+)\s*(см|См)(\.)?""")) {
             "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}${it.groupValues[3]}"
         }
@@ -80,16 +80,13 @@ private fun String.normalizeWeightAndUnits(): String {
  */
 private fun String.normalizeNumbers(): String {
     return this
-        // 1. Неразрывные дроби (0,33)
-        .replace(Regex("""(\d),(\d)""")) { matchResult ->
-            "${matchResult.groupValues[1]},${matchResult.groupValues[2]}"
-                .replace(",", ",\u202F")
-        }
-        // 2. Неразрывные большие числа (12 500)
-        .replace(Regex("""(\d{1,3}) (\d{3})(?!\d)""")) { matchResult ->
-            val part1 = matchResult.groupValues[1]
-            val part2 = matchResult.groupValues[2]
-            "$part1$NON_BRAKING_SPACE$part2"
+        // 0, 5 → 0,5 (убираем лишний пробел)
+        .replace(Regex("""(\d),\s+(\d)""")) { "${it.groupValues[1]},${it.groupValues[2]}" }
+        // Дроби (оставляем просто запятую)
+        .replace(Regex("""(\d),(\d)""")) { "${it.groupValues[1]},${it.groupValues[2]}" }
+        // Большие числа (группы по 3 разряда, универсально)
+        .replace(Regex("""\b(?=(\d{4,}))(?:\d{1,3})(?=(\d{3})+(?!\d))""")) {
+            it.value + NON_BRAKING_SPACE
         }
 }
 

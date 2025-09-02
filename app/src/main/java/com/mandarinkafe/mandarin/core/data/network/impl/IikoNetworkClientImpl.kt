@@ -1,17 +1,24 @@
 package com.mandarinkafe.mandarin.core.data.network.impl
 
 import android.util.Log
-import com.mandarinkafe.mandarin.BuildConfig
-import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
+import com.mandarinkafe.mandarin.core.data.dto.CustomerCategoriesRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.Response
-import com.mandarinkafe.mandarin.core.data.network.IikoApiService
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoDiscountApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoMenuApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoOrderApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoTerminalApi
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.AliveTerminalGroupsRequest
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.DiscountsRequest
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCustomerByPhoneRequest
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.TerminalGroupsIdsRequest
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
-import com.mandarinkafe.mandarin.features.order.data.network.LoyaltyCustomerByPhoneRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
-import com.mandarinkafe.mandarin.features.order.data.network.dto.paymenttype.PaymentTypesRequest
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
@@ -22,181 +29,190 @@ import kotlinx.coroutines.withContext
 
 class IikoNetworkClientImpl(
     private val networkMonitor: NetworkMonitor,
-    private val iikoService: IikoApiService,
+    private val authApi: IikoAuthApi,
+    private val menuApi: IikoMenuApi,
+    private val orderApi: IikoOrderApi,
+    private val terminalApi: IikoTerminalApi,
+    private val discountApi: IikoDiscountApi
 ) : IikoNetworkClient {
-    private val logTag = "IIKO NetworkClient"
-    private var token = ""
-    private var organizationId = ""
-    private var externalMenuId = ""
 
-    private suspend fun authenticate() {
-        if (token.isNotEmpty() && organizationId.isNotEmpty()) {
-            // Уже авторизованы
-            return
-        }
-        try {
-            val authResponse = iikoService.authenticate(AuthRequest(BuildConfig.IIKO_API_KEY))
-            token = BEARER_PREFIX + authResponse.token
+    private var organizationId: String = ""
+    private var externalMenuId: String = ""
 
-            val organizationsResponse = iikoService.getOrganizations(
-                token = token,
-                body = OrganizationsRequest()
-            )
-            organizationId = organizationsResponse.organizations.firstOrNull()?.id
-                ?: error("No organization found")
-        } catch (e: Throwable) {
-            Log.d(logTag, "Ошибка в методе authenticate: ${e.message}")
-        }
+    private val logTag = "DEBUG ORDER API NetworkClient"
+
+    /** Загружаем organizationId один раз при первом обращении */
+    private suspend fun ensureOrganizationId(): String {
+        if (organizationId.isNotEmpty()) return organizationId
+        val response = authApi.getOrganizations(body = OrganizationsRequest())
+        organizationId = response.organizations.firstOrNull()?.id
+            ?: error("Не найдена организация")
+        return organizationId
     }
 
-    private suspend fun ensureAuthenticated() {
-        if (token.isEmpty() || organizationId.isEmpty()) authenticate()
-    }
-
-    private suspend fun getExternalMenuId(): String {
-        val menuIdResponse = iikoService.getMenuId(token)
-        return menuIdResponse.externalMenus.firstOrNull()?.id
-            ?: error("Menu ID not found")
+    private suspend fun ensureExternalMenuId(): String {
+        if (externalMenuId.isNotEmpty()) return externalMenuId
+        val response = menuApi.getMenuId()
+        externalMenuId = response.externalMenus.firstOrNull()?.id
+            ?: error("Menu ID не найден")
+        return externalMenuId
     }
 
     override suspend fun getMenu(): Response {
-        if (!isConnected()) {
-            return Response().apply { resultCode = NO_CONNECTION }
-        }
+        if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return withContext(Dispatchers.IO) {
-            ensureAuthenticated()
-            fetchMenu()
-        }
-    }
-
-    private suspend fun fetchMenu(): Response {
-        Log.d(logTag, "Запуск fetchMenu")
-
-        return try {
-            if (externalMenuId.isEmpty()) {
-                Log.d(logTag, "externalMenuId пустой, начинаем загрузку ID")
-                externalMenuId = getExternalMenuId()
-                Log.d(logTag, "externalMenuId получен: $externalMenuId")
-            }
-
-            Log.d(logTag, "Отправка запроса на получение меню")
-            val menuResponse = iikoService.getMenuById(
-                token = token,
-                body = MenuRequest(
-                    externalMenuId = externalMenuId,
-                    organizationIds = listOf(organizationId)
+            try {
+                val orgId = ensureOrganizationId()
+                val menuId = ensureExternalMenuId()
+                val menuResponse = menuApi.getMenuById(
+                    body = MenuRequest(
+                        externalMenuId = menuId,
+                        organizationIds = listOf(orgId)
+                    )
                 )
-            )
-
-            Log.d(logTag, "Меню успешно получено.")
-            menuResponse.apply { resultCode = HTTP_SUCCESS }
-
-        } catch (e: Throwable) {
-            Log.e(logTag, "Ошибка при получении меню: ${e.message}", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
+                menuResponse.apply { resultCode = HTTP_SUCCESS }
+            } catch (e: Throwable) {
+                Log.e(logTag, "Ошибка при получении меню: ${e.message}", e)
+                Response().apply { resultCode = HTTP_SERVER_ERROR }
+            }
         }
     }
 
     override suspend fun getLoyaltyCustomerInfo(phone: String): Response {
-        if (!isConnected()) {
-            return Response().apply { resultCode = NO_CONNECTION }
-        }
-        return withContext(Dispatchers.IO) {
-            ensureAuthenticated()
-            fetchLoyaltyCustomerInfo(phone)
-        }
-    }
-
-    override suspend fun getPaymentTypes(): Response {
+        if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
-            val response = iikoService.getPaymentTypes(
-                token = token,
-                body = PaymentTypesRequest(
-                    organizationIds = listOf(organizationId)
+            val orgId = ensureOrganizationId()
+            val response = discountApi.getLoyaltyCustomerInfo(
+                body = LoyaltyCustomerByPhoneRequest(
+                    organizationId = orgId,
+                    phone = phone
                 )
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d(logTag, ERROR + e.message)
+            Log.e(logTag, "Ошибка getLoyaltyCustomerInfo: ${e.message}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
-    private val logTagORDER = "DEBUG ORDER NetworkClient"
-
-    override suspend fun createDelivery(order: OutgoingOrderDto): Response {
+    override suspend fun getPaymentTypes(): Response {
+        if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
-            val request = CreateDeliveryRequest(
-                order = order,
-                organizationId = organizationId
-            )
-
-            val response = iikoService.createDelivery(
-                token = token,
-                body = request
-            )
-            Log.d(logTagORDER, "Received response: $response")
-
-            response.apply {
-                resultCode = HTTP_SUCCESS
-                Log.d(logTagORDER, "Modified response code to HTTP_SUCCESS")
-            }
-        } catch (e: Throwable) {
-            Log.e(logTagORDER, "Error in createDelivery: ${e.message}", e)
-            Response().apply {
-                resultCode = HTTP_SERVER_ERROR
-                Log.d(logTagORDER, "Created error response with code $HTTP_SERVER_ERROR")
-            }
-        }
-    }
-
-    private suspend fun fetchLoyaltyCustomerInfo(phone: String): Response {
-        return try {
-            val request = LoyaltyCustomerByPhoneRequest(
-                organizationId = organizationId,
-                phone = phone
-            )
-            val response = iikoService.getLoyaltyCustomerInfo(
-                token = token,
-                body = request
+            val orgId = ensureOrganizationId()
+            val response = orderApi.getPaymentTypes(
+                body = PaymentTypesRequest(listOf(orgId))
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.d(logTag, ERROR + e.message)
+            Log.e(logTag, "Ошибка getPaymentTypes: ${e.message}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
-
-    override suspend fun getOrderStatusById(id: String): Response {
+    override suspend fun createDelivery(order: OutgoingOrderDto): Response {
+        if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
-            val request = OderInfoRequest(
-                organizationId = organizationId,
-                orderIds = listOf(id)
+            val orgId = ensureOrganizationId()
+            val response = orderApi.createDelivery(
+                body = CreateDeliveryRequest(order, orgId)
             )
-
-            val response = iikoService.getOrdersStatusById(
-                token = token,
-                body = request
-            )
-            response.apply {
-                resultCode = HTTP_SUCCESS
-            }
+            response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "Error in getOrderStatusById: ${e.message}", e)
-            Response().apply {
-                resultCode = HTTP_SERVER_ERROR
-                Log.d(logTag, "Created error response with code $HTTP_SERVER_ERROR")
-            }
+            Log.e(logTag, "Ошибка createDelivery: ${e.message}", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    override suspend fun getSingleOrderInfoById(id: String): Response =
+        getOrdersStatusesByIds(listOf(id))
+
+    override suspend fun getOrdersStatusesByIds(ids: List<String>): Response {
+        if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
+        return try {
+            val orgId = ensureOrganizationId()
+            val response = orderApi.getOrdersStatusById(
+                body = OderInfoRequest(orgId, ids)
+            )
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.e(logTag, "Ошибка getOrdersStatuses: ${e.message}", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    override suspend fun getAllCustomerCategories(): Response {
+        if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
+        return try {
+            val orgId = ensureOrganizationId()
+            val response = discountApi.getAllCustomerCategories(
+                body = CustomerCategoriesRequest(orgId)
+            )
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.e(logTag, "Ошибка getAllCustomerCategories: ${e.message}", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    override suspend fun getDiscounts(): Response {
+        if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
+        return try {
+            val orgId = ensureOrganizationId()
+            val response = discountApi.getDiscounts(
+                body = DiscountsRequest(listOf(orgId))
+            )
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.e(logTag, "Ошибка getDiscounts: ${e.message}", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    override suspend fun cancelOrder(id: String): Response {
+        if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
+        return try {
+            val orgId = ensureOrganizationId()
+            val response = orderApi.cancelOrderById(
+                body = CancelOrderRequest(orgId, id)
+            )
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.e(logTag, "Ошибка cancelOrder: ${e.message}", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    override suspend fun getTerminalGroupsIds(): Response {
+        if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
+        return try {
+            val orgId = ensureOrganizationId()
+            val response = terminalApi.getTerminalGroupsIds(
+                body = TerminalGroupsIdsRequest(listOf(orgId))
+            )
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.e(logTag, "Ошибка getTerminalGroupsIds: ${e.message}", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    override suspend fun getAliveTerminalGroups(terminalGroupIds: List<String>): Response {
+        if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
+        return try {
+            val orgId = ensureOrganizationId()
+            val response = terminalApi.getAliveTerminalGroups(
+                body = AliveTerminalGroupsRequest(listOf(orgId), terminalGroupIds)
+            )
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Log.e(logTag, "Ошибка getAliveTerminalGroups: ${e.message}", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
     private fun isConnected(): Boolean {
-        return networkMonitor.isNetworkAvailable()
-    }
-
-    private companion object {
-        const val BEARER_PREFIX = "Bearer "
-        const val ERROR = "Ошибка: "
+        val connected = networkMonitor.isNetworkAvailable()
+        Log.d(logTag, "isConnected: $connected")
+        return connected
     }
 }

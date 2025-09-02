@@ -17,10 +17,16 @@ class SQLDelightOrdersHistoryStorage @Inject constructor(private val queries: Sa
         queries.insert(
             id = order.id,
             whenCreated = order.whenCreated,
-            orderType = order.orderType,
+            orderType = order.orderType?.name ?: "",
             timestamp = order.timestamp,
             addressLine1 = order.addressLine1,
-            addressDetails = order.addressDetails
+            addressDetails = order.addressDetails,
+            mealNames = order.mealNames,
+            number = order.number
         )
+    }
+
+    override suspend fun removeOrderById(id: String) {
+        queries.remove(id)
     }
 }

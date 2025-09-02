@@ -11,7 +11,7 @@ data class DeliveryInfo(
     val savedAddresses: List<Address> = emptyList(),
     val chosenAddress: Address? = null,
     val deliveryZone: DeliveryZone? = null,
-
+    val isLoading: Boolean = false
     ) {
     val isDelivery: Boolean
         get() = deliveryType == DeliveryType.DELIVERY

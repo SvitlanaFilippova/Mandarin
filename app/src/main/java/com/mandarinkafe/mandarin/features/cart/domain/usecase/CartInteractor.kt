@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface CartInteractor {
     fun observeCartItemsCount(): Flow<Int>
     fun observeCartItems(): Flow<Resource<List<CartItem>>>
+    suspend fun forceRetry()
 
     suspend fun addItem(
         cartItem: CartItem? = null,
@@ -25,5 +26,4 @@ interface CartInteractor {
     )
 
     suspend fun clearCart()
-
 }

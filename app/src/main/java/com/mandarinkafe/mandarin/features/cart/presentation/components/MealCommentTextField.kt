@@ -91,7 +91,7 @@ fun MealCommentTextField(
                         Icon(
                             Icons.Default.Check,
                             contentDescription = stringResource(id = R.string.ok),
-                            tint = Colors.LabelVegGreen
+                            tint = Colors.Green
                         )
                     }
                 }

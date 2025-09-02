@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.equalsByContent
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
@@ -13,10 +14,11 @@ import kotlinx.coroutines.flow.first
 
 class CartInteractorImpl(
     private val cartWriter: CartWriter,
-    private val cartReader: CartReader, // чтобы получить текущие cartItems
+    private val cartReader: CartReader,
 ) : CartInteractor {
     override fun observeCartItemsCount() = cartReader.observeCartItemsCount()
     val logTag = "CART DEBUG Interactor"
+
     override fun observeCartItems() = cartReader.observeCartItems()
 
     private suspend fun getCurrentCartItems(): List<CartItem> {
@@ -26,7 +28,9 @@ class CartInteractorImpl(
             else -> emptyList()
         }
     }
-
+    override suspend fun forceRetry() {
+        cartReader.forceRetry()
+    }
     override suspend fun addItem(
         cartItem: CartItem?,
         customizedMeal: CustomizedMeal?,
@@ -34,11 +38,18 @@ class CartInteractorImpl(
     ) {
         when {
             cartItem != null -> {
-                // Если пришёл готовый CartItem, ищем его по id и обновляем/добавляем
-                val existing = getCurrentCartItems().find { it.id == cartItem.id }
-                if (existing != null) {
-                    // увеличиваем количество
-                    val updated = existing.copy(quantity = existing.quantity + 1)
+                val currentItems = getCurrentCartItems()
+
+                val existingById = currentItems.find { it.id == cartItem.id }
+                if (existingById != null) {
+                    val updated = existingById.copy(quantity = existingById.quantity + 1)
+                    cartWriter.addOrUpdateItem(updated)
+                    return
+                }
+
+                val existingByContent = currentItems.find { it.equalsByContent(cartItem) }
+                if (existingByContent != null) {
+                    val updated = existingByContent.copy(quantity = existingByContent.quantity + 1)
                     cartWriter.addOrUpdateItem(updated)
                 } else {
                     cartWriter.addOrUpdateItem(cartItem)
@@ -46,9 +57,8 @@ class CartInteractorImpl(
             }
 
             customizedMeal != null -> {
-                // Ищем последний CartItem с таким же customizedMeal
-                val existing =
-                    getCurrentCartItems().lastOrNull { it.customizedMeal == customizedMeal }
+                val existing = getCurrentCartItems()
+                    .lastOrNull { it.customizedMeal == customizedMeal }
                 if (existing != null) {
                     val updated = existing.copy(quantity = existing.quantity + 1)
                     cartWriter.addOrUpdateItem(updated)
@@ -59,8 +69,8 @@ class CartInteractorImpl(
             }
 
             meal != null -> {
-                // Ищем последний CartItem с таким meal внутри customizedMeal
-                val existing = getCurrentCartItems().lastOrNull { it.customizedMeal.meal == meal }
+                val existing = getCurrentCartItems()
+                    .lastOrNull { it.customizedMeal.meal == meal }
                 if (existing != null) {
                     val updated = existing.copy(quantity = existing.quantity + 1)
                     cartWriter.addOrUpdateItem(updated)
