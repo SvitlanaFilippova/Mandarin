@@ -135,7 +135,9 @@ class DeliveryAreaRepositoryImpl(
             val columns = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)".toRegex())
             if (columns.size >= 2) {
                 columns[0].trim() to columns[1].trim()
-            } else null
+            } else {
+                null
+            }
         } catch (e: Exception) {
             Log.e(logTag, "Error splitting CSV line: $line, error: ${e.message}")
             null
