@@ -68,16 +68,8 @@ class MenuCacheImpl @Inject constructor(
                         val addons = extractAddons(rootCategories)
                         val delivery = extractDelivery(rootCategories)
 
-                        Log.d("MenuDebug", "Extracted ${addons.size} addons categories")
-                        Log.d("MenuDebug", "Extracted delivery category: ${delivery?.name}")
-                        Log.d(
-                            "MenuDebug DeliveryDebug",
-                            "Delivery category meals: ${delivery?.meals?.joinToString { it.name }}"
-                        )
-
                         _addonsCategories.value = addons
                         _deliveryItems.value = delivery
-
 
                         val filteredMenu = filterVisibleCategories(rootCategories)
                         return Resource.Success(filteredMenu)

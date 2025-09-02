@@ -218,7 +218,6 @@ class DeliveryAreaRepositoryImpl(
     private fun extractZoneIdFromDeliveryName(name: String): Int? {
         val regex = Regex("Доставка зона (\\d+)")
         val zoneId = regex.find(name)?.groupValues?.getOrNull(1)?.toIntOrNull()
-        Log.d("DeliveryDebug", "Extracting zoneId from '$name': found '$zoneId'")
         return zoneId
     }
 
