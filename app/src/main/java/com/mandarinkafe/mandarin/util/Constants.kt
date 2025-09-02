@@ -63,13 +63,13 @@ object Constants {
 
     // Map
     const val MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN = 17.0f
-    const val MAP_DEFAULT_ZOOM_FOR_DELIVERY_SCREEN = 11.0f
+    const val MAP_DEFAULT_ZOOM_FOR_DELIVERY_SCREEN = 12.0f
     const val MAP_DEFAULT_TILT = 30.0f
     const val MAP_DEFAULT_AZIMUTH = 0.0f
     const val PIN_INDICATOR_SCALE = 0.45f
     const val PIN_INDICATOR_Y_OFFSET_FACTOR = 0.09f
-    const val MIN_ZOOM = 2f
-    const val MAX_ZOOM = 20f
+    const val MAP_MIN_ZOOM = 2f
+    const val MAP_MAX_ZOOM = 20f
 
     // DI
     const val DATABASE_NAME = "mandarin.db"
@@ -95,13 +95,9 @@ object Constants {
     const val PHONE_NUMBER_DEFAULT = "tel:+74951087055"
     const val PHONE_NUMBER_KEY = "phone_number_key"
     const val VEG_LABEL_DEFAULT = "veg"
-    const val VEG_LABEL_KEY = "veg_label_key"
     const val HOT_LABEL_DEFAULT = "hot"
-    const val HOT_LABEL_KEY = "hot_label_key"
     const val NEW_LABEL_DEFAULT = "new"
-    const val NEW_LABEL_KEY = "new_label_key"
     const val HIT_LABEL_DEFAULT = "hit"
-    const val HIT_LABEL_KEY = "hit_label_key"
 
     const val MANDARIN_LATITUDE = 55.998040
     const val MANDARIN_LONGITUDE = 38.375328

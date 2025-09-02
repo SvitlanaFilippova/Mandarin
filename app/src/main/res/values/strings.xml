@@ -47,8 +47,6 @@
     <string name="adds">Добавки</string>
     <string name="add_additionals">Сделать вкуснее</string>
     <string name="make_more_delicious_description">Можно сделать ещё вкуснее!</string>
-    <string name="to_cart">В корзину</string>
-    <string name="price_with_adds">Цена с добавками</string>
     <string name="to_choose">Выбрать</string>
     <string name="chosen">Выбрано:</string>
     <string name="cancel_choice">Отменить выбор</string>
@@ -65,7 +63,6 @@
     <string name="phone_prefix">+7 </string>
     <string name="phone_mask">(###) ###-##-##</string>
     <string name="phone_placeholder">(XXX) XXX-XX-XX</string>
-    <string name="new_address">Новый адрес</string>
     <string name="street_and_building">Улица и дом *</string>
     <string name="address_comment">Комментарий для курьера</string>
     <string name="your_comment">Комментарий к заказу</string>
@@ -83,7 +80,7 @@
     <string name="i_need_utensils">Мне нужны:</string>
     <string name="total_cart_cost">Сумма заказа</string>
     <string name="discount_template">Скидка %1$d%%</string>
-    <string name="discount_hint">Скидка по&#160;вашей карте действует не&#160;на&#160;все товары в заказе.</string>
+    <string name="discount_hint">Скидка по&#160;карте действует не&#160;на&#160;все товары в заказе.</string>
     <string name="delivery_cost">Стоимость доставки</string>
     <string name="delivery_cost_hint">Для выбранного адреса доставка бесплатна при заказе от&#160;%1&#36;d&#8381; (с&#160;учётом скидок).</string>
     <string name="why_is_that_number">Почему такая цифра</string>
@@ -91,23 +88,19 @@
     <string name="delivery_validation_error">Не&#160;удалось найти адрес в&#160;пределах зон доставки. Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа.</string>
     <string name="submit_order">Оформить заказ</string>
     <string name="pickup_only">В&#160;заказе есть позиции, доступные только для самовывоза. Доставка невозможна.</string>
-    <string name="pickup_both_title">Ваш заказ будет готов в&#160;двух точках самовывоза</string>
+    <string name="pickup_both_title">Заказ будет готов в&#160;двух точках самовывоза</string>
     <string name="pickup_both_description">В&#160;заказе есть блюда, которые готовятся в&#160;пиццерии, и&#160;те, что готовятся в&#160;основном кафе.
 Их&#160;нужно будет забрать по&#160;двум адресам. Это соседние здания.</string>
     <string name="pickup_cafe_address">Кафе: Черноголовка, ул. Береговая, 24</string>
     <string name="pickup_pizzeria_address">Пиццерия: Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
-    <string name="order_submit_success">Заказ №%1$s успешно создан</string>
     <string name="back_to_menu">Вернуться в меню</string>
     <string name="choose_address">Выберите адрес *</string>
     <string name="cancel_order">Отменить заказ</string>
     <string name="repeat_order">Повторить заказ</string>
-    <string name="order">Заказ</string>
     <string name="comment_template">Комментарий: %1$s</string>
 
     <!-- Адрес -->
-    <string name="location">Адрес</string>
     <string name="deliver_to_this_location">Доставить сюда</string>
-    <string name="to_init_location">Вернуться к изначальному адресу</string>
     <string name="to_my_location">Вернуться к моей локации</string>
     <string name="zoom_minus">Отдалить</string>
     <string name="zoom_plus">Приблизить</string>
@@ -116,7 +109,7 @@
     <string name="no_saved_addresses">Сохранённых адресов пока нет.</string>
     <string name="add_address">+ Новый адрес</string>
     <string name="delete_address_question">Удалить адрес?</string>
-    <string name="delete_address_text">Вы действительно хотите удалить сохранённый адрес?</string>
+    <string name="delete_address_text">Действительно хотите удалить сохранённый адрес?</string>
     <string name="address_type">Тип адреса: *</string>
     <string name="address_apartment_number">Квартира *</string>
     <string name="address_apartment_entrance">Подъезд *</string>
@@ -132,7 +125,7 @@
     <string name="your_phone">Номер телефона</string>
     <string name="your_email">E-mail</string>
     <string name="your_message">Сообщение *</string>
-    <string name="i_need_feedback">Мне нужна обратная связь</string>
+    <string name="i_need_feedback">Нужна обратная связь</string>
     <string name="contacts_are_required">Нужен email или номер телефона для связи</string>
 
     <!-- Статусы заказа -->
@@ -153,7 +146,6 @@
     <string name="delivery_status_extra_ready_for_cooking">Заказ принят и&#160;скоро поступит на&#160;кухню.</string>
     <string name="delivery_status_extra_cooking_started">Готовим заказ. Это займёт немного времени.</string>
     <string name="delivery_status_extra_cooking_completed">Блюда готовы. Скоро курьер получит заказ.</string>
-    <string name="delivery_status_extra_cooking_completed_selfpickup">Блюда готовы. Уже можно забирать!</string>
     <string name="delivery_status_extra_waiting">Ожидаем курьера. Это может занять несколько минут.</string>
     <string name="delivery_status_extra_on_way">Курьер уже забрал заказ и&#160;выдвинулся в&#160;путь.</string>
     <string name="delivery_status_extra_delivered">Заказ доставлен. Приятного аппетита!</string>
@@ -161,7 +153,6 @@
     <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка&#160;&#8212; пожалуйста, позвоните.</string>
 
     <!-- История заказов -->
-    <string name="delivery_history">История заказов</string>
     <string name="order_history_is_empty">Здесь будут ваши заказы</string>
     <string name="order_history_is_empty_extra">Сейчас история заказов хранится только на&#160;этом устройстве.
     После переустановки приложения или перехода на&#160;другое устройство данные будут потеряны.
@@ -183,7 +174,6 @@
     <string name="order_info_screen_title_with_number">Заказ №%1$s</string>
     <string name="label_error">Ошибка</string>
     <string name="label_order_type">Способ получения</string>
-    <string name="label_payment_method">Способ оплаты</string>
     <string name="cancel_order_question">Отменить заказ?</string>
     <string name="cancel_order_confirmation">Действительно отменить оформленный заказ?</string>
     <string name="label_order_items">Позиции заказа: %1$d</string>
@@ -204,9 +194,7 @@
     <!-- Кнопки действий -->
     <string name="minus">-</string>
     <string name="plus">+</string>
-    <string name="customize_meal">Редактировать блюдо</string>
     <string name="search_in_menu">Поиск по меню</string>
-    <string name="filter_by_label">"Фильтр по тегам: "</string>
     <string name="clear_text">Очистить текст</string>
 
     <!-- Единицы измерения -->
@@ -216,15 +204,9 @@
     <string name="unit_l">л</string>
 
     <!-- Шаблоны текста -->
-    <string name="default_price_for_button">000 ₽</string>
     <string name="meal_weight_template">%1$d %2$s</string>
-    <string name="meal_title_with_weight_template">%1$s, %2$d %3$s</string>
     <string name="meal_price_template">%1$d ₽</string>
-    <string name="meal_title_with_price_template">%1$s (%2$d ₽)</string>
     <string name="meal_in_cart_count_template">%1$d шт</string>
-    <string name="meal_in_cart_count_plus_template">%1$d шт +</string>
-    <string name="adds_prefix">+ %1$s</string>
-    <string name="process_order_price_template">Оформить за %1$d ₽</string>
     <string name="save_meal">Сохранить (%1$d ₽)</string>
 
     <!-- Ошибки и сообщения -->
@@ -236,7 +218,6 @@
     <string name="error_no_internet">Нет подключения к&#160;интернету</string>
     <string name="error_empty_menu">Сервер вернул пустые данные меню</string>
     <string name="error_empty_data">Не удалось загрузить данные</string>
-    <string name="error_server_error">Ошибка сервера</string>
     <string name="error_something_wrong">Что-то пошло не так :(</string>
     <string name="error_empty_cart">В корзине пока ничего нет</string>
     <string name="error_empty_favorites">В избранных пока ничего нет.</string>
@@ -270,7 +251,7 @@
     <!-- О приложении  -->
     <string name="about_title">О приложении</string>
     <string name="version_text">Версия приложения: %1$s</string>
-    <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана Филиппова&#160;&#8212; я&#160;разработчик этого приложения.\n\nЕсли у&#160;тебя есть идеи по&#160;улучшению или просто хочешь поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!</string>
+    <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана Филиппова&#160;&#8212; я&#160;разработчик этого приложения.\n\nЕсли есть предложения по&#160; его улучшению или просто хочется поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!</string>
     <string name="contact_title">Как со мной связаться:</string>
     <string name="telegram_label">Telegram</string>
     <string name="telegram_url">https://t.me/SvitlanaFilippova</string>
@@ -283,14 +264,9 @@
     <string name="working_hours_title">График работы</string>
     <string name="working_hours_value">Ежедневно с 11:00 до 22:00</string>
     <string name="addresses_title">Адреса</string>
-    <string name="contacts_cafe_title">Кафе</string>
-    <string name="contacts_cafe_address">Черноголовка, ул. Береговая, 24</string>
-    <string name="contacts_pizzeria_title">Пиццерия</string>
-    <string name="contacts_pizzeria_address">Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
     <string name="phone_title">Телефон</string>
 
     <!-- Доставка -->
-    <string name="delivery">Доставка</string>
     <string name="delivery_areas">Зоны доставки</string>
     <string name="delivery_free_from">0&#160;₽ от&#160;%1$d&#160;₽</string>
     <string name="delivery_price">Иначе %1$d&#160;₽</string>
@@ -304,7 +280,6 @@
     <string name="picture_of_meal_template">Изображение %1$s</string>
     <string name="icon_of_category">Иконка категории "%1$s"</string>
     <string name="banner_number">Баннер №%1$d</string>
-    <string name="search_field_icon">Поле поиска</string>
     <string name="added_to_cart">Добавлено в корзину</string>
     <string name="back_to_top">Вернуться в начало</string>
     <string name="is_selected">Выбрано</string>
