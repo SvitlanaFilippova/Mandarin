@@ -1,15 +1,27 @@
 package com.mandarinkafe.mandarin.features.menu.presentation.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -21,12 +33,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BannersSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuItemCard
+import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuSearchBar
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.categorytabs.TabsSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.rememberScrollUiState
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
@@ -68,13 +82,17 @@ fun MenuContentScreen(
 
     val scrollUi = rememberScrollUiState(categoryPositions, subCategoryPositionsMap)
     val scope = rememberCoroutineScope()
-    val activeTabIndex = remember { mutableStateOf(0) }
-    val activeSubTabIndex = remember { mutableStateOf(-1) }
-    var fabVisible by remember { mutableStateOf(false) }
+    val activeTabIndex = remember { mutableIntStateOf(0) }
+    val activeSubTabIndex = remember { mutableIntStateOf(-1) }
+
+    val isScrollingUp by scrollUi.isScrollingUp.collectAsState()
+    val isAtTop by scrollUi.isAtTop.collectAsState()
+
+    var showFab by remember { mutableStateOf(false) }
     fun CoroutineScope.showFabTemporarily() = launch {
-        fabVisible = true
+        showFab = true
         delay(FORCE_SHOW_FAB_DURATION_MS)
-        fabVisible = false
+        showFab = false
     }
 
     val configuration = LocalConfiguration.current
@@ -87,13 +105,13 @@ fun MenuContentScreen(
         snapshotFlow { scrollUi.listState.firstVisibleItemIndex }
             .collect {
                 val newIndex = scrollUi.getActiveTabIndex()
-                if (activeTabIndex.value != newIndex) {
-                    activeTabIndex.value = newIndex
-                    activeSubTabIndex.value = 0
+                if (activeTabIndex.intValue != newIndex) {
+                    activeTabIndex.intValue = newIndex
+                    activeSubTabIndex.intValue = 0
                 }
-                val newSubIndex = scrollUi.getActiveSubTabIndexForHeader(activeTabIndex.value)
-                if (activeSubTabIndex.value != newSubIndex) {
-                    activeSubTabIndex.value = newSubIndex
+                val newSubIndex = scrollUi.getActiveSubTabIndexForHeader(activeTabIndex.intValue)
+                if (activeSubTabIndex.intValue != newSubIndex) {
+                    activeSubTabIndex.intValue = newSubIndex
                 }
             }
     }
@@ -101,17 +119,18 @@ fun MenuContentScreen(
     // Скроллим к баннеру и показываем FAB
     LaunchedEffect(selectedMenuItemIndex) {
         if (selectedMenuItemIndex != DEFAULT_UNSELECTED_INDEX) {
-            scrollUi.listState.scrollToItem(selectedMenuItemIndex)
+            scrollUi.listState.scrollToItem(selectedMenuItemIndex + 1) // небольшой отступ, чтобы цель была вверху экрана
             scope.showFabTemporarily()
         }
     }
+
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = scrollUi.listState,
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8),
         ) {
-            // 1. Баннеры (скроллятся вместе с контентом)
+            //  Баннеры (скроллятся вместе с контентом)
             item {
                 BannersSection(
                     banners = banners,
@@ -119,34 +138,56 @@ fun MenuContentScreen(
                     onBannerClick = onBannersClick
                 )
             }
-            // Табы категорий
-            val headers = menuItems.filterIsInstance<MenuItem.HeaderItem>()
+
             stickyHeader {
-                TabsSection(
-                    headers = headers,
-                    activeTabIndex = activeTabIndex.value,
-                    activeSubTabIndex = activeSubTabIndex.value,
-                    onCategorySelected = { index ->
-                        activeTabIndex.value = index
-                        activeSubTabIndex.value = 0
-                        scope.launch {
-                            scrollUi.scrollToCategory(index)
-                            scope.showFabTemporarily()
-                        }
-                    },
-                    onSubCategorySelected = { subIndex ->
-                        activeSubTabIndex.value = subIndex
-                        scope.launch {
-                            scrollUi.scrollToSubCategory(
-                                activeTabIndex.value,
-                                subIndex
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animateContentSize(animationSpec = tween(durationMillis = 300))
+                        .background(color = Colors.AppBlack)
+                ) {
+                    AnimatedVisibility(
+                        visible = isAtTop || isScrollingUp,
+                        enter = fadeIn(animationSpec = tween(150)) + slideInVertically(
+                            animationSpec = tween(
+                                150
                             )
-                            scope.showFabTemporarily()
+                        ),
+                        exit = fadeOut(animationSpec = tween(150)) + slideOutVertically(
+                            animationSpec = tween(150)
+                        ),
+                    ) {
+                        MenuSearchBar(onSearchClick = onSearchClick)
+                    }
+
+                    // Табы категорий
+                    val headers = menuItems.filterIsInstance<MenuItem.HeaderItem>()
+                    TabsSection(
+                        headers = headers,
+                        activeTabIndex = activeTabIndex.intValue,
+                        activeSubTabIndex = activeSubTabIndex.intValue,
+                        onCategorySelected = { index ->
+                            activeTabIndex.intValue = index
+                            activeSubTabIndex.intValue = 0
+                            scope.launch {
+                                scrollUi.scrollToCategory(index)
+                                scope.showFabTemporarily()
+                            }
+                        },
+                        onSubCategorySelected = { subIndex ->
+                            activeSubTabIndex.intValue = subIndex
+                            scope.launch {
+                                scrollUi.scrollToSubCategory(
+                                    activeTabIndex.intValue,
+                                    subIndex
+                                )
+                                scope.showFabTemporarily()
+                            }
                         }
-                    },
-                    onSearchClick = onSearchClick
-                )
+                    )
+                }
             }
+
             itemsIndexed(
                 items = menuItems,
                 key = { _, item -> item.id }
@@ -168,13 +209,14 @@ fun MenuContentScreen(
             // Отступ внизу
             item { Spacer(modifier = Modifier.height(Dimens.MarginBig32)) }
         }
+
         BackToTopFAB(
             modifier = Modifier
                 .align(Alignment.BottomStart),
-            visible = fabVisible,
+            visible = (showFab || isScrollingUp) && !isAtTop,
             onClick = {
                 scope.launch {
-                    scrollUi.listState.animateScrollToItem(0)
+                    scrollUi.listState.scrollToItem(0)
                 }
             }
         )

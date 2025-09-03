@@ -14,14 +14,12 @@ fun TabsSection(
     activeSubTabIndex: Int,
     onCategorySelected: (Int) -> Unit,
     onSubCategorySelected: (Int) -> Unit,
-    onSearchClick: () -> Unit
 ) {
     Column(Modifier.background(Colors.AppBlack)) {
         CategoryTabsRow(
             categories = headers,
             selectedTabIndex = activeTabIndex,
             onTabSelected = { index -> onCategorySelected(index) },
-            onSearchClick = onSearchClick
         )
 
         val subCategoriesForActive =

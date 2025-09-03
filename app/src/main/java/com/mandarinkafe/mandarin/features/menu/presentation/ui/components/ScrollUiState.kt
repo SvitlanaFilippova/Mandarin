@@ -5,6 +5,15 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.runningFold
+import kotlinx.coroutines.flow.stateIn
 
 @Stable
 class ScrollUiState(
@@ -12,6 +21,42 @@ class ScrollUiState(
     private val categoryPositions: List<Int>,
     private val subCategoryPositionsMap: Map<Int, List<Int>>
 ) {
+    /**
+     * Направление скролла: true — вверх, false — вниз
+     */
+    val isScrollingUp: StateFlow<Boolean> = snapshotFlow {
+        listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
+    }
+        .runningFold(
+            initial = Triple(false, 0, 0), // (isUp, prevIndex, prevOffset)
+        ) { (_, prevIndex, prevOffset), (index, offset) ->
+            when {
+                index < prevIndex -> Triple(true, index, offset)
+                index > prevIndex -> Triple(false, index, offset)
+                offset < prevOffset -> Triple(true, index, offset)
+                offset > prevOffset -> Triple(false, index, offset)
+                else -> Triple(false, index, offset)
+            }
+        }
+        .map { it.first } // берём только флаг isUp
+        .stateIn(
+            scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob()),
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
+
+    /**
+     * Находится ли список в самом верху (первый элемент + смещение == 0)
+     */
+    val isAtTop: StateFlow<Boolean> = snapshotFlow {
+        listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
+    }
+        .stateIn(
+            scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob()),
+            started = SharingStarted.Eagerly,
+            initialValue = true
+        )
+
     fun getActiveTabIndex(): Int {
         val firstVisible = listState.firstVisibleItemIndex
         return categoryPositions.indexOfLast { it <= firstVisible }.coerceAtLeast(0)

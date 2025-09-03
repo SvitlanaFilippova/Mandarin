@@ -18,9 +18,8 @@ fun CategoryTabsRow(
     categories: List<MenuItem.HeaderItem>,
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    onSearchClick: () -> Unit,
 ) {
-    val selectedTab = remember(selectedTabIndex) { selectedTabIndex + 1 }
+    val selectedTab = remember(selectedTabIndex) { selectedTabIndex }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         ScrollableTabRow(
@@ -38,13 +37,6 @@ fun CategoryTabsRow(
             },
             divider = { }
         ) {
-            // Поиск
-            SearchTab(
-                isSelected = false,
-                onClick = onSearchClick,
-            )
-
-            // Все остальные категории
             categories.forEachIndexed { index, category ->
                 CategoryTabItem(
                     name = category.categoryName,
