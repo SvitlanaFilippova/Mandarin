@@ -4,11 +4,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.categorytabs.SubCategoryTabItem
+
 
 @Composable
 fun AddsCategoryTabsRow(
@@ -38,4 +41,19 @@ fun AddsCategoryTabsRow(
             color = Colors.LightGrey.copy(alpha = 0.3f)
         )
     }
+}
+
+@Composable
+private fun SubCategoryTabItem(category: String, isSelected: Boolean, onClick: () -> Unit) {
+    Tab(
+        selected = isSelected,
+        onClick = onClick,
+        text = {
+            Text(
+                category,
+                color = if (isSelected) Colors.Orange else Color.White
+            )
+        },
+        selectedContentColor = Colors.Orange,
+    )
 }
