@@ -62,7 +62,7 @@ fun MealDetailsContentScreen(
 
     Column(
         modifier = Modifier
-            .padding(Dimens.MarginSmall8)
+            .padding(vertical = Dimens.MarginSmall8, horizontal = Dimens.MarginStandard16)
     ) {
         BottomSheetHeader(
             meal = meal,

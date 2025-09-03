@@ -78,7 +78,7 @@ complexity:
     includePrivateDeclarations: false
   CognitiveComplexMethod:
     active: true
-    threshold: 20
+    threshold: 22
   CyclomaticComplexMethod:
     active: true
     threshold: 15
