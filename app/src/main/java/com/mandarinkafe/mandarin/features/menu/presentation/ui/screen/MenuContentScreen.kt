@@ -41,7 +41,7 @@ import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BackTo
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BannersSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuItemCard
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuSearchBar
-import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.categorytabs.TabsSection
+import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.TabsSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.rememberScrollUiState
 import com.mandarinkafe.mandarin.util.Constants
 import kotlinx.coroutines.CoroutineScope
@@ -113,7 +113,6 @@ fun MenuContentScreen(
             }
     }
 
-    // Скроллим к баннеру и показываем FAB
     LaunchedEffect(selectedMenuItemIndex) {
         if (selectedMenuItemIndex != Constants.DEFAULT_UNSELECTED_INDEX) {
             scrollUi.listState.scrollToItem(selectedMenuItemIndex + 1)
