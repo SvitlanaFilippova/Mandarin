@@ -43,10 +43,7 @@ import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuIt
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuSearchBar
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.categorytabs.TabsSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.rememberScrollUiState
-import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
-import com.mandarinkafe.mandarin.util.Constants.FORCE_SHOW_FAB_DURATION_MS
-import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_COLUMN_COUNT
-import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_SPACING_COUNT
+import com.mandarinkafe.mandarin.util.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -91,14 +88,14 @@ fun MenuContentScreen(
     var showFab by remember { mutableStateOf(false) }
     fun CoroutineScope.showFabTemporarily() = launch {
         showFab = true
-        delay(FORCE_SHOW_FAB_DURATION_MS)
+        delay(Constants.FORCE_SHOW_FAB_DURATION_MS)
         showFab = false
     }
 
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val imageSize = remember(screenWidth) {
-        (screenWidth - Dimens.MarginSmall8 * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
+        (screenWidth - Dimens.MarginSmall8 * Constants.MENU_IMAGE_SPACING_COUNT) / Constants.MENU_IMAGE_COLUMN_COUNT
     }
     // Обновляем активную табу при скролле
     LaunchedEffect(scrollUi.listState) {
@@ -118,8 +115,8 @@ fun MenuContentScreen(
 
     // Скроллим к баннеру и показываем FAB
     LaunchedEffect(selectedMenuItemIndex) {
-        if (selectedMenuItemIndex != DEFAULT_UNSELECTED_INDEX) {
-            scrollUi.listState.scrollToItem(selectedMenuItemIndex + 1) // небольшой отступ, чтобы цель была вверху экрана
+        if (selectedMenuItemIndex != Constants.DEFAULT_UNSELECTED_INDEX) {
+            scrollUi.listState.scrollToItem(selectedMenuItemIndex + 1)
             scope.showFabTemporarily()
         }
     }
@@ -140,52 +137,32 @@ fun MenuContentScreen(
             }
 
             stickyHeader {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .animateContentSize(animationSpec = tween(durationMillis = 300))
-                        .background(color = Colors.AppBlack)
-                ) {
-                    AnimatedVisibility(
-                        visible = isAtTop || isScrollingUp,
-                        enter = fadeIn(animationSpec = tween(150)) + slideInVertically(
-                            animationSpec = tween(
-                                150
-                            )
-                        ),
-                        exit = fadeOut(animationSpec = tween(150)) + slideOutVertically(
-                            animationSpec = tween(150)
-                        ),
-                    ) {
-                        MenuSearchBar(onSearchClick = onSearchClick)
-                    }
-
-                    // Табы категорий
-                    val headers = menuItems.filterIsInstance<MenuItem.HeaderItem>()
-                    TabsSection(
-                        headers = headers,
-                        activeTabIndex = activeTabIndex.intValue,
-                        activeSubTabIndex = activeSubTabIndex.intValue,
-                        onCategorySelected = { index ->
-                            activeTabIndex.intValue = index
-                            activeSubTabIndex.intValue = 0
-                            scope.launch {
-                                scrollUi.scrollToCategory(index)
-                                scope.showFabTemporarily()
-                            }
-                        },
-                        onSubCategorySelected = { subIndex ->
-                            activeSubTabIndex.intValue = subIndex
-                            scope.launch {
-                                scrollUi.scrollToSubCategory(
-                                    activeTabIndex.intValue,
-                                    subIndex
-                                )
-                                scope.showFabTemporarily()
-                            }
+                MenuStickyHeader(
+                    isAtTop = isAtTop,
+                    isScrollingUp = isScrollingUp,
+                    menuItems = menuItems,
+                    activeTabIndex = activeTabIndex.intValue,
+                    activeSubTabIndex = activeSubTabIndex.intValue,
+                    onSearchClick = onSearchClick,
+                    onCategorySelected = { index ->
+                        activeTabIndex.intValue = index
+                        activeSubTabIndex.intValue = 0
+                        scope.launch {
+                            scrollUi.scrollToCategory(index)
+                            scope.showFabTemporarily()
                         }
-                    )
-                }
+                    },
+                    onSubCategorySelected = { subIndex ->
+                        activeSubTabIndex.intValue = subIndex
+                        scope.launch {
+                            scrollUi.scrollToSubCategory(
+                                activeTabIndex.intValue,
+                                subIndex
+                            )
+                            scope.showFabTemporarily()
+                        }
+                    }
+                )
             }
 
             itemsIndexed(
@@ -219,6 +196,49 @@ fun MenuContentScreen(
                     scrollUi.listState.scrollToItem(0)
                 }
             }
+        )
+    }
+}
+
+@Composable
+private fun MenuStickyHeader(
+    isAtTop: Boolean,
+    isScrollingUp: Boolean,
+    menuItems: List<MenuItem>,
+    activeTabIndex: Int,
+    activeSubTabIndex: Int,
+    onSearchClick: () -> Unit,
+    onCategorySelected: (Int) -> Unit,
+    onSubCategorySelected: (Int) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize(animationSpec = tween(durationMillis = Constants.ANIMATION_DURATION_FAST))
+            .background(color = Colors.AppBlack)
+    ) {
+        AnimatedVisibility(
+            visible = isAtTop || isScrollingUp,
+            enter = fadeIn(animationSpec = tween(Constants.ANIMATION_DURATION_SUPER_FAST)) + slideInVertically(
+                animationSpec = tween(
+                    Constants.ANIMATION_DURATION_SUPER_FAST
+                )
+            ),
+            exit = fadeOut(animationSpec = tween(Constants.ANIMATION_DURATION_SUPER_FAST)) + slideOutVertically(
+                animationSpec = tween(Constants.ANIMATION_DURATION_SUPER_FAST)
+            ),
+        ) {
+            MenuSearchBar(onSearchClick = onSearchClick)
+        }
+
+        // Табы категорий
+        val headers = menuItems.filterIsInstance<MenuItem.HeaderItem>()
+        TabsSection(
+            headers = headers,
+            activeTabIndex = activeTabIndex,
+            activeSubTabIndex = activeSubTabIndex,
+            onCategorySelected = onCategorySelected,
+            onSubCategorySelected = onSubCategorySelected
         )
     }
 }

@@ -44,6 +44,7 @@ object Constants {
     const val MAP_ANIMATION_DURATION = 1f
     const val ANIMATION_DURATION_SLOW = 1000
     const val ANIMATION_DURATION_FAST = 300
+    const val ANIMATION_DURATION_SUPER_FAST = 150
     const val GRADIENT_HEIGHT_RATIO = 0.5f
     const val WEIGHT_RATIO_30 = 0.3f
     const val WEIGHT_RATIO_70 = 0.7f

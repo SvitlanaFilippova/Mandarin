@@ -38,7 +38,7 @@ class ScrollUiState(
                 else -> Triple(false, index, offset)
             }
         }
-        .map { it.first } // берём только флаг isUp
+        .map { it.first }
         .stateIn(
             scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob()),
             started = SharingStarted.Eagerly,
