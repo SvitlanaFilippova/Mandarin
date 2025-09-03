@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 
-
 @Composable
 fun AddsCategoryTabsRow(
     categories: List<String>,

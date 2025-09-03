@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -19,7 +21,16 @@ fun CartRecommendsList(
     onMealDetailsClick: (Meal) -> Unit,
     modifier: Modifier,
 ) {
+    val listState = rememberLazyListState()
+    // Автоматический скролл к началу при изменении списка
+    LaunchedEffect(recommendsList) {
+        if (recommendsList.isNotEmpty()) {
+            listState.scrollToItem(0)
+        }
+    }
+
     LazyRow(
+        state = listState,
         modifier = modifier
             .padding(horizontal = Dimens.MarginSuperSmall4)
             .background(Colors.Transparent),
