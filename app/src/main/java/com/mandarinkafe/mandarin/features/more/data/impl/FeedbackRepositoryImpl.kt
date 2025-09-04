@@ -47,6 +47,7 @@ class FeedbackRepositoryImpl @Inject constructor(
                 PHONE_PREFIX_8
             )) ->
                 formatWithGroups(digits, PHONE_11_GROUPS)
+
             else -> phone
         }
     }
@@ -55,12 +56,11 @@ class FeedbackRepositoryImpl @Inject constructor(
         return "+7 (${digits.substring(groups[0])}) " +
                 "${digits.substring(groups[1])}-" +
                 "${digits.substring(groups[2])}-" +
-                digits.substring(groups[3])
+                "${digits.substring(groups[3])}"
     }
 
     // Расширение для substring по IntRange
     private fun String.substring(range: IntRange) = substring(range.first, range.last + 1)
-
 
     companion object {
         private const val PHONE_LENGTH_10 = 10
