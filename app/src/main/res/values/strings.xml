@@ -102,6 +102,7 @@
     <!-- Адрес -->
     <string name="deliver_to_this_location">Доставить сюда</string>
     <string name="to_my_location">Вернуться к моей локации</string>
+    <string name="to_init_location">Вернуться к изначальной позиции</string>
     <string name="zoom_minus">Отдалить</string>
     <string name="zoom_plus">Приблизить</string>
     <string name="save">Сохранить</string>

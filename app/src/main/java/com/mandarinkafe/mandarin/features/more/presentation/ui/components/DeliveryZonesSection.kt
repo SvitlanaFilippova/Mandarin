@@ -28,10 +28,10 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.components.MapWithButtons
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.models.UiDeliveryArea
-import com.mandarinkafe.mandarin.util.Constants.MAP_ANIMATION_DURATION
-import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_AZIMUTH
-import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_TILT
-import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_ZOOM_FOR_DELIVERY_SCREEN
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_ANIMATION_DURATION
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_AZIMUTH
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_TILT
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_DELIVERY_SCREEN
 import com.mandarinkafe.mandarin.util.presentation.ui.components.BindMapViewToLifecycle
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point

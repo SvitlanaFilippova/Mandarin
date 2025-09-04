@@ -4,8 +4,8 @@ import com.mandarinkafe.mandarin.features.address.address.presentation.ui.models
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
-import com.mandarinkafe.mandarin.util.Constants.MANDARIN_LATITUDE
-import com.mandarinkafe.mandarin.util.Constants.MANDARIN_LONGITUDE
+import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LATITUDE
+import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LONGITUDE
 import com.yandex.mapkit.geometry.Point
 
 sealed interface DeliveryContract {
@@ -18,8 +18,8 @@ sealed interface DeliveryContract {
     data class DeliveryState(
         val isLoading: Boolean = true,
         val initPinPoint: Point = Point(
-            MANDARIN_LATITUDE,
-            MANDARIN_LONGITUDE
+            MANDARIN_CENTER_LATITUDE,
+            MANDARIN_CENTER_LONGITUDE
         ),
         val deliveryAreas: List<UiDeliveryArea> = listOf(),
         val currentPinPoint: Point? = null,
