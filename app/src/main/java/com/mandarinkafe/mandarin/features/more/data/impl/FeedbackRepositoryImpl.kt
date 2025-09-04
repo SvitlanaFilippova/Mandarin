@@ -42,25 +42,25 @@ class FeedbackRepositoryImpl @Inject constructor(
         val digits = phone.filter { it.isDigit() }
 
         return when {
-            digits.length == PHONE_LENGTH_10 -> {
-                "+7 (${digits.substring(0, 3)}) " +
-                        "${digits.substring(3, 6)}-" +
-                        "${digits.substring(6, 8)}-" +
-                        digits.substring(8, 10)
-            }
-
+            digits.length == PHONE_LENGTH_10 -> formatWithGroups(digits, PHONE_10_GROUPS)
             digits.length == PHONE_LENGTH_11 && (digits.startsWith(PHONE_PREFIX_7) || digits.startsWith(
                 PHONE_PREFIX_8
-            )) -> {
-                "+7 (${digits.substring(1, 4)}) " +
-                        "${digits.substring(4, 7)}-" +
-                        "${digits.substring(7, 9)}-" +
-                        digits.substring(9, 11)
-            }
-
+            )) ->
+                formatWithGroups(digits, PHONE_11_GROUPS)
             else -> phone
         }
     }
+
+    private fun formatWithGroups(digits: String, groups: Array<IntRange>): String {
+        return "+7 (${digits.substring(groups[0])}) " +
+                "${digits.substring(groups[1])}-" +
+                "${digits.substring(groups[2])}-" +
+                digits.substring(groups[3])
+    }
+
+    // Расширение для substring по IntRange
+    private fun String.substring(range: IntRange) = substring(range.first, range.last + 1)
+
 
     companion object {
         private const val PHONE_LENGTH_10 = 10
@@ -79,5 +79,9 @@ class FeedbackRepositoryImpl @Inject constructor(
         private const val EMAIL_LABEL = "\uD83D\uDCE7 Email: "
         private const val MESSAGE_LABEL = "\uD83D\uDCAC️ Сообщение: "
         private const val NEED_ANSWER_LABEL = "\n❗ Просит обратную связь ❗"
+
+        // Индексы для форматирования телефона
+        private val PHONE_10_GROUPS = arrayOf(0..2, 3..5, 6..7, 8..9)
+        private val PHONE_11_GROUPS = arrayOf(1..3, 4..6, 7..8, 9..10)
     }
 }
