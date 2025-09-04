@@ -52,17 +52,23 @@ class FeedbackRepositoryImpl @Inject constructor(
         }
     }
 
+
     private fun formatWithGroups(digits: String, groups: Array<IntRange>): String {
-        return "+7 (${digits.substring(groups[0])}) " +
-                "${digits.substring(groups[1])}-" +
-                "${digits.substring(groups[2])}-" +
-                "${digits.substring(groups[3])}"
+        return "+7 (${digits.substring(groups[COUNTRY_CODE_INDEX])}) " +
+                "${digits.substring(groups[FIRST_GROUP_INDEX])}-" +
+                "${digits.substring(groups[SECOND_GROUP_INDEX])}-" +
+                digits.substring(groups[THIRD_GROUP_INDEX])
     }
 
     // Расширение для substring по IntRange
     private fun String.substring(range: IntRange) = substring(range.first, range.last + 1)
 
     companion object {
+        private const val COUNTRY_CODE_INDEX = 0
+        private const val FIRST_GROUP_INDEX = 1
+        private const val SECOND_GROUP_INDEX = 2
+        private const val THIRD_GROUP_INDEX = 3
+
         private const val PHONE_LENGTH_10 = 10
         private const val PHONE_LENGTH_11 = 11
         private const val PHONE_PREFIX_7 = "7"
