@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.more.presentation.viewmodel
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.Constants
 
 sealed interface FeedbackContract {
     sealed interface FeedbackEvent : BaseEvent {
@@ -14,13 +15,29 @@ sealed interface FeedbackContract {
         data object SubmitForm : FeedbackEvent
     }
 
-    sealed interface FeedbackEffect : BaseEffect
+    sealed interface FeedbackEffect : BaseEffect {
+        data object ShowSuccess : FeedbackEffect
+        data class ShowError(val message: String) : FeedbackEffect
+    }
+
     data class FeedbackState(
+        val isLoading: Boolean = false,
         val isError: Boolean = false,
         val name: String = "",
         val phone: String = "",
         val email: String = "",
         val message: String = "",
-        val needFeedback: Boolean = false
-    ) : BaseState
+        val needAnswer: Boolean = false
+    ) : BaseState {
+        val isContactValid: Boolean
+            get() =
+                !needAnswer || phone.length == Constants.VALID_PHONE_LENGTH || email.isNotBlank()
+
+        // Валидация
+        val isMessageValid: Boolean
+            get() = message.isNotBlank()
+
+        val isFormValid: Boolean
+            get() = isMessageValid && isContactValid
+    }
 }

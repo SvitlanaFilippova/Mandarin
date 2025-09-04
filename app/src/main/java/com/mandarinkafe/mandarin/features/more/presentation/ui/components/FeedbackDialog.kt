@@ -8,8 +8,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,13 +25,14 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackContract
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackContract.FeedbackEvent
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackViewModel
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.MaskVisualTransformation
-import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.ui.components.CheckboxWithTextRow
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConsentTextWithLinks
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun FeedbackDialog(
@@ -37,24 +40,11 @@ fun FeedbackDialog(
     viewModel: FeedbackViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    val name = state.name
-    val phone = state.phone
-    val email = state.email
-    val message = state.message
-    val needFeedback = state.needFeedback
-
+    val effectFlow = viewModel.effect
     val onEvent = viewModel::onEvent
 
     // Локальное состояние ошибки
     var isError by remember { mutableStateOf(false) }
-
-    // Валидация
-    val isMessageValid = message.isNotBlank()
-    val isContactValid =
-        !needFeedback || phone.length == Constants.VALID_PHONE_LENGTH || email.isNotBlank()
-
-    val isFormValid = isMessageValid && isContactValid
-    val mask = MaskVisualTransformation(stringResource(R.string.phone_mask))
 
     val colors = TextFieldDefaults.colors(
         cursorColor = Colors.Orange,
@@ -71,84 +61,31 @@ fun FeedbackDialog(
         disabledIndicatorColor = Colors.Transparent,
     )
 
+    // локальные состояния для диалога после отправки формы
+    var dialogMessage by remember { mutableStateOf<String?>(null) }
+    val successMessage = stringResource(R.string.message_sent_successfully)
+    var isSuccess by remember { mutableStateOf(false) }
+
+    // форма обратной связи
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = { Text(stringResource(R.string.more_message_manager)) },
         text = {
-            Column {
-                MyTextField(
-                    value = name,
-                    labelRes = R.string.your_name,
-                    onValueChange = { onEvent(FeedbackEvent.SetName(it)) },
-                    colors = colors
-                )
-
-                Spacer(Modifier.height(Dimens.MarginSmall8))
-                MyTextField(
-                    value = phone,
-                    labelRes = R.string.your_phone,
-                    isError = !isContactValid && isError,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    onValueChange = { onEvent(FeedbackEvent.SetPhone(it)) },
-                    visualTransformation = mask,
-
-                    placeholder = {
-                        Text(
-                            text = stringResource(R.string.phone_placeholder),
-                            style = Typography.RegularLightTextStyle
-                        )
-                    },
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.phone_prefix),
-                            style = Typography.RegularTextStyle
-                        )
-                    },
-                    colors = colors
-                )
-
-                Spacer(Modifier.height(Dimens.MarginSmall8))
-
-                MyTextField(
-                    value = email,
-                    labelRes = R.string.your_email,
-                    isError = !isContactValid && isError,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    onValueChange = { onEvent(FeedbackEvent.SetEmail(it)) },
-                    colors = colors
-                )
-
-                Spacer(Modifier.height(Dimens.MarginSmall8))
-
-                MyTextField(
-                    value = message,
-                    onValueChange = { onEvent(FeedbackEvent.SetMessage(it)) },
-                    labelRes = R.string.your_message,
-                    isError = !isMessageValid && isError,
-                    minLines = 4,
-                    colors = colors
-                )
-
-                Spacer(Modifier.height(Dimens.MarginSmall8))
-
-                CheckboxWithTextRow(
-                    checked = needFeedback,
-                    labelRes = R.string.i_need_feedback,
-                    onCheckedChange = { onEvent(FeedbackEvent.SetNeedFeedback(it)) }
-                )
-                Spacer(Modifier.height(Dimens.MarginSmall8))
-
-                if (needFeedback && !isContactValid && isError) {
-                    Text(
-                        text = stringResource(R.string.contacts_are_required),
-                        style = Typography.ErrorTextStyle,
-                        modifier = Modifier.padding(start = Dimens.MarginStandard16)
-                    )
-                    Spacer(Modifier.height(Dimens.MarginSmall8))
-                }
-                ConsentTextWithLinks(
-                    modifier = Modifier.padding(start = Dimens.MarginStandard16),
-                    buttonName = stringResource(R.string.send)
+            with(state) {
+                FeedbackFields(
+                    colors = colors,
+                    name = name,
+                    phone = phone,
+                    email = email,
+                    message = message,
+                    needAnswer = needAnswer,
+                    onNameChange = { onEvent(FeedbackEvent.SetName(it)) },
+                    onPhoneChange = { onEvent(FeedbackEvent.SetPhone(it)) },
+                    onEmailChange = { onEvent(FeedbackEvent.SetEmail(it)) },
+                    onMessageChange = { onEvent(FeedbackEvent.SetMessage(it)) },
+                    onSetNeedFeedback = { onEvent(FeedbackEvent.SetNeedFeedback(it)) },
+                    isContactValid = isContactValid,
+                    isError = isError,
                 )
             }
         },
@@ -156,7 +93,7 @@ fun FeedbackDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    if (isFormValid) {
+                    if (state.isFormValid) {
                         onEvent(FeedbackEvent.SubmitForm)
                     } else {
                         isError = true
@@ -172,5 +109,163 @@ fun FeedbackDialog(
             }
         }
     )
+
+// Доп. диалог для сообщений (успех/ошибка)
+    if (dialogMessage != null) {
+        AlertDialog(
+            onDismissRequest = {
+                dialogMessage = null
+                if (isSuccess) {
+                    onDismissRequest()
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        dialogMessage = null
+                        if (isSuccess) {
+                            onDismissRequest()
+                        }
+                    }
+                ) {
+                    Text(stringResource(R.string.ok))
+                }
+            },
+            title = { Text(stringResource(R.string.more_message_manager)) },
+            text = { Text(dialogMessage ?: "") }
+        )
+    }
+
+    // Эффекты от ViewModel
+    LaunchedEffect(Unit) {
+        effectFlow.collectLatest { effect ->
+            when (effect) {
+                is FeedbackContract.FeedbackEffect.ShowError -> {
+                    dialogMessage = effect.message
+                    isSuccess = false
+                }
+
+                is FeedbackContract.FeedbackEffect.ShowSuccess -> {
+                    dialogMessage = successMessage
+                    isSuccess = true
+                }
+            }
+        }
+    }
 }
 
+@Composable
+private fun FeedbackFields(
+    colors: TextFieldColors,
+    onNameChange: (String) -> Unit,
+    onPhoneChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onMessageChange: (String) -> Unit,
+    onSetNeedFeedback: (Boolean) -> Unit,
+    name: String,
+    phone: String,
+    email: String,
+    message: String,
+    needAnswer: Boolean,
+    isContactValid: Boolean,
+    isError: Boolean,
+) {
+    Column {
+        // Имя
+        MyTextField(
+            value = name,
+            labelRes = R.string.your_name,
+            onValueChange = { onNameChange(it) },
+            colors = colors
+        )
+
+        Spacer(Modifier.height(Dimens.MarginSmall8))
+
+        // Номер телефона
+        PhoneField(
+            value = phone,
+            isError = !isContactValid && isError,
+            onValueChange = { onPhoneChange(it) },
+            colors = colors
+        )
+
+        // E-mail
+        MyTextField(
+            value = email,
+            labelRes = R.string.your_email,
+            isError = !isContactValid && isError,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            onValueChange = { onEmailChange(it) },
+            colors = colors
+        )
+
+        Spacer(Modifier.height(Dimens.MarginSmall8))
+
+        // Сообщение
+        MyTextField(
+            value = message,
+            onValueChange = { onMessageChange(it) },
+            labelRes = R.string.your_message,
+            isError = !message.isNotBlank() && isError,
+            minLines = 4,
+            colors = colors
+        )
+
+        Spacer(Modifier.height(Dimens.MarginSmall8))
+
+        CheckboxWithTextRow(
+            checked = needAnswer,
+            labelRes = R.string.i_need_feedback,
+            onCheckedChange = { onSetNeedFeedback(it) }
+        )
+        Spacer(Modifier.height(Dimens.MarginSmall8))
+
+        if (needAnswer && !isContactValid && isError) {
+            Text(
+                text = stringResource(R.string.contacts_are_required),
+                style = Typography.ErrorTextStyle,
+                modifier = Modifier.padding(start = Dimens.MarginStandard16)
+            )
+            Spacer(Modifier.height(Dimens.MarginSmall8))
+        }
+        ConsentTextWithLinks(
+            modifier = Modifier.padding(start = Dimens.MarginStandard16),
+            buttonName = stringResource(R.string.send)
+        )
+    }
+}
+
+@Composable
+private fun PhoneField(
+    value: String,
+    isError: Boolean,
+    onValueChange: (String) -> Unit,
+    colors: TextFieldColors
+) {
+    val mask = MaskVisualTransformation(stringResource(R.string.phone_mask))
+
+    MyTextField(
+        value = value,
+        labelRes = R.string.your_phone,
+        isError = isError,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+        onValueChange = { onValueChange(it) },
+        visualTransformation = mask,
+
+        placeholder = {
+            Text(
+                text = stringResource(R.string.phone_placeholder),
+                style = Typography.RegularLightTextStyle
+            )
+        },
+        prefix = {
+            Text(
+                text = stringResource(R.string.phone_prefix),
+                style = Typography.RegularTextStyle
+            )
+        },
+        colors = colors
+    )
+
+    Spacer(Modifier.height(Dimens.MarginSmall8))
+}
