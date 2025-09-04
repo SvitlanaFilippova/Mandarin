@@ -77,6 +77,7 @@ object Constants {
     const val IIKO_BASE_URL = "https://api-ru.iiko.services"
     const val LOCAL_STORAGE_NAME = "local_storage"
     const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/spreadsheets/d/e/"
+    const val TELEGRAM_API_BASE_URL = "https://api.telegram.org/"
 
     // Для обработки особых категорий по их названиям
     const val CATEGORY_ADDS = "Добавки"

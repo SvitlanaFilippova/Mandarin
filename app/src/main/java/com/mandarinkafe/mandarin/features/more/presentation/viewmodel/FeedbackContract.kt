@@ -14,13 +14,18 @@ sealed interface FeedbackContract {
         data object SubmitForm : FeedbackEvent
     }
 
-    sealed interface FeedbackEffect : BaseEffect
+    sealed interface FeedbackEffect : BaseEffect {
+        data object ShowSuccess : FeedbackEffect
+        data class ShowError(val message: String) : FeedbackEffect
+    }
+
     data class FeedbackState(
+        val isLoading: Boolean = false,
         val isError: Boolean = false,
         val name: String = "",
         val phone: String = "",
         val email: String = "",
         val message: String = "",
-        val needFeedback: Boolean = false
+        val needAnswer: Boolean = false
     ) : BaseState
 }

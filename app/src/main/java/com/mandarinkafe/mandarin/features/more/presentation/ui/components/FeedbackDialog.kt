@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +24,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackContract
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackContract.FeedbackEvent
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackViewModel
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.MaskVisualTransformation
@@ -30,6 +32,7 @@ import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.ui.components.CheckboxWithTextRow
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConsentTextWithLinks
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun FeedbackDialog(
@@ -41,8 +44,9 @@ fun FeedbackDialog(
     val phone = state.phone
     val email = state.email
     val message = state.message
-    val needFeedback = state.needFeedback
+    val needFeedback = state.needAnswer
 
+    val effectFlow = viewModel.effect
     val onEvent = viewModel::onEvent
 
     // Локальное состояние ошибки
@@ -71,11 +75,18 @@ fun FeedbackDialog(
         disabledIndicatorColor = Colors.Transparent,
     )
 
+    // локальные состояния для диалога после отправки формы
+    var dialogMessage by remember { mutableStateOf<String?>(null) }
+    val successMessage = stringResource(R.string.message_sent_successfully)
+    var isSuccess by remember { mutableStateOf(false) }
+
+    // форма обратной связи
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = { Text(stringResource(R.string.more_message_manager)) },
         text = {
             Column {
+                // Имя
                 MyTextField(
                     value = name,
                     labelRes = R.string.your_name,
@@ -84,6 +95,7 @@ fun FeedbackDialog(
                 )
 
                 Spacer(Modifier.height(Dimens.MarginSmall8))
+                // Номер телефона
                 MyTextField(
                     value = phone,
                     labelRes = R.string.your_phone,
@@ -109,6 +121,7 @@ fun FeedbackDialog(
 
                 Spacer(Modifier.height(Dimens.MarginSmall8))
 
+                // E-mail
                 MyTextField(
                     value = email,
                     labelRes = R.string.your_email,
@@ -120,6 +133,7 @@ fun FeedbackDialog(
 
                 Spacer(Modifier.height(Dimens.MarginSmall8))
 
+                // Сообщение
                 MyTextField(
                     value = message,
                     onValueChange = { onEvent(FeedbackEvent.SetMessage(it)) },
@@ -172,5 +186,47 @@ fun FeedbackDialog(
             }
         }
     )
-}
 
+// Доп. диалог для сообщений (успех/ошибка)
+    if (dialogMessage != null) {
+        AlertDialog(
+            onDismissRequest = {
+                dialogMessage = null
+                if (isSuccess) {
+                    onDismissRequest()
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        dialogMessage = null
+                        if (isSuccess) {
+                            onDismissRequest()
+                        }
+                    }
+                ) {
+                    Text(stringResource(R.string.ok))
+                }
+            },
+            title = { Text(stringResource(R.string.more_message_manager)) },
+            text = { Text(dialogMessage ?: "") }
+        )
+    }
+
+    // Эффекты от ViewModel
+    LaunchedEffect(Unit) {
+        effectFlow.collectLatest { effect ->
+            when (effect) {
+                is FeedbackContract.FeedbackEffect.ShowError -> {
+                    dialogMessage = effect.message
+                    isSuccess = false
+                }
+
+                is FeedbackContract.FeedbackEffect.ShowSuccess -> {
+                    dialogMessage = successMessage
+                    isSuccess = true
+                }
+            }
+        }
+    }
+}

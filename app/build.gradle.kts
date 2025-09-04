@@ -56,6 +56,12 @@ android {
         val iikoApiKey = properties.getProperty("IIKO_API_KEY") ?: ""
         buildConfigField("String", "IIKO_API_KEY", "\"$iikoApiKey\"")
 
+        // telegram bot
+        val tgBotToken = properties.getProperty("TG_BOT_TOKEN") ?: ""
+        buildConfigField("String", "TG_BOT_TOKEN", "\"$tgBotToken\"")
+        val tgChannelId = properties.getProperty("TG_CHANNEL_ID") ?: ""
+        buildConfigField("String", "TG_CHANNEL_ID", "\"$tgChannelId\"")
+
     }
 
     buildTypes {
