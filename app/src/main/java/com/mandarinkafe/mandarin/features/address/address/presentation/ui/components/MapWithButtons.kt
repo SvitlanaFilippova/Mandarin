@@ -20,9 +20,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.models.UiDeliveryArea
-import com.mandarinkafe.mandarin.util.Constants.MAP_ANIMATION_DURATION
-import com.mandarinkafe.mandarin.util.Constants.MAP_MAX_ZOOM
-import com.mandarinkafe.mandarin.util.Constants.MAP_MIN_ZOOM
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_ANIMATION_DURATION
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_MAX_ZOOM
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_MIN_ZOOM
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.RoundedButton
 import com.yandex.mapkit.Animation
@@ -101,7 +101,7 @@ fun MapWithButtons(
                 RoundedButton(
                     onClick = onBackToInitLocationClick,
                     painter = painterResource(R.drawable.ic_undo),
-                    contentDescriptionResId = R.string.to_my_location
+                    contentDescriptionResId = R.string.to_init_location
                 )
             }
 
@@ -115,6 +115,7 @@ fun MapWithButtons(
                 )
             }
 
+            // Кнопка "Приблизить"
             RoundedButton(
                 modifier = Modifier.padding(top = Dimens.MarginSmall8),
                 onClick = { changeZoom(mapView = mapView, delta = +1f) },
@@ -122,6 +123,7 @@ fun MapWithButtons(
                 contentDescriptionResId = R.string.zoom_plus
             )
 
+            // Кнопка "Отдалить"
             RoundedButton(
                 modifier = Modifier.padding(top = Dimens.MarginSmall8),
                 onClick = { changeZoom(mapView = mapView, delta = -1f) },

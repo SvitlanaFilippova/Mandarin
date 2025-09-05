@@ -15,8 +15,8 @@ import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressContract.AddressEffect.GoToAddressDetailsEffect
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressContract.AddressEvent
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressContract.AddressState
-import com.mandarinkafe.mandarin.util.Constants.MANDARIN_LATITUDE
-import com.mandarinkafe.mandarin.util.Constants.MANDARIN_LONGITUDE
+import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LATITUDE
+import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LONGITUDE
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.debounce
 import com.mandarinkafe.mandarin.util.isSameAs
@@ -231,8 +231,8 @@ class AddressViewModel @Inject constructor(
                     setState {
                         copy(
                             userLocation = Point(
-                                MANDARIN_LATITUDE,
-                                MANDARIN_LONGITUDE
+                                MANDARIN_CAFE_LATITUDE,
+                                MANDARIN_CAFE_LONGITUDE
                             )
                         )
                     }

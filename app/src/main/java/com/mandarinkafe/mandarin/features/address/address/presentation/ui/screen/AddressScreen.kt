@@ -32,11 +32,11 @@ import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressViewModel
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.LocationIcon
 import com.mandarinkafe.mandarin.util.Constants
-import com.mandarinkafe.mandarin.util.Constants.MAP_ANIMATION_DURATION
-import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_AZIMUTH
-import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_TILT
-import com.mandarinkafe.mandarin.util.Constants.MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN
 import com.mandarinkafe.mandarin.util.Constants.MIN_LINES_FOR_ADDRESS_INPUT
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_ANIMATION_DURATION
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_AZIMUTH
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_TILT
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN
 import com.mandarinkafe.mandarin.util.presentation.ui.components.BindMapViewToLifecycle
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import com.yandex.mapkit.Animation

@@ -15,8 +15,8 @@ import androidx.compose.ui.res.painterResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.util.Constants.PIN_INDICATOR_SCALE
-import com.mandarinkafe.mandarin.util.Constants.PIN_INDICATOR_Y_OFFSET_FACTOR
+import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_INDICATOR_SCALE
+import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_INDICATOR_Y_OFFSET_FACTOR
 
 @Composable
 fun ChosenLocationPin(

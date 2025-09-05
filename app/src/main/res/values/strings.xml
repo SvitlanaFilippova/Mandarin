@@ -102,6 +102,7 @@
     <!-- Адрес -->
     <string name="deliver_to_this_location">Доставить сюда</string>
     <string name="to_my_location">Вернуться к моей локации</string>
+    <string name="to_init_location">Вернуться к изначальной позиции</string>
     <string name="zoom_minus">Отдалить</string>
     <string name="zoom_plus">Приблизить</string>
     <string name="save">Сохранить</string>
@@ -232,7 +233,7 @@
     <string name="more_delivery_info">Условия доставки</string>
     <string name="more_contacts">Контакты</string>
     <string name="more_message_manager">Написать руководству</string>
-    <string name="message_sent_successfully">Сообщение успешно отправлено! Спасибо за обратную связь, мы её очень ценим ♥️</string>
+    <string name="message_sent_successfully">Сообщение успешно отправлено.\n\nСпасибо за&#160;обратную связь, мы&#160;её&#160;очень ценим! &#9829;️</string>
     <string name="more_privacy_policy">Политика конфиденциальности</string>
     <string name="more_user_agreement">Пользовательское соглашение</string>
     <string name="more_personal_data_agreement">Соглашение об обработке персональных данных</string>
