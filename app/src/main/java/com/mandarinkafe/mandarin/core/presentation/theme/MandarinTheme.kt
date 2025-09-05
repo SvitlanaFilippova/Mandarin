@@ -1,9 +1,10 @@
+package com.mandarinkafe.mandarin.core.presentation.theme
+
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 
 @Composable
 fun MandarinTheme(

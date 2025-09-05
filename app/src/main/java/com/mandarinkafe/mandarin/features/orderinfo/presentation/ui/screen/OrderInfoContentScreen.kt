@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen
 
-import ClickToCopyText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +30,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.O
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickToCopyText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 
