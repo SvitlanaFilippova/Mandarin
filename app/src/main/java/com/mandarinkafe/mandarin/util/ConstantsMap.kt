@@ -16,4 +16,17 @@ object ConstantsMap {
     const val MANDARIN_PIZZERIA_LONGITUDE = 38.374570
     const val MANDARIN_CENTER_LATITUDE = 55.998299
     const val MANDARIN_CENTER_LONGITUDE = 38.374949
+
+    // Для пинов на странице "Контакты"
+    const val PIN_ANCHOR_X = 0.5f
+    const val PIN_ANCHOR_Y = 1.2f
+    const val PIN_SCALE = 0.8f
+    const val PIN_OPACITY = 0.3f
+
+    const val PIN_TEXT_SIZE = 10f
+    const val PIN_TEXT_OFFSET = 5f
+    const val PIN_TEXT_ALPHA = 0.5f
+
+    const val PIN_LABEL_CAFE = "Основное кафе"
+    const val PIN_LABEL_PIZZERIA = "Пиццерия"
 }
