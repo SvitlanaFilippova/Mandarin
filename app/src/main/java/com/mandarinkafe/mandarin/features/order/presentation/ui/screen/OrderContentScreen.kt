@@ -76,6 +76,7 @@ fun OrderContent(
             DeliveryTypeChooser(
                 chosen = state.deliveryInfo.deliveryType,
                 pickupOnly = state.pickupOnly,
+                containsAlcohol = state.containsAlcohol,
                 isError = state.isError,
                 onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
             )

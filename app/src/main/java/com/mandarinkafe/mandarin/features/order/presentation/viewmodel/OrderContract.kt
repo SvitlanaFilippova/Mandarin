@@ -69,6 +69,7 @@ sealed interface OrderContract {
         val comment: String = "",
         val isError: Boolean = false,
         val pickupOnly: Boolean = false,
+        val containsAlcohol: Boolean = false,
         val pickupPoint: OrderPickupPoint = OrderPickupPoint.CAFE,
         val isLoading: Boolean = false
     ) : BaseState {

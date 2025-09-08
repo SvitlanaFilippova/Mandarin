@@ -129,7 +129,7 @@ class OrderViewModel @Inject constructor(
 
     private fun observeCartItems() {
         viewModelScope.launch {
-            cartObserver.observe { items, containNotDiscountable, isPickupOnly, pickupPoint ->
+            cartObserver.observe { items, containNotDiscountable, isPickupOnly, pickupPoint, containsAlcohol ->
                 setState {
                     val newDeliveryInfo =
                         if (isPickupOnly) {
@@ -148,7 +148,8 @@ class OrderViewModel @Inject constructor(
                         cartSummary = newCartSummary,
                         deliveryInfo = newDeliveryInfo,
                         pickupPoint = pickupPoint,
-                        pickupOnly = isPickupOnly
+                        pickupOnly = isPickupOnly,
+                        containsAlcohol = containsAlcohol
                     )
                 }
             }
