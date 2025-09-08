@@ -23,7 +23,7 @@ fun ConfirmationDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
+                Text(stringResource(R.string.no_cancel))
             }
         },
         title = { Text(stringResource(titleRes)) },

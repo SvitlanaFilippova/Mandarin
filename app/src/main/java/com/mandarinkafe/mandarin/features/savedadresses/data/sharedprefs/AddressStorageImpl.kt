@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.address.savedadresses.data.sharedprefs
+package com.mandarinkafe.mandarin.features.savedadresses.data.sharedprefs
 
 import android.content.SharedPreferences
 import android.util.Log

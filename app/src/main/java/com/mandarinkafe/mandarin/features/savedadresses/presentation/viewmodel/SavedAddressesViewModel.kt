@@ -1,12 +1,12 @@
-package com.mandarinkafe.mandarin.features.address.savedadresses.presentation.viewmodel
+package com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
-import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
-import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesEffect
-import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesEvent
-import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesState
+import com.mandarinkafe.mandarin.features.savedadresses.domain.api.GetSavedAddressesUseCase
+import com.mandarinkafe.mandarin.features.savedadresses.domain.api.RemoveAddressUseCase
+import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesEffect
+import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesEvent
+import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesState
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -29,7 +29,7 @@ class SavedAddressesViewModel @Inject constructor(
             is SavedAddressesEvent.AddNewAddress -> createNewAddress()
             is SavedAddressesEvent.EditAddress -> goToAddressEdit(event.address)
             is SavedAddressesEvent.RemoveAddress -> removeSavedAddress(event.id)
-            SavedAddressesEvent.RefreshAddresses -> getSavedAddresses()
+            is SavedAddressesEvent.RefreshAddresses -> getSavedAddresses()
         }
     }
 

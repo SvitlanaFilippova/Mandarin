@@ -7,8 +7,6 @@ import com.mandarinkafe.mandarin.core.domain.api.ObserveCartItemsUseCase
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
-import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
-import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
@@ -30,6 +28,8 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.C
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.OrderCreator
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
+import com.mandarinkafe.mandarin.features.savedadresses.domain.api.GetSavedAddressesUseCase
+import com.mandarinkafe.mandarin.features.savedadresses.domain.api.RemoveAddressUseCase
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
