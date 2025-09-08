@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,8 +25,6 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 fun MealInfo(
     meal: Meal,
 ) {
-    Log.d("DEBUG IMAGES", "Meal: ${meal.name}, image: ${meal.imageUrl}")
-
     Column {
         MealDetailsImage(meal)
         if (meal.description.isNotEmpty()) {

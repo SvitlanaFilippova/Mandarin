@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.navigation.extensions
 
+import android.util.Base64
 import android.util.Log
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -12,6 +13,9 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.CART_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.CONTACTS_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_ID
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_JSON
 import com.mandarinkafe.mandarin.navigation.NavConstants.LEGAL_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
@@ -45,7 +49,6 @@ fun NavController.navigateToCart(snackbarMessage: String? = null) {
         ?.savedStateHandle
         ?.set(SNACKBAR_MESSAGE_KEY, snackbarMessage)
 }
-
 
 fun NavController.navigateToSavedAddresses() {
     this.navigate(SAVED_ADDRESSES_ROUTE)
@@ -104,12 +107,21 @@ fun NavController.navigateToMealDetails(
     isEditMode: Boolean = false
 ) {
     val gson = Gson()
-    val json = item?.let { URLEncoder.encode(gson.toJson(it), StandardCharsets.UTF_8.toString()) }
-    val itemParam = json ?: "null"
+
+    val json = item?.let { gson.toJson(it) }
+    val encoded = json?.let {
+        Base64.encodeToString(it.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
+    }
+
+    val itemParam = encoded ?: "null"
     val mealIdParam = mealId ?: "null"
 
-    val route = "$MEAL_DETAILS_ROUTE/$itemParam/$mealIdParam/$isEditMode"
-    this.navigate(route)
+    val route = "$MEAL_DETAILS_ROUTE?" +
+            "$KEY_MEAL_JSON=$itemParam&" +
+            "$KEY_MEAL_ID=$mealIdParam&" +
+            "$KEY_IS_EDIT_MODE=$isEditMode"
+
+    navigate(route)
 }
 
 fun NavController.navigateToOrderInfo(

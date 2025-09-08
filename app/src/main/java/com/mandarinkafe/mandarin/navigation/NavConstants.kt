@@ -36,7 +36,10 @@ object NavConstants {
 
     const val MEAL_DETAILS_ROUTE = "meal_details"
     const val MEAL_DETAILS_ROUTE_WITH_ARGS =
-        "$MEAL_DETAILS_ROUTE/{$KEY_MEAL_JSON}/{$KEY_MEAL_ID}/{$KEY_IS_EDIT_MODE}"
+        "$MEAL_DETAILS_ROUTE?" +
+                "$KEY_MEAL_JSON={$KEY_MEAL_JSON}&" +
+                "$KEY_MEAL_ID={$KEY_MEAL_ID}&" +
+                "$KEY_IS_EDIT_MODE={$KEY_IS_EDIT_MODE}"
 
     const val SEARCH_SCREEN_ROUTE = "search"
     const val SEARCH_SCREEN_ROUTE_WITH_ARGS =
