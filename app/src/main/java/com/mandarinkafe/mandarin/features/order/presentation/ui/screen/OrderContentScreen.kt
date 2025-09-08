@@ -28,6 +28,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConsentTextWithLinks
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -40,6 +41,7 @@ fun OrderContent(
     onDeleteRequest: (String) -> Unit,
     showAllAddresses: Boolean,
     onToggleShowAll: () -> Unit,
+    onBackClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -48,6 +50,13 @@ fun OrderContent(
             .padding(Dimens.MarginSmall8),
         state = scrollState,
     ) {
+
+        item {
+            ScreenTitleWithBackButton(
+                name = stringResource(R.string.submit_order__screen_title),
+                onBackClick = onBackClick
+            )
+        }
         item {
             with(state.userInfo) {
                 PersonalInfo(

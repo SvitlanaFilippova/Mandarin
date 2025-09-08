@@ -79,13 +79,14 @@ fun NavController.navigateToAddress(address: Address? = null, returnToRoute: Str
 
     if (address == null) {
         // Новый адрес → карта
-        val emptyAddress = URLEncoder.encode("", StandardCharsets.UTF_8.toString())
+        val emptyAddress = ""
         navigate("$ADDRESS_SCREEN_ROUTE/$emptyAddress/$encodedReturnRoute")
     } else {
-        // Есть уже выбранный адрес,(например, редактирование)
+        // Есть уже выбранный адрес
         val gson = Gson()
-        val json = URLEncoder.encode(gson.toJson(address), StandardCharsets.UTF_8.toString())
-        navigate("$ADDRESS_SCREEN_ROUTE/$json/$encodedReturnRoute")
+        val json = gson.toJson(address)
+        val encoded = Base64.encodeToString(json.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
+        navigate("$ADDRESS_SCREEN_ROUTE/$encoded/$encodedReturnRoute")
     }
 }
 
@@ -95,10 +96,12 @@ fun NavController.navigateToAddressDetails(
     returnToRoute: String
 ) {
     val gson = Gson()
-    val json =
-        URLEncoder.encode(gson.toJson(address), StandardCharsets.UTF_8.toString())
-    val route = "$ADDRESS_DETAILS_ROUTE/$json/$isEditMode/$returnToRoute"
-    this.navigate(route)
+    val json = gson.toJson(address)
+    val encoded = Base64.encodeToString(json.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
+    val encodedReturn = URLEncoder.encode(returnToRoute, StandardCharsets.UTF_8.toString())
+
+    val route = "$ADDRESS_DETAILS_ROUTE/$encoded/$isEditMode/$encodedReturn"
+    navigate(route)
 }
 
 fun NavController.navigateToMealDetails(

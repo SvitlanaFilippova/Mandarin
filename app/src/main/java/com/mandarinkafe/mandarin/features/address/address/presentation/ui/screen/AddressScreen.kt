@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
@@ -39,6 +40,7 @@ import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_TILT
 import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN
 import com.mandarinkafe.mandarin.util.presentation.ui.components.BindMapViewToLifecycle
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -93,6 +95,11 @@ fun AddressMapScreen(
             .fillMaxSize()
             .padding(Dimens.MarginSmall8)
     ) {
+        ScreenTitleWithBackButton(
+            name = stringResource(R.string.address_screen_title),
+            onBackClick = { navController.popBackStack() }
+        )
+
         // Строка с адресом
         MyTextField(
             modifier = Modifier

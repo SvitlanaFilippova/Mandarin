@@ -75,7 +75,8 @@ fun OrderScreen(
             onDeleteRequest = {
                 addressIdToDelete = it
                 showConfirmDeleteDialog = true
-            }
+            },
+            onBackClick = { navController.popBackStack() }
         )
 
         PullRefreshIndicator(

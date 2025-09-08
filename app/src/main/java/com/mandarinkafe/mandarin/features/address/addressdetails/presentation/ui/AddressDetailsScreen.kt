@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
@@ -36,6 +37,7 @@ import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_ADDRESS_ID
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.BigButtonWithText
 
 @Composable
@@ -72,6 +74,12 @@ fun AddressDetailsScreen(
             .fillMaxSize()
             .padding(Dimens.MarginSmall8),
     ) {
+
+        ScreenTitleWithBackButton(
+            name = stringResource(R.string.address_details_screen_title),
+            onBackClick = { navController.popBackStack() }
+        )
+
         // Улица и дом. При клике - переход на экран выбора адреса на карте
         MyTextField(
             modifier = Modifier.clickable(onClick = { onEvent(AddressDetailsEvent.ChangeLocation) }),

@@ -17,6 +17,9 @@
     <string name="more_options">Ещё</string>
     <string name="order_history">История заказов</string>
     <string name="saved_addresses">Сохранённые адреса</string>
+    <string name="address_screen_title">Адрес</string>
+    <string name="address_details_screen_title">Детали адреса</string>
+    <string name="submit_order__screen_title">Оформление заказа</string>
 
     <!-- Корзина -->
     <string name="cart">Корзина</string>
@@ -34,7 +37,6 @@
     <string name="quantity_x_template">x%.0f</string>
     <string name="some_items_unavailable">Некоторые блюда недоступны. Остальные добавлены в&#160;корзину</string>
     <string name="all_items_added_to_cart">Все позиции из&#160;заказа добавлены в&#160;корзину</string>
-
 
     <!-- Избранное -->
     <string name="favorite">Избранное</string>
