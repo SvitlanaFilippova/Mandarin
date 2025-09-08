@@ -29,7 +29,6 @@ fun SubmitOrderButton(
     onSubmitOrder: () -> Unit,
     isLoading: Boolean,
 ) {
-
     val onClickAction = when {
         !shouldBeActive -> onMissingRequiredInfo
         else -> onSubmitOrder

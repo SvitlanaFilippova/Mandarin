@@ -50,7 +50,6 @@ fun OrderContent(
             .padding(Dimens.MarginSmall8),
         state = scrollState,
     ) {
-
         item {
             ScreenTitleWithBackButton(
                 name = stringResource(R.string.submit_order__screen_title),

@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.util
 import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
-
 import com.yandex.mapkit.geometry.Point
 
 fun Point.isSameAs(other: Point, epsilon: Double = 1e-6): Boolean {

@@ -74,7 +74,6 @@ fun AddressDetailsScreen(
             .fillMaxSize()
             .padding(Dimens.MarginSmall8),
     ) {
-
         ScreenTitleWithBackButton(
             name = stringResource(R.string.address_details_screen_title),
             onBackClick = { navController.popBackStack() }
