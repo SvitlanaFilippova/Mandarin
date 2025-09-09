@@ -26,23 +26,22 @@
 | История заказов                  | ✔️ Реализовано |
 | Сохранение адресов доставки               | ✔️ Реализовано |
 | Форма обратной связи             | ✔️ Реализовано |
-| Онлайн-оплата заказа             | 📌 Планируется |
+| Онлайн-оплата заказа             | 🛠️ В разработке |
 
 
 ## Используемые инструменты и технологии 📚
 
-| Технологии             |  Технологии         |
-|------------------------|---------------------|
-|Jetpack Compose         | Firebase Remote Config |
-| StateFlow              | Yandex MapKit          |
-| MVI                    | SQLDelight              |
-| Coroutines             | SharedPreferences      |
-| Retrofit2              | Material3              | 
-| Coil                   | Hilt                   | 
-| Gson                   | iikoCloud API | 
-| Telegram Bot API                   |                   
-
-
+| Категория             | Технологии |
+|------------------------|------------|
+| UI                    | Jetpack Compose, Material3, Accompanist |
+| Архитектура           | MVI, StateFlow, Coroutines, Hilt, KSP |
+| Навигация             | Navigation Compose, Accompanist Navigation Material |
+| Работа с данными      | Retrofit2, Gson, SQLDelight, SharedPreferences |
+| Изображения           | Coil 3 (с OkHttp) |
+| Карты                 | Yandex MapKit |
+| Firebase              | Remote Config, Crashlytics |
+| Интеграции            | iikoCloud API, Telegram Bot API |
+| Инструменты качества  | Detekt |
 
 
 
