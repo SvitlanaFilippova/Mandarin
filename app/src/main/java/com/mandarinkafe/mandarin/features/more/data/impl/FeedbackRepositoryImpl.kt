@@ -82,8 +82,8 @@ class FeedbackRepositoryImpl @Inject constructor(
         private const val FEEDBACK_TITLE = "<b>Новое обращение</b>\n\n"
         private const val NAME_LABEL = "\uD83D\uDC64 Имя: "
         private const val PHONE_LABEL = "\uD83D\uDCDE Телефон: "
-        private const val EMAIL_LABEL = "\uD83D\uDCE7 Email: "
-        private const val MESSAGE_LABEL = "\uD83D\uDCAC️ Сообщение: "
+        private const val EMAIL_LABEL = "\uD83D\uDCE7 Email/Telegram: "
+        private const val MESSAGE_LABEL = "\uD83D\uDCAC️ Сообщение:\n"
         private const val NEED_ANSWER_LABEL = "\n❗ Просит обратную связь ❗"
 
         // Индексы для форматирования телефона

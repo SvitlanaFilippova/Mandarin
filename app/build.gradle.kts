@@ -62,6 +62,9 @@ android {
         val tgChannelId = properties.getProperty("TG_CHANNEL_ID") ?: ""
         buildConfigField("String", "TG_CHANNEL_ID", "\"$tgChannelId\"")
 
+        val devTgChatId = properties.getProperty("DEV_TG_CHAT_ID") ?: ""
+        buildConfigField("String", "DEV_TG_CHAT_ID", "\"$devTgChatId\"")
+
     }
 
     buildTypes {
