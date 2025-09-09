@@ -28,7 +28,7 @@ class GetAddonsUseCaseImpl(
                     val depth = it.categoryPath.size
                     depth == addonsPrefix.size + 1 || it.categoryPath == addonsPrefix
                 }
-                .filter { !it.items.isNullOrEmpty() }
+                .filter { it.items.isNotEmpty() }
 
             Success(total)
         }

@@ -8,7 +8,6 @@ object OrderConstants {
     const val ADDRESS_TYPE_LEGACY = "legacy"
     const val DISCOUNT_TYPE_RMS = "RMS"
     const val PAYMENT_CASH_CODE = "CASH"
-    const val PAYMENT_CARD_CODE = "CARD"
     const val PAYMENT_CASH_NAME = "cash"
     const val PAYMENT_CARD_NAME = "card"
     const val DEFAULT_AMOUNT = 1.0

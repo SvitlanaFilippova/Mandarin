@@ -12,10 +12,3 @@ data class StoredCartItem(
     val quantity: Int,
     val comment: String
 )
-
-fun StoredCartItem.sameAs(other: StoredCartItem): Boolean {
-    return mealId == other.mealId &&
-            addsIds == other.addsIds &&
-            modifiers == other.modifiers &&
-            comment == other.comment
-}

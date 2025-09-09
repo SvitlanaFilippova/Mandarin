@@ -30,11 +30,4 @@ sealed class BottomNavigationItem(@StringRes val title: Int, val icon: Int, val 
             R.drawable.ic_cart,
             NavConstants.CART_SCREEN_ROUTE
         )
-
-    object Search :
-        BottomNavigationItem(
-            R.string.search,
-            R.drawable.ic_search,
-            NavConstants.SEARCH_SCREEN_ROUTE
-        )
 }
