@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.core.presentation
 
-import MandarinTheme
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import com.mandarinkafe.mandarin.core.presentation.theme.MandarinTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

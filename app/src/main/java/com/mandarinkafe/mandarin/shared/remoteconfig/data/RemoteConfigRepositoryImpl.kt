@@ -14,7 +14,6 @@ class RemoteConfigRepositoryImpl(
 
     init {
         val configSettings = remoteConfigSettings {
-//            FirebaseRemoteConfigSettings.Builder.setMinimumFetchIntervalInSeconds = 3600
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
 
