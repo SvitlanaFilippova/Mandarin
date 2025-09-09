@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.address.savedadresses.presentation.viewmodel
+package com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel
 
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.util.BaseEffect

@@ -1,8 +1,8 @@
-package com.mandarinkafe.mandarin.features.address.savedadresses.domain.impl
+package com.mandarinkafe.mandarin.features.savedadresses.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.GetSavedAddressesUseCase
-import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.SavedAddressRepository
+import com.mandarinkafe.mandarin.features.savedadresses.domain.api.GetSavedAddressesUseCase
+import com.mandarinkafe.mandarin.features.savedadresses.domain.api.SavedAddressRepository
 
 class GetSavedAddressesUseCaseImpl(private val repository: SavedAddressRepository) :
     GetSavedAddressesUseCase {

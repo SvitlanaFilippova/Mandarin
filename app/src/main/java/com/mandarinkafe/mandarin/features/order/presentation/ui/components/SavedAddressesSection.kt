@@ -14,8 +14,8 @@ import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.components.SavedAddressCard
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
+import com.mandarinkafe.mandarin.features.savedadresses.presentation.ui.components.SavedAddressCard
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SAVED_ADDRESSES_NUMBER
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyClickableText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText

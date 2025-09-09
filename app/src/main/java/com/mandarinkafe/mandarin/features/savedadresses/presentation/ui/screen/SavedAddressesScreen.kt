@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.screen
+package com.mandarinkafe.mandarin.features.savedadresses.presentation.ui.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,10 +25,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.components.HandleSavedAddressesEffects
-import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.components.SavedAddressCard
-import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesEvent
-import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.viewmodel.SavedAddressesViewModel
+import com.mandarinkafe.mandarin.features.savedadresses.presentation.ui.components.HandleSavedAddressesEffects
+import com.mandarinkafe.mandarin.features.savedadresses.presentation.ui.components.SavedAddressCard
+import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesEvent
+import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.SavedAddressesViewModel
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog

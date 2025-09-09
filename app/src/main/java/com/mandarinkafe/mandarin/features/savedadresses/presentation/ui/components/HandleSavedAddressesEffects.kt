@@ -1,10 +1,10 @@
-package com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.components
+package com.mandarinkafe.mandarin.features.savedadresses.presentation.ui.components
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
-import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesEffect
+import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesEffect
 import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails

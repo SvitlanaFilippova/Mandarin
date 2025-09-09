@@ -28,6 +28,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConsentTextWithLinks
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -40,6 +41,7 @@ fun OrderContent(
     onDeleteRequest: (String) -> Unit,
     showAllAddresses: Boolean,
     onToggleShowAll: () -> Unit,
+    onBackClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -49,14 +51,24 @@ fun OrderContent(
         state = scrollState,
     ) {
         item {
-            with(state.userInfo) {
+            ScreenTitleWithBackButton(
+                name = stringResource(R.string.submit_order__screen_title),
+                onBackClick = onBackClick
+            )
+        }
+        item {
+            with(state) {
                 PersonalInfo(
-                    nameQuery = name,
-                    phoneQuery = phone,
-                    isError = state.isError,
-                    phoneIsValid = phoneIsValid,
+                    nameQuery = userInfo.name,
+                    phoneQuery = userInfo.phone,
+                    isError = isError,
+                    phoneIsValid = userInfo.phoneIsValid,
+                    showSaveUserInfoCheckbox = showSaveUserInfoCheckbox,
+                    saveUserInfoCheckboxText = saveUserInfoCheckboxText,
+                    saveUserInfo = saveUserInfo,
                     onNameEntered = { onEvent(OrderEvent.SetName(it)) },
                     onPhoneChanged = { onEvent(OrderEvent.SetPhone(it)) },
+                    onSaveUserInfoToggled = { onEvent(OrderEvent.ToggleSaveUserInfo(it)) },
                 )
             }
         }
@@ -67,6 +79,7 @@ fun OrderContent(
             DeliveryTypeChooser(
                 chosen = state.deliveryInfo.deliveryType,
                 pickupOnly = state.pickupOnly,
+                containsAlcohol = state.containsAlcohol,
                 isError = state.isError,
                 onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
             )

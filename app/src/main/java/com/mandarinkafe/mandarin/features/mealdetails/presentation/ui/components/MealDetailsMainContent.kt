@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,7 +45,7 @@ fun MealDetailsMainContent(
     val meal = remember { customizedMeal.meal }
     val shouldShowChosen =
         remember(customizedMeal.isCustomized) { !meal.isOnlySingleRequiredChoice() && customizedMeal.isCustomized }
-
+    Log.d("DEBUG LABEL", "Meal labels: ${customizedMeal.meal.labels}")
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth(),

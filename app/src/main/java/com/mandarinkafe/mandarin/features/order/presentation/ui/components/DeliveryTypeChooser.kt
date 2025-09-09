@@ -28,7 +28,8 @@ fun DeliveryTypeChooser(
     chosen: DeliveryType?,
     isError: Boolean,
     onDeliverySelected: (DeliveryType) -> Unit,
-    pickupOnly: Boolean
+    pickupOnly: Boolean,
+    containsAlcohol: Boolean
 ) {
     val deliveryTypes = remember { UiDeliveryType.entries.toList() }
 
@@ -45,14 +46,24 @@ fun DeliveryTypeChooser(
         text = stringResource(R.string.delivery_type),
         style = style,
     )
+    when {
+        containsAlcohol -> {
+            TooltipText(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = Dimens.MarginStandard16),
+                textRes = R.string.alcohol_pickup_only_18_plus
+            )
+        }
 
-    if (pickupOnly) {
-        TooltipText(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = Dimens.MarginStandard16),
-            textRes = R.string.pickup_only
-        )
+        pickupOnly -> {
+            TooltipText(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = Dimens.MarginStandard16),
+                textRes = R.string.pickup_only
+            )
+        }
     }
 
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +28,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.components.CustomMapView
+import com.mandarinkafe.mandarin.features.more.presentation.ui.components.OurAddressesCard
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LONGITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LATITUDE
@@ -50,6 +50,7 @@ import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_SCALE
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_TEXT_ALPHA
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_TEXT_OFFSET
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_TEXT_SIZE
+import com.mandarinkafe.mandarin.util.openGeoLocation
 import com.mandarinkafe.mandarin.util.presentation.ui.components.BindMapViewToLifecycle
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InfoCard
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
@@ -67,6 +68,10 @@ import com.yandex.runtime.image.ImageProvider
 fun ContactsScreen(onBackClick: () -> Boolean) {
     val context = LocalContext.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
+    val addresses = listOf(
+        R.string.pickup_cafe_address,
+        R.string.pickup_pizzeria_address
+    )
 
     Column(
         modifier = Modifier
@@ -104,26 +109,12 @@ fun ContactsScreen(onBackClick: () -> Boolean) {
             )
         )
 
-        // Адреса
-        InfoCard(
-            iconVector = Icons.Default.LocationOn,
-            title = stringResource(R.string.addresses_title),
-            lines = listOf(
-                stringResource(R.string.pickup_cafe_address) to {
-                    val intent = Intent(
-                        Intent.ACTION_VIEW,
-                        "geo:0,0?q=${context.getString(R.string.pickup_cafe_address)}".toUri()
-                    )
-                    context.startActivity(intent)
-                },
-                stringResource(R.string.pickup_pizzeria_address) to {
-                    val intent = Intent(
-                        Intent.ACTION_VIEW,
-                        "geo:0,0?q=${context.getString(R.string.pickup_pizzeria_address)}".toUri()
-                    )
-                    context.startActivity(intent)
+        OurAddressesCard(
+            lines = addresses.map { resId ->
+                stringResource(resId) to {
+                    context.openGeoLocation(context.getString(resId))
                 }
-            )
+            }
         )
 
         MapWithCafePins(

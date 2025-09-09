@@ -11,6 +11,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.presentation.ui.components.CheckboxWithTextRow
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 
 @Composable
@@ -20,7 +21,11 @@ fun PersonalInfo(
     isError: Boolean,
     phoneIsValid: Boolean,
     onNameEntered: (String) -> Unit,
-    onPhoneChanged: (String) -> Unit
+    onPhoneChanged: (String) -> Unit,
+    showSaveUserInfoCheckbox: Boolean,
+    saveUserInfoCheckboxText: String,
+    saveUserInfo: Boolean,
+    onSaveUserInfoToggled: (Boolean) -> Unit
 ) {
     val mask = MaskVisualTransformation(stringResource(R.string.phone_mask))
     MyTextField(
@@ -51,4 +56,15 @@ fun PersonalInfo(
             )
         }
     )
+    if (showSaveUserInfoCheckbox) {
+        Spacer(Modifier.height(Dimens.MarginSmall8))
+
+        CheckboxWithTextRow(
+            checked = saveUserInfo,
+            labelRes = R.string.save_user_data,
+            text = saveUserInfoCheckboxText,
+            onCheckedChange = { onSaveUserInfoToggled(it) }
+        )
+
+    }
 }

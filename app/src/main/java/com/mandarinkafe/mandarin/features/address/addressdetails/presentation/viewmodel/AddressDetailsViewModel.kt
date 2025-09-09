@@ -7,8 +7,8 @@ import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.vi
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsContract.AddressDetailsEffect
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsContract.AddressDetailsEffect.EditLocation
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsContract.AddressDetailsEvent
-import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.RemoveAddressUseCase
-import com.mandarinkafe.mandarin.features.address.savedadresses.domain.api.SaveAddressUseCase
+import com.mandarinkafe.mandarin.features.savedadresses.domain.api.RemoveAddressUseCase
+import com.mandarinkafe.mandarin.features.savedadresses.domain.api.SaveAddressUseCase
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

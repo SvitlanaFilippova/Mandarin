@@ -1,16 +1,21 @@
 package com.mandarinkafe.mandarin.features.order.di
 
+import android.content.SharedPreferences
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.LoyaltyCustomerRepositoryImpl
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckDiscountByPhoneUseCase
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.LoyaltyCustomerRepository
 import com.mandarinkafe.mandarin.features.order.data.impl.OrderRepositoryImpl
+import com.mandarinkafe.mandarin.features.order.data.impl.UserInfoRepositoryImpl
+import com.mandarinkafe.mandarin.features.order.data.sharedprefs.UserInfoStorage
+import com.mandarinkafe.mandarin.features.order.data.sharedprefs.UserInfoStorageImpl
 import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWithDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.OrderRepository
 import com.mandarinkafe.mandarin.features.order.domain.api.ResolvePickupPointUseCase
+import com.mandarinkafe.mandarin.features.order.domain.api.UserInfoRepository
 import com.mandarinkafe.mandarin.features.order.domain.impl.ApplyPhoneDiscountUseCaseImpl
 import com.mandarinkafe.mandarin.features.order.domain.impl.CalculateCartTotalWithDiscountUseCaseImpl
 import com.mandarinkafe.mandarin.features.order.domain.impl.CreateOrderUseCaseImpl
@@ -33,7 +38,6 @@ class OrderModule {
             networkClient = iikoNetworkClient,
         )
     }
-
 
     @Singleton
     @Provides
@@ -78,4 +82,17 @@ class OrderModule {
             checkDiscountByPhone = checkDiscountByPhone
         )
     }
+
+    @Provides
+    @Singleton
+    fun provideUserInfoStorage(
+        sharedPreferences: SharedPreferences
+    ): UserInfoStorage = UserInfoStorageImpl(sharedPreferences = sharedPreferences)
+
+    @Provides
+    @Singleton
+    fun provideUserInfoRepository(
+        userInfoStorage: UserInfoStorage
+    ): UserInfoRepository = UserInfoRepositoryImpl(userInfoStorage = userInfoStorage)
+
 }

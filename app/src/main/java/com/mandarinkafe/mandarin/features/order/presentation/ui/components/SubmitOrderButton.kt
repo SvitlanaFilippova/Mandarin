@@ -29,17 +29,6 @@ fun SubmitOrderButton(
     onSubmitOrder: () -> Unit,
     isLoading: Boolean,
 ) {
-    val contentColor = if (shouldBeActive) {
-        Color.White
-    } else {
-        Color.White.copy(alpha = 0.5f)
-    }
-    val containerColor = if (shouldBeActive) {
-        Colors.Orange
-    } else {
-        Colors.LightGrey.copy(alpha = 0.4f)
-    }
-
     val onClickAction = when {
         !shouldBeActive -> onMissingRequiredInfo
         else -> onSubmitOrder
@@ -53,11 +42,11 @@ fun SubmitOrderButton(
         enabled = !isLoading,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = contentColor
+            containerColor = Colors.Orange,
+            contentColor = Color.White
         ),
 
-    ) {
+        ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
@@ -65,7 +54,7 @@ fun SubmitOrderButton(
             Text(
                 text = stringResource(R.string.submit_order),
                 style = Typography.ToCartButtonBigStyle,
-                color = contentColor
+                color = Color.White
             )
             Spacer(modifier = Modifier.weight(1f))
             when (isLoading) {
@@ -79,7 +68,7 @@ fun SubmitOrderButton(
                     Text(
                         text = stringResource(R.string.float_price_template, totalOrderSum),
                         style = Typography.ToCartButtonBigStyle,
-                        color = contentColor
+                        color = Color.White
                     )
                 }
             }

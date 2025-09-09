@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state
 
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 
-data class UserInfo(
+data class UserInfoUi(
     val name: String = "",
     val phone: String = ""
 ) {

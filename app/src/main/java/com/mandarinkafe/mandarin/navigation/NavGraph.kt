@@ -18,7 +18,6 @@ import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.screen.AddressMapScreen
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.AddressDetailsScreen
-import com.mandarinkafe.mandarin.features.address.savedadresses.presentation.ui.screen.SavedAddressesScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.screen.CartScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.FavoritesScreen
@@ -33,6 +32,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScre
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen.OrderInfoScreen
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.screen.OrdersHistoryScreen
+import com.mandarinkafe.mandarin.features.savedadresses.presentation.ui.screen.SavedAddressesScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_ADDRESS_JSON
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
