@@ -44,7 +44,6 @@ fun AboutScreen(onBackClick: () -> Boolean) {
     val appVersion: String = BuildConfig.VERSION_NAME
     val versionText = stringResource(id = R.string.version_text, appVersion)
     val aboutMainText = stringResource(id = R.string.about_main_text)
-    stringResource(id = R.string.contact_title)
     val thanksText = stringResource(id = R.string.thanks_text)
     var showDialog by remember { mutableStateOf(false) }
 

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -26,15 +27,15 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.MaskVisualTransformation
 import com.mandarinkafe.mandarin.util.presentation.ui.components.CheckboxWithTextRow
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConsentTextWithLinks
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun <State, Effect, Event> BaseFeedbackDialog(
+fun <Effect, Event> BaseFeedbackDialog(
     titleRes: Int,
     onDismissRequest: () -> Unit,
-    state: State,
     effectFlow: Flow<Effect>,
     onEvent: (Event) -> Unit,
     submitEvent: Event,
@@ -50,7 +51,8 @@ fun <State, Effect, Event> BaseFeedbackDialog(
     onEmailChange: (String) -> Unit,
     onMessageChange: (String) -> Unit,
     onSetNeedFeedback: (Boolean) -> Unit,
-    isFormValid: Boolean
+    isFormValid: Boolean,
+    isLoading: Boolean
 ) {
     var isError by remember { mutableStateOf(false) }
     var dialogMessage by remember { mutableStateOf<String?>(null) }
@@ -93,13 +95,23 @@ fun <State, Effect, Event> BaseFeedbackDialog(
             )
         },
         confirmButton = {
-            TextButton(onClick = {
-                if (isFormValid) {
-                    onEvent(submitEvent)
-                } else {
-                    isError = true
+            TextButton(
+                onClick = {
+                    if (isFormValid) {
+                        onEvent(submitEvent)
+                    } else {
+                        isError = true
+                    }
+                },
+                enabled = !isLoading // кнопка неактивна во время загрузки
+            ) {
+                if (isLoading) {
+                    MyCircularProgressIndicator(
+                        modifier = Modifier
+                            .size(Dimens.ProgressBarSmallSize),
+                        strokeWidth = Dimens.ProgressBarStroke6,
+                    )
                 }
-            }) {
                 Text(stringResource(R.string.send))
             }
         },

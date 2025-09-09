@@ -129,7 +129,7 @@
 
     <!-- Форма обратной связи -->
     <string name="your_phone">Номер телефона</string>
-    <string name="your_email">E-mail</string>
+    <string name="your_email">E-mail ил Telegram</string>
     <string name="your_message">Сообщение *</string>
     <string name="i_need_feedback">Нужна обратная связь</string>
     <string name="contacts_are_required">Нужен email или номер телефона для связи</string>

@@ -19,10 +19,10 @@ fun DevFeedbackDialog(
     val state by viewModel.state.collectAsState()
     val successTitle = stringResource(R.string.message_sent_successfully)
 
+    with(state) {
     BaseFeedbackDialog(
         titleRes = R.string.dev_feedback_title,
         onDismissRequest = onDismissRequest,
-        state = state,
         effectFlow = viewModel.effect,
         onEvent = viewModel::onEvent,
         submitEvent = DevFeedbackEvent.SubmitForm,
@@ -33,12 +33,13 @@ fun DevFeedbackDialog(
                     successTitle to true
             }
         },
-        name = state.name,
-        phone = state.phone,
-        email = state.email,
-        message = state.message,
-        needAnswer = state.needAnswer,
-        isContactValid = state.isContactValid,
+        name = name,
+        phone = phone,
+        email = email,
+        message = message,
+        needAnswer = needAnswer,
+        isContactValid = isContactValid,
+        isLoading = isLoading,
         onNameChange = { viewModel.onEvent(DevFeedbackEvent.SetName(it)) },
         onPhoneChange = { viewModel.onEvent(DevFeedbackEvent.SetPhone(it)) },
         onEmailChange = { viewModel.onEvent(DevFeedbackEvent.SetEmail(it)) },
@@ -46,4 +47,5 @@ fun DevFeedbackDialog(
         onSetNeedFeedback = { viewModel.onEvent(DevFeedbackEvent.SetNeedFeedback(it)) },
         isFormValid = state.isFormValid
     )
+    }
 }
