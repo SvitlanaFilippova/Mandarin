@@ -258,12 +258,11 @@
     <!-- О приложении  -->
     <string name="about_title">О приложении</string>
     <string name="version_text">Версия приложения: %1$s</string>
-    <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана Филиппова&#160;&#8212; я&#160;разработчик этого приложения.\n\nЕсли есть предложения по&#160; его улучшению или просто хочется поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!</string>
-    <string name="contact_title">Как со мной связаться:</string>
+    <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана&#160;&#8212; я&#160;разработчик этого приложения.\n\nЕсли есть предложения по&#160; его улучшению или просто хочется поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!</string>
+    <string name="dev_feedback_label">Форма обратной связи</string>
+    <string name="dev_feedback_title">Сообщение разработчику</string>
     <string name="telegram_label">Telegram</string>
     <string name="telegram_url">https://t.me/SvitlanaFilippova</string>
-    <string name="github_label">GitHub</string>
-    <string name="github_url">https://github.com/SvitlanaFilippova</string>
     <string name="thanks_text">P.S: отзывы в сторах тоже приветствуются 😊\n\n**тут будут ссылки, чтобы оставить отзыв**</string>
 
     <!-- Контакты -->

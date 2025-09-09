@@ -89,8 +89,6 @@ fun MoreMenuScreen(navController: NavHostController) {
         }
     }
 
-
-
     if (showDialog) {
         FeedbackDialog(
             onDismissRequest = { showDialog = false },

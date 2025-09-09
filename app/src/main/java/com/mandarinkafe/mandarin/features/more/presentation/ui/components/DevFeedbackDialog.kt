@@ -6,30 +6,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackContract
-import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackContract.FeedbackEvent
-import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackViewModel
+import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackContract
+import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackContract.DevFeedbackEvent
+import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.BaseFeedbackDialog
 
 @Composable
-fun FeedbackDialog(
+fun DevFeedbackDialog(
     onDismissRequest: () -> Unit,
-    viewModel: FeedbackViewModel = hiltViewModel()
+    viewModel: DevFeedbackViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val successTitle = stringResource(R.string.message_sent_successfully)
 
     BaseFeedbackDialog(
-        titleRes = R.string.more_message_manager,
+        titleRes = R.string.dev_feedback_title,
         onDismissRequest = onDismissRequest,
         state = state,
         effectFlow = viewModel.effect,
         onEvent = viewModel::onEvent,
-        submitEvent = FeedbackEvent.SubmitForm,
+        submitEvent = DevFeedbackEvent.SubmitForm,
         mapEffect = { effect ->
             when (effect) {
-                is FeedbackContract.FeedbackEffect.ShowError -> effect.message to false
-                is FeedbackContract.FeedbackEffect.ShowSuccess ->
+                is DevFeedbackContract.DevFeedbackEffect.ShowError -> effect.message to false
+                is DevFeedbackContract.DevFeedbackEffect.ShowSuccess ->
                     successTitle to true
             }
         },
@@ -39,11 +39,11 @@ fun FeedbackDialog(
         message = state.message,
         needAnswer = state.needAnswer,
         isContactValid = state.isContactValid,
-        onNameChange = { viewModel.onEvent(FeedbackEvent.SetName(it)) },
-        onPhoneChange = { viewModel.onEvent(FeedbackEvent.SetPhone(it)) },
-        onEmailChange = { viewModel.onEvent(FeedbackEvent.SetEmail(it)) },
-        onMessageChange = { viewModel.onEvent(FeedbackEvent.SetMessage(it)) },
-        onSetNeedFeedback = { viewModel.onEvent(FeedbackEvent.SetNeedFeedback(it)) },
+        onNameChange = { viewModel.onEvent(DevFeedbackEvent.SetName(it)) },
+        onPhoneChange = { viewModel.onEvent(DevFeedbackEvent.SetPhone(it)) },
+        onEmailChange = { viewModel.onEvent(DevFeedbackEvent.SetEmail(it)) },
+        onMessageChange = { viewModel.onEvent(DevFeedbackEvent.SetMessage(it)) },
+        onSetNeedFeedback = { viewModel.onEvent(DevFeedbackEvent.SetNeedFeedback(it)) },
         isFormValid = state.isFormValid
     )
 }
