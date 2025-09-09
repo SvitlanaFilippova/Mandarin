@@ -33,11 +33,11 @@
 
 | Категория             | Технологии |
 |------------------------|------------|
-| UI                    | Jetpack Compose, Material3, Accompanist |
-| Архитектура           | MVI, StateFlow, Coroutines, Hilt, KSP |
+| UI                    | Jetpack Compose, Material3 |
+| Архитектура           | MVI, StateFlow, Coroutines, Hilt |
 | Навигация             | Navigation Compose, Accompanist Navigation Material |
 | Работа с данными      | Retrofit2, Gson, SQLDelight, SharedPreferences |
-| Изображения           | Coil 3 (с OkHttp) |
+| Изображения           | Coil 3 |
 | Карты                 | Yandex MapKit |
 | Firebase              | Remote Config, Crashlytics |
 | Интеграции            | iikoCloud API, Telegram Bot API |
