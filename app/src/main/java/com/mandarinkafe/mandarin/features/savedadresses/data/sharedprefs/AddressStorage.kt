@@ -7,3 +7,4 @@ interface AddressStorage {
     fun saveAddress(item: Address)
     fun removeAddress(id: String)
 }
+

@@ -5,8 +5,8 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
@@ -40,8 +40,7 @@ fun BottomNavigation(
         enter = fadeIn() + expandVertically(),
         exit = fadeOut() + shrinkVertically()
     ) {
-        BottomAppBar(
-            tonalElevation = Dimens.Elevation4,
+        NavigationBar(
             containerColor = Colors.AppBlack,
         ) {
             val backStackEntry = navController.currentBackStackEntryAsState().value
@@ -89,7 +88,7 @@ fun BottomNavigation(
                         unselectedTextColor = Color.White,
                         indicatorColor = Color.Transparent
                     ),
-                    alwaysShowLabel = false
+                    alwaysShowLabel = true
                 )
             }
         }

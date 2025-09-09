@@ -8,7 +8,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentTyp
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.CartSummary
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
-import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.UserInfo
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.UserInfoUi
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Utensils
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
@@ -27,6 +27,7 @@ sealed interface OrderContract {
         // Ввод персональных данных
         data class SetName(val query: String) : OrderEvent
         data class SetPhone(val query: String) : OrderEvent
+        data class ToggleSaveUserInfo(val checked: Boolean) : OrderEvent
 
         // Настройки доставки
         data class SetDeliveryType(val deliveryType: DeliveryType) : OrderEvent
@@ -61,7 +62,7 @@ sealed interface OrderContract {
     }
 
     data class OrderState(
-        val userInfo: UserInfo = UserInfo(),
+        val userInfo: UserInfoUi = UserInfoUi(),
         val deliveryInfo: DeliveryInfo = DeliveryInfo(),
         val paymentInfo: PaymentInfo = PaymentInfo(),
         val cartSummary: CartSummary = CartSummary(),
@@ -71,7 +72,10 @@ sealed interface OrderContract {
         val pickupOnly: Boolean = false,
         val containsAlcohol: Boolean = false,
         val pickupPoint: OrderPickupPoint = OrderPickupPoint.CAFE,
-        val isLoading: Boolean = false
+        val isLoading: Boolean = false,
+        val saveUserInfo: Boolean = false,
+        val showSaveUserInfoCheckbox: Boolean = true,
+        val saveUserInfoCheckboxText: String = "Использовать имя и телефон для будущих заказов",
     ) : BaseState {
         val deliveryCost: Int
             get() = when {

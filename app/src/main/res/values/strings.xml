@@ -66,6 +66,7 @@
     <string name="phone_prefix">+7 </string>
     <string name="phone_mask">(###) ###-##-##</string>
     <string name="phone_placeholder">(XXX) XXX-XX-XX</string>
+    <string name="save_user_data">Сохранить имя и номер телефона для будущих заказов</string>
     <string name="street_and_building">Улица и дом *</string>
     <string name="address_comment">Комментарий для курьера</string>
     <string name="your_comment">Комментарий к заказу</string>

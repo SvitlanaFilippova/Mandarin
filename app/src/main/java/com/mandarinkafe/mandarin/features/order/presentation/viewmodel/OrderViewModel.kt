@@ -1,11 +1,11 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartItemsUseCase
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
+import com.mandarinkafe.mandarin.core.domain.models.UserInfo
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.GetPaymentTypesUseCase
@@ -14,6 +14,7 @@ import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUse
 import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWithDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.ResolvePickupPointUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.SaveOrderToHistoryUseCase
+import com.mandarinkafe.mandarin.features.order.domain.api.UserInfoRepository
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
@@ -28,6 +29,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.C
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.OrderCreator
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.UserInfoUi
 import com.mandarinkafe.mandarin.features.savedadresses.domain.api.GetSavedAddressesUseCase
 import com.mandarinkafe.mandarin.features.savedadresses.domain.api.RemoveAddressUseCase
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
@@ -50,7 +52,8 @@ class OrderViewModel @Inject constructor(
     private val calculateCartTotalWithDiscount: CalculateCartTotalWithDiscountUseCase,
     private val applyPhoneDiscount: ApplyPhoneDiscountUseCase,
     private val saveOrderToHistory: SaveOrderToHistoryUseCase,
-    private val checkIfTerminalIsAlive: CheckIfTerminalIsAliveUseCase
+    private val checkIfTerminalIsAlive: CheckIfTerminalIsAliveUseCase,
+    private val userInfoRepository: UserInfoRepository
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     private val cartObserver = CartObserver(
@@ -87,12 +90,14 @@ class OrderViewModel @Inject constructor(
             is OrderEvent.OnMissingRequiredInfo -> showMissingRequiredInfo()
             is OrderEvent.SubmitOrder -> checkIfOrderCanBeSubmitted()
             is OrderEvent.StopObservingStatus -> orderCreator.stopObserving()
+            is OrderEvent.ToggleSaveUserInfo -> toggleSaveUserInfo(event.checked)
         }
     }
 
     private fun getInitData() {
         getPaymentTypes()
         getSavedAddresses()
+        getSavedUserInfo()
     }
 
     private fun getPaymentTypes() {
@@ -114,6 +119,68 @@ class OrderViewModel @Inject constructor(
 
             }
 
+        }
+    }
+
+    private fun toggleSaveUserInfo(checked: Boolean) {
+        setState { copy(saveUserInfo = checked) }
+    }
+
+    private fun getSavedUserInfo() {
+        viewModelScope.launch {
+            val savedUserInfo = userInfoRepository.getUserInfo()
+            setState {
+                if (savedUserInfo != null) {
+                    // Есть сохранённые данные → не показываем чекбокс
+                    copy(
+                        userInfo = userInfo.copy(
+                            name = savedUserInfo.name,
+                            phone = savedUserInfo.phone
+                        ),
+                        showSaveUserInfoCheckbox = false
+                    )
+                } else {
+                    // Нет сохранённых данных → показываем чекбокс
+                    copy(showSaveUserInfoCheckbox = true)
+                }
+            }
+            savedUserInfo?.let { checkDiscount(it.phone) }
+        }
+    }
+
+    private fun saveUserInfo() {
+        viewModelScope.launch {
+            val userInfo = state.value.userInfo
+            userInfoRepository.saveUserInfo(
+                UserInfo(
+                    name = userInfo.name,
+                    phone = userInfo.phone
+                )
+            )
+        }
+    }
+
+    private fun updateUserInfo(newInfo: UserInfoUi) {
+        viewModelScope.launch {
+            val saved = userInfoRepository.getUserInfo()
+            val showCheckbox = when {
+                saved == null -> true // первый раз сохраняем
+                saved.name != newInfo.name || saved.phone != newInfo.phone -> true // изменились
+                else -> false
+            }
+            val text = if (saved != null) {
+                "Обновить имя и телефон для будущих заказов"
+            } else {
+                "Использовать имя и телефон для будущих заказов"
+            }
+
+            setState {
+                copy(
+                    userInfo = newInfo,
+                    showSaveUserInfoCheckbox = showCheckbox,
+                    saveUserInfoCheckboxText = text
+                )
+            }
         }
     }
 
@@ -237,7 +304,8 @@ class OrderViewModel @Inject constructor(
     }
 
     private fun setName(query: String) {
-        setState { copy(userInfo = userInfo.copy(name = query)) }
+        val newInfo = state.value.userInfo.copy(name = query)
+        updateUserInfo(newInfo)
     }
 
     private fun setNoNeedUtensils(noNeedUtensils: Boolean) {
@@ -259,13 +327,16 @@ class OrderViewModel @Inject constructor(
                 else -> digitsOnly
             }
             val phone = normalized.take(VALID_PHONE_LENGTH)
-            setState { copy(userInfo = userInfo.copy(phone = phone)) }
 
+            val newInfo = state.value.userInfo.copy(phone = phone)
+            updateUserInfo(newInfo)
+            checkDiscount(phone)
+        }
+    }
+
+    private fun checkDiscount(phone: String) {
+        viewModelScope.launch {
             val discount = applyPhoneDiscount(phone, state.value.cartSummary.discountPercent)
-            Log.d(
-                "DEBUG DISCOUNT OrderVM",
-                "discountId: ${discount.discountId}, discountPercent: ${discount.discountSize}"
-            )
             if (discount.shouldUpdate) {
                 setState {
                     copy(
@@ -329,16 +400,18 @@ class OrderViewModel @Inject constructor(
                     "Что-то пошло не так — не удалось проверить, работает ли сейчас доставка."
                 )
             }
+
         }
     }
 
     private fun submitOrder() {
+        if (state.value.saveUserInfo) saveUserInfo()
+
         viewModelScope.launch {
             setLoading()
             val order = state.value.toDomain(
                 paymentType = state.value.paymentInfo.chosenPaymentTypeDomain
             )
-
             orderCreator.submit(
                 scope = viewModelScope,
                 order = order,
@@ -362,5 +435,4 @@ class OrderViewModel @Inject constructor(
         setLoading(false)
         sendEffect(ShowError(msg))
     }
-
 }

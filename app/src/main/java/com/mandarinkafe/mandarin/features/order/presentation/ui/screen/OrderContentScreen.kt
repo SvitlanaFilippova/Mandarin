@@ -57,14 +57,18 @@ fun OrderContent(
             )
         }
         item {
-            with(state.userInfo) {
+            with(state) {
                 PersonalInfo(
-                    nameQuery = name,
-                    phoneQuery = phone,
-                    isError = state.isError,
-                    phoneIsValid = phoneIsValid,
+                    nameQuery = userInfo.name,
+                    phoneQuery = userInfo.phone,
+                    isError = isError,
+                    phoneIsValid = userInfo.phoneIsValid,
+                    showSaveUserInfoCheckbox = showSaveUserInfoCheckbox,
+                    saveUserInfoCheckboxText = saveUserInfoCheckboxText,
+                    saveUserInfo = saveUserInfo,
                     onNameEntered = { onEvent(OrderEvent.SetName(it)) },
                     onPhoneChanged = { onEvent(OrderEvent.SetPhone(it)) },
+                    onSaveUserInfoToggled = { onEvent(OrderEvent.ToggleSaveUserInfo(it)) },
                 )
             }
         }
