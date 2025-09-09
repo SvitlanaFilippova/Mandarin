@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.more.presentation.ui.screen
 
 import android.content.Intent
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -84,7 +83,6 @@ fun AboutScreen(onBackClick: () -> Boolean) {
                 modifier = modifier,
                 onClick = {
                     showDialog = true
-                    Log.d("DEBUG FEEDBACK", "DevFeedbackLink onClick called")
                 }
             )
 
@@ -119,7 +117,6 @@ fun AboutScreen(onBackClick: () -> Boolean) {
     }
 
     if (showDialog) {
-        Log.d("DEBUG FEEDBACK", "showDialog = true")
         DevFeedbackDialog(
             onDismissRequest = { showDialog = false },
         )
@@ -160,10 +157,7 @@ private fun DevFeedbackLink(
 ) {
     Row(
         modifier = modifier
-            .clickable {
-                onClick()
-                Log.d("DEBUG FEEDBACK", "DevFeedbackLink clicked")
-            },
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

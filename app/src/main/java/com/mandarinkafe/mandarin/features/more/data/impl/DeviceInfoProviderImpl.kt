@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.more.data.impl
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import com.mandarinkafe.mandarin.features.more.data.DeviceInfoProvider
 
 class DeviceInfoProviderImpl(private val context: Context) : DeviceInfoProvider {
@@ -10,12 +11,14 @@ class DeviceInfoProviderImpl(private val context: Context) : DeviceInfoProvider 
             context.packageManager.getPackageInfo(context.packageName, 0).versionName
         } catch (e: Exception) {
             "Unknown"
+            Log.d("DeviceInfoProvider", "Unknown versionName, $e")
         }
 
         val versionCode = try {
             context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode
         } catch (e: Exception) {
             "Unknown"
+            Log.d("DeviceInfoProvider", "Unknown versionCode, $e")
         }
 
         return buildString {
