@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.ordershistory.data.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OrdersInfoResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.toOrderStatus
@@ -12,26 +11,24 @@ import com.mandarinkafe.mandarin.util.Resource
 
 class OrdersStatusesRepositoryImpl(private val networkClient: IikoNetworkClient) :
     OrdersStatusesRepository {
+
     override suspend fun getStatuses(ids: List<String>): Resource<List<OrderStatus>> {
         val response = networkClient.getOrdersStatusesByIds(ids)
+
         return when (response.resultCode) {
-            NO_CONNECTION -> Resource.ErrorNoInternet<List<OrderStatus>>()
+            NO_CONNECTION -> {
+                Resource.ErrorNoInternet()
+            }
             HTTP_SUCCESS -> {
-                Log.d("DEBUG OBSERVE STATUS RepositoryImpl", "HTTP_SUCCESS")
                 val orders = (response as OrdersInfoResponse)
                     .orders.map { it.toOrderStatus() }
 
-
-                if (orders.isNotEmpty()) {
-                    Resource.Success(data = orders)
-                } else {
-                    Resource.ErrorOther(
-                        "Ошибка сервера или пустой ответ"
-                    )
-                }
+                Resource.Success(data = orders)
             }
 
-            else -> Resource.ErrorOther("Ошибка сервера или пустой ответ")
+            else -> {
+                Resource.ErrorOther("Ошибка сервера или пустой ответ")
+            }
         }
     }
 }
