@@ -40,7 +40,7 @@
 | Изображения           | Coil 3 |
 | Карты                 | Yandex MapKit |
 | Firebase              | Remote Config, Crashlytics |
-| Интеграции            | iikoCloud API, Telegram Bot API |
+| Интеграции            | iikoCloud API, API ЮKassa, Telegram Bot API |
 | Инструменты качества  | Detekt |
 
 
