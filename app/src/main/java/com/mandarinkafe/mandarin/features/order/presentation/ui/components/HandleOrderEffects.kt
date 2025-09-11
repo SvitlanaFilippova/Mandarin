@@ -36,7 +36,7 @@ fun HandleOrderEffects(
                         returnToRoute = NavConstants.ORDER_SCREEN_ROUTE
                     )
 
-                is OrderEffect.ShowMassage ->
+                is OrderEffect.ShowMessage ->
                     snackbarHostState.showSnackbar(effect.message.asString(context))
 
                 is OrderEffect.ShowSuccess ->

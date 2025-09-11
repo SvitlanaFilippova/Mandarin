@@ -61,7 +61,7 @@ sealed interface OrderContract {
 
         // Обработка отправки заказа
         data class ShowSuccess(val orderId: String) : OrderEffect
-        data class ShowMassage(val message: UiText) : OrderEffect
+        data class ShowMessage(val message: UiText) : OrderEffect
 
     }
 

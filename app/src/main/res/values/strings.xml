@@ -190,7 +190,7 @@
     <string name="label_comment">Комментарий к заказу</string>
     <string name="label_created_when">Создан</string>
     <string name="label_confirmed_when">Подтверждён</string>
-    <string name="label_cancelled_when">Отменён</string>
+    <string name="label_cancelled_when">Отменён</string>BY
     <string name="label_cooking_completed_when">Готов</string>
     <string name="label_sent_when">Отправлен</string>
     <string name="label_delivered_when">Доставлен</string>
@@ -206,35 +206,27 @@
     <!-- Статусы заказа -->
     <string name="delivery_status_unconfirmed">Не подтверждён</string>
     <string name="delivery_status_extra_unconfirmed">Ожидаем подтверждения заказа. В&#160;ближайшее время оператор позвонит, чтобы подтвердить его. Пожалуйста, будь на&#160;связи.</string>
-
     <string name="delivery_status_wait_cooking">Ожидает готовки</string>
     <string name="delivery_status_extra_wait_cooking">Заказ принят и&#160;скоро поступит на&#160;кухню.</string>
-
     <string name="delivery_status_cooking_started">Начали готовить</string>
     <string name="delivery_status_extra_cooking_started">Готовим заказ. Это займёт немного времени.</string>
-
     <string name="delivery_status_cooking_completed">Приготовлен</string>
     <string name="delivery_status_extra_cooking_completed">Блюда готовы. Скоро курьер получит заказ.</string>
-
     <string name="delivery_status_waiting">Упакован</string>
     <string name="delivery_status_extra_waiting">Ожидаем курьера. Это может занять несколько минут.</string>
-
     <string name="delivery_status_on_way">В пути</string>
     <string name="delivery_status_extra_on_way">Курьер уже забрал заказ и&#160;выдвинулся в&#160;путь.</string>
-
     <string name="delivery_status_delivered">Доставлен</string>
     <string name="delivery_status_extra_delivered">Заказ доставлен. Приятного аппетита!</string>
-
     <string name="delivery_status_closed">Закрыт</string>
     <string name="delivery_status_extra_closed">Заказ завершён. Спасибо, что вы&#160;с&#160;нами!</string>
-
     <string name="delivery_status_cancelled">Отменён</string>
     <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка&#160;&#8212; пожалуйста, позвоните.</string>
 
 
     <!-- Общие ошибки и сообщения -->
     <string name="placeholder_message_call_us">Попробуй ещё&#160;раз или просто позвони нам по&#160;телефону, чтобы сделать заказ.</string>
-    <string name="error_no_internet">Нет подключения к&#160;интернету 🤷</string>
+    <string name="error_no_internet">Нет подключения к&#160;интернету</string>
     <string name="error_empty_menu">Сервер вернул пустые данные меню 🤷</string>
     <string name="error_empty_data">Не удалось загрузить данные 🤷</string>
     <string name="error_something_wrong">Что-то пошло не так 🤷 </string>
@@ -270,7 +262,7 @@
     <string name="about_title">О приложении</string>
     <string name="version_text">Версия приложения: %1$s</string>
     <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана&#160;&#8212; я&#160;разработчик этого приложения.\n\nЕсли есть предложения по&#160; его улучшению или просто хочется поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!</string>
-    <string name="massage_developer">Связаться с разработчиком:</string>
+    <string name="message_developer">Связаться с разработчиком:</string>
     <string name="dev_feedback_label">Форма обратной связи</string>
     <string name="dev_feedback_form_title">Сообщение разработчику</string>
     <string name="telegram_label">Telegram</string>

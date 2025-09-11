@@ -23,7 +23,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentTyp
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.AddNewAddress
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.EditAddress
-import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowMassage
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowMessage
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowSuccess
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
@@ -110,7 +110,7 @@ class OrderViewModel @Inject constructor(
         viewModelScope.launch {
             val itemIds = state.value.pickupOnlyPositions.map { it.id }
             pickupOnlyRemover(itemIds)
-            sendEffect(ShowMassage(UiText.StringResource(R.string.pickup_only_positions_removed)))
+            sendEffect(ShowMessage(UiText.StringResource(R.string.pickup_only_positions_removed)))
         }
     }
 
@@ -452,6 +452,6 @@ class OrderViewModel @Inject constructor(
 
     private fun sendErrorEffect(msg: UiText) {
         setLoading(false)
-        sendEffect(ShowMassage(msg))
+        sendEffect(ShowMessage(msg))
     }
 }
