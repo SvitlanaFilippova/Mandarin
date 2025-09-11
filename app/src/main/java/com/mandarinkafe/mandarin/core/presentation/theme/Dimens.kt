@@ -34,6 +34,7 @@ object Dimens {
     val MarginBig24 = 24.dp
     val MarginBig32 = 32.dp
     val MarginForCartButton72 = 72.dp
+    val MarginSuperHugeForCheckoutButton = 200.dp
     val BSMarginForStatusBar40 = 40.dp
     val ModifierRowHeight48 = 48.dp
     val RadiusImageCorner2 = 2.dp
@@ -53,7 +54,6 @@ object Dimens {
     val TextSizeSmall12 = 12.sp
     val TextSizeBig24 = 24.sp
     val TextSizeBig20 = 20.sp
-    val TextSizeRegular13 = 13.sp
     val TextSizeRegular14 = 14.sp
     val TooltipMaxWidth = 200.dp
     val BannerIndicatorActiveWidth32 = 32.dp

@@ -193,6 +193,8 @@ fun OrderContent(
             )
         }
 
+        item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
+
         item {
             with(state.cartSummary) {
                 OrderSummaryData(
@@ -225,6 +227,7 @@ fun OrderContent(
             )
             ConsentTextWithLinks(buttonName = stringResource(R.string.submit_order))
         }
-        item { Spacer(Modifier.height(Dimens.MarginForCartButton72)) }
+
+        item { Spacer(Modifier.height(Dimens.MarginSuperHugeForCheckoutButton)) }
     }
 }
