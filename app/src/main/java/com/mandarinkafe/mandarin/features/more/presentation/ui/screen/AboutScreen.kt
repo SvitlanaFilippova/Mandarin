@@ -71,7 +71,7 @@ fun AboutScreen(onBackClick: () -> Boolean) {
 
         Text(
             modifier = Modifier.padding(Dimens.MarginSmall8),
-            text = stringResource(R.string.massage_developer),
+            text = stringResource(R.string.message_developer),
             style = Typography.RegularTextStyle,
         )
 

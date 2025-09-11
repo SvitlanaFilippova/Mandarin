@@ -109,7 +109,7 @@ fun CartContentScreen(
                                 horizontal = Dimens.MarginSmall8,
                                 vertical = Dimens.MarginStandard16
                             ),
-                            text = stringResource(R.string.question_add_to_cart),
+                            text = stringResource(R.string.recommendations_title),
                             style = Typography.TitleStyle
                         )
                     }

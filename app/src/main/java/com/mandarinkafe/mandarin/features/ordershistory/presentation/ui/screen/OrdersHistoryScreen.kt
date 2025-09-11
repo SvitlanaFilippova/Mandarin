@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.screen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -23,17 +24,22 @@ import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.componen
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryContract.OrdersHistoryEffect
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryContract.OrdersHistoryEvent
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryViewModel
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun OrdersHistoryScreen(
     navController: NavHostController,
+    sharedViewModel: SharedViewModel,
     viewModel: OrdersHistoryViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val listState = rememberLazyListState()
     val onEvent = viewModel::onEvent
     val effectFlow = viewModel.effect
     val snackbarHostState = LocalSnackbarHostState.current
@@ -63,6 +69,7 @@ fun OrdersHistoryScreen(
             )
 
             OrdersHistoryList(
+                listState = listState,
                 navController = navController,
                 fullData = state.fullData,
                 filteredData = state.filteredData,
@@ -78,14 +85,23 @@ fun OrdersHistoryScreen(
     }
 
     LaunchedEffect(Unit) {
-        effectFlow.collectLatest { effect ->
-            when (effect) {
-                is OrdersHistoryEffect.ShowError -> {
-                    snackbarHostState.showSnackbar(
-                        message = effect.message,
-                        duration = SnackbarDuration.Long,
-                        withDismissAction = true,
-                    )
+        launch {
+            effectFlow.collectLatest { effect ->
+                when (effect) {
+                    is OrdersHistoryEffect.ShowError -> {
+                        snackbarHostState.showSnackbar(
+                            message = effect.message,
+                            duration = SnackbarDuration.Long,
+                            withDismissAction = true,
+                        )
+                    }
+                }
+            }
+        }
+        launch {
+            sharedViewModel.effect.collect { effect ->
+                if (effect is SharedEffect.ScrollToTop) {
+                    listState.scrollToItem(0)
                 }
             }
         }

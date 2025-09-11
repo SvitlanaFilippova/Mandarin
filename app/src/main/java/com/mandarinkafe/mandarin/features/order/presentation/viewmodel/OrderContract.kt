@@ -1,6 +1,8 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Address
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.OrderPickupPoint
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
@@ -13,6 +15,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Ute
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.UiText
 
 sealed interface OrderContract {
     sealed interface OrderEvent : BaseEvent {
@@ -46,6 +49,7 @@ sealed interface OrderContract {
         data class SetComment(val query: String) : OrderEvent
 
         // Управление заказом
+        data object RemovePickupOnly : OrderEvent
         data object OnMissingRequiredInfo : OrderEvent
         data object SubmitOrder : OrderEvent
         data object StopObservingStatus : OrderEvent
@@ -57,7 +61,7 @@ sealed interface OrderContract {
 
         // Обработка отправки заказа
         data class ShowSuccess(val orderId: String) : OrderEffect
-        data class ShowError(val message: String) : OrderEffect
+        data class ShowMessage(val message: UiText) : OrderEffect
 
     }
 
@@ -70,12 +74,14 @@ sealed interface OrderContract {
         val comment: String = "",
         val isError: Boolean = false,
         val pickupOnly: Boolean = false,
+        val pickupOnlyPositions: List<CartItem> = listOf(),
+        val pickupOnlyPositionsNames: List<String> = listOf(),
         val containsAlcohol: Boolean = false,
         val pickupPoint: OrderPickupPoint = OrderPickupPoint.CAFE,
         val isLoading: Boolean = false,
         val saveUserInfo: Boolean = false,
         val showSaveUserInfoCheckbox: Boolean = true,
-        val saveUserInfoCheckboxText: String = "Использовать имя и телефон для будущих заказов",
+        val saveUserInfoCheckboxText: UiText = UiText.StringResource(R.string.save_name_and_phone),
     ) : BaseState {
         val deliveryCost: Int
             get() = when {

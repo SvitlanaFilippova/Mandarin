@@ -11,6 +11,7 @@ sealed interface SharedContract {
 
     sealed interface SharedEvent : BaseEvent {
         data object OnPhoneClick : SharedEvent
+        data object OnLogoClick : SharedEvent
         data object HideTopBar : SharedEvent
         data object ShowTopBar : SharedEvent
         data object ResetTopBar : SharedEvent
@@ -33,6 +34,7 @@ sealed interface SharedContract {
 
     sealed interface SharedEffect : BaseEffect {
         data object GoBackEffect : SharedEffect
+        data object ScrollToTop : SharedEffect
         data object OnPhoneClick : SharedEffect
 
         data class OpenMealDetailsBS(

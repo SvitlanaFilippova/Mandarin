@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.order.data.mapper
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.data.dto.order.AddressDto
 import com.mandarinkafe.mandarin.core.data.dto.order.Coordinates
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
@@ -49,10 +48,6 @@ fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
         changeFrom = if (cash) paymentInfo.changeFrom else "",
     )
     val address = if (deliveryInfo.isPickup) null else deliveryInfo.chosenAddress
-    Log.d(
-        "DEBUG DISCOUNT Mapper to OutgoingOrder",
-        "discountId: ${cartSummary.discountId}, discountPercent: ${cartSummary.discountPercent}"
-    )
     return OutgoingOrder(
         name = userInfo.name.trim(),
         phone = userInfo.phone,

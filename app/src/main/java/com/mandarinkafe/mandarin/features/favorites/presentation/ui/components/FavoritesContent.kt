@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.favorites.presentation.ui.components
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -29,6 +30,7 @@ fun FavoritesContent(
     onAddToCart: (CustomizedMeal) -> Unit,
     onRemoveFromCart: (CustomizedMeal) -> Unit,
     onMealDetailsClick: (CustomizedMeal) -> Unit,
+    listState: LazyListState,
 ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
@@ -41,6 +43,7 @@ fun FavoritesContent(
     ScreenTitle(name = stringResource(R.string.favorite))
 
     LazyColumn(
+        state = listState,
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
         items(

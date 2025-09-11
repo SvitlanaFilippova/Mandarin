@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,7 +38,10 @@ fun UndoIndicator(
             modifier = Modifier
                 .matchParentSize()
                 .clickable(onClick = onCancel),
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.spacedBy(
+                Dimens.MarginSmall8,
+                Alignment.CenterHorizontally
+            ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             CircularProgressIndicator(
@@ -47,9 +49,7 @@ fun UndoIndicator(
                 color = Colors.White,
                 strokeWidth = Dimens.Elevation4,
                 trackColor = Colors.Transparent,
-                modifier = Modifier
-                    .size(Dimens.ButtonToCartSmall32)
-                    .padding(Dimens.MarginSmall8)
+                modifier = Modifier.size(Dimens.ProgressBarSmallSize)
             )
 
             Text(

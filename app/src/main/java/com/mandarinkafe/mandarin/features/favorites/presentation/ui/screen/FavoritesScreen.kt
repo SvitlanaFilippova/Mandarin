@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,12 +18,14 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewMo
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.components.FavoritesContent
 import com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel.FavoritesContract.FavoritesEffect
 import com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel.FavoritesViewModel
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
 fun FavoritesScreen(
@@ -33,20 +36,19 @@ fun FavoritesScreen(
     val state by favoritesViewModel.state.collectAsState()
     val cartState by cartViewModel.state.collectAsState()
     val effectFlow = favoritesViewModel.effect
-
+    val listState = rememberLazyListState()
     val onSharedEvent = sharedViewModel::onEvent
     val onCartEvent = cartViewModel::onEvent
-
     val snackbarHostState = LocalSnackbarHostState.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Colors.AppBlack)
     ) {
-        state.error
-
         when {
             state.isLoading -> LoadingScreen()
+
             state.error != null -> PlaceholderScreen(
                 state.error,
                 onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
@@ -58,6 +60,7 @@ fun FavoritesScreen(
             )
 
             else -> FavoritesContent(
+                listState = listState,
                 data = state.data,
                 cartItems = cartState.cartItems,
                 inProgressItems = cartState.inProgressItems,
@@ -76,14 +79,23 @@ fun FavoritesScreen(
         }
 
         LaunchedEffect(Unit) {
-            effectFlow.collectLatest { effect ->
-                when (effect) {
-                    is FavoritesEffect.ShowSnackbar -> {
-                        snackbarHostState.showSnackbar(
-                            message = effect.message,
-                            duration = SnackbarDuration.Long,
-                            withDismissAction = true,
-                        )
+            launch {
+                effectFlow.collectLatest { effect ->
+                    when (effect) {
+                        is FavoritesEffect.ShowSnackbar -> {
+                            snackbarHostState.showSnackbar(
+                                message = effect.message,
+                                duration = SnackbarDuration.Long,
+                                withDismissAction = true,
+                            )
+                        }
+                    }
+                }
+            }
+            launch {
+                sharedViewModel.effect.collect { effect ->
+                    if (effect is SharedEffect.ScrollToTop) {
+                        listState.scrollToItem(0)
                     }
                 }
             }

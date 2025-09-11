@@ -40,7 +40,7 @@ fun ModifierGroupItem(
         if (modifierGroup.isRequired) {
             Text(
                 modifier = Modifier.padding(start = Dimens.MarginSmall8),
-                text = stringResource(R.string.mandatory),
+                text = stringResource(R.string.modifier_is_mandatory),
                 style = Typography.RegularTextStyle,
                 fontWeight = FontWeight.Light
             )

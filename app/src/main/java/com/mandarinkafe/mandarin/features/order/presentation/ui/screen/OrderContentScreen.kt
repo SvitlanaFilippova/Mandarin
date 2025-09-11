@@ -11,12 +11,15 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.order.presentation.ui.components.AlertAboutPickupOnly
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.DeliveryTypeChooser
+import com.mandarinkafe.mandarin.features.order.presentation.ui.components.DeliveryTypeTitle
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.OrderSummaryData
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PaymentChooser
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.PersonalInfo
@@ -26,6 +29,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Submi
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.UtensilPreferences
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
+import com.mandarinkafe.mandarin.util.asString
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConsentTextWithLinks
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
@@ -43,6 +47,8 @@ fun OrderContent(
     onToggleShowAll: () -> Unit,
     onBackClick: () -> Unit,
 ) {
+    val context = LocalContext.current
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -64,7 +70,7 @@ fun OrderContent(
                     isError = isError,
                     phoneIsValid = userInfo.phoneIsValid,
                     showSaveUserInfoCheckbox = showSaveUserInfoCheckbox,
-                    saveUserInfoCheckboxText = saveUserInfoCheckboxText,
+                    saveUserInfoCheckboxText = saveUserInfoCheckboxText.asString(context),
                     saveUserInfo = saveUserInfo,
                     onNameEntered = { onEvent(OrderEvent.SetName(it)) },
                     onPhoneChanged = { onEvent(OrderEvent.SetPhone(it)) },
@@ -76,14 +82,35 @@ fun OrderContent(
         item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
 
         item {
-            DeliveryTypeChooser(
+            DeliveryTypeTitle(
                 chosen = state.deliveryInfo.deliveryType,
-                pickupOnly = state.pickupOnly,
-                containsAlcohol = state.containsAlcohol,
                 isError = state.isError,
-                onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
             )
         }
+
+        item {
+            with(state) {
+                AlertAboutPickupOnly(
+                    containsAlcohol = containsAlcohol,
+                    pickupOnly = pickupOnly,
+                    pickupOnlyPositionsNames = pickupOnlyPositionsNames,
+                    onRemovePickupOnly = { onEvent(OrderEvent.RemovePickupOnly) },
+                )
+            }
+        }
+
+
+        item {
+            with(state) {
+                DeliveryTypeChooser(
+                    chosen = deliveryInfo.deliveryType,
+                    deliveryEnabled = !pickupOnly && !containsAlcohol,
+                    isError = isError,
+                    onDeliverySelected = { onEvent(OrderEvent.SetDeliveryType(it)) },
+                )
+            }
+        }
+
         item { Spacer(Modifier.height(Dimens.MarginSmall8)) }
 
         item {
@@ -166,6 +193,8 @@ fun OrderContent(
             )
         }
 
+        item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
+
         item {
             with(state.cartSummary) {
                 OrderSummaryData(
@@ -199,6 +228,6 @@ fun OrderContent(
             ConsentTextWithLinks(buttonName = stringResource(R.string.submit_order))
         }
 
-        item { Spacer(Modifier.height(Dimens.MarginForCartButton72)) }
+        item { Spacer(Modifier.height(Dimens.MarginSuperHugeForCheckoutButton)) }
     }
 }

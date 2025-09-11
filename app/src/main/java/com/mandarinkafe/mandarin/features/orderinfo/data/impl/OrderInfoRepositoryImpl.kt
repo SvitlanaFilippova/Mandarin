@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.orderinfo.data.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
@@ -15,11 +14,8 @@ class OrderInfoRepositoryImpl(
     private val networkClient: IikoNetworkClient,
     private val menuCache: MenuCache,
 ) : OrderInfoRepository {
-    private val logTag = "DEBUG ORDER API OrderInfoRepository"
 
     override suspend fun getStatusFromApi(id: String): Resource<IncomingOrder> {
-        Log.d(logTag, "called getStatusFromApi for order: $id")
-
         val response = networkClient.getSingleOrderInfoById(id)
         return when (response.resultCode) {
             NO_CONNECTION -> Resource.ErrorNoInternet<IncomingOrder>()

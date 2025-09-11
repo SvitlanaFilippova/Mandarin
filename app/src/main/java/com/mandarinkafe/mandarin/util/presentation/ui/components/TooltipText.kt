@@ -26,7 +26,9 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 fun TooltipText(
     modifier: Modifier = Modifier,
     @StringRes textRes: Int,
-    @StringRes extraTextRes: Int? = null
+    @StringRes extraTextRes: Int? = null,
+    extraText: String? = null,
+    extraComposable: @Composable (() -> Unit)? = null,
 ) {
     Box(
         modifier = modifier
@@ -60,6 +62,19 @@ fun TooltipText(
                         text = stringResource(extraTextRes),
                         style = Typography.SmallTextStyle.copy(color = Colors.WhiteTransparent75),
                     )
+                }
+                extraText?.let {
+                    Text(
+                        modifier = Modifier.padding(top = Dimens.MarginStandard16),
+                        text = extraText,
+                        style = Typography.SmallTextStyle.copy(color = Colors.WhiteTransparent75),
+                    )
+                }
+
+                extraComposable?.let {
+                    Box(modifier = Modifier.padding(top = Dimens.MarginStandard16)) {
+                        it()
+                    }
                 }
             }
         }

@@ -21,7 +21,7 @@ fun DevFeedbackDialog(
 
     with(state) {
     BaseFeedbackDialog(
-        titleRes = R.string.dev_feedback_title,
+        titleRes = R.string.dev_feedback_form_title,
         onDismissRequest = onDismissRequest,
         effectFlow = viewModel.effect,
         onEvent = viewModel::onEvent,

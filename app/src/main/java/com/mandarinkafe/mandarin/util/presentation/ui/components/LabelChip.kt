@@ -15,10 +15,27 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.search.presentation.model.LabelUiModel
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_LABEL_CHIP
+import com.mandarinkafe.mandarin.util.LabelSize
 
 @Composable
-fun LabelChip(label: LabelUiModel, cardIsSmall: Boolean) {
-    val cornerRadius = if (cardIsSmall) Dimens.CornerRadius4 else Dimens.CornerRadius8
+fun LabelChip(label: LabelUiModel, size: LabelSize) {
+    val cornerRadius = when (size) {
+        LabelSize.SMALL -> Dimens.CornerRadius4
+        LabelSize.MEDIUM -> Dimens.CornerRadius8
+        LabelSize.BIG -> Dimens.CornerRadius8
+    }
+
+    val padding = when (size) {
+        LabelSize.SMALL -> Dimens.MarginSuperSmall2
+        LabelSize.MEDIUM -> Dimens.MarginSuperSmall4
+        LabelSize.BIG -> Dimens.MarginSmall8
+    }
+    val style = when (size) {
+        LabelSize.SMALL -> Typography.MealLabelSmallTextStyle
+        LabelSize.MEDIUM -> Typography.MealLabelTextStyle
+        LabelSize.BIG -> Typography.MealLabelBigTextStyle
+    }
+
     Box(
         modifier = Modifier
             .background(
@@ -28,13 +45,13 @@ fun LabelChip(label: LabelUiModel, cardIsSmall: Boolean) {
                     bottomStart = cornerRadius,
                 )
             )
-            .padding(if (cardIsSmall) Dimens.MarginSuperSmall2 else Dimens.MarginSuperSmall4),
+            .padding(padding),
         contentAlignment = Alignment.CenterEnd
     ) {
         Text(
             text = label.name,
             color = Color.White,
-            style = if (cardIsSmall) Typography.MealLabelSmallTextStyle else Typography.MealLabelTextStyle,
+            style = style,
             textAlign = TextAlign.End,
             maxLines = MAX_LINES_FOR_LABEL_CHIP,
             overflow = TextOverflow.Ellipsis

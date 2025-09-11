@@ -43,6 +43,7 @@ fun PriceAndButtons(
 
         Spacer(modifier = Modifier.weight(1f))
 
+        // Кнопка "сделать вкуснее"/"редактировать"
         if ((meal.isCustomizable || meal.requireSelection) && !itemInPendingDeletion) {
             MealDetailsButton(
                 isCustomized = item.customizedMeal.isCustomized,

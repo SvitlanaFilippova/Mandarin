@@ -83,7 +83,6 @@ object Constants {
     const val TAG_CAFE = "CAFE"
     const val LABEL_18 = "18+"
 
-
     // remoteConfig
     const val PHONE_NUMBER_DEFAULT = "tel:+74951087055"
     const val PHONE_NUMBER_KEY = "phone_number_key"
@@ -93,4 +92,5 @@ object Constants {
     const val HIT_LABEL_DEFAULT = "hit"
 
     const val LOCALE_RU = "ru_RU"
+    const val COMMENT_DIVIDER = "\\\\\\"
 }

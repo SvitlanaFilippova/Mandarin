@@ -28,6 +28,7 @@ import com.mandarinkafe.mandarin.core.domain.models.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.LabelSize
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MealButtonsRow
 
@@ -64,6 +65,7 @@ fun SmallHorizontalMealItemCard(
             cardIsSmall = true,
             isFavorite = isFavorite,
             onToggleFavorite = { onToggleFavorite(meal) },
+            labelSize = LabelSize.SMALL,
         )
 
         Column(

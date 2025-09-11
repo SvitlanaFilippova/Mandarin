@@ -13,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
@@ -32,7 +31,6 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickToCopyText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 
 @Composable
 fun OrderInfoContentScreen(
@@ -52,17 +50,6 @@ fun OrderInfoContentScreen(
             .padding(Dimens.MarginSmall8),
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
-        item {
-            ScreenTitleWithBackButton(
-                name = stringResource(
-                    R.string.order_info_screen_title_with_number,
-                    order.number ?: ""
-                ),
-                showBackButton = !fromOrderCreation,
-                onBackClick = { navController.popBackStack() }
-            )
-        }
-
         item {
             OrderStatusSection(deliveryStatus = state.deliveryStatus)
         }
