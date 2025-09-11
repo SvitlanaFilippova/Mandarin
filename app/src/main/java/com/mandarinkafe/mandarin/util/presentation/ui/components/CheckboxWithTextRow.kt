@@ -19,6 +19,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 @Composable
 fun CheckboxWithTextRow(
     checked: Boolean,
+    modifier: Modifier = Modifier,
     labelRes: Int? = null,
     text: String? = null,
     onCheckedChange: (Boolean) -> Unit
@@ -26,7 +27,7 @@ fun CheckboxWithTextRow(
     val displayText = text ?: labelRes?.let { stringResource(it) } ?: ""
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .toggleable(
                 value = checked,

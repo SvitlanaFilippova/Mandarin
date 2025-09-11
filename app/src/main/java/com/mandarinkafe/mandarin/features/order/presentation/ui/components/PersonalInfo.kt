@@ -1,7 +1,13 @@
 package com.mandarinkafe.mandarin.features.order.presentation.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,15 +62,17 @@ fun PersonalInfo(
             )
         }
     )
-    if (showSaveUserInfoCheckbox) {
-        Spacer(Modifier.height(Dimens.MarginSmall8))
-
+    AnimatedVisibility(
+        visible = showSaveUserInfoCheckbox,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically()
+    ) {
         CheckboxWithTextRow(
+            modifier = Modifier.padding(top = Dimens.MarginSmall8),
             checked = saveUserInfo,
             labelRes = R.string.save_user_data,
             text = saveUserInfoCheckboxText,
             onCheckedChange = { onSaveUserInfoToggled(it) }
         )
-
     }
 }

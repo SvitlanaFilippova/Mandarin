@@ -66,7 +66,7 @@
     <string name="maximum_modifier">В этой группе уже выбрано максимально возможное количество добавок</string>
     <string name="maximum_modifier_short">(максимум %d)</string>
     <string name="make_mandatory_choice_before_cart">Выбери нужные опции в обязательных модификаторах — только после этого можно добавить блюдо в корзину</string>
-    <string name="for_selfpickup">для самовывоза</string>
+    <string name="label_selfpickup_only">самовывоз</string>
     <string name="for_selfpickup_details">Позиция доступна только для заказа самовывозом. Доставка невозможна.</string>
 
 
@@ -104,14 +104,16 @@
     <!-- Оформление заказа - сообщения и ошибки -->
     <string name="delivery_validation_error">Не&#160;удалось найти адрес в&#160;пределах зон доставки. Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа.</string>
     <string name="delivery_cost_hint">Для выбранного адреса доставка бесплатна при заказе от&#160;%1&#36;d&#8381; (с&#160;учётом скидок).</string>
-    <string name="why_is_that_number">Почему такая цифра</string>
-    <string name="discount_hint">Скидка по&#160;карте действует не&#160;на&#160;все товары в заказе.</string>
+    <string name="discount_hint">Скидка по&#160;карте действует не&#160;на&#160;все позиции.</string>
     <string name="delivery_request_validation">Нужно ввести адрес для расчёта стоимости доставки</string>
-    <string name="pickup_only">В&#160;заказе есть позиции, доступные только для самовывоза. Доставка невозможна.</string>
+    <string name="pickup_only">В&#160;заказе есть позиции, доступные только для самовывоза.</string>
+    <string name="remove_pickup_only_from_cart">Убрать их из корзины, хочу доставку!</string>
+    <string name="pickup_only_positions_removed">Окей, удалили из&#160;заказа все позиции, которые недоступны для доставки</string>
     <string name="alcohol_pickup_only_18_plus">В&#160;заказе содержится алкоголь. Он&#160;доступен только для самовывоза и&#160;отпускается лицам старше 18&#160;лет.</string>
+    <string name="positions_for_pickup_only_template">Позиции, для которых невозможна доставка:\n%1$s</string>
     <string name="pickup_both_title">Заказ будет готов в&#160;двух точках самовывоза</string>
     <string name="pickup_both_description">В&#160;заказе есть блюда, которые готовятся в&#160;пиццерии, и&#160;те, что готовятся в&#160;основном кафе.
-Их&#160;нужно будет забрать по&#160;двум адресам. Это соседние здания.</string>
+Их&#160;нужно будет забрать по&#160;двум адресам. Это соседние здания 😊</string>
     <string name="pickup_cafe_address">Кафе: Черноголовка, ул. Береговая, 24</string>
     <string name="pickup_pizzeria_address">Пиццерия: Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
     <string name="error_payment_types_unavailable">Не удалось получить от сервера доступные способы оплаты</string>
@@ -308,6 +310,7 @@
     <string name="is_selected">Выбрано</string>
     <string name="logo_cafe">Логотип кафе</string>
     <string name="send">Отправить</string>
+    <string name="why_is_that_number">Почему такая цифра</string>
 
 
     <!-- Единицы измерения -->

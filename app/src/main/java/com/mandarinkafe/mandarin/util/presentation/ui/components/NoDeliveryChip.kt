@@ -62,7 +62,7 @@ fun NoDeliveryChip(modifier: Modifier, size: LabelSize) {
             contentAlignment = Alignment.CenterEnd
         ) {
             Text(
-                text = stringResource(R.string.for_selfpickup),
+                text = stringResource(R.string.label_selfpickup_only),
                 color = Color.White,
                 style = style,
                 textAlign = TextAlign.End,

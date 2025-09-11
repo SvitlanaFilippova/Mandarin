@@ -13,6 +13,7 @@ import com.mandarinkafe.mandarin.features.infrastructure.domain.api.GetPaymentTy
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWithDiscountUseCase
+import com.mandarinkafe.mandarin.features.order.domain.api.PickupOnlyRemoveUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.ResolvePickupPointUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.SaveOrderToHistoryUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.UserInfoRepository
@@ -22,7 +23,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentTyp
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.AddNewAddress
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.EditAddress
-import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowError
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowMassage
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowSuccess
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
@@ -33,6 +34,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Pay
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.UserInfoUi
 import com.mandarinkafe.mandarin.features.savedadresses.domain.api.GetSavedAddressesUseCase
 import com.mandarinkafe.mandarin.features.savedadresses.domain.api.RemoveAddressUseCase
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.UiText
@@ -45,6 +47,7 @@ import javax.inject.Inject
 class OrderViewModel @Inject constructor(
     observeCartItemsUseCase: ObserveCartItemsUseCase,
     resolvePickupPoint: ResolvePickupPointUseCase,
+    private val pickupOnlyRemover: PickupOnlyRemoveUseCase,
     private val orderCreator: OrderCreator,
     private val getDeliveryZone: GetDeliveryZoneUseCase,
     private val getSavedAddressesUseCase: GetSavedAddressesUseCase,
@@ -93,6 +96,7 @@ class OrderViewModel @Inject constructor(
             is OrderEvent.SubmitOrder -> checkIfOrderCanBeSubmitted()
             is OrderEvent.StopObservingStatus -> orderCreator.stopObserving()
             is OrderEvent.ToggleSaveUserInfo -> toggleSaveUserInfo(event.checked)
+            is OrderEvent.RemovePickupOnly -> removePickupOnly()
         }
     }
 
@@ -100,6 +104,14 @@ class OrderViewModel @Inject constructor(
         getPaymentTypes()
         getSavedAddresses()
         getSavedUserInfo()
+    }
+
+    private fun removePickupOnly() {
+        viewModelScope.launch {
+            val itemIds = state.value.pickupOnlyPositions.map { it.id }
+            pickupOnlyRemover(itemIds)
+            sendEffect(ShowMassage(UiText.StringResource(R.string.pickup_only_positions_removed)))
+        }
     }
 
     private fun getPaymentTypes() {
@@ -167,13 +179,13 @@ class OrderViewModel @Inject constructor(
             val saved = userInfoRepository.getUserInfo()
             val showCheckbox = when {
                 saved == null -> true // первый раз сохраняем
-                saved.name != newInfo.name || saved.phone != newInfo.phone -> true // изменились
+                saved.name != newInfo.name || saved.phone != newInfo.phone -> true // данные изменились
                 else -> false
             }
             val text = if (saved != null) {
-                "Обновить имя и телефон для будущих заказов"
+                UiText.StringResource(R.string.update_saved_name_and_phone)
             } else {
-                "Использовать имя и телефон для будущих заказов"
+                UiText.StringResource(R.string.save_name_and_phone)
             }
 
             setState {
@@ -213,12 +225,24 @@ class OrderViewModel @Inject constructor(
                         items = items,
                         containNotDiscountable = containNotDiscountable
                     )
+
+                    val pickupOnlyPositions = items
+                        .filter {
+                            it.customizedMeal.meal.isPickupOnly ||
+                                    it.customizedMeal.meal.labels.any { label -> label.name == Constants.LABEL_18 }
+                        }
+                    val pickupOnlyPositionsNames = pickupOnlyPositions
+                        .map { it.name }
+                        .distinct()
+
                     copy(
                         cartSummary = newCartSummary,
                         deliveryInfo = newDeliveryInfo,
                         pickupPoint = pickupPoint,
+                        containsAlcohol = containsAlcohol,
                         pickupOnly = isPickupOnly,
-                        containsAlcohol = containsAlcohol
+                        pickupOnlyPositions = pickupOnlyPositions,
+                        pickupOnlyPositionsNames = pickupOnlyPositionsNames,
                     )
                 }
             }
@@ -389,6 +413,7 @@ class OrderViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is Resource.ErrorNoInternet -> {
                     sendErrorEffect(UiText.StringResource(R.string.error_no_internet))
                 }
@@ -427,6 +452,6 @@ class OrderViewModel @Inject constructor(
 
     private fun sendErrorEffect(msg: UiText) {
         setLoading(false)
-        sendEffect(ShowError(msg))
+        sendEffect(ShowMassage(msg))
     }
 }
