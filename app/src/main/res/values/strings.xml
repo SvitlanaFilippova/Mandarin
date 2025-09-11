@@ -175,7 +175,10 @@
 
 
     <!-- Детали заказа -->
+    <string name="order_info_screen_title">Заказ</string>
     <string name="order_info_screen_title_with_number">Заказ №%1$s</string>
+    <string name="order_info_error_empty_data">Увы, детали заказа не&#160;удалось получить.</string>
+    <string name="order_info_error_empty_data_extra">Сервер гарантирует их&#160;хранение в&#160;течение 7&#160;дней. Сейчас, скорее всего, он&#160;их&#160;уже удалил 😔</string>
     <string name="label_error">Ошибка</string>
     <string name="label_order_type">Способ получения</string>
     <string name="label_order_items">Позиции заказа: %1$d</string>

@@ -50,4 +50,10 @@ sealed class UiError(
         extraMsgRes = R.string.nothing_found_extra,
         imgRes = R.drawable.placeholder_nothing_found,
     )
+
+    object EmptyOrderData : UiError(
+        msgRes = R.string.order_info_error_empty_data,
+        extraMsgRes = R.string.order_info_error_empty_data_extra,
+        imgRes = R.drawable.placeholder_server_error,
+    )
 }

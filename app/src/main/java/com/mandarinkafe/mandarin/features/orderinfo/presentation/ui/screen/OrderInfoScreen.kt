@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.presentation.models.UiError.EmptyOrderData
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent.StopObservingStatus
@@ -26,6 +28,8 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.OnMealDetailsClick
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
+import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -58,18 +62,36 @@ fun OrderInfoScreen(
             .fillMaxSize()
             .pullRefresh(pullRefreshState)
     ) {
-        if (state.incomingOrder != null) {
-            OrderInfoContentScreen(
-                order = state.incomingOrder,
-                state = state,
-                onEvent = onEvent,
-                navController = navController,
-                orderRepeatingInProgress = state.orderRepeatingInProgress,
-                fromOrderCreation = fromOrderCreation,
-                onOrderItemClick = { mealId -> onSharedEvent(OnMealDetailsClick(mealId = mealId)) }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            val title = state.incomingOrder?.let {
+                stringResource(
+                    R.string.order_info_screen_title_with_number,
+                    it.number ?: ""
+                )
+            } ?: stringResource(R.string.order_info_screen_title)
+            ScreenTitleWithBackButton(
+                name = title,
+                showBackButton = !fromOrderCreation,
+                onBackClick = { navController.popBackStack() }
             )
-        }
 
+            if (state.incomingOrder != null) {
+                OrderInfoContentScreen(
+                    order = state.incomingOrder,
+                    state = state,
+                    onEvent = onEvent,
+                    navController = navController,
+                    orderRepeatingInProgress = state.orderRepeatingInProgress,
+                    fromOrderCreation = fromOrderCreation,
+                    onOrderItemClick = { mealId -> onSharedEvent(OnMealDetailsClick(mealId = mealId)) }
+                )
+            } else {
+                PlaceholderScreen(error = EmptyOrderData)
+            }
+        }
         PullRefreshIndicator(
             refreshing = state.isLoading,
             state = pullRefreshState,
