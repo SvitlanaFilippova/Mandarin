@@ -36,7 +36,7 @@ fun OrderActionsButtons(
                         modifier = Modifier
                             .padding(Dimens.MarginSmall8)
                             .weight(1f),
-                        textResID = R.string.repeat_order,
+                        textResID = R.string.repeat_order_button,
                         containerColor = Colors.Green,
                         onClick = onRepeatOrderCLick
                     )
@@ -48,7 +48,7 @@ fun OrderActionsButtons(
                     modifier = Modifier
                         .padding(Dimens.MarginSmall8)
                         .weight(1f),
-                    textResID = R.string.cancel_order,
+                    textResID = R.string.cancel_order_button,
                     containerColor = Colors.ErrorRed,
                     onClick = onCancelClick
 

@@ -26,8 +26,8 @@ enum class UiDeliveryStatus(
     ),
     READY_FOR_COOKING(
         "ReadyForCooking",
-        R.string.delivery_status_ready_for_cooking,
-        R.string.delivery_status_extra_ready_for_cooking,
+        R.string.delivery_status_wait_cooking,
+        R.string.delivery_status_extra_wait_cooking,
         R.drawable.ic_timer
     ),
     COOKING_STARTED(

@@ -38,18 +38,33 @@ fun OrderTimesSection(order: IncomingOrder) {
                 verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
             ) {
                 with(order) {
-                    whenCreated?.let { LabelValue(stringResource(R.string.label_created), it) }
-                    whenConfirmed?.let { LabelValue(stringResource(R.string.label_confirmed), it) }
-                    whenCancelled?.let { LabelValue(stringResource(R.string.label_cancelled), it) }
-                    whenCookingCompleted?.let {
+                    whenCreated?.let { LabelValue(stringResource(R.string.label_created_when), it) }
+                    whenConfirmed?.let {
                         LabelValue(
-                            stringResource(R.string.label_cooking_completed),
+                            stringResource(R.string.label_confirmed_when),
                             it
                         )
                     }
-                    whenSent?.let { LabelValue(stringResource(R.string.label_sent), it) }
-                    whenDelivered?.let { LabelValue(stringResource(R.string.label_delivered), it) }
-                    whenClosed?.let { LabelValue(stringResource(R.string.label_closed), it) }
+                    whenCancelled?.let {
+                        LabelValue(
+                            stringResource(R.string.label_cancelled_when),
+                            it
+                        )
+                    }
+                    whenCookingCompleted?.let {
+                        LabelValue(
+                            stringResource(R.string.label_cooking_completed_when),
+                            it
+                        )
+                    }
+                    whenSent?.let { LabelValue(stringResource(R.string.label_sent_when), it) }
+                    whenDelivered?.let {
+                        LabelValue(
+                            stringResource(R.string.label_delivered_when),
+                            it
+                        )
+                    }
+                    whenClosed?.let { LabelValue(stringResource(R.string.label_closed_when), it) }
                 }
             }
         }

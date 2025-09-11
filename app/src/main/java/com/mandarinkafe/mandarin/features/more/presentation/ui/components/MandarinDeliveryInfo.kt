@@ -23,7 +23,7 @@ fun MandarinDeliveryInfo() {
     )
     Text(
         modifier = Modifier.fillMaxWidth(),
-        text = stringResource(R.string.mandarin_info_when),
+        text = stringResource(R.string.working_hours_value),
         textAlign = TextAlign.Center,
         style = Typography.MealTitleStyle,
         fontWeight = FontWeight.Bold
