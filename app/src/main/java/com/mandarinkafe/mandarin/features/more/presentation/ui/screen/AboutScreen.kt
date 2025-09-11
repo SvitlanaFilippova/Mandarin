@@ -69,6 +69,12 @@ fun AboutScreen(onBackClick: () -> Boolean) {
 
         Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
 
+        Text(
+            modifier = Modifier.padding(Dimens.MarginSmall8),
+            text = stringResource(R.string.massage_developer),
+            style = Typography.RegularTextStyle,
+        )
+
         Row(
             modifier = Modifier
                 .padding(horizontal = Dimens.MarginSmall8),
