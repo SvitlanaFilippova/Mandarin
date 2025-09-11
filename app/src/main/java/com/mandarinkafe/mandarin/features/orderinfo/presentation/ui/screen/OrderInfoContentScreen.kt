@@ -50,7 +50,6 @@ fun OrderInfoContentScreen(
             .padding(Dimens.MarginSmall8),
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
-
         item {
             OrderStatusSection(deliveryStatus = state.deliveryStatus)
         }

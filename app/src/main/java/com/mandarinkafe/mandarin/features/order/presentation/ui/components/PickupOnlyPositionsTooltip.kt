@@ -28,7 +28,6 @@ fun PickupOnlyPositionsTooltip(
     )
 
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-
         Column {
             Text(
                 text = onlyPickUpPositionsText,

@@ -23,7 +23,9 @@ fun AlertAboutPickupOnly(
                     onRemovePickupOnly = onRemovePickupOnly
                 )
             }
-        } else null
+        } else {
+            null
+        }
 
     when {
         containsAlcohol -> {

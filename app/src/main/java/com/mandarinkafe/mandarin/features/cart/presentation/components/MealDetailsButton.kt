@@ -14,7 +14,6 @@ fun MealDetailsButton(
     onEditMealClick: () -> Unit,
     onMealDetailsClick: () -> Unit,
 ) {
-
     when {
         isCustomized -> {
             // Кнопка "Редактировать"
