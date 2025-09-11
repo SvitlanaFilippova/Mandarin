@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.shared.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
@@ -8,7 +7,11 @@ import com.mandarinkafe.mandarin.core.domain.api.ObserveCartCountUseCase
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect.FinishSplash
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect.GoBackEffect
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect.OpenMealDetailsBS
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect.ScrollToTop
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect.SnackbarEffect
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.DismissFavoriteDialog
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.HideTopBar
@@ -74,11 +77,8 @@ class SharedViewModel @Inject constructor(
             is ShowTopBar -> setState { copy(shouldShowTopBar = true) }
             is ResetTopBar -> setState { copy(shouldShowTopBar = true) }
             is OnPhoneClick -> sendEffect(SharedEffect.OnPhoneClick)
+            is SharedEvent.OnLogoClick -> sendEffect(ScrollToTop)
             is OnMealDetailsClick -> {
-                Log.d(
-                    "DEBUG OnMealDetailsClick",
-                    "OnMealDetailsClick clicked for event.mealId: ${event.mealId}"
-                )
                 sendEffect(
                     OpenMealDetailsBS(
                         meal = event.meal,
@@ -106,9 +106,9 @@ class SharedViewModel @Inject constructor(
                 )
             }
 
-            is SharedEvent.GoBack -> sendEffect(SharedEffect.GoBackEffect)
+            is SharedEvent.GoBack -> sendEffect(GoBackEffect)
             is SharedEvent.ShowSnackbar -> sendEffect(
-                SharedEffect.SnackbarEffect(
+                SnackbarEffect(
                     text = event.message,
                     showToCartButton = event.showToCartButton
                 )
@@ -148,7 +148,7 @@ class SharedViewModel @Inject constructor(
             }
             // Ждём, пока одна из двух корутин вызовет complete()
             done.await()
-            sendEffect(SharedEffect.FinishSplash)
+            sendEffect(FinishSplash)
         }
     }
 

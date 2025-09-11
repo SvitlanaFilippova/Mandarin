@@ -70,6 +70,8 @@ fun HandleEffects(
                     }
                 }
 
+                is SharedEffect.ScrollToTop -> { // обрабатывается отдельно, на конкретных экранах}
+                }
             }
         }
     }

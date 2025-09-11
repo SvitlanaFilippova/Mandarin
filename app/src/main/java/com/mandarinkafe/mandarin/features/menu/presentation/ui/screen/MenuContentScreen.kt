@@ -43,9 +43,11 @@ import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuIt
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuSearchBar
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.TabsSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.rememberScrollUiState
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.util.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -63,6 +65,7 @@ fun MenuContentScreen(
     bannersAreLoading: Boolean,
     selectedMenuItemIndex: Int,
     banners: List<Banner>,
+    sharedEffectFlow: SharedFlow<SharedEffect>,
 ) {
     val categoryPositions = remember(menuItems) {
         menuItems.mapIndexedNotNull { index, item ->
@@ -192,12 +195,21 @@ fun MenuContentScreen(
             visible = (showFab || isScrollingUp) && !isAtTop,
             onClick = {
                 scope.launch {
-                    scrollUi.listState.scrollToItem(0)
+                    scrollUi.scrollToTop()
                 }
             }
         )
     }
+
+    LaunchedEffect(Unit) {
+        sharedEffectFlow.collect { effect ->
+            if (effect is SharedEffect.ScrollToTop) {
+                scrollUi.scrollToTop()
+            }
+        }
+    }
 }
+
 
 @Composable
 private fun MenuStickyHeader(

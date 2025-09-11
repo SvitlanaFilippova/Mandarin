@@ -81,6 +81,10 @@ class ScrollUiState(
             index = target + 1
         )
     }
+
+    suspend fun scrollToTop() {
+        listState.scrollToItem(0)
+    }
 }
 
 @Composable

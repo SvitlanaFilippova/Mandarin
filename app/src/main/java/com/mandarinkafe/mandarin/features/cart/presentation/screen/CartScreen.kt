@@ -27,6 +27,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrder
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.Constants.SNACKBAR_MESSAGE_KEY
@@ -34,6 +35,7 @@ import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -46,6 +48,7 @@ fun CartScreen(
     val state by cartViewModel.state.collectAsState()
     val effectFlow = cartViewModel.effect
     val onSharedEvent = sharedViewModel::onEvent
+
     val onCartEvent = cartViewModel::onEvent
     val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
     var showClearCartDialog by remember { mutableStateOf(false) }
@@ -154,24 +157,24 @@ fun CartScreen(
         )
     }
 
-
     LaunchedEffect(Unit) {
-        effectFlow.collectLatest { effect ->
-            when (effect) {
-                is CartEffect.ShowClearCartConfirmDialog -> {
-                    showClearCartDialog = true
-                }
-
-                is CartEffect.ProceedOrder -> {
-                    navController.navigateToOrder()
-                }
-
-                is CartEffect.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(
+        launch {
+            effectFlow.collectLatest { effect ->
+                when (effect) {
+                    is CartEffect.ShowClearCartConfirmDialog -> showClearCartDialog = true
+                    is CartEffect.ProceedOrder -> navController.navigateToOrder()
+                    is CartEffect.ShowSnackbar -> snackbarHostState.showSnackbar(
                         message = effect.message,
                         duration = SnackbarDuration.Long,
                         withDismissAction = true,
                     )
+                }
+            }
+        }
+        launch {
+            sharedViewModel.effect.collect { effect ->
+                if (effect is SharedEffect.ScrollToTop) {
+                    listState.scrollToItem(0)
                 }
             }
         }

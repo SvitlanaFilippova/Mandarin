@@ -185,7 +185,8 @@ fun NavGraph(navHostController: NavHostController) {
             composable(NavConstants.ORDER_SCREEN_ROUTE) {
                 OrderScreen(
                     navController = navHostController,
-                    orderViewModel = orderViewModel
+                    orderViewModel = orderViewModel,
+                    sharedViewModel = sharedViewModel
                 )
             }
 
@@ -217,6 +218,7 @@ fun NavGraph(navHostController: NavHostController) {
             composable(NavConstants.ORDERS_HISTORY_ROUTE) {
                 OrdersHistoryScreen(
                     navController = navHostController,
+                    sharedViewModel = sharedViewModel,
                 )
             }
             composable(NavConstants.SAVED_ADDRESSES_ROUTE) {

@@ -51,6 +51,7 @@ fun MenuScreen(
     val onCartEvent = cartViewModel::onEvent
 
     val effectFlow = menuViewModel.effect
+    val sharedEffectFlow = sharedViewModel.effect
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isLoading,
@@ -85,6 +86,7 @@ fun MenuScreen(
                 banners = banners,
                 bannersAreLoading = bannersAreLoading,
                 selectedMenuItemIndex = state.selectedMenuItemIndex,
+                sharedEffectFlow = sharedEffectFlow,
                 onAddToCart = { meal -> onCartEvent(CartEvent.AddToCart(customizedMeal = meal.toCustomizedMeal())) },
                 onRemoveFromCart = { meal -> onCartEvent(CartEvent.OnReduce(meal = meal)) },
                 onToggleFavorite = { meal -> onSharedEvent(SharedEvent.ToggleFavorite(meal)) },

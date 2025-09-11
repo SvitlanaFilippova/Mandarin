@@ -26,6 +26,8 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Obser
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 
@@ -33,6 +35,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDia
 @Composable
 fun OrderScreen(
     orderViewModel: OrderViewModel,
+    sharedViewModel: SharedViewModel,
     navController: NavHostController
 ) {
     val state by orderViewModel.state.collectAsState()
@@ -113,6 +116,15 @@ fun OrderScreen(
         DisposableEffect(Unit) {
             onDispose {
                 onEvent(StopObservingStatus)
+            }
+        }
+    }
+
+    // ловим эффект клика по логотипу -> скролим в верхнюю часть экрана
+    LaunchedEffect(Unit) {
+        sharedViewModel.effect.collect { effect ->
+            if (effect is SharedEffect.ScrollToTop) {
+                scrollState.scrollToItem(0)
             }
         }
     }

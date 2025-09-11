@@ -40,6 +40,7 @@ fun AppTopBar(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(Dimens.MarginSuperSmall4)
+                    .clickable { onEvent(SharedEvent.OnLogoClick) }
             )
 
             // Иконка звонка
