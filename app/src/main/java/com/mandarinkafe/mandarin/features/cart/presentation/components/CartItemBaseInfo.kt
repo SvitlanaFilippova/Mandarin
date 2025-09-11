@@ -36,6 +36,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens.MarginSmall8
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants.ALPHA_50
+import com.mandarinkafe.mandarin.util.LabelSize
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
 
 @Composable
@@ -78,8 +79,8 @@ fun CartItemBaseInfo(
                     onToggleFavorite(customizedMeal)
                 }
             },
-
-            )
+            labelSize = LabelSize.SMALL,
+        )
         Column(
             modifier = Modifier
                 .weight(1f)

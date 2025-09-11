@@ -31,6 +31,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_TITLE_IN_MENU
+import com.mandarinkafe.mandarin.util.LabelSize
 import com.mandarinkafe.mandarin.util.presentation.localizedShortText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MealButtonsRow
@@ -69,6 +70,7 @@ fun MenuMealItem(
             cardIsSmall = false,
             isFavorite = isFavorite,
             onToggleFavorite = { onToggleFavorite(meal) },
+            labelSize = LabelSize.MEDIUM,
         )
 
         // Блок с текстовой информацией о блюде

@@ -18,29 +18,53 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_LABEL_CHIP
+import com.mandarinkafe.mandarin.util.LabelSize
 
 @Composable
-fun NoDeliveryChip(modifier: Modifier, cardIsSmall: Boolean) {
-    val cornerRadius = if (cardIsSmall) Dimens.CornerRadius4 else Dimens.CornerRadius8
+fun NoDeliveryChip(modifier: Modifier, size: LabelSize) {
+    val cornerRadius = when (size) {
+        LabelSize.SMALL -> Dimens.CornerRadius4
+        LabelSize.MEDIUM -> Dimens.CornerRadius8
+        LabelSize.BIG -> Dimens.CornerRadius8
+    }
+
+    val padding = when (size) {
+        LabelSize.SMALL -> Dimens.MarginSuperSmall2
+        LabelSize.MEDIUM -> Dimens.MarginSuperSmall4
+        LabelSize.BIG -> Dimens.MarginSmall8
+    }
+    val style = when (size) {
+        LabelSize.SMALL -> {
+            Typography.MealLabelSmallTextStyle
+        }
+
+        LabelSize.MEDIUM -> {
+            Typography.MealLabelTextStyle
+        }
+
+        LabelSize.BIG -> {
+            Typography.MealLabelBigTextStyle
+        }
+    }
     Column(
         modifier = modifier
     ) {
         Box(
             modifier = Modifier
                 .background(
-                    color = Colors.AppBlack80,
+                    color = Colors.Brown.copy(alpha = 0.8f),
                     shape = RoundedCornerShape(
                         topStart = cornerRadius,
                         bottomStart = cornerRadius,
                     )
                 )
-                .padding(if (cardIsSmall) Dimens.MarginSuperSmall2 else Dimens.MarginSuperSmall4),
+                .padding(padding),
             contentAlignment = Alignment.CenterEnd
         ) {
             Text(
                 text = stringResource(R.string.for_selfpickup),
                 color = Color.White,
-                style = if (cardIsSmall) Typography.MealLabelSmallTextStyle else Typography.MealLabelTextStyle,
+                style = style,
                 textAlign = TextAlign.End,
                 maxLines = MAX_LINES_FOR_LABEL_CHIP,
                 overflow = TextOverflow.Ellipsis

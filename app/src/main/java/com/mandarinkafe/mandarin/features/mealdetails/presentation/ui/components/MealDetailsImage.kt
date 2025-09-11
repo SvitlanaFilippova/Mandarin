@@ -19,6 +19,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.search.presentation.SearchMapper.toUiModel
+import com.mandarinkafe.mandarin.util.LabelSize
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LabelChip
 import com.mandarinkafe.mandarin.util.presentation.ui.components.NoDeliveryChip
 
@@ -54,7 +55,7 @@ fun MealDetailsImage(meal: Meal) {
             meal.labels.forEach {
                 LabelChip(
                     label = it.toUiModel(),
-                    cardIsSmall = false,
+                    size = LabelSize.BIG,
                 )
             }
         }
@@ -65,7 +66,7 @@ fun MealDetailsImage(meal: Meal) {
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = Dimens.MarginStandard16),
-                cardIsSmall = false,
+                size = LabelSize.BIG,
             )
         }
     }

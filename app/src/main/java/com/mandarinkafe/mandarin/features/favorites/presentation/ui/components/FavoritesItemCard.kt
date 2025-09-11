@@ -28,6 +28,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_TITLE_IN_MENU
+import com.mandarinkafe.mandarin.util.LabelSize
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
 
 /**
@@ -68,6 +69,7 @@ fun FavoritesItemCard(
             cardIsSmall = false,
             isFavorite = isFavorite,
             onToggleFavorite = { onToggleFavorite(item) },
+            labelSize = LabelSize.MEDIUM,
         )
 
         Column(

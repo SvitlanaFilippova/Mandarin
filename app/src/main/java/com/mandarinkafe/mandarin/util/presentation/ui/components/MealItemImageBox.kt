@@ -31,6 +31,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.search.presentation.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.util.Constants.IMAGE_SIZE_IN_MENU
+import com.mandarinkafe.mandarin.util.LabelSize
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.FavoriteButton
 
 @Composable
@@ -40,6 +41,7 @@ fun MealItemImageBox(
     cardIsSmall: Boolean,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
+    labelSize: LabelSize
 ) {
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }
@@ -94,7 +96,7 @@ fun MealItemImageBox(
             meal.labels.forEach {
                 LabelChip(
                     label = it.toUiModel(),
-                    cardIsSmall = cardIsSmall,
+                    size = labelSize,
                 )
             }
         }
@@ -105,7 +107,7 @@ fun MealItemImageBox(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = paddingSize),
-                cardIsSmall = cardIsSmall,
+                size = labelSize,
             )
         }
 
