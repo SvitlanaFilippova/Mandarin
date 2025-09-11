@@ -1,11 +1,13 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers
 
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.UiText
 import com.mandarinkafe.mandarin.util.tickerFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -25,7 +27,7 @@ class OrderCreator @Inject constructor(
         scope: CoroutineScope,
         order: OutgoingOrder,
         onSuccess: (IncomingOrder) -> Unit,
-        onError: (String) -> Unit,
+        onError: (UiText) -> Unit,
         onLoading: () -> Unit
     ) {
         when (val result = createOrder(order)) {
@@ -41,14 +43,25 @@ class OrderCreator @Inject constructor(
 
                     CreationStatus.SUCCESS -> onSuccess(orderInfo)
                     CreationStatus.ERROR ->
-                        onError(orderInfo.errorInfo?.message ?: "Не удалось создать заказ")
+                        onError(
+                            orderInfo.errorInfo?.message?.let { UiText.DynamicString(it) }
+                                ?: UiText.StringResource(R.string.error_order_creation_failed)
+                        )
 
-                    null -> onError("Ошибка: пустой ответ от сервера")
+                    null -> onError(
+                        UiText.StringResource(R.string.error_empty_server_response)
+                    )
                 }
             }
 
-            is Resource.ErrorNoInternet -> onError("Нет подключения к интернету")
-            else -> onError(result.message ?: "Не удалось отправить заказ")
+            is Resource.ErrorNoInternet -> onError(
+                UiText.StringResource(R.string.error_no_internet)
+            )
+
+            else -> onError(
+                result.message?.let { UiText.DynamicString(it) }
+                    ?: UiText.StringResource(R.string.error_order_creation_failed)
+            )
         }
     }
 
@@ -56,7 +69,7 @@ class OrderCreator @Inject constructor(
         scope: CoroutineScope,
         orderId: String,
         onSuccess: (IncomingOrder) -> Unit,
-        onError: (String) -> Unit,
+        onError: (UiText) -> Unit,
         onLoading: () -> Unit
     ) {
         stopObserving()
@@ -77,7 +90,12 @@ class OrderCreator @Inject constructor(
 
                                 CreationStatus.ERROR -> {
                                     onError(
-                                        result.data.errorInfo?.message ?: "Не удалось создать заказ"
+                                        result.data.errorInfo?.message?.let {
+                                            UiText.DynamicString(
+                                                it
+                                            )
+                                        }
+                                            ?: UiText.StringResource(R.string.error_order_creation_failed)
                                     )
                                     stopObserving()
                                 }
@@ -86,9 +104,13 @@ class OrderCreator @Inject constructor(
                             }
                         }
 
-                        is Resource.ErrorNoInternet -> onError("Нет подключения к интернету")
+                        is Resource.ErrorNoInternet -> onError(
+                            UiText.StringResource(R.string.error_no_internet)
+                        )
+
                         is Resource.ErrorOther -> onError(
-                            result.message ?: "Ошибка получения статуса"
+                            result.message?.let { UiText.DynamicString(it) }
+                                ?: UiText.StringResource(R.string.error_order_status_failed)
                         )
 
                         else -> Unit

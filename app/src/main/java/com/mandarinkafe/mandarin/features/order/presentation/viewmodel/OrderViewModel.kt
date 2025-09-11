@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartItemsUseCase
 import com.mandarinkafe.mandarin.core.domain.models.Address
@@ -34,6 +35,7 @@ import com.mandarinkafe.mandarin.features.savedadresses.domain.api.GetSavedAddre
 import com.mandarinkafe.mandarin.features.savedadresses.domain.api.RemoveAddressUseCase
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.UiText
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -104,21 +106,21 @@ class OrderViewModel @Inject constructor(
         viewModelScope.launch {
             val response = getPaymentTypesUseCase()
             when (response) {
-                is Resource.ErrorNoInternet -> sendErrorEffect(msg = "Нет подключения к интернету")
+                is Resource.ErrorNoInternet ->
+                    sendErrorEffect(UiText.StringResource(R.string.error_no_internet))
+
                 is Resource.Success -> {
                     if (response.data != null) {
                         setState { copy(paymentInfo = paymentInfo.copy(availablePaymentTypes = response.data)) }
                     } else {
-                        sendErrorEffect(msg = "Не удалось получить от сервера доступные способы оплаты")
+                        sendErrorEffect(UiText.StringResource(R.string.error_payment_types_unavailable))
                     }
                 }
 
                 else -> {
-                    sendErrorEffect(msg = "Не удалось получить от сервера доступные способы оплаты")
+                    sendErrorEffect(UiText.StringResource(R.string.error_payment_types_unavailable))
                 }
-
             }
-
         }
     }
 
@@ -352,10 +354,8 @@ class OrderViewModel @Inject constructor(
     }
 
     private fun showMissingRequiredInfo() {
-        setState {
-            copy(isError = true)
-        }
-        sendErrorEffect("Нужно заполнить все обязательные поля")
+        setState { copy(isError = true) }
+        sendErrorEffect(UiText.StringResource(R.string.error_missing_required_fields))
     }
 
     private fun recalculateCartSummary(discountSize: Int? = null) {
@@ -385,22 +385,16 @@ class OrderViewModel @Inject constructor(
                         submitOrder()
                     } else {
                         sendErrorEffect(
-                            "Упс, кажется, сейчас мы не работаем — заказ оформить не получится\uD83E\uDD37\nВозвращайся в рабочее время!"
+                            UiText.StringResource(R.string.error_terminal_unavailable)
                         )
                     }
                 }
-
                 is Resource.ErrorNoInternet -> {
-                    sendErrorEffect(
-                        "Нет подключения к интернету."
-                    )
+                    sendErrorEffect(UiText.StringResource(R.string.error_no_internet))
                 }
 
-                else -> sendErrorEffect(
-                    "Что-то пошло не так — не удалось проверить, работает ли сейчас доставка."
-                )
+                else -> sendErrorEffect(UiText.StringResource(R.string.error_unknown))
             }
-
         }
     }
 
@@ -431,7 +425,7 @@ class OrderViewModel @Inject constructor(
         }
     }
 
-    private fun sendErrorEffect(msg: String) {
+    private fun sendErrorEffect(msg: UiText) {
         setLoading(false)
         sendEffect(ShowError(msg))
     }

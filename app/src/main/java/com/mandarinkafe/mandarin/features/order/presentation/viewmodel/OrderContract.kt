@@ -13,6 +13,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Ute
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.UiText
 
 sealed interface OrderContract {
     sealed interface OrderEvent : BaseEvent {
@@ -57,7 +58,7 @@ sealed interface OrderContract {
 
         // Обработка отправки заказа
         data class ShowSuccess(val orderId: String) : OrderEffect
-        data class ShowError(val message: String) : OrderEffect
+        data class ShowError(val message: UiText) : OrderEffect
 
     }
 
