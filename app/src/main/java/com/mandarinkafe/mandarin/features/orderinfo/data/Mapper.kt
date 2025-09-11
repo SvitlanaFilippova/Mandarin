@@ -21,6 +21,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingMealAd
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingModifier
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.OrderStatus
+import com.mandarinkafe.mandarin.util.Constants.COMMENT_DIVIDER
 import com.mandarinkafe.mandarin.util.DateTimeUtils.toHumanDateTimeOrNull
 import com.mandarinkafe.mandarin.util.applyTypography
 
@@ -40,6 +41,8 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
             append(comment)
         }
     }
+    val visibleComment = order?.comment?.substringBefore(COMMENT_DIVIDER) ?: ""
+
     return IncomingOrder(
         id = id,
         number = order?.number,
@@ -49,7 +52,7 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         errorInfo = errorInfo?.toDomain(),
         phone = order?.phone,
         deliveryAddress = order?.deliveryPoint?.toAddress(),
-        comment = order?.comment,
+        comment = visibleComment,
         customer = order?.customer,
         items = order?.items?.toDomainWithAdds(addons) ?: emptyList(),
         paymentName = order?.payments?.firstOrNull()?.paymentType?.name,
@@ -113,6 +116,8 @@ private fun DeliveryPointDto.toAddress(): Address {
             longitude = it.longitude
         )
     }
+    val visibleComment = comment?.substringBefore(COMMENT_DIVIDER) ?: ""
+
     return Address(
         point = point,
         streetAndBuilding = address?.line1 ?: "",
@@ -120,7 +125,7 @@ private fun DeliveryPointDto.toAddress(): Address {
         entrance = address?.entrance ?: "",
         floor = address?.floor ?: "",
         intercom = address?.doorphone ?: "",
-        comment = comment ?: ""
+        comment = visibleComment
     )
 }
 
@@ -144,7 +149,6 @@ private fun String.toDeliveryStatus(): DeliveryStatus {
     return DeliveryStatus.entries.find { it.apiName.equals(this, ignoreCase = true) }
         ?: DeliveryStatus.UNCONFIRMED
 }
-
 
 private fun collectAddonIds(addonsCategories: List<MealAdditionalCategory>): Set<String> =
     addonsCategories.flatMap { it.items.map { add -> add.id } }.toSet()
@@ -206,6 +210,7 @@ private class IncomingOrderItemBuilder private constructor(
 
     companion object {
         fun fromDto(dto: IncomingOrderItemDto): IncomingOrderItemBuilder {
+            val visibleComment = dto.comment?.substringBefore(COMMENT_DIVIDER) ?: ""
             return IncomingOrderItemBuilder(
                 id = dto.product.id,
                 name = dto.product.name.applyTypography(),
@@ -213,7 +218,7 @@ private class IncomingOrderItemBuilder private constructor(
                 price = dto.price,
                 positionId = dto.positionId,
                 deleted = dto.deleted?.toDomain() ?: DeletionInfo(),
-                comment = dto.comment ?: "",
+                comment = visibleComment,
                 chosenModifiers = dto.modifiers?.map { it.toDomain() } ?: emptyList(),
                 discountedPrice = dto.resultSum,
             )

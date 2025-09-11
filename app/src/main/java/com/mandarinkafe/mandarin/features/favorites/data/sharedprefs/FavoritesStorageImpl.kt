@@ -15,19 +15,15 @@ class FavoritesStorageImpl @Inject constructor(
 ) : FavoritesStorage {
     private val logTag = "FavoritesStorage"
     override suspend fun toggleFavorite(meal: StoredFavoriteMeal): Boolean {
-        Log.d(logTag, "toggleFavorite called with meal=$meal")
         val currentSetResult = getFavorites()
         if (currentSetResult is FavoritesStorageResult.Success) {
             val currentSet = currentSetResult.favorites.toMutableSet()
-            Log.d(logTag, "Current favorites before toggle: $currentSet")
-
             val isBase = meal.isBase()
             val alreadyExists = if (isBase) {
                 currentSet.any { it.mealId == meal.mealId && it.isBase() }
             } else {
                 currentSet.any { it.sameAs(meal) }
             }
-            Log.d(logTag, "isBase=$isBase, alreadyExists=$alreadyExists")
 
             val isNowFavorite = if (alreadyExists) {
                 if (isBase) {
@@ -35,19 +31,13 @@ class FavoritesStorageImpl @Inject constructor(
                 } else {
                     currentSet.removeAll { it.sameAs(meal) }
                 }
-                Log.d(logTag, "Removed meal=$meal")
                 false
             } else {
                 currentSet.add(meal)
-                Log.d(logTag, "Added meal=$meal")
                 true
             }
 
             saveFavorites(currentSet)
-            Log.d(
-                logTag,
-                "Favorites after toggle: $currentSet, isNowFavorite=$isNowFavorite"
-            )
             return isNowFavorite
         } else {
             return false
@@ -56,7 +46,6 @@ class FavoritesStorageImpl @Inject constructor(
 
     override fun saveFavorites(favorites: Set<StoredFavoriteMeal>) {
         val json = Gson().toJson(favorites)
-        Log.d(logTag, "Saving favorites JSON=$json")
         sharedPreferences.edit {
             putString(FAVORITES_KEY, json)
         }
@@ -64,8 +53,6 @@ class FavoritesStorageImpl @Inject constructor(
 
     override suspend fun getFavorites(): FavoritesStorageResult {
         val json = sharedPreferences.getString(FAVORITES_KEY, null)
-        Log.d(logTag, "Reading favorites raw JSON=$json")
-
         return try {
             if (json == null) {
                 Log.w(logTag, "Favorites key is null, returning emptySet()")
@@ -73,7 +60,6 @@ class FavoritesStorageImpl @Inject constructor(
             } else {
                 val listType = object : TypeToken<Set<StoredFavoriteMeal>>() {}.type
                 val result: Set<StoredFavoriteMeal> = Gson().fromJson(json, listType) ?: emptySet()
-                Log.d(logTag, "Parsed favorites=$result")
                 FavoritesStorageResult.Success(result)
             }
         } catch (e: Exception) {

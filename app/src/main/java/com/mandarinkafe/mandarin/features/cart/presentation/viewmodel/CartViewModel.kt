@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
@@ -43,8 +42,6 @@ class CartViewModel @Inject constructor(
         observeCartChanges()
     }
 
-    private val logTag = "CART DEBUG VM"
-
     override fun onEvent(event: CartEvent) {
         when (event) {
             is AddToCart -> addItem(item = event.item, customizedMeal = event.customizedMeal)
@@ -62,6 +59,7 @@ class CartViewModel @Inject constructor(
 
     private fun forceRefresh() {
         viewModelScope.launch {
+            resetError()
             cartInteractor.forceRetry()
             updateRecommends(state.value.cartItems.map { it.customizedMeal.meal }.toSet())
         }
@@ -74,16 +72,13 @@ class CartViewModel @Inject constructor(
     }
 
     private suspend fun proceedCartResult(cartResource: Resource<List<CartItem>>) {
-        Log.d(logTag, "observeCartItems emitted: $cartResource")
         when (cartResource) {
             is Resource.Success -> {
-                Log.d(logTag, "Cart updated: ${cartResource.data?.size} items")
                 setData(cartResource.data)
                 updateRecommends(cartResource.data?.map { it.customizedMeal.meal }?.toSet())
             }
 
             is Loading -> {
-                Log.d(logTag, "Loading cart data")
                 setLoading()
             }
 
@@ -91,14 +86,12 @@ class CartViewModel @Inject constructor(
                 if (state.value.cartItems.isEmpty()) {
                     setError(cartResource)
                 } else {
-                    Log.w(logTag, "No internet, but cart already has items, skip error")
                     setLoading(false)
                 }
             }
 
             is Resource.Idle -> {}
             else -> {
-                Log.e(logTag, "Error loading cart: $cartResource")
                 setError(cartResource)
             }
         }
@@ -236,7 +229,6 @@ class CartViewModel @Inject constructor(
     }
 
     private fun updateMealInCart(item: CartItem) {
-        Log.d("Cart DEBUG VM", "call updateMealInCart, item: $item ")
         val id = item.id
         setState { copy(inProgressItems = inProgressItems + id) }
         viewModelScope.launch {
@@ -249,7 +241,6 @@ class CartViewModel @Inject constructor(
         customizedMeal: CustomizedMeal? = null,
         meal: Meal? = null
     ) {
-        Log.d("Cart DEBUG VM", "call addItem, item: $item ")
         val tempId =
             item?.id ?: customizedMeal?.meal?.id ?: meal?.id ?: return
         setState {
@@ -351,6 +342,10 @@ class CartViewModel @Inject constructor(
         if (error != null) {
             setState { copy(error = error, isLoading = false) }
         }
+    }
+
+    private fun resetError() {
+        setState { copy(error = null) }
     }
 
     private companion object {

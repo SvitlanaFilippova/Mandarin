@@ -39,17 +39,16 @@ fun FavoritesScreen(
     val listState = rememberLazyListState()
     val onSharedEvent = sharedViewModel::onEvent
     val onCartEvent = cartViewModel::onEvent
-
     val snackbarHostState = LocalSnackbarHostState.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Colors.AppBlack)
     ) {
-        state.error
-
         when {
             state.isLoading -> LoadingScreen()
+
             state.error != null -> PlaceholderScreen(
                 state.error,
                 onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
