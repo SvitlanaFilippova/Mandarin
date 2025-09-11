@@ -24,13 +24,13 @@
 
     <!-- Корзина -->
     <string name="cart">Корзина</string>
-    <string name="add_to_cart">Добавить в корзину</string>
+    <string name="add_to_cart">Советуем добавить</string>
     <string name="clear_cart">Очистить корзину</string>
     <string name="question_add_to_cart">Добавить в корзину ?</string>
     <string name="add_to_favorite">Добавить в избранное</string>
     <string name="remove_from_cart">Убрать из корзины</string>
     <string name="comment_for_meal">Комментарий к блюду для повара</string>
-    <string name="cancel_removing">Вернуть</string>
+    <string name="cancel_removing">Ой, верните!</string>
     <string name="clear_cart_question">Очистить корзину?</string>
     <string name="clear_cart_confirmation">Действительно удалить всё из корзины?</string>
     <string name="cart_total_cost_template">%d ₽</string>
@@ -72,6 +72,7 @@
     <string name="your_comment">Комментарий к заказу</string>
     <string name="shipping">Доставка</string>
     <string name="shipping_self_pickup">Cамовывоз</string>
+    <string name="choose_address">Выберите адрес *</string>
     <string name="delivery_type">Способ получения: *</string>
     <string name="payment_type">Способ оплаты: *</string>
     <string name="payment_online">картой онлайн</string>
@@ -98,11 +99,7 @@
 Их&#160;нужно будет забрать по&#160;двум адресам. Это соседние здания.</string>
     <string name="pickup_cafe_address">Кафе: Черноголовка, ул. Береговая, 24</string>
     <string name="pickup_pizzeria_address">Пиццерия: Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
-    <string name="back_to_menu">Вернуться в меню</string>
-    <string name="choose_address">Выберите адрес *</string>
-    <string name="cancel_order">Отменить заказ</string>
-    <string name="repeat_order">Повторить заказ</string>
-    <string name="comment_template">Комментарий: %1$s</string>
+
 
     <!-- Адрес -->
     <string name="deliver_to_this_location">Доставить сюда</string>
@@ -196,6 +193,10 @@
     <string name="label_sent">Отправлен</string>
     <string name="label_delivered">Доставлен</string>
     <string name="label_closed">Закрыт</string>
+    <string name="back_to_menu">Вернуться в меню</string>
+    <string name="cancel_order">Отменить заказ</string>
+    <string name="repeat_order">Повторить заказ</string>
+    <string name="comment_template">Комментарий: %1$s</string>
 
     <!-- Кнопки действий -->
     <string name="minus">-</string>
@@ -259,6 +260,7 @@
     <string name="about_title">О приложении</string>
     <string name="version_text">Версия приложения: %1$s</string>
     <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана&#160;&#8212; я&#160;разработчик этого приложения.\n\nЕсли есть предложения по&#160; его улучшению или просто хочется поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!</string>
+    <string name="massage_developer">Связаться с разработчиком:</string>
     <string name="dev_feedback_label">Форма обратной связи</string>
     <string name="dev_feedback_title">Сообщение разработчику</string>
     <string name="telegram_label">Telegram</string>
