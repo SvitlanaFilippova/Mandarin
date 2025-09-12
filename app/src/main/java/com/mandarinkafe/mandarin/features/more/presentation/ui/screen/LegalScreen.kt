@@ -22,8 +22,6 @@ fun LegalScreen(onSharedEvent: (SharedEvent) -> Unit, onBackClick: () -> Boolean
     val cannotOpenLinkMessage = stringResource(id = R.string.cannot_open_link)
     val privacyLabel = stringResource(id = R.string.more_privacy_policy)
     val privacyUrl = stringResource(id = R.string.privacy_policy_url)
-    val userAgreementLabel = stringResource(id = R.string.more_user_agreement)
-    val userAgreementUrl = stringResource(id = R.string.user_agreement_url)
     val personalDataLabel = stringResource(id = R.string.more_personal_data_agreement)
     val personalDataUrl = stringResource(id = R.string.user_agreement_url)
     val yandexMapsLabel = stringResource(id = R.string.more_yandex_maps_terms)
@@ -53,9 +51,7 @@ fun LegalScreen(onSharedEvent: (SharedEvent) -> Unit, onBackClick: () -> Boolean
         }
 
         MenuItem(title = privacyLabel, onClick = { openUrl(privacyUrl) })
-        MenuItem(title = userAgreementLabel, onClick = { openUrl(userAgreementUrl) })
         MenuItem(title = personalDataLabel, onClick = { openUrl(personalDataUrl) })
         MenuItem(title = yandexMapsLabel, onClick = { openUrl(yandexMapsUrl) })
     }
-
 }
