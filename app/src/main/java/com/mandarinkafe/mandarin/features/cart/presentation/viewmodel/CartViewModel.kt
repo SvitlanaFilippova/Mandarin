@@ -6,7 +6,7 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
-import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetAllRecommendsUseCase
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.AddToCart
@@ -31,7 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val cartInteractor: CartInteractor,
-    private val recommendsUseCase: GetAllRecommendsUseCase,
+    private val recommendsUseCase: GetRecommendsUseCase,
     private val checkIfTerminalIsAlive: CheckIfTerminalIsAliveUseCase
 ) : BaseViewModel<CartEvent, CartEffect, CartState>() {
     override fun setInitialState() = CartState()

@@ -71,7 +71,6 @@ object Constants {
 
     // Для обработки особых категорий по их названиям
     const val CATEGORY_ADDS = "Добавки"
-    const val CATEGORY_RECOMMENDS = "Рекомендованные (общие)"
     const val DELIVERY_CATEGORY_NAME = "Доставка"
 
     // Теги для особой логики в меню

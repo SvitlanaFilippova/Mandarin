@@ -14,15 +14,9 @@ import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
 import com.mandarinkafe.mandarin.features.cart.domain.impl.CartInteractorImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.ClearCartUseCaseImpl
-import com.mandarinkafe.mandarin.features.cart.domain.impl.GetAllRecommendsUseCaseImpl
-import com.mandarinkafe.mandarin.features.cart.domain.impl.GetCartRecommendsUseCaseImpl
-import com.mandarinkafe.mandarin.features.cart.domain.impl.GetCommonRecommendsUseCaseImpl
+import com.mandarinkafe.mandarin.features.cart.domain.impl.GetRecommendsUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
-import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetAllRecommendsUseCase
-import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetCartRecommendsUseCase
-import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetCommonRecommendsUseCase
-import com.mandarinkafe.mandarin.features.menu.domain.usecase.CategoryFilter
-import com.mandarinkafe.mandarin.util.di.Recommends
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -82,28 +76,10 @@ object CartModule {
     fun provideGetRecommendsUseCase(
         menuCache: MenuCache,
         schemaRepository: RecommendsSchemaRepository
-    ): GetCartRecommendsUseCase = GetCartRecommendsUseCaseImpl(
+    ): GetRecommendsUseCase = GetRecommendsUseCaseImpl(
         schemaRepository = schemaRepository,
         menuCache = menuCache,
     )
-
-    @Provides
-    @Singleton
-    fun provideGetCommonRecommendsUseCase(
-        @Recommends recommendsFilter: CategoryFilter,
-        menuCache: MenuCache,
-    ): GetCommonRecommendsUseCase {
-        return GetCommonRecommendsUseCaseImpl(
-            cache = menuCache,
-            recommendsFilter = recommendsFilter
-        )
-    }
-
-    @Provides
-    fun provideGetAllRecommendsUseCase(
-        common: GetCommonRecommendsUseCase,
-        cartBased: GetCartRecommendsUseCase
-    ): GetAllRecommendsUseCase = GetAllRecommendsUseCaseImpl(common = common, cartBased = cartBased)
 
     @Provides
     @Singleton
