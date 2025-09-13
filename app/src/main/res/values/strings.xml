@@ -242,7 +242,6 @@
     <string name="more_message_manager">Написать руководству</string>
     <string name="message_sent_successfully">Сообщение успешно отправлено.\n\nСпасибо за&#160;обратную связь, мы&#160;её&#160;очень ценим! &#9829;️</string>
     <string name="more_privacy_policy">Политика конфиденциальности</string>
-    <string name="more_user_agreement">Пользовательское соглашение</string>
     <string name="more_personal_data_agreement">Соглашение об обработке персональных данных</string>
     <string name="more_yandex_maps_terms">Условия использования отдельных сервисов «Яндекс.Карт»</string>
     <string name="cannot_open_link">Не удалось открыть ссылку</string>
