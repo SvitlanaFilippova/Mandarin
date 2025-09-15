@@ -4,6 +4,7 @@ import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toStoredCartItem
@@ -68,8 +69,8 @@ class CartRepositoryImpl @Inject constructor(
                     Resource.ErrorOther("Не удалось загрузить меню. Попробуйте позже.")
                 return@launch
             } else {
-                val menu = menuResource.data.orEmpty()
-                val validItems = mapAndValidate(storedCartItems, menu)
+                val fullMenu = menuResource.data.orEmpty()
+                val validItems = mapAndValidate(storedCartItems, fullMenu)
                 cartItems = validItems
                 _cartItems.value = Resource.Success(validItems)
                 _cartCount.value = validItems.sumOf { it.quantity }
@@ -84,14 +85,11 @@ class CartRepositoryImpl @Inject constructor(
 
     private fun mapAndValidate(
         raw: List<StoredCartItem>,
-        menu: List<MealCategory>
+        fullMenu: List<MealCategory>
     ): List<CartItem> {
         val valid = mutableListOf<CartItem>()
 
-        val allMeals = menu.flatMap { category ->
-            category.meals.orEmpty() +
-                    category.subCategories.orEmpty().flatMap { it.meals.orEmpty() }
-        }.associateBy { it.id }
+        val allMeals = flattenMeals(fullMenu).associateBy { it.id }
 
         for (item in raw) {
             val baseMeal = allMeals[item.mealId]
@@ -115,6 +113,16 @@ class CartRepositoryImpl @Inject constructor(
             }
         }
         return valid
+    }
+
+    private fun flattenMeals(categories: List<MealCategory>): List<Meal> {
+        val result = mutableListOf<Meal>()
+        fun dfs(cat: MealCategory) {
+            result += cat.meals.orEmpty()
+            cat.subCategories?.forEach { dfs(it) }
+        }
+        categories.forEach { dfs(it) }
+        return result
     }
 
     override suspend fun addOrUpdateItem(item: CartItem) {

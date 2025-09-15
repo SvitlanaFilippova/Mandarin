@@ -22,7 +22,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class FavoritesModule {
 
-
     @Provides
     @Singleton
     fun provideLocalStorage(sharedPreferences: SharedPreferences): FavoritesStorage {
@@ -71,12 +70,10 @@ class FavoritesModule {
     @Provides
     @Singleton
     fun provideValidateFavoritesUseCase(
-        menuCache: MenuCache,
-        writer: FavoritesWriter
+        menuCache: MenuCache
     ): ValidateFavoritesUseCase {
         return ValidateFavoritesUseCaseImpl(
-            menuCache = menuCache,
-            writer = writer
+            menuCache = menuCache
         )
     }
 }
