@@ -22,4 +22,5 @@ object Colors {
     val LabelNewBlue = Color(0xE61C848C)
     val LabelHitOrange = Color(0xE6F5BD47)
     val LabelDefault = Color(0xE6756D85)
+    val LabelSaleRed = Color(0xFFE91E63)
 }

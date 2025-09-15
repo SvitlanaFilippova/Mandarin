@@ -89,6 +89,7 @@ object Constants {
     const val HOT_LABEL_DEFAULT = "hot"
     const val NEW_LABEL_DEFAULT = "new"
     const val HIT_LABEL_DEFAULT = "hit"
+    const val SALE_LABEL_DEFAULT = "sale"
 
     const val LOCALE_RU = "ru_RU"
     const val COMMENT_DIVIDER = "\\\\\\"
