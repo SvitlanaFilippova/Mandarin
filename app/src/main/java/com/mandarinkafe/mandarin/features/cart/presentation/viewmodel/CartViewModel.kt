@@ -296,13 +296,9 @@ class CartViewModel @Inject constructor(
         cartItems?.let {
             val resource = recommendsUseCase(cartItems)
             setRecommendsLoading(resource is Loading)
-            val filteredRecommends =
-                when (resource) {
-                    is Resource.Success -> resource.data ?: emptyList()
-                    else -> emptyList()
-                }
+            val recommends = resource.data ?: Recommends()
             setState {
-                copy(recommends = filteredRecommends)
+                copy(recommends = recommends)
             }
         }
     }
@@ -314,7 +310,7 @@ class CartViewModel @Inject constructor(
                     cartItems = data,
                     error = null,
                     isLoading = false,
-                    inProgressItems = emptySet()
+                    inProgressItems = emptySet(),
                 )
             }
         }

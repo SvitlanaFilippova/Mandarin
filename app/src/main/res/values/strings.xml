@@ -35,6 +35,7 @@
     <string name="clear_cart">Очистить корзину</string>
     <string name="clear_cart_question">Очистить корзину?</string>
     <string name="clear_cart_confirmation">Действительно удалить всё из корзины?</string>
+    <string name="sushi_soy_souse_tooltip">Палочки, васаби, имбирь и&#160;соевый соус к&#160;суши и&#160;роллам предоставляются бесплатно. Но&#160;вдруг нужна экстра порция.</string>
     <string name="recommendations_title">Советуем добавить</string>
     <string name="comment_for_meal">Комментарий к блюду для повара</string>
     <string name="remove_from_cart">Убрать из корзины</string>
