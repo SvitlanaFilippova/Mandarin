@@ -4,6 +4,7 @@ import android.util.Base64
 import android.util.Log
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.navOptions
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
@@ -17,6 +18,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_ID
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_JSON
 import com.mandarinkafe.mandarin.navigation.NavConstants.LEGAL_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDERS_HISTORY_ROUTE
@@ -42,9 +44,16 @@ fun NavController.navigateToMenu() {
 }
 
 fun NavController.navigateToCart(snackbarMessage: String? = null) {
-    this.navigate(CART_SCREEN_ROUTE) {
-        launchSingleTop = true
-    }
+    this.navigate(
+        route = CART_SCREEN_ROUTE,
+        navOptions = navOptions {
+            launchSingleTop = true
+            restoreState = true
+            popUpTo(MAIN_GRAPH) {
+                saveState = true
+            }
+        }
+    )
     this.currentBackStackEntry
         ?.savedStateHandle
         ?.set(SNACKBAR_MESSAGE_KEY, snackbarMessage)
