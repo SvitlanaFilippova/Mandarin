@@ -27,7 +27,6 @@ class FavoritesInteractorImpl(
     private val reader: FavoritesReader,
     private val writer: FavoritesWriter,
     private val forceRefreshMenu: ForceRefreshMenuUseCase
-
 ) : FavoritesApi {
     private val _favoritesItemsFlow =
         MutableStateFlow<Resource<List<CustomizedMeal>>>(ErrorEmptyData())

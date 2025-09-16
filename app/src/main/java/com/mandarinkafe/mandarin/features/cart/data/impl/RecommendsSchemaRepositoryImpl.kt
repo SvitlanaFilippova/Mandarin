@@ -58,7 +58,7 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
                     ?.map { it.trim() }
                     ?.filter { it.isNotEmpty() }
 
-                val isSeparate = parts[3].trim().equals("TRUE", ignoreCase = true)
+                val isSeparate = parts[3].trim().equals(TRUE_STRING, ignoreCase = true)
 
                 // Не создаём DTO, если нет исходного или нет рекомендуемых товаров
                 if (sourceName == null) return@mapNotNull null
@@ -76,5 +76,6 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
 
     companion object {
         private const val CSV_COLUMNS_NUMBER = 4
+        private const val TRUE_STRING = "TRUE"
     }
 }

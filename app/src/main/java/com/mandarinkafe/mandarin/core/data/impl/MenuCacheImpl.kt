@@ -52,7 +52,6 @@ class MenuCacheImpl @Inject constructor(
 
     @SuppressLint("LogNotTimber")
     private suspend fun fetchWithRetries(): Resource<List<MealCategory>> {
-        Log.d("MenuCache DEBUG", "fetchWithRetries called")
         var attempts = 0
         while (attempts < MAX_ATTEMPTS) {
             try {
@@ -63,10 +62,10 @@ class MenuCacheImpl @Inject constructor(
                     }
 
                     is Resource.ErrorNoInternet<*> -> return result
-                    else -> Log.d("Menu DEBUG", "fetchWithRetries. Ошибка: ${result.message}")
+                    else -> Log.d(LOG_TAG, "fetchWithRetries. Ошибка: ${result.message}")
                 }
             } catch (e: Exception) {
-                Log.d("Menu DEBUG", "fetchWithRetries. Exception: ${e.message}")
+                Log.d(LOG_TAG, "fetchWithRetries. Exception: ${e.message}")
             }
             attempts++
             delay(DELAY_BEFORE_NEXT_ATTEMPT)
@@ -75,7 +74,6 @@ class MenuCacheImpl @Inject constructor(
     }
 
     override suspend fun forceRefresh(fetcher: suspend () -> Resource<List<MealCategory>>) {
-        Log.d("MenuCache DEBUG", "forceRefresh called")
         val result = fetcher()
         if (result is Resource.Success) {
             proceedSuccessData(result.data)
@@ -111,7 +109,6 @@ class MenuCacheImpl @Inject constructor(
             )
         )
         _mainMenu.value = Resource.Success(main)
-        Log.d("MenuCache DEBUG", "_mainMenu updated, main.size=${main.size}")
 
         return visible
     }
@@ -244,10 +241,11 @@ class MenuCacheImpl @Inject constructor(
     }
 
     private companion object {
-        const val MAX_ATTEMPTS = 7
+        const val MAX_ATTEMPTS = 5
         const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 300L
 
         const val RECOMMENDS_CATEGORY_NAME = "Рекомендованные"
         const val DELIVERY_CATEGORY_NAME = "Доставка"
+        const val LOG_TAG = "MENU CACHE DEBUG"
     }
 }

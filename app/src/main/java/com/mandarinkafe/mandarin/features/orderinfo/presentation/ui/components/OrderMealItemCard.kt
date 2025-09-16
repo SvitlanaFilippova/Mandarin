@@ -39,10 +39,14 @@ fun OrderMealItemCard(
         if (isDeleted) TextDecoration.LineThrough else null
     }
 
-    val noLongerInMenuMessage = if (!item.isValidated) stringResource(
-        R.string.item_is_no_longer_available,
-        item.name
-    ) else ""
+    val noLongerInMenuMessage = if (!item.isValidated) {
+        stringResource(
+            R.string.item_is_no_longer_available,
+            item.name
+        )
+    } else {
+        ""
+    }
 
     val onMealDetailsClick = {
         if (item.isValidated) {

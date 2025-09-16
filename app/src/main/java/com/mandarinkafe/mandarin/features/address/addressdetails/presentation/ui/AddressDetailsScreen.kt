@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -72,6 +74,7 @@ fun AddressDetailsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(Dimens.MarginSmall8),
     ) {
         ScreenTitleWithBackButton(
@@ -129,7 +132,7 @@ fun AddressDetailsScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = Dimens.MarginStandard16)
+                .padding(vertical = Dimens.MarginStandard16)
         ) {
             if (isEditMode) {
                 BigButtonWithText(
