@@ -46,7 +46,7 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
 
                 val sourceName = parts[SOURCE_NAME_INDEX].takeIf { it.isNotBlank() }
 
-                val excludeSku = parts[CSV_COLUMNS_NUMBER]
+                val excludeSku = parts[EXCLUDE_SKU_INDEX]
                     .takeIf { it.isNotBlank() }
                     ?.split(";")
                     ?.map { it.trim() }
