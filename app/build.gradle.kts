@@ -103,6 +103,10 @@ android {
 
 
 dependencies {
+    // Android Jetpack Lifecycle
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.process)
+
     // Navigation for Compose
     implementation(libs.androidx.navigation.compose)
 

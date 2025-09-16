@@ -24,6 +24,8 @@ import kotlinx.coroutines.launch
 class MenuCacheImpl @Inject constructor(
     private val fetcher: MenuFetcher,
 ) : MenuCache {
+    override var lastRefreshTime: Long = 0
+        private set
     private val _allVisibleMenu =
         MutableStateFlow<Resource<List<MealCategory>>>(Resource.Idle())
     private val _mainMenu = MutableStateFlow<Resource<List<MealCategory>>>(Resource.Idle())
@@ -84,6 +86,7 @@ class MenuCacheImpl @Inject constructor(
 
     // ================= Helper Methods =================
     private fun proceedSuccessData(data: List<MealCategory>?): List<MealCategory> {
+        lastRefreshTime = System.currentTimeMillis()
         val rootCategories = data ?: emptyList()
 
         val visible = filterVisibleMenu(rootCategories)

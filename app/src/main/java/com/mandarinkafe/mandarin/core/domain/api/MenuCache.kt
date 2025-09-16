@@ -30,6 +30,9 @@ interface MenuCache {
      */
     val deliveryItems: StateFlow<MealCategory?>
 
+    /** Время последнего успешного обновления меню */
+    val lastRefreshTime: Long
+
     fun getMealById(id: String): Meal?
     fun getMealsBySku(sku: String): List<Meal>
     fun fetchMenuIfNeeded()
