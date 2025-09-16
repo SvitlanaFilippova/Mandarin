@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart.data.impl
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
@@ -45,6 +46,7 @@ class CartRepositoryImpl @Inject constructor(
         getInitData()
     }
 
+    @SuppressLint("LogNotTimber")
     private fun getInitData() {
         scope.launch {
             // 1. Получаем корзину из storage
@@ -60,10 +62,11 @@ class CartRepositoryImpl @Inject constructor(
 
             // 2. Ждём первое успешное меню, но не дольше 5 секунд
             val menuResource = withTimeoutOrNull(MENU_WAIT_TIMEOUT) {
-                menuCache.fullMenu
+                menuCache.allVisibleMenu
                     .filterIsInstance<Resource.Success<List<MealCategory>>>()
                     .firstOrNull()
             }
+
             if (menuResource == null) {
                 _cartItems.value =
                     Resource.ErrorOther("Не удалось загрузить меню. Попробуйте позже.")
@@ -85,11 +88,11 @@ class CartRepositoryImpl @Inject constructor(
 
     private fun mapAndValidate(
         raw: List<StoredCartItem>,
-        fullMenu: List<MealCategory>
+        menu: List<MealCategory>
     ): List<CartItem> {
         val valid = mutableListOf<CartItem>()
 
-        val allMeals = flattenMeals(fullMenu).associateBy { it.id }
+        val allMeals = flattenMeals(menu).associateBy { it.id }
 
         for (item in raw) {
             val baseMeal = allMeals[item.mealId]
@@ -162,7 +165,7 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        private const val MENU_WAIT_TIMEOUT = 5000L
+        private const val MENU_WAIT_TIMEOUT = 15000L
         private const val ERROR_TAG = "Cart DEBUG Repo"
     }
 }

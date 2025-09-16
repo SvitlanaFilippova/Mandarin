@@ -72,11 +72,13 @@ fun MenuScreen(
                 onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
             )
 
-            menuItems.isEmpty() && !isLoading -> PlaceholderScreen(
-                error = UiError.MenuEmpty,
-                onRetryClick = { onMenuEvent(MenuEvent.ForceRefresh) },
-                onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
-            )
+            menuItems.isEmpty() && !isLoading ->
+                PlaceholderScreen(
+                    error = UiError.MenuEmpty,
+                    onRetryClick = { onMenuEvent(MenuEvent.ForceRefresh) },
+                    onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+                )
+
 
             menuItems.isNotEmpty() -> MenuContentScreen(
                 menuItems = menuItems,
