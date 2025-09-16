@@ -25,6 +25,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.OnMealDetailsClick
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
@@ -86,7 +87,14 @@ fun OrderInfoScreen(
                     navController = navController,
                     orderRepeatingInProgress = state.orderRepeatingInProgress,
                     fromOrderCreation = fromOrderCreation,
-                    onOrderItemClick = { mealId -> onSharedEvent(OnMealDetailsClick(mealId = mealId)) }
+                    onOpenMealDetails = { mealId -> onSharedEvent(OnMealDetailsClick(mealId = mealId)) },
+                    showNoLongerInMenuMessage = { text ->
+                        onSharedEvent(
+                            SharedContract.SharedEvent.ShowSnackbar(
+                                text
+                            )
+                        )
+                    }
                 )
             } else {
                 PlaceholderScreen(error = EmptyOrderData)

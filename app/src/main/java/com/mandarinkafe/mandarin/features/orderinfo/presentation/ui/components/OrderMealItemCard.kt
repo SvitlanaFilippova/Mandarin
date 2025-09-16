@@ -23,11 +23,13 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingMealAdditional
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingModifier
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
+
 @Composable
 fun OrderMealItemCard(
     modifier: Modifier = Modifier,
     item: IncomingOrderItem,
-    onMealDetailsClick: () -> Unit,
+    onOpenMealDetails: () -> Unit,
+    showNoLongerInMenuMessage: (String) -> Unit,
 ) {
     val discountedDecoration = remember(item) {
         if (item.isDiscounted) TextDecoration.LineThrough else null
@@ -35,6 +37,19 @@ fun OrderMealItemCard(
     val isDeleted = remember(item) { item.deleted.isDeleted }
     val deletedDecoration = remember(item) {
         if (isDeleted) TextDecoration.LineThrough else null
+    }
+
+    val noLongerInMenuMessage = if (!item.isValidated) stringResource(
+        R.string.item_is_no_longer_available,
+        item.name
+    ) else ""
+
+    val onMealDetailsClick = {
+        if (item.isValidated) {
+            onOpenMealDetails()
+        } else {
+            showNoLongerInMenuMessage(noLongerInMenuMessage)
+        }
     }
 
     Row(

@@ -51,6 +51,7 @@ class OrderInfoRepositoryImpl(
                 if (addMeal != null) {
                     add.copy(
                         name = addMeal.name,
+                        isValidated = true
                     )
                 } else {
                     add
@@ -60,6 +61,7 @@ class OrderInfoRepositoryImpl(
             if (meal != null) {
                 item.copy(
                     name = meal.name,
+                    isValidated = true,
                     chosenAdds = validatedAdds
                 )
             } else {
