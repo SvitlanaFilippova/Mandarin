@@ -63,7 +63,7 @@ class CartViewModel @Inject constructor(
     private fun forceRefresh() {
         viewModelScope.launch {
             resetError()
-            cartInteractor.forceRetry()
+            cartInteractor.forceRefresh()
             updateRecommends(state.value.cartItems.map { it.customizedMeal.meal }.toSet())
         }
     }

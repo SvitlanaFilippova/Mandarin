@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.menu.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
+import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
@@ -30,7 +31,8 @@ import javax.inject.Inject
 class MenuViewModel @Inject constructor(
     private val menuInteractor: MenuInteractor,
     private val favoritesApi: FavoritesApi,
-    private val getBannersUseCase: GetBannersUseCase
+    private val getBannersUseCase: GetBannersUseCase,
+    private val forceRefreshMenu: ForceRefreshMenuUseCase,
 ) : BaseViewModel<MenuEvent, MenuEffect, MenuState>() {
     override fun setInitialState() = MenuState()
 
@@ -52,7 +54,7 @@ class MenuViewModel @Inject constructor(
     private fun forceRefresh() {
         viewModelScope.launch {
             setLoading()
-            menuInteractor.forceRefresh()
+            forceRefreshMenu()
             loadMenu()
             getBanners()
         }

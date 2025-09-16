@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.cart.domain.impl
 
 import com.mandarinkafe.mandarin.core.data.api.CartReader
+import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.first
 class CartInteractorImpl(
     private val cartWriter: CartWriter,
     private val cartReader: CartReader,
+    private val forceRefreshMenu: ForceRefreshMenuUseCase,
 ) : CartInteractor {
     override fun observeCartItemsCount() = cartReader.observeCartItemsCount()
     override fun observeCartItems() = cartReader.observeCartItems()
@@ -25,7 +27,8 @@ class CartInteractorImpl(
             else -> emptyList()
         }
     }
-    override suspend fun forceRetry() {
+    override suspend fun forceRefresh() {
+        forceRefreshMenu()
         cartReader.forceRetry()
     }
     override suspend fun addItem(

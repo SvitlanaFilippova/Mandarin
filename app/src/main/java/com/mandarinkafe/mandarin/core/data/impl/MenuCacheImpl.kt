@@ -85,18 +85,12 @@ class MenuCacheImpl @Inject constructor(
     // ================= Helper Methods =================
     private fun proceedSuccessData(data: List<MealCategory>?): List<MealCategory> {
         val rootCategories = data ?: emptyList()
-        Log.d(
-            "MenuCache DEBUG",
-            "proceedSuccessData called, rootCategories size=${rootCategories.size}"
-        )
 
         val visible = filterVisibleMenu(rootCategories)
         _allVisibleMenu.value = Resource.Success(visible)
-        Log.d("MenuCache DEBUG", "_allVisibleMenu updated with visible.size=${visible.size}")
 
         val addons = extractAddons(visible)
         _addonsCategories.value = addons
-        Log.d("MenuCache DEBUG", "_addonsCategories updated with addons.size=${addons.size}")
 
         val delivery = extractSpecialCategory(
             allCategories = visible,
