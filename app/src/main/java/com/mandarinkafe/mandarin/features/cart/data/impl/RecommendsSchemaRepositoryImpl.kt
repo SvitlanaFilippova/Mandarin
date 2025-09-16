@@ -44,21 +44,22 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
 
                 if (parts.size < CSV_COLUMNS_NUMBER) return@mapNotNull null
 
-                val sourceName = parts[0].takeIf { it.isNotBlank() }
+                val sourceName = parts[SOURCE_NAME_INDEX].takeIf { it.isNotBlank() }
 
-                val excludeSku = parts[1]
+                val excludeSku = parts[CSV_COLUMNS_NUMBER]
                     .takeIf { it.isNotBlank() }
                     ?.split(";")
                     ?.map { it.trim() }
                     ?.filter { it.isNotEmpty() }
 
-                val recommendedSku = parts[2]
+                val recommendedSku = parts[RECOMMEND_SKU_INDEX]
                     .takeIf { it.isNotBlank() }
                     ?.split(";")
                     ?.map { it.trim() }
                     ?.filter { it.isNotEmpty() }
 
-                val isSeparate = parts[3].trim().equals(TRUE_STRING, ignoreCase = true)
+                val isSeparate =
+                    parts[IS_SEPARATE_INDEX].trim().equals(TRUE_STRING, ignoreCase = true)
 
                 // Не создаём DTO, если нет исходного или нет рекомендуемых товаров
                 if (sourceName == null) return@mapNotNull null
@@ -75,6 +76,10 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
     }
 
     companion object {
+        private const val SOURCE_NAME_INDEX = 0
+        private const val EXCLUDE_SKU_INDEX = 1
+        private const val RECOMMEND_SKU_INDEX = 2
+        private const val IS_SEPARATE_INDEX = 3
         private const val CSV_COLUMNS_NUMBER = 4
         private const val TRUE_STRING = "TRUE"
     }
