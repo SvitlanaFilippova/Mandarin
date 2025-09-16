@@ -6,4 +6,5 @@ data class IncomingMealAdditional(
     val amount: Double,
     val price: Double,
     val discountedPrice: Double?,
+    val isValidated: Boolean = false
 )

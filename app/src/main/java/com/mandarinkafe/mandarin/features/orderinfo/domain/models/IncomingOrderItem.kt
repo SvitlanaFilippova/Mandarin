@@ -10,7 +10,8 @@ data class IncomingOrderItem(
     val discountedPrice: Double?,
     val positionId: String?,
     val deleted: DeletionInfo = DeletionInfo(),
-    val comment: String
+    val comment: String,
+    val isValidated: Boolean = false
 ) {
     val totalPrice: Double
         get() = price + chosenModifiers.sumOf { it.price } + chosenAdds.sumOf { it.price }
