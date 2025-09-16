@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.screen
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -95,10 +94,6 @@ fun CartScreen(
                 )
 
                 state.cartItems.isEmpty() && !state.isLoading -> {
-                    Log.d(
-                        "Cart Error DEBUG",
-                        "CartScreen,  state.cartItems.isEmpty() && !state.isLoading, показываю PlaceholderScreen"
-                    )
                     PlaceholderScreen(
                         UiError.CartEmpty,
                         onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },

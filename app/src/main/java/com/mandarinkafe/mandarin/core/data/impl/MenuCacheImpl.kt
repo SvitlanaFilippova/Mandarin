@@ -38,7 +38,7 @@ class MenuCacheImpl @Inject constructor(
     override val deliveryItems: StateFlow<MealCategory?> = _deliveryItems.asStateFlow()
 
     override fun fetchMenuIfNeeded() {
-        val current = _mainMenu.value
+        val current = _allVisibleMenu.value
         if (current is Resource.Success || current is Resource.Loading) return
 
         CoroutineScope(Dispatchers.IO).launch {

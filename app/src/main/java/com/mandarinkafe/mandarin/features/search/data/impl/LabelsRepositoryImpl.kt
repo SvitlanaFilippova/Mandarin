@@ -16,10 +16,10 @@ class LabelsRepositoryImpl(
 
     override suspend fun getLabels(): List<Label> {
         // Ждём, пока меню загрузится
-        menuCache.visibleMenu.first { it is Resource.Success }
+        menuCache.mainMenu.first { it is Resource.Success }
 
         val currentMenu =
-            (menuCache.visibleMenu.value as? Resource.Success)?.data ?: return emptyList()
+            (menuCache.mainMenu.value as? Resource.Success)?.data ?: return emptyList()
 
         val currentHash = currentMenu.hashCode()
 

@@ -8,6 +8,6 @@ import com.mandarinkafe.mandarin.util.Resource
 class GetOrderStatusUseCaseImpl(private val repository: OrderInfoRepository) :
     GetOrderStatusUseCase {
     override suspend fun invoke(id: String): Resource<IncomingOrder> {
-        return repository.getStatusFromApi(id)
+        return repository.getOrderFromApi(id)
     }
 }

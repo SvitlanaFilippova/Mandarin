@@ -7,13 +7,29 @@ import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Класс для хранения поулченного меню и операций с ним
+ * Класс для хранения полученного меню и операций с ним
  */
 interface MenuCache {
-    val fullMenu: StateFlow<Resource<List<MealCategory>>>
-    val visibleMenu: StateFlow<Resource<List<MealCategory>>>
+    /**
+     * Все категории со статусом "visible", включая добавки
+     */
+    val allVisibleMenu: StateFlow<Resource<List<MealCategory>>>
+
+    /**
+     * Только категории (видимые), которые должны отображаться в основном меню
+     */
+    val mainMenu: StateFlow<Resource<List<MealCategory>>>
+
+    /**
+     * Категории добавок (видимые)
+     */
     val addonsCategories: StateFlow<List<MealAdditionalCategory>>
+
+    /**
+     * Категория позиций доставки
+     */
     val deliveryItems: StateFlow<MealCategory?>
+
     fun getMealById(id: String): Meal?
     fun getMealsBySku(sku: String): List<Meal>
     fun fetchMenuIfNeeded()

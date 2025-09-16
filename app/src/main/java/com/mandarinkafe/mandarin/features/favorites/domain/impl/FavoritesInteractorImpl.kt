@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.favorites.domain.impl
 
+import android.util.Log
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesReader
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesWriter
@@ -47,11 +48,16 @@ class FavoritesInteractorImpl(
     }
 
     override suspend fun toggleFavorite(custom: CustomizedMeal) {
+        Log.d(
+            "Debug FAVORITES",
+            "FavoritesInteractorImpl, called toggleFavorite  for custom meal $custom"
+        )
         val record = custom.toFavoriteRecord(getTimeStamp())
         writer.toggleFavorite(record)
     }
 
     override suspend fun toggleFavorite(meal: Meal) {
+        Log.d("Debug FAVORITES", "FavoritesInteractorImpl, called toggleFavorite  for meal $meal")
         val record = meal.toFavoriteRecord(getTimeStamp())
         writer.toggleFavorite(record)
 
@@ -63,7 +69,6 @@ class FavoritesInteractorImpl(
 
     private suspend fun observeFavoritesUpdates() {
         reader.observeRawFavorites().collect { resource ->
-            // Исправление: передаем напрямую resource, а не Resource.Success
             when (resource) {
                 is Success -> {
                     val records = resource.data ?: emptySet()

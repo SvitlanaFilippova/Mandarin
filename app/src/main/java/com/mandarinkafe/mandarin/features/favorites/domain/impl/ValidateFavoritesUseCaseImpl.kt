@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.favorites.domain.impl
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.FavoriteRecord
+import com.mandarinkafe.mandarin.core.domain.models.id
 import com.mandarinkafe.mandarin.features.cart.data.validateBy
 import com.mandarinkafe.mandarin.features.favorites.domain.usecase.ValidateFavoritesUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
@@ -23,7 +24,7 @@ class ValidateFavoritesUseCaseImpl(
             Resource.Success(
                 result.validPairs
                     .sortedByDescending { it.first.timestamp }
-                    .map { it.second }
+                    .map { it.second }.distinctBy { it.id }
             )
         } catch (e: Exception) {
             Resource.ErrorOther(e.message ?: "Favorites validation error")
@@ -31,14 +32,14 @@ class ValidateFavoritesUseCaseImpl(
     }
 
     private suspend fun waitForMenu() {
-        menuCache.visibleMenu.first { it is Resource.Success }
+        menuCache.allVisibleMenu.first { it is Resource.Success }
     }
 
     private fun processRecords(
         raw: Set<FavoriteRecord>
     ): ValidationResult {
         val validPairs = mutableListOf<Pair<FavoriteRecord, CustomizedMeal>>()
-        val cleanedStored = mutableSetOf<FavoriteRecord>()
+
 
         for (record in raw) {
             val fullMeal = menuCache.getMealById(record.mealId)
@@ -54,12 +55,12 @@ class ValidateFavoritesUseCaseImpl(
                         modifiers = emptyList()
                     )
                     validPairs += record to customized
-                    cleanedStored += record
                 }
 
                 is FavoriteRecord.Custom -> {
                     val validAdds = record.addsIds.mapNotNull { id ->
-                        menuCache.getMealById(id)?.toMealAdditional()
+                        val additional = menuCache.getMealById(id)?.toMealAdditional()
+                        additional
                     }
 
                     val validMods = record.modifiers.validateBy(fullMeal.modifiers)
@@ -74,19 +75,16 @@ class ValidateFavoritesUseCaseImpl(
                         modifiers = validMods
                     )
                     validPairs += cleaned to customized
-                    cleanedStored += cleaned
                 }
             }
         }
 
         return ValidationResult(
             validPairs = validPairs,
-            cleanedStored = cleanedStored,
         )
     }
 
     private data class ValidationResult(
         val validPairs: List<Pair<FavoriteRecord, CustomizedMeal>>,
-        val cleanedStored: Set<FavoriteRecord>,
     )
 }

@@ -77,7 +77,6 @@ class FavoritesRepositoryImpl(
         when (val stored = storage.getFavorites()) {
             is FavoritesStorageResult.Success -> {
                 val records = stored.favorites.toFavoriteRecords()
-
                 _favoritesFlow.value = if (isConnected()) {
                     Resource.Success(records)
                 } else {
