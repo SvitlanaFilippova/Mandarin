@@ -15,7 +15,7 @@ class OrderInfoRepositoryImpl(
     private val menuCache: MenuCache,
 ) : OrderInfoRepository {
 
-    override suspend fun getStatusFromApi(id: String): Resource<IncomingOrder> {
+    override suspend fun getOrderFromApi(id: String): Resource<IncomingOrder> {
         val response = networkClient.getSingleOrderInfoById(id)
         return when (response.resultCode) {
             NO_CONNECTION -> Resource.ErrorNoInternet<IncomingOrder>()
@@ -27,7 +27,8 @@ class OrderInfoRepositoryImpl(
                     ?.toDomain(addons)
 
                 if (orderInfo != null) {
-                    Resource.Success(data = orderInfo)
+                    val validatedOrder = validateOrderItemsWithMenu(order = orderInfo)
+                    Resource.Success(data = validatedOrder)
                 } else {
                     Resource.ErrorOther(
                         "Ошибка сервера или пустой ответ"
@@ -39,4 +40,35 @@ class OrderInfoRepositoryImpl(
         }
     }
 
+    private fun validateOrderItemsWithMenu(
+        order: IncomingOrder
+    ): IncomingOrder {
+        val validatedItems = order.items.map { item ->
+            val meal = menuCache.getMealById(item.id)
+
+            val validatedAdds = item.chosenAdds.map { add ->
+                val addMeal = menuCache.getMealById(add.id)
+                if (addMeal != null) {
+                    add.copy(
+                        name = addMeal.name,
+                    )
+                } else {
+                    add
+                }
+            }
+
+            if (meal != null) {
+                item.copy(
+                    name = meal.name,
+                    chosenAdds = validatedAdds
+                )
+            } else {
+                item.copy(
+                    chosenAdds = validatedAdds
+                )
+            }
+        }
+
+        return order.copy(items = validatedItems)
+    }
 }
