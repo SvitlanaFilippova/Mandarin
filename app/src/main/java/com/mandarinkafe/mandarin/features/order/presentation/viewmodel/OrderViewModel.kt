@@ -70,6 +70,7 @@ class OrderViewModel @Inject constructor(
     init {
         getSavedAddresses()
         observeCartItems()
+        getSavedUserInfo()
     }
 
     override fun setInitialState() = OrderState()
@@ -103,7 +104,6 @@ class OrderViewModel @Inject constructor(
     private fun getInitData() {
         getPaymentTypes()
         getSavedAddresses()
-        getSavedUserInfo()
     }
 
     private fun removePickupOnly() {
@@ -448,6 +448,7 @@ class OrderViewModel @Inject constructor(
             clearCart()
             saveOrderToHistory(order)
         }
+        getSavedUserInfo()
     }
 
     private fun sendErrorEffect(msg: UiText) {

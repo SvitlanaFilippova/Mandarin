@@ -33,8 +33,7 @@ fun SearchResultsLazyColumn(
 
     LazyColumn(
         state = listState
-    )
-    {
+    ) {
         items(
             items = filteredMenuItems,
             key = { it.id }

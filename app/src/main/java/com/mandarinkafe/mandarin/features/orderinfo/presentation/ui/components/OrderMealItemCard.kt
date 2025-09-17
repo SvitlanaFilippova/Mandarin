@@ -34,9 +34,8 @@ fun OrderMealItemCard(
     val discountedDecoration = remember(item) {
         if (item.isDiscounted) TextDecoration.LineThrough else null
     }
-    val isDeleted = remember(item) { item.deleted.isDeleted }
     val deletedDecoration = remember(item) {
-        if (isDeleted) TextDecoration.LineThrough else null
+        if (item.isDeleted) TextDecoration.LineThrough else null
     }
 
     val noLongerInMenuMessage = if (!item.isValidated) {
@@ -75,10 +74,7 @@ fun OrderMealItemCard(
                 deletedDecoration = deletedDecoration
             )
 
-            AddsList(
-                adds = item.chosenAdds,
-                deletedDecoration = deletedDecoration
-            )
+            AddsList(adds = item.chosenAdds)
 
             if (item.comment.isNotEmpty()) {
                 MealComment(comment = item.comment)
@@ -86,7 +82,7 @@ fun OrderMealItemCard(
 
             MealPriceRow(
                 item = item,
-                isDeleted = isDeleted,
+                isDeleted = item.isDeleted,
                 deletedDecoration = deletedDecoration,
                 discountedDecoration = discountedDecoration
             )
@@ -146,27 +142,34 @@ private fun ModifiersList(
 @Composable
 private fun AddsList(
     adds: List<IncomingMealAdditional>,
-    deletedDecoration: TextDecoration?,
 ) {
     adds.forEach {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "+ ${it.name}",
-                style = Typography.MealSmallTextStyle,
-                textDecoration = deletedDecoration,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-            )
-            Text(
-                text = stringResource(R.string.float_price_template, it.price),
-                style = Typography.MealSmallTextStyle,
-                textDecoration = deletedDecoration,
-            )
-        }
+        AddItemRow(item = it)
+    }
+}
+
+@Composable
+private fun AddItemRow(item: IncomingMealAdditional) {
+    val deletedDecoration = remember(item) {
+        if (item.isDeleted) TextDecoration.LineThrough else null
+    }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.weight(1f),
+            text = "+ ${item.name}",
+            style = Typography.MealSmallTextStyle,
+            textDecoration = deletedDecoration,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+        )
+        Text(
+            text = stringResource(R.string.float_price_template, item.price),
+            style = Typography.MealSmallTextStyle,
+            textDecoration = deletedDecoration,
+        )
     }
 }
 
@@ -218,3 +221,4 @@ private fun MealPriceRow(
         }
     }
 }
+

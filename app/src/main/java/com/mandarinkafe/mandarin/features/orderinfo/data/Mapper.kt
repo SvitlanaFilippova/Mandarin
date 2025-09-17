@@ -11,11 +11,9 @@ import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
-import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.DeletionInfoDto
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.IncomingModifierDto
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.IncomingOrderItemDto
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.OrderInfoResponseDto
-import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeletionInfo
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingMealAdditional
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingModifier
@@ -96,7 +94,7 @@ fun IncomingOrderItemDto.toDomain() = IncomingOrderItem(
     chosenModifiers = modifiers?.map { it.toDomain() } ?: emptyList(),
     price = price,
     positionId = positionId,
-    deleted = deleted?.toDomain() ?: DeletionInfo(),
+    isDeleted = deleted?.deletionMethod != null,
     comment = comment ?: "",
     discountedPrice = resultSum
 )
@@ -139,12 +137,6 @@ private fun IncomingModifierDto.toDomain() = IncomingModifier(
     discountedPrice = resultSum
 )
 
-private fun DeletionInfoDto.toDomain() = DeletionInfo(
-    isDeleted = deletionMethod != null,
-    comment = deletionMethod?.comment,
-    removalType = deletionMethod?.removalType?.name
-)
-
 private fun String.toDeliveryStatus(): DeliveryStatus {
     return DeliveryStatus.entries.find { it.apiName.equals(this, ignoreCase = true) }
         ?: DeliveryStatus.UNCONFIRMED
@@ -170,7 +162,8 @@ private fun associateItemsWithAdds(
                 name = dto.product.name.applyTypography(),
                 amount = dto.amount,
                 price = dto.price,
-                discountedPrice = dto.resultSum
+                discountedPrice = dto.resultSum,
+                isDeleted = dto.deleted?.deletionMethod != null,
             )
             if (result.isNotEmpty()) {
                 result.last().chosenAdds += addon
@@ -190,7 +183,7 @@ private class IncomingOrderItemBuilder private constructor(
     private val price: Double,
     private val discountedPrice: Double?,
     private val positionId: String?,
-    private val deleted: DeletionInfo,
+    private val isDeleted: Boolean,
     private val comment: String,
     var chosenModifiers: List<IncomingModifier> = emptyList(),
     val chosenAdds: MutableList<IncomingMealAdditional> = mutableListOf()
@@ -203,7 +196,7 @@ private class IncomingOrderItemBuilder private constructor(
         chosenAdds = chosenAdds.toList(),
         price = price,
         positionId = positionId,
-        deleted = deleted,
+        isDeleted = isDeleted,
         comment = comment,
         discountedPrice = discountedPrice
     )
@@ -217,7 +210,7 @@ private class IncomingOrderItemBuilder private constructor(
                 amount = dto.amount,
                 price = dto.price,
                 positionId = dto.positionId,
-                deleted = dto.deleted?.toDomain() ?: DeletionInfo(),
+                isDeleted = dto.deleted?.deletionMethod != null,
                 comment = visibleComment,
                 chosenModifiers = dto.modifiers?.map { it.toDomain() } ?: emptyList(),
                 discountedPrice = dto.resultSum,
@@ -231,7 +224,7 @@ private class IncomingOrderItemBuilder private constructor(
                 amount = 0.0,
                 price = 0.0,
                 positionId = null,
-                deleted = DeletionInfo(),
+                isDeleted = false,
                 comment = "",
                 discountedPrice = null,
             ).apply { chosenAdds += addon }

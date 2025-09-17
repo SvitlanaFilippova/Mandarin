@@ -9,7 +9,7 @@ data class IncomingOrderItem(
     val price: Double,
     val discountedPrice: Double?,
     val positionId: String?,
-    val deleted: DeletionInfo = DeletionInfo(),
+    val isDeleted: Boolean = false,
     val comment: String,
     val isValidated: Boolean = false
 ) {
