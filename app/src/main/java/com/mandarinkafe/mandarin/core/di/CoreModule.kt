@@ -16,10 +16,12 @@ import com.mandarinkafe.mandarin.core.data.network.api.IikoOrderApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoTerminalApi
 import com.mandarinkafe.mandarin.core.data.network.impl.GoogleDocsNetworkClientImpl
 import com.mandarinkafe.mandarin.core.data.network.impl.IikoNetworkClientImpl
+import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartCountUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartItemsUseCase
+import com.mandarinkafe.mandarin.core.domain.impl.ForceRefreshMenuUseCaseImpl
 import com.mandarinkafe.mandarin.core.domain.impl.GetInitialDataUseCaseImpl
 import com.mandarinkafe.mandarin.core.domain.impl.ObserveCartCountUseCaseImpl
 import com.mandarinkafe.mandarin.core.domain.impl.ObserveCartItemsUseCaseImpl
@@ -27,6 +29,7 @@ import com.mandarinkafe.mandarin.database.AppDatabase
 import com.mandarinkafe.mandarin.features.address.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CategoryDiscountRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
+import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.util.Constants.DATABASE_NAME
 import com.mandarinkafe.mandarin.util.Constants.GOOGLE_DOCS_BASE_URL
 import com.mandarinkafe.mandarin.util.Constants.LOCAL_STORAGE_NAME
@@ -110,6 +113,18 @@ class CoreModule {
     fun provideMenuCache(fetcher: MenuFetcher): MenuCache {
         return MenuCacheImpl(
             fetcher = fetcher
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideForceRefreshMenuUseCase(
+        repository: MenuRepository,
+        cache: MenuCache
+    ): ForceRefreshMenuUseCase {
+        return ForceRefreshMenuUseCaseImpl(
+            repository = repository,
+            cache = cache
         )
     }
 

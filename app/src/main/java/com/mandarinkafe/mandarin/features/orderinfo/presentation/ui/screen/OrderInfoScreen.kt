@@ -25,6 +25,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent.OnMealDetailsClick
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
@@ -42,6 +43,7 @@ fun OrderInfoScreen(
     navController: NavHostController,
 ) {
     if (orderID == null) return
+
     val onEvent = viewModel::onEvent
     val state by viewModel.state.collectAsState()
     val effectFlow = viewModel.effect
@@ -78,20 +80,33 @@ fun OrderInfoScreen(
                 onBackClick = { navController.popBackStack() }
             )
 
-            if (state.incomingOrder != null) {
-                OrderInfoContentScreen(
-                    order = state.incomingOrder,
-                    state = state,
-                    onEvent = onEvent,
-                    navController = navController,
-                    orderRepeatingInProgress = state.orderRepeatingInProgress,
-                    fromOrderCreation = fromOrderCreation,
-                    onOrderItemClick = { mealId -> onSharedEvent(OnMealDetailsClick(mealId = mealId)) }
-                )
-            } else {
-                PlaceholderScreen(error = EmptyOrderData)
+            when {
+                state.incomingOrder != null -> {
+                    OrderInfoContentScreen(
+                        order = state.incomingOrder,
+                        state = state,
+                        onEvent = onEvent,
+                        navController = navController,
+                        orderRepeatingInProgress = state.orderRepeatingInProgress,
+                        fromOrderCreation = fromOrderCreation,
+                        onOpenMealDetails = { mealId -> onSharedEvent(OnMealDetailsClick(mealId = mealId)) },
+                        showNoLongerInMenuMessage = { text ->
+                            onSharedEvent(
+                                SharedContract.SharedEvent.ShowSnackbar(
+                                    text
+                                )
+                            )
+                        }
+                    )
+                }
+
+                state.incomingOrder == null && !state.isLoading -> {
+                    PlaceholderScreen(error = EmptyOrderData)
+                }
+
             }
         }
+
         PullRefreshIndicator(
             refreshing = state.isLoading,
             state = pullRefreshState,
@@ -101,7 +116,6 @@ fun OrderInfoScreen(
         DisposableEffect(Unit) {
             onDispose { onEvent(StopObservingStatus) }
         }
-
 
         LaunchedEffect(Unit) {
             effectFlow.collectLatest { effect ->

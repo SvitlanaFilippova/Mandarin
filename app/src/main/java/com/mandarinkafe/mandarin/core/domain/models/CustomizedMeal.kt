@@ -15,7 +15,17 @@ data class CustomizedMeal(
     Выбранные модификаторы (по группам)
      */
     val modifiers: List<ModifierGroup> = emptyList<ModifierGroup>(),
-)
+
+    ) {
+    override fun equals(other: Any?): Boolean {
+        return other is CustomizedMeal && id == other.id
+    }
+
+    override fun hashCode(): Int = id.hashCode()
+}
+
+val CustomizedMeal.id: String
+    get() = generateUniqueId(meal, adds, modifiers)
 
 /**
  * Проверяет, выбраны ли какие-либо опции у блюда
@@ -23,26 +33,15 @@ data class CustomizedMeal(
 val CustomizedMeal.isCustomized
     get() = modifiers.isNotEmpty() || adds.isNotEmpty()
 
-val CustomizedMeal.id: String
-    get() = buildString {
-        append(meal.id)
-        adds.sortedBy { it.id }.forEach { append("_add_${it.id}") }
-        modifiers.sortedBy { it.id }.forEach { group ->
-            append("_modgroup_${group.id}")
-            group.items.sortedBy { it.id }.forEach {
-                append("_mod_${it.id}")
-            }
-        }
-    }
-
-fun CustomizedMeal.isFavorite(favorites: List<CustomizedMeal>) = favorites.any { it == this }
+fun CustomizedMeal.isFavorite(favorites: List<CustomizedMeal>): Boolean {
+    return favorites.any { it == this }
+}
 
 fun CustomizedMeal.totalPrice(): Int {
     val addsTotal = adds.sumOf { it.price }
     val modifiersTotal = modifiers.sumOf { group -> group.items.sumOf { it.price } }
     return meal.price + addsTotal + modifiersTotal
 }
-
 
 fun CustomizedMeal.hasSelectedAllRequiredModifiers(): Boolean {
     return meal.modifiers
@@ -84,6 +83,22 @@ fun CustomizedMeal.customizedText(): String {
         if (optionalItems.isNotEmpty()) {
             if (!requiredText.isNullOrBlank()) append("\n")
             append(optionalItems.joinToString(", "))
+        }
+    }
+}
+
+private fun generateUniqueId(
+    meal: Meal,
+    adds: List<MealAdditional>,
+    modifiers: List<ModifierGroup>
+): String {
+    return buildString {
+        append(meal.id)
+        if (adds.isNotEmpty() || modifiers.isNotEmpty()) append("_custom")
+        adds.sortedBy { it.id }.forEach { append("_add_${it.id}") }
+        modifiers.sortedBy { it.id }.forEach { g ->
+            append("_modgroup_${g.id}")
+            g.items.sortedBy { it.id }.forEach { append("_mod_${it.id}") }
         }
     }
 }

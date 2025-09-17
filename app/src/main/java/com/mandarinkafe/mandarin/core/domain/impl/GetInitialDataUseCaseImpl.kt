@@ -32,7 +32,7 @@ class GetInitialDataUseCaseImpl(
         }
 
         emitAll(
-            menuCache.visibleMenu.map { result ->
+            menuCache.mainMenu.map { result ->
                 when (result) {
                     is Resource.Success -> {
                         val filtered = result.data?.filterNot { it.isHidden }

@@ -15,7 +15,7 @@ class RepeatOrderInteractorImpl(
 ) : RepeatOrderInteractor {
 
     override suspend fun mapToCartItems(incoming: List<IncomingOrderItem>): RepeatOrderResult {
-        menuCache.visibleMenu.first { it is Resource.Success }
+        menuCache.allVisibleMenu.first { it is Resource.Success }
 
         val validItems = mutableListOf<CartItem>()
         var invalidFound = false

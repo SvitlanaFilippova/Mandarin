@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,10 +16,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import coil3.compose.AsyncImagePainter
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
 import coil3.request.ImageRequest
+import coil3.request.allowHardware
 import coil3.request.crossfade
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -43,49 +39,45 @@ fun MealItemImageBox(
     onToggleFavorite: () -> Unit,
     labelSize: LabelSize
 ) {
-    var isLoading by remember { mutableStateOf(true) }
-    var isError by remember { mutableStateOf(false) }
-
+    val spacerSize = if (cardIsSmall) Dimens.MarginSuperSmall2 else Dimens.MarginSuperSmall4
+    val paddingSize = if (cardIsSmall) Dimens.MarginSuperSmall4 else Dimens.MarginSmall8
     Box(
         modifier = modifier
+            .clip(RoundedCornerShape(Dimens.CornerRadius8)),
+        contentAlignment = Alignment.Center
+
     ) {
         SubcomposeAsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(meal.imageUrl)
                 .size(IMAGE_SIZE_IN_MENU)
                 .crossfade(true)
+                .allowHardware(false)
                 .build(),
             contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                .background(Colors.AppBlack),
-            onState = {
-                isLoading = it is AsyncImagePainter.State.Loading
-                isError = it is AsyncImagePainter.State.Error
-            }
-        ) {
-            when {
-                isLoading || isError -> {
-                    Image(
-                        painter = painterResource(R.drawable.placeholder_meal_no_photo),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .matchParentSize()
-                    )
+            modifier = Modifier.fillMaxSize(),
+
+            loading = { Placeholder() },
+            error = { Placeholder() },
+            success = { state ->
+                val ratio = state.painter.intrinsicSize.width / state.painter.intrinsicSize.height
+                val contentScale = if (ratio in 0.75f..1.5f) {
+                    ContentScale.Crop
+                } else {
+                    ContentScale.Fit
                 }
 
-                else -> {
-                    SubcomposeAsyncImageContent()
-                }
+                SubcomposeAsyncImageContent(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(Dimens.CornerRadius8))
+                        .background(Colors.White),
+                    contentScale = contentScale
+                )
             }
-        }
+        )
+
         // Тэги блюда
-
-        val spacerSize = if (cardIsSmall) Dimens.MarginSuperSmall2 else Dimens.MarginSuperSmall4
-        val paddingSize = if (cardIsSmall) Dimens.MarginSuperSmall4 else Dimens.MarginSmall8
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(spacerSize),
@@ -118,4 +110,16 @@ fun MealItemImageBox(
             onClick = onToggleFavorite
         )
     }
+}
+
+@Composable
+private fun Placeholder() {
+    Image(
+        painter = painterResource(R.drawable.placeholder_meal_no_photo),
+        contentDescription = null,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Colors.AppBlack),
+        contentScale = ContentScale.Crop
+    )
 }

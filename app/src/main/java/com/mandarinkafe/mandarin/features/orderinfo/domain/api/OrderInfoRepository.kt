@@ -4,5 +4,5 @@ import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.util.Resource
 
 interface OrderInfoRepository {
-    suspend fun getStatusFromApi(id: String): Resource<IncomingOrder>
+    suspend fun getOrderFromApi(id: String): Resource<IncomingOrder>
 }

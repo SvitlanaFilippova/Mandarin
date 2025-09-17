@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.menu.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
+import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
@@ -30,7 +31,8 @@ import javax.inject.Inject
 class MenuViewModel @Inject constructor(
     private val menuInteractor: MenuInteractor,
     private val favoritesApi: FavoritesApi,
-    private val getBannersUseCase: GetBannersUseCase
+    private val getBannersUseCase: GetBannersUseCase,
+    private val forceRefreshMenu: ForceRefreshMenuUseCase,
 ) : BaseViewModel<MenuEvent, MenuEffect, MenuState>() {
     override fun setInitialState() = MenuState()
 
@@ -48,10 +50,11 @@ class MenuViewModel @Inject constructor(
             is MenuEvent.ForceRefresh -> forceRefresh()
         }
     }
+
     private fun forceRefresh() {
         viewModelScope.launch {
             setLoading()
-            menuInteractor.forceRefresh()
+            forceRefreshMenu()
             loadMenu()
             getBanners()
         }
@@ -65,11 +68,11 @@ class MenuViewModel @Inject constructor(
     private fun loadMenu() {
         viewModelScope.launch {
             menuInteractor.getMenu().collectLatest { resource ->
-                setLoading(resource is Loading)
+                setLoading(resource is Loading || resource is Idle)
                 when (resource) {
-                    is Success -> setData(resource.data)
-                    is Loading -> {}
                     is Idle -> {}
+                    is Loading -> {}
+                    is Success -> setData(resource.data)
                     else -> setError(resource)
                 }
             }
@@ -108,7 +111,6 @@ class MenuViewModel @Inject constructor(
         }
         setState { copy(error = error) }
     }
-
 
     // Обработка кликов по баннерам - поиск подходящей категории/блюда в меню и скролл к нему
     private fun findMenuItemByBanner(banner: Banner) {

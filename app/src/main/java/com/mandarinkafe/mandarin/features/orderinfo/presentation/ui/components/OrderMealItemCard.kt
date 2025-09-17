@@ -23,18 +23,36 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingMealAdditional
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingModifier
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
+
 @Composable
 fun OrderMealItemCard(
     modifier: Modifier = Modifier,
     item: IncomingOrderItem,
-    onMealDetailsClick: () -> Unit,
+    onOpenMealDetails: () -> Unit,
+    showNoLongerInMenuMessage: (String) -> Unit,
 ) {
     val discountedDecoration = remember(item) {
         if (item.isDiscounted) TextDecoration.LineThrough else null
     }
-    val isDeleted = remember(item) { item.deleted.isDeleted }
     val deletedDecoration = remember(item) {
-        if (isDeleted) TextDecoration.LineThrough else null
+        if (item.isDeleted) TextDecoration.LineThrough else null
+    }
+
+    val noLongerInMenuMessage = if (!item.isValidated) {
+        stringResource(
+            R.string.item_is_no_longer_available,
+            item.name
+        )
+    } else {
+        ""
+    }
+
+    val onMealDetailsClick = {
+        if (item.isValidated) {
+            onOpenMealDetails()
+        } else {
+            showNoLongerInMenuMessage(noLongerInMenuMessage)
+        }
     }
 
     Row(
@@ -56,10 +74,7 @@ fun OrderMealItemCard(
                 deletedDecoration = deletedDecoration
             )
 
-            AddsList(
-                adds = item.chosenAdds,
-                deletedDecoration = deletedDecoration
-            )
+            AddsList(adds = item.chosenAdds)
 
             if (item.comment.isNotEmpty()) {
                 MealComment(comment = item.comment)
@@ -67,7 +82,7 @@ fun OrderMealItemCard(
 
             MealPriceRow(
                 item = item,
-                isDeleted = isDeleted,
+                isDeleted = item.isDeleted,
                 deletedDecoration = deletedDecoration,
                 discountedDecoration = discountedDecoration
             )
@@ -127,27 +142,34 @@ private fun ModifiersList(
 @Composable
 private fun AddsList(
     adds: List<IncomingMealAdditional>,
-    deletedDecoration: TextDecoration?,
 ) {
     adds.forEach {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "+ ${it.name}",
-                style = Typography.MealSmallTextStyle,
-                textDecoration = deletedDecoration,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-            )
-            Text(
-                text = stringResource(R.string.float_price_template, it.price),
-                style = Typography.MealSmallTextStyle,
-                textDecoration = deletedDecoration,
-            )
-        }
+        AddItemRow(item = it)
+    }
+}
+
+@Composable
+private fun AddItemRow(item: IncomingMealAdditional) {
+    val deletedDecoration = remember(item) {
+        if (item.isDeleted) TextDecoration.LineThrough else null
+    }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.weight(1f),
+            text = "+ ${item.name}",
+            style = Typography.MealSmallTextStyle,
+            textDecoration = deletedDecoration,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+        )
+        Text(
+            text = stringResource(R.string.float_price_template, item.price),
+            style = Typography.MealSmallTextStyle,
+            textDecoration = deletedDecoration,
+        )
     }
 }
 
@@ -199,3 +221,4 @@ private fun MealPriceRow(
         }
     }
 }
+

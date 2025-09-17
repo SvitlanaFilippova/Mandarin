@@ -32,6 +32,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.components.ProcessOr
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
+import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
 @Composable
 fun CartContentScreen(
@@ -102,7 +103,7 @@ fun CartContentScreen(
                 }
 
                 // Заголовок рекомендаций
-                if (state.recommends.isNotEmpty()) {
+                if (state.recommends.mainRecommends.isNotEmpty()) {
                     item {
                         Text(
                             modifier = Modifier.padding(
@@ -130,12 +131,29 @@ fun CartContentScreen(
                         }
                     } else {
                         CartRecommendsList(
-                            recommendsList = state.recommends,
+                            recommendsList = state.recommends.mainRecommends,
                             modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
                             onAddToCart = { onAddToCart(it.toCartItem()) },
                             onMealDetailsClick = { onMealDetailsClick(it.toCartItem()) },
                         )
                     }
+                }
+
+                // Сообщение про соевый соус и тд
+                if (state.recommends.separateRecommends.isNotEmpty()) {
+                    item {
+                        TooltipText(
+                            modifier = Modifier.padding(Dimens.MarginSmall8),
+                            textRes = R.string.sushi_soy_souse_tooltip
+                        )
+                        CartRecommendsList(
+                            recommendsList = state.recommends.separateRecommends,
+                            modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
+                            onAddToCart = { onAddToCart(it.toCartItem()) },
+                            onMealDetailsClick = { onMealDetailsClick(it.toCartItem()) },
+                        )
+                    }
+
                 }
 
                 // Отступ для кнопки "Оформить заказ"

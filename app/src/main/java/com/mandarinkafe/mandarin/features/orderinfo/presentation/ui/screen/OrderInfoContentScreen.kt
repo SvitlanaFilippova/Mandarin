@@ -38,9 +38,10 @@ fun OrderInfoContentScreen(
     state: OrderInfoState,
     onEvent: (OrderInfoEvent) -> Unit,
     navController: NavHostController,
-    onOrderItemClick: (String) -> Unit,
+    onOpenMealDetails: (String) -> Unit,
     orderRepeatingInProgress: Boolean,
     fromOrderCreation: Boolean,
+    showNoLongerInMenuMessage: (String) -> Unit,
 ) {
     if (order == null) return
     var showCancelDialog by remember { mutableStateOf(false) }
@@ -62,7 +63,8 @@ fun OrderInfoContentScreen(
                     items = order.items,
                     sum = order.sum,
                     discountName = order.discountReason,
-                    onOrderItemClick = onOrderItemClick
+                    onOpenMealDetails = onOpenMealDetails,
+                    showNoLongerInMenuMessage = showNoLongerInMenuMessage
                 )
             }
         }

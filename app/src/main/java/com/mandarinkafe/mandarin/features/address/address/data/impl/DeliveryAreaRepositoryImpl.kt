@@ -36,7 +36,7 @@ class DeliveryAreaRepositoryImpl(
             val metaMap = parseMetaCsv(metaCsv)
 
             // Ждём, пока меню загрузится
-            menuCache.visibleMenu.first { it is Resource.Success }
+            menuCache.mainMenu.first { it is Resource.Success }
 
             // Извлекаем цены из deliveryCategory
             val pricesCategory = menuCache.deliveryItems.value?.meals

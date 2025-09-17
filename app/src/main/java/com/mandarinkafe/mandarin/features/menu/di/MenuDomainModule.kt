@@ -2,7 +2,6 @@ package com.mandarinkafe.mandarin.features.menu.di
 
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
-import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.features.menu.domain.impl.GetBannersUseCaseImpl
 import com.mandarinkafe.mandarin.features.menu.domain.impl.MenuInteractorImpl
 import com.mandarinkafe.mandarin.features.menu.domain.usecase.GetBannersUseCase
@@ -18,11 +17,9 @@ class MenuDomainModule {
 
     @Provides
     fun provideMenuInteractor(
-        repository: MenuRepository,
         cache: MenuCache,
     ): MenuInteractor {
         return MenuInteractorImpl(
-            repository = repository,
             cache = cache
         )
     }

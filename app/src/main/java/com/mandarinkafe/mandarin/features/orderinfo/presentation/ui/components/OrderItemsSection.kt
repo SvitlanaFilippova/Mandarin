@@ -26,7 +26,8 @@ fun OrderItemsSection(
     items: List<IncomingOrderItem>,
     sum: Double?,
     discountName: String?,
-    onOrderItemClick: (String) -> Unit
+    onOpenMealDetails: (String) -> Unit,
+    showNoLongerInMenuMessage: (String) -> Unit,
 ) {
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Column(
@@ -40,8 +41,10 @@ fun OrderItemsSection(
             items.forEach {
                 OrderMealItemCard(
                     item = it,
-                    onMealDetailsClick = { onOrderItemClick(it.id) }
+                    onOpenMealDetails = { onOpenMealDetails(it.id) },
+                    showNoLongerInMenuMessage = showNoLongerInMenuMessage
                 )
+
                 HorizontalDivider(
                     Modifier.height(Dimens.DividerHeight1),
                 )

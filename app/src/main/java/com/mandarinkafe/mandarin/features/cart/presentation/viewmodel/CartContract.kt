@@ -16,6 +16,7 @@ sealed interface CartContract {
             val item: CartItem? = null,
             val customizedMeal: CustomizedMeal? = null
         ) : CartEvent
+
         data class AddCommentToItem(val item: CartItem, val comment: String) : CartEvent
         data class UpdateMealInCart(val newItem: CartItem) : CartEvent
         data class OnReduceWithDelay(val item: CartItem) : CartEvent
@@ -24,6 +25,7 @@ sealed interface CartContract {
             val customizedMeal: CustomizedMeal? = null,
             val meal: Meal? = null
         ) : CartEvent
+
         data object ForceRefresh : CartEvent
 
         // Очистка корзины
@@ -46,7 +48,7 @@ sealed interface CartContract {
         val error: UiError? = null,
         val cartItems: List<CartItem> = emptyList(),
         val favoritesItems: Set<CustomizedMeal> = emptySet(),
-        val recommends: List<Meal> = emptyList(),
+        val recommends: Recommends = Recommends(),
         val recommendsAreLoading: Boolean = true,
         val pendingDeletionItems: List<String> = emptyList(),
         val inProgressItems: Set<String> = emptySet(),

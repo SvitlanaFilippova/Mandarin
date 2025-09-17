@@ -56,7 +56,7 @@ fun CartItemBaseInfo(
     val customizedMeal = item.customizedMeal
     val meal = item.customizedMeal.meal
 
-    val isFavorite by remember(item, favorites) {
+    val isFavorite by remember(customizedMeal, favorites) {
         derivedStateOf { item.customizedMeal.isFavorite(favorites) }
     }
 

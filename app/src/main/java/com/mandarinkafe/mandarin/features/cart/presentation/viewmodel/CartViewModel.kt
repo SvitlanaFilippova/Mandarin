@@ -19,8 +19,11 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.Resource.ErrorNoInternet
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
+import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
+import com.mandarinkafe.mandarin.util.Resource.Success
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -60,7 +63,7 @@ class CartViewModel @Inject constructor(
     private fun forceRefresh() {
         viewModelScope.launch {
             resetError()
-            cartInteractor.forceRetry()
+            cartInteractor.forceRefresh()
             updateRecommends(state.value.cartItems.map { it.customizedMeal.meal }.toSet())
         }
     }
@@ -73,16 +76,16 @@ class CartViewModel @Inject constructor(
 
     private suspend fun proceedCartResult(cartResource: Resource<List<CartItem>>) {
         when (cartResource) {
-            is Resource.Success -> {
+            is Success -> {
                 setData(cartResource.data)
                 updateRecommends(cartResource.data?.map { it.customizedMeal.meal }?.toSet())
             }
 
-            is Loading -> {
+            is Loading, is Idle -> {
                 setLoading()
             }
 
-            is Resource.ErrorNoInternet -> {
+            is ErrorNoInternet -> {
                 if (state.value.cartItems.isEmpty()) {
                     setError(cartResource)
                 } else {
@@ -90,7 +93,6 @@ class CartViewModel @Inject constructor(
                 }
             }
 
-            is Resource.Idle -> {}
             else -> {
                 setError(cartResource)
             }
@@ -192,7 +194,7 @@ class CartViewModel @Inject constructor(
 
             setState { copy(proceedOrderIsLoading = false) }
             when (terminalResponse) {
-                is Resource.Success -> {
+                is Success -> {
                     if (terminalResponse.data == true) {
                         sendEffect(CartEffect.ProceedOrder)
                     } else {
@@ -204,7 +206,7 @@ class CartViewModel @Inject constructor(
                     }
                 }
 
-                is Resource.ErrorNoInternet -> {
+                is ErrorNoInternet -> {
                     sendEffect(
                         CartEffect.ShowSnackbar(
                             "Нет подключения к интернету."
@@ -296,13 +298,9 @@ class CartViewModel @Inject constructor(
         cartItems?.let {
             val resource = recommendsUseCase(cartItems)
             setRecommendsLoading(resource is Loading)
-            val filteredRecommends =
-                when (resource) {
-                    is Resource.Success -> resource.data ?: emptyList()
-                    else -> emptyList()
-                }
+            val recommends = resource.data ?: Recommends()
             setState {
-                copy(recommends = filteredRecommends)
+                copy(recommends = recommends)
             }
         }
     }
@@ -314,7 +312,7 @@ class CartViewModel @Inject constructor(
                     cartItems = data,
                     error = null,
                     isLoading = false,
-                    inProgressItems = emptySet()
+                    inProgressItems = emptySet(),
                 )
             }
         }
@@ -334,7 +332,7 @@ class CartViewModel @Inject constructor(
 
         val error = when (resource) {
             is Resource.ErrorEmptyData -> UiError.CartEmpty
-            is Resource.ErrorNoInternet -> if (hasItems) null else UiError.NoInternet
+            is ErrorNoInternet -> if (hasItems) null else UiError.NoInternet
             is ErrorOther -> UiError.OtherError
             else -> return
         }

@@ -9,4 +9,10 @@ data class MealAdditional(
     val price: Int,
     val discountable: Boolean,
     val orderItemType: String,
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        return other is MealAdditional && id == other.id
+    }
+
+    override fun hashCode(): Int = id.hashCode()
+}

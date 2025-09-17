@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesReader
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesWriter
+import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.favorites.data.impl.FavoritesRepositoryImpl
 import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorage
@@ -21,7 +22,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class FavoritesModule {
-
 
     @Provides
     @Singleton
@@ -59,24 +59,24 @@ class FavoritesModule {
     fun provideFavoritesApi(
         reader: FavoritesReader,
         writer: FavoritesWriter,
-        validator: ValidateFavoritesUseCase
+        validator: ValidateFavoritesUseCase,
+        forceRefreshMenu: ForceRefreshMenuUseCase
     ): FavoritesApi {
         return FavoritesInteractorImpl(
             reader = reader,
             writer = writer,
-            validator = validator
+            validator = validator,
+            forceRefreshMenu = forceRefreshMenu
         )
     }
 
     @Provides
     @Singleton
     fun provideValidateFavoritesUseCase(
-        menuCache: MenuCache,
-        writer: FavoritesWriter
+        menuCache: MenuCache
     ): ValidateFavoritesUseCase {
         return ValidateFavoritesUseCaseImpl(
-            menuCache = menuCache,
-            writer = writer
+            menuCache = menuCache
         )
     }
 }

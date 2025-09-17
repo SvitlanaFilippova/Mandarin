@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@SuppressLint("LogNotTimber")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CartScreen(
@@ -91,10 +93,12 @@ fun CartScreen(
                     onRetryClick = { onCartEvent(CartEvent.ForceRefresh) }
                 )
 
-                state.cartItems.isEmpty() -> PlaceholderScreen(
-                    UiError.CartEmpty,
-                    onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
-                )
+                state.cartItems.isEmpty() && !state.isLoading -> {
+                    PlaceholderScreen(
+                        UiError.CartEmpty,
+                        onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+                    )
+                }
 
                 else -> {
                     CartContentScreen(

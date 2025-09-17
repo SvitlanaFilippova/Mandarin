@@ -19,9 +19,11 @@ interface FavoritesApi {
     suspend fun getFavorites(): Resource<List<CustomizedMeal>>
 
     /** Эмитит новый список при каждом изменении избранных.*/
-
     fun observeFavoritesItems(): Flow<Resource<List<CustomizedMeal>>>
 
     /** Эмитит новый список ID при каждом изменении избранных "базовых" блюд.*/
     fun observeFavoritesBaseMealIDs(): Flow<Set<String>>
+
+    /** Принудительное обновление данных о сохранённых избранных и повторная их валидация по меню.*/
+    suspend fun forceRefresh()
 }

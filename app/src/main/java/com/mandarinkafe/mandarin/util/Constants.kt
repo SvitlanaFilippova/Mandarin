@@ -69,9 +69,6 @@ object Constants {
     const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/spreadsheets/d/e/"
     const val TELEGRAM_API_BASE_URL = "https://api.telegram.org/"
 
-    // Для обработки особых категорий по их названиям
-    const val CATEGORY_ADDS = "Добавки"
-    const val DELIVERY_CATEGORY_NAME = "Доставка"
 
     // Теги для особой логики в меню
     const val TAG_NO_ADDS = "NO_ADDS"
@@ -82,6 +79,8 @@ object Constants {
     const val TAG_CAFE = "CAFE"
     const val LABEL_18 = "18+"
 
+    const val CATEGORY_ADDS = "Добавки"
+
     // remoteConfig
     const val PHONE_NUMBER_DEFAULT = "tel:+74951087055"
     const val PHONE_NUMBER_KEY = "phone_number_key"
@@ -89,6 +88,7 @@ object Constants {
     const val HOT_LABEL_DEFAULT = "hot"
     const val NEW_LABEL_DEFAULT = "new"
     const val HIT_LABEL_DEFAULT = "hit"
+    const val SALE_LABEL_DEFAULT = "sale"
 
     const val LOCALE_RU = "ru_RU"
     const val COMMENT_DIVIDER = "\\\\\\"

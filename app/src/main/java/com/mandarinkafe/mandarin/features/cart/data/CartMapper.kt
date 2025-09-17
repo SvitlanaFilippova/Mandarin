@@ -71,6 +71,7 @@ object CartMapper {
     fun RecommendsSchemaDto.toDomain() = RecommendsSchemaRule(
         sourceName = sourceName ?: "",
         excludeSku = excludeSku ?: emptyList<String>(),
-        recommendedSku = recommendedSku ?: emptyList()
+        recommendedSku = recommendedSku ?: emptyList(),
+        isSeparate = isSeparate
     )
 }

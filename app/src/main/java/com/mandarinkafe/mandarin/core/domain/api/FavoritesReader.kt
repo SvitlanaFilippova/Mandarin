@@ -13,4 +13,5 @@ interface FavoritesReader {
 
     fun observeRawFavorites(): Flow<Resource<Set<FavoriteRecord>>>
     fun observeBaseFavoritesIds(): Flow<Set<String>>
+
 }

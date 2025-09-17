@@ -1,8 +1,11 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,11 +15,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
+import coil3.compose.SubcomposeAsyncImageContent
+import coil3.request.ImageRequest
+import coil3.request.allowHardware
+import coil3.request.crossfade
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.search.presentation.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.util.LabelSize
@@ -26,25 +35,44 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.NoDeliveryChip
 @Composable
 fun MealDetailsImage(meal: Meal) {
     Box(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .clip(RoundedCornerShape(Dimens.CornerRadius8))
+            .background(Colors.White),
         contentAlignment = Alignment.Center
     ) {
-        AsyncImage(
-            model = meal.imageUrl,
+        SubcomposeAsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(meal.imageUrl)
+                .crossfade(true)
+                .allowHardware(false)
+                .build(),
             contentDescription = stringResource(
                 R.string.picture_of_meal_template,
                 meal.name
             ),
-            error = painterResource(R.drawable.placeholder_meal_no_photo),
-            placeholder = painterResource(R.drawable.placeholder_meal_no_photo),
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .padding(vertical = Dimens.MarginSmall8)
-                .fillMaxSize()
-                .clip(RoundedCornerShape(Dimens.CornerRadius8))
+
+            loading = { Placeholder() },
+
+            error = { Placeholder() },
+
+            success = { state ->
+                val ratio = state.painter.intrinsicSize.width / state.painter.intrinsicSize.height
+                val contentScale = if (ratio in 0.75f..1.5f) {
+                    ContentScale.Crop // «нормальная» картинка, без рамки
+                } else {
+                    ContentScale.Fit // слишком узкая/высокая, вписываем в квадрат
+                }
+
+                SubcomposeAsyncImageContent(
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = contentScale
+                )
+            },
         )
 
-        // Ярлыки
+        // ярлыки
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4),
@@ -60,7 +88,6 @@ fun MealDetailsImage(meal: Meal) {
             }
         }
 
-        // Метка "только самовывоз"
         if (meal.isPickupOnly) {
             NoDeliveryChip(
                 modifier = Modifier
@@ -70,4 +97,16 @@ fun MealDetailsImage(meal: Meal) {
             )
         }
     }
+}
+
+@Composable
+private fun Placeholder() {
+    Image(
+        painter = painterResource(R.drawable.placeholder_meal_no_photo),
+        contentDescription = null,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Colors.AppBlack),
+        contentScale = ContentScale.Crop
+    )
 }

@@ -8,5 +8,4 @@ import kotlinx.coroutines.flow.StateFlow
 interface MenuInteractor {
     val menu: StateFlow<Resource<List<MealCategory>>>
     fun getMenu(): Flow<Resource<List<MealCategory>>>
-    suspend fun forceRefresh()
 }

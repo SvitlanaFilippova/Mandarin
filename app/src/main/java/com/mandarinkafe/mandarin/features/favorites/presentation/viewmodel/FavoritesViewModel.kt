@@ -29,11 +29,19 @@ class FavoritesViewModel @Inject constructor(private val favoritesApi: Favorites
     }
 
     override fun onEvent(event: FavoritesEvent) {
-        // нет специфичных событий для обработки, все события по избранным обрабатываются в SharedViewModel
+        when (event) {
+            FavoritesEvent.ForceRefresh -> forceRefresh()
+        }
     }
 
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
+    }
+
+    private fun forceRefresh() {
+        viewModelScope.launch {
+            favoritesApi.forceRefresh()
+        }
     }
 
     private fun observeFavorites() {

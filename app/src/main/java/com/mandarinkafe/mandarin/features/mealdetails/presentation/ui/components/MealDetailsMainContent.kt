@@ -54,9 +54,7 @@ fun MealDetailsMainContent(
     ) {
         // Изображение блюда и нформация о нём
         item {
-            MealInfo(
-                meal = meal
-            )
+            MealInfo(meal = meal)
         }
 
         // Заголовок для модификаторов/добавок, если блюдо и без них можно закаказать

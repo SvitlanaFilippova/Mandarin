@@ -3,7 +3,9 @@ package com.mandarinkafe.mandarin.features.search.presentation.ui.components
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -20,7 +22,18 @@ fun SearchResultsLazyColumn(
     onMealDetailsClick: (Meal) -> Unit,
     inProgressItems: Set<String>
 ) {
-    LazyColumn {
+    val listState = rememberLazyListState()
+
+    // Скроллим наверх при изменении списка
+    LaunchedEffect(filteredMenuItems) {
+        if (filteredMenuItems.isNotEmpty()) {
+            listState.animateScrollToItem(0)
+        }
+    }
+
+    LazyColumn(
+        state = listState
+    ) {
         items(
             items = filteredMenuItems,
             key = { it.id }

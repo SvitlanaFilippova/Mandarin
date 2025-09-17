@@ -24,7 +24,7 @@ sealed interface OrderInfoContract {
 
     data class OrderInfoState(
         val orderId: String? = null,
-        val isLoading: Boolean = false,
+        val isLoading: Boolean = true,
         val incomingOrder: IncomingOrder? = null,
         val orderRepeatingInProgress: Boolean = false,
     ) : BaseState {

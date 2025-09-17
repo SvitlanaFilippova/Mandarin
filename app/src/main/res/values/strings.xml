@@ -35,6 +35,7 @@
     <string name="clear_cart">Очистить корзину</string>
     <string name="clear_cart_question">Очистить корзину?</string>
     <string name="clear_cart_confirmation">Действительно удалить всё из корзины?</string>
+    <string name="sushi_soy_souse_tooltip">Палочки, васаби, имбирь и&#160;соевый соус к&#160;суши и&#160;роллам предоставляются бесплатно. Но&#160;вдруг нужна экстра порция.</string>
     <string name="recommendations_title">Советуем добавить</string>
     <string name="comment_for_meal">Комментарий к блюду для повара</string>
     <string name="remove_from_cart">Убрать из корзины</string>
@@ -200,6 +201,7 @@
     <string name="cancel_order_question">Отменить заказ?</string>
     <string name="cancel_order_confirmation">Действительно отменить оформленный заказ?</string>
     <string name="repeat_order_button">Повторить заказ</string>
+    <string name="item_is_no_longer_available">На данный момент в&#160;меню отсутствует позиция «%1$s»</string>
     <string name="some_items_unavailable">Некоторые блюда недоступны. Остальные добавлены в&#160;корзину</string>
     <string name="all_items_added_to_cart">Все позиции из&#160;заказа добавлены в&#160;корзину</string>
 

@@ -1,9 +1,11 @@
 package com.mandarinkafe.mandarin.features.cart.data.impl
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toStoredCartItem
@@ -44,6 +46,7 @@ class CartRepositoryImpl @Inject constructor(
         getInitData()
     }
 
+    @SuppressLint("LogNotTimber")
     private fun getInitData() {
         scope.launch {
             // 1. Получаем корзину из storage
@@ -59,17 +62,18 @@ class CartRepositoryImpl @Inject constructor(
 
             // 2. Ждём первое успешное меню, но не дольше 5 секунд
             val menuResource = withTimeoutOrNull(MENU_WAIT_TIMEOUT) {
-                menuCache.fullMenu
+                menuCache.allVisibleMenu
                     .filterIsInstance<Resource.Success<List<MealCategory>>>()
                     .firstOrNull()
             }
+
             if (menuResource == null) {
                 _cartItems.value =
                     Resource.ErrorOther("Не удалось загрузить меню. Попробуйте позже.")
                 return@launch
             } else {
-                val menu = menuResource.data.orEmpty()
-                val validItems = mapAndValidate(storedCartItems, menu)
+                val fullMenu = menuResource.data.orEmpty()
+                val validItems = mapAndValidate(storedCartItems, fullMenu)
                 cartItems = validItems
                 _cartItems.value = Resource.Success(validItems)
                 _cartCount.value = validItems.sumOf { it.quantity }
@@ -88,10 +92,7 @@ class CartRepositoryImpl @Inject constructor(
     ): List<CartItem> {
         val valid = mutableListOf<CartItem>()
 
-        val allMeals = menu.flatMap { category ->
-            category.meals.orEmpty() +
-                    category.subCategories.orEmpty().flatMap { it.meals.orEmpty() }
-        }.associateBy { it.id }
+        val allMeals = flattenMeals(menu).associateBy { it.id }
 
         for (item in raw) {
             val baseMeal = allMeals[item.mealId]
@@ -115,6 +116,16 @@ class CartRepositoryImpl @Inject constructor(
             }
         }
         return valid
+    }
+
+    private fun flattenMeals(categories: List<MealCategory>): List<Meal> {
+        val result = mutableListOf<Meal>()
+        fun dfs(cat: MealCategory) {
+            result += cat.meals.orEmpty()
+            cat.subCategories?.forEach { dfs(it) }
+        }
+        categories.forEach { dfs(it) }
+        return result
     }
 
     override suspend fun addOrUpdateItem(item: CartItem) {
@@ -154,7 +165,7 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        private const val MENU_WAIT_TIMEOUT = 5000L
+        private const val MENU_WAIT_TIMEOUT = 15000L
         private const val ERROR_TAG = "Cart DEBUG Repo"
     }
 }

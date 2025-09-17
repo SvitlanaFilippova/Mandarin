@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -58,7 +59,8 @@ fun OrderHistoryCard(modifier: Modifier = Modifier, order: SavedOrder, onClick: 
             if (order.addressDetails.isNotEmpty()) {
                 Text(
                     text = order.addressDetails,
-                    style = Typography.RegularLightTextStyle,
+                    style = Typography.SmallTextStyle,
+                    fontWeight = FontWeight.Light,
                 )
             }
             Spacer(modifier = Modifier.height(Dimens.MarginSmall8))

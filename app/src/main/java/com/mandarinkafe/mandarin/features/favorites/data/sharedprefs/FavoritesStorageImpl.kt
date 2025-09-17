@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.favorites.data.sharedprefs
 
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.content.edit
@@ -51,6 +52,7 @@ class FavoritesStorageImpl @Inject constructor(
         }
     }
 
+    @SuppressLint("LogNotTimber")
     override suspend fun getFavorites(): FavoritesStorageResult {
         val json = sharedPreferences.getString(FAVORITES_KEY, null)
         return try {

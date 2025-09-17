@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.cart.di
 import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
+import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.database.AppDatabase
 import com.mandarinkafe.mandarin.db.CartItemsQueries
@@ -65,10 +66,15 @@ object CartModule {
 
     @Provides
     @Singleton
-    fun provideCartInteractor(writer: CartWriter, reader: CartReader): CartInteractor =
+    fun provideCartInteractor(
+        writer: CartWriter,
+        reader: CartReader,
+        forceRefreshMenu: ForceRefreshMenuUseCase
+    ): CartInteractor =
         CartInteractorImpl(
             cartWriter = writer,
-            cartReader = reader
+            cartReader = reader,
+            forceRefreshMenu = forceRefreshMenu
         )
 
     @Provides
@@ -88,4 +94,5 @@ object CartModule {
             repository = cartWriter
         )
     }
+
 }

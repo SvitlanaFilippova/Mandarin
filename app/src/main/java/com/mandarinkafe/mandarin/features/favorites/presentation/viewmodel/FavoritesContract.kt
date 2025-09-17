@@ -7,7 +7,9 @@ import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
 
 sealed interface FavoritesContract {
-    sealed interface FavoritesEvent : BaseEvent
+    sealed interface FavoritesEvent : BaseEvent {
+        data object ForceRefresh : FavoritesEvent
+    }
 
     sealed interface FavoritesEffect : BaseEffect {
         data class ShowSnackbar(val message: String) : FavoritesEffect

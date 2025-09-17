@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
 import com.mandarinkafe.mandarin.features.cart.domain.model.RecommendsSchemaRule
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.Recommends
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
 import com.mandarinkafe.mandarin.util.Resource.ErrorNoInternet
@@ -18,7 +19,7 @@ class GetRecommendsUseCaseImpl(
     private val schemaRepository: RecommendsSchemaRepository,
     private val menuCache: MenuCache,
 ) : GetRecommendsUseCase {
-    override suspend fun invoke(cartItems: Set<Meal>): Resource<List<Meal>> {
+    override suspend fun invoke(cartItems: Set<Meal>): Resource<Recommends> {
         val schemaResult = schemaRepository.getRecommendsSchema()
 
         return when (schemaResult) {
@@ -31,10 +32,13 @@ class GetRecommendsUseCaseImpl(
                 val rules = schemaResult.data ?: return ErrorEmptyData()
 
                 val cartItemsWithNorm = normalizeCartItems(cartItems)
+                // ids элементов в корзине
+                val inCartIds = cartItems.map { it.id }.toSet()
 
                 val (globalRules, normalRules) = rules.partition { it.sourceName == SOURCE_ALL }
-
                 val matchingRules = filterRules(normalRules, cartItemsWithNorm)
+
+                val separateRules = rules.filter { it.isSeparate }
 
                 // Сначала обычные, потом глобальные
                 val recommendedSkus = (matchingRules + globalRules)
@@ -46,14 +50,24 @@ class GetRecommendsUseCaseImpl(
                     .flatMap { sku -> menuCache.getMealsBySku(sku) }
                     .distinctBy { it.id }
 
-                // ids элементов в корзине
-                val inCartIds = cartItems.map { it.id }.toSet()
+                val matchingSeparateRules = filterRules(separateRules, cartItemsWithNorm)
 
-                // фильтруем те блюда, что уже в корзине
-                val filtered = meals
+                val separateSkus = matchingSeparateRules
+                    .flatMap { it.recommendedSku }
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+
+                val separateMeals = separateSkus
+                    .flatMap { sku -> menuCache.getMealsBySku(sku) }
+                    .distinctBy { it.id }
                     .filterNot { it.id in inCartIds }
 
-                Success(filtered)
+                // фильтруем те блюда, что уже в корзине и что попали в отдельные
+                val filtered = meals
+                    .filterNot { it.id in inCartIds }
+                    .filterNot { meal -> separateMeals.any { it.id == meal.id } }
+
+                Success(Recommends(mainRecommends = filtered, separateRecommends = separateMeals))
             }
         }
     }

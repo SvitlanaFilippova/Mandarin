@@ -13,7 +13,6 @@ import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryR
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscountInfoDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscountTypeDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
-import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingPaymentDto
 import com.mandarinkafe.mandarin.features.order.domain.api.OrderRepository
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
@@ -70,16 +69,7 @@ class OrderRepositoryImpl(
                     type = OrderConstants.CUSTOMER_TYPE_ONE_TIME
                 ),
                 items = orderItems,
-                payments = listOf(
-                    OutgoingPaymentDto(
-                        paymentTypeKind = paymentType.paymentTypeKind,
-                        paymentTypeId = paymentType.id,
-                        sum = totalOrderSum,
-                        isPrepay = false,
-                        isProcessedExternally = false,
-                        isFiscalizedExternally = false,
-                    )
-                ),
+                payments = null,
                 discountsInfo = discountInfo
             )
         }
