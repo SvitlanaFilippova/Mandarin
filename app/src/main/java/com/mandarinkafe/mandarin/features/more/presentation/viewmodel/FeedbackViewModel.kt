@@ -10,6 +10,7 @@ import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Result
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -50,13 +51,20 @@ class FeedbackViewModel @Inject constructor(
 
         when (result) {
             is Result.Success -> {
-                setState { FeedbackState() } // обнуляем введённые ранее данные
-                sendEffect(FeedbackEffect.ShowSuccess)
+                proceedSuccessSubmitForm()
             }
 
             is Result.Failure -> {
                 sendEffect(FeedbackEffect.ShowError(result.throwable.message ?: "Ошибка"))
             }
+        }
+    }
+
+    private fun proceedSuccessSubmitForm() {
+        viewModelScope.launch {
+            sendEffect(FeedbackEffect.ShowSuccess)
+            delay(DELAY_FOR_FORM_RESET_AFTER_SUBMIT)
+            setState { FeedbackState() } // обнуляем введённые ранее данные
         }
     }
 
@@ -75,5 +83,9 @@ class FeedbackViewModel @Inject constructor(
 
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
+    }
+
+    private companion object {
+        const val DELAY_FOR_FORM_RESET_AFTER_SUBMIT = 5000L
     }
 }
