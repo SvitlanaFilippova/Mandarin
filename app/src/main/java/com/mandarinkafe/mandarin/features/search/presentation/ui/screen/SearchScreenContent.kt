@@ -29,9 +29,6 @@ import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchCo
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.SearchBarInputField
 
-/**
- * Компонент с SearchBar - полем для полиска и его результами
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreenContent(

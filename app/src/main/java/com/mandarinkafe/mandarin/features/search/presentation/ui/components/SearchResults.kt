@@ -43,5 +43,4 @@ fun SearchResults(
             PlaceholderScreen(error = UiError.SearchEmpty)
         }
     }
-
 }
