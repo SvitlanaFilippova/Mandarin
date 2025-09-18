@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.core.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -32,6 +33,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.AppTopBar
 import com.mandarinkafe.mandarin.util.presentation.ui.components.CustomSnackbarHost
 import com.mandarinkafe.mandarin.util.presentation.ui.components.HandleEffects
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
@@ -51,7 +53,6 @@ fun MainScreen() {
     val showTopBar = !isSplash && sharedState.shouldShowTopBar
     val onEvent = sharedViewModel::onEvent
     val selectedMeal = sharedState.selectedMealForFavoriteChoice
-
     val isInnerScreen = currentRoute?.let { route -> route !in bottomNavigationRoutes } == true
     val showBottomBar = !isSplash && !isInnerScreen
 

@@ -4,10 +4,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -17,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
@@ -24,16 +28,14 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartClearTextButton
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartItemCard
-import com.mandarinkafe.mandarin.features.cart.presentation.components.CartRecommendsList
 import com.mandarinkafe.mandarin.features.cart.presentation.components.ProcessOrderButton
+import com.mandarinkafe.mandarin.features.cart.presentation.components.RecommendsSection
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
-import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CartContentScreen(
     state: CartState,
@@ -51,6 +53,12 @@ fun CartContentScreen(
     onCommentAdded: (CartItem, String) -> Unit,
 ) {
     val cartItemsList = state.cartItems
+    val ifCartIsEmpty =
+        state.cartItems.all { it.id in state.pendingDeletionItems }
+
+    val imeInsets = WindowInsets.ime
+    val imeHeight = imeInsets.getBottom(LocalDensity.current)
+    val imeVisible = imeHeight > 0
 
     Column(
         modifier = Modifier
@@ -118,52 +126,37 @@ fun CartContentScreen(
 
                 // Горизонтальный список рекомендаций
                 item {
-                    if (state.recommendsAreLoading) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = Dimens.MarginStandard16),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            MyCircularProgressIndicator(
-                                strokeWidth = Dimens.ProgressBarStroke6,
-                            )
-                        }
-                    } else {
-                        CartRecommendsList(
-                            recommendsList = state.recommends.mainRecommends,
-                            modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
-                            onAddToCart = { onAddToCart(it.toCartItem()) },
-                            onMealDetailsClick = { onMealDetailsClick(it.toCartItem()) },
-                        )
-                    }
+                    RecommendsSection(
+                        mainRecommends = state.recommends.mainRecommends,
+                        separateRecommends = state.recommends.separateRecommends,
+                        recommendsAreLoading = state.recommendsAreLoading,
+                        onAddToCart = onAddToCart,
+                        onMealDetailsClick = onMealDetailsClick
+                    )
                 }
 
-                // Сообщение про соевый соус и тд
-                if (state.recommends.separateRecommends.isNotEmpty()) {
+                // Кнопка оформления заказа (отображается тут только если открыта клавиатура, иначе будет закреплена поверх контента)
+                if (!ifCartIsEmpty && imeVisible) {
                     item {
-                        TooltipText(
-                            modifier = Modifier.padding(Dimens.MarginSmall8),
-                            textRes = R.string.sushi_soy_souse_tooltip
-                        )
-                        CartRecommendsList(
-                            recommendsList = state.recommends.separateRecommends,
-                            modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
-                            onAddToCart = { onAddToCart(it.toCartItem()) },
-                            onMealDetailsClick = { onMealDetailsClick(it.toCartItem()) },
+                        ProcessOrderButton(
+                            onClick = onProceedOrderClick,
+                            totalPrice = state.totalCartPrice,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .background(color = Colors.Transparent),
+                            proceedOrderIsLoading = proceedOrderIsLoading
                         )
                     }
-
                 }
 
                 // Отступ для кнопки "Оформить заказ"
-                item { Spacer(modifier = Modifier.height(Dimens.MarginForCartButton72)) }
+                if (!ifCartIsEmpty && !imeVisible) {
+                    item { Spacer(modifier = Modifier.height(Dimens.MarginForCartButton72)) }
+                }
             }
 
-            // Кнопка оформления заказа
-            val ifCartIsEmpty =
-                state.cartItems.all { it.id in state.pendingDeletionItems }
-            if (!ifCartIsEmpty) {
+            // Кнопка оформления заказа (закреплена поверх контента, скрывается при открытой клавиатуре)
+            if (!ifCartIsEmpty && !imeVisible) {
                 ProcessOrderButton(
                     onClick = onProceedOrderClick,
                     totalPrice = state.totalCartPrice,

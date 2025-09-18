@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
@@ -30,6 +28,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.search.presentation.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.util.LabelSize
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LabelChip
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MealImagePlaceholder
 import com.mandarinkafe.mandarin.util.presentation.ui.components.NoDeliveryChip
 
 @Composable
@@ -53,9 +52,9 @@ fun MealDetailsImage(meal: Meal) {
                 meal.name
             ),
 
-            loading = { Placeholder() },
+            loading = { MealImagePlaceholder() },
 
-            error = { Placeholder() },
+            error = { MealImagePlaceholder() },
 
             success = { state ->
                 val ratio = state.painter.intrinsicSize.width / state.painter.intrinsicSize.height
@@ -97,16 +96,4 @@ fun MealDetailsImage(meal: Meal) {
             )
         }
     }
-}
-
-@Composable
-private fun Placeholder() {
-    Image(
-        painter = painterResource(R.drawable.placeholder_meal_no_photo),
-        contentDescription = null,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Colors.AppBlack),
-        contentScale = ContentScale.Crop
-    )
 }

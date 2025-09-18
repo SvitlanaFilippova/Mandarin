@@ -1,21 +1,46 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+##############################
+# Общие правила для Kotlin
+##############################
+-dontwarn kotlin.**
+-keep class kotlin.** { *; }
+-keep class kotlinx.** { *; }
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+##############################
+# Jetpack Compose
+##############################
+-keep class androidx.compose.** { *; }
+-keep class androidx.lifecycle.LifecycleObserver
+-keep class androidx.lifecycle.DefaultLifecycleObserver
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+##############################
+# Hilt / Dagger
+##############################
+-keep class dagger.hilt.** { *; }
+-keep class dagger.hilt.android.internal.managers.** { *; }
+-keep class javax.inject.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# чтобы не срезало аннотации
+-keepattributes *Annotation*
+
+##############################
+# Retrofit / Moshi / Gson / kotlinx.serialization
+##############################
+-keep class retrofit2.** { *; }
+-keep class okhttp3.** { *; }
+-keep class okio.** { *; }
+
+-keep class com.squareup.moshi.** { *; }
+-keep class kotlinx.serialization.** { *; }
+
+##############################
+# Coil
+##############################
+-dontwarn coil3.**
+-keep class coil3.** { *; }
+
+##############################
+# Твои модели (если используешь сериализацию/рефлексию)
+##############################
+-keepclassmembers class com.mandarinkafe.mandarin.core.domain.models.** {
+    <fields>;
+}
