@@ -47,9 +47,9 @@
 
 ## Скриншоты приложения 📱
 
-<img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/1_Menu.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/2_Search.jpg?raw=true" width="30%" height="30%"><img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/3_Cart.jpg?raw=true" width="30%" height="30%">
+<img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/1_Menu.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/2_Search.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/3_Cart.jpg?raw=true" width="30%" height="30%">
 
-<img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/4_Checkout.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/5_favorites.jpg?raw=true" width="30%" height="30%"><img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/6_map.jpg?raw=true" width="30%" height="30%">
+<img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/4_Checkout.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/5_favorites.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/6_map.jpg?raw=true" width="30%" height="30%">
 
 ## Общие требования 🗒️
 
