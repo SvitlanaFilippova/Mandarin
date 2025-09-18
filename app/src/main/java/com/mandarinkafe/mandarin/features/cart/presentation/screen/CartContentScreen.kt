@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.screen
 
-import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -29,15 +28,12 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartClearTextButton
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartItemCard
-import com.mandarinkafe.mandarin.features.cart.presentation.components.CartRecommendsList
 import com.mandarinkafe.mandarin.features.cart.presentation.components.ProcessOrderButton
+import com.mandarinkafe.mandarin.features.cart.presentation.components.RecommendsSection
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
-import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -63,8 +59,6 @@ fun CartContentScreen(
     val imeInsets = WindowInsets.ime
     val imeHeight = imeInsets.getBottom(LocalDensity.current)
     val imeVisible = imeHeight > 0
-
-    Log.d("Debug imeVisible", "CartContentScreen, imeVisible = $imeVisible")
 
     Column(
         modifier = Modifier
@@ -132,42 +126,13 @@ fun CartContentScreen(
 
                 // Горизонтальный список рекомендаций
                 item {
-                    if (state.recommendsAreLoading) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = Dimens.MarginStandard16),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            MyCircularProgressIndicator(
-                                strokeWidth = Dimens.ProgressBarStroke6,
-                            )
-                        }
-                    } else {
-                        CartRecommendsList(
-                            recommendsList = state.recommends.mainRecommends,
-                            modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
-                            onAddToCart = { onAddToCart(it.toCartItem()) },
-                            onMealDetailsClick = { onMealDetailsClick(it.toCartItem()) },
-                        )
-                    }
-                }
-
-                // Сообщение про соевый соус и тд
-                if (state.recommends.separateRecommends.isNotEmpty()) {
-                    item {
-                        TooltipText(
-                            modifier = Modifier.padding(Dimens.MarginSmall8),
-                            textRes = R.string.sushi_soy_souse_tooltip
-                        )
-                        CartRecommendsList(
-                            recommendsList = state.recommends.separateRecommends,
-                            modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
-                            onAddToCart = { onAddToCart(it.toCartItem()) },
-                            onMealDetailsClick = { onMealDetailsClick(it.toCartItem()) },
-                        )
-                    }
-
+                    RecommendsSection(
+                        mainRecommends = state.recommends.mainRecommends,
+                        separateRecommends = state.recommends.separateRecommends,
+                        recommendsAreLoading = state.recommendsAreLoading,
+                        onAddToCart = onAddToCart,
+                        onMealDetailsClick = onMealDetailsClick
+                    )
                 }
 
                 // Кнопка оформления заказа (отображается тут только если открыта клавиатура, иначе будет закреплена поверх контента)
