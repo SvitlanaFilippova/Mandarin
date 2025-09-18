@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
@@ -57,8 +55,8 @@ fun MealItemImageBox(
             contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
             modifier = Modifier.fillMaxSize(),
 
-            loading = { Placeholder() },
-            error = { Placeholder() },
+            loading = { MealImagePlaceholder() },
+            error = { MealImagePlaceholder() },
             success = { state ->
                 val ratio = state.painter.intrinsicSize.width / state.painter.intrinsicSize.height
                 val contentScale = if (ratio in 0.75f..1.5f) {
@@ -110,16 +108,4 @@ fun MealItemImageBox(
             onClick = onToggleFavorite
         )
     }
-}
-
-@Composable
-private fun Placeholder() {
-    Image(
-        painter = painterResource(R.drawable.placeholder_meal_no_photo),
-        contentDescription = null,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Colors.AppBlack),
-        contentScale = ContentScale.Crop
-    )
 }

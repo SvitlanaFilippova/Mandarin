@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,11 +40,12 @@ fun MealDetailsMainContent(
     onEvent: (MealDetailsEvent) -> Unit,
     comment: String,
     isEditMode: Boolean,
+    bottomContent: @Composable () -> Unit = { },
+    imeVisible: Boolean,
 ) {
     val meal = remember { customizedMeal.meal }
     val shouldShowChosen =
         remember(customizedMeal.isCustomized) { !meal.isOnlySingleRequiredChoice() && customizedMeal.isCustomized }
-    Log.d("DEBUG LABEL", "Meal labels: ${customizedMeal.meal.labels}")
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth(),
@@ -165,23 +165,25 @@ fun MealDetailsMainContent(
                 )
             }
         }
-
-        // Поле для комментария показываем только в режиме редактирования блюда из корзины. Иначе оно выглядит неоднозначно.
-        if (isEditMode) {
-            item {
-                MyTextField(
-                    modifier = Modifier.padding(
-                        top = Dimens.MarginSmall8,
-                        bottom = Dimens.MarginBig24
-                    ),
-                    value = comment,
-                    labelRes = R.string.comment_for_meal,
-                    onValueChange = { onEvent(SetComment(it)) }
-                )
-            }
+        item {
+            MyTextField(
+                modifier = Modifier.padding(
+                    top = Dimens.MarginSmall8,
+                    bottom = Dimens.MarginBig24
+                ),
+                value = comment,
+                labelRes = R.string.comment_for_meal,
+                onValueChange = { onEvent(SetComment(it)) }
+            )
         }
 
-        // Отступ для кнопки "В корзину"
-        item { Spacer(modifier = Modifier.height(Dimens.MarginForCartButton72)) }
+        // Отступ для кнопки "В корзину" или сама кнопка (если открыта клавиатура)
+        item {
+            if (imeVisible) {
+                bottomContent()
+            } else {
+                Spacer(modifier = Modifier.height(Dimens.MarginForCartButton72))
+            }
+        }
     }
 }
