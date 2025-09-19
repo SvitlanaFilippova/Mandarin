@@ -68,14 +68,14 @@ class CartInteractorImpl(
         return cartWriter.addOrUpdateItem(itemToUpdate)
     }
 
-    override suspend fun tryAddMeal(cartItem: CartItem): MealAddResult {
+    override suspend fun tryAddMeal(item: CartItem): MealAddResult {
         val currentItems = getCurrentCartItems()
         // Базовое блюдо (не кастомизированное, без комментария)
-        if (!cartItem.customizedMeal.isCustomized && cartItem.comment.isEmpty()) {
+        if (!item.customizedMeal.isCustomized && item.comment.isEmpty()) {
             val existingBase = currentItems.find {
                 !it.customizedMeal.isCustomized &&
                         it.comment.isEmpty() &&
-                        it.customizedMeal.meal.id == cartItem.customizedMeal.meal.id
+                        it.customizedMeal.meal.id == item.customizedMeal.meal.id
             }
             if (existingBase != null) {
                 // просто увеличиваем количество
@@ -86,9 +86,9 @@ class CartInteractorImpl(
             }
         }
         //  Кастомизированное блюдо, которое совпадает по базе с обычным
-        if (cartItem.customizedMeal.isCustomized) {
+        if (item.customizedMeal.isCustomized || item.comment.isNotEmpty()) {
             val existingBaseMeal = currentItems.find {
-                it.customizedMeal.meal.id == cartItem.customizedMeal.meal.id &&
+                it.customizedMeal.meal.id == item.customizedMeal.meal.id &&
                         !it.customizedMeal.isCustomized && it.comment.isEmpty()
             }
             if (existingBaseMeal != null) {
@@ -97,7 +97,7 @@ class CartInteractorImpl(
         }
 
         // В корзине ничего похожего нет — добавляем
-        cartWriter.addOrUpdateItem(cartItem)
+        cartWriter.addOrUpdateItem(item)
         return MealAddResult.Added
     }
 
