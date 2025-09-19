@@ -44,9 +44,17 @@ jobs:
 
       - name: Create apikeys.properties from secrets
         run: |
-          echo "MAPKIT_API_KEY=${{ secrets.MAPKIT_API_KEY }}" > apikeys.properties
-          echo "IIKO_API_KEY=${{ secrets.IIKO_API_KEY }}" >> apikeys.properties
+          printf "MAPKIT_API_KEY=%s\nIIKO_API_KEY=%s\nTG_BOT_TOKEN=%s\nTG_CHANNEL_ID=%s\nDEV_TG_CHAT_ID=%s\n" \
+            "$MAPKIT_API_KEY" "$IIKO_API_KEY" "$TG_BOT_TOKEN" "$TG_CHANNEL_ID" "$DEV_TG_CHAT_ID" \
+            > apikeys.properties
+        shell: bash
         working-directory: ${{ github.workspace }}
+        env:
+          MAPKIT_API_KEY: ${{ secrets.MAPKIT_API_KEY }}
+          IIKO_API_KEY: ${{ secrets.IIKO_API_KEY }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHANNEL_ID: ${{ secrets.TG_CHANNEL_ID }}
+          DEV_TG_CHAT_ID: ${{ secrets.DEV_TG_CHAT_ID }}
 
       - name: Run Unit Tests
         run: ./gradlew testDebugUnitTest
