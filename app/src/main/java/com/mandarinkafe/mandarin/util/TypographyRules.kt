@@ -59,6 +59,7 @@ fun String.applyTypography(): String {
 /**
  * Нормализация единиц измерения (граммы, сантиметры и т.п.)
  */
+@Suppress("StringLiteralDuplication")
 private fun String.normalizeUnits(): String {
     return this
         // "гр" → "г"
@@ -77,7 +78,8 @@ private fun String.normalizeUnits(): String {
             "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}"
         }
         .replace(Regex("""(\d+)\s*(см|См)(\.)?""")) {
-            "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}${it.groupValues[3]}"
+            val dot = it.groupValues.getOrNull(3).orEmpty()
+            "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}$dot"
         }
 }
 

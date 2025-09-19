@@ -62,7 +62,7 @@ class MenuCacheImpl @Inject constructor(
                     }
 
                     is Resource.ErrorNoInternet<*> -> return result
-                    else -> Log.e(LOG_TAG, "fetchWithRetries. Ошибка: ${result.message}")
+                    else -> Log.e(LOG_TAG, "fetchWithRetries. ${result.message}")
                 }
             } catch (e: Exception) {
                 Log.e(LOG_TAG, "fetchWithRetries. Exception: ${e.message}")
