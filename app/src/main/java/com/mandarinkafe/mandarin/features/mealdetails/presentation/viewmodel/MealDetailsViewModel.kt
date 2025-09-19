@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
@@ -8,9 +9,12 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
+import com.mandarinkafe.mandarin.features.cart.domain.model.MealAddResult
+import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetMealByIdUseCase
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.CloseAndShowMessage
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowMaxModifiersQuantity
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowRequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
@@ -21,6 +25,7 @@ import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
+import com.mandarinkafe.mandarin.util.UiText
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -30,7 +35,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MealDetailsViewModel @Inject constructor(
     private val getAddonsUseCase: GetAddonsUseCase,
-    private val getMealById: GetMealByIdUseCase
+    private val getMealById: GetMealByIdUseCase,
+    private val cartInteractor: CartInteractor
 ) : BaseViewModel<MealDetailsEvent, MealDetailsEffect, MealDetailsState>() {
     override fun setInitialState() = MealDetailsState()
 
@@ -63,6 +69,88 @@ class MealDetailsViewModel @Inject constructor(
             )
 
             is MealDetailsEvent.SetComment -> setComment(event.text)
+            is MealDetailsEvent.TryAddMeal -> tryAddMeal(item = event.item)
+            is MealDetailsEvent.EditMealInCart -> editMealInCart(
+                newItem = event.newItem,
+                oldItem = event.oldItem
+            )
+        }
+    }
+
+    private fun tryAddMeal(item: CartItem?) {
+        if (item != null) {
+            viewModelScope.launch {
+                val result = cartInteractor.tryAddMeal(item)
+                when (result) {
+                    is MealAddResult.AlreadyExistBaseMeal -> showReplaceOrAddDialog(
+                        newItem = item,
+                        existingItem = result.existing,
+                        message = UiText.StringResource(R.string.replace_or_add_message, item.name)
+                    )
+
+                    is MealAddResult.Added -> showMessageAndCloseMealDetails(
+                        message = UiText.StringResource(
+                            R.string.added_to_cart_template,
+                            item.name
+                        )
+                    )
+                }
+            }
+
+        }
+    }
+
+    private fun showMessageAndCloseMealDetails(message: UiText) {
+        sendEffect(
+            CloseAndShowMessage(message = message)
+        )
+    }
+
+    private fun showReplaceOrAddDialog(
+        newItem: CartItem,
+        existingItem: CartItem,
+        message: UiText
+    ) {
+        sendEffect(
+            MealDetailsEffect.AskReplaceOrAdd(
+                message = message,
+                onAddNew = { addItem(newItem) },
+                onReplace = {
+                    editMealInCart(
+                        newItem = newItem,
+                        oldItem = existingItem
+                    )
+                }
+            )
+        )
+    }
+
+    private fun addItem(item: CartItem) {
+        viewModelScope.launch {
+            cartInteractor.addItem(cartItem = item)
+        }
+
+        showMessageAndCloseMealDetails(
+            message = UiText.StringResource(
+                R.string.added_to_cart_template,
+                item.name
+            )
+        )
+
+    }
+
+    private fun editMealInCart(newItem: CartItem, oldItem: CartItem? = null) {
+        viewModelScope.launch {
+            val wasUpdated = cartInteractor.updateItem(newCartItem = newItem, oldItem = oldItem)
+            val message = if (wasUpdated) {
+                UiText.StringResource(
+                    R.string.edited_template,
+                    newItem.name
+                )
+            } else {
+                null
+            }
+            sendEffect(CloseAndShowMessage(message))
         }
     }
 

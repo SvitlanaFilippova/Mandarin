@@ -1,17 +1,14 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
-import com.mandarinkafe.mandarin.features.cart.domain.model.MealAddResult
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect.CloseMealDetails
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect.ShowSnackbar
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.AddCommentToItem
@@ -23,8 +20,6 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnProceedOrderClick
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduce
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduceWithDelay
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.TryAddMeal
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.UpdateMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.util.Resource
@@ -63,71 +58,10 @@ class CartViewModel @Inject constructor(
             is CancelRemove -> cancelRemove(item = event.item)
             is ClearCart -> clearConfirmation()
             is ConfirmClearCart -> clear()
-            is UpdateMealInCart -> updateMealInCart(
-                newItem = event.newItem,
-                oldItem = event.oldItem
-            )
-
             is OnProceedOrderClick -> onProceedOrderClick()
             is AddCommentToItem -> setCommentToItem(event.item, event.comment)
             is ForceRefresh -> forceRefresh()
-            is TryAddMeal -> tryAddMeal(item = event.item)
         }
-    }
-
-    private fun tryAddMeal(item: CartItem?) {
-        if (item != null) {
-            viewModelScope.launch {
-                val result = cartInteractor.tryAddMeal(item)
-                when (result) {
-                    is MealAddResult.AlreadyExistBaseMeal -> showReplaceOrAddDialog(
-                        newItem = item,
-                        existingItem = result.existing,
-                        message = UiText.StringResource(R.string.replace_message_base, item.name)
-                    )
-
-                    is MealAddResult.AlreadyExistSameCartItem -> showReplaceOrAddDialog(
-                        newItem = item,
-                        existingItem = result.existing,
-                        message = UiText.StringResource(R.string.replace_message_same, item.name)
-                    )
-
-                    is MealAddResult.Added -> showSnackBarAndCloseMealDetails(mealName = item.name)
-                }
-            }
-
-        }
-    }
-
-    private fun showSnackBarAndCloseMealDetails(mealName: String) {
-        Log.d("DEBUG Snackbars", "VM showSnackBarAndCloseMealDetails called")
-        sendEffect(
-            ShowSnackbar(
-                message = UiText.StringResource(R.string.added_to_cart_template, mealName),
-                showToCartButton = true
-            )
-        )
-        sendEffect(CloseMealDetails)
-
-    }
-
-    private fun showReplaceOrAddDialog(
-        newItem: CartItem,
-        existingItem: CartItem,
-        message: UiText
-    ) {
-        sendEffect(
-            CartEffect.AskReplaceOrAdd(
-                message = message,
-                onAddNew = { addItem(newItem, showSnackBar = true) },
-                onReplace = {
-                    updateMealInCart(
-                        newItem = newItem,
-                        oldItem = existingItem
-                    )
-                }
-            )
-        )
     }
 
     private fun forceRefresh() {
@@ -282,10 +216,6 @@ class CartViewModel @Inject constructor(
     }
 
     private fun showSnackbar(message: UiText, showToCartButton: Boolean = false) {
-        Log.d(
-            "DEBUG Snackbars",
-            "showSnackbar called, showToCartButton: $showToCartButton, message: $message"
-        )
         sendEffect(ShowSnackbar(message, showToCartButton))
     }
 
@@ -296,30 +226,11 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private fun updateMealInCart(newItem: CartItem, oldItem: CartItem? = null) {
-        val id = newItem.id
-        setState { copy(inProgressItems = inProgressItems + id) }
-        viewModelScope.launch {
-            val wasUpdated = cartInteractor.updateItem(newCartItem = newItem, oldItem = oldItem)
-            Log.d("DEBUG Snackbars", "updateMealInCart, wasUpdated: $wasUpdated")
-            if (wasUpdated) {
-                showSnackbar(
-                    message = UiText.StringResource(
-                        R.string.edited_template,
-                        newItem.name
-                    )
-                )
-            }
-        }
-    }
-
     private fun addItem(
         item: CartItem? = null,
         customizedMeal: CustomizedMeal? = null,
         meal: Meal? = null,
-        showSnackBar: Boolean = false,
     ) {
-        Log.d("DEBUG Snackbars", "addItem for ${item?.name}, showSnackBar: $showSnackBar")
         val tempId =
             item?.id ?: customizedMeal?.meal?.id ?: meal?.id ?: return
         setState {
@@ -330,16 +241,6 @@ class CartViewModel @Inject constructor(
                 cartItem = item,
                 customizedMeal = customizedMeal,
                 meal = meal
-            )
-        }
-        if (showSnackBar) {
-            val itemName = item?.name ?: customizedMeal?.meal?.name ?: meal?.name ?: ""
-            showSnackbar(
-                message = UiText.StringResource(
-                    R.string.added_to_cart_template,
-                    itemName
-                ),
-                showToCartButton = true
             )
         }
     }

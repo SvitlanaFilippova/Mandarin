@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.screen
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -176,14 +175,6 @@ fun CartScreen(
                             withDismissAction = true,
                         )
                     }
-
-                    is CartEffect.AskReplaceOrAdd -> {} // тут не актуально, обрабатывается на экране кастомизации
-                    is CartEffect.CloseMealDetails -> {
-                        Log.d(
-                            "DEBUG Snackbars",
-                            "CartScreen  got effect CartEffect.CloseMealDetails"
-                        )
-                    } // тут не актуально, обрабатывается на экране кастомизации
                 }
             }
         }

@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
@@ -31,14 +30,14 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.TryAddMeal
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.UpdateMealInCart
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.models.ReplaceOrAddData
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.AskReplaceOrAdd
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.CloseAndShowMessage
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowMaxModifiersQuantity
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowRequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent.EditMealInCart
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent.TryAddMeal
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsViewModel
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
@@ -53,7 +52,6 @@ import kotlinx.coroutines.launch
 fun MealDetailsBottomSheet(
     viewModel: MealDetailsViewModel = hiltViewModel(),
     sharedViewModel: SharedViewModel,
-    cartViewModel: CartViewModel,
     initItem: CartItem?,
     onClose: () -> Unit,
     isEditMode: Boolean,
@@ -79,7 +77,7 @@ fun MealDetailsBottomSheet(
     )
     val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
     val onSharedEvent = sharedViewModel::onEvent
-    val onCartEvent = cartViewModel::onEvent
+    val onEvent = viewModel::onEvent
     val effectFlow = viewModel.effect
     val onToggleFavorite = { item: CustomizedMeal ->
         onSharedEvent(SharedEvent.ToggleFavorite(item = item))
@@ -162,10 +160,10 @@ fun MealDetailsBottomSheet(
                         isFavorite = isFavorite,
                         isEditMode = isEditMode,
                         onClose = onClose,
-                        onRequestAddMeal = { onCartEvent(TryAddMeal(state.actualCartItem)) },
+                        onRequestAddMeal = { onEvent(TryAddMeal(state.actualCartItem)) },
                         onEdit = {
-                            onCartEvent(
-                                UpdateMealInCart(
+                            onEvent(
+                                EditMealInCart(
                                     state.actualCartItem ?: customizedMeal.toCartItem()
                                 )
                             )
@@ -191,43 +189,30 @@ fun MealDetailsBottomSheet(
             effectFlow.collect { effect ->
                 when (effect) {
                     is ShowRequiredModifiersDialog -> showRequiredModifiersDialog = true
-
                     is ShowMaxModifiersQuantity -> showMaxModifiersQuantity = true
-                }
-            }
-        }
-        launch {
-            cartViewModel.effect.collect { effect ->
-                if (effect is CartEffect.AskReplaceOrAdd) {
-                    replaceOrAddData = ReplaceOrAddData(
-                        message = effect.message.asString(context),
-                        onAddNew = { effect.onAddNew(); onClose() },
-                        onReplace = { effect.onReplace(); onClose() }
-                    )
-                }
-                if (effect is CartEffect.CloseMealDetails) {
-                    Log.d(
-                        "DEBUG Snackbars",
-                        "MealDetailsBottomSheet  got effect CartEffect.CloseMealDetails"
-                    )
-                    onClose()
-                }
-                if (effect is CartEffect.ShowSnackbar) {
-                    Log.d(
-                        "DEBUG Snackbars",
-                        "MealDetailsBottomSheet  got effect CartEffect.ShowSnackbar, calling SharedEvent.ShowSnackbar"
-                    )
-                    onSharedEvent(
-                        SharedEvent.ShowSnackbar(
+                    is AskReplaceOrAdd -> {
+                        replaceOrAddData = ReplaceOrAddData(
                             message = effect.message.asString(context),
-                            showToCartButton = effect.showToCartButton
+                            onAddNew = { effect.onAddNew() },
+                            onReplace = { effect.onReplace() }
                         )
-                    )
+                    }
+
+                    is CloseAndShowMessage -> {
+                        effect.message?.let {
+                            onSharedEvent(
+                                SharedEvent.ShowSnackbar(
+                                    message = effect.message.asString(context),
+                                    showToCartButton = true
+                                )
+                            )
+                        }
+                        onClose()
+                    }
                 }
             }
         }
     }
-
 }
 
 @Composable
@@ -297,3 +282,4 @@ private fun ReplaceOrAddDialog(
         }
     )
 }
+

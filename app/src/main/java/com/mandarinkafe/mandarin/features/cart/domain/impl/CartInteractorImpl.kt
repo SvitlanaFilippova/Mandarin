@@ -63,7 +63,6 @@ class CartInteractorImpl(
     override suspend fun updateItem(newCartItem: CartItem, oldItem: CartItem?): Boolean {
         val itemToUpdate = oldItem?.copy(
             customizedMeal = newCartItem.customizedMeal,
-            quantity = newCartItem.quantity,
             comment = newCartItem.comment
         ) ?: newCartItem
         return cartWriter.addOrUpdateItem(itemToUpdate)
@@ -81,18 +80,11 @@ class CartInteractorImpl(
             if (existingBase != null) {
                 // просто увеличиваем количество
                 val updated =
-                    existingBase.copy(quantity = existingBase.quantity + cartItem.quantity)
+                    existingBase.copy(quantity = existingBase.quantity + 1)
                 cartWriter.addOrUpdateItem(updated)
                 return MealAddResult.Added
             }
         }
-
-        // Совпадает по содержимому (кастомизация и коммент те же)
-        val existingByContent = currentItems.find { it.equalsByContent(cartItem) }
-        if (existingByContent != null) {
-            return MealAddResult.AlreadyExistSameCartItem(existingByContent)
-        }
-
         //  Кастомизированное блюдо, которое совпадает по базе с обычным
         if (cartItem.customizedMeal.isCustomized) {
             val existingBaseMeal = currentItems.find {
@@ -104,7 +96,7 @@ class CartInteractorImpl(
             }
         }
 
-        // 4. В корзине ничего похожего нет — добавляем
+        // В корзине ничего похожего нет — добавляем
         cartWriter.addOrUpdateItem(cartItem)
         return MealAddResult.Added
     }

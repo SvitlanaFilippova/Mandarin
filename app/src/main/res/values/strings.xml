@@ -71,9 +71,8 @@
     <string name="make_mandatory_choice_before_cart">Выбери нужные опции в обязательных модификаторах — только после этого можно добавить блюдо в корзину</string>
     <string name="label_selfpickup_only">самовывоз</string>
     <string name="for_selfpickup_details">Позиция доступна только для заказа самовывозом. Доставка невозможна.</string>
-    <string name="replace_or_add_title">Добавить или заменить?</string>
-    <string name="replace_message_base">В корзине уже есть %1$s, но без дополнительных опций.\n\nЗаменяем, или оставляем в&#160;покое и&#160;добавляем ещё одну позицию в&#160;корзину?</string>
-    <string name="replace_message_same">В корзине уже есть %1$s с точно таким же набором опций.\n\nЗаменяем, или оставляем в&#160;покое и&#160;добавляем ещё одну позицию в&#160;корзину?</string>
+    <string name="replace_or_add_title">Что делаем?</string>
+    <string name="replace_or_add_message">В корзине уже есть %1$s, но без дополнительных опций.\n\nЗаменяем, или &#160;просто добавляем ещё одну позицию в&#160;корзину?</string>
     <string name="replace_button">Заменить</string>
     <string name="add_one_more_button">Добавить ещё</string>
 

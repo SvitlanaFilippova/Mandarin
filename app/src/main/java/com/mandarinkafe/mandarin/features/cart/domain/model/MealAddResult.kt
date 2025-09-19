@@ -4,6 +4,5 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 
 sealed class MealAddResult {
     data class AlreadyExistBaseMeal(val existing: CartItem) : MealAddResult()
-    data class AlreadyExistSameCartItem(val existing: CartItem) : MealAddResult()
     data object Added : MealAddResult()
 }
