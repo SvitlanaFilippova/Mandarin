@@ -5,16 +5,23 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
+import com.mandarinkafe.mandarin.features.cart.domain.model.MealAddResult
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect.CloseMealDetails
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect.ShowSnackbar
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.AddCommentToItem
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.AddToCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.CancelRemove
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ClearCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ConfirmClearCart
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ForceRefresh
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnProceedOrderClick
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduce
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduceWithDelay
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.RequestAddMeal
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.UpdateMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
@@ -53,11 +60,70 @@ class CartViewModel @Inject constructor(
             is CancelRemove -> cancelRemove(item = event.item)
             is ClearCart -> clearConfirmation()
             is ConfirmClearCart -> clear()
-            is UpdateMealInCart -> updateMealInCart(item = event.newItem)
-            is CartEvent.OnProceedOrderClick -> onProceedOrderClick()
-            is CartEvent.AddCommentToItem -> setCommentToItem(event.item, event.comment)
-            is CartEvent.ForceRefresh -> forceRefresh()
+            is UpdateMealInCart -> updateMealInCart(
+                newItem = event.newItem,
+                oldItem = event.oldItem
+            )
+
+            is OnProceedOrderClick -> onProceedOrderClick()
+            is AddCommentToItem -> setCommentToItem(event.item, event.comment)
+            is ForceRefresh -> forceRefresh()
+            is RequestAddMeal -> requestAddMeal(item = event.item)
         }
+    }
+
+    private fun requestAddMeal(item: CartItem?) {
+        if (item != null) {
+            viewModelScope.launch {
+                val result = cartInteractor.tryAddMeal(item)
+                when (result) {
+                    is MealAddResult.AlreadyExistBaseMeal -> showReplaceOrAddDialog(
+                        newItem = item,
+                        existingItem = result.existing,
+                        message = "В корзине уже есть ${item.name}, без дополнительных опций.\n\nЗаменяем, или оставляем в&#160;покое и&#160;добавляем ещё одну позицию в&#160;корзину?",
+                    )
+
+                    is MealAddResult.AlreadyExistSameCartItem -> showReplaceOrAddDialog(
+                        newItem = item,
+                        existingItem = result.existing,
+                        message = "В корзине уже есть ${item.name}, с точно таким же набором опций.\n\nЗаменяем, или оставляем в&#160;покое и&#160;добавляем ещё одну позицию в&#160;корзину?"
+                    )
+
+                    is MealAddResult.Added -> showSnackBarAndCloseMealDetails(mealName = item.name)
+                }
+            }
+
+        }
+    }
+
+    private fun showSnackBarAndCloseMealDetails(mealName: String) {
+        sendEffect(
+            ShowSnackbar(
+                message = "Добавлено в корзину: $mealName",
+                showToCartButton = true
+            )
+        )
+        sendEffect(CloseMealDetails)
+
+    }
+
+    private fun showReplaceOrAddDialog(
+        newItem: CartItem,
+        existingItem: CartItem,
+        message: String
+    ) {
+        sendEffect(
+            CartEffect.AskReplaceOrAdd(
+                message = message,
+                onAddNew = { addItem(newItem) },
+                onReplace = {
+                    updateMealInCart(
+                        newItem = newItem,
+                        oldItem = existingItem
+                    )
+                }
+            )
+        )
     }
 
     private fun forceRefresh() {
@@ -199,7 +265,7 @@ class CartViewModel @Inject constructor(
                         sendEffect(CartEffect.ProceedOrder)
                     } else {
                         sendEffect(
-                            CartEffect.ShowSnackbar(
+                            ShowSnackbar(
                                 "Упс, кажется, сейчас мы не работаем — заказ оформить не получится\uD83E\uDD37\nВозвращайся в рабочее время!"
                             )
                         )
@@ -208,14 +274,14 @@ class CartViewModel @Inject constructor(
 
                 is ErrorNoInternet -> {
                     sendEffect(
-                        CartEffect.ShowSnackbar(
+                        ShowSnackbar(
                             "Нет подключения к интернету."
                         )
                     )
                 }
 
                 else -> sendEffect(
-                    CartEffect.ShowSnackbar(
+                    ShowSnackbar(
                         "Что-то пошло не так — не удалось проверить, работает ли сейчас доставка."
                     )
                 )
@@ -226,15 +292,16 @@ class CartViewModel @Inject constructor(
     private fun setCommentToItem(item: CartItem, comment: String) {
         val newItem = item.copy(comment = comment)
         viewModelScope.launch {
-            cartInteractor.updateItem(cartItem = newItem)
+            cartInteractor.updateItem(newCartItem = newItem)
         }
     }
 
-    private fun updateMealInCart(item: CartItem) {
-        val id = item.id
+    private fun updateMealInCart(newItem: CartItem, oldItem: CartItem? = null) {
+        val id = newItem.id
         setState { copy(inProgressItems = inProgressItems + id) }
         viewModelScope.launch {
-            cartInteractor.updateItem(cartItem = item)
+            val wasUpdated = cartInteractor.updateItem(newCartItem = newItem, oldItem = oldItem)
+            if (wasUpdated) sendEffect(ShowSnackbar(message = "Отредактировано... %s")) // stringResource(R.string.edited, meal.name)
         }
     }
 
@@ -249,8 +316,19 @@ class CartViewModel @Inject constructor(
             copy(inProgressItems = inProgressItems + tempId)
         }
         viewModelScope.launch {
-            cartInteractor.addItem(cartItem = item, customizedMeal = customizedMeal, meal = meal)
+            cartInteractor.addItem(
+                cartItem = item,
+                customizedMeal = customizedMeal,
+                meal = meal
+            )
         }
+
+        sendEffect(
+            ShowSnackbar(
+                message = "Добавлено в корзину: %s",
+                showToCartButton = true
+            )
+        )      // stringResource(R.string.added_to_cart_template, item.name)
     }
 
     private fun startProgressTimer(item: CartItem) {

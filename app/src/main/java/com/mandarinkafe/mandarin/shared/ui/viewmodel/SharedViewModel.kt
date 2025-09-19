@@ -109,8 +109,7 @@ class SharedViewModel @Inject constructor(
             is SharedEvent.GoBack -> sendEffect(GoBackEffect)
             is SharedEvent.ShowSnackbar -> sendEffect(
                 SnackbarEffect(
-                    text = event.message,
-                    showToCartButton = event.showToCartButton
+                    text = event.message
                 )
             )
         }

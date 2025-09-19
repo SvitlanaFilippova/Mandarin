@@ -2,8 +2,11 @@ package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,10 +28,11 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.AddToCart
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.RequestAddMeal
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.UpdateMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
-import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.models.ReplaceOrAddData
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowMaxModifiersQuantity
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowRequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
@@ -38,7 +42,6 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InformationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,6 +82,7 @@ fun MealDetailsBottomSheet(
     var showFavoriteVariantChoiceDialog by remember { mutableStateOf(false) }
     var showRequiredModifiersDialog by remember { mutableStateOf(false) }
     var showMaxModifiersQuantity by remember { mutableStateOf(false) }
+    var replaceOrAddData by remember { mutableStateOf<ReplaceOrAddData?>(null) }
 
     val error = state.error
     val onClose: () -> Unit = remember(sheetState, coroutineScope) {
@@ -116,6 +120,16 @@ fun MealDetailsBottomSheet(
             },
             onDismiss = { showFavoriteVariantChoiceDialog = false }
         )
+
+        replaceOrAddData?.let { data ->
+            ReplaceOrAddDialog(
+                message = data.message,
+                onDismiss = { replaceOrAddData = null },
+                onAddNew = data.onAddNew,
+                onReplace = data.onReplace
+            )
+        }
+
         when {
             state.isLoading -> LoadingScreen()
             error != null -> PlaceholderScreen(
@@ -142,26 +156,13 @@ fun MealDetailsBottomSheet(
                         isFavorite = isFavorite,
                         isEditMode = isEditMode,
                         onClose = onClose,
-                        onAddToCart = { message ->
-                            onCartEvent(AddToCart(state.actualCartItem))
-                            onSharedEvent(
-                                SharedEvent.ShowSnackbar(
-                                    message = message,
-                                    showToCartButton = true
-                                )
-                            )
-                        },
-                        onEdit = { message ->
+                        onRequestAddMeal = { onCartEvent(RequestAddMeal(state.actualCartItem)) },
+                        onEdit = {
                             onCartEvent(
                                 UpdateMealInCart(
                                     state.actualCartItem ?: customizedMeal.toCartItem()
                                 )
                             )
-                            if (initItem != state.actualCartItem) {
-                                onSharedEvent(
-                                    SharedEvent.ShowSnackbar(message = message)
-                                )
-                            }
                         },
                         onToggleFavorite = {
                             if (!isFavorite && customizedMeal.isCustomized) {
@@ -179,33 +180,33 @@ fun MealDetailsBottomSheet(
         sheetState.show()
     }
 
-    HandleMealDetailsEffects(
-        effectFlow = effectFlow,
-        onChangeShowRequiredModifiersDialog = { showRequiredModifiersDialog = it },
-        onChangeShowMaxModifiersQuantity = { showMaxModifiersQuantity = it }
-    )
+    LaunchedEffect(Unit) {
+        launch {
+            effectFlow.collect { effect ->
+                when (effect) {
+                    is ShowRequiredModifiersDialog -> showRequiredModifiersDialog = true
 
-}
+                    is ShowMaxModifiersQuantity -> showMaxModifiersQuantity = true
+                }
+            }
+        }
+        launch {
+            cartViewModel.effect.collect { effect ->
+                if (effect is CartEffect.AskReplaceOrAdd) {
+                    replaceOrAddData = ReplaceOrAddData(
+                        message = effect.message,
+                        onAddNew = { effect.onAddNew(); onClose() },
+                        onReplace = { effect.onReplace(); onClose() }
+                    )
+                }
+                if (effect is CartEffect.CloseMealDetails) {
+                    onClose()
+                }
 
-@Composable
-private fun HandleMealDetailsEffects(
-    effectFlow: SharedFlow<MealDetailsEffect>,
-    onChangeShowRequiredModifiersDialog: (Boolean) -> Unit,
-    onChangeShowMaxModifiersQuantity: (Boolean) -> Unit,
-) {
-    LaunchedEffect(effectFlow) {
-        effectFlow.collect { effect ->
-            when (effect) {
-                is ShowRequiredModifiersDialog -> onChangeShowRequiredModifiersDialog(
-                    true
-                )
-
-                is ShowMaxModifiersQuantity -> onChangeShowMaxModifiersQuantity(
-                    true
-                )
             }
         }
     }
+
 }
 
 @Composable
@@ -254,4 +255,24 @@ private fun FavoriteVariantDialog(
             onDismiss = onDismiss
         )
     }
+}
+
+@Composable
+private fun ReplaceOrAddDialog(
+    message: String,
+    onDismiss: () -> Unit,
+    onAddNew: () -> Unit,
+    onReplace: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Что делаем?") },
+        text = { Text(message) },
+        confirmButton = {
+            TextButton(onClick = onReplace) { Text("Заменить ") }
+        },
+        dismissButton = {
+            TextButton(onClick = onAddNew) { Text("Добавить ещё") }
+        }
+    )
 }

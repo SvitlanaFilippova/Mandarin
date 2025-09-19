@@ -17,8 +17,11 @@ sealed interface CartContract {
             val customizedMeal: CustomizedMeal? = null
         ) : CartEvent
 
+        data class RequestAddMeal(val item: CartItem?) : CartEvent
         data class AddCommentToItem(val item: CartItem, val comment: String) : CartEvent
-        data class UpdateMealInCart(val newItem: CartItem) : CartEvent
+        data class UpdateMealInCart(val newItem: CartItem, val oldItem: CartItem? = null) :
+            CartEvent
+
         data class OnReduceWithDelay(val item: CartItem) : CartEvent
         data class CancelRemove(val item: CartItem) : CartEvent
         data class OnReduce(
@@ -38,8 +41,17 @@ sealed interface CartContract {
 
     sealed interface CartEffect : BaseEffect {
         data object ProceedOrder : CartEffect
-        data class ShowSnackbar(val message: String) : CartEffect
+        data class ShowSnackbar(val message: String, val showToCartButton: Boolean = true) :
+            CartEffect
+
+        data object CloseMealDetails : CartEffect
+
         data object ShowClearCartConfirmDialog : CartEffect
+        data class AskReplaceOrAdd(
+            val message: String,
+            val onAddNew: () -> Unit,
+            val onReplace: () -> Unit
+        ) : CartEffect
     }
 
     data class CartState(

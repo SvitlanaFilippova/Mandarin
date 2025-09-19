@@ -172,6 +172,9 @@ fun CartScreen(
                         duration = SnackbarDuration.Long,
                         withDismissAction = true,
                     )
+
+                    is CartEffect.AskReplaceOrAdd -> {} // тут не актуально, обрабатывается на экране кастомизации
+                    is CartEffect.CloseMealDetails -> {} // тут не актуально, обрабатывается на экране кастомизации
                 }
             }
         }
