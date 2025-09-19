@@ -77,7 +77,8 @@ fun TagDto.toDomain() = Tag(
 
 fun LabelDto.toDomain() = Label(
     id = code,
-    name = name
+    name = name.takeIf { it.uppercase() == it } // если всё заглавные, оставляем как есть
+        ?: name.replaceFirstChar { it.uppercaseChar() } // иначе делаем первую букву заглавной
 )
 
 fun ModifierItemDto.toDomain(): ModifierItem {
