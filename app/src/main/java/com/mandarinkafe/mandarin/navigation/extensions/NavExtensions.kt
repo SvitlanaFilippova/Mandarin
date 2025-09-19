@@ -156,7 +156,7 @@ fun NavController.tryGetBackStackEntry(route: String): NavBackStackEntry? {
     return try {
         getBackStackEntry(route)
     } catch (e: IllegalArgumentException) {
-        Log.d("Error tryGetBackStackEntry", "error: $e")
+        Log.e("Error tryGetBackStackEntry", "error: $e")
         null // экрана в стеке нет
     }
 }

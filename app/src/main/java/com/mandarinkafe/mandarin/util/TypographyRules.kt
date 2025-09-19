@@ -59,19 +59,27 @@ fun String.applyTypography(): String {
 /**
  * Нормализация единиц измерения (граммы, сантиметры и т.п.)
  */
+@Suppress("StringLiteralDuplication")
 private fun String.normalizeUnits(): String {
     return this
         // "гр" → "г"
         .replace(Regex("""\b(\d+)\s*(гр|ГР|Гр|гР)\.?\b""")) {
             "${it.groupValues[1]}${NON_BRAKING_SPACE}г"
         }
-        // "г" после числа → неразрывный пробел
+
+        // "г", "л", "мл", "см" после числа → неразрывный пробел
         .replace(Regex("""(\d+)\s*(г|Г)\.?""")) {
             "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}"
         }
-        // сантиметры
+        .replace(Regex("""(\d+)\s*(л|Л)\.?""")) {
+            "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}"
+        }
+        .replace(Regex("""(\d+)\s*(мл|МЛ|Мл|мЛ)\.?""")) {
+            "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}"
+        }
         .replace(Regex("""(\d+)\s*(см|См)(\.)?""")) {
-            "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}${it.groupValues[3]}"
+            val dot = it.groupValues.getOrNull(3).orEmpty()
+            "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}$dot"
         }
 }
 

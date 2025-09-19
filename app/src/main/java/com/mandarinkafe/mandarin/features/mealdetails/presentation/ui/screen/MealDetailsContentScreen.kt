@@ -14,8 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.hasSelectedAllRequiredModifiers
 import com.mandarinkafe.mandarin.core.domain.models.totalPrice
@@ -39,8 +37,8 @@ fun MealDetailsContentScreen(
     isEditMode: Boolean,
     onClose: () -> Unit,
     onEvent: (MealDetailsEvent) -> Unit,
-    onAddToCart: (String) -> Unit,
-    onEdit: (String) -> Unit,
+    onRequestAddMeal: () -> Unit,
+    onEdit: () -> Unit,
     onToggleFavorite: () -> Unit,
     comment: String,
 ) {
@@ -53,8 +51,6 @@ fun MealDetailsContentScreen(
     val imeInsets = WindowInsets.ime
     val imeHeight = imeInsets.getBottom(LocalDensity.current)
     val imeVisible = imeHeight > 0
-    val messageOnAddToCart = stringResource(R.string.added_to_cart_template, meal.name)
-    val messageOnEdit = stringResource(R.string.edited, meal.name)
 
     val onMakeMoreDeliciousClick: () -> Unit = remember(listState) {
         {
@@ -97,14 +93,11 @@ fun MealDetailsContentScreen(
                     if (imeVisible) {
                         ToCartButton(
                             totalPrice = customizedMeal.totalPrice(),
-                            onAddToCart = {
-                                onAddToCart(messageOnAddToCart)
-                                onClose()
-                            },
+                            onRequestAddMeal = onRequestAddMeal,
                             shouldBeActive = toCartShouldBeActive,
                             isEditMode = isEditMode,
                             onEdit = {
-                                onEdit(messageOnEdit)
+                                onEdit()
                                 onClose()
                             },
                             onMissingRequiredOptions = {
@@ -122,14 +115,11 @@ fun MealDetailsContentScreen(
                         .align(Alignment.BottomCenter)
                         .background(Colors.Transparent),
                     totalPrice = customizedMeal.totalPrice(),
-                    onAddToCart = {
-                        onAddToCart(messageOnAddToCart)
-                        onClose()
-                    },
+                    onRequestAddMeal = onRequestAddMeal,
                     shouldBeActive = toCartShouldBeActive,
                     isEditMode = isEditMode,
                     onEdit = {
-                        onEdit(messageOnEdit)
+                        onEdit()
                         onClose()
                     },
                     onMissingRequiredOptions = { onEvent(MealDetailsEvent.OnToCartClickBeforeMandatoryChoice) }

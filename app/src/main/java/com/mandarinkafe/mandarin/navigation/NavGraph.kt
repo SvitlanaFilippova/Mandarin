@@ -129,7 +129,6 @@ fun NavGraph(navHostController: NavHostController) {
 
                 MealDetailsBottomSheet(
                     sharedViewModel = sharedViewModel,
-                    cartViewModel = cartViewModel,
                     mealId = if (mealId != "null") mealId else null,
                     initItem = item,
                     isEditMode = isEditMode,

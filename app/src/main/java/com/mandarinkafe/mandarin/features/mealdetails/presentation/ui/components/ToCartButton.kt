@@ -26,7 +26,7 @@ fun ToCartButton(
     shouldBeActive: Boolean,
     totalPrice: Int,
     onMissingRequiredOptions: () -> Unit,
-    onAddToCart: () -> Unit,
+    onRequestAddMeal: () -> Unit,
     onEdit: () -> Unit,
 ) {
     val contentColor = if (shouldBeActive) {
@@ -43,7 +43,7 @@ fun ToCartButton(
     val onClickAction = when {
         !shouldBeActive -> onMissingRequiredOptions
         isEditMode -> onEdit
-        else -> onAddToCart
+        else -> onRequestAddMeal
     }
 
     Button(

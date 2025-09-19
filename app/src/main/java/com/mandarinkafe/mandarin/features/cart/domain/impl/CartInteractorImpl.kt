@@ -6,8 +6,10 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.equalsByContent
+import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
+import com.mandarinkafe.mandarin.features.cart.domain.model.MealAddResult
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.first
@@ -27,68 +29,76 @@ class CartInteractorImpl(
             else -> emptyList()
         }
     }
+
     override suspend fun forceRefresh() {
         forceRefreshMenu()
         cartReader.forceRetry()
     }
+
     override suspend fun addItem(
         cartItem: CartItem?,
         customizedMeal: CustomizedMeal?,
         meal: Meal?
     ) {
         when {
-            cartItem != null -> {
-                val currentItems = getCurrentCartItems()
-
-                val existingById = currentItems.find { it.id == cartItem.id }
-                if (existingById != null) {
-                    val updated = existingById.copy(quantity = existingById.quantity + 1)
-                    cartWriter.addOrUpdateItem(updated)
-                    return
-                }
-
-                val existingByContent = currentItems.find { it.equalsByContent(cartItem) }
-                if (existingByContent != null) {
-                    val updated = existingByContent.copy(quantity = existingByContent.quantity + 1)
-                    cartWriter.addOrUpdateItem(updated)
-                } else {
-                    cartWriter.addOrUpdateItem(cartItem)
-                }
-            }
-
-            customizedMeal != null -> {
-                val existing = getCurrentCartItems()
-                    .lastOrNull { it.customizedMeal == customizedMeal }
-                if (existing != null) {
-                    val updated = existing.copy(quantity = existing.quantity + 1)
-                    cartWriter.addOrUpdateItem(updated)
-                } else {
-                    val newItem = customizedMeal.toCartItem()
-                    cartWriter.addOrUpdateItem(newItem)
-                }
-            }
-
-            meal != null -> {
-                val existing = getCurrentCartItems()
-                    .lastOrNull { it.customizedMeal.meal == meal }
-                if (existing != null) {
-                    val updated = existing.copy(quantity = existing.quantity + 1)
-                    cartWriter.addOrUpdateItem(updated)
-                } else {
-                    val newItem = meal.toCartItem()
-                    cartWriter.addOrUpdateItem(newItem)
-                }
-            }
-
-            else -> {
-                // Все параметры null — ничего не делаем
-            }
+            cartItem != null -> addOrIncrement(cartItem)
+            customizedMeal != null -> addOrIncrement(customizedMeal.toCartItem())
+            meal != null -> addOrIncrement(meal.toCartItem())
+            else -> Unit
         }
     }
 
-    override suspend fun updateItem(cartItem: CartItem) {
-        // здесь ожидается уже корректное количество quantity, обновляем только данные
-        cartWriter.addOrUpdateItem(cartItem)
+    private suspend fun addOrIncrement(target: CartItem) {
+        val currentItems = getCurrentCartItems()
+
+        val existing = currentItems.find { it.equalsByContent(target) }
+        if (existing != null) {
+            val updated = existing.copy(quantity = existing.quantity + 1)
+            cartWriter.addOrUpdateItem(updated)
+        } else {
+            cartWriter.addOrUpdateItem(target)
+        }
+    }
+
+    override suspend fun updateItem(newCartItem: CartItem, oldItem: CartItem?): Boolean {
+        val itemToUpdate = oldItem?.copy(
+            customizedMeal = newCartItem.customizedMeal,
+            comment = newCartItem.comment
+        ) ?: newCartItem
+        return cartWriter.addOrUpdateItem(itemToUpdate)
+    }
+
+    override suspend fun tryAddMeal(item: CartItem): MealAddResult {
+        val currentItems = getCurrentCartItems()
+        // Базовое блюдо (не кастомизированное, без комментария)
+        if (!item.customizedMeal.isCustomized && item.comment.isEmpty()) {
+            val existingBase = currentItems.find {
+                !it.customizedMeal.isCustomized &&
+                        it.comment.isEmpty() &&
+                        it.customizedMeal.meal.id == item.customizedMeal.meal.id
+            }
+            if (existingBase != null) {
+                // просто увеличиваем количество
+                val updated =
+                    existingBase.copy(quantity = existingBase.quantity + 1)
+                cartWriter.addOrUpdateItem(updated)
+                return MealAddResult.Added
+            }
+        }
+        //  Кастомизированное блюдо, которое совпадает по базе с обычным
+        if (item.customizedMeal.isCustomized || item.comment.isNotEmpty()) {
+            val existingBaseMeal = currentItems.find {
+                it.customizedMeal.meal.id == item.customizedMeal.meal.id &&
+                        !it.customizedMeal.isCustomized && it.comment.isEmpty()
+            }
+            if (existingBaseMeal != null) {
+                return MealAddResult.AlreadyExistBaseMeal(existingBaseMeal)
+            }
+        }
+
+        // В корзине ничего похожего нет — добавляем
+        cartWriter.addOrUpdateItem(item)
+        return MealAddResult.Added
     }
 
     override suspend fun removeFromCart(
@@ -96,43 +106,22 @@ class CartInteractorImpl(
         customizedMeal: CustomizedMeal?,
         meal: Meal?
     ) {
-        when {
-            cartItemId != null -> {
-                // Для CartItem — удаляем сразу
-                cartWriter.deleteItemById(cartItemId)
-            }
+        val currentItems = getCurrentCartItems()
+        val target: CartItem? = when {
+            cartItemId != null -> currentItems.find { it.id == cartItemId }
+            customizedMeal != null -> currentItems.lastOrNull { it.customizedMeal == customizedMeal }
+            meal != null -> currentItems.lastOrNull { it.customizedMeal.meal == meal }
+            else -> null
+        }
 
-            customizedMeal != null -> {
-                val currentItems = getCurrentCartItems()
-                val target = currentItems.lastOrNull { it.customizedMeal == customizedMeal }
-                if (target != null) {
-                    if (target.quantity > 1) {
-                        // Уменьшаем количество
-                        val updated = target.copy(quantity = target.quantity - 1)
-                        cartWriter.addOrUpdateItem(updated)
-                    } else {
-                        // Удаляем полностью
-                        cartWriter.deleteItemById(target.id)
-                    }
-                }
-            }
+        target?.let { decrementOrRemove(it) }
+    }
 
-            meal != null -> {
-                val currentItems = getCurrentCartItems()
-                val target = currentItems.lastOrNull { it.customizedMeal.meal == meal }
-                if (target != null) {
-                    if (target.quantity > 1) {
-                        val updated = target.copy(quantity = target.quantity - 1)
-                        cartWriter.addOrUpdateItem(updated)
-                    } else {
-                        cartWriter.deleteItemById(target.id)
-                    }
-                }
-            }
-
-            else -> {
-                // Ничего не передано — ничего не делаем
-            }
+    private suspend fun decrementOrRemove(item: CartItem) {
+        if (item.quantity > 1) {
+            cartWriter.addOrUpdateItem(item.copy(quantity = item.quantity - 1))
+        } else {
+            cartWriter.deleteItemById(item.id)
         }
     }
 

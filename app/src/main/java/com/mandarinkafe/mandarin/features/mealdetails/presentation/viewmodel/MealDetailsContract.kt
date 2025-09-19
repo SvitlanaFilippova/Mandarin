@@ -11,6 +11,7 @@ import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SELECTED_FIRST_INDEX
+import com.mandarinkafe.mandarin.util.UiText
 
 sealed interface MealDetailsContract {
     sealed interface MealDetailsEvent : BaseEvent {
@@ -40,11 +41,21 @@ sealed interface MealDetailsContract {
 
         // Обработка действий с корзиной
         data object OnToCartClickBeforeMandatoryChoice : MealDetailsEvent
+        data class TryAddMeal(val item: CartItem?) : MealDetailsEvent
+        data class EditMealInCart(val newItem: CartItem, val oldItem: CartItem? = null) :
+            MealDetailsEvent
     }
 
     sealed interface MealDetailsEffect : BaseEffect {
         data object ShowRequiredModifiersDialog : MealDetailsEffect
         data class ShowMaxModifiersQuantity(val groupName: String, val max: Int) : MealDetailsEffect
+        data class AskReplaceOrAdd(
+            val message: UiText,
+            val onAddNew: () -> Unit,
+            val onReplace: () -> Unit
+        ) : MealDetailsEffect
+
+        data class CloseAndShowMessage(val message: UiText? = null) : MealDetailsEffect
     }
 
     data class MealDetailsState(

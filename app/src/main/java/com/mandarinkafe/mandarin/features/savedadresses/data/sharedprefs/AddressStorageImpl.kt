@@ -23,7 +23,7 @@ class AddressStorageImpl @Inject constructor(private val sharedPreferences: Shar
                 gson.fromJson<List<Address>>(json, listType) ?: emptyList()
             }
         } catch (e: Exception) {
-            Log.d(
+            Log.e(
                 "getSavedAddresses error",
                 "Ошибка чтения сохранённых адресов: ${e.message}. Удаляю сохранённые адреса"
             )

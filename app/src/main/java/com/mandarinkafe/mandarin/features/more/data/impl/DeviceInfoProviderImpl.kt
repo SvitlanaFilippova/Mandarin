@@ -11,14 +11,19 @@ class DeviceInfoProviderImpl(private val context: Context) : DeviceInfoProvider 
             context.packageManager.getPackageInfo(context.packageName, 0).versionName
         } catch (e: Exception) {
             "Unknown"
-            Log.d("DeviceInfoProvider", "Unknown versionName, $e")
+            Log.e("DeviceInfoProvider", "Unknown versionName, $e")
         }
 
         val versionCode = try {
-            context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode
+            val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                pInfo.longVersionCode
+            } else {
+                pInfo.versionCode.toLong()
+            }
         } catch (e: Exception) {
             "Unknown"
-            Log.d("DeviceInfoProvider", "Unknown versionCode, $e")
+            Log.e("DeviceInfoProvider", "Unknown versionCode, $e")
         }
 
         return buildString {

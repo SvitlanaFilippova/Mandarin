@@ -8,6 +8,7 @@ import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.UiText
 
 sealed interface CartContract {
     sealed interface CartEvent : BaseEvent {
@@ -18,7 +19,6 @@ sealed interface CartContract {
         ) : CartEvent
 
         data class AddCommentToItem(val item: CartItem, val comment: String) : CartEvent
-        data class UpdateMealInCart(val newItem: CartItem) : CartEvent
         data class OnReduceWithDelay(val item: CartItem) : CartEvent
         data class CancelRemove(val item: CartItem) : CartEvent
         data class OnReduce(
@@ -38,8 +38,10 @@ sealed interface CartContract {
 
     sealed interface CartEffect : BaseEffect {
         data object ProceedOrder : CartEffect
-        data class ShowSnackbar(val message: String) : CartEffect
+        data class ShowSnackbar(val message: UiText, val showToCartButton: Boolean = false) :
+            CartEffect
         data object ShowClearCartConfirmDialog : CartEffect
+
     }
 
     data class CartState(

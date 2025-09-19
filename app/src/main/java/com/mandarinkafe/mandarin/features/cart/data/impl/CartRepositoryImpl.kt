@@ -128,20 +128,30 @@ class CartRepositoryImpl @Inject constructor(
         return result
     }
 
-    override suspend fun addOrUpdateItem(item: CartItem) {
+    override suspend fun addOrUpdateItem(item: CartItem): Boolean {
+        var wasUpdated = false
         cartItems = cartItems.toMutableList().apply {
             val index = indexOfFirst { it.id == item.id }
-            if (index != -1) set(index, item) else add(item)
+            if (index != -1) {
+                val oldItem = this[index]
+                if (oldItem != item) {
+                    this[index] = item
+                    wasUpdated = true
+                }
+            } else {
+                add(item)
+            }
         }
 
         // Мгновенное обновление UI
         _cartItems.value = Resource.Success(cartItems)
         _cartCount.value = cartItems.sumOf { it.quantity }
-
         // Фоновое сохранение
         scope.launch(Dispatchers.IO) {
             storage.addOrUpdateItem(item.toStoredCartItem())
+
         }
+        return wasUpdated
     }
 
     override suspend fun deleteItemById(id: String) {

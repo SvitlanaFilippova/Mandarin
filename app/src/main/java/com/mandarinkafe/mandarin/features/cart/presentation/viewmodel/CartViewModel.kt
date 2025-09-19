@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -8,14 +9,17 @@ import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect.ShowSnackbar
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.AddCommentToItem
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.AddToCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.CancelRemove
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ClearCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ConfirmClearCart
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.ForceRefresh
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnProceedOrderClick
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduce
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduceWithDelay
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.UpdateMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.util.Resource
@@ -24,6 +28,7 @@ import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
+import com.mandarinkafe.mandarin.util.UiText
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -53,10 +58,9 @@ class CartViewModel @Inject constructor(
             is CancelRemove -> cancelRemove(item = event.item)
             is ClearCart -> clearConfirmation()
             is ConfirmClearCart -> clear()
-            is UpdateMealInCart -> updateMealInCart(item = event.newItem)
-            is CartEvent.OnProceedOrderClick -> onProceedOrderClick()
-            is CartEvent.AddCommentToItem -> setCommentToItem(event.item, event.comment)
-            is CartEvent.ForceRefresh -> forceRefresh()
+            is OnProceedOrderClick -> onProceedOrderClick()
+            is AddCommentToItem -> setCommentToItem(event.item, event.comment)
+            is ForceRefresh -> forceRefresh()
         }
     }
 
@@ -198,50 +202,34 @@ class CartViewModel @Inject constructor(
                     if (terminalResponse.data == true) {
                         sendEffect(CartEffect.ProceedOrder)
                     } else {
-                        sendEffect(
-                            CartEffect.ShowSnackbar(
-                                "Упс, кажется, сейчас мы не работаем — заказ оформить не получится\uD83E\uDD37\nВозвращайся в рабочее время!"
-                            )
+                        showSnackbar(
+                            message = UiText.StringResource(R.string.error_terminal_unavailable),
                         )
                     }
                 }
 
-                is ErrorNoInternet -> {
-                    sendEffect(
-                        CartEffect.ShowSnackbar(
-                            "Нет подключения к интернету."
-                        )
-                    )
-                }
+                is ErrorNoInternet -> showSnackbar(UiText.StringResource(R.string.error_no_internet))
 
-                else -> sendEffect(
-                    CartEffect.ShowSnackbar(
-                        "Что-то пошло не так — не удалось проверить, работает ли сейчас доставка."
-                    )
-                )
+                else -> showSnackbar(UiText.StringResource(R.string.error_cant_check_terminal_is_alive))
             }
         }
+    }
+
+    private fun showSnackbar(message: UiText, showToCartButton: Boolean = false) {
+        sendEffect(ShowSnackbar(message, showToCartButton))
     }
 
     private fun setCommentToItem(item: CartItem, comment: String) {
         val newItem = item.copy(comment = comment)
         viewModelScope.launch {
-            cartInteractor.updateItem(cartItem = newItem)
-        }
-    }
-
-    private fun updateMealInCart(item: CartItem) {
-        val id = item.id
-        setState { copy(inProgressItems = inProgressItems + id) }
-        viewModelScope.launch {
-            cartInteractor.updateItem(cartItem = item)
+            cartInteractor.updateItem(newCartItem = newItem)
         }
     }
 
     private fun addItem(
         item: CartItem? = null,
         customizedMeal: CustomizedMeal? = null,
-        meal: Meal? = null
+        meal: Meal? = null,
     ) {
         val tempId =
             item?.id ?: customizedMeal?.meal?.id ?: meal?.id ?: return
@@ -249,7 +237,11 @@ class CartViewModel @Inject constructor(
             copy(inProgressItems = inProgressItems + tempId)
         }
         viewModelScope.launch {
-            cartInteractor.addItem(cartItem = item, customizedMeal = customizedMeal, meal = meal)
+            cartInteractor.addItem(
+                cartItem = item,
+                customizedMeal = customizedMeal,
+                meal = meal
+            )
         }
     }
 
