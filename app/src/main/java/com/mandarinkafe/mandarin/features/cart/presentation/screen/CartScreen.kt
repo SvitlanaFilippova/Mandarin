@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.screen
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
@@ -32,10 +34,10 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.Constants.SNACKBAR_MESSAGE_KEY
+import com.mandarinkafe.mandarin.util.asString
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @SuppressLint("LogNotTimber")
@@ -50,7 +52,7 @@ fun CartScreen(
     val state by cartViewModel.state.collectAsState()
     val effectFlow = cartViewModel.effect
     val onSharedEvent = sharedViewModel::onEvent
-
+    val context = LocalContext.current
     val onCartEvent = cartViewModel::onEvent
     val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
     var showClearCartDialog by remember { mutableStateOf(false) }
@@ -163,18 +165,25 @@ fun CartScreen(
 
     LaunchedEffect(Unit) {
         launch {
-            effectFlow.collectLatest { effect ->
+            effectFlow.collect { effect ->
                 when (effect) {
                     is CartEffect.ShowClearCartConfirmDialog -> showClearCartDialog = true
                     is CartEffect.ProceedOrder -> navController.navigateToOrder()
-                    is CartEffect.ShowSnackbar -> snackbarHostState.showSnackbar(
-                        message = effect.message,
-                        duration = SnackbarDuration.Long,
-                        withDismissAction = true,
-                    )
+                    is CartEffect.ShowSnackbar -> {
+                        snackbarHostState.showSnackbar(
+                            message = effect.message.asString(context),
+                            duration = SnackbarDuration.Long,
+                            withDismissAction = true,
+                        )
+                    }
 
                     is CartEffect.AskReplaceOrAdd -> {} // тут не актуально, обрабатывается на экране кастомизации
-                    is CartEffect.CloseMealDetails -> {} // тут не актуально, обрабатывается на экране кастомизации
+                    is CartEffect.CloseMealDetails -> {
+                        Log.d(
+                            "DEBUG Snackbars",
+                            "CartScreen  got effect CartEffect.CloseMealDetails"
+                        )
+                    } // тут не актуально, обрабатывается на экране кастомизации
                 }
             }
         }

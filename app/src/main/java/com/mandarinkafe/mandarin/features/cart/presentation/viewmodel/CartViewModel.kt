@@ -1,6 +1,8 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -21,7 +23,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnProceedOrderClick
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduce
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduceWithDelay
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.RequestAddMeal
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.TryAddMeal
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.UpdateMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
@@ -31,6 +33,7 @@ import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
+import com.mandarinkafe.mandarin.util.UiText
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -68,11 +71,11 @@ class CartViewModel @Inject constructor(
             is OnProceedOrderClick -> onProceedOrderClick()
             is AddCommentToItem -> setCommentToItem(event.item, event.comment)
             is ForceRefresh -> forceRefresh()
-            is RequestAddMeal -> requestAddMeal(item = event.item)
+            is TryAddMeal -> tryAddMeal(item = event.item)
         }
     }
 
-    private fun requestAddMeal(item: CartItem?) {
+    private fun tryAddMeal(item: CartItem?) {
         if (item != null) {
             viewModelScope.launch {
                 val result = cartInteractor.tryAddMeal(item)
@@ -80,13 +83,13 @@ class CartViewModel @Inject constructor(
                     is MealAddResult.AlreadyExistBaseMeal -> showReplaceOrAddDialog(
                         newItem = item,
                         existingItem = result.existing,
-                        message = "В корзине уже есть ${item.name}, без дополнительных опций.\n\nЗаменяем, или оставляем в&#160;покое и&#160;добавляем ещё одну позицию в&#160;корзину?",
+                        message = UiText.StringResource(R.string.replace_message_base, item.name)
                     )
 
                     is MealAddResult.AlreadyExistSameCartItem -> showReplaceOrAddDialog(
                         newItem = item,
                         existingItem = result.existing,
-                        message = "В корзине уже есть ${item.name}, с точно таким же набором опций.\n\nЗаменяем, или оставляем в&#160;покое и&#160;добавляем ещё одну позицию в&#160;корзину?"
+                        message = UiText.StringResource(R.string.replace_message_same, item.name)
                     )
 
                     is MealAddResult.Added -> showSnackBarAndCloseMealDetails(mealName = item.name)
@@ -97,9 +100,10 @@ class CartViewModel @Inject constructor(
     }
 
     private fun showSnackBarAndCloseMealDetails(mealName: String) {
+        Log.d("DEBUG Snackbars", "VM showSnackBarAndCloseMealDetails called")
         sendEffect(
             ShowSnackbar(
-                message = "Добавлено в корзину: $mealName",
+                message = UiText.StringResource(R.string.added_to_cart_template, mealName),
                 showToCartButton = true
             )
         )
@@ -110,12 +114,12 @@ class CartViewModel @Inject constructor(
     private fun showReplaceOrAddDialog(
         newItem: CartItem,
         existingItem: CartItem,
-        message: String
+        message: UiText
     ) {
         sendEffect(
             CartEffect.AskReplaceOrAdd(
                 message = message,
-                onAddNew = { addItem(newItem) },
+                onAddNew = { addItem(newItem, showSnackBar = true) },
                 onReplace = {
                     updateMealInCart(
                         newItem = newItem,
@@ -264,29 +268,25 @@ class CartViewModel @Inject constructor(
                     if (terminalResponse.data == true) {
                         sendEffect(CartEffect.ProceedOrder)
                     } else {
-                        sendEffect(
-                            ShowSnackbar(
-                                "Упс, кажется, сейчас мы не работаем — заказ оформить не получится\uD83E\uDD37\nВозвращайся в рабочее время!"
-                            )
+                        showSnackbar(
+                            message = UiText.StringResource(R.string.error_terminal_unavailable),
                         )
                     }
                 }
 
-                is ErrorNoInternet -> {
-                    sendEffect(
-                        ShowSnackbar(
-                            "Нет подключения к интернету."
-                        )
-                    )
-                }
+                is ErrorNoInternet -> showSnackbar(UiText.StringResource(R.string.error_no_internet))
 
-                else -> sendEffect(
-                    ShowSnackbar(
-                        "Что-то пошло не так — не удалось проверить, работает ли сейчас доставка."
-                    )
-                )
+                else -> showSnackbar(UiText.StringResource(R.string.error_cant_check_terminal_is_alive))
             }
         }
+    }
+
+    private fun showSnackbar(message: UiText, showToCartButton: Boolean = false) {
+        Log.d(
+            "DEBUG Snackbars",
+            "showSnackbar called, showToCartButton: $showToCartButton, message: $message"
+        )
+        sendEffect(ShowSnackbar(message, showToCartButton))
     }
 
     private fun setCommentToItem(item: CartItem, comment: String) {
@@ -301,15 +301,25 @@ class CartViewModel @Inject constructor(
         setState { copy(inProgressItems = inProgressItems + id) }
         viewModelScope.launch {
             val wasUpdated = cartInteractor.updateItem(newCartItem = newItem, oldItem = oldItem)
-            if (wasUpdated) sendEffect(ShowSnackbar(message = "Отредактировано... %s")) // stringResource(R.string.edited, meal.name)
+            Log.d("DEBUG Snackbars", "updateMealInCart, wasUpdated: $wasUpdated")
+            if (wasUpdated) {
+                showSnackbar(
+                    message = UiText.StringResource(
+                        R.string.edited_template,
+                        newItem.name
+                    )
+                )
+            }
         }
     }
 
     private fun addItem(
         item: CartItem? = null,
         customizedMeal: CustomizedMeal? = null,
-        meal: Meal? = null
+        meal: Meal? = null,
+        showSnackBar: Boolean = false,
     ) {
+        Log.d("DEBUG Snackbars", "addItem for ${item?.name}, showSnackBar: $showSnackBar")
         val tempId =
             item?.id ?: customizedMeal?.meal?.id ?: meal?.id ?: return
         setState {
@@ -322,13 +332,16 @@ class CartViewModel @Inject constructor(
                 meal = meal
             )
         }
-
-        sendEffect(
-            ShowSnackbar(
-                message = "Добавлено в корзину: %s",
+        if (showSnackBar) {
+            val itemName = item?.name ?: customizedMeal?.meal?.name ?: meal?.name ?: ""
+            showSnackbar(
+                message = UiText.StringResource(
+                    R.string.added_to_cart_template,
+                    itemName
+                ),
                 showToCartButton = true
             )
-        )      // stringResource(R.string.added_to_cart_template, item.name)
+        }
     }
 
     private fun startProgressTimer(item: CartItem) {

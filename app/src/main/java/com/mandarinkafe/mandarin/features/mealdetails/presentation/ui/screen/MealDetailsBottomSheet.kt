@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
@@ -18,6 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
@@ -29,7 +32,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.RequestAddMeal
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.TryAddMeal
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.UpdateMealInCart
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.models.ReplaceOrAddData
@@ -39,6 +42,7 @@ import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.Mea
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsViewModel
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.util.asString
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InformationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
@@ -55,6 +59,8 @@ fun MealDetailsBottomSheet(
     isEditMode: Boolean,
     mealId: String?,
 ) {
+    val context = LocalContext.current
+
     if (initItem == null && mealId == null) return
     val state by viewModel.state.collectAsState()
     LaunchedEffect(initItem, mealId) {
@@ -156,7 +162,7 @@ fun MealDetailsBottomSheet(
                         isFavorite = isFavorite,
                         isEditMode = isEditMode,
                         onClose = onClose,
-                        onRequestAddMeal = { onCartEvent(RequestAddMeal(state.actualCartItem)) },
+                        onRequestAddMeal = { onCartEvent(TryAddMeal(state.actualCartItem)) },
                         onEdit = {
                             onCartEvent(
                                 UpdateMealInCart(
@@ -194,15 +200,30 @@ fun MealDetailsBottomSheet(
             cartViewModel.effect.collect { effect ->
                 if (effect is CartEffect.AskReplaceOrAdd) {
                     replaceOrAddData = ReplaceOrAddData(
-                        message = effect.message,
+                        message = effect.message.asString(context),
                         onAddNew = { effect.onAddNew(); onClose() },
                         onReplace = { effect.onReplace(); onClose() }
                     )
                 }
                 if (effect is CartEffect.CloseMealDetails) {
+                    Log.d(
+                        "DEBUG Snackbars",
+                        "MealDetailsBottomSheet  got effect CartEffect.CloseMealDetails"
+                    )
                     onClose()
                 }
-
+                if (effect is CartEffect.ShowSnackbar) {
+                    Log.d(
+                        "DEBUG Snackbars",
+                        "MealDetailsBottomSheet  got effect CartEffect.ShowSnackbar, calling SharedEvent.ShowSnackbar"
+                    )
+                    onSharedEvent(
+                        SharedEvent.ShowSnackbar(
+                            message = effect.message.asString(context),
+                            showToCartButton = effect.showToCartButton
+                        )
+                    )
+                }
             }
         }
     }
@@ -266,13 +287,13 @@ private fun ReplaceOrAddDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Что делаем?") },
+        title = { Text(stringResource(R.string.replace_or_add_title)) },
         text = { Text(message) },
         confirmButton = {
-            TextButton(onClick = onReplace) { Text("Заменить ") }
+            TextButton(onClick = onReplace) { Text(stringResource(R.string.replace_button)) }
         },
         dismissButton = {
-            TextButton(onClick = onAddNew) { Text("Добавить ещё") }
+            TextButton(onClick = onAddNew) { Text(stringResource(R.string.add_one_more_button)) }
         }
     )
 }
