@@ -69,6 +69,14 @@ private fun String.normalizeUnits(): String {
         .replace(Regex("""(\d+)\s*(г|Г)\.?""")) {
             "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}"
         }
+        // "л" после числа → неразрывный пробел
+        .replace(Regex("""(\d+)\s*(л|Л)\.?""")) {
+            "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}"
+        }
+        // "мл" после числа → неразрывный пробел
+        .replace(Regex("""(\d+)\s*(мл|МЛ|Мл|мЛ)\.?""")) {
+            "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}"
+        }
         // сантиметры
         .replace(Regex("""(\d+)\s*(см|См)(\.)?""")) {
             "${it.groupValues[1]}$NON_BRAKING_SPACE${it.groupValues[2].lowercase()}${it.groupValues[3]}"

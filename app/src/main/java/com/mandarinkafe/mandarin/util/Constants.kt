@@ -41,7 +41,6 @@ object Constants {
     const val MIN_MODIFIER_LIMIT_TO_IGNORE = 50
 
     // common UI
-
     const val ANIMATION_DURATION_SLOW = 1000
     const val ANIMATION_DURATION_FAST = 300
     const val ANIMATION_DURATION_SUPER_FAST = 150
