@@ -13,7 +13,7 @@ object DateTimeUtils {
             LocalDateTime.parse(it, inputFormatter).format(outputFormatter)
         }
     } catch (e: Exception) {
-        Log.d("Error toHumanDateTimeOrNull", "error: $e")
+        Log.e("Error toHumanDateTimeOrNull", "error: $e")
         null
     }
 }

@@ -22,7 +22,7 @@ class SQLDelightCartStorage @Inject constructor(private val queries: CartItemsQu
             withContext(Dispatchers.IO) {
                 queries.deleteAll()
             }
-            Log.d("Error CartStorage", "Ошибка при получении корзины из БД. Очищаю корзину. $e")
+            Log.e("Error CartStorage", "Ошибка при получении корзины из БД. Очищаю корзину. $e")
             emptyList()
         }
     }

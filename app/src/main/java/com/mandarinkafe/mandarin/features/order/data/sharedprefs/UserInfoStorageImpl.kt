@@ -21,7 +21,7 @@ class UserInfoStorageImpl(
                 gson.fromJson(json, UserInfo::class.java)
             }
         } catch (e: Exception) {
-            Log.d(
+            Log.e(
                 "UserInfoStorage",
                 "Ошибка чтения UserInfo: ${e.message}. Очищаю сохранённые данные"
             )

@@ -212,7 +212,6 @@ class IikoNetworkClientImpl(
 
     private fun isConnected(): Boolean {
         val connected = networkMonitor.isNetworkAvailable()
-        Log.d(logTag, "isConnected: $connected")
         return connected
     }
 }

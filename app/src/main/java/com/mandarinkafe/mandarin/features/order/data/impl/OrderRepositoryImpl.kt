@@ -33,11 +33,7 @@ class OrderRepositoryImpl(
             val orderItems = prepareOrderItems(outgoingOrder)
             val discountInfo = createDiscountInfo(outgoingOrder.discountTypeId, orderItems)
             val orderDto = buildOrderDto(outgoingOrder, orderItems, discountInfo)
-
             val response = networkClient.createDelivery(orderDto)
-
-            Log.d(logTag, "response code: ${response.resultCode}, full response: $response")
-
             handleCreateOrderResponse(response)
         } catch (e: Exception) {
             Log.e(logTag, "Exception in createOrder: ${e.message}", e)
@@ -78,7 +74,6 @@ class OrderRepositoryImpl(
     private fun handleCreateOrderResponse(response: Response): Resource<IncomingOrder> {
         return when (response.resultCode) {
             NO_CONNECTION -> {
-                Log.d(logTag, "No connection error")
                 Resource.ErrorNoInternet()
             }
 

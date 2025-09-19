@@ -47,7 +47,7 @@ class GoogleDocsNetworkClientImpl(
                     resultCode = HTTP_SUCCESS
                 }
             } catch (e: Throwable) {
-                Log.d("getSheet", "Не удалось прочитать csv. ${e.message}")
+                Log.e("getSheet", "Не удалось прочитать csv. ${e.message}")
                 Response().apply { resultCode = HTTP_SERVER_ERROR }
             }
         }

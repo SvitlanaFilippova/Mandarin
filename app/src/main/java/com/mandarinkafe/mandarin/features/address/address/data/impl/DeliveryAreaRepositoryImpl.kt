@@ -46,12 +46,11 @@ class DeliveryAreaRepositoryImpl(
                     if (zoneId != null) {
                         zoneId to meal.price
                     } else {
-                        Log.d("DeliveryDebug", "Meal '${meal.name}' -> no zoneId extracted")
+                        Log.e("DeliveryDebug", "Meal '${meal.name}' -> no zoneId extracted")
                         null
                     }
                 }.toMap()
             } else {
-                Log.d("DeliveryDebug", "No delivery category found")
                 emptyMap()
             }
 
@@ -78,10 +77,6 @@ class DeliveryAreaRepositoryImpl(
             }
 
             val parentArea = polygonsMap[id - 1]
-            if (parentArea == null) {
-                Log.d(logTag, "Parent area not found for zone id=$id (parent=${id - 1})")
-            }
-
             val deliveryPrice = pricesMap[id]
             if (deliveryPrice == null) {
                 Log.w(logTag, "Price not found for zone id=$id — setting to 0")

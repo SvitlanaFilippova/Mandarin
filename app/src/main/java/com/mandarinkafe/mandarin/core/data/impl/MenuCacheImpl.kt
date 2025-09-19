@@ -62,10 +62,10 @@ class MenuCacheImpl @Inject constructor(
                     }
 
                     is Resource.ErrorNoInternet<*> -> return result
-                    else -> Log.d(LOG_TAG, "fetchWithRetries. Ошибка: ${result.message}")
+                    else -> Log.e(LOG_TAG, "fetchWithRetries. Ошибка: ${result.message}")
                 }
             } catch (e: Exception) {
-                Log.d(LOG_TAG, "fetchWithRetries. Exception: ${e.message}")
+                Log.e(LOG_TAG, "fetchWithRetries. Exception: ${e.message}")
             }
             attempts++
             delay(DELAY_BEFORE_NEXT_ATTEMPT)
