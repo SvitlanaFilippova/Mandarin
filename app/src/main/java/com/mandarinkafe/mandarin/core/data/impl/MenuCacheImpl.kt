@@ -241,8 +241,8 @@ class MenuCacheImpl @Inject constructor(
     }
 
     private companion object {
-        const val MAX_ATTEMPTS = 5
-        const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 300L
+        const val MAX_ATTEMPTS = 3
+        const val DELAY_BEFORE_NEXT_ATTEMPT: Long = 400L
 
         const val RECOMMENDS_CATEGORY_NAME = "Рекомендованные"
         const val DELIVERY_CATEGORY_NAME = "Доставка"

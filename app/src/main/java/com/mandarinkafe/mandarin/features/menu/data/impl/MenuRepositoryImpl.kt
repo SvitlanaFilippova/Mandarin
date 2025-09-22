@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.menu.data.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
@@ -39,7 +38,6 @@ class MenuRepositoryImpl @Inject constructor(
                 else -> Resource.ErrorOther("Ошибка сервера или пустой ответ")
             }
         } catch (e: Exception) {
-            Log.e("MENU CACHE DEBUG", "MenuRepositoryImpl fetchMenu catch error")
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }

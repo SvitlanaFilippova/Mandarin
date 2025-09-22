@@ -22,7 +22,6 @@
     <string name="favorite">Избранное</string>
     <string name="cart">Корзина</string>
     <string name="more_options">Ещё</string>
-    <string name="search">Поиск</string>
     <string name="order_history">История заказов</string>
     <string name="saved_addresses">Сохранённые адреса</string>
     <string name="address_screen_title">Адрес</string>
@@ -44,8 +43,6 @@
     <string name="added_to_cart_template">Добавлено в корзину:\n%s</string>
     <string name="edited_template">Отредактировано:\n%1$s</string>
     <string name="comment_template">Комментарий: %1$s</string>
-    <string name="mandatory_choice_before_cart">Сделайте обязательный выбор перед добавлением в корзину</string>
-    <string name="maximum_modifier_alert">Превышено максимальное количество модификаторов</string>
 
 
     <!-- Избранное -->

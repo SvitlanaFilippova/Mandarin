@@ -87,17 +87,6 @@ fun SplashScreen() {
             )
         }
 
-        // Фон под лого
-        Image(
-            painter = painterResource(id = R.drawable.background_for_logo),
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .size(Dimens.SplashScreenBackgroundSize220)
-                .graphicsLayer { alpha = logoAlpha.value },
-
-            )
-
         // Логотип
         Image(
             painter = painterResource(id = R.drawable.logo_orange),

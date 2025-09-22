@@ -29,8 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -45,6 +45,8 @@ import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.TabsSe
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.rememberScrollUiState
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.util.Constants
+import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_COLUMN_COUNT
+import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_SPACING_COUNT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
@@ -95,10 +97,12 @@ fun MenuContentScreen(
         showFab = false
     }
 
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val imageSize = remember(screenWidth) {
-        (screenWidth - Dimens.MarginSmall8 * Constants.MENU_IMAGE_SPACING_COUNT) / Constants.MENU_IMAGE_COLUMN_COUNT
+    val windowInfo = LocalWindowInfo.current
+    val density = LocalDensity.current
+    val horizontalPadding = Dimens.MarginSmall8
+    val screenWidthDp = with(density) { windowInfo.containerSize.width.toDp() }
+    val imageSize = remember(screenWidthDp) {
+        (screenWidthDp - horizontalPadding * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
     }
     // Обновляем активную табу при скролле
     LaunchedEffect(scrollUi.listState) {
