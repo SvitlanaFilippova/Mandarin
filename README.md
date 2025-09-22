@@ -41,7 +41,7 @@
 | Карты                 | Yandex MapKit |
 | Firebase              | Remote Config, Crashlytics |
 | Интеграции            | iikoCloud API, API ЮKassa, Telegram Bot API |
-| Инструменты качества  | Detekt |
+| Инструменты качества  | Detekt, Lint |
 
 
 
