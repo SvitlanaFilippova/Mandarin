@@ -9,9 +9,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
@@ -33,12 +33,14 @@ fun FavoritesContent(
     onMealDetailsClick: (CustomizedMeal) -> Unit,
     listState: LazyListState,
 ) {
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
     val horizontalPadding = Dimens.MarginSmall8
+    val windowInfo = LocalWindowInfo.current
+    val density = LocalDensity.current
 
-    val imageSize = remember(screenWidth) {
-        (screenWidth - horizontalPadding * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
+    val screenWidthDp = with(density) { windowInfo.containerSize.width.toDp() }
+
+    val imageSize = remember(screenWidthDp) {
+        (screenWidthDp - horizontalPadding * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
     }
 
     ScreenTitle(name = stringResource(R.string.favorite))

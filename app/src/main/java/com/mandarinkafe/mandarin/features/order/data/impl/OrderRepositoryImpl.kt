@@ -26,7 +26,7 @@ class OrderRepositoryImpl(
     private val networkClient: IikoNetworkClient,
     private val menuCache: MenuCache,
 ) : OrderRepository {
-    private val logTag = "DEBUG ORDER API OrderRepository"
+    private val logTag = "ORDER API OrderRepository"
 
     override suspend fun createOrder(outgoingOrder: OutgoingOrder): Resource<IncomingOrder> {
         return try {

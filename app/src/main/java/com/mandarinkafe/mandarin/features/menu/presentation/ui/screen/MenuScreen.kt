@@ -8,7 +8,9 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,11 +37,14 @@ fun MenuScreen(
     sharedViewModel: SharedViewModel,
     navController: NavHostController
 ) {
-    val cartItems by cartViewModel.state.map { it.cartItems }
-        .collectAsStateWithLifecycle(emptyList())
-    val cartInProgressItems by cartViewModel.state.map { it.inProgressItems }
-        .collectAsStateWithLifecycle(emptySet())
     val state by menuViewModel.state.collectAsStateWithLifecycle()
+
+    val cartItemsFlow = remember { cartViewModel.state.map { it.cartItems } }
+    val cartItems by cartItemsFlow.collectAsState(initial = emptyList())
+
+    val cartInProgressItemsFlow = remember { cartViewModel.state.map { it.inProgressItems } }
+    val cartInProgressItems by cartInProgressItemsFlow.collectAsState(initial = emptySet())
+
     val favoriteIds by sharedViewModel.favoritesIDs.collectAsStateWithLifecycle(emptySet())
 
     val menuItems = state.menuItems
