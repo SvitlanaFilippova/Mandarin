@@ -30,10 +30,10 @@ jobs:
         with:
           reviewdog_version: latest
 
-      - name: Setup JDK 17 for build
+      - name: Setup JDK 21 for build
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
           cache: gradle
 
@@ -77,10 +77,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup JDK 17 for build
+      - name: Setup JDK 21 for build
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
           cache: gradle
 
