@@ -11,9 +11,9 @@ import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoDiscountApi
-import com.mandarinkafe.mandarin.core.data.network.api.IikoMenuApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoOrderApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoTerminalApi
+import com.mandarinkafe.mandarin.core.data.network.api.ServerMenuApi
 import com.mandarinkafe.mandarin.core.data.network.impl.GoogleDocsNetworkClientImpl
 import com.mandarinkafe.mandarin.core.data.network.impl.IikoNetworkClientImpl
 import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
@@ -80,7 +80,7 @@ class CoreModule {
     @Singleton
     fun provideIikoNetworkClient(
         authApi: IikoAuthApi,
-        menuApi: IikoMenuApi,
+        menuApi: ServerMenuApi,
         orderApi: IikoOrderApi,
         discountApi: IikoDiscountApi,
         terminalApi: IikoTerminalApi,

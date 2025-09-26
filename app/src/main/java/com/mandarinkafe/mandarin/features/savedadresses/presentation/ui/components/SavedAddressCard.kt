@@ -67,7 +67,7 @@ fun SavedAddressCard(
                     text = details,
                     overflow = TextOverflow.Ellipsis,
                     style = Typography.MealSmallTextStyle,
-                    maxLines = 1
+                    maxLines = 2
                 )
             }
         }

@@ -50,6 +50,10 @@ jobs:
         run: |
           echo "MAPKIT_API_KEY=${{ secrets.MAPKIT_API_KEY }}" > apikeys.properties
           echo "IIKO_API_KEY=${{ secrets.IIKO_API_KEY }}" >> apikeys.properties
+          echo "SERVER_BASE_URL=${{ secrets.SERVER_BASE_URL }}" >> apikeys.properties
+          echo "TG_CHANNEL_ID=${{ secrets.TG_CHANNEL_ID }}" >> apikeys.properties
+          echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> apikeys.properties
+          echo "DEV_TG_CHAT_ID=${{ secrets.DEV_TG_CHAT_ID }}" >> apikeys.properties
         working-directory: ${{ github.workspace }}
 
       - name: Run detekt
@@ -90,6 +94,10 @@ jobs:
         run: |
           echo "MAPKIT_API_KEY=${{ secrets.MAPKIT_API_KEY }}" > apikeys.properties
           echo "IIKO_API_KEY=${{ secrets.IIKO_API_KEY }}" >> apikeys.properties
+          echo "SERVER_BASE_URL=${{ secrets.SERVER_BASE_URL }}" >> apikeys.properties
+          echo "TG_CHANNEL_ID=${{ secrets.TG_CHANNEL_ID }}" >> apikeys.properties
+          echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> apikeys.properties
+          echo "DEV_TG_CHAT_ID=${{ secrets.DEV_TG_CHAT_ID }}" >> apikeys.properties
         working-directory: ${{ github.workspace }}
 
       - name: Assemble app

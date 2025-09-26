@@ -7,15 +7,14 @@ import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoDiscountApi
-import com.mandarinkafe.mandarin.core.data.network.api.IikoMenuApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoOrderApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoTerminalApi
+import com.mandarinkafe.mandarin.core.data.network.api.ServerMenuApi
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.AliveTerminalGroupsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.DiscountsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCustomerByPhoneRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.TerminalGroupsIdsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesRequest
-import com.mandarinkafe.mandarin.features.menu.data.network.MenuRequest
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequest
@@ -30,14 +29,13 @@ import kotlinx.coroutines.withContext
 class IikoNetworkClientImpl(
     private val networkMonitor: NetworkMonitor,
     private val authApi: IikoAuthApi,
-    private val menuApi: IikoMenuApi,
+    private val menuApi: ServerMenuApi,
     private val orderApi: IikoOrderApi,
     private val terminalApi: IikoTerminalApi,
     private val discountApi: IikoDiscountApi
 ) : IikoNetworkClient {
 
     private var organizationId: String = ""
-    private var externalMenuId: String = ""
 
     private val logTag = "DEBUG ORDER API NetworkClient"
 
@@ -50,26 +48,14 @@ class IikoNetworkClientImpl(
         return organizationId
     }
 
-    private suspend fun ensureExternalMenuId(): String {
-        if (externalMenuId.isNotEmpty()) return externalMenuId
-        val response = menuApi.getMenuId()
-        externalMenuId = response.externalMenus.firstOrNull()?.id
-            ?: error("Menu ID не найден")
-        return externalMenuId
-    }
 
     override suspend fun getMenu(): Response {
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return withContext(Dispatchers.IO) {
             try {
-                val orgId = ensureOrganizationId()
-                val menuId = ensureExternalMenuId()
-                val menuResponse = menuApi.getMenuById(
-                    body = MenuRequest(
-                        externalMenuId = menuId,
-                        organizationIds = listOf(orgId)
-                    )
-                )
+                val menuResponse = menuApi.getMenu()
+                organizationId = menuResponse.menu.intervals?.firstOrNull()?.organizationId ?: ""
+
                 menuResponse.apply { resultCode = HTTP_SUCCESS }
             } catch (e: Throwable) {
                 Log.e(logTag, "Ошибка при получении меню: ${e.message}", e)

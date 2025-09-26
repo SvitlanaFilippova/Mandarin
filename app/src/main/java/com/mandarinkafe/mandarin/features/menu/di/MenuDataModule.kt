@@ -4,9 +4,11 @@ import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.core.domain.api.MenuMetaCache
 import com.mandarinkafe.mandarin.features.menu.data.api.ImageValidator
 import com.mandarinkafe.mandarin.features.menu.data.impl.BannersRepositoryImpl
 import com.mandarinkafe.mandarin.features.menu.data.impl.ImageValidatorImpl
+import com.mandarinkafe.mandarin.features.menu.data.impl.MenuMetaCacheImpl
 import com.mandarinkafe.mandarin.features.menu.data.impl.MenuRepositoryImpl
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
@@ -24,9 +26,11 @@ class MenuDataModule {
     @Singleton
     fun provideMenuRepository(
         iikoNetworkClient: IikoNetworkClient,
+        menuMetaCache: MenuMetaCache
     ): MenuRepositoryImpl {
         return MenuRepositoryImpl(
             iikoNetworkClient = iikoNetworkClient,
+            menuMetaCache = menuMetaCache,
         )
     }
 
@@ -41,7 +45,6 @@ class MenuDataModule {
     fun provideMenuFetcherInterface(
         impl: MenuRepositoryImpl
     ): MenuFetcher = impl
-
 
     @Provides
     @Singleton
@@ -66,4 +69,11 @@ class MenuDataModule {
     fun provideImageValidator(): ImageValidator {
         return ImageValidatorImpl()
     }
+
+    @Provides
+    @Singleton
+    fun provideMenuMetaCache(): MenuMetaCache {
+        return MenuMetaCacheImpl()
+    }
+
 }

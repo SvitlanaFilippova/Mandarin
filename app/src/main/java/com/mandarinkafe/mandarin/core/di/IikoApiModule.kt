@@ -5,7 +5,6 @@ import com.mandarinkafe.mandarin.core.data.network.AuthInterceptor
 import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthSyncApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoDiscountApi
-import com.mandarinkafe.mandarin.core.data.network.api.IikoMenuApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoOrderApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoTerminalApi
 import com.mandarinkafe.mandarin.util.Constants.IIKO_BASE_URL
@@ -56,11 +55,6 @@ object IikoApiModule {
     @Singleton
     fun provideIikoAuthApi(retrofit: Retrofit): IikoAuthApi =
         retrofit.create(IikoAuthApi::class.java)
-
-    @Provides
-    @Singleton
-    fun provideIikoMenuApi(retrofit: Retrofit): IikoMenuApi =
-        retrofit.create(IikoMenuApi::class.java)
 
     @Provides
     @Singleton

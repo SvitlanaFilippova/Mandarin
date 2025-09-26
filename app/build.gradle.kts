@@ -65,6 +65,8 @@ android {
         val devTgChatId = properties.getProperty("DEV_TG_CHAT_ID") ?: ""
         buildConfigField("String", "DEV_TG_CHAT_ID", "\"$devTgChatId\"")
 
+        val serverBaseUrl = properties.getProperty("SERVER_BASE_URL") ?: ""
+        buildConfigField("String", "SERVER_BASE_URL", "\"$serverBaseUrl\"")
     }
 
     buildTypes {
