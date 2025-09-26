@@ -46,11 +46,6 @@ fun AboutScreen(
     viewModel: AboutViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    val versionText = stringResource(id = R.string.version_text, state.versionName ?: "")
-    val lastUpdatedText =
-        stringResource(id = R.string.menu_last_updated_text, state.lastUpdated ?: "")
-    val revisionText = stringResource(id = R.string.menu_revision_text, state.revision ?: 0)
-
     val aboutMainText = stringResource(id = R.string.about_main_text)
     val thanksText = stringResource(id = R.string.thanks_text)
     var showDialog by remember { mutableStateOf(false) }
@@ -128,23 +123,30 @@ fun AboutScreen(
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
             // Время и дата последнего обновления меню из iiko
-            Text(
-                text = lastUpdatedText,
-                style = Typography.SmallTextStyle,
-                color = Colors.LightGrey
-            )
-            // Ревизия меню
-            Text(
-                text = revisionText,
-                style = Typography.SmallTextStyle,
-                color = Colors.LightGrey
-            )
-            // Версия приложения
-            Text(
-                text = versionText,
-                style = Typography.SmallTextStyle,
-                color = Colors.LightGrey
-            )
+            state.lastUpdated?.let {
+                Text(
+                    text = stringResource(id = R.string.menu_last_updated_text, it),
+                    style = Typography.SmallTextStyle,
+                    color = Colors.LightGrey
+                )
+            }
+            state.revision?.let {
+                // Ревизия меню
+                Text(
+                    text = stringResource(id = R.string.menu_revision_text, it),
+                    style = Typography.SmallTextStyle,
+                    color = Colors.LightGrey
+                )
+            }
+
+            state.versionName?.let {
+                // Версия приложения
+                Text(
+                    text = stringResource(id = R.string.version_text, it),
+                    style = Typography.SmallTextStyle,
+                    color = Colors.LightGrey
+                )
+            }
         }
 
     }
