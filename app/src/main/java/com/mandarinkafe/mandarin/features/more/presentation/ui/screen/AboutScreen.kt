@@ -120,6 +120,7 @@ fun AboutScreen(
 
         Column(
             modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
             // Время и дата последнего обновления меню из iiko

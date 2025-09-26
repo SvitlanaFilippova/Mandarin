@@ -266,7 +266,7 @@
     <string name="about_title">О приложении</string>
     <string name="version_text">Версия приложения: %s</string>
     <string name="menu_last_updated_text">Меню актуально на: %s</string>
-    <string name="menu_revision_text">Ревизия %d</string>
+    <string name="menu_revision_text">Ревизия меню №%d</string>
     <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана&#160;&#8212; я&#160;разработчик этого приложения.\n\nЕсли есть предложения по&#160; его улучшению или просто хочется поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!</string>
     <string name="message_developer">Связаться с разработчиком:</string>
     <string name="dev_feedback_label">Форма обратной связи</string>
