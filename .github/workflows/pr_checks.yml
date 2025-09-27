@@ -48,13 +48,19 @@ jobs:
 
       - name: Create apikeys.properties from secrets
         run: |
-          echo "MAPKIT_API_KEY=${{ secrets.MAPKIT_API_KEY }}" > apikeys.properties
-          echo "IIKO_API_KEY=${{ secrets.IIKO_API_KEY }}" >> apikeys.properties
-          echo "SERVER_BASE_URL=${{ secrets.SERVER_BASE_URL }}" >> apikeys.properties
-          echo "TG_CHANNEL_ID=${{ secrets.TG_CHANNEL_ID }}" >> apikeys.properties
-          echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> apikeys.properties
-          echo "DEV_TG_CHAT_ID=${{ secrets.DEV_TG_CHAT_ID }}" >> apikeys.properties
+          printf "MAPKIT_API_KEY=%s\nIIKO_API_KEY=%s\nTG_BOT_TOKEN=%s\nTG_CHANNEL_ID=%s\nDEV_TG_CHAT_ID=%s\nSERVER_BASE_URL=%s\nMANDARIN_API_KEY=%s\n" \
+            "$MAPKIT_API_KEY" "$IIKO_API_KEY" "$TG_BOT_TOKEN" "$TG_CHANNEL_ID" "$DEV_TG_CHAT_ID" "$SERVER_BASE_URL" "$MANDARIN_API_KEY" \
+            > apikeys.properties
+        shell: bash
         working-directory: ${{ github.workspace }}
+        env:
+          MAPKIT_API_KEY: ${{ secrets.MAPKIT_API_KEY }}
+          IIKO_API_KEY: ${{ secrets.IIKO_API_KEY }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHANNEL_ID: ${{ secrets.TG_CHANNEL_ID }}
+          DEV_TG_CHAT_ID: ${{ secrets.DEV_TG_CHAT_ID }}
+          SERVER_BASE_URL: ${{ secrets.SERVER_BASE_URL }}
+          MANDARIN_API_KEY: ${{ secrets.MANDARIN_API_KEY }}
 
       - name: Run detekt
         run: ./gradlew detektAll $commonGradleFlags
@@ -95,13 +101,19 @@ jobs:
 
       - name: Create apikeys.properties from secrets
         run: |
-          echo "MAPKIT_API_KEY=${{ secrets.MAPKIT_API_KEY }}" > apikeys.properties
-          echo "IIKO_API_KEY=${{ secrets.IIKO_API_KEY }}" >> apikeys.properties
-          echo "SERVER_BASE_URL=${{ secrets.SERVER_BASE_URL }}" >> apikeys.properties
-          echo "TG_CHANNEL_ID=${{ secrets.TG_CHANNEL_ID }}" >> apikeys.properties
-          echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> apikeys.properties
-          echo "DEV_TG_CHAT_ID=${{ secrets.DEV_TG_CHAT_ID }}" >> apikeys.properties
+          printf "MAPKIT_API_KEY=%s\nIIKO_API_KEY=%s\nTG_BOT_TOKEN=%s\nTG_CHANNEL_ID=%s\nDEV_TG_CHAT_ID=%s\nSERVER_BASE_URL=%s\nMANDARIN_API_KEY=%s\n" \
+            "$MAPKIT_API_KEY" "$IIKO_API_KEY" "$TG_BOT_TOKEN" "$TG_CHANNEL_ID" "$DEV_TG_CHAT_ID" "$SERVER_BASE_URL" "$MANDARIN_API_KEY" \
+            > apikeys.properties
+        shell: bash
         working-directory: ${{ github.workspace }}
+        env:
+          MAPKIT_API_KEY: ${{ secrets.MAPKIT_API_KEY }}
+          IIKO_API_KEY: ${{ secrets.IIKO_API_KEY }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHANNEL_ID: ${{ secrets.TG_CHANNEL_ID }}
+          DEV_TG_CHAT_ID: ${{ secrets.DEV_TG_CHAT_ID }}
+          SERVER_BASE_URL: ${{ secrets.SERVER_BASE_URL }}
+          MANDARIN_API_KEY: ${{ secrets.MANDARIN_API_KEY }}
 
       - name: Assemble app
         run: ./gradlew :app:assembleDebug $commonGradleFlags

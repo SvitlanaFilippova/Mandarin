@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.core.data.network.impl
 
 import android.util.Log
+import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.CustomerCategoriesRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.Response
@@ -53,7 +54,9 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return withContext(Dispatchers.IO) {
             try {
-                val menuResponse = menuApi.getMenu()
+                val menuResponse = menuApi.getMenu(
+                    apiKey = BuildConfig.MANDARIN_API_KEY
+                )
                 organizationId = menuResponse.menu.intervals?.firstOrNull()?.organizationId ?: ""
 
                 menuResponse.apply { resultCode = HTTP_SUCCESS }
