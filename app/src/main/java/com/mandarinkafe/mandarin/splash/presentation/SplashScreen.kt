@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -87,14 +88,25 @@ fun SplashScreen() {
             )
         }
 
-        // Логотип
-        Image(
-            painter = painterResource(id = R.drawable.logo_orange),
-            contentDescription = stringResource(R.string.logo_cafe),
+        // Логотип на подложке
+        Box(
             modifier = Modifier
                 .align(Alignment.Center)
-                .size(Dimens.SplashScreenLogoSize180)
+                .size(Dimens.SplashScreenBackgroundSize220)
+                .background(
+                    color = Colors.AppBlack,
+                    shape = CircleShape
+                )
                 .graphicsLayer { alpha = logoAlpha.value }
-        )
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.logo_orange),
+                contentDescription = stringResource(R.string.logo_cafe),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(Dimens.SplashScreenLogoSize180)
+                    .graphicsLayer { alpha = logoAlpha.value }
+            )
+        }
     }
 }

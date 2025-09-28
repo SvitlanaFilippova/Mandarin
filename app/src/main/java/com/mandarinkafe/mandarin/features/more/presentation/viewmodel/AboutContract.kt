@@ -1,0 +1,15 @@
+package com.mandarinkafe.mandarin.features.more.presentation.viewmodel
+
+import com.mandarinkafe.mandarin.util.BaseEffect
+import com.mandarinkafe.mandarin.util.BaseEvent
+import com.mandarinkafe.mandarin.util.BaseState
+
+sealed interface AboutContract {
+    sealed interface AboutEvent : BaseEvent
+    sealed interface AboutEffect : BaseEffect
+    data class AboutState(
+        val versionName: String? = null,
+        val lastUpdated: String? = null,
+        val revision: Int? = null
+    ) : BaseState
+}

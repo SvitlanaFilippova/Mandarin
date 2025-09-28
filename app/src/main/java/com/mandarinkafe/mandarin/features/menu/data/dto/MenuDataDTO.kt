@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.menu.data.dto
 
-import com.mandarinkafe.mandarin.core.data.dto.Response
-
-data class MenuResponse(
+data class MenuDataDTO(
+    val intervals: List<IntervalDto>?,
     val itemCategories: List<CategoryDto>?,
-) : Response()
+    val revision: Int
+)

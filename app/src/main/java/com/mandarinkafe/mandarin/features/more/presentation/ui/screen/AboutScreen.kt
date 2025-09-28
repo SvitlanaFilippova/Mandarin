@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,18 +31,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.net.toUri
-import com.mandarinkafe.mandarin.BuildConfig
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.more.presentation.ui.components.DevFeedbackDialog
+import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.AboutViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 
 @Composable
-fun AboutScreen(onBackClick: () -> Boolean) {
-    val appVersion: String = BuildConfig.VERSION_NAME
-    val versionText = stringResource(id = R.string.version_text, appVersion)
+fun AboutScreen(
+    onBackClick: () -> Boolean,
+    viewModel: AboutViewModel = hiltViewModel()
+) {
+    val state by viewModel.state.collectAsState()
     val aboutMainText = stringResource(id = R.string.about_main_text)
     val thanksText = stringResource(id = R.string.thanks_text)
     var showDialog by remember { mutableStateOf(false) }
@@ -113,13 +117,39 @@ fun AboutScreen(onBackClick: () -> Boolean) {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Версия приложения
-        Text(
-            text = versionText,
-            style = Typography.SmallTextStyle,
-            color = Colors.LightGrey
-        )
-        Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
+
+        Column(
+            modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
+        ) {
+            // Время и дата последнего обновления меню из iiko
+            state.lastUpdated?.let {
+                Text(
+                    text = stringResource(id = R.string.menu_last_updated_text, it),
+                    style = Typography.SmallTextStyle,
+                    color = Colors.LightGrey
+                )
+            }
+            state.revision?.let {
+                // Ревизия меню
+                Text(
+                    text = stringResource(id = R.string.menu_revision_text, it),
+                    style = Typography.SmallTextStyle,
+                    color = Colors.LightGrey
+                )
+            }
+
+            state.versionName?.let {
+                // Версия приложения
+                Text(
+                    text = stringResource(id = R.string.version_text, it),
+                    style = Typography.SmallTextStyle,
+                    color = Colors.LightGrey
+                )
+            }
+        }
+
     }
 
     if (showDialog) {

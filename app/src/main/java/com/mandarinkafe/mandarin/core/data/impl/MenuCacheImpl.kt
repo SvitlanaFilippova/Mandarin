@@ -39,15 +39,29 @@ class MenuCacheImpl @Inject constructor(
         _addonsCategories.asStateFlow()
     override val deliveryItems: StateFlow<MealCategory?> = _deliveryItems.asStateFlow()
 
-    override fun fetchMenuIfNeeded() {
-        val current = _allVisibleMenu.value
-        if (current is Resource.Success || current is Resource.Loading) return
 
+    override fun fetchMenuIfNeeded() {
+        val isLoading = _allVisibleMenu.value is Resource.Loading
+        val current = _allVisibleMenu.value
+        if (current is Resource.Success || isLoading) return
         CoroutineScope(Dispatchers.IO).launch {
             _allVisibleMenu.value = Resource.Loading()
             val result = fetchWithRetries()
             _allVisibleMenu.value = result
         }
+    }
+
+    override suspend fun forceRefresh(fetcher: suspend () -> Resource<List<MealCategory>>) {
+        val isLoading = _allVisibleMenu.value is Resource.Loading
+        if (isLoading) return
+        _allVisibleMenu.value = Resource.Loading()
+        val result = fetcher()
+        if (result is Resource.Success) {
+            proceedSuccessData(result.data)
+        } else {
+            _mainMenu.value = result
+        }
+        _allVisibleMenu.value = result
     }
 
     @SuppressLint("LogNotTimber")
@@ -71,15 +85,6 @@ class MenuCacheImpl @Inject constructor(
             delay(DELAY_BEFORE_NEXT_ATTEMPT)
         }
         return Resource.ErrorOther("Не удалось загрузить меню после $attempts попыток")
-    }
-
-    override suspend fun forceRefresh(fetcher: suspend () -> Resource<List<MealCategory>>) {
-        val result = fetcher()
-        if (result is Resource.Success) {
-            proceedSuccessData(result.data)
-        } else {
-            _mainMenu.value = result
-        }
     }
 
     // ================= Helper Methods =================

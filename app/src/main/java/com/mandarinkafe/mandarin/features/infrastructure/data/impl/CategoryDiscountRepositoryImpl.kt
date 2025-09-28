@@ -75,10 +75,10 @@ class CategoryDiscountRepositoryImpl(
         val response = networkClient.getAllCustomerCategories()
         if (response.resultCode == HTTP_SUCCESS) {
             val categories = (response as CustomerCategoriesResponse).guestCategories
-            val filtered = categories.filter { it.isActive }
-            return filtered
+            return categories?.filter { it.isActive } ?: emptyList()
         } else {
             return emptyList()
         }
     }
+
 }

@@ -2,9 +2,10 @@ package com.mandarinkafe.mandarin.features.menu.data.impl
 
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.core.domain.api.MenuMetaCache
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.menu.data.dto.CategoryDto
-import com.mandarinkafe.mandarin.features.menu.data.dto.MenuResponse
+import com.mandarinkafe.mandarin.features.menu.data.dto.ServerMenuResponse
 import com.mandarinkafe.mandarin.features.menu.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.util.Constants.CATEGORY_ADDS
@@ -19,6 +20,7 @@ import java.util.UUID
 @Singleton
 class MenuRepositoryImpl @Inject constructor(
     private val iikoNetworkClient: IikoNetworkClient,
+    private val menuMetaCache: MenuMetaCache
 ) : MenuRepository, MenuFetcher {
 
     override suspend fun fetchMenu(): Resource<List<MealCategory>> {
@@ -27,7 +29,14 @@ class MenuRepositoryImpl @Inject constructor(
             when (response.resultCode) {
                 NO_CONNECTION -> Resource.ErrorNoInternet()
                 HTTP_SUCCESS -> {
-                    val categories = (response as MenuResponse).itemCategories
+                    val serverResponse = response as ServerMenuResponse
+                    // сохраняем мета-инфо
+                    menuMetaCache.save(
+                        lastUpdated = serverResponse.lastUpdated,
+                        revision = serverResponse.menu.revision
+                    )
+
+                    val categories = serverResponse.menu.itemCategories
                     if (!categories.isNullOrEmpty()) {
                         Resource.Success(buildMenuStructure(categories))
                     } else {

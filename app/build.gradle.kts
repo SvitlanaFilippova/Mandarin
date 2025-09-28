@@ -48,23 +48,21 @@ android {
             load(keystoreFile.inputStream())
         }
 
-        // Mapkit
-        val mapKitApiKey = properties.getProperty("MAPKIT_API_KEY") ?: ""
-        buildConfigField("String", "MAPKIT_API_KEY", "\"$mapKitApiKey\"")
+        val keys = listOf(
+            "MAPKIT_API_KEY",
+            "IIKO_API_KEY",
+            "TG_BOT_TOKEN",
+            "TG_CHANNEL_ID",
+            "DEV_TG_CHAT_ID",
+            "SERVER_BASE_URL",
+            "MANDARIN_API_KEY"
+        )
 
-        // iiko
-        val iikoApiKey = properties.getProperty("IIKO_API_KEY") ?: ""
-        buildConfigField("String", "IIKO_API_KEY", "\"$iikoApiKey\"")
-
-        // telegram bot
-        val tgBotToken = properties.getProperty("TG_BOT_TOKEN") ?: ""
-        buildConfigField("String", "TG_BOT_TOKEN", "\"$tgBotToken\"")
-        val tgChannelId = properties.getProperty("TG_CHANNEL_ID") ?: ""
-        buildConfigField("String", "TG_CHANNEL_ID", "\"$tgChannelId\"")
-
-        val devTgChatId = properties.getProperty("DEV_TG_CHAT_ID") ?: ""
-        buildConfigField("String", "DEV_TG_CHAT_ID", "\"$devTgChatId\"")
-
+        //noinspection WrongGradleMethod
+        keys.forEach { key ->
+            val value = properties.getProperty(key) ?: ""
+            this@defaultConfig.buildConfigField("String", key, "\"$value\"")
+        }
     }
 
     buildTypes {
