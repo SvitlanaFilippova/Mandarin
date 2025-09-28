@@ -16,14 +16,12 @@
 # Hilt / Dagger
 ##############################
 -keep class dagger.hilt.** { *; }
--keep class dagger.hilt.android.internal.managers.** { *; }
+-keep class dagger.hilt.android.internal.** { *; }
 -keep class javax.inject.** { *; }
-
-# чтобы не срезало аннотации
 -keepattributes *Annotation*
 
 ##############################
-# Retrofit / Moshi / Gson / kotlinx.serialization
+# Retrofit / OkHttp / Gson / Moshi / kotlinx.serialization
 ##############################
 -keep class retrofit2.** { *; }
 -keep class okhttp3.** { *; }
@@ -32,15 +30,19 @@
 -keep class com.squareup.moshi.** { *; }
 -keep class kotlinx.serialization.** { *; }
 
+# Gson: оставляем имена полей и сериализацию
+-keep class com.mandarinkafe.mandarin.data.auth.model.** { *; }
+-keep class com.mandarinkafe.mandarin.core.domain.models.** { *; }
+-keepclassmembers class * {
+    @com.google.gson.annotations.SerializedName <fields>;
+}
+
+# AuthInterceptor: не срезаем логику
+-keep class com.mandarinkafe.mandarin.core.data.network.AuthInterceptor { *; }
+-keep class com.mandarinkafe.mandarin.core.data.dto.AuthRequest { *; }
+
 ##############################
 # Coil
 ##############################
 -dontwarn coil3.**
 -keep class coil3.** { *; }
-
-##############################
-# Твои модели (если используешь сериализацию/рефлексию)
-##############################
--keepclassmembers class com.mandarinkafe.mandarin.core.domain.models.** {
-    <fields>;
-}
