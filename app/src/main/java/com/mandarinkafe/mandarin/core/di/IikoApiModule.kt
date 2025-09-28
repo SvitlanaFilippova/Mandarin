@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.core.di
 
-import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.network.AuthInterceptor
 import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthSyncApi
@@ -34,7 +33,7 @@ object IikoApiModule {
     @Provides
     @Singleton
     fun provideAuthInterceptor(authSyncApi: IikoAuthSyncApi): AuthInterceptor {
-        return AuthInterceptor(authSyncApi, BuildConfig.IIKO_API_KEY)
+        return AuthInterceptor(authSyncApi)
     }
 
     @Provides
