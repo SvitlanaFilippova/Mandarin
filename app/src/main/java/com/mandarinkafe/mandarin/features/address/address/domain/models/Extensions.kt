@@ -1,0 +1,12 @@
+package com.mandarinkafe.mandarin.features.address.address.domain.models
+
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
+import com.yandex.mapkit.geometry.Point
+
+fun GeoPoint.toYandexPoint(): Point {
+    return Point(latitude, longitude)
+}
+
+fun Point.toGeoPoint(): GeoPoint {
+    return GeoPoint(latitude, longitude)
+}

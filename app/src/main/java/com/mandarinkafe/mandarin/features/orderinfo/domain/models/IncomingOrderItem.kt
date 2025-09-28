@@ -1,0 +1,25 @@
+package com.mandarinkafe.mandarin.features.orderinfo.domain.models
+
+data class IncomingOrderItem(
+    val id: String,
+    val name: String,
+    val amount: Double,
+    val chosenModifiers: List<IncomingModifier> = emptyList(),
+    val chosenAdds: List<IncomingMealAdditional> = emptyList(),
+    val price: Double,
+    val discountedPrice: Double?,
+    val positionId: String?,
+    val isDeleted: Boolean = false,
+    val comment: String,
+    val isValidated: Boolean = false
+) {
+    val totalPrice: Double
+        get() = price + chosenModifiers.sumOf { it.price } + chosenAdds.sumOf { it.price }
+    val totalDiscountedPrice: Double
+        get() = (discountedPrice ?: price) +
+                chosenModifiers.sumOf { it.discountedPrice ?: it.price } +
+                chosenAdds.sumOf { it.discountedPrice ?: it.price }
+
+    val isDiscounted = totalPrice != totalDiscountedPrice
+}
+

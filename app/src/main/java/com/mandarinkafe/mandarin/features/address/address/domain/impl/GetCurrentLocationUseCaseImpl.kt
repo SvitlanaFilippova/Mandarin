@@ -1,0 +1,13 @@
+package com.mandarinkafe.mandarin.features.address.address.domain.impl
+
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
+import com.mandarinkafe.mandarin.features.address.address.domain.api.FusedLocationRepository
+import com.mandarinkafe.mandarin.features.address.address.domain.api.GetCurrentLocationUseCase
+import com.mandarinkafe.mandarin.util.Resource
+
+class GetCurrentLocationUseCaseImpl(private val repository: FusedLocationRepository) :
+    GetCurrentLocationUseCase {
+    override suspend operator fun invoke(): Resource<GeoPoint> {
+        return repository.getCurrentLocation()
+    }
+}

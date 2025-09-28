@@ -1,0 +1,233 @@
+package com.mandarinkafe.mandarin.features.orderinfo.data
+
+import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
+import com.mandarinkafe.mandarin.core.domain.models.Address
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
+import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
+import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
+import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.IncomingModifierDto
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.IncomingOrderItemDto
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.OrderInfoResponseDto
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingMealAdditional
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingModifier
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
+import com.mandarinkafe.mandarin.features.ordershistory.domain.models.OrderStatus
+import com.mandarinkafe.mandarin.util.Constants.COMMENT_DIVIDER
+import com.mandarinkafe.mandarin.util.DateTimeUtils.toHumanDateTimeOrNull
+import com.mandarinkafe.mandarin.util.applyTypography
+
+fun OrderInfoResponseDto.toOrderStatus() = OrderStatus(
+    orderId = id,
+    status = order?.status?.toDeliveryStatus(),
+)
+
+fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): IncomingOrder {
+    val cancelInfo = buildString {
+        val cause = order?.cancelInfo?.cause?.name.orEmpty().applyTypography()
+        val comment = order?.cancelInfo?.comment.orEmpty().applyTypography()
+
+        if (cause.isNotBlank()) append(cause)
+        if (comment.isNotBlank()) {
+            if (isNotEmpty()) append(": ")
+            append(comment)
+        }
+    }
+    val visibleComment = order?.comment?.substringBefore(COMMENT_DIVIDER) ?: ""
+
+    return IncomingOrder(
+        id = id,
+        number = order?.number,
+        timestamp = timestamp,
+        creationStatus = creationStatus?.let { CreationStatus.fromApiName(it) }
+            ?: CreationStatus.IN_PROGRESS,
+        errorInfo = errorInfo?.toDomain(),
+        phone = order?.phone,
+        deliveryAddress = order?.deliveryPoint?.toAddress(),
+        comment = visibleComment,
+        customer = order?.customer,
+        items = order?.items?.toDomainWithAdds(addons) ?: emptyList(),
+        paymentName = order?.payments?.firstOrNull()?.paymentType?.name,
+        status = order?.status?.toDeliveryStatus() ?: DeliveryStatus.UNCONFIRMED,
+        cancelInfo = cancelInfo,
+        orderType = order?.orderType,
+        processedPaymentsSum = order?.processedPaymentsSum,
+        sum = order?.sum,
+        discountReason = order?.discounts?.firstOrNull()?.discountType?.name,
+        whenCancelled = order?.cancelInfo?.whenCancelled?.toHumanDateTimeOrNull(),
+        whenClosed = order?.whenClosed?.toHumanDateTimeOrNull(),
+        whenConfirmed = order?.whenConfirmed?.toHumanDateTimeOrNull(),
+        whenCookingCompleted = order?.whenCookingCompleted?.toHumanDateTimeOrNull(),
+        whenCreated = order?.whenCreated?.toHumanDateTimeOrNull(),
+        whenDelivered = order?.whenDelivered?.toHumanDateTimeOrNull(),
+        whenSent = order?.whenSended?.toHumanDateTimeOrNull(),
+        problem = order?.problem,
+    )
+}
+
+fun IncomingOrderItem.toCartItem(
+    baseMeal: Meal,
+    adds: List<MealAdditional>,
+    modifiers: List<ModifierGroup>
+): CartItem {
+    return CartItem(
+        customizedMeal = CustomizedMeal(
+            meal = baseMeal,
+            adds = adds,
+            modifiers = modifiers
+        ),
+        quantity = amount.toInt(),
+        comment = comment
+    )
+}
+
+fun IncomingOrderItemDto.toDomain() = IncomingOrderItem(
+    id = product.id,
+    name = product.name.applyTypography(),
+    amount = amount,
+    chosenModifiers = modifiers?.map { it.toDomain() } ?: emptyList(),
+    price = price,
+    positionId = positionId,
+    isDeleted = deleted?.deletionMethod != null,
+    comment = comment ?: "",
+    discountedPrice = resultSum
+)
+
+fun List<IncomingOrderItemDto>.toDomainWithAdds(
+    addonsCategories: List<MealAdditionalCategory>
+): List<IncomingOrderItem> {
+    val addonIds = collectAddonIds(addonsCategories)
+    val builders = associateItemsWithAdds(this, addonIds)
+    return builders.map { it.build() }
+}
+
+private fun DeliveryPointDto.toAddress(): Address {
+    val point = coordinates?.let {
+        GeoPoint(
+            latitude = it.latitude,
+            longitude = it.longitude
+        )
+    }
+    val visibleComment = comment?.substringBefore(COMMENT_DIVIDER) ?: ""
+
+    return Address(
+        point = point,
+        streetAndBuilding = address?.line1 ?: "",
+        apartmentNumber = address?.flat ?: "",
+        entrance = address?.entrance ?: "",
+        floor = address?.floor ?: "",
+        intercom = address?.doorphone ?: "",
+        comment = visibleComment
+    )
+}
+
+private fun IncomingModifierDto.toDomain() = IncomingModifier(
+    id = product.id,
+    name = product.name.applyTypography(),
+    amount = amount,
+    price = price,
+    groupId = productGroup.id,
+    groupName = productGroup.name,
+    discountedPrice = resultSum
+)
+
+private fun String.toDeliveryStatus(): DeliveryStatus {
+    return DeliveryStatus.entries.find { it.apiName.equals(this, ignoreCase = true) }
+        ?: DeliveryStatus.UNCONFIRMED
+}
+
+private fun collectAddonIds(addonsCategories: List<MealAdditionalCategory>): Set<String> =
+    addonsCategories.flatMap { it.items.map { add -> add.id } }.toSet()
+
+private fun associateItemsWithAdds(
+    dtos: List<IncomingOrderItemDto>,
+    addonIds: Set<String>
+): List<IncomingOrderItemBuilder> {
+    val result = mutableListOf<IncomingOrderItemBuilder>()
+
+    for (dto in dtos) {
+        val isAddon = dto.product.id in addonIds
+
+        if (!isAddon) {
+            result += IncomingOrderItemBuilder.fromDto(dto)
+        } else {
+            val addon = IncomingMealAdditional(
+                id = dto.product.id,
+                name = dto.product.name.applyTypography(),
+                amount = dto.amount,
+                price = dto.price,
+                discountedPrice = dto.resultSum,
+                isDeleted = dto.deleted?.deletionMethod != null,
+            )
+            if (result.isNotEmpty()) {
+                result.last().chosenAdds += addon
+            } else {
+                result += IncomingOrderItemBuilder.placeholderWithAddon(addon)
+            }
+        }
+    }
+
+    return result
+}
+
+private class IncomingOrderItemBuilder private constructor(
+    private val id: String,
+    private val name: String,
+    private val amount: Double,
+    private val price: Double,
+    private val discountedPrice: Double?,
+    private val positionId: String?,
+    private val isDeleted: Boolean,
+    private val comment: String,
+    var chosenModifiers: List<IncomingModifier> = emptyList(),
+    val chosenAdds: MutableList<IncomingMealAdditional> = mutableListOf()
+) {
+    fun build() = IncomingOrderItem(
+        id = id,
+        name = name,
+        amount = amount,
+        chosenModifiers = chosenModifiers,
+        chosenAdds = chosenAdds.toList(),
+        price = price,
+        positionId = positionId,
+        isDeleted = isDeleted,
+        comment = comment,
+        discountedPrice = discountedPrice
+    )
+
+    companion object {
+        fun fromDto(dto: IncomingOrderItemDto): IncomingOrderItemBuilder {
+            val visibleComment = dto.comment?.substringBefore(COMMENT_DIVIDER) ?: ""
+            return IncomingOrderItemBuilder(
+                id = dto.product.id,
+                name = dto.product.name.applyTypography(),
+                amount = dto.amount,
+                price = dto.price,
+                positionId = dto.positionId,
+                isDeleted = dto.deleted?.deletionMethod != null,
+                comment = visibleComment,
+                chosenModifiers = dto.modifiers?.map { it.toDomain() } ?: emptyList(),
+                discountedPrice = dto.resultSum,
+            )
+        }
+
+        fun placeholderWithAddon(addon: IncomingMealAdditional): IncomingOrderItemBuilder {
+            return IncomingOrderItemBuilder(
+                id = "unknown",
+                name = "Неизвестное блюдо",
+                amount = 0.0,
+                price = 0.0,
+                positionId = null,
+                isDeleted = false,
+                comment = "",
+                discountedPrice = null,
+            ).apply { chosenAdds += addon }
+        }
+    }
+}

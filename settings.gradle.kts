@@ -7,7 +7,11 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
+        gradlePluginPortal()
         mavenCentral()
+        maven {
+            url = uri("https://maven.google.com/")
+        }
         gradlePluginPortal()
     }
 }
@@ -21,4 +25,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Mandarin"
 include(":app")
- 

@@ -1,0 +1,137 @@
+name: PR checks
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  commonGradleFlags: --parallel --stacktrace --no-configuration-cache --no-daemon
+  detektReportPath: ./build/reports/detekt/detekt.xml
+  reviewdogSetup: -f=checkstyle -name="detekt" -level=error -filter-mode=added
+
+jobs:
+  pr-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cleanup Github-Actions bot comments
+        continue-on-error: true
+        run: |
+          sh ./ci/github_comments_cleanup.sh "${{ github.repository_owner }}" "${{ github.event.repository.name }}" "${{ github.event.number }}" "github-actions[bot]" "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Setup Reviewdog
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+
+      - name: Setup JDK 21 for build
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Create google-services.json from secret
+        run: |
+          mkdir -p app/src/debug
+          echo '${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}' > app/google-services.json
+          echo '${{ secrets.GOOGLE_SERVICES_JSON_DEBUG }}' > app/src/debug/google-services.json
+
+      - name: Create apikeys.properties from secrets
+        run: |
+          printf "MAPKIT_API_KEY=%s\nIIKO_API_KEY=%s\nTG_BOT_TOKEN=%s\nTG_CHANNEL_ID=%s\nDEV_TG_CHAT_ID=%s\nSERVER_BASE_URL=%s\nMANDARIN_API_KEY=%s\n" \
+            "$MAPKIT_API_KEY" "$IIKO_API_KEY" "$TG_BOT_TOKEN" "$TG_CHANNEL_ID" "$DEV_TG_CHAT_ID" "$SERVER_BASE_URL" "$MANDARIN_API_KEY" \
+            > apikeys.properties
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        env:
+          MAPKIT_API_KEY: ${{ secrets.MAPKIT_API_KEY }}
+          IIKO_API_KEY: ${{ secrets.IIKO_API_KEY }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHANNEL_ID: ${{ secrets.TG_CHANNEL_ID }}
+          DEV_TG_CHAT_ID: ${{ secrets.DEV_TG_CHAT_ID }}
+          SERVER_BASE_URL: ${{ secrets.SERVER_BASE_URL }}
+          MANDARIN_API_KEY: ${{ secrets.MANDARIN_API_KEY }}
+
+      - name: Run detekt
+        run: ./gradlew detektAll $commonGradleFlags
+
+      - name: Run Reviewdog for Detekt as Github Review
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          reviewdog $reviewdogSetup -reporter=github-pr-review <$detektReportPath
+
+      - name: Run Reviewdog for Detekt as Github CHECK
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          reviewdog $reviewdogSetup -reporter=github-pr-check <$detektReportPath
+
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup JDK 21 for build
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Create google-services.json from secret
+        run: |
+          mkdir -p app/src/debug
+          echo '${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}' > app/google-services.json
+          echo '${{ secrets.GOOGLE_SERVICES_JSON_DEBUG }}' > app/src/debug/google-services.json
+
+      - name: Create apikeys.properties from secrets
+        run: |
+          printf "MAPKIT_API_KEY=%s\nIIKO_API_KEY=%s\nTG_BOT_TOKEN=%s\nTG_CHANNEL_ID=%s\nDEV_TG_CHAT_ID=%s\nSERVER_BASE_URL=%s\nMANDARIN_API_KEY=%s\n" \
+            "$MAPKIT_API_KEY" "$IIKO_API_KEY" "$TG_BOT_TOKEN" "$TG_CHANNEL_ID" "$DEV_TG_CHAT_ID" "$SERVER_BASE_URL" "$MANDARIN_API_KEY" \
+            > apikeys.properties
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        env:
+          MAPKIT_API_KEY: ${{ secrets.MAPKIT_API_KEY }}
+          IIKO_API_KEY: ${{ secrets.IIKO_API_KEY }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHANNEL_ID: ${{ secrets.TG_CHANNEL_ID }}
+          DEV_TG_CHAT_ID: ${{ secrets.DEV_TG_CHAT_ID }}
+          SERVER_BASE_URL: ${{ secrets.SERVER_BASE_URL }}
+          MANDARIN_API_KEY: ${{ secrets.MANDARIN_API_KEY }}
+
+      - name: Assemble app
+        run: ./gradlew :app:assembleDebug $commonGradleFlags
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Debug Build ${{ github.run_number }}
+          tag_name: debug-${{ github.run_number }}
+          files: app/build/outputs/apk/debug/app-debug.apk
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk

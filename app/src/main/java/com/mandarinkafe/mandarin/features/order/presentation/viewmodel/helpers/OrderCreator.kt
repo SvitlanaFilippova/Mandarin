@@ -1,0 +1,130 @@
+package com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers
+
+import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
+import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
+import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
+import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
+import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
+import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.UiText
+import com.mandarinkafe.mandarin.util.tickerFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
+
+class OrderCreator @Inject constructor(
+    private val createOrder: CreateOrderUseCase,
+    private val getOrderStatus: GetOrderStatusUseCase
+) {
+    private var observeJob: Job? = null
+
+    suspend fun submit(
+        scope: CoroutineScope,
+        order: OutgoingOrder,
+        onSuccess: (IncomingOrder) -> Unit,
+        onError: (UiText) -> Unit,
+        onLoading: () -> Unit
+    ) {
+        when (val result = createOrder(order)) {
+            is Resource.Success -> {
+                val orderInfo = result.data
+                val status = orderInfo?.creationStatus
+
+                when (status) {
+                    CreationStatus.IN_PROGRESS -> {
+                        onLoading()
+                        observeOrderUntilSuccess(scope, orderInfo.id, onSuccess, onError, onLoading)
+                    }
+
+                    CreationStatus.SUCCESS -> onSuccess(orderInfo)
+                    CreationStatus.ERROR ->
+                        onError(
+                            orderInfo.errorInfo?.message?.let { UiText.DynamicString(it) }
+                                ?: UiText.StringResource(R.string.error_order_creation_failed)
+                        )
+
+                    null -> onError(
+                        UiText.StringResource(R.string.error_empty_server_response)
+                    )
+                }
+            }
+
+            is Resource.ErrorNoInternet -> onError(
+                UiText.StringResource(R.string.error_no_internet)
+            )
+
+            else -> onError(
+                result.message?.let { UiText.DynamicString(it) }
+                    ?: UiText.StringResource(R.string.error_order_creation_failed)
+            )
+        }
+    }
+
+    private fun observeOrderUntilSuccess(
+        scope: CoroutineScope,
+        orderId: String,
+        onSuccess: (IncomingOrder) -> Unit,
+        onError: (UiText) -> Unit,
+        onLoading: () -> Unit
+    ) {
+        stopObserving()
+        observeJob = scope.launch {
+            tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds)
+                .onStart { emit(Unit) }
+                .map {
+                    getOrderStatus(orderId)
+                }
+                .collect { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            when (result.data?.creationStatus) {
+                                CreationStatus.SUCCESS -> {
+                                    onSuccess(result.data)
+                                    stopObserving()
+                                }
+
+                                CreationStatus.ERROR -> {
+                                    onError(
+                                        result.data.errorInfo?.message?.let {
+                                            UiText.DynamicString(
+                                                it
+                                            )
+                                        }
+                                            ?: UiText.StringResource(R.string.error_order_creation_failed)
+                                    )
+                                    stopObserving()
+                                }
+
+                                else -> onLoading()
+                            }
+                        }
+
+                        is Resource.ErrorNoInternet -> onError(
+                            UiText.StringResource(R.string.error_no_internet)
+                        )
+
+                        is Resource.ErrorOther -> onError(
+                            result.message?.let { UiText.DynamicString(it) }
+                                ?: UiText.StringResource(R.string.error_order_status_failed)
+                        )
+
+                        else -> Unit
+                    }
+                }
+        }
+    }
+
+    fun stopObserving() {
+        observeJob?.cancel()
+        observeJob = null
+    }
+
+    private companion object {
+        const val ORDER_STATUS_UPD_DELAY = 1
+    }
+}

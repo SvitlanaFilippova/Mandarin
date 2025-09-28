@@ -1,0 +1,86 @@
+package com.mandarinkafe.mandarin.features.favorites.presentation.ui.components
+
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.isCustomizable
+import com.mandarinkafe.mandarin.core.domain.models.isCustomized
+import com.mandarinkafe.mandarin.core.domain.models.totalPrice
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ButtonWithCircularProgressIndicator
+import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CartControls
+import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CustomizeButton
+import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.SelectButton
+import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ToCartButtonWithPrice
+
+@Composable
+fun FavoriteItemButtonRow(
+    modifier: Modifier = Modifier,
+    item: CustomizedMeal,
+    isInProgress: Boolean,
+    cartItems: List<CartItem>,
+    onAddToCart: (CustomizedMeal) -> Unit,
+    onRemoveFromCart: (CustomizedMeal) -> Unit,
+    onMealDetailsClick: (CustomizedMeal) -> Unit,
+) {
+    val isInTheCart = cartItems.any { it.customizedMeal == item }
+    val totalPrice = item.totalPrice()
+    val isCustomized = item.isCustomized
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        val modifier = Modifier
+            .widthIn(min = Dimens.ButtonToCartBig120)
+            .height(Dimens.ButtonToCartSmall32)
+            .weight(1f)
+
+        if (item.meal.isCustomizable) {
+            CustomizeButton(
+                modifier = Modifier.padding(end = Dimens.MarginSmall8),
+                onClick = { onMealDetailsClick(item) }
+            )
+        }
+        when {
+            isInProgress -> ButtonWithCircularProgressIndicator(modifier = modifier)
+            isInTheCart -> {
+                val numberInCart =
+                    cartItems.firstOrNull { it.customizedMeal == item }?.quantity ?: 0
+                CartControls(
+                    modifier = modifier,
+                    totalPrice = totalPrice * numberInCart,
+                    numberInCart = numberInCart,
+                    onIncrease = { onAddToCart(item) },
+                    onDecrease = { onRemoveFromCart(item) },
+                )
+            }
+
+            item.meal.requireSelection && !isCustomized -> {
+                SelectButton(
+                    text = stringResource(R.string.to_choose),
+                    onClick = { onMealDetailsClick(item) },
+                    modifier = modifier
+                )
+            }
+
+            else -> {
+                ToCartButtonWithPrice(
+                    price = totalPrice,
+                    onClick = {
+                        onAddToCart(item)
+                    },
+                    modifier = modifier,
+                )
+            }
+        }
+    }
+}
