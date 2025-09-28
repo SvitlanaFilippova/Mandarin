@@ -15,6 +15,7 @@ class AuthInterceptor(
     @Volatile
     private var token: String? = null
     private val apiKey = BuildConfig.IIKO_API_KEY
+    private var logTag = "AuthInterceptor"
 
     override fun intercept(chain: Interceptor.Chain): Response {
         return try {
@@ -24,7 +25,7 @@ class AuthInterceptor(
             val currentToken = token ?: try {
                 fetchToken().also { token = it }
             } catch (e: Exception) {
-                Log.e("AuthInterceptor", "Не удалось получить токен", e)
+                Log.e(logTag, "Не удалось получить токен", e)
                 null
             }
 
@@ -41,7 +42,7 @@ class AuthInterceptor(
                 token = try {
                     fetchToken()
                 } catch (e: Exception) {
-                    Log.e("AuthInterceptor", "Не удалось обновить токен", e)
+                    Log.e(logTag, "Не удалось обновить токен", e)
                     null
                 }
 
@@ -55,7 +56,7 @@ class AuthInterceptor(
 
             response
         } catch (e: IOException) {
-            Log.e("AuthInterceptor", "Ошибка в intercept", e)
+            Log.e(logTag, "Ошибка в intercept", e)
             // Возвращаем фейковый ответ с кодом 500, чтобы не крашить
             chain.proceed(chain.request().newBuilder().build())
         }
