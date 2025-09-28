@@ -54,8 +54,9 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return withContext(Dispatchers.IO) {
             try {
+                val key = BuildConfig.MANDARIN_API_KEY
                 val menuResponse = menuApi.getMenu(
-                    apiKey = BuildConfig.MANDARIN_API_KEY
+                    apiKey = key
                 )
                 organizationId = menuResponse.menu.intervals?.firstOrNull()?.organizationId ?: ""
 
