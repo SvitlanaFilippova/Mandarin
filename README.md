@@ -69,4 +69,4 @@
 
 ⚠️ Из соображений безопасности API-ключи внешних сервисов, таких как карты и iiko, не включены в исходный код. Поэтому при сборке проекта через Android Studio часть функциональности будет недоступна.
 
-📦 Рабочая версия приложения (APK) доступна в разделе [Releases](https://github.com/mandarin-kafe/Mandarin/releases).
+📦 Рабочая версия приложения (APK) доступна в [RuStore](https://www.rustore.ru/catalog/app/com.mandarinkafe.mandarin) и в разделе [Releases](https://github.com/mandarin-kafe/Mandarin/releases)
