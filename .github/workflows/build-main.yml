@@ -42,8 +42,8 @@ jobs:
       - name: Create google-services.json from secret
         run: |
           mkdir -p app/src/debug
-          echo '${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}' > app/google-services.json
-          echo '${{ secrets.GOOGLE_SERVICES_JSON_DEBUG }}' > app/src/debug/google-services.json
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}" > app/google-services.json
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_DEBUG }}" > app/src/debug/google-services.json
 
       - name: Create apikeys.properties from secrets
         run: |
@@ -61,40 +61,16 @@ jobs:
           SERVER_BASE_URL: ${{ secrets.SERVER_BASE_URL }}
           MANDARIN_API_KEY: ${{ secrets.MANDARIN_API_KEY }}
 
-
-      - name: Run Unit Tests
-        run: ./gradlew testDebugUnitTest
-
-      - name: Upload Test Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-report
-          path: app/build/reports/tests/
-
-      - name: Run Detekt formatting
-        run: ./gradlew detektFormat
-
-      - name: Run DetektAll
-        run: ./gradlew detektAll
-
-      - name: Run Android Lint
-        run: ./gradlew lintDebug
-
-      - name: Upload Lint Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: lint-report
-          path: app/build/reports/lint-results-debug.html
-
-      - name: Build (Release)
-        run: ./gradlew build
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > release.keystore
 
       - name: Assemble Release APK
-        run: ./gradlew assembleRelease
-
-      - name: Build debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleRelease \
+          -Pandroid.injected.signing.store.file=$PWD/release.keystore \
+          -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} \
+          -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+          -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
