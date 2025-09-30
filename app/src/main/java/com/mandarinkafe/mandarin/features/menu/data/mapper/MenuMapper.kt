@@ -138,8 +138,8 @@ private data class BaseMealInfo(
 )
 
 private fun extractBaseInfo(firstSize: ItemSizeDto): BaseMealInfo? {
-    val weight = firstSize.portionWeightGrams.toInt()
-    val price = firstSize.prices.firstOrNull()?.price?.toInt() ?: return null
+    val weight = firstSize.portionWeightGrams?.toInt() ?: 0
+    val price = firstSize.prices?.firstOrNull()?.price?.toInt() ?: return null
     val imageUrl = firstSize.buttonImageUrl
     return BaseMealInfo(weight, price, imageUrl)
 }

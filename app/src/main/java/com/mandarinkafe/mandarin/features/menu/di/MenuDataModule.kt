@@ -40,6 +40,7 @@ class MenuDataModule {
         impl: MenuRepositoryImpl
     ): MenuRepository = impl
 
+
     @Provides
     @Singleton
     fun provideMenuFetcherInterface(

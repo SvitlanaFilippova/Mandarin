@@ -1,9 +1,12 @@
 package com.mandarinkafe.mandarin.features.menu.data.dto
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ItemSizeDto(
-    val portionWeightGrams: Float,
-    val prices: List<PriceDto>,
-    val buttonImageUrl: String,
-    val itemModifierGroups: List<ModifierGroupDto>?,
-    val measureUnitType: String,
+    val portionWeightGrams: Float? = null,
+    val prices: List<PriceDto>? = null,
+    val buttonImageUrl: String? = null,
+    val itemModifierGroups: List<ModifierGroupDto>? = null,
+    val measureUnitType: String? = null,
 )

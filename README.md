@@ -36,7 +36,7 @@
 | UI                   | Jetpack Compose, Material3                          |
 | Архитектура          | MVI, StateFlow, Coroutines, Hilt                    |
 | Навигация            | Navigation Compose, Accompanist Navigation Material |
-| Работа с данными     | Retrofit2, Gson, SQLDelight, SharedPreferences      |
+| Работа с данными     | Ktor, Gson, SQLDelight, SharedPreferences           |
 | Изображения          | Coil 3                                              |
 | Карты                | Yandex MapKit                                       |
 | Firebase             | Remote Config, Crashlytics                          |

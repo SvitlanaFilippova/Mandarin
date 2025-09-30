@@ -19,6 +19,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
@@ -120,13 +121,6 @@ dependencies {
     implementation(libs.coil3.coil.compose)
     implementation(libs.coil.network.okhttp)
 
-    // Retrofit
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.scalars)
-
-    // Gson
-    implementation(libs.converter.gson)
-
     // Core
     implementation(libs.androidx.core.ktx)
 
@@ -172,6 +166,16 @@ dependencies {
     implementation(libs.sqldelight.android.driver)
     implementation(libs.sqldelight.coroutines.extensions)
 
+    // Ktor
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.gson)
+
+    // Kotlinx Serialization
+    implementation(libs.kotlinx.serialization.json)
 }
 
 sqldelight {
