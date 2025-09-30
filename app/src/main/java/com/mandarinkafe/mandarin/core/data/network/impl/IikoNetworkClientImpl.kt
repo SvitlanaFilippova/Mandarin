@@ -47,7 +47,6 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return withContext(Dispatchers.IO) {
             try {
-
                 val menuResponse = menuApi.getMenu()
                 organizationId = menuResponse.menu.intervals?.firstOrNull()?.organizationId ?: ""
 

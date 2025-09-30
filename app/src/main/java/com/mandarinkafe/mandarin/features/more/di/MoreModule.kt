@@ -23,6 +23,7 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
+
 @Module
 @InstallIn(SingletonComponent::class)
 object MoreModule {
