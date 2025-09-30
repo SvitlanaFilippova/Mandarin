@@ -72,7 +72,7 @@ object Typography {
     )
 
     val MealSmallTextStyle = TextStyle(
-        fontSize = Dimens.TextSizeSmall11,
+        fontSize = Dimens.TextSizeSmall12,
         fontWeight = FontWeight.Light,
         color = Colors.LightGrey
     )
