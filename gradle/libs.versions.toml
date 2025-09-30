@@ -1,4 +1,6 @@
 [versions]
+gson = "2.13.2"
+ktor = "3.3.0"
 lifecycleVersion = "2.9.4"
 versionCode = "3"
 versionName = "1.01"
@@ -31,9 +33,9 @@ mapkit = "4.22.0-full"
 material = "1.13.0"
 navigationCompose = "2.9.4"
 parcelize = "2.2.20"
-retrofit = "3.0.0"
 runtimeLivedata = "1.9.1"
 sqldelight = "2.1.0"
+kotlinx-serialization = "1.6.0"
 
 [libraries]
 # Accompanist
@@ -87,10 +89,6 @@ com-yandex-maps-mobile = { group = "com.yandex.android", name = "maps.mobile", v
 # Material
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
-# Network
-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-retrofit-converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
 
 # Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -100,6 +98,16 @@ sqldelight = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 
+# Ktor
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+
+# Kotlinx Serialization
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 [plugins]
 
@@ -111,5 +119,7 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrains-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "parcelize" }
+jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+

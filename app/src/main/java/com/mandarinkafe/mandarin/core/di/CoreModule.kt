@@ -9,11 +9,8 @@ import com.mandarinkafe.mandarin.core.data.impl.MenuCacheImpl
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
-import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthApi
-import com.mandarinkafe.mandarin.core.data.network.api.IikoDiscountApi
-import com.mandarinkafe.mandarin.core.data.network.api.IikoOrderApi
-import com.mandarinkafe.mandarin.core.data.network.api.IikoTerminalApi
-import com.mandarinkafe.mandarin.core.data.network.api.ServerMenuApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoApi
+import com.mandarinkafe.mandarin.core.data.network.api.ServerApi
 import com.mandarinkafe.mandarin.core.data.network.impl.GoogleDocsNetworkClientImpl
 import com.mandarinkafe.mandarin.core.data.network.impl.IikoNetworkClientImpl
 import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
@@ -31,7 +28,6 @@ import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CategoryDisc
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 import com.mandarinkafe.mandarin.util.Constants.DATABASE_NAME
-import com.mandarinkafe.mandarin.util.Constants.GOOGLE_DOCS_BASE_URL
 import com.mandarinkafe.mandarin.util.Constants.LOCAL_STORAGE_NAME
 import com.mandarinkafe.mandarin.util.NetworkMonitor
 import dagger.Module
@@ -39,8 +35,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import javax.inject.Singleton
 
 @Module
@@ -68,30 +66,33 @@ class CoreModule {
 
     @Provides
     @Singleton
-    fun provideGoogleDocsApiService(): GoogleDocsApiService {
-        return Retrofit.Builder()
-            .baseUrl(GOOGLE_DOCS_BASE_URL)
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
-            .create(GoogleDocsApiService::class.java)
+    @GoogleDocsClient
+    fun provideGoogleDocsHttpClient(): HttpClient {
+        return HttpClient {
+            defaultRequest {
+                contentType(ContentType.Text.Plain)
+            }
+        }
+    }
+
+    @Provides
+    @Singleton
+    fun provideGoogleDocsApiService(
+        @GoogleDocsClient client: HttpClient
+    ): GoogleDocsApiService {
+        return GoogleDocsApiService(client)
     }
 
     @Provides
     @Singleton
     fun provideIikoNetworkClient(
-        authApi: IikoAuthApi,
-        menuApi: ServerMenuApi,
-        orderApi: IikoOrderApi,
-        discountApi: IikoDiscountApi,
-        terminalApi: IikoTerminalApi,
+        menuApi: ServerApi,
+        iikoApi: IikoApi,
         networkMonitor: NetworkMonitor
     ): IikoNetworkClient {
         return IikoNetworkClientImpl(
-            authApi = authApi,
+            iikoApi = iikoApi,
             menuApi = menuApi,
-            orderApi = orderApi,
-            discountApi = discountApi,
-            terminalApi = terminalApi,
             networkMonitor = networkMonitor,
         )
     }

@@ -21,9 +21,9 @@
 -keepattributes *Annotation*
 
 ##############################
-# Retrofit / OkHttp / Gson / Moshi / kotlinx.serialization
+# Ktor / OkHttp / Gson / Moshi / kotlinx.serialization
 ##############################
--keep class retrofit2.** { *; }
+-keep class ktor.** { *; }
 -keep class okhttp3.** { *; }
 -keep class okio.** { *; }
 
@@ -33,9 +33,6 @@
 # Gson: оставляем имена полей и сериализацию
 -keep class com.mandarinkafe.mandarin.data.auth.model.** { *; }
 -keep class com.mandarinkafe.mandarin.core.domain.models.** { *; }
--keepclassmembers class * {
-    @com.google.gson.annotations.SerializedName <fields>;
-}
 
 # AuthInterceptor: не срезаем логику
 -keep class com.mandarinkafe.mandarin.core.data.network.AuthInterceptor { *; }

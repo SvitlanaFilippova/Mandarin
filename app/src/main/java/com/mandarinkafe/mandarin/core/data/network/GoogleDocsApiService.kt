@@ -1,11 +1,14 @@
 package com.mandarinkafe.mandarin.core.data.network
 
-import retrofit2.http.GET
-import retrofit2.http.Streaming
-import retrofit2.http.Url
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 
-interface GoogleDocsApiService {
-    @GET
-    @Streaming
-    suspend fun getCsv(@Url url: String): String
+class GoogleDocsApiService(
+    private val client: HttpClient
+) {
+    suspend fun getCsv(url: String): String {
+        return client.get(url) {
+        }.body()
+    }
 }

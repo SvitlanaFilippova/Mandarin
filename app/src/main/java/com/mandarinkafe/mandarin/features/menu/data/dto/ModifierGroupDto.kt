@@ -1,5 +1,8 @@
 package com.mandarinkafe.mandarin.features.menu.data.dto
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ModifierGroupDto(
     val itemGroupId: String,
     val name: String? = null,

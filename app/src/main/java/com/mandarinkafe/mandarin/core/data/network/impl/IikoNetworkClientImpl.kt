@@ -1,16 +1,12 @@
 package com.mandarinkafe.mandarin.core.data.network.impl
 
 import android.util.Log
-import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.CustomerCategoriesRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
-import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthApi
-import com.mandarinkafe.mandarin.core.data.network.api.IikoDiscountApi
-import com.mandarinkafe.mandarin.core.data.network.api.IikoOrderApi
-import com.mandarinkafe.mandarin.core.data.network.api.IikoTerminalApi
-import com.mandarinkafe.mandarin.core.data.network.api.ServerMenuApi
+import com.mandarinkafe.mandarin.core.data.network.api.IikoApi
+import com.mandarinkafe.mandarin.core.data.network.api.ServerApi
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.AliveTerminalGroupsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.DiscountsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCustomerByPhoneRequest
@@ -29,11 +25,8 @@ import kotlinx.coroutines.withContext
 
 class IikoNetworkClientImpl(
     private val networkMonitor: NetworkMonitor,
-    private val authApi: IikoAuthApi,
-    private val menuApi: ServerMenuApi,
-    private val orderApi: IikoOrderApi,
-    private val terminalApi: IikoTerminalApi,
-    private val discountApi: IikoDiscountApi
+    private val iikoApi: IikoApi,
+    private val menuApi: ServerApi,
 ) : IikoNetworkClient {
 
     private var organizationId: String = ""
@@ -43,7 +36,7 @@ class IikoNetworkClientImpl(
     /** Загружаем organizationId один раз при первом обращении */
     private suspend fun ensureOrganizationId(): String {
         if (organizationId.isNotEmpty()) return organizationId
-        val response = authApi.getOrganizations(body = OrganizationsRequest())
+        val response = iikoApi.getOrganizations(body = OrganizationsRequest())
         organizationId = response.organizations.firstOrNull()?.id
             ?: error("Не найдена организация")
         return organizationId
@@ -54,10 +47,8 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return withContext(Dispatchers.IO) {
             try {
-                val key = BuildConfig.MANDARIN_API_KEY
-                val menuResponse = menuApi.getMenu(
-                    apiKey = key
-                )
+
+                val menuResponse = menuApi.getMenu()
                 organizationId = menuResponse.menu.intervals?.firstOrNull()?.organizationId ?: ""
 
                 menuResponse.apply { resultCode = HTTP_SUCCESS }
@@ -72,7 +63,7 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
             val orgId = ensureOrganizationId()
-            val response = discountApi.getLoyaltyCustomerInfo(
+            val response = iikoApi.getLoyaltyCustomerInfo(
                 body = LoyaltyCustomerByPhoneRequest(
                     organizationId = orgId,
                     phone = phone
@@ -89,7 +80,7 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
             val orgId = ensureOrganizationId()
-            val response = orderApi.getPaymentTypes(
+            val response = iikoApi.getPaymentTypes(
                 body = PaymentTypesRequest(listOf(orgId))
             )
             response.apply { resultCode = HTTP_SUCCESS }
@@ -103,7 +94,7 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
             val orgId = ensureOrganizationId()
-            val response = orderApi.createDelivery(
+            val response = iikoApi.createDelivery(
                 body = CreateDeliveryRequest(order, orgId)
             )
             response.apply { resultCode = HTTP_SUCCESS }
@@ -120,7 +111,7 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
             val orgId = ensureOrganizationId()
-            val response = orderApi.getOrdersStatusById(
+            val response = iikoApi.getOrdersStatusById(
                 body = OderInfoRequest(orgId, ids)
             )
             response.apply { resultCode = HTTP_SUCCESS }
@@ -134,7 +125,7 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
             val orgId = ensureOrganizationId()
-            val response = discountApi.getAllCustomerCategories(
+            val response = iikoApi.getAllCustomerCategories(
                 body = CustomerCategoriesRequest(orgId)
             )
             response.apply { resultCode = HTTP_SUCCESS }
@@ -148,7 +139,7 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
             val orgId = ensureOrganizationId()
-            val response = discountApi.getDiscounts(
+            val response = iikoApi.getDiscounts(
                 body = DiscountsRequest(listOf(orgId))
             )
             response.apply { resultCode = HTTP_SUCCESS }
@@ -162,7 +153,7 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
             val orgId = ensureOrganizationId()
-            val response = orderApi.cancelOrderById(
+            val response = iikoApi.cancelOrderById(
                 body = CancelOrderRequest(orgId, id)
             )
             response.apply { resultCode = HTTP_SUCCESS }
@@ -176,7 +167,7 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
             val orgId = ensureOrganizationId()
-            val response = terminalApi.getTerminalGroupsIds(
+            val response = iikoApi.getTerminalGroupsIds(
                 body = TerminalGroupsIdsRequest(listOf(orgId))
             )
             response.apply { resultCode = HTTP_SUCCESS }
@@ -190,7 +181,7 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
             val orgId = ensureOrganizationId()
-            val response = terminalApi.getAliveTerminalGroups(
+            val response = iikoApi.getAliveTerminalGroups(
                 body = AliveTerminalGroupsRequest(listOf(orgId), terminalGroupIds)
             )
             response.apply { resultCode = HTTP_SUCCESS }
