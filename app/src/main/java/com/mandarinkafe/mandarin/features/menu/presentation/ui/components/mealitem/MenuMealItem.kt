@@ -92,6 +92,7 @@ fun MenuMealItem(
 
             if (meal.description.isNotEmpty()) {
                 Text(
+                    modifier = Modifier.padding(vertical = Dimens.MarginSuperSmall4),
                     text = meal.description,
                     style = Typography.MealSmallTextStyle,
                     maxLines = MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU,

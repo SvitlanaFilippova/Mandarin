@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.util.Constants
 
 @Composable
@@ -39,10 +41,14 @@ fun ExpandableText(
 ) {
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
     val isTextOverflow = textLayoutResult?.hasVisualOverflow == true
-
+    val clickEnabled = isTextOverflow || isExpanded
     Box(
         modifier = Modifier
-            .clickable(onClick = onClick)
+            .clickable(
+                enabled = clickEnabled,
+                onClick = onClick
+            )
+            .padding(vertical = Dimens.MarginSuperSmall4)
             .wrapContentHeight()
     ) {
         Text(
@@ -56,6 +62,7 @@ fun ExpandableText(
             }
         )
 
+        // Показываем градиент и иконку только когда текст НЕ раскрыт и есть переполнение
         if (!isExpanded && isTextOverflow) {
             Box(
                 modifier = Modifier
@@ -87,9 +94,9 @@ fun ExpandableText(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = "Раскрыть текст",
                     modifier = Modifier
-                        .size(16.dp)
+                        .size(24.dp)
                         .align(Alignment.BottomCenter)
-                        .offset(y = 8.dp),
+                        .offset(y = 4.dp),
                     tint = Colors.LightGrey
                 )
             }
