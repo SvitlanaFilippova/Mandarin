@@ -8,6 +8,10 @@ annotation class IikoClient
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
+annotation class IikoAuthClient
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
 annotation class ServerClient
 
 

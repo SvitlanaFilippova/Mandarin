@@ -1,5 +1,8 @@
 package com.mandarinkafe.mandarin.core.data.dto.order
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class AddressDto(
     val street: StreetDto? = null,
     val house: String? = null,

@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.infrastructure.data.impl
 
+import android.util.Log
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.AliveTerminalGroupsResponse
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.TerminalGroupsIdsResponse
@@ -13,8 +14,14 @@ class AliveTerminalRepositoryImpl(
 ) : AliveTerminalRepository {
 
     override suspend fun checkAliveTerminals(): Resource<Boolean> {
+        Log.e("DEBUG CART BUG- AliveTerminalRepository", "Called checkAliveTerminals")
         // Получаем все группы терминалов
         val response = networkClient.getTerminalGroupsIds()
+        Log.e(
+            "DEBUG CART BUG- AliveTerminalRepository",
+            "got response TerminalGroupsIds: $response"
+        )
+
         if (response.resultCode == NO_CONNECTION) {
             return Resource.ErrorNoInternet()
         }

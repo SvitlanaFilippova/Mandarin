@@ -3,7 +3,9 @@ package com.mandarinkafe.mandarin.features.orderinfo.data.network.dto
 import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
 import com.mandarinkafe.mandarin.core.data.dto.order.OrderType
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class IncomingOrderDto(
     val phone: String? = null,
     val orderServiceType: String? = null,

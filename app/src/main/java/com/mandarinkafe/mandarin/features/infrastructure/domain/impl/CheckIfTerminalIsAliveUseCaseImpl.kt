@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.infrastructure.domain.impl
 
+import android.util.Log
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.AliveTerminalRepository
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.util.Resource
@@ -11,12 +12,20 @@ class CheckIfTerminalIsAliveUseCaseImpl(private val repository: AliveTerminalRep
     private var lastCacheTime: Long = INITIAL_CACHE_TIME
 
     override suspend fun invoke(): Resource<Boolean> {
+        Log.e(
+            "DEBUG CART BUG- CheckIfTerminalIsAliveUseCase",
+            "Called CheckIfTerminalIsAliveUseCase"
+        )
         val now = System.currentTimeMillis()
         val useCache = cachedStatus != null && now - lastCacheTime < CACHE_TTL_MS
 
         return if (useCache) {
             Resource.Success(cachedStatus!!)
         } else {
+            Log.e(
+                "DEBUG CART BUG- CheckIfTerminalIsAliveUseCase",
+                "Calling repository.checkAliveTerminals"
+            )
             val result = repository.checkAliveTerminals()
             if (result is Resource.Success) {
                 cachedStatus = result.data

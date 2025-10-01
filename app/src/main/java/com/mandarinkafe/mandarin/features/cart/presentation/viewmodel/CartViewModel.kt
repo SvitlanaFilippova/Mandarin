@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
@@ -193,6 +194,7 @@ class CartViewModel @Inject constructor(
 
     private fun onProceedOrderClick() {
         viewModelScope.launch {
+            Log.e("DEBUG CART BUG- Cart ViewModel", "Called onProceedOrderClick")
             setState { copy(proceedOrderIsLoading = true) }
             val terminalResponse = checkIfTerminalIsAlive()
 
@@ -200,6 +202,10 @@ class CartViewModel @Inject constructor(
             when (terminalResponse) {
                 is Success -> {
                     if (terminalResponse.data == true) {
+                        Log.e(
+                            "DEBUG CART BUG- Cart ViewModel",
+                            "got terminalResponse : ${terminalResponse.data}"
+                        )
                         sendEffect(CartEffect.ProceedOrder)
                     } else {
                         showSnackbar(

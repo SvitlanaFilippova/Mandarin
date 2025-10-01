@@ -9,32 +9,39 @@ import kotlinx.coroutines.sync.withLock
 
 class IikoAuthProvider(
     private val authApi: IikoAuthApi
-) : AuthProvider {
+) {
+    private var token: String? = null
     private val mutex = Mutex()
-    private var cachedToken: String? = null
     private val apiKey = BuildConfig.IIKO_API_KEY
-    private val logTag = "IikoAuthProvider"
 
-    override suspend fun getToken(): String {
+    suspend fun getToken(): String {
         return mutex.withLock {
-            if (cachedToken == null) {
-                cachedToken = refreshToken()
+            val current = token
+            if (current != null) {
+                return current
             }
-            cachedToken!!
+            val newToken = fetchNewToken()
+            token = newToken
+            newToken
         }
     }
 
-    override suspend fun refreshToken(): String {
+    suspend fun refreshToken(): String {
         return mutex.withLock {
-            try {
+            fetchNewToken().also { token = it }
+        }
+    }
+
+    private suspend fun fetchNewToken(): String {
+        return try {
                 val response = authApi.authenticate(AuthRequest(apiKey))
-                cachedToken = response.token
+            token = response.token
                     ?: error("Пустой токен от iiko")
-                cachedToken!!
+            token!!
             } catch (e: Exception) {
-                Log.e(logTag, "Ошибка получения токена", e)
+            Log.e(token, "Ошибка получения токена", e)
                 throw e
             }
         }
     }
-}
+

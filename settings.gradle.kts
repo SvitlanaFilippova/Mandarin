@@ -25,3 +25,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Mandarin"
 include(":app")
+include(":shared")

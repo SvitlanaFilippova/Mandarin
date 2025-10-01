@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.core.data.network.api
 import com.mandarinkafe.mandarin.core.data.dto.CustomerCategoriesRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsResponse
-import com.mandarinkafe.mandarin.core.data.network.AuthInterceptor
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.AliveTerminalGroupsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.CustomerCategoriesResponse
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.DiscountsRequest
@@ -28,12 +27,10 @@ import io.ktor.client.request.setBody
 
 class IikoApi(
     private val client: HttpClient,
-    private val authInterceptor: AuthInterceptor
 ) {
     // Список организаций
     suspend fun getOrganizations(body: OrganizationsRequest): OrganizationsResponse {
         return client.post("/api/1/organizations") {
-            authInterceptor.intercept(this)
             setBody(body)
         }.body()
     }
@@ -41,14 +38,12 @@ class IikoApi(
     // Терминалы
     suspend fun getTerminalGroupsIds(body: TerminalGroupsIdsRequest): TerminalGroupsIdsResponse {
         return client.post("/api/1/terminal_groups") {
-            authInterceptor.intercept(this)
             setBody(body)
         }.body()
     }
 
     suspend fun getAliveTerminalGroups(body: AliveTerminalGroupsRequest): AliveTerminalGroupsResponse {
         return client.post("/api/1/terminal_groups/is_alive") {
-            authInterceptor.intercept(this)
             setBody(body)
         }.body()
     }
@@ -56,21 +51,18 @@ class IikoApi(
     // Заказ
     suspend fun createDelivery(body: CreateDeliveryRequest): CreateDeliveryResponse {
         return client.post("/api/1/deliveries/create") {
-            authInterceptor.intercept(this)
             setBody(body)
         }.body()
     }
 
     suspend fun getOrdersStatusById(body: OderInfoRequest): OrdersInfoResponse {
         return client.post("/api/1/deliveries/by_id") {
-            authInterceptor.intercept(this)
             setBody(body)
         }.body()
     }
 
     suspend fun cancelOrderById(body: CancelOrderRequest): CancelOrderResponse {
         return client.post("/api/1/deliveries/cancel") {
-            authInterceptor.intercept(this)
             setBody(body)
         }.body()
     }
@@ -78,7 +70,6 @@ class IikoApi(
     // Типы оплаты
     suspend fun getPaymentTypes(body: PaymentTypesRequest): PaymentTypesResponse {
         return client.post("/api/1/payment_types") {
-            authInterceptor.intercept(this)
             setBody(body)
         }.body()
     }
@@ -86,21 +77,18 @@ class IikoApi(
     // Скидки и лояльность
     suspend fun getDiscounts(body: DiscountsRequest): DiscountsResponse {
         return client.post("/api/1/discounts") {
-            authInterceptor.intercept(this)
             setBody(body)
         }.body()
     }
 
     suspend fun getLoyaltyCustomerInfo(body: LoyaltyCustomerByPhoneRequest): LoyaltyCustomerResponse {
         return client.post("/api/1/loyalty/iiko/customer/info") {
-            authInterceptor.intercept(this)
             setBody(body)
         }.body()
     }
 
     suspend fun getAllCustomerCategories(body: CustomerCategoriesRequest): CustomerCategoriesResponse {
         return client.post("/api/1/loyalty/iiko/customer_category") {
-            authInterceptor.intercept(this)
             setBody(body)
         }.body()
     }

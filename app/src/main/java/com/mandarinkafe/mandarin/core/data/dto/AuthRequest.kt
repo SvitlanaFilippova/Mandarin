@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.core.data.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class AuthRequest(
-    @SerializedName("apiLogin")
-    val apiKey: String
+    val apiLogin: String
 )

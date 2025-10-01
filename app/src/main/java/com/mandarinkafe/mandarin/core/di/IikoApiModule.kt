@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.core.di
 
-import com.mandarinkafe.mandarin.core.data.network.AuthInterceptor
 import com.mandarinkafe.mandarin.core.data.network.api.IikoApi
 import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthApi
 import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthProvider
@@ -10,6 +9,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.DEFAULT
@@ -25,36 +27,30 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object IikoApiModule {
+    // Клиент для аутентификации
     @Provides
     @Singleton
-    @IikoClient
-    fun provideHttpClient(): HttpClient {
+    @IikoAuthClient
+    fun provideAuthHttpClient(): HttpClient {
         return HttpClient {
             install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                    isLenient = true
-                    coerceInputValues = true
-                })
+                json(Json { ignoreUnknownKeys = true; isLenient = true })
             }
+            install(Logging) { level = LogLevel.HEADERS }
 
             defaultRequest {
                 url(IIKO_BASE_URL)
                 contentType(ContentType.Application.Json)
             }
-
-            install(Logging) {
-                logger = Logger.DEFAULT
-                level = LogLevel.HEADERS
-            }
         }
     }
+
 
     // API для аутентификации (не требует токена)
     @Provides
     @Singleton
     fun provideIikoAuthApi(
-        @IikoClient client: HttpClient
+        @IikoAuthClient client: HttpClient
     ): IikoAuthApi {
         return IikoAuthApi(client)
     }
@@ -68,13 +64,49 @@ object IikoApiModule {
         return IikoAuthProvider(authApi)
     }
 
-    // AuthInterceptor для добавления токена к запросам
+    // Основной клиент с токеном
     @Provides
     @Singleton
-    fun provideAuthInterceptor(
+    @IikoClient
+    fun provideHttpClient(
         authProvider: IikoAuthProvider
-    ): AuthInterceptor {
-        return AuthInterceptor(authProvider)
+    ): HttpClient {
+        return HttpClient {
+            install(ContentNegotiation) {
+                json(Json {
+                    ignoreUnknownKeys = true
+                    isLenient = true
+                    coerceInputValues = true
+                })
+            }
+
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.HEADERS
+            }
+
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        BearerTokens(
+                            accessToken = authProvider.getToken(),
+                            refreshToken = authProvider.getToken()
+                        )
+                    }
+                    refreshTokens {
+                        BearerTokens(
+                            accessToken = authProvider.refreshToken(),
+                            refreshToken = authProvider.refreshToken()
+                        )
+                    }
+                }
+            }
+
+            defaultRequest {
+                url(IIKO_BASE_URL)
+                contentType(ContentType.Application.Json)
+            }
+        }
     }
 
     // Основной API класс с методами, требующими аутентификации
@@ -82,8 +114,7 @@ object IikoApiModule {
     @Singleton
     fun provideIikoApi(
         @IikoClient client: HttpClient,
-        authInterceptor: AuthInterceptor
     ): IikoApi {
-        return IikoApi(client, authInterceptor)
+        return IikoApi(client)
     }
 }

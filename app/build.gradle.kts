@@ -114,6 +114,7 @@ dependencies {
     // Hilt
     implementation(libs.com.hilt)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.play.services.auth)
     ksp(libs.com.hilt.ksp)
     implementation(libs.androidx.hilt.navigation.compose)
 
@@ -170,6 +171,7 @@ dependencies {
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.client.auth)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.gson)
