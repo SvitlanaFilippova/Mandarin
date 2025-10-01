@@ -8,6 +8,7 @@ import kotlin.test.assertEquals
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
+@Suppress("FunctionNaming", "MagicNumber")
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
