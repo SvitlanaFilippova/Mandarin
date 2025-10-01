@@ -26,16 +26,16 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Ute
 import java.util.UUID
 
 fun LoyaltyCustomerResponse.toDomain() = LoyaltyCustomer(
-    id = id,
+    id = id ?: "",
     isDeleted = isDeleted == true,
-    categories = categories.map { it.toDomain() },
+    categories = categories?.map { it.toDomain() } ?: emptyList(),
 )
 
 fun CustomerCategoryDto.toDomain() = CustomerCategory(
-    id = id,
-    name = name,
-    discountPercent = name.toIntOrNull(),
-    isActive = isActive
+    id = id ?: "",
+    name = name ?: "",
+    discountPercent = name?.toIntOrNull(),
+    isActive = isActive == true
 )
 
 fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {

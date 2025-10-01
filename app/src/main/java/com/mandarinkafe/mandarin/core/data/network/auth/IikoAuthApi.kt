@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.core.data.network.api
+package com.mandarinkafe.mandarin.core.data.network.auth
 
 import android.util.Log
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest

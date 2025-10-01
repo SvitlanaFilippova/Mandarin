@@ -1,7 +1,8 @@
 package com.mandarinkafe.mandarin.core.di
 
+import android.util.Log
 import com.mandarinkafe.mandarin.core.data.network.api.IikoApi
-import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthApi
+import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthApi
 import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthProvider
 import com.mandarinkafe.mandarin.util.Constants.IIKO_BASE_URL
 import dagger.Module
@@ -14,7 +15,6 @@ import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -74,15 +74,21 @@ object IikoApiModule {
         return HttpClient {
             install(ContentNegotiation) {
                 json(Json {
+                    encodeDefaults = true
                     ignoreUnknownKeys = true
                     isLenient = true
                     coerceInputValues = true
+                    explicitNulls = false
                 })
             }
 
             install(Logging) {
-                logger = Logger.DEFAULT
-                level = LogLevel.HEADERS
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        Log.d("KtorDebug", message)
+                    }
+                }
+                level = LogLevel.ALL
             }
 
             install(Auth) {

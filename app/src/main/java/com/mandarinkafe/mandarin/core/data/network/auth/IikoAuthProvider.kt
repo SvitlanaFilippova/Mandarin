@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.core.data.network.auth
 import android.util.Log
 import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
-import com.mandarinkafe.mandarin.core.data.network.api.IikoAuthApi
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 

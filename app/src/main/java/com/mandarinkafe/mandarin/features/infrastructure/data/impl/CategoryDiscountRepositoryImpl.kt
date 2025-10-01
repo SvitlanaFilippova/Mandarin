@@ -40,7 +40,16 @@ class CategoryDiscountRepositoryImpl(
         discounts: List<DiscountTypeDto>
     ): List<CategoryDiscountMap> {
         return categories.mapNotNull { category ->
-            val categoryPercent = category.name.toDoubleOrNull()
+            // Проверяем что category.id не null
+            val categoryId = category.id ?: run {
+                Log.w(
+                    "DEBUG DISCOUNT Repository",
+                    "Category has null ID, name: '${category.name}', skipping"
+                )
+                return@mapNotNull null
+            }
+
+            val categoryPercent = category.name?.toDoubleOrNull()
             if (categoryPercent == null) {
                 Log.w(
                     "DEBUG DISCOUNT Repository",
@@ -50,11 +59,12 @@ class CategoryDiscountRepositoryImpl(
             }
 
             val matchingDiscount = discounts.firstOrNull { discount ->
-                discount.percent.toDouble() == categoryPercent
+                discount.percent == categoryPercent
             }
 
-            matchingDiscount?.let {
-                CategoryDiscountMap(category.id, it.id)
+            matchingDiscount?.let { discount ->
+                val discountId = discount.id
+                CategoryDiscountMap(categoryId, discountId)
             }
         }
     }
@@ -75,7 +85,7 @@ class CategoryDiscountRepositoryImpl(
         val response = networkClient.getAllCustomerCategories()
         if (response.resultCode == HTTP_SUCCESS) {
             val categories = (response as CustomerCategoriesResponse).guestCategories
-            return categories?.filter { it.isActive } ?: emptyList()
+            return categories?.filter { it.isActive == true } ?: emptyList()
         } else {
             return emptyList()
         }
