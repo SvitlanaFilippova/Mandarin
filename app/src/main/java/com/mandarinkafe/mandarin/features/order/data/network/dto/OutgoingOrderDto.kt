@@ -4,7 +4,6 @@ import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
 import com.mandarinkafe.mandarin.core.data.dto.order.OrderType
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrderItem
-
 import kotlinx.serialization.Serializable
 
 @Serializable
