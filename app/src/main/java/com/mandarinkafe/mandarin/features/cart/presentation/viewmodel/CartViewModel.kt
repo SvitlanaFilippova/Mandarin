@@ -23,6 +23,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
 import com.mandarinkafe.mandarin.util.Resource.ErrorNoInternet
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
@@ -66,6 +67,7 @@ class CartViewModel @Inject constructor(
 
     private fun forceRefresh() {
         viewModelScope.launch {
+            setLoading()
             resetError()
             cartInteractor.forceRefresh()
             updateRecommends(state.value.cartItems.map { it.customizedMeal.meal }.toSet())
@@ -78,11 +80,11 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private suspend fun proceedCartResult(cartResource: Resource<List<CartItem>>) {
-        when (cartResource) {
+    private suspend fun proceedCartResult(resource: Resource<List<CartItem>>) {
+        when (resource) {
             is Success -> {
-                setData(cartResource.data)
-                updateRecommends(cartResource.data?.map { it.customizedMeal.meal }?.toSet())
+                setData(resource.data)
+                updateRecommends(resource.data?.map { it.customizedMeal.meal }?.toSet())
             }
 
             is Loading, is Idle -> {
@@ -91,14 +93,14 @@ class CartViewModel @Inject constructor(
 
             is ErrorNoInternet -> {
                 if (state.value.cartItems.isEmpty()) {
-                    setError(cartResource)
+                    setError(resource)
                 } else {
                     setLoading(false)
                 }
             }
 
             else -> {
-                setError(cartResource)
+                setError(resource)
             }
         }
     }
@@ -319,19 +321,17 @@ class CartViewModel @Inject constructor(
     }
 
     private fun setError(resource: Resource<*>) {
-        val hasItems = state.value.cartItems.isNotEmpty()
         setLoading(false)
 
+        val hasItems = state.value.cartItems.isNotEmpty()
+
         val error = when (resource) {
-            is Resource.ErrorEmptyData -> UiError.CartEmpty
+            is ErrorEmptyData -> UiError.CartEmpty
             is ErrorNoInternet -> if (hasItems) null else UiError.NoInternet
             is ErrorOther -> UiError.OtherError
             else -> return
         }
-
-        if (error != null) {
-            setState { copy(error = error, isLoading = false) }
-        }
+        setState { copy(error = error) }
     }
 
     private fun resetError() {

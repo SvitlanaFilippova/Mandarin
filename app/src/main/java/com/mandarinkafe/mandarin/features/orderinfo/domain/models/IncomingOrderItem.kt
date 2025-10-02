@@ -1,5 +1,7 @@
 package com.mandarinkafe.mandarin.features.orderinfo.domain.models
 
+import kotlin.math.abs
+
 data class IncomingOrderItem(
     val id: String,
     val name: String,
@@ -20,6 +22,9 @@ data class IncomingOrderItem(
                 chosenModifiers.sumOf { it.discountedPrice ?: it.price } +
                 chosenAdds.sumOf { it.discountedPrice ?: it.price }
 
-    val isDiscounted = totalPrice != totalDiscountedPrice && discountedPrice != null
+    val isDiscounted: Boolean
+        get() {
+            val epsilon = 0.001
+            return abs(totalPrice * amount - totalDiscountedPrice * amount) > epsilon
+        }
 }
-

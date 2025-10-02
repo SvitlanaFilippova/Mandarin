@@ -3,8 +3,8 @@
     <string name="app_name">Мандарин</string>
     <string name="cafe_phone_number">+7&#160;(495)&#160;108–70–55</string>
     <string name="back">Назад</string>
-    <string name="yes">Да</string>
     <string name="ok">Ок</string>
+    <string name="yes">Да</string>
     <string name="no_cancel">Нет</string>
     <string name="cancel">Отмена</string>
     <string name="edit">Редактировать</string>
@@ -15,7 +15,8 @@
     <string name="clear_text">Очистить текст</string>
     <string name="placeholder_retry">Обновить</string>
     <string name="placeholder_call">Позвонить</string>
-
+    <string name="remove_yes">Да 🗑️</string>
+    <string name="remove_no">Нет-нет! 🙈</string>
 
     <!-- Заголовки экранов -->
     <string name="menu">Меню</string>
@@ -232,11 +233,12 @@
     <!-- Общие ошибки и сообщения -->
     <string name="placeholder_message_call_us">Попробуй ещё&#160;раз или просто позвони нам по&#160;телефону, чтобы сделать заказ.</string>
     <string name="error_no_internet">Нет подключения к&#160;интернету</string>
-    <string name="error_empty_menu">Сервер вернул пустые данные меню 🤷</string>
-    <string name="error_empty_data">Не удалось загрузить данные 🤷</string>
+    <string name="error_something_wrong_for_placeholder">Что-то пошло не так</string>
+    <string name="error_empty_menu">Сервер вернул пустые данные меню</string>
+    <string name="error_empty_data">Не удалось загрузить данные</string>
+    <string name="error_empty_server_response">Ошибка: пустой ответ от сервера</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
     <string name="error_something_wrong">Что-то пошло не так 🤷 </string>
-    <string name="error_empty_server_response">Ошибка: пустой ответ от сервера 🤷</string>
-    <string name="error_unknown">Неизвестная ошибка 🤷</string>
 
     <!-- Меню "Ещё" -->
     <string name="more_orders_history">История заказов</string>

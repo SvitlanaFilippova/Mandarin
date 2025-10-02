@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.util.presentation.ui
+package com.mandarinkafe.mandarin.util.presentation.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,10 +25,6 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.MaskVisualTransformation
-import com.mandarinkafe.mandarin.util.presentation.ui.components.CheckboxWithTextRow
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ConsentTextWithLinks
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 

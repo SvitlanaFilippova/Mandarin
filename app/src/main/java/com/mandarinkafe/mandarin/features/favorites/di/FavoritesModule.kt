@@ -7,12 +7,10 @@ import com.mandarinkafe.mandarin.core.domain.api.FavoritesWriter
 import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.favorites.data.impl.FavoritesRepositoryImpl
+import com.mandarinkafe.mandarin.features.favorites.data.impl.FavoritesValidator
 import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorage
 import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorageImpl
 import com.mandarinkafe.mandarin.features.favorites.domain.impl.FavoritesInteractorImpl
-import com.mandarinkafe.mandarin.features.favorites.domain.impl.ValidateFavoritesUseCaseImpl
-import com.mandarinkafe.mandarin.features.favorites.domain.usecase.ValidateFavoritesUseCase
-import com.mandarinkafe.mandarin.util.NetworkMonitor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,12 +30,12 @@ class FavoritesModule {
     @Provides
     @Singleton
     fun provideFavoritesRepository(
-        networkMonitor: NetworkMonitor,
+        validator: FavoritesValidator,
         storage: FavoritesStorage
     ): FavoritesRepositoryImpl =
         FavoritesRepositoryImpl(
             storage = storage,
-            networkMonitor = networkMonitor
+            validator = validator,
         )
 
     @Provides
@@ -59,13 +57,12 @@ class FavoritesModule {
     fun provideFavoritesApi(
         reader: FavoritesReader,
         writer: FavoritesWriter,
-        validator: ValidateFavoritesUseCase,
+
         forceRefreshMenu: ForceRefreshMenuUseCase
     ): FavoritesApi {
         return FavoritesInteractorImpl(
             reader = reader,
             writer = writer,
-            validator = validator,
             forceRefreshMenu = forceRefreshMenu
         )
     }
@@ -74,8 +71,8 @@ class FavoritesModule {
     @Singleton
     fun provideValidateFavoritesUseCase(
         menuCache: MenuCache
-    ): ValidateFavoritesUseCase {
-        return ValidateFavoritesUseCaseImpl(
+    ): FavoritesValidator {
+        return FavoritesValidator(
             menuCache = menuCache
         )
     }

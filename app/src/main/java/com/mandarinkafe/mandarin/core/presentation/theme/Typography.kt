@@ -48,7 +48,7 @@ object Typography {
     )
 
     val ExtraSmallTextStyle = TextStyle(
-        fontSize = Dimens.TextSizeSuperSmall10,
+        fontSize = Dimens.TextSizeSmall11,
         fontWeight = FontWeight.Light,
         color = Colors.White
     )

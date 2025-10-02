@@ -2,102 +2,126 @@ package com.mandarinkafe.mandarin.features.favorites.data.impl
 
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesReader
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesWriter
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.FavoriteRecord
+import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteRecord
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteRecords
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toStored
 import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorage
 import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorageResult
-import com.mandarinkafe.mandarin.util.NetworkMonitor
 import com.mandarinkafe.mandarin.util.Resource
-import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
+import com.mandarinkafe.mandarin.util.Resource.ErrorOther
+import com.mandarinkafe.mandarin.util.Resource.Idle
+import com.mandarinkafe.mandarin.util.Resource.Loading
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class FavoritesRepositoryImpl(
-    private val networkMonitor: NetworkMonitor,
     private val storage: FavoritesStorage,
+    private val validator: FavoritesValidator,
 ) : FavoritesReader, FavoritesWriter {
 
-    private val _favoritesFlow = MutableStateFlow<Resource<Set<FavoriteRecord>>>(ErrorEmptyData())
+    private var currentRawRecords = mutableSetOf<FavoriteRecord>()
+
+    private val _favoriteItems = MutableStateFlow<Resource<List<CustomizedMeal>>>(Idle())
+    override fun observeFavorites(): Flow<Resource<List<CustomizedMeal>>> =
+        _favoriteItems.asStateFlow()
+
     private val _baseIdsFlow = MutableStateFlow<Set<String>>(emptySet())
-
-    init {
-        CoroutineScope(Dispatchers.IO).launch {
-            refreshFavorites()
-        }
-    }
-
-    override fun observeRawFavorites(): Flow<Resource<Set<FavoriteRecord>>> =
-        _favoritesFlow.asStateFlow()
-
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     override fun observeBaseFavoritesIds(): Flow<Set<String>> = _baseIdsFlow.asStateFlow()
-
-    override suspend fun getRawFavorites(): Resource<Set<FavoriteRecord>> {
-        return if (!isConnected()) {
-            Resource.ErrorNoInternet()
-        } else {
-            _favoritesFlow.value
-        }
-    }
 
     override fun getBaseFavoritesIds(): Set<String> {
         return _baseIdsFlow.value
     }
 
-    override suspend fun toggleFavorite(record: FavoriteRecord) {
-        val currentSet = when (val current = _favoritesFlow.value) {
-            is Resource.Success -> current.data?.toMutableSet() ?: mutableSetOf()
-            else -> mutableSetOf()
-        }
-        if (currentSet.contains(record)) {
-            currentSet.remove(record)
+    init {
+        getInitData()
+    }
+
+
+    override suspend fun forceRetry() {
+        _favoriteItems.value = Loading()
+        getInitData()
+    }
+
+
+    override suspend fun toggleFavorite(custom: CustomizedMeal) {
+        val record = custom.toFavoriteRecord(getTimeStamp())
+        proceedToggleFavorite(record)
+    }
+
+    override suspend fun toggleFavorite(meal: Meal) {
+        val record = meal.toFavoriteRecord(getTimeStamp())
+        proceedToggleFavorite(record)
+    }
+
+    private suspend fun proceedToggleFavorite(record: FavoriteRecord) {
+        if (currentRawRecords.contains(record)) {
+            currentRawRecords.remove(record)
         } else {
-            currentSet.add(record)
+            currentRawRecords.add(record)
         }
 
         // Сохраняем изменения
-        saveToStorage(currentSet)
+        updateFavorites(currentRawRecords)
     }
 
-    override suspend fun saveFavorites(records: Set<FavoriteRecord>) {
-        saveToStorage(records)
-    }
+    private suspend fun updateFavorites(records: Set<FavoriteRecord>) {
+        // Обновляем данные по базовым айди
+        _baseIdsFlow.value = currentRawRecords
+            .filterIsInstance<FavoriteRecord.Base>()
+            .map { it.mealId }
+            .toSet()
 
-    private suspend fun saveToStorage(records: Set<FavoriteRecord>) {
+        // Валидируем и обновляем данные Флоу избранных
+        _favoriteItems.value = validator(records)
+
+
+        // Сохраняем новую информацию в БД
         val dtos = records.map { it.toStored() }.toSet()
         storage.saveFavorites(dtos)
-        refreshFavorites()
     }
 
-    private suspend fun refreshFavorites() {
-        when (val stored = storage.getFavorites()) {
-            is FavoritesStorageResult.Success -> {
-                val records = stored.favorites.toFavoriteRecords()
-                _favoritesFlow.value = if (isConnected()) {
-                    Resource.Success(records)
-                } else {
-                    Resource.ErrorNoInternet()
+    private fun getTimeStamp(): Long {
+        return System.currentTimeMillis()
+    }
+
+
+    private fun getInitData() {
+        scope.launch {
+            _favoriteItems.value = Loading()
+            val stored = storage.getFavorites()
+            when (stored) {
+                // Если вдруг избранные в БД были битые
+                is FavoritesStorageResult.Corrupted -> {
+                    _favoriteItems.value =
+                        ErrorOther("Произошла критическая ошибка при попытке получения избранных. Пришлось их обнулить :( ")
+                    _baseIdsFlow.value = emptySet()
+                    currentRawRecords = mutableSetOf()
                 }
 
-                _baseIdsFlow.value = records
-                    .filterIsInstance<FavoriteRecord.Base>()
-                    .map { it.mealId }
-                    .toSet()
-            }
+                // Данные их БД получены успешно
+                is FavoritesStorageResult.Success -> {
+                    // Обновляем кэш "сырых" данных
+                    currentRawRecords = stored.favorites.toFavoriteRecords()
 
-            is FavoritesStorageResult.Corrupted -> {
-                _favoritesFlow.value =
-                    Resource.ErrorOther("Произошла критическая ошибка при попытке получения избранных. Пришлось их обнулить :( ")
-                _baseIdsFlow.value = emptySet()
+                    // Обновляем данные по базовым айди
+                    _baseIdsFlow.value = currentRawRecords
+                        .filterIsInstance<FavoriteRecord.Base>()
+                        .map { it.mealId }
+                        .toSet()
+
+                    // Валидируем и обновляем данные
+                    _favoriteItems.value = validator(currentRawRecords)
+                }
             }
         }
-    }
-
-    private fun isConnected(): Boolean {
-        return networkMonitor.isNetworkAvailable()
     }
 }

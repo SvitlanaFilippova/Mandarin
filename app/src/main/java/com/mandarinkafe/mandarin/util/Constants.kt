@@ -7,6 +7,7 @@ object Constants {
     const val HTTP_SERVER_ERROR = 500
     const val HTTP_UNAUTHORIZED = 401
     const val IMAGE_VALIDATOR_TIMEOUT = 1000
+    const val MENU_WAIT_TIMEOUT = 10000L
 
     // Menu UI
     const val BANNERS_AUTO_SCROLL_INTERVAL: Long = 5000L

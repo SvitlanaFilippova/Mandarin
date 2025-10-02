@@ -30,7 +30,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickToCopyText
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
+import com.mandarinkafe.mandarin.util.presentation.ui.components.RemoveConfirmationDialog
 
 @Composable
 fun OrderInfoContentScreen(
@@ -116,7 +116,7 @@ fun OrderInfoContentScreen(
 
 // Диалог для подтверждения желания отменить заказ
     if (showCancelDialog) {
-        ConfirmationDialog(
+        RemoveConfirmationDialog(
             titleRes = R.string.cancel_order_question,
             textRes = R.string.cancel_order_confirmation,
             onConfirm = {

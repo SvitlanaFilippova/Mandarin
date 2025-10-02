@@ -20,7 +20,7 @@ object FavoriteMapper {
         }
     }
 
-    fun Set<StoredFavoriteMeal>.toFavoriteRecords(): Set<FavoriteRecord> =
+    fun Set<StoredFavoriteMeal>.toFavoriteRecords(): MutableSet<FavoriteRecord> =
         this.map {
             if (it.addsIds.isEmpty() && it.modifiers.isEmpty()) {
                 FavoriteRecord.Base(
@@ -35,7 +35,7 @@ object FavoriteMapper {
                     timestamp = it.timestamp
                 )
             }
-        }.toSet()
+        }.toMutableSet()
 
     fun CustomizedMeal.toFavoriteRecord(timestamp: Long): FavoriteRecord {
         return if (this.isCustomized) {
