@@ -102,7 +102,6 @@ android {
 }
 
 
-
 dependencies {
     // Android Jetpack Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)

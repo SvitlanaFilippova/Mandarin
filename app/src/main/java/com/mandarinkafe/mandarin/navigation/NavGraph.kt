@@ -67,11 +67,11 @@ fun NavGraph(navHostController: NavHostController) {
                 SplashScreen()
             }
 
+            // экраны, доступные через BottomNavigation:
             navigation(
                 startDestination = NavConstants.MENU_SCREEN_ROUTE,
                 route = NavConstants.MAIN_GRAPH
             ) {
-                // экраны, доступные через BottomNavigation:
                 composable(NavConstants.MENU_SCREEN_ROUTE) {
                     MenuScreen(
                         navController = navHostController,
@@ -79,24 +79,7 @@ fun NavGraph(navHostController: NavHostController) {
                         sharedViewModel = sharedViewModel
                     )
                 }
-                composable(
-                    route = NavConstants.SEARCH_SCREEN_ROUTE_WITH_ARGS,
-                    arguments = listOf(
-                        navArgument(NavConstants.KEY_FOCUS_INPUT) {
-                            type = NavType.BoolType
-                            defaultValue = false
-                        }
-                    )
-                ) { backStackEntry ->
-                    val focusInput =
-                        backStackEntry.arguments?.getBoolean(NavConstants.KEY_FOCUS_INPUT) == true
-                    SearchScreen(
-                        focusSearchBarInput = focusInput,
-                        cartViewModel = cartViewModel,
-                        sharedViewModel = sharedViewModel,
-                        onBackClick = { navHostController.popBackStack() }
-                    )
-                }
+
                 composable(NavConstants.FAVORITES_SCREEN_ROUTE) {
                     FavoritesScreen(
                         cartViewModel = cartViewModel,
@@ -111,6 +94,64 @@ fun NavGraph(navHostController: NavHostController) {
                         navController = navHostController
                     )
                 }
+
+                composable(NavConstants.MORE_MENU_SCREEN_ROUTE) {
+                    MoreMenuScreen(
+                        navController = navHostController,
+                    )
+                }
+            }
+
+            // Остальные экраны:
+            composable(
+                route = NavConstants.SEARCH_SCREEN_ROUTE_WITH_ARGS,
+                arguments = listOf(
+                    navArgument(NavConstants.KEY_FOCUS_INPUT) {
+                        type = NavType.BoolType
+                        defaultValue = false
+                    }
+                )
+            ) { backStackEntry ->
+                val focusInput =
+                    backStackEntry.arguments?.getBoolean(NavConstants.KEY_FOCUS_INPUT) == true
+                SearchScreen(
+                    focusSearchBarInput = focusInput,
+                    cartViewModel = cartViewModel,
+                    sharedViewModel = sharedViewModel,
+                    onBackClick = { navHostController.popBackStack() }
+                )
+            }
+
+            composable(NavConstants.ORDERS_HISTORY_ROUTE) {
+                OrdersHistoryScreen(
+                    navController = navHostController,
+                    sharedViewModel = sharedViewModel,
+                )
+            }
+
+            composable(NavConstants.SAVED_ADDRESSES_ROUTE) {
+                SavedAddressesScreen(
+                    navController = navHostController,
+                )
+            }
+
+            composable(NavConstants.ABOUT_SCREEN_ROUTE) {
+                AboutScreen(onBackClick = { navHostController.popBackStack() })
+            }
+
+            composable(NavConstants.LEGAL_SCREEN_ROUTE) {
+                LegalScreen(
+                    onBackClick = { navHostController.popBackStack() },
+                    onSharedEvent = sharedViewModel::onEvent
+                )
+            }
+
+            composable(NavConstants.DELIVERY_SCREEN_ROUTE) {
+                DeliveryScreen(onBackClick = { navHostController.popBackStack() })
+            }
+
+            composable(NavConstants.CONTACTS_SCREEN_ROUTE) {
+                ContactsScreen(onBackClick = { navHostController.popBackStack() })
             }
 
             bottomSheet(
@@ -181,6 +222,7 @@ fun NavGraph(navHostController: NavHostController) {
                     callerEntry = backStackEntry
                 )
             }
+
             composable(NavConstants.ORDER_SCREEN_ROUTE) {
                 OrderScreen(
                     navController = navHostController,
@@ -207,41 +249,6 @@ fun NavGraph(navHostController: NavHostController) {
                     navController = navHostController,
                 )
             }
-
-            composable(NavConstants.MORE_MENU_SCREEN_ROUTE) {
-                MoreMenuScreen(
-                    navController = navHostController,
-                )
-            }
-
-            composable(NavConstants.ORDERS_HISTORY_ROUTE) {
-                OrdersHistoryScreen(
-                    navController = navHostController,
-                    sharedViewModel = sharedViewModel,
-                )
-            }
-            composable(NavConstants.SAVED_ADDRESSES_ROUTE) {
-                SavedAddressesScreen(
-                    navController = navHostController,
-                )
-            }
-
-            composable(NavConstants.ABOUT_SCREEN_ROUTE) {
-                AboutScreen(onBackClick = { navHostController.popBackStack() })
-            }
-            composable(NavConstants.LEGAL_SCREEN_ROUTE) {
-                LegalScreen(
-                    onBackClick = { navHostController.popBackStack() },
-                    onSharedEvent = sharedViewModel::onEvent
-                )
-            }
-            composable(NavConstants.DELIVERY_SCREEN_ROUTE) {
-                DeliveryScreen(onBackClick = { navHostController.popBackStack() })
-            }
-            composable(NavConstants.CONTACTS_SCREEN_ROUTE) {
-                ContactsScreen(onBackClick = { navHostController.popBackStack() })
-            }
-
         }
     }
 }
