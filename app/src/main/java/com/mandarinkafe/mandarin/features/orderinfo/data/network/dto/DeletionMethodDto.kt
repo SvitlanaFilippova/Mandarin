@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DeletionMethodDto(
-    val id: String,
-    val comment: String?,
-    val removalType: RemovalTypeDto?
+    val id: String? = null,
+    val comment: String? = null,
+    val removalType: RemovalTypeDto? = null,
 )

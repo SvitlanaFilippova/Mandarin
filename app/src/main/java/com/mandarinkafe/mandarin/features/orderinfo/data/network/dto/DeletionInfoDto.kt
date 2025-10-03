@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DeletionInfoDto(
-    val deletionMethod: DeletionMethodDto?
+    val deletionMethod: DeletionMethodDto? = null,
 )

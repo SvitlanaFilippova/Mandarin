@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class OrderType(
     val id: String,
     val name: String,
-    val orderServiceType: String
+    val orderServiceType: String? = null,
 )

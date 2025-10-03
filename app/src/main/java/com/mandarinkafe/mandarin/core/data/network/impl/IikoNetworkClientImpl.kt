@@ -36,19 +36,15 @@ class IikoNetworkClientImpl(
     /** Загружаем organizationId один раз при первом обращении */
     private suspend fun ensureOrganizationId(): String {
         if (organizationId.isNotEmpty()) {
-            Log.d(logTag, "✅ Используем существующий organizationId: ${organizationId.take(10)}...")
             return organizationId
         }
-
-        Log.d(logTag, "🔄 Запрашиваем organizationId...")
         return try {
             val response = iikoApi.getOrganizations(body = OrganizationsRequest())
             organizationId = response.organizations.firstOrNull()?.id
                 ?: error("Не найдена организация")
-            Log.d(logTag, "✅ Получен organizationId: ${organizationId.take(10)}...")
             organizationId
         } catch (e: Exception) {
-            Log.e(logTag, "❌ Ошибка получения organizationId", e)
+            Log.e(logTag, "Ошибка получения organizationId", e)
             throw e
         }
     }
@@ -70,44 +66,35 @@ class IikoNetworkClientImpl(
     }
 
     override suspend fun getLoyaltyCustomerInfo(phone: String): Response {
-        Log.d(logTag, "🔄 getLoyaltyCustomerInfo(phone: ${phone.take(5)}...)")
         if (!isConnected()) {
-            Log.w(logTag, "📵 Нет соединения в getLoyaltyCustomerInfo")
             return Response().apply { resultCode = NO_CONNECTION }
         }
 
         return try {
             val orgId = ensureOrganizationId()
-            Log.d(logTag, "📤 Запрос информации о клиенте...")
             val response = iikoApi.getLoyaltyCustomerInfo(
                 body = LoyaltyCustomerByPhoneRequest(
                     organizationId = orgId,
                     phone = phone
                 )
             )
-            Log.d(logTag, "✅ Информация о клиенте получена")
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "❌ Ошибка getLoyaltyCustomerInfo", e)
+            Log.e(logTag, "Ошибка getLoyaltyCustomerInfo", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
     override suspend fun getPaymentTypes(): Response {
-        Log.d(logTag, "🔄 getPaymentTypes()")
         if (!isConnected()) {
-            Log.w(logTag, "📵 Нет соединения в getPaymentTypes")
             return Response().apply { resultCode = NO_CONNECTION }
         }
-
         return try {
             val orgId = ensureOrganizationId()
-            Log.d(logTag, "📤 Запрос типов оплаты...")
             val response = iikoApi.getPaymentTypes(body = PaymentTypesRequest(listOf(orgId)))
-            Log.d(logTag, "✅ Типы оплаты получены")
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "❌ Ошибка getPaymentTypes", e)
+            Log.e(logTag, "Ошибка getPaymentTypes", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -215,7 +202,6 @@ class IikoNetworkClientImpl(
 
     private fun isConnected(): Boolean {
         val connected = networkMonitor.isNetworkAvailable()
-        Log.d(logTag, "📶 Проверка сети: $connected")
         return connected
     }
 }

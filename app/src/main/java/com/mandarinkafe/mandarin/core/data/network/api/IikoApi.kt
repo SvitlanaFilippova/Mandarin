@@ -25,7 +25,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
 
 class IikoApi(
     private val client: HttpClient,
@@ -72,12 +71,10 @@ class IikoApi(
 
     // Заказ
     suspend fun createDelivery(body: CreateDeliveryRequest): CreateDeliveryResponse {
-        logRequest("createDelivery", body)
         return try {
             val response = client.post("/api/1/deliveries/create") {
                 setBody(body)
             }
-            logResponse("createDelivery", response)
             response.body()
         } catch (e: Exception) {
             logError("createDelivery", e)
@@ -86,12 +83,10 @@ class IikoApi(
     }
 
     suspend fun getOrdersStatusById(body: OderInfoRequest): OrdersInfoResponse {
-        logRequest("getOrdersStatusById", body)
         return try {
             val response = client.post("/api/1/deliveries/by_id") {
                 setBody(body)
             }
-            logResponse("getOrdersStatusById", response)
             response.body()
         } catch (e: Exception) {
             logError("getOrdersStatusById", e)
@@ -100,12 +95,10 @@ class IikoApi(
     }
 
     suspend fun cancelOrderById(body: CancelOrderRequest): CancelOrderResponse {
-        logRequest("cancelOrderById", body)
         return try {
             val response = client.post("/api/1/deliveries/cancel") {
                 setBody(body)
             }
-            logResponse("cancelOrderById", response)
             response.body()
         } catch (e: Exception) {
             logError("cancelOrderById", e)
@@ -163,20 +156,20 @@ class IikoApi(
         }
     }
 
-    private fun <T> logRequest(methodName: String, body: T) {
-        Log.d(logTag, "📤 $methodName - Запрос: ${body.toString().take(500)}...")
-    }
-
-    private suspend fun logResponse(methodName: String, response: HttpResponse) {
-        Log.d(logTag, "📥 $methodName - Статус: ${response.status}")
-
-        try {
-            val rawBody = response.body<String>()
-            Log.d(logTag, "📥 $methodName - Сырой ответ: ${rawBody.take(1000)}...")
-        } catch (e: Exception) {
-            Log.d(logTag, "📥 $methodName - Не удалось прочитать сырой ответ: ${e.message}")
-        }
-    }
+//    private fun <T> logRequest(methodName: String, body: T) {
+//        Log.d(logTag, "📤 $methodName - Запрос: ${body.toString().take(500)}...")
+//    }
+//
+//    private suspend fun logResponse(methodName: String, response: HttpResponse) {
+//        Log.d(logTag, "📥 $methodName - Статус: ${response.status}")
+//
+//        try {
+//            val rawBody = response.body<String>()
+//            Log.d(logTag, "📥 $methodName - Сырой ответ: ${rawBody.take(1000)}...")
+//        } catch (e: Exception) {
+//            Log.d(logTag, "📥 $methodName - Не удалось прочитать сырой ответ: ${e.message}")
+//        }
+//    }
 
     private fun logError(methodName: String, e: Exception) {
         Log.e(logTag, "❌ $methodName - Ошибка: ${e.message}", e)

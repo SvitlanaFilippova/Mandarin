@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CancelInfo(
-    val cause: Cause,
-    val comment: String,
-    val whenCancelled: String
+    val cause: Cause? = null,
+    val comment: String? = null,
+    val whenCancelled: String?? = null,
 )

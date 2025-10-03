@@ -5,11 +5,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class IncomingOrderItemDto(
     val product: ProductInfoDto,
-    val amount: Double,
-    val modifiers: List<IncomingModifierDto>?,
+    val amount: Double? = null,
+    val modifiers: List<IncomingModifierDto> = emptyList(),
     val price: Double,
-    val resultSum: Double?,
-    val positionId: String?,
-    val deleted: DeletionInfoDto?,
-    val comment: String?
+    val resultSum: Double? = null,
+    val positionId: String? = null,
+    val deleted: DeletionInfoDto? = null,
+    val comment: String?? = null,
 )

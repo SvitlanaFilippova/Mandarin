@@ -85,18 +85,21 @@ fun IncomingOrderItem.toCartItem(
     )
 }
 
-fun IncomingOrderItemDto.toDomain() = IncomingOrderItem(
-    id = product.id,
-    name = product.name.applyTypography(),
-    amount = amount,
-    chosenModifiers = modifiers?.map { it.toDomain(amount) } ?: emptyList(),
-    price = price,
-    positionId = positionId,
-    isDeleted = deleted?.deletionMethod != null,
-    comment = comment ?: "",
-    discountedPrice = resultSum?.takeIf { it > 0 }
-        ?.div(amount) // делим на количество, чтобы узнать цену за единицу
-)
+fun IncomingOrderItemDto.toDomain(): IncomingOrderItem {
+    val safeAmount = amount ?: 1.0
+    return IncomingOrderItem(
+        id = product.id,
+        name = product.name.applyTypography(),
+        amount = safeAmount,
+        chosenModifiers = modifiers.map { it.toDomain(safeAmount) },
+        price = price,
+        positionId = positionId,
+        isDeleted = deleted?.deletionMethod != null,
+        comment = comment ?: "",
+        discountedPrice = resultSum?.takeIf { it > 0 }
+            ?.div(safeAmount) // делим на количество, чтобы узнать цену за единицу
+    )
+}
 
 fun List<IncomingOrderItemDto>.toDomainWithAdds(
     addonsCategories: List<MealAdditionalCategory>
@@ -124,15 +127,18 @@ private fun DeliveryPointDto.toAddress(): Address {
     )
 }
 
-private fun IncomingModifierDto.toDomain(mealAmount: Double) = IncomingModifier(
-    id = product.id,
-    name = product.name.applyTypography(),
-    amount = amount,
-    price = price,
-    groupId = productGroup.id,
-    groupName = productGroup.name,
-    discountedPrice = resultSum?.takeIf { it > 0 }?.div(mealAmount * this.amount)
-)
+private fun IncomingModifierDto.toDomain(mealAmount: Double): IncomingModifier {
+    val safeAmount = amount ?: 1.0
+    return IncomingModifier(
+        id = product.id,
+        name = product.name.applyTypography(),
+        amount = safeAmount,
+        price = price,
+        groupId = productGroup.id,
+        groupName = productGroup.name,
+        discountedPrice = resultSum?.takeIf { it > 0 }?.div(mealAmount * safeAmount)
+    )
+}
 
 private fun String.toDeliveryStatus(): DeliveryStatus {
     return DeliveryStatus.entries.find { it.apiName.equals(this, ignoreCase = true) }
@@ -154,12 +160,13 @@ private fun associateItemsWithAdds(
         if (!isAddon) {
             result += IncomingOrderItemBuilder.fromDto(dto)
         } else {
+            val safeAmount = dto.amount ?: 1.1
             val addon = IncomingMealAdditional(
                 id = dto.product.id,
                 name = dto.product.name.applyTypography(),
-                amount = dto.amount,
+                amount = safeAmount,
                 price = dto.price,
-                discountedPrice = dto.resultSum?.takeIf { it > 0 }?.div(dto.amount),
+                discountedPrice = dto.resultSum?.takeIf { it > 0 }?.div(safeAmount),
                 isDeleted = dto.deleted?.deletionMethod != null,
             )
             if (result.isNotEmpty()) {
@@ -200,16 +207,17 @@ private class IncomingOrderItemBuilder private constructor(
 
     companion object {
         fun fromDto(dto: IncomingOrderItemDto): IncomingOrderItemBuilder {
+            val safeAmount = dto.amount ?: 0.0
             return IncomingOrderItemBuilder(
                 id = dto.product.id,
                 name = dto.product.name.applyTypography(),
-                amount = dto.amount,
+                amount = safeAmount,
                 price = dto.price,
                 positionId = dto.positionId,
                 isDeleted = dto.deleted?.deletionMethod != null,
                 comment = dto.comment.toVisibleComment(),
-                chosenModifiers = dto.modifiers?.map { it.toDomain(dto.amount) } ?: emptyList(),
-                discountedPrice = dto.resultSum?.takeIf { it > 0 }?.div(dto.amount)
+                chosenModifiers = dto.modifiers.map { it.toDomain(safeAmount) },
+                discountedPrice = dto.resultSum?.takeIf { it > 0 }?.div(safeAmount)
             )
         }
 

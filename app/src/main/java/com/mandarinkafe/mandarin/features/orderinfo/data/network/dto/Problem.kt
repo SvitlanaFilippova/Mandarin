@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Problem(
-    val description: String,
-    val hasProblem: Boolean
+    val description: String? = null,
+    val hasProblem: Boolean? = null,
 )

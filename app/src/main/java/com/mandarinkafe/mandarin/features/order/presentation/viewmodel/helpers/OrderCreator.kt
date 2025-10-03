@@ -14,6 +14,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
@@ -67,55 +68,71 @@ class OrderCreator @Inject constructor(
 
     private fun observeOrderUntilSuccess(
         scope: CoroutineScope,
-        orderId: String,
+        orderId: String?,
         onSuccess: (IncomingOrder) -> Unit,
         onError: (UiText) -> Unit,
         onLoading: () -> Unit
     ) {
         stopObserving()
+
+        if (orderId.isNullOrBlank()) {
+            onError(UiText.StringResource(R.string.error_order_creation_failed))
+            return
+        }
+
         observeJob = scope.launch {
-            tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds)
-                .onStart { emit(Unit) }
-                .map {
-                    getOrderStatus(orderId)
-                }
-                .collect { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            when (result.data?.creationStatus) {
-                                CreationStatus.SUCCESS -> {
-                                    onSuccess(result.data)
-                                    stopObserving()
-                                }
+            val isCompleted = withTimeoutOrNull(15.seconds) {
+                tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds)
+                    .onStart { emit(Unit) }
+                    .map { getOrderStatus(orderId) }
+                    .collect { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                when (result.data?.creationStatus) {
+                                    CreationStatus.SUCCESS -> {
+                                        onSuccess(result.data)
+                                        stopObserving()
+                                    }
 
-                                CreationStatus.ERROR -> {
-                                    onError(
-                                        result.data.errorInfo?.message?.let {
-                                            UiText.DynamicString(
-                                                it
-                                            )
-                                        }
-                                            ?: UiText.StringResource(R.string.error_order_creation_failed)
-                                    )
-                                    stopObserving()
-                                }
+                                    CreationStatus.ERROR -> {
+                                        onError(
+                                            result.data.errorInfo?.message?.let {
+                                                UiText.DynamicString(
+                                                    it
+                                                )
+                                            }
+                                                ?: UiText.StringResource(R.string.error_order_creation_failed)
+                                        )
+                                        stopObserving()
+                                    }
 
-                                else -> onLoading()
+                                    else -> onLoading()
+                                }
                             }
+
+                            is Resource.ErrorNoInternet -> {
+                                onError(UiText.StringResource(R.string.error_no_internet))
+                                stopObserving()
+                            }
+
+                            is Resource.ErrorOther -> {
+                                onError(
+                                    result.message?.let { UiText.DynamicString(it) }
+                                        ?: UiText.StringResource(R.string.error_order_status_failed)
+                                )
+                                stopObserving()
+                            }
+
+                            else -> Unit
                         }
-
-                        is Resource.ErrorNoInternet -> onError(
-                            UiText.StringResource(R.string.error_no_internet)
-                        )
-
-                        is Resource.ErrorOther -> onError(
-                            result.message?.let { UiText.DynamicString(it) }
-                                ?: UiText.StringResource(R.string.error_order_status_failed)
-                        )
-
-                        else -> Unit
                     }
-                }
+                true // если collect завершился раньше таймаута
+            }
+
+            if (isCompleted == null) { // null -> вышли по таймауту
+                onError(UiText.StringResource(R.string.error_order_timeout))
+                stopObserving()
+            }
         }
     }
 

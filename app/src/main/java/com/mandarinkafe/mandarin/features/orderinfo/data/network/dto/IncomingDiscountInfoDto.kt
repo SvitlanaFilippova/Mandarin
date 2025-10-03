@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class IncomingDiscountInfoDto(
-    val discountType: IncomingDiscountTypeDto?,
-    val sum: Double?,
-    val selectivePositions: List<String>?, // позиции, на которые не действует
+    val discountType: IncomingDiscountTypeDto? = null,
+    val sum: Double? = null,
+    val selectivePositions: List<String>? = null, // позиции, на которые не действует
 )
