@@ -35,7 +35,11 @@ data class IncomingOrderItem(
 
     val isDiscounted: Boolean
         get() {
-            val epsilon = 0.01
+            val epsilon = EPSILON
             return abs(unitPrice - unitDiscountedPrice) > epsilon
         }
+
+    private companion object {
+        const val EPSILON = 0.01
+    }
 }
