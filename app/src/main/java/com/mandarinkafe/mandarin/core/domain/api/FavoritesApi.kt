@@ -15,9 +15,6 @@ interface FavoritesApi {
      *  Возвращает актуальный статус isFavorite для блюда после выполнения операции*/
     suspend fun toggleFavorite(custom: CustomizedMeal)
 
-    /** Получить уже **валидный**, очищенный от пропавших или устаревших, список. */
-    suspend fun getFavorites(): Resource<List<CustomizedMeal>>
-
     /** Эмитит новый список при каждом изменении избранных.*/
     fun observeFavoritesItems(): Flow<Resource<List<CustomizedMeal>>>
 

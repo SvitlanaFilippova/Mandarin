@@ -9,7 +9,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackContract
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackContract.DevFeedbackEvent
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackViewModel
-import com.mandarinkafe.mandarin.util.presentation.ui.BaseFeedbackDialog
+import com.mandarinkafe.mandarin.util.presentation.ui.components.BaseFeedbackDialog
 
 @Composable
 fun DevFeedbackDialog(

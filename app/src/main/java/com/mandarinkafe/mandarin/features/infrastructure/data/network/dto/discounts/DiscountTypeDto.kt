@@ -1,5 +1,8 @@
 package com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.discounts
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class DiscountTypeDto(
     val id: String,
     val name: String,

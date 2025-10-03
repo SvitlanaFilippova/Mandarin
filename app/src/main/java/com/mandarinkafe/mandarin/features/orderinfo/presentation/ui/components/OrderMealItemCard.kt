@@ -203,7 +203,7 @@ private fun MealPriceRow(
         Text(
             text = stringResource(
                 R.string.float_price_template,
-                item.totalPrice * item.amount
+                item.totalPrice
             ),
             style = Typography.RegularLightTextStyle,
             textDecoration = if (isDeleted) deletedDecoration else discountedDecoration

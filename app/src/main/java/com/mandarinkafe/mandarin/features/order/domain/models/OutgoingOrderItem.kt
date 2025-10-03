@@ -1,5 +1,8 @@
 package com.mandarinkafe.mandarin.features.order.domain.models
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class OutgoingOrderItem(
     val productId: String,
     val modifiers: List<OutgoingModifier>? = null,

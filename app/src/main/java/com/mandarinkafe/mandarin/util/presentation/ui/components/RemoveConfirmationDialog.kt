@@ -8,7 +8,7 @@ import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
 
 @Composable
-fun ConfirmationDialog(
+fun RemoveConfirmationDialog(
     titleRes: Int,
     textRes: Int,
     onConfirm: () -> Unit,
@@ -18,12 +18,12 @@ fun ConfirmationDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text(stringResource(R.string.yes))
+                Text(stringResource(R.string.remove_yes))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.no_cancel))
+                Text(stringResource(R.string.remove_no))
             }
         },
         title = { Text(stringResource(titleRes)) },

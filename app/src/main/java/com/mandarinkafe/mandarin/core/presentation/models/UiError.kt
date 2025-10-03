@@ -17,7 +17,7 @@ sealed class UiError(
     )
 
     object OtherError : UiError(
-        msgRes = R.string.error_something_wrong,
+        msgRes = R.string.error_something_wrong_for_placeholder,
         extraMsgRes = R.string.placeholder_message_call_us,
         imgRes = R.drawable.placeholder_server_error,
     )

@@ -3,7 +3,9 @@ package com.mandarinkafe.mandarin.features.orderinfo.data.network.dto
 import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
 import com.mandarinkafe.mandarin.core.data.dto.order.OrderType
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class IncomingOrderDto(
     val phone: String? = null,
     val orderServiceType: String? = null,
@@ -17,7 +19,7 @@ data class IncomingOrderDto(
     val cancelInfo: CancelInfo? = null,
     val discounts: List<IncomingDiscountInfoDto>? = null,
     val orderType: OrderType? = null,
-    val processedPaymentsSum: Int? = null,
+    val processedPaymentsSum: Double? = null,
     val sum: Double? = null,
     val whenClosed: String? = null,
     val whenConfirmed: String? = null,

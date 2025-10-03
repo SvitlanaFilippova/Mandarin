@@ -1,12 +1,9 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components.buttons
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -19,13 +16,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 
@@ -35,12 +31,6 @@ fun FavoriteButton(
     isFavorite: Boolean,
     onClick: () -> Unit
 ) {
-    val backgroundColor by animateColorAsState(
-        targetValue = if (isFavorite) Colors.Orange else Colors.LightGrey,
-        animationSpec = tween(durationMillis = ANIMATION_DURATION_FAST),
-        label = "favoriteBackgroundColor"
-    )
-
     val scaleAnim = remember { Animatable(1f) }
 
     // Предыдущее значение, чтобы отследить изменение
@@ -73,17 +63,7 @@ fun FavoriteButton(
                 .graphicsLayer(
                     scaleX = scaleAnim.value,
                     scaleY = scaleAnim.value
-                )
-                .shadow(
-                    elevation = Dimens.Elevation4,
-                    shape = CircleShape,
-                    clip = false
-                )
-                .background(
-                    color = backgroundColor,
-                    shape = CircleShape
-                )
-                .clip(CircleShape),
+                ),
             contentAlignment = Alignment.Center
         ) {
             Crossfade(
@@ -92,18 +72,23 @@ fun FavoriteButton(
                 label = "favoriteIcon"
             ) { isFav ->
                 Icon(
-                    modifier = Modifier.padding(Dimens.MarginSuperSmall4),
+                    modifier = Modifier.shadow(
+                        elevation = Dimens.Elevation4,
+                        shape = CircleShape,
+                        clip = false
+                    ),
                     painter = painterResource(
                         if (isFav) {
-                            R.drawable.ic_favorite_active
+                            R.drawable.ic_favorite_in_circle_active
                         } else {
-                            R.drawable.ic_favorite_inactive
+                            R.drawable.ic_favorite_in_circle_inactive
                         }
                     ),
                     contentDescription = stringResource(R.string.add_to_favorite),
-                    tint = Colors.White
+                    tint = Color.Unspecified
                 )
             }
         }
     }
 }
+

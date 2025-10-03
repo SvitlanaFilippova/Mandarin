@@ -49,7 +49,7 @@ fun OrderActionsButtons(
                         .padding(Dimens.MarginSmall8)
                         .weight(1f),
                     textResID = R.string.cancel_order_button,
-                    containerColor = Colors.ErrorRed,
+                    containerColor = Colors.Red,
                     onClick = onCancelClick
 
                 )

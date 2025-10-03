@@ -36,6 +36,11 @@ parcelize = "2.2.20"
 runtimeLivedata = "1.9.1"
 sqldelight = "2.1.0"
 kotlinx-serialization = "1.6.0"
+kotlinStdlibVersion = "2.2.20"
+kotlinTestVersion = "2.2.20"
+runnerVersion = "1.5.2"
+coreVersion = "1.5.0"
+playServicesAuthVersion = "21.4.0"
 
 [libraries]
 # Accompanist
@@ -102,12 +107,18 @@ sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-ex
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 # Kotlinx Serialization
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlibVersion" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinTestVersion" }
+androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runnerVersion" }
+androidx-core = { group = "androidx.test", name = "core", version.ref = "coreVersion" }
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuthVersion" }
 
 [plugins]
 
@@ -122,4 +133,7 @@ jetbrains-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", ver
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+android-lint = { id = "com.android.lint", version.ref = "agp" }
 

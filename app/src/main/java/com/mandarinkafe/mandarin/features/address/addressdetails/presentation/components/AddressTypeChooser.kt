@@ -31,7 +31,7 @@ fun AddressTypeChooser(
     val types = remember { UiAddressType.entries.toList() }
 
     val style = if (isError && chosen == null) {
-        Typography.RegularTextStyle.copy(color = Colors.ErrorRed)
+        Typography.RegularTextStyle.copy(color = Colors.Red)
     } else {
         Typography.RegularTextStyle
     }
@@ -49,7 +49,7 @@ fun AddressTypeChooser(
             val selected = item.name == chosen?.name
             val borderColor = when {
                 selected -> Colors.Orange
-                isError && chosen == null -> Colors.ErrorRed
+                isError && chosen == null -> Colors.Red
                 else -> Colors.AppBlack
             }
 

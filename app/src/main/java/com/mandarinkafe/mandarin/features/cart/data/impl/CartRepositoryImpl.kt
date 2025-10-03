@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.cart.data.impl
 
-import android.annotation.SuppressLint
 import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
@@ -14,6 +13,7 @@ import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.validateBy
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
+import com.mandarinkafe.mandarin.util.Constants.MENU_WAIT_TIMEOUT
 import com.mandarinkafe.mandarin.util.Resource
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -23,9 +23,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
 
 @Singleton
@@ -41,12 +42,12 @@ class CartRepositoryImpl @Inject constructor(
 
     private val _cartCount = MutableStateFlow(0)
     override fun observeCartItemsCount(): Flow<Int> = _cartCount.asStateFlow()
+    private val mutex = Mutex()
 
     init {
         getInitData()
     }
 
-    @SuppressLint("LogNotTimber")
     private fun getInitData() {
         scope.launch {
             // 1. Получаем корзину из storage
@@ -60,23 +61,27 @@ class CartRepositoryImpl @Inject constructor(
                 emptyList()
             }
 
-            // 2. Ждём первое успешное меню, но не дольше 5 секунд
+            // Ждём до MENU_WAIT_TIMEOUT пока меню станет не Loading/Idle
             val menuResource = withTimeoutOrNull(MENU_WAIT_TIMEOUT) {
                 menuCache.allVisibleMenu
-                    .filterIsInstance<Resource.Success<List<MealCategory>>>()
-                    .firstOrNull()
-            }
+                    .firstOrNull { it !is Resource.Loading && it !is Resource.Idle }
+            } ?: menuCache.allVisibleMenu.value // если таймаут, берём последнее известное состояние
 
-            if (menuResource == null) {
-                _cartItems.value =
-                    Resource.ErrorOther("Не удалось загрузить меню. Попробуйте позже.")
-                return@launch
-            } else {
-                val fullMenu = menuResource.data.orEmpty()
-                val validItems = mapAndValidate(storedCartItems, fullMenu)
-                cartItems = validItems
-                _cartItems.value = Resource.Success(validItems)
-                _cartCount.value = validItems.sumOf { it.quantity }
+            _cartItems.value = when (menuResource) {
+                is Resource.Success -> {
+                    val fullMenu = menuResource.data.orEmpty()
+                    val validItems = mapAndValidate(storedCartItems, fullMenu)
+                    cartItems = validItems
+                    _cartCount.value = validItems.sumOf { it.quantity }
+
+                    Resource.Success(validItems)
+                }
+
+                is Resource.ErrorEmptyData -> Resource.ErrorEmptyData()
+                is Resource.ErrorNoInternet -> Resource.ErrorNoInternet()
+                is Resource.ErrorOther -> Resource.ErrorOther(menuResource.message ?: "Ошибка меню")
+                is Resource.Loading -> Resource.Loading()
+                is Resource.Idle -> Resource.Idle()
             }
         }
     }
@@ -128,7 +133,7 @@ class CartRepositoryImpl @Inject constructor(
         return result
     }
 
-    override suspend fun addOrUpdateItem(item: CartItem): Boolean {
+    override suspend fun addOrUpdateItem(item: CartItem): Boolean = mutex.withLock {
         var wasUpdated = false
         cartItems = cartItems.toMutableList().apply {
             val index = indexOfFirst { it.id == item.id }
@@ -146,6 +151,7 @@ class CartRepositoryImpl @Inject constructor(
         // Мгновенное обновление UI
         _cartItems.value = Resource.Success(cartItems)
         _cartCount.value = cartItems.sumOf { it.quantity }
+
         // Фоновое сохранение
         scope.launch(Dispatchers.IO) {
             storage.addOrUpdateItem(item.toStoredCartItem())
@@ -175,7 +181,6 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        private const val MENU_WAIT_TIMEOUT = 15000L
         private const val ERROR_TAG = "Cart DEBUG Repo"
     }
 }

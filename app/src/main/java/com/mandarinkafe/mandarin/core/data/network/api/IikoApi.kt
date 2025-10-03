@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.core.data.network.api
 
+import android.util.Log
 import com.mandarinkafe.mandarin.core.data.dto.CustomerCategoriesRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsResponse
-import com.mandarinkafe.mandarin.core.data.network.AuthInterceptor
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.AliveTerminalGroupsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.CustomerCategoriesResponse
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.DiscountsRequest
@@ -28,82 +28,150 @@ import io.ktor.client.request.setBody
 
 class IikoApi(
     private val client: HttpClient,
-    private val authInterceptor: AuthInterceptor
 ) {
+    private val logTag = "IikoApiDebug"
+
     // Список организаций
     suspend fun getOrganizations(body: OrganizationsRequest): OrganizationsResponse {
-        return client.post("/api/1/organizations") {
-            authInterceptor.intercept(this)
-            setBody(body)
-        }.body()
+        return try {
+            val response = client.post("/api/1/organizations") {
+                setBody(body)
+            }
+            response.body()
+        } catch (e: Exception) {
+            logError("getOrganizations", e)
+            throw e
+        }
     }
 
     // Терминалы
     suspend fun getTerminalGroupsIds(body: TerminalGroupsIdsRequest): TerminalGroupsIdsResponse {
-        return client.post("/api/1/terminal_groups") {
-            authInterceptor.intercept(this)
-            setBody(body)
-        }.body()
+        return try {
+            val response = client.post("/api/1/terminal_groups") {
+                setBody(body)
+            }
+            response.body()
+        } catch (e: Exception) {
+            logError("getTerminalGroupsIds", e)
+            throw e
+        }
     }
 
     suspend fun getAliveTerminalGroups(body: AliveTerminalGroupsRequest): AliveTerminalGroupsResponse {
-        return client.post("/api/1/terminal_groups/is_alive") {
-            authInterceptor.intercept(this)
-            setBody(body)
-        }.body()
+        return try {
+            val response = client.post("/api/1/terminal_groups/is_alive") {
+                setBody(body)
+            }
+            response.body()
+        } catch (e: Exception) {
+            logError("getAliveTerminalGroups", e)
+            throw e
+        }
     }
 
     // Заказ
     suspend fun createDelivery(body: CreateDeliveryRequest): CreateDeliveryResponse {
-        return client.post("/api/1/deliveries/create") {
-            authInterceptor.intercept(this)
-            setBody(body)
-        }.body()
+        return try {
+            val response = client.post("/api/1/deliveries/create") {
+                setBody(body)
+            }
+            response.body()
+        } catch (e: Exception) {
+            logError("createDelivery", e)
+            throw e
+        }
     }
 
     suspend fun getOrdersStatusById(body: OderInfoRequest): OrdersInfoResponse {
-        return client.post("/api/1/deliveries/by_id") {
-            authInterceptor.intercept(this)
-            setBody(body)
-        }.body()
+        return try {
+            val response = client.post("/api/1/deliveries/by_id") {
+                setBody(body)
+            }
+            response.body()
+        } catch (e: Exception) {
+            logError("getOrdersStatusById", e)
+            throw e
+        }
     }
 
     suspend fun cancelOrderById(body: CancelOrderRequest): CancelOrderResponse {
-        return client.post("/api/1/deliveries/cancel") {
-            authInterceptor.intercept(this)
-            setBody(body)
-        }.body()
+        return try {
+            val response = client.post("/api/1/deliveries/cancel") {
+                setBody(body)
+            }
+            response.body()
+        } catch (e: Exception) {
+            logError("cancelOrderById", e)
+            throw e
+        }
     }
 
     // Типы оплаты
     suspend fun getPaymentTypes(body: PaymentTypesRequest): PaymentTypesResponse {
-        return client.post("/api/1/payment_types") {
-            authInterceptor.intercept(this)
-            setBody(body)
-        }.body()
+        return try {
+            val response = client.post("/api/1/payment_types") {
+                setBody(body)
+            }
+            response.body()
+        } catch (e: Exception) {
+            logError("getPaymentTypes", e)
+            throw e
+        }
     }
 
     // Скидки и лояльность
     suspend fun getDiscounts(body: DiscountsRequest): DiscountsResponse {
-        return client.post("/api/1/discounts") {
-            authInterceptor.intercept(this)
-            setBody(body)
-        }.body()
+        return try {
+            val response = client.post("/api/1/discounts") {
+                setBody(body)
+            }
+            response.body()
+        } catch (e: Exception) {
+            logError("getDiscounts", e)
+            throw e
+        }
     }
 
     suspend fun getLoyaltyCustomerInfo(body: LoyaltyCustomerByPhoneRequest): LoyaltyCustomerResponse {
-        return client.post("/api/1/loyalty/iiko/customer/info") {
-            authInterceptor.intercept(this)
-            setBody(body)
-        }.body()
+        return try {
+            val response = client.post("/api/1/loyalty/iiko/customer/info") {
+                setBody(body)
+            }
+            response.body()
+        } catch (e: Exception) {
+            logError("getLoyaltyCustomerInfo", e)
+            throw e
+        }
     }
 
     suspend fun getAllCustomerCategories(body: CustomerCategoriesRequest): CustomerCategoriesResponse {
-        return client.post("/api/1/loyalty/iiko/customer_category") {
-            authInterceptor.intercept(this)
-            setBody(body)
-        }.body()
+        return try {
+            val response = client.post("/api/1/loyalty/iiko/customer_category") {
+                setBody(body)
+            }
+            response.body()
+        } catch (e: Exception) {
+            logError("getAllCustomerCategories", e)
+            throw e
+        }
+    }
+
+//    private fun <T> logRequest(methodName: String, body: T) {
+//        Log.d(logTag, "📤 $methodName - Запрос: ${body.toString().take(500)}...")
+//    }
+//
+//    private suspend fun logResponse(methodName: String, response: HttpResponse) {
+//        Log.d(logTag, "📥 $methodName - Статус: ${response.status}")
+//
+//        try {
+//            val rawBody = response.body<String>()
+//            Log.d(logTag, "📥 $methodName - Сырой ответ: ${rawBody.take(1000)}...")
+//        } catch (e: Exception) {
+//            Log.d(logTag, "📥 $methodName - Не удалось прочитать сырой ответ: ${e.message}")
+//        }
+//    }
+
+    private fun logError(methodName: String, e: Exception) {
+        Log.e(logTag, "❌ $methodName - Ошибка: ${e.message}", e)
     }
 }
-
-

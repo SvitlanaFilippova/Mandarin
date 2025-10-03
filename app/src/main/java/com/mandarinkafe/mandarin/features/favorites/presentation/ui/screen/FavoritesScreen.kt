@@ -29,7 +29,6 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
-import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -65,14 +64,13 @@ fun FavoritesScreen(
                 .background(Colors.AppBlack)
         ) {
             when {
-                state.isLoading -> LoadingScreen()
-
                 state.error != null -> PlaceholderScreen(
                     state.error,
                     onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+                    onRetryClick = { onEvent(FavoritesEvent.ForceRefresh) },
                 )
 
-                state.data.isEmpty() -> PlaceholderScreen(
+                state.data.isEmpty() && !state.isLoading -> PlaceholderScreen(
                     UiError.FavoritesEmpty,
                     onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
                 )

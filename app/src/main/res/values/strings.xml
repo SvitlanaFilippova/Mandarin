@@ -3,8 +3,8 @@
     <string name="app_name">Мандарин</string>
     <string name="cafe_phone_number">+7&#160;(495)&#160;108–70–55</string>
     <string name="back">Назад</string>
-    <string name="yes">Да</string>
     <string name="ok">Ок</string>
+    <string name="yes">Да</string>
     <string name="no_cancel">Нет</string>
     <string name="cancel">Отмена</string>
     <string name="edit">Редактировать</string>
@@ -15,7 +15,8 @@
     <string name="clear_text">Очистить текст</string>
     <string name="placeholder_retry">Обновить</string>
     <string name="placeholder_call">Позвонить</string>
-
+    <string name="remove_yes">Да 🗑️</string>
+    <string name="remove_no">Нет-нет! 🙈</string>
 
     <!-- Заголовки экранов -->
     <string name="menu">Меню</string>
@@ -127,6 +128,8 @@
     <string name="error_cant_check_terminal_is_alive">Что-то пошло не так — не удалось проверить, работает ли сейчас доставка.</string>
     <string name="error_order_creation_failed">Не удалось создать заказ</string>
     <string name="error_order_status_failed">Ошибка получения статуса заказа</string>
+    <string name="error_order_timeout">Не удалось создать заказ: превышено время ожидания</string>
+
 
     <!-- Адрес -->
     <string name="deliver_to_this_location">Доставить сюда</string>
@@ -188,6 +191,7 @@
     <string name="label_order_items">Позиции заказа: %1$d</string>
     <string name="discount_applied">Применена скидка</string>
     <string name="label_total">Итого</string>
+    <string name="label_paid">Оплачено</string>
     <string name="label_address">Адрес</string>
     <string name="label_phone">Телефон</string>
     <string name="label_customer">Клиент</string>
@@ -232,11 +236,12 @@
     <!-- Общие ошибки и сообщения -->
     <string name="placeholder_message_call_us">Попробуй ещё&#160;раз или просто позвони нам по&#160;телефону, чтобы сделать заказ.</string>
     <string name="error_no_internet">Нет подключения к&#160;интернету</string>
-    <string name="error_empty_menu">Сервер вернул пустые данные меню 🤷</string>
-    <string name="error_empty_data">Не удалось загрузить данные 🤷</string>
+    <string name="error_something_wrong_for_placeholder">Что-то пошло не так</string>
+    <string name="error_empty_menu">Сервер вернул пустые данные меню</string>
+    <string name="error_empty_data">Не удалось загрузить данные</string>
+    <string name="error_empty_server_response">Ошибка: пустой ответ от сервера</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
     <string name="error_something_wrong">Что-то пошло не так 🤷 </string>
-    <string name="error_empty_server_response">Ошибка: пустой ответ от сервера 🤷</string>
-    <string name="error_unknown">Неизвестная ошибка 🤷</string>
 
     <!-- Меню "Ещё" -->
     <string name="more_orders_history">История заказов</string>

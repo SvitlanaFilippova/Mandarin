@@ -40,23 +40,25 @@ class FavoritesViewModel @Inject constructor(private val favoritesApi: Favorites
 
     private fun forceRefresh() {
         viewModelScope.launch {
+            resetError()
+            setLoading()
             favoritesApi.forceRefresh()
         }
     }
 
     private fun observeFavorites() {
-        setState { copy(isLoading = true) }
         viewModelScope.launch {
             favoritesApi.observeFavoritesItems()
                 .collect { resource ->
-                    setLoading(resource is Loading)
                     when (resource) {
                         is Success -> {
                             setData(resource.data)
                         }
 
-                        is Loading -> {}
-                        is Idle -> {}
+                        is Loading, is Idle -> {
+                            setLoading()
+                        }
+
                         else -> {
                             setError(resource)
                             if (resource.message?.isNotEmpty() == true) {
@@ -73,19 +75,28 @@ class FavoritesViewModel @Inject constructor(private val favoritesApi: Favorites
             setState {
                 copy(
                     data = data,
-                    error = null
+                    error = null,
+                    isLoading = false
                 )
             }
         }
     }
 
     private fun setError(resource: Resource<*>) {
+        setLoading(false)
+
+        val hasItems = state.value.data.isNotEmpty()
+
         val error = when (resource) {
-            is ErrorEmptyData<*> -> UiError.FavoritesEmpty
-            is ErrorNoInternet<*> -> UiError.NoInternet
-            is ErrorOther<*> -> UiError.OtherError
+            is ErrorEmptyData -> UiError.FavoritesEmpty
+            is ErrorNoInternet -> if (hasItems) null else UiError.NoInternet
+            is ErrorOther -> UiError.OtherError
             else -> return
         }
         setState { copy(error = error) }
+    }
+
+    private fun resetError() {
+        setState { copy(error = null) }
     }
 }

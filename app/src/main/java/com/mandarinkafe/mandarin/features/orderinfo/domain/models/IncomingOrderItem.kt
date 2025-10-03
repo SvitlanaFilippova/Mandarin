@@ -1,5 +1,7 @@
 package com.mandarinkafe.mandarin.features.orderinfo.domain.models
 
+import kotlin.math.abs
+
 data class IncomingOrderItem(
     val id: String,
     val name: String,
@@ -13,13 +15,31 @@ data class IncomingOrderItem(
     val comment: String,
     val isValidated: Boolean = false
 ) {
-    val totalPrice: Double
+    // Цена за одну единицу без скидки (включая модификаторы и добавки)
+    val unitPrice: Double
         get() = price + chosenModifiers.sumOf { it.price } + chosenAdds.sumOf { it.price }
-    val totalDiscountedPrice: Double
+
+    // Общая цена без скидки
+    val totalPrice: Double
+        get() = unitPrice * amount
+
+    // Цена за одну единицу со скидкой
+    val unitDiscountedPrice: Double
         get() = (discountedPrice ?: price) +
                 chosenModifiers.sumOf { it.discountedPrice ?: it.price } +
                 chosenAdds.sumOf { it.discountedPrice ?: it.price }
 
-    val isDiscounted = totalPrice != totalDiscountedPrice
-}
+    // Общая цена со скидкой
+    val totalDiscountedPrice: Double
+        get() = unitDiscountedPrice * amount
 
+    val isDiscounted: Boolean
+        get() {
+            val epsilon = EPSILON
+            return abs(unitPrice - unitDiscountedPrice) > epsilon
+        }
+
+    private companion object {
+        const val EPSILON = 0.01
+    }
+}

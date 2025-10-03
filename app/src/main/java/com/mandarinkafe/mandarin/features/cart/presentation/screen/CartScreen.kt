@@ -35,7 +35,7 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.Constants.SNACKBAR_MESSAGE_KEY
 import com.mandarinkafe.mandarin.util.asString
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
+import com.mandarinkafe.mandarin.util.presentation.ui.components.RemoveConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.launch
 
@@ -149,7 +149,7 @@ fun CartScreen(
 
     // Диалог для подтверждения желания очистить корзину
     if (showClearCartDialog) {
-        ConfirmationDialog(
+        RemoveConfirmationDialog(
             titleRes = R.string.clear_cart_question,
             textRes = R.string.clear_cart_confirmation,
             onConfirm = {

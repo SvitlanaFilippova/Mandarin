@@ -1,11 +1,10 @@
 package com.mandarinkafe.mandarin.core.domain.api
 
-import com.mandarinkafe.mandarin.core.domain.models.FavoriteRecord
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 
 interface FavoritesWriter {
     /** Добавляет или убирает запись; возвращает новое состояние (true = теперь в избранном). */
-    suspend fun toggleFavorite(record: FavoriteRecord)
-
-    /** Полностью перезаписать все записи в storage. */
-    suspend fun saveFavorites(records: Set<FavoriteRecord>)
+    suspend fun toggleFavorite(custom: CustomizedMeal)
+    suspend fun toggleFavorite(meal: Meal)
 }

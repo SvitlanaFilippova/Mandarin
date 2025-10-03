@@ -37,8 +37,8 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.extensions.tryGetBackStackEntry
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_ADDRESS_ID
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
+import com.mandarinkafe.mandarin.util.presentation.ui.components.RemoveConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.BigButtonWithText
 
@@ -139,7 +139,7 @@ fun AddressDetailsScreen(
                     modifier = Modifier.weight(1f),
                     textResID = R.string.delete,
                     onSubmit = { showConfirmDeleteDialog = true },
-                    activeContainerColor = Colors.ErrorRed
+                    activeContainerColor = Colors.Red
                 )
                 Spacer(Modifier.width(Dimens.MarginStandard16))
             }
@@ -162,7 +162,7 @@ fun AddressDetailsScreen(
     }
     // Диалог для подтверждения желания удалить адрес
     if (showConfirmDeleteDialog) {
-        ConfirmationDialog(
+        RemoveConfirmationDialog(
             titleRes = R.string.delete_address_question,
             textRes = R.string.delete_address_text,
             onConfirm = {

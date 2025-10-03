@@ -31,8 +31,8 @@ import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.S
 import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.SavedAddressesViewModel
 import com.mandarinkafe.mandarin.util.Constants.SHOULD_REFRESH_ADDRESSES_KEY
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyClickableText
+import com.mandarinkafe.mandarin.util.presentation.ui.components.RemoveConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
@@ -113,7 +113,7 @@ fun SavedAddressesScreen(
 
     // Диалог для подтверждения желания удалить адрес
     if (showConfirmDeleteDialog && addressIdToDelete != null) {
-        ConfirmationDialog(
+        RemoveConfirmationDialog(
             titleRes = R.string.delete_address_question,
             textRes = R.string.delete_address_text,
             onConfirm = {

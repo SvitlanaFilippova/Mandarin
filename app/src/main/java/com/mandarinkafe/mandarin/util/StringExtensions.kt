@@ -1,5 +1,8 @@
 package com.mandarinkafe.mandarin.util
 
+import com.mandarinkafe.mandarin.util.Constants.COMMENT_DIVIDER_1
+import com.mandarinkafe.mandarin.util.Constants.COMMENT_DIVIDER_2
+
 /**
  * Заменяет все нестандартные пробелы на обычные (для правильной работы поиска)
  */
@@ -95,4 +98,18 @@ fun String.toLatinTranslit(): String {
         result = result.replace(cyr, latin)
     }
     return result
+}
+
+fun String?.toVisibleComment(): String {
+    if (this == null) return ""
+    val dividers = listOf(COMMENT_DIVIDER_1, COMMENT_DIVIDER_2)
+    val firstDividerIndex = dividers
+        .mapNotNull { divider -> indexOf(divider).takeIf { it >= 0 } }
+        .minOrNull()
+
+    return if (firstDividerIndex != null) {
+        substring(0, firstDividerIndex).trim()
+    } else {
+        this.trim()
+    }
 }

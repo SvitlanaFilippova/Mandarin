@@ -51,23 +51,26 @@ fun TooltipText(
             Column(modifier = Modifier.padding(Dimens.MarginStandard16)) {
                 Text(
                     text = stringResource(textRes),
-                    style = Typography.SmallTextStyle.copy(
-                        color = Colors.WhiteTransparent75,
-                        fontWeight = FontWeight.Medium
-                    ),
+                    style = Typography.SmallTextStyle.copy(color = Colors.WhiteTransparent75),
                 )
                 extraTextRes?.let {
                     Text(
                         modifier = Modifier.padding(top = Dimens.MarginStandard16),
                         text = stringResource(extraTextRes),
-                        style = Typography.SmallTextStyle.copy(color = Colors.WhiteTransparent75),
+                        style = Typography.SmallTextStyle.copy(
+                            color = Colors.WhiteTransparent75,
+                            fontWeight = FontWeight.Light
+                        ),
                     )
                 }
                 extraText?.let {
                     Text(
                         modifier = Modifier.padding(top = Dimens.MarginStandard16),
                         text = extraText,
-                        style = Typography.SmallTextStyle.copy(color = Colors.WhiteTransparent75),
+                        style = Typography.SmallTextStyle.copy(
+                            color = Colors.WhiteTransparent75,
+                            fontWeight = FontWeight.Light
+                        ),
                     )
                 }
 

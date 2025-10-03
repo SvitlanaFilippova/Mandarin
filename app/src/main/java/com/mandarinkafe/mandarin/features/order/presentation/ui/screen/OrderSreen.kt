@@ -29,7 +29,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderView
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ConfirmationDialog
+import com.mandarinkafe.mandarin.util.presentation.ui.components.RemoveConfirmationDialog
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -90,7 +90,7 @@ fun OrderScreen(
 
         // Диалог для подтверждения желания удалить адрес
         if (showConfirmDeleteDialog && addressIdToDelete != null) {
-            ConfirmationDialog(
+            RemoveConfirmationDialog(
                 titleRes = R.string.delete_address_question,
                 textRes = R.string.delete_address_text,
                 onConfirm = {

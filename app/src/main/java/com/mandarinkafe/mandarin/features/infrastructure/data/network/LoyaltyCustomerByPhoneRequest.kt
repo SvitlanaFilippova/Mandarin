@@ -1,11 +1,10 @@
 package com.mandarinkafe.mandarin.features.infrastructure.data.network
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class LoyaltyCustomerByPhoneRequest(
     val phone: String,
-    val type: String = TYPE_PHONE,
+    val type: String = "phone",
     val organizationId: String,
-) {
-    private companion object {
-        const val TYPE_PHONE = "phone"
-    }
-}
+)

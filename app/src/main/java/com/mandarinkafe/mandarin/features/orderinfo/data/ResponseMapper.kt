@@ -7,5 +7,4 @@ fun ErrorInfoDto.toDomain() = ErrorInfo(
     code = code,
     message = message,
     errorReason = errorReason,
-    additionalData = additionalData
 )

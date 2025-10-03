@@ -31,15 +31,22 @@ class IikoNetworkClientImpl(
 
     private var organizationId: String = ""
 
-    private val logTag = "DEBUG ORDER API NetworkClient"
+    private val logTag = "NetworkClientDebug"
 
     /** Загружаем organizationId один раз при первом обращении */
     private suspend fun ensureOrganizationId(): String {
-        if (organizationId.isNotEmpty()) return organizationId
-        val response = iikoApi.getOrganizations(body = OrganizationsRequest())
-        organizationId = response.organizations.firstOrNull()?.id
-            ?: error("Не найдена организация")
-        return organizationId
+        if (organizationId.isNotEmpty()) {
+            return organizationId
+        }
+        return try {
+            val response = iikoApi.getOrganizations(body = OrganizationsRequest())
+            organizationId = response.organizations.firstOrNull()?.id
+                ?: error("Не найдена организация")
+            organizationId
+        } catch (e: Exception) {
+            Log.e(logTag, "Ошибка получения organizationId", e)
+            throw e
+        }
     }
 
 
@@ -59,7 +66,10 @@ class IikoNetworkClientImpl(
     }
 
     override suspend fun getLoyaltyCustomerInfo(phone: String): Response {
-        if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+
         return try {
             val orgId = ensureOrganizationId()
             val response = iikoApi.getLoyaltyCustomerInfo(
@@ -70,21 +80,21 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "Ошибка getLoyaltyCustomerInfo: ${e.message}", e)
+            Log.e(logTag, "Ошибка getLoyaltyCustomerInfo", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
     override suspend fun getPaymentTypes(): Response {
-        if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
         return try {
             val orgId = ensureOrganizationId()
-            val response = iikoApi.getPaymentTypes(
-                body = PaymentTypesRequest(listOf(orgId))
-            )
+            val response = iikoApi.getPaymentTypes(body = PaymentTypesRequest(listOf(orgId)))
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "Ошибка getPaymentTypes: ${e.message}", e)
+            Log.e(logTag, "Ошибка getPaymentTypes", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
