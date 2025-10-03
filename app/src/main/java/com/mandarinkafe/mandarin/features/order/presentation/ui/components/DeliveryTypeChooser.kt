@@ -32,7 +32,7 @@ fun DeliveryTypeChooser(
             val selected = item.toDomain() == chosen
             val borderColor = when {
                 selected -> Colors.Orange
-                isError && chosen == null -> Colors.ErrorRed
+                isError && chosen == null -> Colors.Red
                 else -> Colors.AppBlack
             }
 

@@ -36,7 +36,7 @@ fun PickupOnlyPositionsTooltip(
             Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
             Text(
                 text = stringResource(R.string.remove_pickup_only_from_cart),
-                style = Typography.SmallTextStyle.copy(color = Colors.ErrorRed),
+                style = Typography.SmallTextStyle.copy(color = Colors.Red),
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier.clickable(onClick = onRemovePickupOnly)
             )

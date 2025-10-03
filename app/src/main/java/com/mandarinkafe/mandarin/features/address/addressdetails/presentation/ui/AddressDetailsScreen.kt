@@ -139,7 +139,7 @@ fun AddressDetailsScreen(
                     modifier = Modifier.weight(1f),
                     textResID = R.string.delete,
                     onSubmit = { showConfirmDeleteDialog = true },
-                    activeContainerColor = Colors.ErrorRed
+                    activeContainerColor = Colors.Red
                 )
                 Spacer(Modifier.width(Dimens.MarginStandard16))
             }

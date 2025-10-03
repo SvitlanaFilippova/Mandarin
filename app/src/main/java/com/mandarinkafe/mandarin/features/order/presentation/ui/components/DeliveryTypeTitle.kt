@@ -18,7 +18,7 @@ fun DeliveryTypeTitle(
     isError: Boolean,
 ) {
     val style = if (isError && chosen == null) {
-        Typography.RegularTextStyle.copy(color = Colors.ErrorRed)
+        Typography.RegularTextStyle.copy(color = Colors.Red)
     } else {
         Typography.RegularTextStyle
     }

@@ -63,7 +63,7 @@ fun <Effect, Event> BaseFeedbackDialog(
         unfocusedTextColor = Colors.White,
         unfocusedContainerColor = Colors.LightGrey.copy(alpha = 0.2f),
         unfocusedIndicatorColor = Colors.Transparent,
-        errorIndicatorColor = Colors.ErrorRed,
+        errorIndicatorColor = Colors.Red,
         errorContainerColor = Colors.LightGrey.copy(alpha = 0.2f),
         disabledTextColor = Colors.White,
         disabledContainerColor = Colors.DarkGrey,

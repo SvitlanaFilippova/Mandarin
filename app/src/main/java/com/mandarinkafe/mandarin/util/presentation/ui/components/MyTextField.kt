@@ -46,7 +46,7 @@ fun MyTextField(
         unfocusedTextColor = Colors.White,
         unfocusedContainerColor = Colors.DarkGrey,
         unfocusedIndicatorColor = Colors.Transparent,
-        errorIndicatorColor = Colors.ErrorRed,
+        errorIndicatorColor = Colors.Red,
         errorContainerColor = Colors.DarkGrey,
         disabledTextColor = Colors.White,
         disabledContainerColor = Colors.DarkGrey,

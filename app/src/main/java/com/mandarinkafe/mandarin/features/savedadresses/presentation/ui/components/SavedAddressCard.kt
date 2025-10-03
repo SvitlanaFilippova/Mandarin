@@ -93,7 +93,7 @@ fun SavedAddressCard(
                     .padding(Dimens.MarginSuperSmall2),
                 imageVector = Icons.Default.Delete,
                 contentDescription = stringResource(R.string.remove),
-                tint = Colors.ErrorRed
+                tint = Colors.Red
             )
         }
     }

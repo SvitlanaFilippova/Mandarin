@@ -1,11 +1,10 @@
-package com.mandarinkafe.mandarin.util.presentation.ui.components.buttons
+package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -16,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
@@ -25,13 +23,13 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 
+
 @Composable
-fun FavoriteButton(
+fun FavoriteButtonForMealDetails(
     modifier: Modifier = Modifier,
     isFavorite: Boolean,
     onClick: () -> Unit
 ) {
-
     val scaleAnim = remember { Animatable(1f) }
 
     // Предыдущее значение, чтобы отследить изменение
@@ -73,16 +71,11 @@ fun FavoriteButton(
                 label = "favoriteIcon"
             ) { isFav ->
                 Icon(
-                    modifier = Modifier.shadow(
-                        elevation = Dimens.Elevation4,
-                        shape = CircleShape,
-                        clip = false
-                    ),
                     painter = painterResource(
                         if (isFav) {
-                            R.drawable.ic_favorite_in_circle_active
+                            R.drawable.ic_favorite_active
                         } else {
-                            R.drawable.ic_favorite_in_circle_inactive
+                            R.drawable.ic_favorite_inactive
                         }
                     ),
                     contentDescription = stringResource(R.string.add_to_favorite),
@@ -92,4 +85,3 @@ fun FavoriteButton(
         }
     }
 }
-

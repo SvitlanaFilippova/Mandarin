@@ -14,7 +14,7 @@ object Colors {
     val DarkGrey = Color(0xFF2c2d2b)
     val LightGreyTransparent75 = Color(0xBFAEAFB4)
     val WhiteTransparent75 = Color(0xBFFFFFFF)
-    val ErrorRed = Color(0xE6DE5836)
+    val Red = Color(0xE6DE5836)
     val Transparent = Color(0x00000000)
     val Green = Color(0xE694C338)
     val LabelVegGreen = Color(0xE694C338)
