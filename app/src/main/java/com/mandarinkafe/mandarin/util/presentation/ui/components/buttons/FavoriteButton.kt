@@ -31,7 +31,6 @@ fun FavoriteButton(
     isFavorite: Boolean,
     onClick: () -> Unit
 ) {
-
     val scaleAnim = remember { Animatable(1f) }
 
     // Предыдущее значение, чтобы отследить изменение

@@ -75,67 +75,86 @@ class OrderCreator @Inject constructor(
     ) {
         stopObserving()
 
-        if (orderId.isNullOrBlank()) {
-            onError(UiText.StringResource(R.string.error_order_creation_failed))
-            return
-        }
+        if (!validateOrderId(orderId, onError)) return
 
         observeJob = scope.launch {
             val isCompleted = withTimeoutOrNull(15.seconds) {
                 tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds)
                     .onStart { emit(Unit) }
-                    .map { getOrderStatus(orderId) }
+                    .map { getOrderStatus(orderId!!) }
                     .collect { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                when (result.data?.creationStatus) {
-                                    CreationStatus.SUCCESS -> {
-                                        onSuccess(result.data)
-                                        stopObserving()
-                                    }
-
-                                    CreationStatus.ERROR -> {
-                                        onError(
-                                            result.data.errorInfo?.message?.let {
-                                                UiText.DynamicString(
-                                                    it
-                                                )
-                                            }
-                                                ?: UiText.StringResource(R.string.error_order_creation_failed)
-                                        )
-                                        stopObserving()
-                                    }
-
-                                    else -> onLoading()
-                                }
-                            }
-
-                            is Resource.ErrorNoInternet -> {
-                                onError(UiText.StringResource(R.string.error_no_internet))
-                                stopObserving()
-                            }
-
-                            is Resource.ErrorOther -> {
-                                onError(
-                                    result.message?.let { UiText.DynamicString(it) }
-                                        ?: UiText.StringResource(R.string.error_order_status_failed)
-                                )
-                                stopObserving()
-                            }
-
-                            else -> Unit
-                        }
+                        handleOrderStatusResult(result, onSuccess, onError, onLoading)
                     }
-                true // если collect завершился раньше таймаута
+                true
             }
 
-            if (isCompleted == null) { // null -> вышли по таймауту
-                onError(UiText.StringResource(R.string.error_order_timeout))
-                stopObserving()
-            }
+            handleTimeout(isCompleted, onError)
         }
     }
 
+    private fun validateOrderId(orderId: String?, onError: (UiText) -> Unit): Boolean {
+        if (orderId.isNullOrBlank()) {
+            onError(UiText.StringResource(R.string.error_order_creation_failed))
+            return false
+        }
+        return true
+    }
+
+    private fun handleOrderStatusResult(
+        result: Resource<IncomingOrder>,
+        onSuccess: (IncomingOrder) -> Unit,
+        onError: (UiText) -> Unit,
+        onLoading: () -> Unit
+    ) {
+        when (result) {
+            is Resource.Success -> handleCreationStatus(result, onSuccess, onError, onLoading)
+            is Resource.ErrorNoInternet -> {
+                onError(UiText.StringResource(R.string.error_no_internet))
+                stopObserving()
+            }
+
+            is Resource.ErrorOther -> {
+                onError(
+                    result.message?.let { UiText.DynamicString(it) }
+                        ?: UiText.StringResource(R.string.error_order_status_failed)
+                )
+                stopObserving()
+            }
+
+            else -> Unit
+        }
+    }
+
+    private fun handleCreationStatus(
+        result: Resource.Success<IncomingOrder>,
+        onSuccess: (IncomingOrder) -> Unit,
+        onError: (UiText) -> Unit,
+        onLoading: () -> Unit
+    ) {
+        when (result.data?.creationStatus) {
+            CreationStatus.SUCCESS -> {
+                onSuccess(result.data)
+                stopObserving()
+            }
+
+            CreationStatus.ERROR -> {
+                onError(
+                    result.data.errorInfo?.message?.let { UiText.DynamicString(it) }
+                        ?: UiText.StringResource(R.string.error_order_creation_failed)
+                )
+                stopObserving()
+            }
+
+            else -> onLoading()
+        }
+    }
+
+    private fun handleTimeout(isCompleted: Boolean?, onError: (UiText) -> Unit) {
+        if (isCompleted == null) {
+            onError(UiText.StringResource(R.string.error_order_timeout))
+            stopObserving()
+        }
+    }
     fun stopObserving() {
         observeJob?.cancel()
         observeJob = null
