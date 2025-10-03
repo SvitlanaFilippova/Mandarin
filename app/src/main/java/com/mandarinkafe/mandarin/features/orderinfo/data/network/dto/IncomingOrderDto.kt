@@ -19,7 +19,7 @@ data class IncomingOrderDto(
     val cancelInfo: CancelInfo? = null,
     val discounts: List<IncomingDiscountInfoDto>? = null,
     val orderType: OrderType? = null,
-    val processedPaymentsSum: Int? = null,
+    val processedPaymentsSum: Double? = null,
     val sum: Double? = null,
     val whenClosed: String? = null,
     val whenConfirmed: String? = null,

@@ -62,9 +62,10 @@ fun OrderInfoContentScreen(
                 OrderItemsSection(
                     items = order.items,
                     sum = order.sum,
+                    processedPaymentsSum = order.processedPaymentsSum,
                     discountName = order.discountReason,
                     onOpenMealDetails = onOpenMealDetails,
-                    showNoLongerInMenuMessage = showNoLongerInMenuMessage
+                    showNoLongerInMenuMessage = showNoLongerInMenuMessage,
                 )
             }
         }

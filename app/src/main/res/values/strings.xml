@@ -189,6 +189,7 @@
     <string name="label_order_items">Позиции заказа: %1$d</string>
     <string name="discount_applied">Применена скидка</string>
     <string name="label_total">Итого</string>
+    <string name="label_paid">Оплачено</string>
     <string name="label_address">Адрес</string>
     <string name="label_phone">Телефон</string>
     <string name="label_customer">Клиент</string>

@@ -25,6 +25,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderI
 fun OrderItemsSection(
     items: List<IncomingOrderItem>,
     sum: Double?,
+    processedPaymentsSum: Double?,
     discountName: String?,
     onOpenMealDetails: (String) -> Unit,
     showNoLongerInMenuMessage: (String) -> Unit,
@@ -84,6 +85,28 @@ fun OrderItemsSection(
                         ),
                         style = Typography.RegularTextStyle
                     )
+                }
+            }
+
+            processedPaymentsSum?.let {
+                if (it > 0) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.label_paid),
+                            style = Typography.RegularTextStyle
+                        )
+                        Text(
+                            text = stringResource(
+                                R.string.float_price_template,
+                                it.toFloat()
+                            ),
+                            style = Typography.RegularTextStyle
+                        )
+                    }
                 }
             }
 

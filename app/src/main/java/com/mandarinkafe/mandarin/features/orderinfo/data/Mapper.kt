@@ -89,12 +89,13 @@ fun IncomingOrderItemDto.toDomain() = IncomingOrderItem(
     id = product.id,
     name = product.name.applyTypography(),
     amount = amount,
-    chosenModifiers = modifiers?.map { it.toDomain() } ?: emptyList(),
+    chosenModifiers = modifiers?.map { it.toDomain(amount) } ?: emptyList(),
     price = price,
     positionId = positionId,
     isDeleted = deleted?.deletionMethod != null,
     comment = comment ?: "",
-    discountedPrice = resultSum
+    discountedPrice = resultSum?.takeIf { it > 0 }
+        ?.div(amount) // делим на количество, чтобы узнать цену за единицу
 )
 
 fun List<IncomingOrderItemDto>.toDomainWithAdds(
@@ -123,14 +124,14 @@ private fun DeliveryPointDto.toAddress(): Address {
     )
 }
 
-private fun IncomingModifierDto.toDomain() = IncomingModifier(
+private fun IncomingModifierDto.toDomain(mealAmount: Double) = IncomingModifier(
     id = product.id,
     name = product.name.applyTypography(),
     amount = amount,
     price = price,
     groupId = productGroup.id,
     groupName = productGroup.name,
-    discountedPrice = resultSum
+    discountedPrice = resultSum?.takeIf { it > 0 }?.div(mealAmount * this.amount)
 )
 
 private fun String.toDeliveryStatus(): DeliveryStatus {
@@ -158,7 +159,7 @@ private fun associateItemsWithAdds(
                 name = dto.product.name.applyTypography(),
                 amount = dto.amount,
                 price = dto.price,
-                discountedPrice = dto.resultSum,
+                discountedPrice = dto.resultSum?.takeIf { it > 0 }?.div(dto.amount),
                 isDeleted = dto.deleted?.deletionMethod != null,
             )
             if (result.isNotEmpty()) {
@@ -207,8 +208,8 @@ private class IncomingOrderItemBuilder private constructor(
                 positionId = dto.positionId,
                 isDeleted = dto.deleted?.deletionMethod != null,
                 comment = dto.comment.toVisibleComment(),
-                chosenModifiers = dto.modifiers?.map { it.toDomain() } ?: emptyList(),
-                discountedPrice = dto.resultSum,
+                chosenModifiers = dto.modifiers?.map { it.toDomain(dto.amount) } ?: emptyList(),
+                discountedPrice = dto.resultSum?.takeIf { it > 0 }?.div(dto.amount)
             )
         }
 
