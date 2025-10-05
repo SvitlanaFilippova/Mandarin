@@ -58,7 +58,7 @@ fun PersonalInfo(
         prefix = {
             Text(
                 text = stringResource(R.string.phone_prefix),
-                style = Typography.RegularTextStyle
+                style = Typography.RegularTextStyle,
             )
         }
     )

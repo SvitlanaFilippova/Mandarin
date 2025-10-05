@@ -41,7 +41,7 @@ fun ToCartButtonWithPrice(
             horizontalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
         Icon(
-                modifier = Modifier.size(Dimens.IconSize24),
+            modifier = Modifier.size(Dimens.IconSize20),
                 painter = painterResource(R.drawable.ic_cart),
                 contentDescription = stringResource(id = R.string.add_to_cart),
                 tint = Color.White

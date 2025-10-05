@@ -15,7 +15,7 @@ object Dimens {
     val Elevation4 = 4.dp
     val ButtonWithTextHeight = 40.dp
     val BigButtonWithTextHeight = 56.dp
-    val ButtonToCartSmall32 = 32.dp
+    val ButtonToCartSmall36 = 36.dp
     val ButtonBoxBig40 = 40.dp
     val ButtonBox32 = 32.dp
     val ButtonToCartBig120 = 120.dp

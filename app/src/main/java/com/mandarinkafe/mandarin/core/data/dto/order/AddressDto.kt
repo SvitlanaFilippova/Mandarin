@@ -10,6 +10,6 @@ data class AddressDto(
     val entrance: String? = null,
     val floor: String? = null,
     val doorphone: String? = null,
-    val type: String,
+    val type: String? = null,
     val line1: String? = null,
 )

@@ -38,7 +38,7 @@ fun DateAndStatusSection(orderStatus: DeliveryStatus?, whenCreated: String) {
         verticalAlignment = Alignment.Bottom
     ) {
         Text(
-            modifier = Modifier.padding(top = Dimens.MarginSmall8),
+            modifier = Modifier.padding(top = Dimens.MarginSmall8, end = Dimens.MarginSmall8),
             text = whenCreated,
             style = Typography.RegularTextStyle,
         )

@@ -5,9 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Checkbox
@@ -21,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -46,7 +46,7 @@ fun ModifierMultiSelectItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(Dimens.ModifierRowHeight48)
+                .heightIn(min = Dimens.ModifierRowHeight48)
                 .toggleable(
                     value = isAdded,
                     onValueChange = { onCheckedChange(!isAdded) },
@@ -63,11 +63,13 @@ fun ModifierMultiSelectItem(
                 colors = CheckboxDefaults.colors(checkedColor = Colors.Orange)
             )
             Text(
-                modifier = Modifier.padding(horizontal = Dimens.MarginStandard16),
+                modifier = Modifier
+                    .padding(start = Dimens.MarginStandard16)
+                    .weight(1f),
+                textAlign = TextAlign.Start,
                 text = item.name.removeLeadingDash(),
                 style = Typography.RegularTextStyle
             )
-            Spacer(modifier = Modifier.weight(1f))
             Text(
                 modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
                 text = stringResource(R.string.meal_price_template, item.price),

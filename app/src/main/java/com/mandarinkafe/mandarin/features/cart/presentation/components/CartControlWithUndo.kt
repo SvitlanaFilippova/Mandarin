@@ -32,7 +32,7 @@ fun CartControlWithUndo(
             Box(
                 modifier = Modifier
                     .widthIn(min = Dimens.ButtonToCartBig120)
-                    .height(Dimens.ButtonToCartSmall32)
+                    .height(Dimens.ButtonToCartSmall36)
                     .clip(RoundedCornerShape(Dimens.CornerRadius8))
                     .background(Colors.OrangeTransparent20)
             ) {
@@ -43,7 +43,7 @@ fun CartControlWithUndo(
             CartControls(
                 modifier = Modifier
                     .widthIn(min = Dimens.ButtonToCartBig120)
-                    .height(Dimens.ButtonToCartSmall32),
+                    .height(Dimens.ButtonToCartSmall36),
                 numberInCart = item.quantity,
                 totalPrice = item.customizedMeal.totalPrice() * item.quantity,
                 onIncrease = onAddToCart,

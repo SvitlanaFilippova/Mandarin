@@ -73,17 +73,21 @@ class OrderRepositoryImpl(
 
     private fun handleCreateOrderResponse(response: Response): Resource<IncomingOrder> {
         return when (response.resultCode) {
-            NO_CONNECTION -> {
-                Resource.ErrorNoInternet()
-            }
+            NO_CONNECTION -> Resource.ErrorNoInternet()
 
             HTTP_SUCCESS -> {
                 val addons = menuCache.addonsCategories.value
-                val orderInfo = (response as CreateDeliveryResponse).orderInfo.toDomain(addons)
-                if (orderInfo.errorInfo == null) {
-                    Resource.Success(data = orderInfo)
-                } else {
-                    Resource.ErrorOther(orderInfo.errorInfo.message ?: "Неизвестная ошибка")
+                val orderInfo = (response as CreateDeliveryResponse).orderInfo?.toDomain(addons)
+
+                when {
+                    orderInfo == null ->
+                        Resource.ErrorOther("Неизвестная ошибка")
+
+                    orderInfo.errorInfo == null ->
+                        Resource.Success(data = orderInfo)
+
+                    else ->
+                        Resource.ErrorOther(orderInfo.errorInfo.message ?: "Неизвестная ошибка")
                 }
             }
 
@@ -93,6 +97,7 @@ class OrderRepositoryImpl(
             }
         }
     }
+
 
     private fun createDiscountInfo(
         discountTypeId: String?,
