@@ -10,6 +10,10 @@
   <img src="https://contrib.rocks/image?repo=mandarin-kafe/Mandarin&max=6" />
 </a>
 
+
+Серверная часть проекта:  
+[**Родионов Александр**](https://github.com/AlexDeyl) — [репозиторий сервера](https://github.com/SvitlanaFilippova/Mandarin-server)
+
 ## Возможности приложения ✨
 
 | Функциональность                              | Статус           |
