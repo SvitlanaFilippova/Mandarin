@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
+import com.mandarinkafe.mandarin.core.data.network.ServerNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.address.address.data.impl.AddressRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.address.data.impl.DeliveryAreaRepositoryImpl
@@ -139,7 +139,7 @@ class AddressModule {
     @Singleton
     @Provides
     fun provideDeliveryAreaRepository(
-        networkClient: GoogleDocsNetworkClient,
+        networkClient: ServerNetworkClient,
         menuCache: MenuCache
     ): DeliveryAreaRepository {
         return DeliveryAreaRepositoryImpl(

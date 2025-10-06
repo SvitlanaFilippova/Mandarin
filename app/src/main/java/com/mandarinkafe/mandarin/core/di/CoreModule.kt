@@ -6,13 +6,12 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.data.impl.MenuCacheImpl
-import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
-import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.core.data.network.ServerNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.api.IikoApi
 import com.mandarinkafe.mandarin.core.data.network.api.ServerApi
-import com.mandarinkafe.mandarin.core.data.network.impl.GoogleDocsNetworkClientImpl
 import com.mandarinkafe.mandarin.core.data.network.impl.IikoNetworkClientImpl
+import com.mandarinkafe.mandarin.core.data.network.impl.ServerNetworkClientImpl
 import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
@@ -35,10 +34,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import javax.inject.Singleton
 
 @Module
@@ -66,46 +61,25 @@ class CoreModule {
 
     @Provides
     @Singleton
-    @GoogleDocsClient
-    fun provideGoogleDocsHttpClient(): HttpClient {
-        return HttpClient {
-            defaultRequest {
-                contentType(ContentType.Text.Plain)
-            }
-        }
-    }
-
-    @Provides
-    @Singleton
-    fun provideGoogleDocsApiService(
-        @GoogleDocsClient client: HttpClient
-    ): GoogleDocsApiService {
-        return GoogleDocsApiService(client)
-    }
-
-    @Provides
-    @Singleton
     fun provideIikoNetworkClient(
-        menuApi: ServerApi,
         iikoApi: IikoApi,
         networkMonitor: NetworkMonitor
     ): IikoNetworkClient {
         return IikoNetworkClientImpl(
             iikoApi = iikoApi,
-            menuApi = menuApi,
             networkMonitor = networkMonitor,
         )
     }
 
     @Provides
     @Singleton
-    fun provideGoogleDocsNetworkClient(
-        googleDocsApi: GoogleDocsApiService,
+    fun provideServerNetworkClient(
+        serverApi: ServerApi,
         networkMonitor: NetworkMonitor
-    ): GoogleDocsNetworkClient {
-        return GoogleDocsNetworkClientImpl(
+    ): ServerNetworkClient {
+        return ServerNetworkClientImpl(
+            serverApi = serverApi,
             networkMonitor = networkMonitor,
-            googleDocsApi = googleDocsApi
         )
     }
 

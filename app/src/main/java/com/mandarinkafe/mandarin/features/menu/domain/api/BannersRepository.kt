@@ -5,5 +5,5 @@ import com.mandarinkafe.mandarin.util.Resource
 
 interface BannersRepository {
     suspend fun getBanners(): Resource<List<Banner>>
-    suspend fun loadBannersCsv(): Resource<Unit>
+    suspend fun loadBanners(): Resource<Unit>
 }

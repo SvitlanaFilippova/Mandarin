@@ -14,11 +14,6 @@ annotation class IikoAuthClient
 @Retention(AnnotationRetention.BINARY)
 annotation class ServerClient
 
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class GoogleDocsClient
-
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class TelegramClient

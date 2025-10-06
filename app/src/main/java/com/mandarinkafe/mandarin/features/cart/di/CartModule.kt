@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.cart.di
 
 import com.mandarinkafe.mandarin.core.data.api.CartReader
-import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
+import com.mandarinkafe.mandarin.core.data.network.ServerNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
@@ -58,7 +58,7 @@ object CartModule {
     @Provides
     @Singleton
     fun provideRecommendsSchemaRepository(
-        networkClient: GoogleDocsNetworkClient
+        networkClient: ServerNetworkClient
     ): RecommendsSchemaRepository =
         RecommendsSchemaRepositoryImpl(
             networkClient = networkClient
