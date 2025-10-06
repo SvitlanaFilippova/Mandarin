@@ -5,7 +5,6 @@ object Constants {
     const val NO_CONNECTION = -1
     const val HTTP_SUCCESS = 200
     const val HTTP_SERVER_ERROR = 500
-    const val HTTP_UNAUTHORIZED = 401
     const val IMAGE_VALIDATOR_TIMEOUT = 1000
     const val MENU_WAIT_TIMEOUT = 10000L
 
@@ -46,8 +45,6 @@ object Constants {
     const val ANIMATION_DURATION_FAST = 300
     const val ANIMATION_DURATION_SUPER_FAST = 150
     const val GRADIENT_HEIGHT_RATIO = 0.5f
-    const val WEIGHT_RATIO_30 = 0.3f
-    const val WEIGHT_RATIO_70 = 0.7f
     const val ALPHA_50 = 0.5f
     const val TITLE_FONT_WEIGHT = 800
     const val NON_BRAKING_SPACE = "\u00A0"
