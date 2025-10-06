@@ -12,5 +12,17 @@ data class DeliveryZoneDto(
     val colorHex: String?,
 
     val id: Int,
-    val points: List<PointDto>
+    val points: List<DeliveryPointDto>
+)
+
+@Serializable
+data class DeliveryPointDto(
+    val id: Int,
+    val geometry: GeometryDto
+)
+
+@Serializable
+data class GeometryDto(
+    val type: String,
+    val coordinates: List<List<List<Double>>>
 )

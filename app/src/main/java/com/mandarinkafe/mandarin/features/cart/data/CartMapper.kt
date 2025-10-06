@@ -68,10 +68,18 @@ object CartMapper {
         customizedMeal = this,
     )
 
-    fun RecommendsSchemaDto.toDomain() = RecommendsSchemaRule(
-        sourceName = sourceName ?: "",
-        excludeSku = excludeSku ?: emptyList<String>(),
-        recommendedSku = recommendedSku ?: emptyList(),
-        isSeparate = isSeparate
-    )
+    fun RecommendsSchemaDto.toDomain(): RecommendsSchemaRule {
+        return RecommendsSchemaRule(
+            sourceName = sourceName.orEmpty(),
+            excludeSku = excludeSku?.split(";")
+                ?.map { it.trim() }
+                ?.filter { it.isNotEmpty() }
+                ?: emptyList(),
+            recommendedSku = recommendedSku?.split(";")
+                ?.map { it.trim() }
+                ?.filter { it.isNotEmpty() }
+                ?: emptyList(),
+            isSeparate = isSeparate
+        )
+    }
 }

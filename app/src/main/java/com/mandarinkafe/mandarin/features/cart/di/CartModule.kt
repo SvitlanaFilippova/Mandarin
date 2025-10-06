@@ -94,5 +94,4 @@ object CartModule {
             repository = cartWriter
         )
     }
-
 }

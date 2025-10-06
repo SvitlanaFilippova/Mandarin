@@ -9,10 +9,10 @@ data class RecommendsSchemaDto(
     val sourceName: String?,
 
     @SerialName("excluded_ids")
-    val excludeSku: List<String>?,
+    val excludeSku: String?,
 
     @SerialName("recommended_ids")
-    val recommendedSku: List<String>?,
+    val recommendedSku: String?,
 
     @SerialName("show_as_block")
     val isSeparate: Boolean = false

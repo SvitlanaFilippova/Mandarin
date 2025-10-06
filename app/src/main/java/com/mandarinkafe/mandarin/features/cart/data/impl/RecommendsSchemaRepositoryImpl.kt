@@ -9,21 +9,21 @@ import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 
-class RecommendsSchemaRepositoryImpl(private val networkClient: ServerNetworkClient) :
-    RecommendsSchemaRepository {
+class RecommendsSchemaRepositoryImpl(
+    private val networkClient: ServerNetworkClient
+) : RecommendsSchemaRepository {
+
     override suspend fun getRecommendsSchema(): Resource<List<RecommendsSchemaRule>> {
         val response = networkClient.getRecommendations()
 
-        if (response.resultCode == NO_CONNECTION) {
-            return Resource.ErrorNoInternet()
+        return when (response.resultCode) {
+            NO_CONNECTION -> Resource.ErrorNoInternet()
+            HTTP_SUCCESS -> {
+                val data = (response as RecommendationsResponse).data.map { it.toDomain() }
+                Resource.Success(data)
+            }
+
+            else -> Resource.ErrorEmptyData()
         }
-
-        if (response.resultCode != HTTP_SUCCESS) {
-            return Resource.ErrorEmptyData()
-        }
-
-
-        val result = (response as RecommendationsResponse).data.map { it.toDomain() }
-        return Resource.Success(result)
     }
 }

@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.DeliveryZone
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.address.data.dto.DeliveryZonesResponse
+import com.mandarinkafe.mandarin.features.address.address.data.toDomain
 import com.mandarinkafe.mandarin.features.address.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.first
@@ -41,21 +42,17 @@ class DeliveryAreaRepositoryImpl(
                     Log.w(logTag, "Zone ${dto.id} has no points, skipping")
                     null
                 } else {
-                    // Берём polygon предыдущей зоны как parentArea
-                    val parentArea = if (index > 0) sortedDto[index - 1].points.map {
-                        GeoPoint(
-                            it.lat,
-                            it.lng
-                        )
-                    } else null
+                    val parentArea = if (index > 0) sortedDto[index - 1].points
+                        .firstOrNull()
+                        ?.geometry
+                        ?.coordinates
+                        ?.firstOrNull()
+                        ?.map { GeoPoint(it[1], it[0]) }
+                    else null
 
-                    DeliveryZone(
-                        id = dto.id,
-                        polygon = dto.points.map { GeoPoint(it.lat, it.lng) },
-                        parentArea = parentArea,
-                        colorHex = dto.colorHex.orEmpty(),
-                        freeDeliveryThreshold = dto.freeDeliveryThreshold,
-                        deliveryPrice = pricesMap[dto.id] ?: 0
+                    dto.toDomain(
+                        deliveryPrice = pricesMap[dto.id] ?: 0,
+                        parentArea = parentArea
                     )
                 }
             }.filterNotNull()
@@ -74,3 +71,4 @@ class DeliveryAreaRepositoryImpl(
         return regex.find(name)?.groupValues?.getOrNull(1)?.toIntOrNull()
     }
 }
+
