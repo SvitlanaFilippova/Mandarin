@@ -49,7 +49,7 @@ fun CartControls(
             // Кнопка "-"
             IconButton(
                 onClick = onDecrease,
-                modifier = Modifier.size(Dimens.ButtonToCartSmall32)
+                modifier = Modifier.size(Dimens.ButtonToCartSmall36)
             ) {
                 // Если последний экземпляр в корзине, то кнопка меняется на "урну"
                 if (numberInCart == 1) {
@@ -84,7 +84,7 @@ fun CartControls(
             // Кнопка "+"
             IconButton(
                 onClick = onIncrease,
-                modifier = Modifier.size(Dimens.ButtonToCartSmall32)
+                modifier = Modifier.size(Dimens.ButtonToCartSmall36)
             ) {
                 Text(
                     stringResource(id = R.string.plus),

@@ -21,7 +21,7 @@ fun CustomizeButtonWithText(
 ) {
     Button(
         modifier = modifier
-            .height(Dimens.ButtonToCartSmall32)
+            .height(Dimens.ButtonToCartSmall36)
             .widthIn(min = Dimens.ButtonToCartBig120),
 
         onClick = onClick,

@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components.buttons
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -42,7 +42,7 @@ fun ButtonWithText(
 
     Button(
         modifier = modifier
-            .height(Dimens.ButtonWithTextHeight),
+            .heightIn(min = Dimens.ButtonWithTextHeight),
         onClick = onClickAction,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         colors = ButtonDefaults.buttonColors(

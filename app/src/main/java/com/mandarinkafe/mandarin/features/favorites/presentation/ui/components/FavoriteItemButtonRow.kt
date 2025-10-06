@@ -41,7 +41,7 @@ fun FavoriteItemButtonRow(
     ) {
         val modifier = Modifier
             .widthIn(min = Dimens.ButtonToCartBig120)
-            .height(Dimens.ButtonToCartSmall32)
+            .height(Dimens.ButtonToCartSmall36)
             .weight(1f)
 
         if (item.meal.isCustomizable) {

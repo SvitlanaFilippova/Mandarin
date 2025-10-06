@@ -20,7 +20,7 @@ fun CustomizeButton(
     onClick: () -> Unit
 ) {
     Button(
-        modifier = modifier.size(Dimens.ButtonBox32),
+        modifier = modifier.size(Dimens.ButtonToCartSmall36),
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         contentPadding = PaddingValues(Dimens.MarginSuperSmall4),

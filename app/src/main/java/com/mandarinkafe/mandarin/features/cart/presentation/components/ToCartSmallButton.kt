@@ -3,7 +3,8 @@ package com.mandarinkafe.mandarin.features.cart.presentation.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
@@ -21,8 +22,6 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.util.Constants.WEIGHT_RATIO_30
-import com.mandarinkafe.mandarin.util.Constants.WEIGHT_RATIO_70
 
 @Composable
 fun ToCartSmallButton(
@@ -32,7 +31,7 @@ fun ToCartSmallButton(
     isInCart: Boolean = false,
 ) {
     Button(
-        modifier = modifier.height(Dimens.ButtonToCartSmall32),
+        modifier = modifier.heightIn(min = Dimens.ButtonToCartSmall36),
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         contentPadding = PaddingValues(Dimens.MarginSuperSmall4),
@@ -43,18 +42,17 @@ fun ToCartSmallButton(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
             if (!isInCart) {
                 Icon(
-                    modifier = Modifier.weight(WEIGHT_RATIO_30),
+                    modifier = Modifier.size(Dimens.IconSize20),
                     painter = painterResource(R.drawable.ic_cart),
                     contentDescription = stringResource(id = R.string.add_to_cart),
                     tint = Color.White
                 )
                 Text(
                     text = stringResource(id = R.string.meal_price_template, price),
-                    modifier = Modifier.weight(WEIGHT_RATIO_70),
                     style = Typography.ToCartButtonStyle
                 )
             } else {
@@ -64,7 +62,6 @@ fun ToCartSmallButton(
                     tint = Color.White
                 )
             }
-
         }
     }
 }

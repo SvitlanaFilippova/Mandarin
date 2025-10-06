@@ -84,6 +84,5 @@ fun MyTextField(
         },
         leadingIcon = leadingIcon,
         prefix = prefix
-
     )
 }

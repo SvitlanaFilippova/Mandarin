@@ -41,7 +41,7 @@
     <string name="remove_from_cart">Убрать из корзины</string>
     <string name="cancel_removing">Ой, верните!</string>
     <string name="error_empty_cart">В корзине пока ничего нет</string>
-    <string name="added_to_cart_template">Добавлено в корзину:\n%s</string>
+    <string name="added_to_cart_template">Добавлено в&#160;корзину:\n%s</string>
     <string name="edited_template">Отредактировано:\n%1$s</string>
     <string name="comment_template">Комментарий: %1$s</string>
 
@@ -50,10 +50,10 @@
     <string name="error_empty_favorites">В избранных пока ничего нет.</string>
     <string name="error_empty_favorites_extra">Скорее добавь свои любимые блюда, чтобы заказывать их&#160;было ещё удобнее!</string>
     <string name="add_to_favorite">Добавить в избранное</string>
-    <string name="favorite_variant_dialog_title">Что именно добавить в&#160;избранное?</string>
+    <string name="favorite_variant_dialog_title">Что сохранить?</string>
     <string name="favorite_variant_dialog_message">Добавить в&#160;избранное базовое блюдо или&#160;сразу с&#160;выбранными опциями?</string>
-    <string name="favorite_variant_base_button">Базовое блюдо</string>
-    <string name="favorite_variant_custom_button">С выбранными опциями</string>
+    <string name="favorite_variant_base_button">Базовое блюдо 🍽️</string>
+    <string name="favorite_variant_custom_button">С выбранными опциями ⚙️</string>
 
 
     <!-- Кастомизация блюда -->
@@ -126,7 +126,7 @@
     <string name="error_terminal_unavailable">Упс, кажется, сейчас мы не работаем — заказ оформить не получится🤷
 Возвращайся в рабочее время!</string>
     <string name="error_cant_check_terminal_is_alive">Что-то пошло не так — не удалось проверить, работает ли сейчас доставка.</string>
-    <string name="error_order_creation_failed">Не удалось создать заказ</string>
+    <string name="error_order_creation_failed">Не xcxcxcxc создать заказ</string>
     <string name="error_order_status_failed">Ошибка получения статуса заказа</string>
     <string name="error_order_timeout">Не удалось создать заказ: превышено время ожидания</string>
 

@@ -97,7 +97,9 @@ private fun MealHeader(name: String, price: Double, deletedDecoration: TextDecor
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .padding(end = Dimens.MarginStandard16)
+                .weight(1f),
             text = name,
             textDecoration = deletedDecoration,
             style = Typography.MealTitleStyle,

@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.cart.presentation.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,7 +24,7 @@ fun SelectSmallButton(
     onClick: () -> Unit,
 ) {
     Button(
-        modifier = modifier.height(Dimens.ButtonToCartSmall32),
+        modifier = modifier.heightIn(min = Dimens.ButtonToCartSmall36),
         onClick = onClick,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         contentPadding = PaddingValues(Dimens.MarginSuperSmall4),
