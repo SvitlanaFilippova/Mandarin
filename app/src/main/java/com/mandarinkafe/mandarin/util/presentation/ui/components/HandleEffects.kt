@@ -17,6 +17,7 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToMealDetails
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.util.Constants.PHONE_NUMBER_DEFAULT
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 @Composable
 fun HandleEffects(
@@ -57,22 +58,26 @@ fun HandleEffects(
                 }
 
                 is SharedEffect.SnackbarEffect -> {
-                    val actionLabel =
-                        if (effect.showToCartButton) "В корзину" else null
-                    val result = snackbarHostState.showSnackbar(
-                        message = effect.text,
-                        duration = SnackbarDuration.Short,
-                        withDismissAction = true,
-                        actionLabel = actionLabel
-                    )
-                    if (result == SnackbarResult.ActionPerformed) {
-                        navController.navigateToCart()
+                    // показываем snackbar асинхронно — не блокируем поток collect
+                    launch {
+                        val actionLabel = if (effect.showToCartButton) "В корзину" else null
+                        val result = snackbarHostState.showSnackbar(
+                            message = effect.text,
+                            duration = SnackbarDuration.Short,
+                            withDismissAction = true,
+                            actionLabel = actionLabel
+                        )
+                        if (result == SnackbarResult.ActionPerformed) {
+                            navController.navigateToCart()
+                        }
                     }
                 }
 
-                is SharedEffect.ScrollToTop -> { // обрабатывается отдельно, на конкретных экранах}
+                is SharedEffect.ScrollToTop -> {
+                    // обрабатывается отдельно
                 }
             }
         }
     }
+
 }
