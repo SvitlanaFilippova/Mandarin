@@ -87,7 +87,6 @@ fun MealDetailsContentScreen(
                 onMakeMoreDeliciousClick = onMakeMoreDeliciousClick,
                 onEvent = onEvent,
                 comment = comment,
-                isEditMode = isEditMode,
                 imeVisible = imeVisible,
                 bottomContent = {
                     if (imeVisible) {

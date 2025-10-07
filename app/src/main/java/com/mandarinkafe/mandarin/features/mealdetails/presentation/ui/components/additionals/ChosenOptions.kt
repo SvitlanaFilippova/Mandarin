@@ -16,6 +16,7 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.presentation.localizedShortText
 
 @Composable
 fun ChosenOptions(
@@ -41,17 +42,30 @@ fun ChosenOptions(
             modifiers.forEach { group ->
                 group.items.forEach { item ->
                     ChosenItemChip(
-                        itemName = item.name,
+                        itemName = formatNameWithWeight(
+                            name = item.name,
+                            weight = item.weight,
+                            measureUnit = item.measureUnitType.localizedShortText()
+                        ),
                         onClick = { onModifierClick(group, item) }
                     )
                 }
             }
             adds.forEach {
                 ChosenItemChip(
-                    itemName = it.name,
+                    itemName = formatNameWithWeight(
+                        name = it.name,
+                        weight = it.weight,
+                        measureUnit = it.measureUnitType.localizedShortText()
+                    ),
                     onClick = { onAddClick(it) }
                 )
             }
         }
     }
+}
+
+/** Форматирует название + вес (если вес есть) */
+private fun formatNameWithWeight(name: String, weight: Int, measureUnit: String): String {
+    return if (weight > 0) "$name, $weight $measureUnit" else name
 }
