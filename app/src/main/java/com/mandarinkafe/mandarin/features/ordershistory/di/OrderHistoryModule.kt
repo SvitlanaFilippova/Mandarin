@@ -1,8 +1,6 @@
 package com.mandarinkafe.mandarin.features.ordershistory.di
 
-import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.database.AppDatabase
-import com.mandarinkafe.mandarin.db.SavedOrderQueries
 import com.mandarinkafe.mandarin.features.order.domain.api.SaveOrderToHistoryUseCase
 import com.mandarinkafe.mandarin.features.ordershistory.data.impl.OrdersHistoryRepositoryImpl
 import com.mandarinkafe.mandarin.features.ordershistory.data.impl.OrdersStatusesRepositoryImpl
@@ -15,68 +13,28 @@ import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersStatuse
 import com.mandarinkafe.mandarin.features.ordershistory.domain.impl.GetOrdersStatusesUseCaseImpl
 import com.mandarinkafe.mandarin.features.ordershistory.domain.impl.OrdersHistoryInteractorImpl
 import com.mandarinkafe.mandarin.features.ordershistory.domain.impl.SaveOrderToHistoryUseCaseImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryViewModel
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-class OrderHistoryModule {
+val ordersHistoryModule = module {
 
-    @Provides
-    fun provideSavedOrderQueries(db: AppDatabase): SavedOrderQueries =
-        db.savedOrderQueries
+    // --- Storage ---
+    single { get<AppDatabase>().savedOrderQueries }
+    singleOf(::SQLDelightOrdersHistoryStorage) { bind<OrdersHistoryStorage>() }
 
-    @Provides
-    @Singleton
-    fun provideOrdersHistoryStorage(queries: SavedOrderQueries): OrdersHistoryStorage {
-        return SQLDelightOrdersHistoryStorage(queries = queries)
-    }
+    // --- Repositories ---
+    singleOf(::OrdersHistoryRepositoryImpl) { bind<OrdersHistoryRepository>() }
+    singleOf(::OrdersStatusesRepositoryImpl) { bind<OrdersStatusesRepository>() }
 
-    @Provides
-    @Singleton
-    fun provideOrdersHistoryRepository(
-        storage: OrdersHistoryStorage,
-    ): OrdersHistoryRepository =
-        OrdersHistoryRepositoryImpl(
-            storage = storage,
-        )
+    // --- UseCases / Interactors ---
+    singleOf(::SaveOrderToHistoryUseCaseImpl) { bind<SaveOrderToHistoryUseCase>() }
+    singleOf(::OrdersHistoryInteractorImpl) { bind<OrdersHistoryInteractor>() }
+    singleOf(::GetOrdersStatusesUseCaseImpl) { bind<GetOrdersStatusesUseCase>() }
 
-    @Provides
-    @Singleton
-    fun provideSaveOrderToHistoryUseCase(
-        repository: OrdersHistoryRepository
-    ): SaveOrderToHistoryUseCase =
-        SaveOrderToHistoryUseCaseImpl(
-            repository = repository,
-        )
+    // ViewModel
+    viewModelOf(::OrdersHistoryViewModel)
 
-    @Provides
-    @Singleton
-    fun provideGetOrdersHistoryUseCase(
-        repository: OrdersHistoryRepository
-    ): OrdersHistoryInteractor =
-        OrdersHistoryInteractorImpl(
-            repository = repository,
-        )
-
-    @Provides
-    @Singleton
-    fun provideOrdersStatusesRepository(
-        networkClient: IikoNetworkClient
-    ): OrdersStatusesRepository =
-        OrdersStatusesRepositoryImpl(
-            networkClient = networkClient
-        )
-
-    @Provides
-    @Singleton
-    fun provideGetOrdersStatusesUseCase(
-        repository: OrdersStatusesRepository
-    ): GetOrdersStatusesUseCase =
-        GetOrdersStatusesUseCaseImpl(
-            repository = repository,
-        )
 }

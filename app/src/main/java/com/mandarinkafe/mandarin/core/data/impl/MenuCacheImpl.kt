@@ -10,8 +10,6 @@ import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditionalCa
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.CATEGORY_ADDS
 import com.mandarinkafe.mandarin.util.Resource
-import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -20,8 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-@Singleton
-class MenuCacheImpl @Inject constructor(
+class MenuCacheImpl(
     private val fetcher: MenuFetcher,
 ) : MenuCache {
     override var lastRefreshTime: Long = 0

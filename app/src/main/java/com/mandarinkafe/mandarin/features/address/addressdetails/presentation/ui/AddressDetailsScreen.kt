@@ -20,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
@@ -41,13 +40,14 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import com.mandarinkafe.mandarin.util.presentation.ui.components.RemoveConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.BigButtonWithText
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AddressDetailsScreen(
     initAddress: Address?,
     returnToRoute: String,
     isEditMode: Boolean,
-    viewModel: AddressDetailsViewModel = hiltViewModel(),
+    viewModel: AddressDetailsViewModel = koinViewModel(),
     navController: NavHostController,
     callerEntry: NavBackStackEntry
 ) {

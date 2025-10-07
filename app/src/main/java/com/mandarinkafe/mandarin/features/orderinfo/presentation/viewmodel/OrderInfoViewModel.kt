@@ -13,17 +13,14 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.mandarinkafe.mandarin.util.tickerFlow
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
-@HiltViewModel
-class OrderInfoViewModel @Inject constructor(
+class OrderInfoViewModel(
     private val getOrderStatus: GetOrderStatusUseCase,
     private val cancelOrderUseCase: CancelOrderUseCase,
     private val repeatOrderInteractor: RepeatOrderInteractor,

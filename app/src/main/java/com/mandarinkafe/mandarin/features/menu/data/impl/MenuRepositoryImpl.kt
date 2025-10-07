@@ -13,12 +13,9 @@ import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.applyTypography
-import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import java.util.UUID
 
-@Singleton
-class MenuRepositoryImpl @Inject constructor(
+class MenuRepositoryImpl(
     private val iikoNetworkClient: IikoNetworkClient,
     private val menuMetaCache: MenuMetaCache
 ) : MenuRepository, MenuFetcher {

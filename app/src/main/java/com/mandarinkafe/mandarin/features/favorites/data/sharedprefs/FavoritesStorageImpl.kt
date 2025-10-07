@@ -9,9 +9,8 @@ import com.google.gson.reflect.TypeToken
 import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.data.models.isBase
 import com.mandarinkafe.mandarin.features.favorites.data.models.sameAs
-import javax.inject.Inject
 
-class FavoritesStorageImpl @Inject constructor(
+class FavoritesStorageImpl(
     private val sharedPreferences: SharedPreferences
 ) : FavoritesStorage {
     private val logTag = "FavoritesStorage"

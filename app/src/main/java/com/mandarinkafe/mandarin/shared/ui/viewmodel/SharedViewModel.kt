@@ -24,7 +24,6 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedState
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_SCREEN_DURATION
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,10 +33,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class SharedViewModel @Inject constructor(
+class SharedViewModel(
     private val favoritesApi: FavoritesApi,
     private val getInitialDataUseCase: GetInitialDataUseCase,
     private val observeCartCountUseCase: ObserveCartCountUseCase

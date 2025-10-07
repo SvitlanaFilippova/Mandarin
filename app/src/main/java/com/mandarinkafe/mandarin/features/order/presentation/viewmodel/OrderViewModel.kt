@@ -39,12 +39,9 @@ import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.UiText
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class OrderViewModel @Inject constructor(
+class OrderViewModel(
     observeCartItemsUseCase: ObserveCartItemsUseCase,
     resolvePickupPoint: ResolvePickupPointUseCase,
     private val pickupOnlyRemover: PickupOnlyRemoveUseCase,

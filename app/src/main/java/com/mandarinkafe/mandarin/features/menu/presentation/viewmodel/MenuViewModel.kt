@@ -22,13 +22,10 @@ import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class MenuViewModel @Inject constructor(
+class MenuViewModel(
     private val menuInteractor: MenuInteractor,
     private val favoritesApi: FavoritesApi,
     private val getBannersUseCase: GetBannersUseCase,

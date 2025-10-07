@@ -15,7 +15,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R.drawable
 import com.mandarinkafe.mandarin.R.string
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -25,10 +24,11 @@ import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DeliveryVi
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InfoCard
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun DeliveryScreen(
-    viewModel: DeliveryViewModel = hiltViewModel(),
+    viewModel: DeliveryViewModel = koinViewModel(),
     onBackClick: () -> Boolean
 ) {
     val state by viewModel.state.collectAsState()

@@ -1,39 +1,20 @@
 package com.mandarinkafe.mandarin.features.mealdetails.di
 
-import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.mealdetails.domain.impl.GetAddonsUseCaseImpl
 import com.mandarinkafe.mandarin.features.mealdetails.domain.impl.GetMealByIdUseCaseImpl
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetMealByIdUseCase
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsViewModel
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-class MealDetailsModule {
 
-    @Provides
-    @Singleton
-    fun provideGetAddonsUseCase(
-        cache: MenuCache,
-    ): GetAddonsUseCase {
-        return GetAddonsUseCaseImpl(
-            cache = cache,
-        )
-    }
+val mealDetailsModule = module {
 
-    @Provides
-    @Singleton
-    fun provideGetMealByIdUseCase(
-        cache: MenuCache,
-    ): GetMealByIdUseCase {
-        return GetMealByIdUseCaseImpl(
-            cache = cache,
-        )
-    }
-
+    singleOf(::GetAddonsUseCaseImpl) { bind<GetAddonsUseCase>() }
+    singleOf(::GetMealByIdUseCaseImpl) { bind<GetMealByIdUseCase>() }
+    viewModelOf(::MealDetailsViewModel)
 
 }

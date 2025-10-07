@@ -20,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
@@ -46,11 +45,12 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.InformationDial
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealDetailsBottomSheet(
-    viewModel: MealDetailsViewModel = hiltViewModel(),
+    viewModel: MealDetailsViewModel = koinViewModel(),
     sharedViewModel: SharedViewModel,
     initItem: CartItem?,
     onClose: () -> Unit,

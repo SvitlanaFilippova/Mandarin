@@ -13,7 +13,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.jetbrains.kotlin.parcelize)
     alias(libs.plugins.jetbrains.kotlin.compose)
     alias(libs.plugins.google.services)
@@ -103,6 +102,15 @@ android {
 
 
 dependencies {
+    // Подключаем Shared модуль
+    implementation(project(":shared"))
+
+    // Koin
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.ktor)
+
     // Android Jetpack Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.process)
@@ -110,12 +118,6 @@ dependencies {
     // Navigation for Compose
     implementation(libs.androidx.navigation.compose)
 
-    // Hilt
-    implementation(libs.com.hilt)
-    implementation(libs.androidx.runtime.livedata)
-    implementation(libs.play.services.auth)
-    ksp(libs.com.hilt.ksp)
-    implementation(libs.androidx.hilt.navigation.compose)
 
     // Coil
     implementation(libs.coil3.coil.compose)

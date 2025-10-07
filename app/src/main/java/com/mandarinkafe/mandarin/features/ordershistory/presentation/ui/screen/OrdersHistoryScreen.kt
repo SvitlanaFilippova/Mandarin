@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.components.FiltersSection
@@ -30,13 +29,14 @@ import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun OrdersHistoryScreen(
     navController: NavHostController,
     sharedViewModel: SharedViewModel,
-    viewModel: OrdersHistoryViewModel = hiltViewModel()
+    viewModel: OrdersHistoryViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val listState = rememberLazyListState()

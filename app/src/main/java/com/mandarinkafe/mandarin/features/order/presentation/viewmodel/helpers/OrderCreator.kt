@@ -15,10 +15,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
-class OrderCreator @Inject constructor(
+class OrderCreator(
     private val createOrder: CreateOrderUseCase,
     private val getOrderStatus: GetOrderStatusUseCase
 ) {

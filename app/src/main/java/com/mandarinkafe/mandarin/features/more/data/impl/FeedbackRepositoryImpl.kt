@@ -5,9 +5,8 @@ import com.mandarinkafe.mandarin.features.more.data.network.TelegramApi
 import com.mandarinkafe.mandarin.features.more.domain.api.FeedbackRepository
 import com.mandarinkafe.mandarin.features.more.domain.models.Feedback
 import com.mandarinkafe.mandarin.util.Result
-import javax.inject.Inject
 
-class FeedbackRepositoryImpl @Inject constructor(
+class FeedbackRepositoryImpl(
     private val telegramApi: TelegramApi
 ) : FeedbackRepository {
 

@@ -6,9 +6,8 @@ import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import javax.inject.Inject
 
-class AddressStorageImpl @Inject constructor(private val sharedPreferences: SharedPreferences) :
+class AddressStorageImpl(private val sharedPreferences: SharedPreferences) :
     AddressStorage {
 
     private val gson = Gson()

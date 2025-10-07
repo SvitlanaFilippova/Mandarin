@@ -4,17 +4,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackContract
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackContract.FeedbackEvent
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.BaseFeedbackDialog
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun FeedbackDialog(
     onDismissRequest: () -> Unit,
-    viewModel: FeedbackViewModel = hiltViewModel()
+    viewModel: FeedbackViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val successTitle = stringResource(R.string.message_sent_successfully)

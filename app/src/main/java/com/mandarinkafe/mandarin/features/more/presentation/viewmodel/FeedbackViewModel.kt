@@ -9,13 +9,10 @@ import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackCo
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Result
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class FeedbackViewModel @Inject constructor(
+class FeedbackViewModel(
     private val repository: FeedbackRepository
 ) :
     BaseViewModel<FeedbackEvent, FeedbackEffect, FeedbackState>() {

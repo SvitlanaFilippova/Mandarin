@@ -8,11 +8,8 @@ import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class MenuRefreshOnResumeObserver @Inject constructor(
+class MenuRefreshOnResumeObserver(
     private val forceRefreshMenuUseCase: ForceRefreshMenuUseCase,
     private val menuCache: MenuCache
 ) : DefaultLifecycleObserver {

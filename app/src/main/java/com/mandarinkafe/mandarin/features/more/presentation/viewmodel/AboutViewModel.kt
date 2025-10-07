@@ -4,12 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.domain.api.MenuMetaCache
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class AboutViewModel @Inject constructor(private val menuMetaCache: MenuMetaCache) :
+class AboutViewModel(private val menuMetaCache: MenuMetaCache) :
     BaseViewModel<AboutContract.AboutEvent, AboutContract.AboutEffect, AboutContract.AboutState>() {
     init {
         getInitData()

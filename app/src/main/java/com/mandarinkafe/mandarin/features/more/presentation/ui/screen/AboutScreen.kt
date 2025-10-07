@@ -31,7 +31,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.net.toUri
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -39,11 +38,12 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.more.presentation.ui.components.DevFeedbackDialog
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.AboutViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AboutScreen(
     onBackClick: () -> Boolean,
-    viewModel: AboutViewModel = hiltViewModel()
+    viewModel: AboutViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val aboutMainText = stringResource(id = R.string.about_main_text)

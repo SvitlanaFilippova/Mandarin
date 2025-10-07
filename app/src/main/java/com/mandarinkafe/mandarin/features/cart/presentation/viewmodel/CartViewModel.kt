@@ -31,14 +31,11 @@ import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
 import com.mandarinkafe.mandarin.util.UiText
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class CartViewModel @Inject constructor(
+class CartViewModel(
     private val cartInteractor: CartInteractor,
     private val recommendsUseCase: GetRecommendsUseCase,
     private val checkIfTerminalIsAlive: CheckIfTerminalIsAliveUseCase

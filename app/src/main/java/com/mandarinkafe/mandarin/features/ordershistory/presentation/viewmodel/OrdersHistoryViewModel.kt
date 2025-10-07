@@ -14,16 +14,13 @@ import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.h
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.mandarinkafe.mandarin.util.tickerFlow
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
-@HiltViewModel
-class OrdersHistoryViewModel @Inject constructor(
+class OrdersHistoryViewModel(
     private val historyInteractor: OrdersHistoryInteractor,
     private val getOrdersStatuses: GetOrdersStatusesUseCase
 ) : BaseViewModel<OrdersHistoryEvent, OrdersHistoryEffect, OrdersHistoryState>() {

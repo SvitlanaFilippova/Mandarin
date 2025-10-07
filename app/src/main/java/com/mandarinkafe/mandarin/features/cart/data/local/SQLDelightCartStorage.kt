@@ -7,9 +7,8 @@ import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class SQLDelightCartStorage @Inject constructor(private val queries: CartItemsQueries) :
+class SQLDelightCartStorage(private val queries: CartItemsQueries) :
     CartStorage {
     override suspend fun getCartItems(): List<StoredCartItem> {
         return try {

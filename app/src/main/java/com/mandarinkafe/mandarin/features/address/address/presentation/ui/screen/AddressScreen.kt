@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Address
@@ -45,10 +44,11 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AddressMapScreen(
-    viewModel: AddressViewModel = hiltViewModel(),
+    viewModel: AddressViewModel = koinViewModel(),
     navController: NavHostController,
     initAddress: Address?,
     returnToRoute: String
