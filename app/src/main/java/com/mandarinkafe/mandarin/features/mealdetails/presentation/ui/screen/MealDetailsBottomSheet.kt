@@ -203,7 +203,7 @@ fun MealDetailsBottomSheet(
                             onSharedEvent(
                                 SharedEvent.ShowSnackbar(
                                     message = effect.message.asString(context),
-                                    showToCartButton = true
+                                    showToCartButton = !state.isEditMode
                                 )
                             )
                         }
