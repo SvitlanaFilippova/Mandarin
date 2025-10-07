@@ -11,6 +11,7 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
 import com.mandarinkafe.mandarin.navigation.NavConstants.MAIN_GRAPH
+import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMealDetails
@@ -31,13 +32,17 @@ fun HandleEffects(
         effectFlow.collect { effect ->
             when (effect) {
                 is SharedEffect.OpenMealDetailsBS -> {
-                    navController.navigateToMealDetails(
-                        item = effect.cartItem
-                            ?: effect.item?.toCartItem()
-                            ?: effect.meal?.toCartItem(),
-                        mealId = effect.mealId,
-                        isEditMode = effect.isEditMode
-                    )
+                    if (!navController.currentDestination?.route.orEmpty()
+                            .contains(MEAL_DETAILS_ROUTE)
+                    ) {
+                        navController.navigateToMealDetails(
+                            item = effect.cartItem
+                                ?: effect.item?.toCartItem()
+                                ?: effect.meal?.toCartItem(),
+                            mealId = effect.mealId,
+                            isEditMode = effect.isEditMode
+                        )
+                    }
                 }
 
                 is SharedEffect.OnPhoneClick -> {
