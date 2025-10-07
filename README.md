@@ -38,9 +38,9 @@
 | Категория            | Технологии                                          |
 |----------------------|-----------------------------------------------------|
 | UI                   | Jetpack Compose, Material3                          |
-| Архитектура          | MVI, StateFlow, Coroutines, Hilt                    |
+| Архитектура          | MVI, StateFlow, Coroutines, <del>Hilt</del>   ->  Koin              |
 | Навигация            | Navigation Compose, Accompanist Navigation Material |
-| Работа с данными     | Ktor, Gson, SQLDelight, SharedPreferences           |
+| Работа с данными     | Gson, SQLDelight, SharedPreferences, <del>Retrofit</del> -> Ktor           |
 | Изображения          | Coil 3                                              |
 | Карты                | Yandex MapKit                                       |
 | Firebase             | Remote Config, Crashlytics                          |
