@@ -88,6 +88,8 @@ fun ModifierItemDto.toDomain(): ModifierItem {
         id = itemId,
         name = name?.removeLeadingDash()?.applyTypography() ?: "",
         price = safePrice,
+        weight = portionWeightGrams?.toInt() ?: 0,
+        measureUnitType = MeasureUnitType.from(measureUnitType) ?: MeasureUnitType.GRAM,
     )
 }
 

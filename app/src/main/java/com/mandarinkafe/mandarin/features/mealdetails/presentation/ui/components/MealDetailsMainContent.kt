@@ -39,7 +39,6 @@ fun MealDetailsMainContent(
     onMakeMoreDeliciousClick: () -> Unit,
     onEvent: (MealDetailsEvent) -> Unit,
     comment: String,
-    isEditMode: Boolean,
     bottomContent: @Composable () -> Unit = { },
     imeVisible: Boolean,
 ) {
@@ -120,7 +119,7 @@ fun MealDetailsMainContent(
             }
             if (addons.isNotEmpty()) {
                 val addsItems =
-                    addons[selectedTabIndex].items ?: emptyList()
+                    addons[selectedTabIndex].items
                 // Список доступных добавок
                 itemsIndexed(addsItems) { _, item ->
                     AddsItem(
@@ -165,6 +164,8 @@ fun MealDetailsMainContent(
                 )
             }
         }
+
+        // Поле для комментария
         item {
             MyTextField(
                 modifier = Modifier.padding(

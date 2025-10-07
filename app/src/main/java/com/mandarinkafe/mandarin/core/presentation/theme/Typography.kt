@@ -29,6 +29,8 @@ object Typography {
         color = Colors.WhiteTransparent75
     )
 
+    val RegularExtraLightTextStyle = RegularLightTextStyle.copy(fontWeight = FontWeight.ExtraLight)
+
     val TitleStyle = TextStyle(
         fontSize = Dimens.TextSizeBig20,
         fontWeight = FontWeight(TITLE_FONT_WEIGHT),

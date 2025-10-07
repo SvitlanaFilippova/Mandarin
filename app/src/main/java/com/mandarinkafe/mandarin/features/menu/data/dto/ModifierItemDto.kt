@@ -10,6 +10,7 @@ data class ModifierItemDto(
     val buttonImageUrl: String? = null,
     val prices: List<PriceDto>?,
     val portionWeightGrams: Double? = null,
+    val measureUnitType: String? = null,
     val restrictions: RestrictionsDto? = null,
     val amount: Double? = null,
 )

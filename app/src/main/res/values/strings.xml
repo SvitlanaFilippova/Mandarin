@@ -329,6 +329,7 @@
 
     <!-- Шаблоны текста -->
     <string name="meal_weight_template">%1$d %2$s</string>
+    <string name="meal_weight_template_for_adds">%1$d %2$s</string>
     <string name="meal_price_template">%1$d ₽</string>
     <string name="meal_in_cart_count_template">%1$d шт</string>
     <string name="save_meal">Сохранить (%1$d ₽)</string>
