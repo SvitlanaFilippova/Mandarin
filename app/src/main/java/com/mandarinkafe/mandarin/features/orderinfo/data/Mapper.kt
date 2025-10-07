@@ -8,6 +8,7 @@ import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
+import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
@@ -167,6 +168,8 @@ private fun associateItemsWithAdds(
                 amount = safeAmount,
                 price = dto.price,
                 discountedPrice = dto.resultSum?.takeIf { it > 0 }?.div(safeAmount),
+                weight = dto.weight ?: 0,
+                measureUnitType = MeasureUnitType.from(dto.measureUnitType) ?: MeasureUnitType.GRAM,
                 isDeleted = dto.deleted?.deletionMethod != null,
             )
             if (result.isNotEmpty()) {

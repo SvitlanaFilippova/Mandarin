@@ -34,6 +34,8 @@ fun ModifierGroupItem(
         modifier = Modifier.padding(Dimens.MarginSmall8)
     ) {
         Text(
+            modifier = Modifier.weight(1f, fill = false),
+            softWrap = true,
             text = modifierGroup.name,
             style = Typography.TitleStyle
         )

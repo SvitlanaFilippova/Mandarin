@@ -12,6 +12,8 @@ fun Meal.toMealAdditional() = MealAdditional(
     price = price,
     orderItemType = orderItemType,
     discountable = discountable,
+    weight = weight,
+    measureUnitType = measureUnitType
 )
 
 fun MealCategory.toMealAdditionalCategory() = MealAdditionalCategory(
