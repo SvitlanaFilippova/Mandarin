@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.infrastructure.data.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.infrastructure.data.local.CategoryDiscountsStorage
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.CustomerCategoriesResponse
@@ -10,6 +9,7 @@ import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.discou
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CategoryDiscountRepository
 import com.mandarinkafe.mandarin.features.infrastructure.domain.models.CategoryDiscountMap
 import com.mandarinkafe.mandarin.features.infrastructure.domain.models.toDomain
+import com.mandarinkafe.mandarin.util.AppLog
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 
 class CategoryDiscountRepositoryImpl(
@@ -42,8 +42,7 @@ class CategoryDiscountRepositoryImpl(
         return categories.mapNotNull { category ->
             // Проверяем что category.id не null
             val categoryId = category.id ?: run {
-                Log.w(
-                    "DEBUG DISCOUNT Repository",
+                AppLog.w(
                     "Category has null ID, name: '${category.name}', skipping"
                 )
                 return@mapNotNull null
@@ -51,8 +50,7 @@ class CategoryDiscountRepositoryImpl(
 
             val categoryPercent = category.name?.toDoubleOrNull()
             if (categoryPercent == null) {
-                Log.w(
-                    "DEBUG DISCOUNT Repository",
+                AppLog.w(
                     "Category '${category.name}' is not a number, skipping"
                 )
                 return@mapNotNull null

@@ -1,10 +1,10 @@
 package com.mandarinkafe.mandarin.features.cart.data.local
 
-import android.util.Log
 import com.mandarinkafe.mandarin.db.CartItemsQueries
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toParams
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
+import com.mandarinkafe.mandarin.util.AppLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -21,7 +21,7 @@ class SQLDelightCartStorage(private val queries: CartItemsQueries) :
             withContext(Dispatchers.IO) {
                 queries.deleteAll()
             }
-            Log.e("Error CartStorage", "Ошибка при получении корзины из БД. Очищаю корзину. $e")
+            AppLog.e("Ошибка при получении корзины из БД. Очищаю корзину. $e")
             emptyList()
         }
     }

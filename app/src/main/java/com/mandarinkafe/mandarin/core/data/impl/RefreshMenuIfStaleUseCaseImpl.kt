@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.core.data.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.RefreshMenuIfStaleUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
+import com.mandarinkafe.mandarin.util.AppLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,7 +21,7 @@ class RefreshMenuIfStaleUseCaseImpl(
                 try {
                     forceRefreshMenuUseCase()
                 } catch (e: Exception) {
-                    Log.e("MenuRefresh", "Menu refresh failed", e)
+                    AppLog.e("Menu refresh failed", e)
                 }
             }
         }

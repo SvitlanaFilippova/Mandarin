@@ -1,11 +1,11 @@
 package com.mandarinkafe.mandarin.features.savedadresses.data.sharedprefs
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mandarinkafe.mandarin.core.domain.models.Address
+import com.mandarinkafe.mandarin.util.AppLog
 
 class AddressStorageImpl(private val sharedPreferences: SharedPreferences) :
     AddressStorage {
@@ -22,8 +22,7 @@ class AddressStorageImpl(private val sharedPreferences: SharedPreferences) :
                 gson.fromJson<List<Address>>(json, listType) ?: emptyList()
             }
         } catch (e: Exception) {
-            Log.e(
-                "getSavedAddresses error",
+            AppLog.e(
                 "Ошибка чтения сохранённых адресов: ${e.message}. Удаляю сохранённые адреса"
             )
             clear()

@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.navigation.extensions
 
 import android.util.Base64
-import android.util.Log
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.navOptions
@@ -26,6 +25,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_INFO_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SAVED_ADDRESSES_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
+import com.mandarinkafe.mandarin.util.AppLog
 import com.mandarinkafe.mandarin.util.Constants.SNACKBAR_MESSAGE_KEY
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -156,7 +156,7 @@ fun NavController.tryGetBackStackEntry(route: String): NavBackStackEntry? {
     return try {
         getBackStackEntry(route)
     } catch (e: IllegalArgumentException) {
-        Log.e("Error tryGetBackStackEntry", "error: $e")
+        AppLog.e("error: $e")
         null // экрана в стеке нет
     }
 }

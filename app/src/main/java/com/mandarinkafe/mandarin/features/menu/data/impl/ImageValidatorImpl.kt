@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.menu.data.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.features.menu.data.api.ImageValidator
+import com.mandarinkafe.mandarin.util.AppLog
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.IMAGE_VALIDATOR_TIMEOUT
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +24,7 @@ class ImageValidatorImpl : ImageValidator {
 
             code == HTTP_SUCCESS && contentType?.startsWith("image") == true
         } catch (e: Exception) {
-            Log.e("ImageValidatorImpl", "Изображение не валидно: ${e.message}")
+            AppLog.e("Изображение не валидно: ${e.message}")
             false
         }
     }

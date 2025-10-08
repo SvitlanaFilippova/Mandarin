@@ -1,10 +1,10 @@
 package com.mandarinkafe.mandarin.features.order.data.sharedprefs
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.UserInfo
+import com.mandarinkafe.mandarin.util.AppLog
 
 class UserInfoStorageImpl(
     private val sharedPreferences: SharedPreferences
@@ -21,8 +21,7 @@ class UserInfoStorageImpl(
                 gson.fromJson(json, UserInfo::class.java)
             }
         } catch (e: Exception) {
-            Log.e(
-                "UserInfoStorage",
+            AppLog.e(
                 "Ошибка чтения UserInfo: ${e.message}. Очищаю сохранённые данные"
             )
             clearUserInfo()

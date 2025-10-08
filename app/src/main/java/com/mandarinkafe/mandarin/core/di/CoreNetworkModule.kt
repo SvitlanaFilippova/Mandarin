@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.core.di
 
-import android.util.Log
 import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
@@ -11,6 +10,7 @@ import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthApi
 import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthProvider
 import com.mandarinkafe.mandarin.core.data.network.impl.GoogleDocsNetworkClientImpl
 import com.mandarinkafe.mandarin.core.data.network.impl.IikoNetworkClientImpl
+import com.mandarinkafe.mandarin.util.AppLog
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
@@ -64,7 +64,7 @@ val coreNetworkModule = module {
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
-                        Log.d("KtorDebug", message)
+                        AppLog.d(message)
                     }
                 }
                 level = LogLevel.ALL

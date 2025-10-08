@@ -24,7 +24,6 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
-import io.github.aakira.napier.log
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
@@ -142,7 +141,6 @@ private fun CategoryTabItem(
                     }
                 )
             } else {
-                log { "CategoryTabItem, URL null" }
                 Image(
                     painter = painterResource(R.drawable.logo_orange),
                     contentDescription = null,

@@ -2,18 +2,17 @@ package com.mandarinkafe.mandarin.features.favorites.data.sharedprefs
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.data.models.isBase
 import com.mandarinkafe.mandarin.features.favorites.data.models.sameAs
+import com.mandarinkafe.mandarin.util.AppLog
 
 class FavoritesStorageImpl(
     private val sharedPreferences: SharedPreferences
 ) : FavoritesStorage {
-    private val logTag = "FavoritesStorage"
     override suspend fun toggleFavorite(meal: StoredFavoriteMeal): Boolean {
         val currentSetResult = getFavorites()
         if (currentSetResult is FavoritesStorageResult.Success) {
@@ -56,7 +55,7 @@ class FavoritesStorageImpl(
         val json = sharedPreferences.getString(FAVORITES_KEY, null)
         return try {
             if (json == null) {
-                Log.w(logTag, "Favorites key is null, returning emptySet()")
+                AppLog.w("Favorites key is null, returning emptySet()")
                 FavoritesStorageResult.Success(emptySet())
             } else {
                 val listType = object : TypeToken<Set<StoredFavoriteMeal>>() {}.type
@@ -64,7 +63,7 @@ class FavoritesStorageImpl(
                 FavoritesStorageResult.Success(result)
             }
         } catch (e: Exception) {
-            Log.e(logTag, "Ошибка чтения избранного: ${e.message}, json=$json", e)
+            AppLog.e("Ошибка чтения избранного: ${e.message}, json=$json", e)
             sharedPreferences.edit { remove(FAVORITES_KEY) }
             FavoritesStorageResult.Corrupted()
         }

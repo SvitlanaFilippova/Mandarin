@@ -17,6 +17,8 @@ import com.mandarinkafe.mandarin.features.ordershistory.di.ordersHistoryModule
 import com.mandarinkafe.mandarin.features.search.di.searchModule
 import com.mandarinkafe.mandarin.util.Constants.LOCALE_RU
 import com.yandex.mapkit.MapKitFactory
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 
@@ -25,7 +27,6 @@ class App : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@App)
-            printLogger()
             modules(
                 coreModule,
                 coreNetworkModule,
@@ -46,5 +47,8 @@ class App : Application() {
         // Настраиваем MapKit
         MapKitFactory.setApiKey(BuildConfig.MAPKIT_API_KEY)
         MapKitFactory.setLocale(LOCALE_RU)
+
+        // Инициализация Napier
+        Napier.base(DebugAntilog())
     }
 }
