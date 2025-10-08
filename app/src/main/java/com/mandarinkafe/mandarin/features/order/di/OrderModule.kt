@@ -20,6 +20,9 @@ import com.mandarinkafe.mandarin.features.order.domain.impl.PickupOnlyRemoveUseC
 import com.mandarinkafe.mandarin.features.order.domain.impl.ResolvePickupPointUseCaseImpl
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.OrderCreator
+import com.mandarinkafe.mandarin.features.savedadresses.domain.AddressUseCases
+import com.mandarinkafe.mandarin.features.savedadresses.domain.CartContentUseCases
+import com.mandarinkafe.mandarin.features.savedadresses.domain.OrderInfoUseCases
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -47,7 +50,13 @@ val orderModule = module {
     singleOf(::UserInfoRepositoryImpl) { bind<UserInfoRepository>() }
     singleOf(::OrderCreator)
 
+    // Группы юзкейсов для OrderViewModel
+    singleOf(::CartContentUseCases)
+    singleOf(::OrderInfoUseCases)
+    singleOf(::AddressUseCases)
+
     // ViewModel
     viewModelOf(::OrderViewModel)
+
 
 }

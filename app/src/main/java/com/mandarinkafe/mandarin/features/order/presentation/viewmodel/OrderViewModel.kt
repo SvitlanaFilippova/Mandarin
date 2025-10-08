@@ -2,19 +2,14 @@ package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.R
-import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
-import com.mandarinkafe.mandarin.core.domain.api.ObserveCartItemsUseCase
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.core.domain.models.UserInfo
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
-import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
-import com.mandarinkafe.mandarin.features.infrastructure.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWithDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.PickupOnlyRemoveUseCase
-import com.mandarinkafe.mandarin.features.order.domain.api.ResolvePickupPointUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.SaveOrderToHistoryUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.UserInfoRepository
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
@@ -32,8 +27,9 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.O
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.UserInfoUi
-import com.mandarinkafe.mandarin.features.savedadresses.domain.api.GetSavedAddressesUseCase
-import com.mandarinkafe.mandarin.features.savedadresses.domain.api.RemoveAddressUseCase
+import com.mandarinkafe.mandarin.features.savedadresses.domain.AddressUseCases
+import com.mandarinkafe.mandarin.features.savedadresses.domain.CartContentUseCases
+import com.mandarinkafe.mandarin.features.savedadresses.domain.OrderInfoUseCases
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
@@ -42,25 +38,21 @@ import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import kotlinx.coroutines.launch
 
 class OrderViewModel(
-    observeCartItemsUseCase: ObserveCartItemsUseCase,
-    resolvePickupPoint: ResolvePickupPointUseCase,
+    private val cartUseCases: CartContentUseCases,
     private val pickupOnlyRemover: PickupOnlyRemoveUseCase,
     private val orderCreator: OrderCreator,
     private val getDeliveryZone: GetDeliveryZoneUseCase,
-    private val getSavedAddressesUseCase: GetSavedAddressesUseCase,
-    private val removeAddress: RemoveAddressUseCase,
-    private val getPaymentTypesUseCase: GetPaymentTypesUseCase,
-    private val clearCart: ClearCartUseCase,
+    private val addressUseCases: AddressUseCases,
+    private val infoUseCases: OrderInfoUseCases,
     private val calculateCartTotalWithDiscount: CalculateCartTotalWithDiscountUseCase,
     private val applyPhoneDiscount: ApplyPhoneDiscountUseCase,
     private val saveOrderToHistory: SaveOrderToHistoryUseCase,
-    private val checkIfTerminalIsAlive: CheckIfTerminalIsAliveUseCase,
-    private val userInfoRepository: UserInfoRepository
+    private val userInfoRepository: UserInfoRepository,
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     private val cartObserver = CartObserver(
-        observeCartItems = observeCartItemsUseCase,
-        resolvePickupPoint = resolvePickupPoint,
+        observeCartItems = cartUseCases.observeCartItems,
+        resolvePickupPoint = cartUseCases.resolvePickupPoint,
         recalculateCartSummary = ::recalculateCartSummary
     )
 
@@ -113,7 +105,7 @@ class OrderViewModel(
 
     private fun getPaymentTypes() {
         viewModelScope.launch {
-            val response = getPaymentTypesUseCase()
+            val response = infoUseCases.getPaymentTypesUseCase()
             when (response) {
                 is Resource.ErrorNoInternet ->
                     sendErrorEffect(UiText.StringResource(R.string.error_no_internet))
@@ -201,7 +193,7 @@ class OrderViewModel(
     }
 
     private fun removeSavedAddress(id: String) {
-        viewModelScope.launch { removeAddress(id) }
+        viewModelScope.launch { addressUseCases.removeAddress(id) }
         getSavedAddresses()
     }
 
@@ -248,7 +240,7 @@ class OrderViewModel(
 
     private fun getSavedAddresses() {
         viewModelScope.launch {
-            val addressList = getSavedAddressesUseCase().reversed()
+            val addressList = addressUseCases.getSavedAddressesUseCase().reversed()
             setState {
                 val newDeliveryInfo = deliveryInfo.copy(
                     savedAddresses = addressList
@@ -399,7 +391,7 @@ class OrderViewModel(
     private fun checkIfOrderCanBeSubmitted() {
         viewModelScope.launch {
             setLoading()
-            val terminalResponse = checkIfTerminalIsAlive()
+            val terminalResponse = infoUseCases.checkIfTerminalIsAlive()
             when (terminalResponse) {
                 is Resource.Success -> {
                     if (terminalResponse.data == true) {
@@ -442,7 +434,7 @@ class OrderViewModel(
         clearState()
         sendEffect(ShowSuccess(order.id))
         viewModelScope.launch {
-            clearCart()
+            cartUseCases.clearCart()
             saveOrderToHistory(order)
         }
         getSavedUserInfo()
