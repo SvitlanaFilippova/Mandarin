@@ -23,10 +23,9 @@ import org.koin.core.context.GlobalContext.startKoin
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
-
-        // Старт Koin
         startKoin {
             androidContext(this@App)
+            printLogger()
             modules(
                 coreModule,
                 coreNetworkModule,
@@ -47,12 +46,5 @@ class App : Application() {
         // Настраиваем MapKit
         MapKitFactory.setApiKey(BuildConfig.MAPKIT_API_KEY)
         MapKitFactory.setLocale(LOCALE_RU)
-
-
-        // Получаем MenuRefreshOnResumeObserver через Koin
-//        val menuRefreshObserver: MenuRefreshOnResumeObserver =
-//            org.koin.core.context.GlobalContext.get().koin.get()
-        // Подписываемся на события жизненного цикла
-//        ProcessLifecycleOwner.get().lifecycle.addObserver(menuRefreshObserver)
     }
 }

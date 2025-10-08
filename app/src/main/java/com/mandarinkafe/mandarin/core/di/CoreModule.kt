@@ -1,6 +1,8 @@
 package com.mandarinkafe.mandarin.core.di
 
+import com.mandarinkafe.mandarin.core.data.api.RefreshMenuIfStaleUseCase
 import com.mandarinkafe.mandarin.core.data.impl.MenuCacheImpl
+import com.mandarinkafe.mandarin.core.data.impl.RefreshMenuIfStaleUseCaseImpl
 import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
@@ -25,7 +27,9 @@ val coreModule = module {
     singleOf(::ForceRefreshMenuUseCaseImpl) { bind<ForceRefreshMenuUseCase>() }
     singleOf(::ObserveCartCountUseCaseImpl) { bind<ObserveCartCountUseCase>() }
     singleOf(::ObserveCartItemsUseCaseImpl) { bind<ObserveCartItemsUseCase>() }
+    singleOf(::RefreshMenuIfStaleUseCaseImpl) { bind<RefreshMenuIfStaleUseCase>() }
 
     // ViewModel
     viewModelOf(::SharedViewModel)
+
 }

@@ -41,20 +41,24 @@ fun MainScreen() {
     val sharedState by sharedViewModel.state.collectAsState()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-
     val currentRoute = navBackStackEntry?.destination?.route
     var isSplashLoading by remember { mutableStateOf(true) }
     val isSplash = if (isSplashLoading) true else currentRoute == SPLASH_SCREEN_ROUTE
-    LaunchedEffect(currentRoute) {
-        if (isSplashLoading && currentRoute != null && currentRoute != SPLASH_SCREEN_ROUTE) {
-            isSplashLoading = false
-        }
-    }
     val showTopBar = !isSplash && sharedState.shouldShowTopBar
     val onEvent = sharedViewModel::onEvent
     val selectedMeal = sharedState.selectedMealForFavoriteChoice
     val isInnerScreen = currentRoute?.let { route -> route !in bottomNavigationRoutes } == true
     val showBottomBar = !isSplash && !isInnerScreen
+
+    LaunchedEffect(Unit) {
+        onEvent(SharedEvent.RefreshMenuIfStale)
+    }
+
+    LaunchedEffect(currentRoute) {
+        if (isSplashLoading && currentRoute != null && currentRoute != SPLASH_SCREEN_ROUTE) {
+            isSplashLoading = false
+        }
+    }
 
     Scaffold(
         modifier = Modifier

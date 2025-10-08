@@ -1,20 +1,18 @@
-package com.mandarinkafe.mandarin.core.data
+package com.mandarinkafe.mandarin.core.data.impl
 
 import android.util.Log
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
+import com.mandarinkafe.mandarin.core.data.api.RefreshMenuIfStaleUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MenuRefreshOnResumeObserver(
+class RefreshMenuIfStaleUseCaseImpl(
     private val forceRefreshMenuUseCase: ForceRefreshMenuUseCase,
     private val menuCache: MenuCache
-) : DefaultLifecycleObserver {
-
-    override fun onStart(owner: LifecycleOwner) {
+) : RefreshMenuIfStaleUseCase {
+    override suspend fun invoke() {
         val now = System.currentTimeMillis()
         val lastRefresh = menuCache.lastRefreshTime
 

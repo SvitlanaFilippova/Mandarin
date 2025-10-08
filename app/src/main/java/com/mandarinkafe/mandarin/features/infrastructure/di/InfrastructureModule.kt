@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.features.infrastructure.di
 import android.content.Context
 import android.content.SharedPreferences
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-import com.mandarinkafe.mandarin.core.data.MenuRefreshOnResumeObserver
 import com.mandarinkafe.mandarin.core.di.DiConstants
 import com.mandarinkafe.mandarin.database.AppDatabase
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.AliveTerminalRepositoryImpl
@@ -58,7 +57,6 @@ val infrastructureModule = module {
     // CheckDiscountByPhone
     singleOf(::CheckDiscountByPhoneUseCaseImpl) { bind<CheckDiscountByPhoneUseCase>() }
 
-    singleOf(::MenuRefreshOnResumeObserver)
     singleOf(::NetworkMonitor)
 
 }

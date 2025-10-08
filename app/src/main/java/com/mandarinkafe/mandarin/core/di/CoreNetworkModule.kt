@@ -141,28 +141,28 @@ val coreNetworkModule = module {
         )
     }
 
-    // IikoAuthProvider
-    singleOf(::IikoAuthProvider)
-
     // IikoApi
-    singleOf(::IikoApi) {
-        named(DiConstants.IIKO_CLIENT_QUALIFIER)
+    single {
+        IikoApi(get(named(DiConstants.IIKO_CLIENT_QUALIFIER)))
     }
 
     // IikoAuthApi
-    singleOf(::IikoAuthApi) {
-        named(DiConstants.IIKO_AUTH_CLIENT_QUALIFIER)
+    single {
+        IikoAuthApi(get(named(DiConstants.IIKO_AUTH_CLIENT_QUALIFIER)))
     }
 
     // ServerApi
-    singleOf(::ServerApi) {
-        named(DiConstants.SERVER_CLIENT_QUALIFIER)
+    single {
+        ServerApi(get(named(DiConstants.SERVER_CLIENT_QUALIFIER)))
     }
 
     // GoogleDocsApiService
-    singleOf(::GoogleDocsApiService) {
-        named(DiConstants.GOOGLE_DOCS_CLIENT_QUALIFIER)
+    single {
+        GoogleDocsApiService(get(named(DiConstants.GOOGLE_DOCS_CLIENT_QUALIFIER)))
     }
+
+    // IikoAuthProvider
+    singleOf(::IikoAuthProvider)
 
     // Network Clients
     singleOf(::IikoNetworkClientImpl) { bind<IikoNetworkClient>() }
