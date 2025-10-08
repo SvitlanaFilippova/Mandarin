@@ -2,6 +2,7 @@
 gson = "2.13.2"
 koin = "4.1.1"
 ktor = "3.3.0"
+kamel = "1.0.8"
 lifecycleVersion = "2.9.4"
 versionCode = "3"
 versionName = "1.01"
@@ -13,7 +14,6 @@ accompanistNavigationMaterialVersion = "0.36.0"
 accompanistSystemuicontrollerVersion = "0.36.0"
 activity = "1.11.0"
 agp = "8.13.0"
-coilComposeVersion = "3.3.0"
 compiler = "1.5.15"
 composeActivity = "1.11.0"
 composeBom = "2025.09.00"
@@ -32,14 +32,14 @@ mapkit = "4.22.0-full"
 material = "1.13.0"
 navigationCompose = "2.9.4"
 parcelize = "2.2.20"
-runtimeLivedata = "1.9.1"
 sqldelight = "2.1.0"
 kotlinx-serialization = "1.6.0"
 kotlinStdlibVersion = "2.2.20"
 kotlinTestVersion = "2.2.20"
+napier = "2.7.1"
 runnerVersion = "1.5.2"
 coreVersion = "1.5.0"
-playServicesAuthVersion = "21.4.0"
+
 
 [libraries]
 # Accompanist
@@ -66,9 +66,13 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycleVersion" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleVersion" }
 
-# Coil
-coil3-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilComposeVersion" }
-coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilComposeVersion" }
+# Kamel
+kamel-image-default = { module = "media.kamel:kamel-image-default", version.ref = "kamel" }
+kamel-image = { group = "media.kamel", name = "kamel-image", version.ref = "kamel" }
+kamel-decoder-bitmap = { group = "media.kamel", name = "kamel-decoder-image-bitmap", version.ref = "kamel" }
+kamel-decoder-vector = { group = "media.kamel", name = "kamel-decoder-image-vector", version.ref = "kamel" }
+kamel-fetcher-android = { group = "media.kamel", name = "kamel-fetcher-resources-android", version.ref = "kamel" }
+
 
 # Detekt
 staticAnalysis-detektCli = { module = "io.gitlab.arturbosch.detekt:detekt-cli", version.ref = "detekt" }
@@ -80,6 +84,9 @@ firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx"
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
 firebase-config-ktx = { module = "com.google.firebase:firebase-config-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+
+# Napier(логгер)
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 # Koin
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }

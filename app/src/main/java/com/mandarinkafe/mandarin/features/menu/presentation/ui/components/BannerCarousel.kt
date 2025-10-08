@@ -31,12 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -45,6 +40,7 @@ import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_SLOW
 import com.mandarinkafe.mandarin.util.Constants.BANNERS_ASPECT_RATIO
 import com.mandarinkafe.mandarin.util.Constants.BANNERS_AUTO_SCROLL_INTERVAL
+import com.mandarinkafe.mandarin.util.presentation.ui.components.KamelSubcomposeAsyncImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -98,18 +94,15 @@ fun BannerCarousel(
                 )
             )
         ) { page ->
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(banners[page].imageUrl)
-                    .crossfade(true)
-                    .build(),
+            KamelSubcomposeAsyncImage(
+                model = banners[page].imageUrl,
                 contentDescription = stringResource(R.string.banner_number, page),
-                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(BANNERS_ASPECT_RATIO)
                     .clip(RoundedCornerShape(Dimens.CornerRadius8))
-                    .clickable { onBannerClick(banners[page]) }
+                    .clickable { onBannerClick(banners[page]) },
+                crossfade = true
             )
         }
 

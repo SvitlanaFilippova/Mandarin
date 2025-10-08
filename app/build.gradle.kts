@@ -118,13 +118,17 @@ dependencies {
     // Navigation for Compose
     implementation(libs.androidx.navigation.compose)
 
-
-    // Coil
-    implementation(libs.coil3.coil.compose)
-    implementation(libs.coil.network.okhttp)
-
+    // Kamel
+    implementation(libs.kamel.image.default)
+//    implementation(libs.kamel.image)
+//    implementation(libs.kamel.decoder.bitmap)
+//    implementation(libs.kamel.decoder.vector)
+//    implementation(libs.kamel.fetcher.android)
     // Core
     implementation(libs.androidx.core.ktx)
+
+    // Napier
+    implementation(libs.napier)
 
     // Material Design
     implementation(libs.material)

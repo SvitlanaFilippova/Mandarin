@@ -1,7 +1,9 @@
 package com.mandarinkafe.mandarin.features.menu.presentation.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
@@ -15,13 +17,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import coil3.compose.AsyncImage
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
+import io.github.aakira.napier.log
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
 
 @Composable
 fun TabsSection(
@@ -95,10 +100,13 @@ private fun CategoryTabsRow(
 @Composable
 private fun CategoryTabItem(
     name: String,
-    icon: Any?,
+    icon: String?,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
+    val colorFilter = ColorFilter.tint(
+        if (isSelected) Colors.Orange else Color.White
+    )
     Tab(
         selected = isSelected,
         onClick = onClick,
@@ -109,17 +117,39 @@ private fun CategoryTabItem(
             )
         },
         icon = {
-            AsyncImage(
-                model = icon,
-                contentDescription = stringResource(
-                    R.string.icon_of_category,
-                    name
-                ),
-                modifier = Modifier.size(Dimens.IconSize24),
-                error = painterResource(R.drawable.logo_orange),
-                placeholder = painterResource(R.drawable.logo_orange),
-                colorFilter = ColorFilter.tint(if (isSelected) Colors.Orange else Color.White)
-            )
+            if (icon != null) {
+                KamelImage(
+                    resource = { asyncPainterResource(data = icon) },
+                    contentDescription = stringResource(R.string.icon_of_category, name),
+                    modifier = Modifier.size(Dimens.IconSize24),
+                    contentScale = ContentScale.Fit,
+                    colorFilter = colorFilter,
+                    onLoading = { _ ->
+                        Image(
+                            painter = painterResource(R.drawable.logo_orange),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            colorFilter = colorFilter
+                        )
+                    },
+                    onFailure = { _ ->
+                        Image(
+                            painter = painterResource(R.drawable.logo_orange),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            colorFilter = colorFilter
+                        )
+                    }
+                )
+            } else {
+                log { "CategoryTabItem, URL null" }
+                Image(
+                    painter = painterResource(R.drawable.logo_orange),
+                    contentDescription = null,
+                    modifier = Modifier.size(Dimens.IconSize24),
+                    colorFilter = colorFilter
+                )
+            }
         },
         selectedContentColor = Colors.Orange,
     )
