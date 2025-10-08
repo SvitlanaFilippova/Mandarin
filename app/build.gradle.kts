@@ -120,10 +120,7 @@ dependencies {
 
     // Kamel
     implementation(libs.kamel.image.default)
-//    implementation(libs.kamel.image)
-//    implementation(libs.kamel.decoder.bitmap)
-//    implementation(libs.kamel.decoder.vector)
-//    implementation(libs.kamel.fetcher.android)
+
     // Core
     implementation(libs.androidx.core.ktx)
 

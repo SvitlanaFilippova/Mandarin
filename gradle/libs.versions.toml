@@ -68,11 +68,6 @@ androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtim
 
 # Kamel
 kamel-image-default = { module = "media.kamel:kamel-image-default", version.ref = "kamel" }
-kamel-image = { group = "media.kamel", name = "kamel-image", version.ref = "kamel" }
-kamel-decoder-bitmap = { group = "media.kamel", name = "kamel-decoder-image-bitmap", version.ref = "kamel" }
-kamel-decoder-vector = { group = "media.kamel", name = "kamel-decoder-image-vector", version.ref = "kamel" }
-kamel-fetcher-android = { group = "media.kamel", name = "kamel-fetcher-resources-android", version.ref = "kamel" }
-
 
 # Detekt
 staticAnalysis-detektCli = { module = "io.gitlab.arturbosch.detekt:detekt-cli", version.ref = "detekt" }

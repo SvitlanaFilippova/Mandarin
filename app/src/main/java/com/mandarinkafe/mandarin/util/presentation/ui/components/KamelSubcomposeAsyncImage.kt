@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import com.mandarinkafe.mandarin.util.Constants.RATIO_FOR_IMAGE_CROP_MAX
+import com.mandarinkafe.mandarin.util.Constants.RATIO_FOR_IMAGE_CROP_MIN
 import io.kamel.core.Resource
 import io.kamel.image.asyncPainterResource
 
@@ -68,7 +70,7 @@ fun KamelSubcomposeAsyncImage(
 
                 val finalContentScale = when {
                     contentScale != null -> contentScale
-                    (ratio in 0.75f..1.5f) -> ContentScale.Crop
+                    ratio in RATIO_FOR_IMAGE_CROP_MIN..RATIO_FOR_IMAGE_CROP_MAX -> ContentScale.Crop
                     else -> ContentScale.Fit
                 }
 

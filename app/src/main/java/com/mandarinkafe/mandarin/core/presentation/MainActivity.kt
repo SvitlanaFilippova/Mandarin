@@ -7,7 +7,6 @@ import com.mandarinkafe.mandarin.core.presentation.theme.MandarinTheme
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContent {
             MandarinTheme {

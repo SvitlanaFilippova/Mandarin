@@ -34,7 +34,6 @@ fun MealDetailsImage(meal: Meal) {
             .background(Colors.White),
         contentAlignment = Alignment.Center
     ) {
-
         KamelSubcomposeAsyncImage(
             model = meal.imageUrl,
             contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),

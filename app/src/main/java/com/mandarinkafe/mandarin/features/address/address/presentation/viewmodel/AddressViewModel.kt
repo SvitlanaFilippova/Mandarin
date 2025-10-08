@@ -25,7 +25,6 @@ import com.yandex.mapkit.geometry.Point
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
 class AddressViewModel(
     private val searchInteractor: AddressSearchInteractor,
     private val getUserLocation: GetCurrentLocationUseCase,

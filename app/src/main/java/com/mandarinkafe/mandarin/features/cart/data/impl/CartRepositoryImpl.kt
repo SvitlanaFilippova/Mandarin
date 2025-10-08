@@ -27,7 +27,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
 
-
 class CartRepositoryImpl(
     private val storage: CartStorage,
     private val menuCache: MenuCache,

@@ -51,6 +51,8 @@ object Constants {
     const val TITLE_FONT_WEIGHT = 800
     const val NON_BRAKING_SPACE = "\u00A0"
     const val SNACKBAR_MESSAGE_KEY = "snackbarMessage"
+    const val RATIO_FOR_IMAGE_CROP_MIN = 0.75f
+    const val RATIO_FOR_IMAGE_CROP_MAX = 1.5f
 
     // Order
     const val VALID_PHONE_LENGTH = 10
