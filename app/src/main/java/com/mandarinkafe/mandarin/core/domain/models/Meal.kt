@@ -11,6 +11,8 @@ data class Meal(
     val measureUnitType: MeasureUnitType,
     val price: Int,
     val imageUrl: String,
+    val imagePreviewUrl: String,
+    val placeholderUrl: String,
     val description: String,
     val sku: String,
     val orderItemType: String,
