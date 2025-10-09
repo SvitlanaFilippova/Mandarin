@@ -1,7 +1,8 @@
 package com.mandarinkafe.mandarin.core.domain.models
 
-import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType.entries
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class MeasureUnitType(val rawValue: String) {
     GRAM("GRAM"),
     KILOGRAM("KILOGRAM"),

@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.menu.di
 
-import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.domain.api.MenuMetaCache
 import com.mandarinkafe.mandarin.features.menu.data.api.ImageValidator
@@ -33,8 +32,6 @@ val menuModule = module {
     singleOf(::MenuMetaCacheImpl) { bind<MenuMetaCache>() }
 
     singleOf(::ImageValidatorImpl) { bind<ImageValidator>() }
-
-    singleOf(::Gson)
 
     // Domain Layer
     singleOf(::MenuInteractorImpl) { bind<MenuInteractor>() }

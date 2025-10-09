@@ -1,7 +1,9 @@
 package com.mandarinkafe.mandarin.features.favorites.data.models
 
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class StoredFavoriteMeal(
     val mealId: String,
     val timestamp: Long,

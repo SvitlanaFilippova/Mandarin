@@ -1,7 +1,9 @@
 package com.mandarinkafe.mandarin.core.domain.models
 
 import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Immutable
 data class ModifierItem(
     val id: String,

@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -12,7 +11,6 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
-import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.screen.AddressMapScreen
@@ -54,7 +52,6 @@ fun NavGraph(navHostController: NavHostController) {
     val cartViewModel: CartViewModel = koinViewModel()
     val sharedViewModel: SharedViewModel = koinViewModel()
     val orderViewModel: OrderViewModel = koinViewModel()
-    val gson = remember { Gson() }
 
     ModalBottomSheetLayout(
         bottomSheetNavigator = bottomSheetNavigator
@@ -165,7 +162,7 @@ fun NavGraph(navHostController: NavHostController) {
                 val isEditMode =
                     backStackEntry.arguments?.getBoolean(KEY_IS_EDIT_MODE) == true
                 val item =
-                    backStackEntry.decodeJsonArg<CartItem>(NavConstants.KEY_MEAL_JSON, gson)
+                    backStackEntry.decodeJsonArg<CartItem>(NavConstants.KEY_MEAL_JSON)
                 val mealId = backStackEntry.arguments?.getString(NavConstants.KEY_MEAL_ID)
 
                 MealDetailsBottomSheet(
@@ -185,7 +182,7 @@ fun NavGraph(navHostController: NavHostController) {
                 )
             ) { backStackEntry ->
                 val address =
-                    backStackEntry.decodeJsonArg<Address?>(KEY_ADDRESS_JSON, gson)
+                    backStackEntry.decodeJsonArg<Address?>(KEY_ADDRESS_JSON)
                 val returnToRoute = backStackEntry.arguments
                     ?.getString(KEY_RETURN_TO_ROUTE)
                     ?.let { URLDecoder.decode(it, StandardCharsets.UTF_8.toString()) }
@@ -209,7 +206,7 @@ fun NavGraph(navHostController: NavHostController) {
                 val isEditMode =
                     backStackEntry.arguments?.getBoolean(KEY_IS_EDIT_MODE) == true
                 val address =
-                    backStackEntry.decodeJsonArg<Address>(KEY_ADDRESS_JSON, gson)
+                    backStackEntry.decodeJsonArg<Address>(KEY_ADDRESS_JSON)
                 val returnToRoute = backStackEntry.arguments?.getString(KEY_RETURN_TO_ROUTE)
                     ?.let { URLDecoder.decode(it, StandardCharsets.UTF_8.toString()) }
                     ?: ""

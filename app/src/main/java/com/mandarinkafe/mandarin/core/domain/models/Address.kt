@@ -1,8 +1,10 @@
 package com.mandarinkafe.mandarin.core.domain.models
 
 import androidx.compose.runtime.Stable
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
+@Serializable
 @Stable
 data class Address(
     val id: String = UUID.randomUUID().toString(),

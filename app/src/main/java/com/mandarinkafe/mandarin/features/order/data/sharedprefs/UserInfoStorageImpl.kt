@@ -2,36 +2,34 @@ package com.mandarinkafe.mandarin.features.order.data.sharedprefs
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.UserInfo
 import com.mandarinkafe.mandarin.util.AppLog
+import kotlinx.serialization.json.Json
 
 class UserInfoStorageImpl(
     private val sharedPreferences: SharedPreferences
 ) : UserInfoStorage {
 
-    private val gson = Gson()
+    private val json = Json { ignoreUnknownKeys = true }
 
     override fun getUserInfo(): UserInfo? {
         return try {
-            val json = sharedPreferences.getString(USER_INFO_KEY, null)
-            if (json.isNullOrEmpty()) {
+            val jsonString = sharedPreferences.getString(USER_INFO_KEY, null)
+            if (jsonString.isNullOrEmpty()) {
                 null
             } else {
-                gson.fromJson(json, UserInfo::class.java)
+                json.decodeFromString<UserInfo>(jsonString)
             }
         } catch (e: Exception) {
-            AppLog.e(
-                "Ошибка чтения UserInfo: ${e.message}. Очищаю сохранённые данные"
-            )
+            AppLog.e("Ошибка чтения UserInfo: ${e.message}")
             clearUserInfo()
             null
         }
     }
 
     override fun saveUserInfo(userInfo: UserInfo) {
-        val json = gson.toJson(userInfo)
-        sharedPreferences.edit { putString(USER_INFO_KEY, json) }
+        val jsonString = json.encodeToString(userInfo)
+        sharedPreferences.edit { putString(USER_INFO_KEY, jsonString) }
     }
 
     override fun clearUserInfo() {

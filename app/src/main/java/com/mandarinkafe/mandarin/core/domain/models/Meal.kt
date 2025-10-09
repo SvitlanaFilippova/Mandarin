@@ -2,7 +2,9 @@ package com.mandarinkafe.mandarin.core.domain.models
 
 import androidx.compose.runtime.Stable
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealPickupPoint
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Stable
 data class Meal(
     val id: String,

@@ -176,7 +176,6 @@ dependencies {
     implementation(libs.ktor.client.auth)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.okhttp)
-    implementation(libs.gson)
 
     // Kotlinx Serialization
     implementation(libs.kotlinx.serialization.json)

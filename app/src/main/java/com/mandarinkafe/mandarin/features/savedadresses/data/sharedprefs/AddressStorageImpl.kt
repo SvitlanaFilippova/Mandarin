@@ -2,24 +2,22 @@ package com.mandarinkafe.mandarin.features.savedadresses.data.sharedprefs
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.util.AppLog
+import kotlinx.serialization.json.Json
 
 class AddressStorageImpl(private val sharedPreferences: SharedPreferences) :
     AddressStorage {
 
-    private val gson = Gson()
-    private val listType = object : TypeToken<MutableList<Address>>() {}.type
+    private val json = Json { ignoreUnknownKeys = true }
 
     override fun getSavedAddresses(): List<Address> {
         return try {
-            val json = sharedPreferences.getString(ADDRESSES_KEY, null)
-            if (json.isNullOrEmpty()) {
+            val jsonString = sharedPreferences.getString(ADDRESSES_KEY, null)
+            if (jsonString.isNullOrEmpty()) {
                 mutableListOf()
             } else {
-                gson.fromJson<List<Address>>(json, listType) ?: emptyList()
+                json.decodeFromString<List<Address>>(jsonString)
             }
         } catch (e: Exception) {
             AppLog.e(
@@ -41,15 +39,15 @@ class AddressStorageImpl(private val sharedPreferences: SharedPreferences) :
             current.add(item)
         }
 
-        val json = gson.toJson(current, listType)
-        sharedPreferences.edit { putString(ADDRESSES_KEY, json) }
+        val jsonString = json.encodeToString(current)
+        sharedPreferences.edit { putString(ADDRESSES_KEY, jsonString) }
     }
 
     override fun removeAddress(id: String) {
         val current = getSavedAddresses().toMutableList()
         val updated = current.filterNot { it.id == id }
-        val json = gson.toJson(updated, listType)
-        sharedPreferences.edit { putString(ADDRESSES_KEY, json) }
+        val jsonString = json.encodeToString(updated)
+        sharedPreferences.edit { putString(ADDRESSES_KEY, jsonString) }
     }
 
     private fun clear() {

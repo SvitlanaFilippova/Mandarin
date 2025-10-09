@@ -4,7 +4,6 @@ import android.util.Base64
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.navOptions
-import com.google.gson.Gson
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.navigation.NavConstants.ABOUT_SCREEN_ROUTE
@@ -27,6 +26,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.SAVED_ADDRESSES_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.util.AppLog
 import com.mandarinkafe.mandarin.util.Constants.SNACKBAR_MESSAGE_KEY
+import kotlinx.serialization.json.Json
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -92,8 +92,7 @@ fun NavController.navigateToAddress(address: Address? = null, returnToRoute: Str
         navigate("$ADDRESS_SCREEN_ROUTE/$emptyAddress/$encodedReturnRoute")
     } else {
         // Есть уже выбранный адрес
-        val gson = Gson()
-        val json = gson.toJson(address)
+        val json = Json.encodeToString(address)
         val encoded = Base64.encodeToString(json.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
         navigate("$ADDRESS_SCREEN_ROUTE/$encoded/$encodedReturnRoute")
     }
@@ -104,8 +103,7 @@ fun NavController.navigateToAddressDetails(
     isEditMode: Boolean = false,
     returnToRoute: String
 ) {
-    val gson = Gson()
-    val json = gson.toJson(address)
+    val json = Json.encodeToString(address)
     val encoded = Base64.encodeToString(json.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
     val encodedReturn = URLEncoder.encode(returnToRoute, StandardCharsets.UTF_8.toString())
 
@@ -118,9 +116,7 @@ fun NavController.navigateToMealDetails(
     mealId: String? = null,
     isEditMode: Boolean = false
 ) {
-    val gson = Gson()
-
-    val json = item?.let { gson.toJson(it) }
+    val json = item?.let { Json.encodeToString(it) }
     val encoded = json?.let {
         Base64.encodeToString(it.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
     }

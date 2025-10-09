@@ -3,16 +3,17 @@ package com.mandarinkafe.mandarin.features.favorites.data.sharedprefs
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.data.models.isBase
 import com.mandarinkafe.mandarin.features.favorites.data.models.sameAs
 import com.mandarinkafe.mandarin.util.AppLog
+import kotlinx.serialization.json.Json
 
 class FavoritesStorageImpl(
     private val sharedPreferences: SharedPreferences
 ) : FavoritesStorage {
+
+    private val json = Json { ignoreUnknownKeys = true }
     override suspend fun toggleFavorite(meal: StoredFavoriteMeal): Boolean {
         val currentSetResult = getFavorites()
         if (currentSetResult is FavoritesStorageResult.Success) {
@@ -44,22 +45,21 @@ class FavoritesStorageImpl(
     }
 
     override fun saveFavorites(favorites: Set<StoredFavoriteMeal>) {
-        val json = Gson().toJson(favorites)
+        val jsonString = json.encodeToString(favorites)
         sharedPreferences.edit {
-            putString(FAVORITES_KEY, json)
+            putString(FAVORITES_KEY, jsonString)
         }
     }
 
     @SuppressLint("LogNotTimber")
     override suspend fun getFavorites(): FavoritesStorageResult {
-        val json = sharedPreferences.getString(FAVORITES_KEY, null)
+        val jsonString = sharedPreferences.getString(FAVORITES_KEY, null)
         return try {
-            if (json == null) {
+            if (jsonString == null) {
                 AppLog.w("Favorites key is null, returning emptySet()")
                 FavoritesStorageResult.Success(emptySet())
             } else {
-                val listType = object : TypeToken<Set<StoredFavoriteMeal>>() {}.type
-                val result: Set<StoredFavoriteMeal> = Gson().fromJson(json, listType) ?: emptySet()
+                val result: Set<StoredFavoriteMeal> = json.decodeFromString(jsonString)
                 FavoritesStorageResult.Success(result)
             }
         } catch (e: Exception) {

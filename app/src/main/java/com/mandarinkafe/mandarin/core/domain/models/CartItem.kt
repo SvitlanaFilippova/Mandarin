@@ -1,8 +1,10 @@
 package com.mandarinkafe.mandarin.core.domain.models
 
 import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
+@Serializable
 @Immutable
 data class CartItem(
     val id: String = UUID.randomUUID().toString(),

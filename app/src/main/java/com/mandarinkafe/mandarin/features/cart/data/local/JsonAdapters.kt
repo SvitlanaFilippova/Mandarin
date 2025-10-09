@@ -1,30 +1,22 @@
 package com.mandarinkafe.mandarin.features.cart.data.local
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+import kotlinx.serialization.json.Json
 
 object JsonAdapters {
-
-    private val gson = Gson()
+    private val json = Json { ignoreUnknownKeys = true }
 
     fun listToJson(ids: List<String>): String =
-        gson.toJson(ids)
+        json.encodeToString(ids)
 
     fun jsonToList(s: String?): List<String> {
-        return s?.let {
-            val type = object : TypeToken<List<String>>() {}.type
-            gson.fromJson(it, type)
-        } ?: emptyList()
+        return s?.let { json.decodeFromString(it) } ?: emptyList()
     }
 
     fun modsToJson(mods: List<ModifierGroup>): String =
-        gson.toJson(mods)
+        json.encodeToString(mods)
 
     fun jsonToMods(s: String?): List<ModifierGroup> {
-        return s?.let {
-            val type = object : TypeToken<List<ModifierGroup>>() {}.type
-            gson.fromJson(it, type)
-        } ?: emptyList()
+        return s?.let { json.decodeFromString(it) } ?: emptyList()
     }
 }
