@@ -118,17 +118,6 @@ jobs:
       - name: Assemble app
         run: ./gradlew :app:assembleDebug $commonGradleFlags
 
-      - name: Create GitHub Release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
-        uses: softprops/action-gh-release@v2
-        with:
-          name: Debug Build ${{ github.run_number }}
-          tag_name: debug-${{ github.run_number }}
-          files: app/build/outputs/apk/debug/app-debug.apk
-          draft: false
-          prerelease: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4

@@ -59,5 +59,5 @@ object Dimens {
     val BannerIndicatorActiveWidth32 = 32.dp
     val BannerIndicatorInactiveWidth8 = 8.dp
     val BannerIndicatorSize4 = 4.dp
-    val PriceMinWidthForCustomizeItem = 72.dp
+    val PriceMinWidthForCustomizeItem = 64.dp
 }
