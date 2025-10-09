@@ -46,7 +46,7 @@ fun KamelSubcomposeAsyncImage(
     val resource: Resource<Painter> = asyncPainterResource(data = model)
     onStateChange?.invoke(resource)
 
-    val previewResource: Resource<Painter>? = previewModel?.let { 
+    val previewResource: Resource<Painter>? = previewModel?.let {
         asyncPainterResource(data = it)
     }
 
