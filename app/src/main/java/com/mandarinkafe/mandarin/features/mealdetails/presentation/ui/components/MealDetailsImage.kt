@@ -36,6 +36,7 @@ fun MealDetailsImage(meal: Meal) {
     ) {
         KamelSubcomposeAsyncImage(
             model = meal.imageUrl,
+            previewModel = meal.imagePreviewUrl,
             contentDescription = stringResource(R.string.picture_of_meal_template, meal.name),
             modifier = Modifier
                 .fillMaxWidth()

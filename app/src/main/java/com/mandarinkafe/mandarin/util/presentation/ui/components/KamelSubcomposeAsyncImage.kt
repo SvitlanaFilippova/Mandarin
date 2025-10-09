@@ -19,8 +19,9 @@ import io.kamel.image.asyncPainterResource
 @Composable
 fun KamelSubcomposeAsyncImage(
     model: Any?,
-    contentDescription: String?,
     modifier: Modifier = Modifier,
+    previewModel: Any? = null,
+    contentDescription: String?,
     placeholder: Painter? = null,
     error: Painter? = null,
     crossfade: Boolean = true,
@@ -45,53 +46,29 @@ fun KamelSubcomposeAsyncImage(
     val resource: Resource<Painter> = asyncPainterResource(data = model)
     onStateChange?.invoke(resource)
 
+    val previewResource: Resource<Painter>? = previewModel?.let {
+        asyncPainterResource(data = it)
+    }
+
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         when (resource) {
             is Resource.Loading -> {
-                placeholder?.let {
-                    Image(
-                        painter = it,
-                        contentDescription = contentDescription,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                } ?: CircularProgressIndicator()
+                LoadingStateContent(
+                    previewResource = previewResource,
+                    placeholder = placeholder,
+                    contentDescription = contentDescription,
+                    contentScale = contentScale
+                )
             }
 
             is Resource.Success -> {
-                val painter = resource.value
-
-                // Умная адаптация contentScale по пропорции
-                val ratio = if (painter.intrinsicSize.height != 0f) {
-                    painter.intrinsicSize.width / painter.intrinsicSize.height
-                } else {
-                    1f
-                }
-
-                val finalContentScale = when {
-                    contentScale != null -> contentScale
-                    ratio in RATIO_FOR_IMAGE_CROP_MIN..RATIO_FOR_IMAGE_CROP_MAX -> ContentScale.Crop
-                    else -> ContentScale.Fit
-                }
-
-                if (crossfade) {
-                    Crossfade(targetState = painter, label = "imageCrossfade") { p ->
-                        Image(
-                            painter = p,
-                            contentDescription = contentDescription,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = finalContentScale
-                        )
-                    }
-                } else {
-                    Image(
-                        painter = painter,
-                        contentDescription = contentDescription,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = finalContentScale,
-                        colorFilter = tint?.let { androidx.compose.ui.graphics.ColorFilter.tint(it) }
-                    )
-                }
+                SuccessStateContent(
+                    painter = resource.value,
+                    contentDescription = contentDescription,
+                    crossfade = crossfade,
+                    tint = tint,
+                    contentScale = contentScale
+                )
             }
 
             is Resource.Failure -> {
@@ -105,5 +82,96 @@ fun KamelSubcomposeAsyncImage(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun LoadingStateContent(
+    previewResource: Resource<Painter>?,
+    placeholder: Painter?,
+    contentDescription: String?,
+    contentScale: ContentScale?
+) {
+    when {
+        previewResource is Resource.Success -> {
+            Image(
+                painter = previewResource.value,
+                contentDescription = contentDescription,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = contentScale ?: ContentScale.Crop
+            )
+        }
+
+        previewResource is Resource.Loading && placeholder != null -> {
+            Image(
+                painter = placeholder,
+                contentDescription = contentDescription,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        previewResource is Resource.Failure && placeholder != null -> {
+            Image(
+                painter = placeholder,
+                contentDescription = contentDescription,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        placeholder != null -> {
+            Image(
+                painter = placeholder,
+                contentDescription = contentDescription,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        else -> CircularProgressIndicator()
+    }
+}
+
+@Composable
+private fun SuccessStateContent(
+    painter: Painter,
+    contentDescription: String?,
+    crossfade: Boolean,
+    tint: Color?,
+    contentScale: ContentScale?
+) {
+    val finalContentScale = when {
+        contentScale != null -> contentScale
+        else -> {
+            val ratio = if (painter.intrinsicSize.height != 0f) {
+                painter.intrinsicSize.width / painter.intrinsicSize.height
+            } else {
+                1f
+            }
+            when {
+                ratio in RATIO_FOR_IMAGE_CROP_MIN..RATIO_FOR_IMAGE_CROP_MAX -> ContentScale.Crop
+                else -> ContentScale.Fit
+            }
+        }
+    }
+
+    if (crossfade) {
+        Crossfade(targetState = painter, label = "imageCrossfade") { p ->
+            Image(
+                painter = p,
+                contentDescription = contentDescription,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = finalContentScale
+            )
+        }
+    } else {
+        Image(
+            painter = painter,
+            contentDescription = contentDescription,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = finalContentScale,
+            colorFilter = tint?.let { androidx.compose.ui.graphics.ColorFilter.tint(it) }
+        )
     }
 }

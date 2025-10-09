@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.menu.data.mapper
 
+import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.domain.models.Label
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType
@@ -49,6 +50,8 @@ fun MealDto.toDomain(
         measureUnitType = MeasureUnitType.from(firstSize.measureUnitType) ?: MeasureUnitType.GRAM,
         price = baseInfo.price,
         imageUrl = baseInfo.imageUrl ?: "",
+        imagePreviewUrl = baseInfo.thumbnailUrl ?: "",
+        placeholderUrl = baseInfo.placeholderUrl ?: "",
         labels = finalMealLabels,
         tags = finalMealTags,
         isHidden = isHidden == true,
@@ -137,13 +140,17 @@ private data class BaseMealInfo(
     val weight: Int,
     val price: Int,
     val imageUrl: String?,
+    val thumbnailUrl: String?,
+    val placeholderUrl: String?
 )
 
 private fun extractBaseInfo(firstSize: ItemSizeDto): BaseMealInfo? {
     val weight = firstSize.portionWeightGrams?.toInt() ?: 0
     val price = firstSize.prices?.firstOrNull()?.price?.toInt() ?: return null
     val imageUrl = firstSize.buttonImageUrl
-    return BaseMealInfo(weight, price, imageUrl)
+    val thumbnailUrl = BuildConfig.SERVER_BASE_URL + firstSize.thumbnailUrl
+    val placeholderUrl = firstSize.placeholderUrl
+    return BaseMealInfo(weight, price, imageUrl, thumbnailUrl, placeholderUrl)
 }
 
 private fun checkIfAddable(tags: List<Tag>, catIsAddable: Boolean): Boolean {
