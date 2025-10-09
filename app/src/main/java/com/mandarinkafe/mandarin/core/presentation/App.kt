@@ -50,5 +50,6 @@ class App : Application() {
 
         // Инициализация Napier
         Napier.base(DebugAntilog())
+
     }
 }
