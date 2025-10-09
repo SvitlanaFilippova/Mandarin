@@ -22,13 +22,10 @@ import com.mandarinkafe.mandarin.util.debounce
 import com.mandarinkafe.mandarin.util.isSameAs
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.yandex.mapkit.geometry.Point
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class AddressViewModel @Inject constructor(
+class AddressViewModel(
     private val searchInteractor: AddressSearchInteractor,
     private val getUserLocation: GetCurrentLocationUseCase,
     private val getDeliveryZone: GetDeliveryZoneUseCase,

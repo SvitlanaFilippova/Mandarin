@@ -3,11 +3,9 @@ package com.mandarinkafe.mandarin.util
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import dagger.hilt.android.qualifiers.ApplicationContext
-import jakarta.inject.Inject
 
-class NetworkMonitor @Inject constructor(
-    @ApplicationContext private val context: Context
+class NetworkMonitor(
+    private val context: Context
 ) {
     fun isNetworkAvailable(): Boolean {
         val connectivityManager =

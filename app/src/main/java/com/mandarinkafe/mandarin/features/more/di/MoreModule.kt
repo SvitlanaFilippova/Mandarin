@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.more.di
 
-import android.content.Context
-import com.mandarinkafe.mandarin.core.di.TelegramClient
+import com.mandarinkafe.mandarin.core.di.DiConstants.TELEGRAM_API_BASE_URL
+import com.mandarinkafe.mandarin.core.di.DiConstants.TELEGRAM_CLIENT_QUALIFIER
 import com.mandarinkafe.mandarin.features.more.data.DeviceInfoProvider
 import com.mandarinkafe.mandarin.features.more.data.impl.DevFeedbackRepositoryImpl
 import com.mandarinkafe.mandarin.features.more.data.impl.DeviceInfoProviderImpl
@@ -9,12 +9,10 @@ import com.mandarinkafe.mandarin.features.more.data.impl.FeedbackRepositoryImpl
 import com.mandarinkafe.mandarin.features.more.data.network.TelegramApi
 import com.mandarinkafe.mandarin.features.more.domain.api.DevFeedbackRepository
 import com.mandarinkafe.mandarin.features.more.domain.api.FeedbackRepository
-import com.mandarinkafe.mandarin.util.Constants.TELEGRAM_API_BASE_URL
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.AboutViewModel
+import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DeliveryViewModel
+import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackViewModel
+import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -22,56 +20,40 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import javax.inject.Singleton
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object MoreModule {
+val moreModule = module {
 
-    @Provides
-    @Singleton
-    @TelegramClient
-    fun provideTelegramHttpClient(): HttpClient {
-        return HttpClient {
+    // --- HttpClient для Telegram ---
+    single(named(TELEGRAM_CLIENT_QUALIFIER)) {
+        HttpClient {
             defaultRequest {
                 url(TELEGRAM_API_BASE_URL)
                 contentType(ContentType.Application.Json)
             }
-
             install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                    isLenient = true
-                })
+                json(Json { ignoreUnknownKeys = true; isLenient = true })
             }
         }
     }
 
-    @Provides
-    @Singleton
-    fun provideTelegramApi(
-        @TelegramClient client: HttpClient
-    ): TelegramApi {
-        return TelegramApi(client)
-    }
+    // --- API ---
+    single { TelegramApi(get(named("TelegramClient"))) }
 
-    @Provides
-    @Singleton
-    fun provideFeedbackRepository(
-        api: TelegramApi
-    ): FeedbackRepository = FeedbackRepositoryImpl(telegramApi = api)
+    // --- Device info provider ---
+    singleOf(::DeviceInfoProviderImpl) { bind<DeviceInfoProvider>() }
 
-    @Provides
-    @Singleton
-    fun provideDevFeedbackRepository(
-        api: TelegramApi,
-        deviceInfoProvider: DeviceInfoProvider
-    ): DevFeedbackRepository =
-        DevFeedbackRepositoryImpl(telegramApi = api, deviceInfoProvider = deviceInfoProvider)
+    // --- Repositories ---
+    singleOf(::FeedbackRepositoryImpl) { bind<FeedbackRepository>() }
+    singleOf(::DevFeedbackRepositoryImpl) { bind<DevFeedbackRepository>() }
 
-    @Provides
-    @Singleton
-    fun provideDeviceInfoProvider(
-        @ApplicationContext context: Context
-    ): DeviceInfoProvider = DeviceInfoProviderImpl(context = context)
+    // ViewModels
+    viewModelOf(::FeedbackViewModel)
+    viewModelOf(::DevFeedbackViewModel)
+    viewModelOf(::AboutViewModel)
+    viewModelOf(::DeliveryViewModel)
 }

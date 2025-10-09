@@ -1,8 +1,10 @@
 package com.mandarinkafe.mandarin.features.infrastructure.di
 
-import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import android.content.Context
+import android.content.SharedPreferences
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+import com.mandarinkafe.mandarin.core.di.DiConstants
 import com.mandarinkafe.mandarin.database.AppDatabase
-import com.mandarinkafe.mandarin.db.CategoryDiscountQueries
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.AliveTerminalRepositoryImpl
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.CategoryDiscountRepositoryImpl
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.PaymentTypesRepositoryImpl
@@ -13,88 +15,48 @@ import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CategoryDisc
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckDiscountByPhoneUseCase
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.GetPaymentTypesUseCase
-import com.mandarinkafe.mandarin.features.infrastructure.domain.api.LoyaltyCustomerRepository
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.PaymentTypesRepository
 import com.mandarinkafe.mandarin.features.infrastructure.domain.impl.CheckDiscountByPhoneUseCaseImpl
 import com.mandarinkafe.mandarin.features.infrastructure.domain.impl.CheckIfTerminalIsAliveUseCaseImpl
 import com.mandarinkafe.mandarin.features.infrastructure.domain.impl.GetPaymentTypesUseCaseImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.mandarinkafe.mandarin.util.NetworkMonitor
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-class InfrastructureModule {
-    @Singleton
-    @Provides
-    fun providePaymentTypesRepository(
-        networkClient: IikoNetworkClient
-    ): PaymentTypesRepository {
-        return PaymentTypesRepositoryImpl(
-            networkClient = networkClient
+val infrastructureModule = module {
+    // Database
+    single {
+        val driver = AndroidSqliteDriver(
+            schema = AppDatabase.Schema,
+            context = androidContext(),
+            name = DiConstants.DATABASE_NAME
         )
+        AppDatabase(driver)
     }
 
-    @Singleton
-    @Provides
-    fun provideGetPaymentTypesUseCase(
-        repository: PaymentTypesRepository
-    ): GetPaymentTypesUseCase {
-        return GetPaymentTypesUseCaseImpl(
-            repository = repository
-        )
+    // SharedPreferences
+    single<SharedPreferences> {
+        androidContext().getSharedPreferences(DiConstants.LOCAL_STORAGE_NAME, Context.MODE_PRIVATE)
     }
 
-    @Singleton
-    @Provides
-    fun provideAliveTerminalRepository(
-        networkClient: IikoNetworkClient
-    ): AliveTerminalRepository {
-        return AliveTerminalRepositoryImpl(
-            networkClient = networkClient
-        )
-    }
+    // PaymentTypes
+    singleOf(::PaymentTypesRepositoryImpl) { bind<PaymentTypesRepository>() }
+    singleOf(::GetPaymentTypesUseCaseImpl) { bind<GetPaymentTypesUseCase>() }
 
-    @Singleton
-    @Provides
-    fun provideCheckIfTerminalIsAliveUseCase(
-        repository: AliveTerminalRepository
-    ): CheckIfTerminalIsAliveUseCase {
-        return CheckIfTerminalIsAliveUseCaseImpl(repository = repository)
-    }
+    // AliveTerminal
+    singleOf(::AliveTerminalRepositoryImpl) { bind<AliveTerminalRepository>() }
+    singleOf(::CheckIfTerminalIsAliveUseCaseImpl) { bind<CheckIfTerminalIsAliveUseCase>() }
 
-    @Provides
-    fun provideCategoryDiscountsQueries(db: AppDatabase): CategoryDiscountQueries =
-        db.categoryDiscountQueries
+    // CategoryDiscounts
+    single { get<AppDatabase>().categoryDiscountQueries }
+    singleOf(::SQLDelightCategoryDiscountsStorage) { bind<CategoryDiscountsStorage>() }
+    singleOf(::CategoryDiscountRepositoryImpl) { bind<CategoryDiscountRepository>() }
 
-    @Provides
-    @Singleton
-    fun provideCategoryDiscountsStorage(queries: CategoryDiscountQueries): CategoryDiscountsStorage {
-        return SQLDelightCategoryDiscountsStorage(queries = queries)
-    }
+    // CheckDiscountByPhone
+    singleOf(::CheckDiscountByPhoneUseCaseImpl) { bind<CheckDiscountByPhoneUseCase>() }
 
-    @Provides
-    @Singleton
-    fun provideCategoryDiscountRepository(
-        storage: CategoryDiscountsStorage,
-        networkClient: IikoNetworkClient
-    ): CategoryDiscountRepository {
-        return CategoryDiscountRepositoryImpl(
-            storage = storage,
-            networkClient = networkClient
-        )
-    }
+    singleOf(::NetworkMonitor)
 
-    @Provides
-    fun provideCheckDiscountByPhoneUseCase(
-        loyaltyCustomerRepository: LoyaltyCustomerRepository,
-        categoryDiscountRepository: CategoryDiscountRepository
-    ): CheckDiscountByPhoneUseCase {
-        return CheckDiscountByPhoneUseCaseImpl(
-            repository = loyaltyCustomerRepository,
-            categoryDiscountRepository = categoryDiscountRepository
-        )
-    }
 }

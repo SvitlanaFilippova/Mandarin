@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.presentation.models.UiError.EmptyOrderData
@@ -32,13 +31,14 @@ import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun OrderInfoScreen(
     orderID: String?,
     sharedViewModel: SharedViewModel,
-    viewModel: OrderInfoViewModel = hiltViewModel(),
+    viewModel: OrderInfoViewModel = koinViewModel(),
     fromOrderCreation: Boolean = false,
     navController: NavHostController,
 ) {

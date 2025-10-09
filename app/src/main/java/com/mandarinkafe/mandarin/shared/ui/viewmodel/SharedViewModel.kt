@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.shared.ui.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.core.data.api.RefreshMenuIfStaleUseCase
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartCountUseCase
@@ -24,7 +25,6 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedState
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_SCREEN_DURATION
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,16 +34,16 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class SharedViewModel @Inject constructor(
+class SharedViewModel(
     private val favoritesApi: FavoritesApi,
     private val getInitialDataUseCase: GetInitialDataUseCase,
-    private val observeCartCountUseCase: ObserveCartCountUseCase
+    private val observeCartCountUseCase: ObserveCartCountUseCase,
+    private val refreshMenuIfStaleUseCase: RefreshMenuIfStaleUseCase
 ) :
     BaseViewModel<SharedEvent, SharedEffect, SharedState>() {
     override fun setInitialState() = SharedState()
+
 
     val favoritesItemsFlow: StateFlow<List<CustomizedMeal>> =
         favoritesApi.observeFavoritesItems()
@@ -113,6 +113,8 @@ class SharedViewModel @Inject constructor(
                     showToCartButton = event.showToCartButton
                 )
             )
+
+            is SharedEvent.RefreshMenuIfStale -> viewModelScope.launch { refreshMenuIfStaleUseCase() }
         }
     }
 

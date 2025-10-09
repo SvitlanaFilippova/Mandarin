@@ -13,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
@@ -28,11 +27,12 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.map
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MenuScreen(
-    menuViewModel: MenuViewModel = hiltViewModel(),
+    menuViewModel: MenuViewModel = koinViewModel(),
     cartViewModel: CartViewModel,
     sharedViewModel: SharedViewModel,
     navController: NavHostController

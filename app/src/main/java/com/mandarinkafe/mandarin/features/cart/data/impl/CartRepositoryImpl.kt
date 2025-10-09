@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.cart.data.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.CartReader
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
@@ -13,10 +12,9 @@ import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.validateBy
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
+import com.mandarinkafe.mandarin.util.AppLog
 import com.mandarinkafe.mandarin.util.Constants.MENU_WAIT_TIMEOUT
 import com.mandarinkafe.mandarin.util.Resource
-import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -29,8 +27,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
 
-@Singleton
-class CartRepositoryImpl @Inject constructor(
+class CartRepositoryImpl(
     private val storage: CartStorage,
     private val menuCache: MenuCache,
 ) : CartWriter, CartReader {
@@ -54,7 +51,7 @@ class CartRepositoryImpl @Inject constructor(
             val storedCartItems = try {
                 storage.getCartItems()
             } catch (e: Exception) {
-                Log.e(ERROR_TAG, "Ошибка при чтении корзины из storage", e)
+                AppLog.e("Ошибка при чтении корзины из storage", e)
                 storage.clearCart()
                 _cartItems.value =
                     Resource.ErrorOther("Ошибка при чтении корзины из локального хранилища. Корзина будет очищена.")
@@ -117,7 +114,7 @@ class CartRepositoryImpl @Inject constructor(
                     comment = item.comment
                 )
             } catch (e: Exception) {
-                Log.e(ERROR_TAG, "Mapping failed for item: $item", e)
+                AppLog.e("Mapping failed for item: $item", e)
             }
         }
         return valid
@@ -178,9 +175,5 @@ class CartRepositoryImpl @Inject constructor(
         scope.launch(Dispatchers.IO) {
             storage.clearCart()
         }
-    }
-
-    companion object {
-        private const val ERROR_TAG = "Cart DEBUG Repo"
     }
 }

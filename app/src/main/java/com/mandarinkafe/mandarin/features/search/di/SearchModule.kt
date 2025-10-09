@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.search.di
 
-import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.search.data.impl.LabelsRepositoryImpl
 import com.mandarinkafe.mandarin.features.search.domain.api.LabelsRepository
 import com.mandarinkafe.mandarin.features.search.domain.impl.FilterUseCaseImpl
@@ -9,40 +8,16 @@ import com.mandarinkafe.mandarin.features.search.domain.impl.GetLabelsUseCaseImp
 import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetFullMealListUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetLabelsUseCase
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchViewModel
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-class SearchModule {
-
-    @Provides
-    @Singleton
-    fun provideLabelsRepository(menuCache: MenuCache): LabelsRepository {
-        return LabelsRepositoryImpl(
-            menuCache = menuCache
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun provideGetLabelsUseCase(repository: LabelsRepository): GetLabelsUseCase =
-        GetLabelsUseCaseImpl(
-            repository = repository
-        )
-
-    @Provides
-    @Singleton
-    fun provideGetFullMealListUseCase(menuCache: MenuCache): GetFullMealListUseCase =
-        GetFullMealListUseCaseImpl(
-            menuCache = menuCache
-        )
-
-    @Provides
-    @Singleton
-    fun provideGetFilterUseCase(): FilterUseCase =
-        FilterUseCaseImpl()
+val searchModule = module {
+    singleOf(::LabelsRepositoryImpl) { bind<LabelsRepository>() }
+    singleOf(::GetLabelsUseCaseImpl) { bind<GetLabelsUseCase>() }
+    singleOf(::GetFullMealListUseCaseImpl) { bind<GetFullMealListUseCase>() }
+    singleOf(::FilterUseCaseImpl) { bind<FilterUseCase>() }
+    viewModelOf(::SearchViewModel)
 }

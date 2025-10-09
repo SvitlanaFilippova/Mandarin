@@ -1,15 +1,14 @@
 package com.mandarinkafe.mandarin.features.cart.data.local
 
-import android.util.Log
 import com.mandarinkafe.mandarin.db.CartItemsQueries
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toParams
 import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
+import com.mandarinkafe.mandarin.util.AppLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class SQLDelightCartStorage @Inject constructor(private val queries: CartItemsQueries) :
+class SQLDelightCartStorage(private val queries: CartItemsQueries) :
     CartStorage {
     override suspend fun getCartItems(): List<StoredCartItem> {
         return try {
@@ -22,7 +21,7 @@ class SQLDelightCartStorage @Inject constructor(private val queries: CartItemsQu
             withContext(Dispatchers.IO) {
                 queries.deleteAll()
             }
-            Log.e("Error CartStorage", "Ошибка при получении корзины из БД. Очищаю корзину. $e")
+            AppLog.e("Ошибка при получении корзины из БД. Очищаю корзину. $e")
             emptyList()
         }
     }

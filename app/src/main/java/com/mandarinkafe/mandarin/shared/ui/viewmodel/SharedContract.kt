@@ -17,6 +17,7 @@ sealed interface SharedContract {
         data object ResetTopBar : SharedEvent
         data class ShowFavoriteDialog(val item: CustomizedMeal) : SharedEvent
         data object DismissFavoriteDialog : SharedEvent
+        data object RefreshMenuIfStale : SharedEvent
         data class ToggleFavorite(val meal: Meal? = null, val item: CustomizedMeal? = null) :
             SharedEvent
 

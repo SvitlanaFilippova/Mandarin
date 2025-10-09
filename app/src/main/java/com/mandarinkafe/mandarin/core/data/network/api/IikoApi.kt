@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.core.data.network.api
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.data.dto.CustomerCategoriesRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsResponse
@@ -21,6 +20,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequ
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OrdersInfoResponse
+import com.mandarinkafe.mandarin.util.AppLog
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -29,7 +29,6 @@ import io.ktor.client.request.setBody
 class IikoApi(
     private val client: HttpClient,
 ) {
-    private val logTag = "IikoApiDebug"
 
     // Список организаций
     suspend fun getOrganizations(body: OrganizationsRequest): OrganizationsResponse {
@@ -156,22 +155,7 @@ class IikoApi(
         }
     }
 
-//    private fun <T> logRequest(methodName: String, body: T) {
-//        Log.d(logTag, "📤 $methodName - Запрос: ${body.toString().take(500)}...")
-//    }
-//
-//    private suspend fun logResponse(methodName: String, response: HttpResponse) {
-//        Log.d(logTag, "📥 $methodName - Статус: ${response.status}")
-//
-//        try {
-//            val rawBody = response.body<String>()
-//            Log.d(logTag, "📥 $methodName - Сырой ответ: ${rawBody.take(1000)}...")
-//        } catch (e: Exception) {
-//            Log.d(logTag, "📥 $methodName - Не удалось прочитать сырой ответ: ${e.message}")
-//        }
-//    }
-
     private fun logError(methodName: String, e: Exception) {
-        Log.e(logTag, "❌ $methodName - Ошибка: ${e.message}", e)
+        AppLog.e("❌ $methodName - Ошибка: ${e.message}", e)
     }
 }

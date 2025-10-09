@@ -15,12 +15,9 @@ import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class FavoritesViewModel @Inject constructor(private val favoritesApi: FavoritesApi) :
+class FavoritesViewModel(private val favoritesApi: FavoritesApi) :
     BaseViewModel<FavoritesEvent, FavoritesEffect, FavoritesState>() {
     override fun setInitialState() = FavoritesState()
 

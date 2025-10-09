@@ -1,17 +1,15 @@
 package com.mandarinkafe.mandarin.core.data.impl
 
 import android.annotation.SuppressLint
-import android.util.Log
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditionalCategory
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
+import com.mandarinkafe.mandarin.util.AppLog
 import com.mandarinkafe.mandarin.util.Constants.CATEGORY_ADDS
 import com.mandarinkafe.mandarin.util.Resource
-import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -20,8 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-@Singleton
-class MenuCacheImpl @Inject constructor(
+class MenuCacheImpl(
     private val fetcher: MenuFetcher,
 ) : MenuCache {
     override var lastRefreshTime: Long = 0
@@ -76,10 +73,10 @@ class MenuCacheImpl @Inject constructor(
                     }
 
                     is Resource.ErrorNoInternet<*> -> return result
-                    else -> Log.e(LOG_TAG, "fetchWithRetries. ${result.message}")
+                    else -> AppLog.e("fetchWithRetries. ${result.message}")
                 }
             } catch (e: Exception) {
-                Log.e(LOG_TAG, "fetchWithRetries. Exception: ${e.message}")
+                AppLog.e("fetchWithRetries. Exception: ${e.message}")
             }
             attempts++
             delay(DELAY_BEFORE_NEXT_ATTEMPT)
@@ -251,6 +248,5 @@ class MenuCacheImpl @Inject constructor(
 
         const val RECOMMENDS_CATEGORY_NAME = "Рекомендованные"
         const val DELIVERY_CATEGORY_NAME = "Доставка"
-        const val LOG_TAG = "MENU CACHE DEBUG"
     }
 }

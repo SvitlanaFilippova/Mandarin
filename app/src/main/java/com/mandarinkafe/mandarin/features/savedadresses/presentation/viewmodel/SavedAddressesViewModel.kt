@@ -8,12 +8,9 @@ import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.S
 import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesEvent
 import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesState
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class SavedAddressesViewModel @Inject constructor(
+class SavedAddressesViewModel(
     private val getSavedAddressesUseCase: GetSavedAddressesUseCase,
     private val removeAddress: RemoveAddressUseCase,
 ) :

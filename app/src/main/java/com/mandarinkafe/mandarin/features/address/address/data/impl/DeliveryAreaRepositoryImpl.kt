@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.address.address.data.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.data.dto.CsvResponse
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
@@ -8,6 +7,7 @@ import com.mandarinkafe.mandarin.core.domain.models.DeliveryZone
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.address.data.dto.ZoneMeta
 import com.mandarinkafe.mandarin.features.address.address.domain.api.DeliveryAreaRepository
+import com.mandarinkafe.mandarin.util.AppLog
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.first
 import java.io.IOException
@@ -16,7 +16,6 @@ class DeliveryAreaRepositoryImpl(
     private val networkClient: GoogleDocsNetworkClient,
     private val menuCache: MenuCache
 ) : DeliveryAreaRepository {
-    private val logTag = "DeliveryZone Debug"
     private var cachedZones: List<DeliveryZone>? = null
 
     override suspend fun getAllAreas(): Resource<List<DeliveryZone>> {
@@ -46,7 +45,7 @@ class DeliveryAreaRepositoryImpl(
                     if (zoneId != null) {
                         zoneId to meal.price
                     } else {
-                        Log.e("DeliveryDebug", "Meal '${meal.name}' -> no zoneId extracted")
+                        AppLog.e("Meal '${meal.name}' -> no zoneId extracted")
                         null
                     }
                 }.toMap()
@@ -72,14 +71,14 @@ class DeliveryAreaRepositoryImpl(
         return polygonsMap.mapNotNull { (id, polygon) ->
             val meta = metaMap[id]
             if (meta == null) {
-                Log.w(logTag, "Meta not found for zone id=$id — skipping")
+                AppLog.w("Meta not found for zone id=$id — skipping")
                 return@mapNotNull null
             }
 
             val parentArea = polygonsMap[id - 1]
             val deliveryPrice = pricesMap[id]
             if (deliveryPrice == null) {
-                Log.w(logTag, "Price not found for zone id=$id — setting to 0")
+                AppLog.w("Price not found for zone id=$id — setting to 0")
             }
 
             DeliveryZone(
@@ -104,18 +103,18 @@ class DeliveryAreaRepositoryImpl(
 
                 val zoneId = extractZoneIdFromName(name)
                 if (zoneId == null) {
-                    Log.w(logTag, "Cannot extract zone ID from name: $name")
+                    AppLog.w("Cannot extract zone ID from name: $name")
                     return@forEach
                 }
 
                 val points = runCatching { parseWktToGeoPoints(wkt) }
                     .getOrElse {
-                        Log.e(logTag, "Error parsing WKT for line: $line, error: ${it.message}")
+                        AppLog.e("Error parsing WKT for line: $line, error: ${it.message}")
                         emptyList()
                     }
 
                 if (points.isEmpty()) {
-                    Log.w(logTag, "No points parsed for zone $zoneId, WKT: $wkt")
+                    AppLog.w("No points parsed for zone $zoneId, WKT: $wkt")
                     return@forEach
                 }
 
@@ -134,7 +133,7 @@ class DeliveryAreaRepositoryImpl(
                 null
             }
         } catch (e: Exception) {
-            Log.e(logTag, "Error splitting CSV line: $line, error: ${e.message}")
+            AppLog.e("Error splitting CSV line: $line, error: ${e.message}")
             null
         }
     }
@@ -176,7 +175,7 @@ class DeliveryAreaRepositoryImpl(
                     val lat = coords[1].toDouble()
                     GeoPoint(lat, lon)
                 }.getOrElse {
-                    Log.w(logTag, "Invalid coordinates: $pair")
+                    AppLog.w("Invalid coordinates: $pair")
                     null
                 }
             }

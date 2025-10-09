@@ -8,6 +8,8 @@ object Constants {
     const val IMAGE_VALIDATOR_TIMEOUT = 1000
     const val MENU_WAIT_TIMEOUT = 10000L
 
+    const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/spreadsheets/d/e/"
+
     // Menu UI
     const val BANNERS_AUTO_SCROLL_INTERVAL: Long = 5000L
     const val BANNERS_ASPECT_RATIO = 2.91f
@@ -49,6 +51,8 @@ object Constants {
     const val TITLE_FONT_WEIGHT = 800
     const val NON_BRAKING_SPACE = "\u00A0"
     const val SNACKBAR_MESSAGE_KEY = "snackbarMessage"
+    const val RATIO_FOR_IMAGE_CROP_MIN = 0.75f
+    const val RATIO_FOR_IMAGE_CROP_MAX = 1.5f
 
     // Order
     const val VALID_PHONE_LENGTH = 10
@@ -58,13 +62,6 @@ object Constants {
     const val PAYMENT_ONLINE_CODE = "ONLINE"
     const val PAYMENT_BANK_CODE = "BANK"
     const val PAYMENT_CASH_CODE = "CASH"
-
-    // DI
-    const val DATABASE_NAME = "mandarin.db"
-    const val IIKO_BASE_URL = "https://api-ru.iiko.services"
-    const val LOCAL_STORAGE_NAME = "local_storage"
-    const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/spreadsheets/d/e/"
-    const val TELEGRAM_API_BASE_URL = "https://api.telegram.org/"
 
 
     // Теги для особой логики в меню

@@ -1,11 +1,6 @@
 package com.mandarinkafe.mandarin.features.order.di
 
-import android.content.SharedPreferences
-import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
-import com.mandarinkafe.mandarin.core.domain.api.MenuCache
-import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.LoyaltyCustomerRepositoryImpl
-import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckDiscountByPhoneUseCase
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.LoyaltyCustomerRepository
 import com.mandarinkafe.mandarin.features.order.data.impl.OrderRepositoryImpl
 import com.mandarinkafe.mandarin.features.order.data.impl.UserInfoRepositoryImpl
@@ -23,85 +18,45 @@ import com.mandarinkafe.mandarin.features.order.domain.impl.CalculateCartTotalWi
 import com.mandarinkafe.mandarin.features.order.domain.impl.CreateOrderUseCaseImpl
 import com.mandarinkafe.mandarin.features.order.domain.impl.PickupOnlyRemoveUseCaseImpl
 import com.mandarinkafe.mandarin.features.order.domain.impl.ResolvePickupPointUseCaseImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.OrderCreator
+import com.mandarinkafe.mandarin.features.savedadresses.domain.AddressUseCases
+import com.mandarinkafe.mandarin.features.savedadresses.domain.CartContentUseCases
+import com.mandarinkafe.mandarin.features.savedadresses.domain.OrderInfoUseCases
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-class OrderModule {
+val orderModule = module {
 
-    @Provides
-    fun provideLoyaltyCustomerRepository(
-        iikoNetworkClient: IikoNetworkClient,
-    ): LoyaltyCustomerRepository {
-        return LoyaltyCustomerRepositoryImpl(
-            networkClient = iikoNetworkClient,
-        )
-    }
+    // LoyaltyCustomerRepository
+    singleOf(::LoyaltyCustomerRepositoryImpl) { bind<LoyaltyCustomerRepository>() }
 
-    @Singleton
-    @Provides
-    fun provideOrderRepository(
-        networkClient: IikoNetworkClient,
-        menuCache: MenuCache
-    ): OrderRepository {
-        return OrderRepositoryImpl(
-            networkClient = networkClient,
-            menuCache = menuCache
-        )
-    }
+    // OrderRepository
+    singleOf(::OrderRepositoryImpl) { bind<OrderRepository>() }
 
-    @Singleton
-    @Provides
-    fun provideCreateOrderUseCase(
-        repository: OrderRepository,
-        menuCache: MenuCache
-    ): CreateOrderUseCase {
-        return CreateOrderUseCaseImpl(
-            repository = repository,
-            menuCache = menuCache
-        )
-    }
+    // UseCases
+    singleOf(::CreateOrderUseCaseImpl) { bind<CreateOrderUseCase>() }
+    singleOf(::CalculateCartTotalWithDiscountUseCaseImpl) { bind<CalculateCartTotalWithDiscountUseCase>() }
+    singleOf(::ResolvePickupPointUseCaseImpl) { bind<ResolvePickupPointUseCase>() }
+    singleOf(::ApplyPhoneDiscountUseCaseImpl) { bind<ApplyPhoneDiscountUseCase>() }
+    singleOf(::PickupOnlyRemoveUseCaseImpl) { bind<PickupOnlyRemoveUseCase>() }
 
-    @Singleton
-    @Provides
-    fun provideCalculateCartTotalWithDiscountUseCase(): CalculateCartTotalWithDiscountUseCase {
-        return CalculateCartTotalWithDiscountUseCaseImpl()
-    }
+    // UserInfoStorage
+    singleOf(::UserInfoStorageImpl) { bind<UserInfoStorage>() }
 
-    @Singleton
-    @Provides
-    fun provideResolvePickupPointUseCase(): ResolvePickupPointUseCase {
-        return ResolvePickupPointUseCaseImpl()
-    }
+    // UserInfoRepository
+    singleOf(::UserInfoRepositoryImpl) { bind<UserInfoRepository>() }
+    singleOf(::OrderCreator)
 
-    @Singleton
-    @Provides
-    fun provideApplyPhoneDiscountUseCase(checkDiscountByPhone: CheckDiscountByPhoneUseCase): ApplyPhoneDiscountUseCase {
-        return ApplyPhoneDiscountUseCaseImpl(
-            checkDiscountByPhone = checkDiscountByPhone
-        )
-    }
+    // Группы юзкейсов для OrderViewModel
+    singleOf(::CartContentUseCases)
+    singleOf(::OrderInfoUseCases)
+    singleOf(::AddressUseCases)
 
-    @Provides
-    @Singleton
-    fun provideUserInfoStorage(
-        sharedPreferences: SharedPreferences
-    ): UserInfoStorage = UserInfoStorageImpl(sharedPreferences = sharedPreferences)
+    // ViewModel
+    viewModelOf(::OrderViewModel)
 
-    @Provides
-    @Singleton
-    fun provideUserInfoRepository(
-        userInfoStorage: UserInfoStorage
-    ): UserInfoRepository = UserInfoRepositoryImpl(userInfoStorage = userInfoStorage)
-
-    @Provides
-    @Singleton
-    fun providePickupOnlyRemoveUseCase(
-        cartWriter: CartWriter
-    ): PickupOnlyRemoveUseCase = PickupOnlyRemoveUseCaseImpl(cartWriter = cartWriter)
 
 }

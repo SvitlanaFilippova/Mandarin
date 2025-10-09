@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.core.data.network.auth
 
-import android.util.Log
 import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
+import com.mandarinkafe.mandarin.util.AppLog
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -38,7 +38,7 @@ class IikoAuthProvider(
                     ?: error("Пустой токен от iiko")
             token!!
             } catch (e: Exception) {
-            Log.e(token, "Ошибка получения токена", e)
+            AppLog.e("Ошибка получения токена", e)
                 throw e
             }
         }

@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -35,11 +34,12 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.MyClickableText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.RemoveConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SavedAddressesScreen(
     navController: NavHostController,
-    viewModel: SavedAddressesViewModel = hiltViewModel()
+    viewModel: SavedAddressesViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val effectFlow = viewModel.effect

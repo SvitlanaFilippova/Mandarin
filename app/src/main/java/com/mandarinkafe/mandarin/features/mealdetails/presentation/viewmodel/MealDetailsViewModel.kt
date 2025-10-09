@@ -27,13 +27,10 @@ import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
 import com.mandarinkafe.mandarin.util.UiText
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class MealDetailsViewModel @Inject constructor(
+class MealDetailsViewModel(
     private val getAddonsUseCase: GetAddonsUseCase,
     private val getMealById: GetMealByIdUseCase,
     private val cartInteractor: CartInteractor

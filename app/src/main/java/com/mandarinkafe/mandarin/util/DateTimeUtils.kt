@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.util
 
-import android.util.Log
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -13,7 +12,7 @@ object DateTimeUtils {
             LocalDateTime.parse(it, inputFormatter).format(outputFormatter)
         }
     } catch (e: Exception) {
-        Log.e("Error toHumanDateTimeOrNull", "error: $e")
+        AppLog.e("error: $e")
         null
     }
 }

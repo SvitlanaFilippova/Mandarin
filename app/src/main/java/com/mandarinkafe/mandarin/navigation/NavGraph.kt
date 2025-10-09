@@ -2,7 +2,6 @@ package com.mandarinkafe.mandarin.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -42,6 +41,7 @@ import com.mandarinkafe.mandarin.navigation.extensions.decodeJsonArg
 import com.mandarinkafe.mandarin.navigation.extensions.stringNavArg
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
+import org.koin.androidx.compose.koinViewModel
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
@@ -51,9 +51,9 @@ fun NavGraph(navHostController: NavHostController) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     navHostController.navigatorProvider.addNavigator(bottomSheetNavigator)
 
-    val cartViewModel: CartViewModel = hiltViewModel()
-    val sharedViewModel: SharedViewModel = hiltViewModel()
-    val orderViewModel: OrderViewModel = hiltViewModel()
+    val cartViewModel: CartViewModel = koinViewModel()
+    val sharedViewModel: SharedViewModel = koinViewModel()
+    val orderViewModel: OrderViewModel = koinViewModel()
     val gson = remember { Gson() }
 
     ModalBottomSheetLayout(

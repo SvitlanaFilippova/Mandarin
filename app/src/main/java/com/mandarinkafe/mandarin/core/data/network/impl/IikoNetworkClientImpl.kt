@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.core.data.network.impl
 
-import android.util.Log
 import com.mandarinkafe.mandarin.core.data.dto.CustomerCategoriesRequest
 import com.mandarinkafe.mandarin.core.data.dto.OrganizationsRequest
 import com.mandarinkafe.mandarin.core.data.dto.Response
@@ -16,6 +15,7 @@ import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryReque
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
+import com.mandarinkafe.mandarin.util.AppLog
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
@@ -31,8 +31,6 @@ class IikoNetworkClientImpl(
 
     private var organizationId: String = ""
 
-    private val logTag = "NetworkClientDebug"
-
     /** Загружаем organizationId один раз при первом обращении */
     private suspend fun ensureOrganizationId(): String {
         if (organizationId.isNotEmpty()) {
@@ -44,7 +42,7 @@ class IikoNetworkClientImpl(
                 ?: error("Не найдена организация")
             organizationId
         } catch (e: Exception) {
-            Log.e(logTag, "Ошибка получения organizationId", e)
+            AppLog.e("Ошибка получения organizationId", e)
             throw e
         }
     }
@@ -59,7 +57,7 @@ class IikoNetworkClientImpl(
 
                 menuResponse.apply { resultCode = HTTP_SUCCESS }
             } catch (e: Throwable) {
-                Log.e(logTag, "Ошибка при получении меню: ${e.message}", e)
+                AppLog.e("Ошибка при получении меню: ${e.message}", e)
                 Response().apply { resultCode = HTTP_SERVER_ERROR }
             }
         }
@@ -80,7 +78,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "Ошибка getLoyaltyCustomerInfo", e)
+            AppLog.e("Ошибка getLoyaltyCustomerInfo", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -94,10 +92,11 @@ class IikoNetworkClientImpl(
             val response = iikoApi.getPaymentTypes(body = PaymentTypesRequest(listOf(orgId)))
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "Ошибка getPaymentTypes", e)
+            AppLog.e("Ошибка getPaymentTypes", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
+
 
     override suspend fun createDelivery(order: OutgoingOrderDto): Response {
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
@@ -108,7 +107,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "Ошибка createDelivery: ${e.message}", e)
+            AppLog.e("Ошибка createDelivery: ${e.message}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -125,7 +124,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "Ошибка getOrdersStatuses: ${e.message}", e)
+            AppLog.e("Ошибка getOrdersStatuses: ${e.message}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -139,7 +138,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "Ошибка getAllCustomerCategories: ${e.message}", e)
+            AppLog.e("Ошибка getAllCustomerCategories: ${e.message}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -153,7 +152,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "Ошибка getDiscounts: ${e.message}", e)
+            AppLog.e("Ошибка getDiscounts: ${e.message}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -167,7 +166,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "Ошибка cancelOrder: ${e.message}", e)
+            AppLog.e("Ошибка cancelOrder: ${e.message}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -181,7 +180,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "Ошибка getTerminalGroupsIds: ${e.message}", e)
+            AppLog.e("Ошибка getTerminalGroupsIds: ${e.message}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -195,7 +194,7 @@ class IikoNetworkClientImpl(
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
-            Log.e(logTag, "Ошибка getAliveTerminalGroups: ${e.message}", e)
+            AppLog.e("Ошибка getAliveTerminalGroups: ${e.message}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
