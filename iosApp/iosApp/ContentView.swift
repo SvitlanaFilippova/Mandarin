@@ -1,6 +1,6 @@
 import UIKit
 import SwiftUI
-import Mandarin
+import sharedKit
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
