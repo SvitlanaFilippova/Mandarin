@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import com.mandarinkafe.mandarin.util.AppLog
 import com.mandarinkafe.mandarin.util.Constants.RATIO_FOR_IMAGE_CROP_MAX
 import com.mandarinkafe.mandarin.util.Constants.RATIO_FOR_IMAGE_CROP_MIN
 import io.kamel.core.Resource
@@ -19,8 +20,9 @@ import io.kamel.image.asyncPainterResource
 @Composable
 fun KamelSubcomposeAsyncImage(
     model: Any?,
-    contentDescription: String?,
     modifier: Modifier = Modifier,
+    previewModel: Any? = null,
+    contentDescription: String?,
     placeholder: Painter? = null,
     error: Painter? = null,
     crossfade: Boolean = true,
@@ -45,23 +47,66 @@ fun KamelSubcomposeAsyncImage(
     val resource: Resource<Painter> = asyncPainterResource(data = model)
     onStateChange?.invoke(resource)
 
+    // Загружаем превью изображение, если оно предоставлено
+    val previewResource: Resource<Painter>? = previewModel?.let {
+        AppLog.d("Загружаю previewModel")
+        asyncPainterResource(data = it)
+    }
+
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         when (resource) {
             is Resource.Loading -> {
-                placeholder?.let {
-                    Image(
-                        painter = it,
-                        contentDescription = contentDescription,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                } ?: CircularProgressIndicator()
+                // Показываем превью если оно доступно, иначе placeholder или индикатор
+                when {
+                    previewResource is Resource.Success -> {
+                        AppLog.d("Показываю previewResource")
+                        Image(
+                            painter = previewResource.value,
+                            contentDescription = contentDescription,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = contentScale ?: ContentScale.Crop
+                        )
+                    }
+
+                    previewResource is Resource.Loading && placeholder != null -> {
+                        AppLog.d("Показываю placeholder пока загружается превью")
+                        Image(
+                            painter = placeholder,
+                            contentDescription = contentDescription,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    previewResource is Resource.Failure && placeholder != null -> {
+                        AppLog.d("Ошибка загрузки превью, показываю placeholder")
+                        Image(
+                            painter = placeholder,
+                            contentDescription = contentDescription,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    placeholder != null -> {
+                        AppLog.d("Показываю placeholder")
+                        Image(
+                            painter = placeholder,
+                            contentDescription = contentDescription,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    else -> CircularProgressIndicator()
+                }
             }
 
             is Resource.Success -> {
+                AppLog.d("Показываю основную model")
                 val painter = resource.value
 
-                // Умная адаптация contentScale по пропорции
+                // Адаптация contentScale по пропорции
                 val ratio = if (painter.intrinsicSize.height != 0f) {
                     painter.intrinsicSize.width / painter.intrinsicSize.height
                 } else {
@@ -95,6 +140,7 @@ fun KamelSubcomposeAsyncImage(
             }
 
             is Resource.Failure -> {
+                AppLog.d("ошибка, показываю placeholder")
                 error?.let {
                     Image(
                         painter = it,

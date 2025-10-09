@@ -35,17 +35,17 @@
 
 ## Используемые инструменты и технологии 📚
 
-| Категория            | Технологии                                          |
-|----------------------|-----------------------------------------------------|
-| UI                   | Jetpack Compose, Material3                          |
-| Архитектура          | MVI, StateFlow, Coroutines, <del>Hilt</del>   ->  Koin              |
-| Навигация            | Navigation Compose, Accompanist Navigation Material |
-| Работа с данными     | Gson, SQLDelight, SharedPreferences, <del>Retrofit</del> -> Ktor           |
-| Изображения          | Coil 3                                              |
-| Карты                | Yandex MapKit                                       |
-| Firebase             | Remote Config, Crashlytics                          |
-| Интеграции           | iikoCloud API, Telegram Bot API                     |
-| Инструменты качества | Detekt, Lint                                        |
+| Категория            | Технологии                                                       |
+|----------------------|------------------------------------------------------------------|
+| UI                   | Jetpack Compose, Material3                                       |
+| Архитектура          | MVI, StateFlow, Coroutines, <del>Hilt</del> ->  Koin             |
+| Навигация            | Navigation Compose, Accompanist Navigation Material              |
+| Работа с данными     | Json, SQLDelight, SharedPreferences, <del>Retrofit</del> -> Ktor |
+| Изображения          | <del>Coil</del> -> Kamel                                         |
+| Карты                | Yandex MapKit                                                    |
+| Firebase             | Remote Config, Crashlytics                                       |
+| Интеграции           | iikoCloud API, Telegram Bot API                                  |
+| Инструменты качества | Detekt, Lint                                                     |
 
 
 
