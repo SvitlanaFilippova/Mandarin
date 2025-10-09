@@ -10,13 +10,13 @@ if (!googleServicesFile.exists() && googleServicesSampleFile.exists()) {
 }
 
 plugins {
+    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
     alias(libs.plugins.jetbrains.kotlin.parcelize)
-    alias(libs.plugins.jetbrains.kotlin.compose)
-    alias(libs.plugins.google.services)
-    alias(libs.plugins.firebase.crashlytics)
+    // alias(libs.plugins.google.services)
+    // alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.jetbrains.kotlin.serialization)
 }
@@ -86,9 +86,6 @@ android {
         sourceCompatibility = JavaVersion.valueOf(libs.versions.java.get())
         targetCompatibility = JavaVersion.valueOf(libs.versions.java.get())
     }
-    kotlinOptions {
-        jvmTarget = JavaVersion.valueOf(libs.versions.java.get()).toString()
-    }
 
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.15"
@@ -100,85 +97,116 @@ android {
     }
 }
 
+kotlin {
+    androidTarget {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
+
+    listOf(
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "Mandarin"
+            isStatic = true
+        }
+    }
+
+    sourceSets {
+        androidMain.dependencies {
+            implementation(compose.preview)
+            implementation(libs.androidx.compose.activity)
+            // Подключаем Shared модуль
+            implementation(project(":shared"))
+
+            // Koin
+            implementation(libs.koin.core)
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
+            implementation(libs.koin.ktor)
+
+            // Android Jetpack Lifecycle
+            implementation(libs.androidx.lifecycle.runtime.ktx)
+            implementation(libs.androidx.lifecycle.process)
+
+            // Navigation for Compose
+            implementation(libs.androidx.navigation.compose)
+
+            // Kamel
+            implementation(libs.kamel.image.default)
+
+            // Core
+            implementation(libs.androidx.core.ktx)
+
+            // Napier
+            implementation(libs.napier)
+
+            // Material Design
+            implementation(libs.material)
+
+            // Activity
+            implementation(libs.androidx.activity)
+
+            // Jetpack Compose
+            implementation(libs.androidx.compose.ui)
+            implementation(libs.androidx.compose.ui.tooling)
+            implementation(libs.androidx.compose.ui.tooling.preview)
+            implementation(libs.androidx.compose.foundation)
+            implementation(libs.androidx.compose.material)
+            implementation(libs.androidx.compose.material3)
+            implementation(libs.androidx.compose.runtime)
+            implementation(libs.androidx.compose.activity)
+            implementation(libs.androidx.compose.viewmodel)
+
+            // Mapkit
+            implementation(libs.com.yandex.maps.mobile)
+
+            // Accompanist для управления системными UI + навигацией с BottomSheet
+            implementation(libs.accompanist.navigation.material)
+            implementation(libs.accompanist.systemuicontroller)
+
+            // Firebase (временно отключено)
+            // implementation(libs.firebase.analytics)
+            // implementation(libs.firebase.crashlytics)
+            // implementation(libs.firebase.config)
+
+            // SQLDelight
+            implementation(libs.sqldelight)
+            implementation(libs.sqldelight.android.driver)
+            implementation(libs.sqldelight.coroutines.extensions)
+
+            // Ktor
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.auth)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.okhttp)
+
+            // Kotlinx Serialization
+            implementation(libs.kotlinx.serialization.json)
+        }
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+            implementation(libs.androidx.lifecycle.viewmodelCompose)
+            implementation(libs.androidx.lifecycle.runtimeCompose)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+    }
+}
+
 
 dependencies {
-    // Подключаем Shared модуль
-    implementation(project(":shared"))
-
-    // Koin
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
-    implementation(libs.koin.androidx.compose)
-    implementation(libs.koin.ktor)
-
-    // Android Jetpack Lifecycle
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.process)
-
-    // Navigation for Compose
-    implementation(libs.androidx.navigation.compose)
-
-    // Kamel
-    implementation(libs.kamel.image.default)
-
-    // Core
-    implementation(libs.androidx.core.ktx)
-
-    // Napier
-    implementation(libs.napier)
-
-    // Material Design
-    implementation(libs.material)
-
-    // Activity
-    implementation(libs.androidx.activity)
-
-    // JUnit
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    implementation(libs.androidx.compiler)
-
-    // Jetpack Compose
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.foundation)
-    implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.runtime)
-    implementation(libs.androidx.compose.activity)
-    implementation(libs.androidx.compose.viewmodel)
-
-    // Mapkit
-    implementation(libs.com.yandex.maps.mobile)
-
-    // Accompanist для управления системными UI + навигацией с BottomSheet
-    implementation(libs.accompanist.navigation.material)
-    implementation(libs.accompanist.systemuicontroller)
-
-    // Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics.ktx)
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.config.ktx)
-
-    // SQLDelight
-    implementation(libs.sqldelight)
-    implementation(libs.sqldelight.android.driver)
-    implementation(libs.sqldelight.coroutines.extensions)
-
-    // Ktor
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.ktor.client.auth)
-    implementation(libs.ktor.client.logging)
-    implementation(libs.ktor.client.okhttp)
-
-    // Kotlinx Serialization
-    implementation(libs.kotlinx.serialization.json)
+    debugImplementation(compose.uiTooling)
 }
 
 sqldelight {
