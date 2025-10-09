@@ -5,10 +5,8 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.core.domain.models.UserInfo
-import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
-import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWithDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.PickupOnlyRemoveUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.SaveOrderToHistoryUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.UserInfoRepository
@@ -41,10 +39,8 @@ class OrderViewModel(
     private val cartUseCases: CartContentUseCases,
     private val pickupOnlyRemover: PickupOnlyRemoveUseCase,
     private val orderCreator: OrderCreator,
-    private val getDeliveryZone: GetDeliveryZoneUseCase,
     private val addressUseCases: AddressUseCases,
     private val infoUseCases: OrderInfoUseCases,
-    private val calculateCartTotalWithDiscount: CalculateCartTotalWithDiscountUseCase,
     private val applyPhoneDiscount: ApplyPhoneDiscountUseCase,
     private val saveOrderToHistory: SaveOrderToHistoryUseCase,
     private val userInfoRepository: UserInfoRepository,
@@ -260,7 +256,7 @@ class OrderViewModel(
             )
         }
         viewModelScope.launch {
-            val deliveryZone = getDeliveryZone(address.point)
+            val deliveryZone = addressUseCases.getDeliveryZone(address.point)
             setState {
                 val newDeliveryInfo = deliveryInfo.copy(
                     deliveryZone = deliveryZone,
@@ -375,7 +371,7 @@ class OrderViewModel(
         setState {
             val discountSize = discountSize ?: cartSummary.discountPercent
             val cartSumWithDiscount =
-                calculateCartTotalWithDiscount(cartSummary.items, discountSize)
+                cartUseCases.calculateCartTotalWithDiscount(cartSummary.items, discountSize)
             copy(
                 cartSummary = cartSummary.copy(
                     cartSumWithDiscount = cartSumWithDiscount,
