@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.core.di
 
+import android.system.Os.bind
 import com.mandarinkafe.mandarin.core.data.api.RefreshMenuIfStaleUseCase
 import com.mandarinkafe.mandarin.core.data.impl.MenuCacheImpl
 import com.mandarinkafe.mandarin.core.data.impl.RefreshMenuIfStaleUseCaseImpl

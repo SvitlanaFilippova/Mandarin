@@ -22,7 +22,6 @@ object Constants {
     const val MAX_LINES_FOR_MEAL_TITLE_IN_MENU = 3
     const val MAX_LINES_FOR_COLLAPSED_EXPANDABLE_TEXT = 4
     const val MIN_LINES_FOR_ADDRESS_INPUT = 2
-    const val IMAGE_SIZE_IN_MENU = 300
     const val MENU_IMAGE_SPACING_COUNT = 3
     const val MENU_IMAGE_COLUMN_COUNT = 2
 

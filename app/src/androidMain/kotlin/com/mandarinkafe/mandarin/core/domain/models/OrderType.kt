@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.core.data.dto.order
+package com.mandarinkafe.mandarin.core.domain.models
 
 import kotlinx.serialization.Serializable
 

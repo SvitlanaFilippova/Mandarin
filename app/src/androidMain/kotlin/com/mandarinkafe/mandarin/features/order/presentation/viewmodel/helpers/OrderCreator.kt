@@ -7,7 +7,7 @@ import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
 import com.mandarinkafe.mandarin.util.Resource
-import com.mandarinkafe.mandarin.util.UiText
+import com.mandarinkafe.mandarin.util.presentation.UiText
 import com.mandarinkafe.mandarin.util.tickerFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

@@ -33,7 +33,7 @@ import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.Constants.SNACKBAR_MESSAGE_KEY
-import com.mandarinkafe.mandarin.util.asString
+import com.mandarinkafe.mandarin.util.presentation.asString
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.RemoveConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen

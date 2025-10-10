@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart.di
 
-import com.mandarinkafe.mandarin.core.data.api.CartReader
+import com.mandarinkafe.mandarin.core.domain.api.CartReader
 import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
 import com.mandarinkafe.mandarin.features.cart.data.impl.CartRepositoryImpl
 import com.mandarinkafe.mandarin.features.cart.data.impl.RecommendsSchemaRepositoryImpl

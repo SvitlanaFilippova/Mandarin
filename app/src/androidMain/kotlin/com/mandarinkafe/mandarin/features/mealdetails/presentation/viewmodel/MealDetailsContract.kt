@@ -11,7 +11,7 @@ import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SELECTED_FIRST_INDEX
-import com.mandarinkafe.mandarin.util.UiText
+import com.mandarinkafe.mandarin.util.presentation.UiText
 
 sealed interface MealDetailsContract {
     sealed interface MealDetailsEvent : BaseEvent {

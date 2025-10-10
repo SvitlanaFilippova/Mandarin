@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.orderinfo.data
 
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
+import com.mandarinkafe.mandarin.core.data.dto.order.OrderTypeDto
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
@@ -10,7 +11,9 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+import com.mandarinkafe.mandarin.core.domain.models.OrderType
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
+import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.IncomingModifierDto
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.IncomingOrderItemDto
@@ -40,6 +43,8 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
             append(comment)
         }
     }
+    val orderType =order?.orderType?.toDomain()
+
     return IncomingOrder(
         id = id,
         number = order?.number,
@@ -50,12 +55,12 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         phone = order?.phone,
         deliveryAddress = order?.deliveryPoint?.toAddress(),
         comment = order?.comment?.toVisibleComment(),
-        customer = order?.customer,
+        customerName = order?.customer?.name,
         items = order?.items?.toDomainWithAdds(addons) ?: emptyList(),
         paymentName = order?.payments?.firstOrNull()?.paymentType?.name,
         status = order?.status?.toDeliveryStatus() ?: DeliveryStatus.UNCONFIRMED,
         cancelInfo = cancelInfo,
-        orderType = order?.orderType,
+        orderType = orderType,
         processedPaymentsSum = order?.processedPaymentsSum,
         sum = order?.sum,
         discountReason = order?.discounts?.firstOrNull()?.discountType?.name,
@@ -66,25 +71,15 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         whenCreated = order?.whenCreated?.toHumanDateTimeOrNull(),
         whenDelivered = order?.whenDelivered?.toHumanDateTimeOrNull(),
         whenSent = order?.whenSended?.toHumanDateTimeOrNull(),
-        problem = order?.problem,
+        isDelivery = orderType?.orderServiceType == OrderConstants.DELIVERY_TYPE_DELIVERY
     )
 }
 
-fun IncomingOrderItem.toCartItem(
-    baseMeal: Meal,
-    adds: List<MealAdditional>,
-    modifiers: List<ModifierGroup>
-): CartItem {
-    return CartItem(
-        customizedMeal = CustomizedMeal(
-            meal = baseMeal,
-            adds = adds,
-            modifiers = modifiers
-        ),
-        quantity = amount.toInt(),
-        comment = comment
-    )
-}
+fun OrderTypeDto.toDomain() = OrderType(
+    id = id,
+    name = name,
+    orderServiceType = orderServiceType,
+)
 
 fun IncomingOrderItemDto.toDomain(): IncomingOrderItem {
     val safeAmount = amount ?: 1.0

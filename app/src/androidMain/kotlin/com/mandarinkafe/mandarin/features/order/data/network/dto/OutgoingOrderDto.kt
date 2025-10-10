@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.order.data.network.dto
 
 import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
-import com.mandarinkafe.mandarin.core.data.dto.order.OrderType
+import com.mandarinkafe.mandarin.core.data.dto.order.OrderTypeDto
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrderItem
 import kotlinx.serialization.Serializable
 
@@ -16,7 +16,7 @@ data class OutgoingOrderDto(
     val items: List<OutgoingOrderItem?>,
     val discountsInfo: OutgoingDiscountInfoDto? = null,
     val payments: List<OutgoingPaymentDto>? = null,
-    val orderType: OrderType? = null,
+    val orderType: OrderTypeDto? = null,
     val processedPaymentsSum: Int? = null,
     val sum: Int? = null,
 )

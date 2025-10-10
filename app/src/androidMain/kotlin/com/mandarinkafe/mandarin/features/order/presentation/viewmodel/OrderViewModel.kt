@@ -31,7 +31,7 @@ import com.mandarinkafe.mandarin.features.savedadresses.domain.OrderInfoUseCases
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
-import com.mandarinkafe.mandarin.util.UiText
+import com.mandarinkafe.mandarin.util.presentation.UiText
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import kotlinx.coroutines.launch
 

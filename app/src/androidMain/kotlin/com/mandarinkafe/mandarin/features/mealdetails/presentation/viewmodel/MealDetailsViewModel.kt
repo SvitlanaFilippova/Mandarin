@@ -8,7 +8,7 @@ import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
-import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
+import com.mandarinkafe.mandarin.features.cart.domain.Mapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.model.MealAddResult
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetAddonsUseCase
@@ -25,7 +25,7 @@ import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
-import com.mandarinkafe.mandarin.util.UiText
+import com.mandarinkafe.mandarin.util.presentation.UiText
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.util
+package com.mandarinkafe.mandarin.util.presentation
 
 import android.content.Context
 import androidx.annotation.StringRes

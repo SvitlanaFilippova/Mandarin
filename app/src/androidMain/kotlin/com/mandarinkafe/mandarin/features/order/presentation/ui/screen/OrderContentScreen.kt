@@ -29,7 +29,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Submi
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.UtensilPreferences
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
-import com.mandarinkafe.mandarin.util.asString
+import com.mandarinkafe.mandarin.util.presentation.asString
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConsentTextWithLinks
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton

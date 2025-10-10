@@ -1,12 +1,8 @@
 package com.mandarinkafe.mandarin.core.domain.models
 
 import androidx.compose.runtime.Immutable
-import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
-import com.mandarinkafe.mandarin.core.data.dto.order.OrderType
-import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.ErrorInfo
-import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.Problem
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
 
@@ -20,7 +16,7 @@ data class IncomingOrder(
     val phone: String? = null,
     val deliveryAddress: Address? = null,
     val comment: String? = null,
-    val customer: CustomerDto? = null,
+    val customerName: String? = null,
     val items: List<IncomingOrderItem>,
     val paymentName: String? = null,
     val status: DeliveryStatus,
@@ -36,12 +32,10 @@ data class IncomingOrder(
     val whenCreated: String? = null,
     val whenDelivered: String? = null,
     val whenSent: String? = null,
-    val problem: Problem? = null,
+    val isDelivery: Boolean
 ) {
     val isClosed: Boolean
         get() = status == DeliveryStatus.CANCELLED || status == DeliveryStatus.CLOSED
-    val isDelivery: Boolean
-        get() = orderType?.orderServiceType == OrderConstants.DELIVERY_TYPE_DELIVERY
     val canBeCanceled: Boolean
         get() = status == DeliveryStatus.UNCONFIRMED || status == DeliveryStatus.WAIT_COOKING || status == DeliveryStatus.READY_FOR_COOKING
 }

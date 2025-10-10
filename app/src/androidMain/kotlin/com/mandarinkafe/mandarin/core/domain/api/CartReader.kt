@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.core.data.api
+package com.mandarinkafe.mandarin.core.domain.api
 
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.util.Resource

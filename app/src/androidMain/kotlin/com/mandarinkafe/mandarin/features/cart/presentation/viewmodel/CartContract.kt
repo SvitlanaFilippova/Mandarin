@@ -8,7 +8,7 @@ import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.util.BaseEffect
 import com.mandarinkafe.mandarin.util.BaseEvent
 import com.mandarinkafe.mandarin.util.BaseState
-import com.mandarinkafe.mandarin.util.UiText
+import com.mandarinkafe.mandarin.util.presentation.UiText
 
 sealed interface CartContract {
     sealed interface CartEvent : BaseEvent {

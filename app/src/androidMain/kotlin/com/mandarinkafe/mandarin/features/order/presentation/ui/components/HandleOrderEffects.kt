@@ -10,7 +10,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrderInfo
-import com.mandarinkafe.mandarin.util.asString
+import com.mandarinkafe.mandarin.util.presentation.asString
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 

@@ -78,7 +78,7 @@ fun OrderInfoContentScreen(
             CustomerInfo(
                 phone = order.phone,
                 comment = order.comment,
-                customerName = order.customer?.name,
+                customerName = order.customerName,
             )
         }
 

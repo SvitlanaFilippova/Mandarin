@@ -13,7 +13,7 @@ import com.mandarinkafe.mandarin.features.cart.data.local.JsonAdapters
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.model.RecommendsSchemaRule
 
-object CartMapper {
+object Mapper {
 
     fun StoredCartItem.toParams() = CartItemInsertParams(
         id = id,
@@ -60,13 +60,6 @@ object CartMapper {
         modifiers = modifiers,
     )
 
-    fun Meal.toCartItem() = CartItem(
-        customizedMeal = this.toCustomizedMeal()
-    )
-
-    fun CustomizedMeal.toCartItem() = CartItem(
-        customizedMeal = this,
-    )
 
     fun RecommendsSchemaDto.toDomain() = RecommendsSchemaRule(
         sourceName = sourceName ?: "",

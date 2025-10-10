@@ -1,12 +1,12 @@
 package com.mandarinkafe.mandarin.features.cart.data.impl
 
-import com.mandarinkafe.mandarin.core.data.api.CartReader
+import com.mandarinkafe.mandarin.core.domain.api.CartReader
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
-import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCustomizedMeal
-import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toStoredCartItem
+import com.mandarinkafe.mandarin.features.cart.data.Mapper.toCustomizedMeal
+import com.mandarinkafe.mandarin.features.cart.data.Mapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.local.CartStorage
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.validateBy

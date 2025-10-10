@@ -10,7 +10,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.cart.data.CartMapper.toCartItem
+import com.mandarinkafe.mandarin.features.cart.domain.Mapper.toCartItem
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 
