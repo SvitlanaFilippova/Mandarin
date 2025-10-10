@@ -40,7 +40,7 @@
 | UI                   | Jetpack Compose, Material3                                       |
 | Архитектура          | MVI, StateFlow, Coroutines, <del>Hilt</del> ->  Koin             |
 | Навигация            | Navigation Compose, Accompanist Navigation Material              |
-| Работа с данными     | Json, SQLDelight, SharedPreferences, <del>Retrofit</del> -> Ktor |
+| Работа с данными     | SQLDelight, <del>SharedPreferences</del> -> DataStore, <del>Retrofit</del> -> Ktor |
 | Изображения          | <del>Coil</del> -> Kamel                                         |
 | Карты                | Yandex MapKit                                                    |
 | Firebase             | Remote Config, Crashlytics                                       |
