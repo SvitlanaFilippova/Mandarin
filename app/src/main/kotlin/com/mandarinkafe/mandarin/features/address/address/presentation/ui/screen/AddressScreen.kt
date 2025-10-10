@@ -22,7 +22,7 @@ import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.address.address.domain.models.toYandexPoint
+import com.mandarinkafe.mandarin.features.address.address.data.Mapper.toYandexPoint
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.components.HandleAddressEffects
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.components.MapWithButtons
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.components.RequestLocationPermission

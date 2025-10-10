@@ -1,10 +1,10 @@
 package com.mandarinkafe.mandarin.features.address.address.data.impl
 
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
+import com.mandarinkafe.mandarin.features.address.address.data.Mapper.toAddressSearchResult
+import com.mandarinkafe.mandarin.features.address.address.data.Mapper.toYandexPoint
 import com.mandarinkafe.mandarin.features.address.address.domain.api.AddressRepository
 import com.mandarinkafe.mandarin.features.address.address.domain.models.AddressSearchResult
-import com.mandarinkafe.mandarin.features.address.address.domain.models.toAddressSearchResult
-import com.mandarinkafe.mandarin.features.address.address.domain.models.toYandexPoint
 import com.mandarinkafe.mandarin.util.Resource
 import com.yandex.mapkit.geometry.Geometry
 import com.yandex.mapkit.search.Response

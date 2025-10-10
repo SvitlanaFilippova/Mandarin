@@ -2,13 +2,13 @@ package com.mandarinkafe.mandarin.features.address.address.presentation.viewmode
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.Address
+import com.mandarinkafe.mandarin.features.address.address.data.Mapper.toGeoPoint
+import com.mandarinkafe.mandarin.features.address.address.data.Mapper.toYandexPoint
 import com.mandarinkafe.mandarin.features.address.address.domain.api.AddressSearchInteractor
 import com.mandarinkafe.mandarin.features.address.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetCurrentLocationUseCase
 import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.address.domain.models.AddressSearchResult
-import com.mandarinkafe.mandarin.features.address.address.domain.models.toGeoPoint
-import com.mandarinkafe.mandarin.features.address.address.domain.models.toYandexPoint
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.models.toUi
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressContract.AddressEffect
 import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressContract.AddressEffect.GoBack

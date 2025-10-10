@@ -76,6 +76,7 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.ktor.client.core)
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.kotlinx.datetime)
                 implementation(libs.napier)
                 
                 // SQLDelight

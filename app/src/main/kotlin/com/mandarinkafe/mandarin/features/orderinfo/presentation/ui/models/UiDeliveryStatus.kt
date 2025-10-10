@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Stable
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 
 @Stable
 enum class UiDeliveryStatus(
@@ -72,4 +73,9 @@ enum class UiDeliveryStatus(
         R.string.delivery_status_extra_cancelled,
         R.drawable.ic_no_food
     )
+}
+
+fun DeliveryStatus.toUi(): UiDeliveryStatus {
+    return UiDeliveryStatus.entries.firstOrNull { it.apiName == this.apiName }
+        ?: error("Unknown DeliveryStatus: $this")
 }

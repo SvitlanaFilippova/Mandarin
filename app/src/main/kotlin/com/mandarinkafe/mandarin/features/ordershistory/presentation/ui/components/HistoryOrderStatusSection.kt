@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
-import com.mandarinkafe.mandarin.features.orderinfo.domain.models.toUi
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.toUi
 
 @Composable
 fun HistoryOrderStatusSection(orderStatus: DeliveryStatus?, color: Color) {
