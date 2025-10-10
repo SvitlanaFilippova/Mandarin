@@ -11,9 +11,6 @@ plugins {
 
 kotlin {
 
-    // Target declarations - add or remove as needed below. These define
-    // which platforms this KMP module supports.
-    // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
         namespace = "com.mandarinkafe.mandarin.shared"
         compileSdk = 36
@@ -83,9 +80,8 @@ kotlin {
                 implementation(libs.sqldelight)
                 implementation(libs.sqldelight.coroutines.extensions)
                 
-                // DataStore
-                implementation("androidx.datastore:datastore-preferences-core:1.1.3")
-                implementation("androidx.datastore:datastore-preferences:1.1.3")
+                // DataStore core
+                implementation(libs.datastore.preferences.core)
             }
         }
 
@@ -99,6 +95,8 @@ kotlin {
             dependencies {
                 implementation(libs.koin.android)
                 implementation(libs.sqldelight.android.driver)
+                // DataStore for Android
+                implementation(libs.datastore.preferences)
             }
         }
 
@@ -118,6 +116,8 @@ kotlin {
                 // on common by default and will correctly pull the iOS artifacts of any
                 // KMP dependencies declared in commonMain.
                 implementation(libs.sqldelight.native.driver)
+                // DataStore for iOS
+                implementation(libs.datastore.preferences)
             }
         }
     }
