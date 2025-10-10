@@ -9,16 +9,16 @@ class ApplyPhoneDiscountUseCaseImpl(
     private val checkDiscountByPhone: CheckDiscountByPhoneUseCase,
 ) : ApplyPhoneDiscountUseCase {
     override suspend fun invoke(
-        phone: String,
+        rawPhone: String,
         currentDiscount: Int
     ): DiscountByPhoneResult {
         return when {
-            phone.length != VALID_PHONE_LENGTH && currentDiscount > 0 -> {
+            rawPhone.length != VALID_PHONE_LENGTH && currentDiscount > 0 -> {
                 DiscountByPhoneResult(discountSize = 0, shouldUpdate = true)
             }
 
-            phone.length == VALID_PHONE_LENGTH -> {
-                when (val result = checkDiscountByPhone(phone)) {
+            rawPhone.length == VALID_PHONE_LENGTH -> {
+                when (val result = checkDiscountByPhone(rawPhone)) {
                     is Resource.Success -> DiscountByPhoneResult(
                         discountSize = result.data?.discountPercent ?: 0,
                         discountId = result.data?.discountId,
