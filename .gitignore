@@ -2,10 +2,15 @@
 .gradle/
 build/
 
+# Kotlin Multiplatform build artifacts
+**/kotlinTransformedMetadataLibraries/
+**/kotlinProjectStructureMetadata/
+**/kotlin-multiplatform-resources/
+**/xcode-frameworks/
+**/fat-framework/
+
 # Local configuration file (sdk path, etc)
 local.properties
-apikeys.properties
-
 apikeys.properties
 
 # Log/OS Files
@@ -34,3 +39,9 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# macOS
+.DS_Store
+
+# Release builds
+**/release/
