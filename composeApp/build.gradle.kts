@@ -82,6 +82,10 @@ kotlin {
                 // SQLDelight
                 implementation(libs.sqldelight)
                 implementation(libs.sqldelight.coroutines.extensions)
+                
+                // DataStore
+                implementation("androidx.datastore:datastore-preferences-core:1.1.3")
+                implementation("androidx.datastore:datastore-preferences:1.1.3")
             }
         }
 
