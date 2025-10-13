@@ -1,5 +1,7 @@
 @file:Suppress("MagicNumber")
 
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -107,19 +109,6 @@ kotlin {
                 implementation(libs.androidx.junit)
             }
         }
-
-        iosMain {
-            dependencies {
-                // Add iOS-specific dependencies here. This a source set created by Kotlin Gradle
-                // Plugin (KGP) that each specific iOS target (e.g., iosX64) depends on as
-                // part of KMP's default source set hierarchy. Note that this source set depends
-                // on common by default and will correctly pull the iOS artifacts of any
-                // KMP dependencies declared in commonMain.
-                implementation(libs.sqldelight.native.driver)
-                // DataStore for iOS
-                implementation(libs.datastore.preferences)
-            }
-        }
     }
 
 }
@@ -133,3 +122,38 @@ sqldelight {
     }
     linkSqlite = true
 }
+
+// Чтение ключей из apikeys.properties
+val keystoreFile = file("${project.rootDir}/apikeys.properties")
+val keystoreSampleFile = file("${project.rootDir}/apikeys.sample.properties")
+
+// Создаём apikeys.properties, если его нет
+if (!keystoreFile.exists() && keystoreSampleFile.exists()) {
+    println("!!! apikeys.properties не найден. Копирую sample...")
+    keystoreFile.writeText(keystoreSampleFile.readText())
+}
+
+val properties = Properties().apply {
+    load(keystoreFile.inputStream())
+}
+
+fun getKey(name: String): String = properties.getProperty(name) ?: ""
+
+// Генерируем BuildConfig.kt файл с ключами
+val buildConfigContent = """
+package com.mandarinkafe.mandarin.core.data.config
+
+object BuildConfig {
+    const val MAPKIT_API_KEY = "${getKey("MAPKIT_API_KEY")}"
+    const val IIKO_API_KEY = "${getKey("IIKO_API_KEY")}"
+    const val TG_BOT_TOKEN = "${getKey("TG_BOT_TOKEN")}"
+    const val TG_CHANNEL_ID = "${getKey("TG_CHANNEL_ID")}"
+    const val DEV_TG_CHAT_ID = "${getKey("DEV_TG_CHAT_ID")}"
+    const val SERVER_BASE_URL = "${getKey("SERVER_BASE_URL")}"
+    const val MANDARIN_API_KEY = "${getKey("MANDARIN_API_KEY")}"
+}
+""".trimIndent()
+
+val buildConfigFile = file("src/commonMain/kotlin/com/mandarinkafe/mandarin/core/data/config/BuildConfig.kt")
+buildConfigFile.parentFile.mkdirs()
+buildConfigFile.writeText(buildConfigContent)

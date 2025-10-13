@@ -1,8 +1,7 @@
 package com.mandarinkafe.mandarin.core.data.network.auth
 
-import com.mandarinkafe.mandarin.BuildConfig
+import com.mandarinkafe.mandarin.core.data.config.BuildConfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
-import com.mandarinkafe.mandarin.util.AppLog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -44,4 +43,3 @@ class IikoAuthProvider(
         }
     }
 }
-

@@ -1,15 +1,15 @@
 package com.mandarinkafe.mandarin.core.data.impl
 
-import android.annotation.SuppressLint
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditionalCategory
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.CATEGORY_ADDS
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.getCurrentTimeMillis
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -41,7 +41,7 @@ class MenuCacheImpl(
         val isLoading = _allVisibleMenu.value is Resource.Loading
         val current = _allVisibleMenu.value
         if (current is Resource.Success || isLoading) return
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(kotlinx.coroutines.Dispatchers.Default).launch {
             _allVisibleMenu.value = Resource.Loading()
             val result = fetchWithRetries()
             _allVisibleMenu.value = result
@@ -61,7 +61,6 @@ class MenuCacheImpl(
         _allVisibleMenu.value = result
     }
 
-    @SuppressLint("LogNotTimber")
     private suspend fun fetchWithRetries(): Resource<List<MealCategory>> {
         var attempts = 0
         while (attempts < MAX_ATTEMPTS) {
@@ -73,10 +72,10 @@ class MenuCacheImpl(
                     }
 
                     is Resource.ErrorNoInternet<*> -> return result
-                    else -> AppLog.e("fetchWithRetries. ${result.message}")
+                    else -> Napier.e("fetchWithRetries. ${result.message}")
                 }
             } catch (e: Exception) {
-                AppLog.e("fetchWithRetries. Exception: ${e.message}")
+                Napier.e("fetchWithRetries. Exception: ${e.message}")
             }
             attempts++
             delay(DELAY_BEFORE_NEXT_ATTEMPT)
@@ -86,7 +85,7 @@ class MenuCacheImpl(
 
     // ================= Helper Methods =================
     private fun proceedSuccessData(data: List<MealCategory>?): List<MealCategory> {
-        lastRefreshTime = System.currentTimeMillis()
+        lastRefreshTime = getCurrentTimeMillis()
         val rootCategories = data ?: emptyList()
 
         val visible = filterVisibleMenu(rootCategories)
