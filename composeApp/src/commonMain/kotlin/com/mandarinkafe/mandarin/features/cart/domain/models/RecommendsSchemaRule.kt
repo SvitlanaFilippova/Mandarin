@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.cart.domain.model
+package com.mandarinkafe.mandarin.features.cart.domain.models
 
 data class RecommendsSchemaRule(
     val sourceName: String,
