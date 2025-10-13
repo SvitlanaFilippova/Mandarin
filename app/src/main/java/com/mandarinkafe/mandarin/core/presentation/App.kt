@@ -25,6 +25,10 @@ import org.koin.core.context.GlobalContext.startKoin
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
+        // Настраиваем MapKit
+        MapKitFactory.setApiKey(BuildConfig.MAPKIT_API_KEY)
+        MapKitFactory.setLocale(LOCALE_RU)
+
         startKoin {
             androidContext(this@App)
             modules(
@@ -43,11 +47,6 @@ class App : Application() {
                 searchModule
             )
         }
-
-        // Настраиваем MapKit
-        MapKitFactory.setApiKey(BuildConfig.MAPKIT_API_KEY)
-        MapKitFactory.setLocale(LOCALE_RU)
-
         // Инициализация Napier
         Napier.base(DebugAntilog())
 
