@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
 import com.mandarinkafe.mandarin.core.domain.models.DeliveryZone
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 
 data class UiDeliveryArea(
     val id: Int,
@@ -19,7 +19,7 @@ fun DeliveryZone.toUi(): UiDeliveryArea {
     val safeColor = try {
         Color(colorHex.toColorInt())
     } catch (e: IllegalArgumentException) {
-        AppLog.e(
+        Napier.e(
             "Не удалось распознать цвет. Использую стандартный. Ошибка: $e"
         )
         Color.Gray

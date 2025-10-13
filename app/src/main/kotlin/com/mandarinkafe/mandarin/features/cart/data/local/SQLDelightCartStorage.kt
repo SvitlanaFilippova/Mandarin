@@ -4,7 +4,8 @@ import com.mandarinkafe.mandarin.db.CartItemsQueries
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toParams
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
-import com.mandarinkafe.mandarin.util.AppLog
+import com.mandarinkafe.mandarin.util.getCurrentTimeMillis
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -12,16 +13,16 @@ class SQLDelightCartStorage(private val queries: CartItemsQueries) :
     CartStorage {
     override suspend fun getCartItems(): List<StoredCartItem> {
         return try {
-            withContext(Dispatchers.IO) {
+            withContext(Dispatchers.Default) {
                 queries.selectAll()
                     .executeAsList()
                     .map { it.toStoredCartItem() }
             }
         } catch (e: Exception) {
-            withContext(Dispatchers.IO) {
+            withContext(Dispatchers.Default) {
                 queries.deleteAll()
             }
-            AppLog.e("Ошибка при получении корзины из БД. Очищаю корзину. $e")
+            Napier.e("Ошибка при получении корзины из БД. Очищаю корзину. $e")
             emptyList()
         }
     }
@@ -32,7 +33,7 @@ class SQLDelightCartStorage(private val queries: CartItemsQueries) :
 
     override suspend fun addOrUpdateItem(item: StoredCartItem) {
         val existingItem = queries.selectById(item.id).executeAsOneOrNull()
-        val timestamp = existingItem?.timestamp ?: System.currentTimeMillis()
+        val timestamp = existingItem?.timestamp ?: getCurrentTimeMillis()
 
         val params = item.toParams()
         with(params) {

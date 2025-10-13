@@ -24,7 +24,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_INFO_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SAVED_ADDRESSES_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.SNACKBAR_MESSAGE_KEY
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
@@ -152,7 +152,7 @@ fun NavController.tryGetBackStackEntry(route: String): NavBackStackEntry? {
     return try {
         getBackStackEntry(route)
     } catch (e: IllegalArgumentException) {
-        AppLog.e("error: $e")
+        Napier.e("error: $e")
         null // экрана в стеке нет
     }
 }

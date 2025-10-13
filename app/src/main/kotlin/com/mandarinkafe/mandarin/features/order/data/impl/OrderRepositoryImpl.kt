@@ -17,7 +17,7 @@ import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrderItem
 import com.mandarinkafe.mandarin.features.orderinfo.data.toDomain
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
@@ -36,7 +36,7 @@ class OrderRepositoryImpl(
             val response = networkClient.createDelivery(orderDto)
             handleCreateOrderResponse(response)
         } catch (e: Exception) {
-            AppLog.e("Exception in createOrder: ${e.message}", e)
+            Napier.e("Exception in createOrder: ${e.message}", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
@@ -92,7 +92,7 @@ class OrderRepositoryImpl(
             }
 
             else -> {
-                AppLog.e("Server error or empty response. Code: ${response.resultCode}")
+                Napier.e("Server error or empty response. Code: ${response.resultCode}")
                 Resource.ErrorOther("Ошибка сервера или пустой ответ")
             }
         }

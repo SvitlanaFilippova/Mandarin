@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.core.data.network.auth
 
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
 import com.mandarinkafe.mandarin.core.data.dto.AuthResponse
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -19,7 +19,7 @@ class IikoAuthApi(
             val authResponse = response.body<AuthResponse>()
             authResponse
         } catch (e: Exception) {
-            AppLog.e("Ошибка в IikoAuthApi.authenticate", e)
+            Napier.e("Ошибка в IikoAuthApi.authenticate", e)
             throw e
         }
     }

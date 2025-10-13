@@ -13,6 +13,7 @@ import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesSt
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
+import com.mandarinkafe.mandarin.util.getCurrentTimeMillis
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +35,7 @@ class FavoritesRepositoryImpl(
         _favoriteItems.asStateFlow()
 
     private val _baseIdsFlow = MutableStateFlow<Set<String>>(emptySet())
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     override fun observeBaseFavoritesIds(): Flow<Set<String>> = _baseIdsFlow.asStateFlow()
 
     override fun getBaseFavoritesIds(): Set<String> {
@@ -90,7 +91,7 @@ class FavoritesRepositoryImpl(
     }
 
     private fun getTimeStamp(): Long {
-        return System.currentTimeMillis()
+        return getCurrentTimeMillis()
     }
 
 

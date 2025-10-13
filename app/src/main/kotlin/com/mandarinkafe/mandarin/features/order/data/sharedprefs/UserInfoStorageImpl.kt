@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.order.data.sharedprefs
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.mandarinkafe.mandarin.core.domain.models.UserInfo
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import kotlinx.serialization.json.Json
 
 class UserInfoStorageImpl(
@@ -21,7 +21,7 @@ class UserInfoStorageImpl(
                 json.decodeFromString<UserInfo>(jsonString)
             }
         } catch (e: Exception) {
-            AppLog.e("Ошибка чтения UserInfo: ${e.message}")
+            Napier.e("Ошибка чтения UserInfo: ${e.message}")
             clearUserInfo()
             null
         }

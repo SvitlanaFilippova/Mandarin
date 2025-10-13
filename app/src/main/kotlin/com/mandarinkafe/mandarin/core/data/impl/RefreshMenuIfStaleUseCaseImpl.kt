@@ -3,7 +3,8 @@ package com.mandarinkafe.mandarin.core.data.impl
 import com.mandarinkafe.mandarin.core.data.api.RefreshMenuIfStaleUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
-import com.mandarinkafe.mandarin.util.AppLog
+import com.mandarinkafe.mandarin.util.getCurrentTimeMillis
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,15 +14,15 @@ class RefreshMenuIfStaleUseCaseImpl(
     private val menuCache: MenuCache
 ) : RefreshMenuIfStaleUseCase {
     override suspend fun invoke() {
-        val now = System.currentTimeMillis()
+        val now = getCurrentTimeMillis()
         val lastRefresh = menuCache.lastRefreshTime
 
         if (now - lastRefresh > REFRESH_INTERVAL_MS) {
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(Dispatchers.Default).launch {
                 try {
                     forceRefreshMenuUseCase()
                 } catch (e: Exception) {
-                    AppLog.e("Menu refresh failed", e)
+                    Napier.e("Menu refresh failed", e)
                 }
             }
         }

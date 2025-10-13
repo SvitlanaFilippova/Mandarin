@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.menu.data.impl
 
 import com.mandarinkafe.mandarin.features.menu.data.api.ImageValidator
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.IMAGE_VALIDATOR_TIMEOUT
 import kotlinx.coroutines.Dispatchers
@@ -10,7 +10,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class ImageValidatorImpl : ImageValidator {
-    override suspend fun isImageUrlValid(url: String): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun isImageUrlValid(url: String): Boolean = withContext(Dispatchers.Default) {
         try {
             val connection = URL(url).openConnection() as HttpURLConnection
             connection.requestMethod = "HEAD"
@@ -24,7 +24,7 @@ class ImageValidatorImpl : ImageValidator {
 
             code == HTTP_SUCCESS && contentType?.startsWith("image") == true
         } catch (e: Exception) {
-            AppLog.e("Изображение не валидно: ${e.message}")
+            Napier.e("Изображение не валидно: ${e.message}")
             false
         }
     }

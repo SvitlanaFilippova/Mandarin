@@ -7,7 +7,7 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.BannerDto
 import com.mandarinkafe.mandarin.features.menu.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.async
@@ -67,7 +67,7 @@ class BannersRepositoryImpl(
             .getOrElse { return Resource.ErrorOther("Ошибка разбора CSV: ${it.message}") }
 
         if (bannersDto.isEmpty()) {
-            AppLog.e("getBanners(): no valid banners")
+            Napier.e("getBanners(): no valid banners")
             return Resource.ErrorEmptyData()
         }
 

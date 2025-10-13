@@ -9,7 +9,7 @@ import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.discou
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CategoryDiscountRepository
 import com.mandarinkafe.mandarin.features.infrastructure.domain.models.CategoryDiscountMap
 import com.mandarinkafe.mandarin.features.infrastructure.domain.models.toDomain
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 
 class CategoryDiscountRepositoryImpl(
@@ -42,7 +42,7 @@ class CategoryDiscountRepositoryImpl(
         return categories.mapNotNull { category ->
             // Проверяем что category.id не null
             val categoryId = category.id ?: run {
-                AppLog.w(
+                Napier.w(
                     "Category has null ID, name: '${category.name}', skipping"
                 )
                 return@mapNotNull null
@@ -50,7 +50,7 @@ class CategoryDiscountRepositoryImpl(
 
             val categoryPercent = category.name?.toDoubleOrNull()
             if (categoryPercent == null) {
-                AppLog.w(
+                Napier.w(
                     "Category '${category.name}' is not a number, skipping"
                 )
                 return@mapNotNull null

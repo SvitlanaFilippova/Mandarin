@@ -4,7 +4,7 @@ import com.mandarinkafe.mandarin.core.data.dto.CsvResponse
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.GOOGLE_DOCS_BASE_URL
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
@@ -47,7 +47,7 @@ class GoogleDocsNetworkClientImpl(
                     resultCode = HTTP_SUCCESS
                 }
             } catch (e: Throwable) {
-                AppLog.e("Не удалось прочитать csv. ${e.message}")
+                Napier.e("Не удалось прочитать csv. ${e.message}")
                 Response().apply { resultCode = HTTP_SERVER_ERROR }
             }
         }

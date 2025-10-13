@@ -12,7 +12,7 @@ import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.validateBy
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
 import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.MENU_WAIT_TIMEOUT
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +31,7 @@ class CartRepositoryImpl(
     private val storage: CartStorage,
     private val menuCache: MenuCache,
 ) : CartWriter, CartReader {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private var cartItems: List<CartItem> = emptyList()
     private val _cartItems = MutableStateFlow<Resource<List<CartItem>>>(Resource.Idle())
@@ -51,7 +51,7 @@ class CartRepositoryImpl(
             val storedCartItems = try {
                 storage.getCartItems()
             } catch (e: Exception) {
-                AppLog.e("Ошибка при чтении корзины из storage", e)
+                Napier.e("Ошибка при чтении корзины из storage", e)
                 storage.clearCart()
                 _cartItems.value =
                     Resource.ErrorOther("Ошибка при чтении корзины из локального хранилища. Корзина будет очищена.")
@@ -114,7 +114,7 @@ class CartRepositoryImpl(
                     comment = item.comment
                 )
             } catch (e: Exception) {
-                AppLog.e("Mapping failed for item: $item", e)
+                Napier.e("Mapping failed for item: $item", e)
             }
         }
         return valid
@@ -150,7 +150,7 @@ class CartRepositoryImpl(
         _cartCount.value = cartItems.sumOf { it.quantity }
 
         // Фоновое сохранение
-        scope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.Default) {
             storage.addOrUpdateItem(item.toStoredCartItem())
 
         }
@@ -161,7 +161,7 @@ class CartRepositoryImpl(
         cartItems = cartItems.filterNot { it.id == id }
         _cartItems.value = Resource.Success(cartItems)
         _cartCount.value = cartItems.sumOf { it.quantity }
-        scope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.Default) {
             storage.deleteItemById(id)
         }
 
@@ -172,7 +172,7 @@ class CartRepositoryImpl(
         _cartItems.value = Resource.Success(emptyList())
         _cartCount.value = 0
 
-        scope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.Default) {
             storage.clearCart()
         }
     }

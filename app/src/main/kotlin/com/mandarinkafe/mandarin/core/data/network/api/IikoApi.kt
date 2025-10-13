@@ -20,7 +20,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequ
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OrdersInfoResponse
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -156,6 +156,6 @@ class IikoApi(
     }
 
     private fun logError(methodName: String, e: Exception) {
-        AppLog.e("❌ $methodName - Ошибка: ${e.message}", e)
+        Napier.e("❌ $methodName - Ошибка: ${e.message}", e)
     }
 }

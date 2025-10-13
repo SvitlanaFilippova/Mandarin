@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.savedadresses.data.sharedprefs
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import kotlinx.serialization.json.Json
 
 class AddressStorageImpl(private val sharedPreferences: SharedPreferences) :
@@ -20,7 +20,7 @@ class AddressStorageImpl(private val sharedPreferences: SharedPreferences) :
                 json.decodeFromString<List<Address>>(jsonString)
             }
         } catch (e: Exception) {
-            AppLog.e(
+            Napier.e(
                 "Ошибка чтения сохранённых адресов: ${e.message}. Удаляю сохранённые адреса"
             )
             clear()

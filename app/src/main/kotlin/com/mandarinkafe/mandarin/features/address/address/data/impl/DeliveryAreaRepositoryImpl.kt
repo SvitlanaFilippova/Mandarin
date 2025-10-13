@@ -7,7 +7,7 @@ import com.mandarinkafe.mandarin.core.domain.models.DeliveryZone
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.address.data.dto.ZoneMeta
 import com.mandarinkafe.mandarin.features.address.address.domain.api.DeliveryAreaRepository
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.first
 import java.io.IOException
@@ -45,7 +45,7 @@ class DeliveryAreaRepositoryImpl(
                     if (zoneId != null) {
                         zoneId to meal.price
                     } else {
-                        AppLog.e("Meal '${meal.name}' -> no zoneId extracted")
+                        Napier.e("Meal '${meal.name}' -> no zoneId extracted")
                         null
                     }
                 }.toMap()
@@ -71,14 +71,14 @@ class DeliveryAreaRepositoryImpl(
         return polygonsMap.mapNotNull { (id, polygon) ->
             val meta = metaMap[id]
             if (meta == null) {
-                AppLog.w("Meta not found for zone id=$id — skipping")
+                Napier.w("Meta not found for zone id=$id — skipping")
                 return@mapNotNull null
             }
 
             val parentArea = polygonsMap[id - 1]
             val deliveryPrice = pricesMap[id]
             if (deliveryPrice == null) {
-                AppLog.w("Price not found for zone id=$id — setting to 0")
+                Napier.w("Price not found for zone id=$id — setting to 0")
             }
 
             DeliveryZone(
@@ -103,18 +103,18 @@ class DeliveryAreaRepositoryImpl(
 
                 val zoneId = extractZoneIdFromName(name)
                 if (zoneId == null) {
-                    AppLog.w("Cannot extract zone ID from name: $name")
+                    Napier.w("Cannot extract zone ID from name: $name")
                     return@forEach
                 }
 
                 val points = runCatching { parseWktToGeoPoints(wkt) }
                     .getOrElse {
-                        AppLog.e("Error parsing WKT for line: $line, error: ${it.message}")
+                        Napier.e("Error parsing WKT for line: $line, error: ${it.message}")
                         emptyList()
                     }
 
                 if (points.isEmpty()) {
-                    AppLog.w("No points parsed for zone $zoneId, WKT: $wkt")
+                    Napier.w("No points parsed for zone $zoneId, WKT: $wkt")
                     return@forEach
                 }
 
@@ -133,7 +133,7 @@ class DeliveryAreaRepositoryImpl(
                 null
             }
         } catch (e: Exception) {
-            AppLog.e("Error splitting CSV line: $line, error: ${e.message}")
+            Napier.e("Error splitting CSV line: $line, error: ${e.message}")
             null
         }
     }
@@ -175,7 +175,7 @@ class DeliveryAreaRepositoryImpl(
                     val lat = coords[1].toDouble()
                     GeoPoint(lat, lon)
                 }.getOrElse {
-                    AppLog.w("Invalid coordinates: $pair")
+                    Napier.w("Invalid coordinates: $pair")
                     null
                 }
             }

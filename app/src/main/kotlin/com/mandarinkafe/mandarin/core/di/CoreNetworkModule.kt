@@ -10,7 +10,7 @@ import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthApi
 import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthProvider
 import com.mandarinkafe.mandarin.core.data.network.impl.GoogleDocsNetworkClientImpl
 import com.mandarinkafe.mandarin.core.data.network.impl.IikoNetworkClientImpl
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
@@ -64,7 +64,7 @@ val coreNetworkModule = module {
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
-                        AppLog.d(message)
+                        Napier.d(message)
                     }
                 }
                 level = LogLevel.ALL

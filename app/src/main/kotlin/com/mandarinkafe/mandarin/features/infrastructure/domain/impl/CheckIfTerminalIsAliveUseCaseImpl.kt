@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.infrastructure.domain.impl
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.AliveTerminalRepository
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.getCurrentTimeMillis
 
 class CheckIfTerminalIsAliveUseCaseImpl(private val repository: AliveTerminalRepository) :
     CheckIfTerminalIsAliveUseCase {
@@ -11,7 +12,7 @@ class CheckIfTerminalIsAliveUseCaseImpl(private val repository: AliveTerminalRep
     private var lastCacheTime: Long = INITIAL_CACHE_TIME
 
     override suspend fun invoke(): Resource<Boolean> {
-        val now = System.currentTimeMillis()
+        val now = getCurrentTimeMillis()
         val useCache = cachedStatus != null && now - lastCacheTime < CACHE_TTL_MS
 
         return if (useCache) {

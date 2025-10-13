@@ -6,7 +6,7 @@ import androidx.core.content.edit
 import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.data.models.isBase
 import com.mandarinkafe.mandarin.features.favorites.data.models.sameAs
-import com.mandarinkafe.mandarin.util.AppLog
+import io.github.aakira.napier.Napier
 import kotlinx.serialization.json.Json
 
 class FavoritesStorageImpl(
@@ -56,14 +56,14 @@ class FavoritesStorageImpl(
         val jsonString = sharedPreferences.getString(FAVORITES_KEY, null)
         return try {
             if (jsonString == null) {
-                AppLog.w("Favorites key is null, returning emptySet()")
+                Napier.w("Favorites key is null, returning emptySet()")
                 FavoritesStorageResult.Success(emptySet())
             } else {
                 val result: Set<StoredFavoriteMeal> = json.decodeFromString(jsonString)
                 FavoritesStorageResult.Success(result)
             }
         } catch (e: Exception) {
-            AppLog.e("Ошибка чтения избранного: ${e.message}, json=$json", e)
+            Napier.e("Ошибка чтения избранного: ${e.message}, json=$json", e)
             sharedPreferences.edit { remove(FAVORITES_KEY) }
             FavoritesStorageResult.Corrupted()
         }

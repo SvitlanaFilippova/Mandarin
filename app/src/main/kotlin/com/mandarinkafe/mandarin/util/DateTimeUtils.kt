@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.util
 
+import io.github.aakira.napier.Napier
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -12,7 +13,7 @@ object DateTimeUtils {
             LocalDateTime.parse(it, inputFormatter).format(outputFormatter)
         }
     } catch (e: Exception) {
-        AppLog.e("error: $e")
+        Napier.e("error: $e")
         null
     }
 }
