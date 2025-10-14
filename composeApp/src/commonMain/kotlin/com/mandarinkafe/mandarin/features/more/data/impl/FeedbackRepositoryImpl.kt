@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.features.more.data.impl
 
-import com.mandarinkafe.mandarin.BuildConfig
+import com.mandarinkafe.mandarin.core.data.config.ApiKeys
 import com.mandarinkafe.mandarin.features.more.data.network.TelegramApi
 import com.mandarinkafe.mandarin.features.more.domain.api.FeedbackRepository
 import com.mandarinkafe.mandarin.features.more.domain.models.Feedback
@@ -23,7 +23,7 @@ class FeedbackRepositoryImpl(
                 if (feedback.needAnswer) append(NEED_ANSWER_LABEL)
             }
 
-            val url = TELEGRAM_API_URL.format(TELEGRAM_BOT_TOKEN)
+            val url = TELEGRAM_API_URL.replace("%s", TELEGRAM_BOT_TOKEN)
 
             telegramApi.sendMessage(
                 url = url,
@@ -73,8 +73,8 @@ class FeedbackRepositoryImpl(
         private const val PHONE_PREFIX_7 = "7"
         private const val PHONE_PREFIX_8 = "8"
 
-        private const val TELEGRAM_BOT_TOKEN = BuildConfig.TG_BOT_TOKEN
-        private const val TELEGRAM_CHANNEL_ID = BuildConfig.TG_CHANNEL_ID
+        private val TELEGRAM_BOT_TOKEN = ApiKeys.TG_BOT_TOKEN
+        private val TELEGRAM_CHANNEL_ID = ApiKeys.TG_CHANNEL_ID
 
         private const val TELEGRAM_API_URL = "https://api.telegram.org/bot%s/sendMessage"
 
