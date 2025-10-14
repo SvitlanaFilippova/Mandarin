@@ -13,8 +13,10 @@ import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.applyTypography
-import java.util.UUID
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 class MenuRepositoryImpl(
     private val iikoNetworkClient: IikoNetworkClient,
     private val menuMetaCache: MenuMetaCache
@@ -119,8 +121,11 @@ class MenuRepositoryImpl(
             return null
         }
         return MealCategory(
-            id = dto?.id ?: UUID.nameUUIDFromBytes(builder.fullPath.joinToString("/").toByteArray())
-                .toString(),
+            id = dto?.id ?: run {
+                val bytes = builder.fullPath.joinToString("/").encodeToByteArray()
+                val uuidBytes = ByteArray(16) { if (it < bytes.size) bytes[it] else 0 }
+                Uuid.fromByteArray(uuidBytes).toString()
+            },
             name = builder.name.applyTypography(),
             meals = meals,
             subCategories = subCategories,

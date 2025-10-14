@@ -5,7 +5,7 @@ import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toDomain
 import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendsSchemaDto
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
-import com.mandarinkafe.mandarin.features.cart.domain.model.RecommendsSchemaRule
+import com.mandarinkafe.mandarin.features.cart.domain.models.RecommendsSchemaRule
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource

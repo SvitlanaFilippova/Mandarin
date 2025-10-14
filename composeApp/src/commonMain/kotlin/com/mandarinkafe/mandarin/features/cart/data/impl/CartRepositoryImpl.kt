@@ -11,7 +11,7 @@ import com.mandarinkafe.mandarin.features.cart.data.local.CartStorage
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.validateBy
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
-import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
+import com.mandarinkafe.mandarin.features.menu.domain.toMealAdditional
 import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.MENU_WAIT_TIMEOUT
 import com.mandarinkafe.mandarin.util.Resource
