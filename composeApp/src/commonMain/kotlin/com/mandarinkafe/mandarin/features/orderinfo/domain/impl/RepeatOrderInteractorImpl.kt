@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.orderinfo.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
-import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditional
+import com.mandarinkafe.mandarin.features.menu.domain.toMealAdditional
 import com.mandarinkafe.mandarin.features.orderinfo.domain.Mapper.toCartItem
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.RepeatOrderInteractor
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem

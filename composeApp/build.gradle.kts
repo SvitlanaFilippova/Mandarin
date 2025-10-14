@@ -99,6 +99,10 @@ kotlin {
                 implementation(libs.sqldelight.android.driver)
                 // DataStore for Android
                 implementation(libs.datastore.preferences)
+                // Google Play Services Location
+                implementation("com.google.android.gms:play-services-location:21.0.1")
+                // Yandex MapKit
+                implementation(libs.com.yandex.maps.mobile)
             }
         }
 

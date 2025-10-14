@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.features.savedadresses.domain
 
-import com.mandarinkafe.mandarin.features.address.address.domain.api.GetDeliveryZoneUseCase
+import com.mandarinkafe.mandarin.features.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.savedadresses.domain.api.GetSavedAddressesUseCase
 import com.mandarinkafe.mandarin.features.savedadresses.domain.api.RemoveAddressUseCase
 

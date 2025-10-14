@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.favorites.presentation.ui.components
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,7 +20,6 @@ import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_COLUMN_COUNT
 import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_SPACING_COUNT
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitle
 
-@SuppressLint("LogNotTimber")
 @Composable
 fun FavoritesContent(
     data: List<CustomizedMeal>,

@@ -4,7 +4,7 @@ import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
-import com.mandarinkafe.mandarin.features.menu.domain.mappers.toMealAdditionalCategory
+import com.mandarinkafe.mandarin.features.menu.domain.toMealAdditionalCategory
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.CATEGORY_ADDS

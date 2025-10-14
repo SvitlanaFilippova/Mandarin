@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.core.domain.impl
 import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
-import com.mandarinkafe.mandarin.features.address.address.domain.api.DeliveryAreaRepository
+import com.mandarinkafe.mandarin.features.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CategoryDiscountRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.util.Resource
