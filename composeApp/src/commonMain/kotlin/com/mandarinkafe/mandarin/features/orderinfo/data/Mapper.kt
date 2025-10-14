@@ -3,18 +3,15 @@ package com.mandarinkafe.mandarin.features.orderinfo.data
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
 import com.mandarinkafe.mandarin.core.data.dto.order.OrderTypeDto
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.core.domain.models.CartItem
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
-import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType
-import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.OrderType
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants
+import com.mandarinkafe.mandarin.features.order.data.network.dto.ErrorInfoDto
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
+import com.mandarinkafe.mandarin.features.order.domain.models.ErrorInfo
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.IncomingModifierDto
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.IncomingOrderItemDto
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.OrderInfoResponseDto
@@ -141,6 +138,12 @@ private fun String.toDeliveryStatus(): DeliveryStatus {
         ?: DeliveryStatus.UNCONFIRMED
 }
 
+fun ErrorInfoDto.toDomain() = ErrorInfo(
+    code = code,
+    message = message,
+    errorReason = errorReason,
+)
+
 private fun collectAddonIds(addonsCategories: List<MealAdditionalCategory>): Set<String> =
     addonsCategories.flatMap { it.items.map { add -> add.id } }.toSet()
 
@@ -156,7 +159,7 @@ private fun associateItemsWithAdds(
         if (!isAddon) {
             result += IncomingOrderItemBuilder.fromDto(dto)
         } else {
-            val safeAmount = dto.amount ?: 1.1
+            val safeAmount = dto.amount ?: 1.0
             val addon = IncomingMealAdditional(
                 id = dto.product.id,
                 name = dto.product.name.applyTypography(),

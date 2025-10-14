@@ -26,7 +26,6 @@ class OrderRepositoryImpl(
     private val networkClient: IikoNetworkClient,
     private val menuCache: MenuCache,
 ) : OrderRepository {
-    private val logTag = "ORDER API OrderRepository"
 
     override suspend fun createOrder(outgoingOrder: OutgoingOrder): Resource<IncomingOrder> {
         return try {
@@ -109,7 +108,7 @@ class OrderRepositoryImpl(
             .filter { it.discountable }
             .flatMap { item ->
                 val mealPosId = listOf(item.positionId)
-                val modifiersPosIds = item.modifiers?.mapNotNull { it.positionId } ?: emptyList()
+                val modifiersPosIds = item.modifiers?.map { it.positionId } ?: emptyList()
                 mealPosId + modifiersPosIds
             }
 
