@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.features.infrastructure.data.local
 
-import com.mandarinkafe.mandarin.db.Category_discount
+import com.mandarinkafe.mandarin.shared.database.Category_discount
 import com.mandarinkafe.mandarin.features.infrastructure.domain.models.CategoryDiscountMap
 
 interface CategoryDiscountsStorage {

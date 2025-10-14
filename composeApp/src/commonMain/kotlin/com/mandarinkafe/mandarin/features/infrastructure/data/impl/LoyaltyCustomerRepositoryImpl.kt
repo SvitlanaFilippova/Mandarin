@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.infrastructure.data.impl
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCustomerResponse
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.LoyaltyCustomerRepository
-import com.mandarinkafe.mandarin.features.order.data.mapper.toDomain
+import com.mandarinkafe.mandarin.features.infrastructure.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.domain.models.LoyaltyCustomer
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Resource
