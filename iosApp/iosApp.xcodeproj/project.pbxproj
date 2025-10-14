@@ -75,6 +75,7 @@
 				088397FB9BC19A36E9A51BD2 /* Sources */,
 				A31567BE1075B2A843519674 /* Frameworks */,
 				F48D4320FD61DFE3A3FF9489 /* Resources */,
+				0390F29F2E9DF1C10029FEF7 /* Merge Info.private.plist */,
 			);
 			buildRules = (
 			);
@@ -135,6 +136,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0390F29F2E9DF1C10029FEF7 /* Merge Info.private.plist */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Merge Info.private.plist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "bash \"$PROJECT_DIR/scripts/merge-plist.sh\"\n";
+		};
 		3C64EF4C5D7DDA06745DD2E9 /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -243,6 +262,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = "${TEAM_ID}";
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../composeApp/build/fat-framework/$(CONFIGURATION)",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -255,14 +278,10 @@
 					"@executable_path/Frameworks",
 					"$(SRCROOT)/../composeApp/build/fat-framework/$(CONFIGURATION)",
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../composeApp/build/fat-framework/$(CONFIGURATION)",
-				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					"composeAppKit",
+					composeAppKit,
 				);
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -281,6 +300,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = "${TEAM_ID}";
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../composeApp/build/fat-framework/$(CONFIGURATION)",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -293,14 +316,10 @@
 					"@executable_path/Frameworks",
 					"$(SRCROOT)/../composeApp/build/fat-framework/$(CONFIGURATION)",
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../composeApp/build/fat-framework/$(CONFIGURATION)",
-				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					"composeAppKit",
+					composeAppKit,
 				);
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

@@ -102,6 +102,12 @@ kotlin {
             }
         }
 
+        iosMain {
+            dependencies {
+                implementation(libs.sqldelight.native.driver)
+            }
+        }
+
         getByName("androidDeviceTest") {
             dependencies {
                 implementation(libs.androidx.runner)

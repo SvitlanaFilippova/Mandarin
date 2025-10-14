@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.core.data.network.auth
 
-import com.mandarinkafe.mandarin.core.data.config.BuildConfig
+import com.mandarinkafe.mandarin.core.data.config.ApiKeys
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.sync.Mutex
@@ -11,7 +11,7 @@ class IikoAuthProvider(
 ) {
     private var token: String? = null
     private val mutex = Mutex()
-    private val apiKey = BuildConfig.IIKO_API_KEY
+    private val apiKey = ApiKeys.IIKO_API_KEY
 
     suspend fun getToken(): String {
         return mutex.withLock {

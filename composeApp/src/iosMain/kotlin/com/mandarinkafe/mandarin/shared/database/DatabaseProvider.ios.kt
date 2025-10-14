@@ -1,12 +1,13 @@
 package com.mandarinkafe.mandarin.shared.database
 
-import com.mandarinkafe.mandarin.db.AppDatabase
-import com.mandarinkafe.mandarin.db.CartItemsQueries
-import com.squareup.sqldelight.drivers.native.NativeSqliteDriver
+import com.mandarinkafe.mandarin.shared.database.CartItemsQueries
+import com.mandarinkafe.mandarin.shared.database.AppDatabase
+import app.cash.sqldelight.driver.native.NativeSqliteDriver
 
 actual class DatabaseProvider {
-    private val database = AppDatabase(NativeSqliteDriver())
-    
+    private val driver = NativeSqliteDriver(AppDatabase.Schema, "app.db")
+    private val database = AppDatabase(driver)
+
     actual val cartItemsQueries: CartItemsQueries
         get() = database.cartItemsQueries
 }
