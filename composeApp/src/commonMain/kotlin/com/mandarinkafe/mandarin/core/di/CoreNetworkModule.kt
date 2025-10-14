@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.core.di
 
-import com.mandarinkafe.mandarin.BuildConfig
+import com.mandarinkafe.mandarin.core.data.config.ApiKeys
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
@@ -16,13 +16,13 @@ import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
@@ -105,7 +105,7 @@ val coreNetworkModule = module {
                 })
             }
             defaultRequest {
-                url(BuildConfig.SERVER_BASE_URL)
+                url(ApiKeys.SERVER_BASE_URL)
                 contentType(ContentType.Application.Json)
             }
         }
@@ -116,29 +116,15 @@ val coreNetworkModule = module {
     single(named(DiConstants.GOOGLE_DOCS_CLIENT_QUALIFIER)) {
         HttpClient {
             install(ContentNegotiation) {
-                json()
+                json(Json {
+                    ignoreUnknownKeys = true
+                    isLenient = true
+                })
             }
             defaultRequest {
                 contentType(ContentType.Text.Plain)
             }
         }
-    }
-
-
-    // Network Clients
-    single<IikoNetworkClient> {
-        IikoNetworkClientImpl(
-            menuApi = get(),
-            iikoApi = get(),
-            networkMonitor = get()
-        )
-    }
-
-    single<GoogleDocsNetworkClient> {
-        GoogleDocsNetworkClientImpl(
-            googleDocsApi = get(),
-            networkMonitor = get()
-        )
     }
 
     // IikoApi

@@ -1,9 +1,5 @@
 package com.mandarinkafe.mandarin.features.infrastructure.di
 
-import android.content.Context
-import android.content.SharedPreferences
-import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-import com.mandarinkafe.mandarin.core.di.DiConstants
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.AliveTerminalRepositoryImpl
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.CategoryDiscountRepositoryImpl
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.PaymentTypesRepositoryImpl
@@ -19,28 +15,11 @@ import com.mandarinkafe.mandarin.features.infrastructure.domain.impl.CheckDiscou
 import com.mandarinkafe.mandarin.features.infrastructure.domain.impl.CheckIfTerminalIsAliveUseCaseImpl
 import com.mandarinkafe.mandarin.features.infrastructure.domain.impl.GetPaymentTypesUseCaseImpl
 import com.mandarinkafe.mandarin.shared.database.AppDatabase
-import com.mandarinkafe.mandarin.util.NetworkMonitor
-import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val infrastructureModule = module {
-    // Database
-    single {
-        val driver = AndroidSqliteDriver(
-            schema = AppDatabase.Schema,
-            context = androidContext(),
-            name = DiConstants.DATABASE_NAME
-        )
-        AppDatabase(driver)
-    }
-
-    // SharedPreferences
-    single<SharedPreferences> {
-        androidContext().getSharedPreferences(DiConstants.LOCAL_STORAGE_NAME, Context.MODE_PRIVATE)
-    }
-
     // PaymentTypes
     singleOf(::PaymentTypesRepositoryImpl) { bind<PaymentTypesRepository>() }
     singleOf(::GetPaymentTypesUseCaseImpl) { bind<GetPaymentTypesUseCase>() }
@@ -50,13 +29,11 @@ val infrastructureModule = module {
     singleOf(::CheckIfTerminalIsAliveUseCaseImpl) { bind<CheckIfTerminalIsAliveUseCase>() }
 
     // CategoryDiscounts
-    single { get<AppDatabase>().categoryDiscountQueries }
+    single { get<AppDatabase>().categoryDiscountQueries } // TODO: ок ли тут?
     singleOf(::SQLDelightCategoryDiscountsStorage) { bind<CategoryDiscountsStorage>() }
     singleOf(::CategoryDiscountRepositoryImpl) { bind<CategoryDiscountRepository>() }
 
     // CheckDiscountByPhone
     singleOf(::CheckDiscountByPhoneUseCaseImpl) { bind<CheckDiscountByPhoneUseCase>() }
-
-    singleOf(::NetworkMonitor)
 
 }
