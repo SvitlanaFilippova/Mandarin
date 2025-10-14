@@ -47,6 +47,7 @@ val addressModule = module {
     }
 
     single<SearchManager> {
+        val mapKit: MapKit = get() // заставляем Koin проинициализировать MapKit
         SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
     }
 
