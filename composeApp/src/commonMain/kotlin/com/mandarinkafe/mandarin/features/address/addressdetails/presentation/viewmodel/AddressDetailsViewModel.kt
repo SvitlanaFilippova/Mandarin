@@ -53,57 +53,37 @@ class AddressDetailsViewModel(
         setState { copy(address = address) }
     }
 
-    private fun setApartmentNumber(query: String) {
-        setState {
-            copy(
-                address = address.copy(apartmentNumber = query),
-                isError = false
-            )
-        }
+    private fun setAddressType(type: AddressType) = updateAddress { copy(addressType = type) }
+
+    private fun setApartmentNumber(query: String) = updateAddress {
+        // Ограничиваем до 10 символов по требованию API
+        val limited = query.take(MAX_ADDRESS_DETAILS_LENGTH)
+        copy(apartmentNumber = limited)
     }
 
-    private fun setEntrance(query: String) {
-        setState {
-            copy(
-                address = address.copy(entrance = query),
-                isError = false
-            )
-        }
+    private fun setEntrance(query: String) = updateAddress {
+        // Ограничиваем до 10 символов по требованию API
+        val limited = query.take(MAX_ADDRESS_DETAILS_LENGTH)
+        copy(entrance = limited)
     }
 
-    private fun setFloor(query: String) {
-        setState {
-            copy(
-                address = address.copy(floor = query),
-                isError = false
-            )
-        }
+    private fun setFloor(query: String) = updateAddress {
+        // Ограничиваем до 10 символов по требованию API
+        val limited = query.take(MAX_ADDRESS_DETAILS_LENGTH)
+        copy(floor = limited)
     }
 
-    private fun setIntercom(query: String) {
-        setState {
-            copy(
-                address = address.copy(intercom = query),
-                isError = false
-            )
-        }
+    private fun setIntercom(query: String) = updateAddress {
+        // Ограничиваем до 10 символов по требованию API
+        val limited = query.take(MAX_ADDRESS_DETAILS_LENGTH)
+        copy(intercom = limited)
     }
 
-    private fun setAddressComment(query: String) {
-        setState {
-            copy(
-                address = address.copy(comment = query),
-                isError = false
-            )
-        }
-    }
+    private fun setAddressComment(query: String) = updateAddress { copy(comment = query) }
 
-    private fun setAddressType(addressType: AddressType) {
+    private fun updateAddress(transform: Address.() -> Address) {
         setState {
-            copy(
-                address = address.copy(addressType = addressType),
-                isError = false
-            )
+            copy(address = address.transform())
         }
     }
 
@@ -116,6 +96,10 @@ class AddressDetailsViewModel(
     }
 
     override fun setLoading(isLoading: Boolean) {
-        setState { copy(isError = false) }
+        // не применимо
+    }
+
+    private companion object {
+        const val MAX_ADDRESS_DETAILS_LENGTH = 10
     }
 }
