@@ -3,9 +3,9 @@ package com.mandarinkafe.mandarin.features.address.presentation.viewmodel
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.features.address.domain.models.AddressSearchResult
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.models.UiDeliveryArea
-import com.mandarinkafe.mandarin.util.BaseEffect
-import com.mandarinkafe.mandarin.util.BaseEvent
-import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.presentation.BaseEffect
+import com.mandarinkafe.mandarin.util.presentation.BaseEvent
+import com.mandarinkafe.mandarin.util.presentation.BaseState
 import com.yandex.mapkit.geometry.Point
 
 sealed interface AddressContract {

@@ -3,9 +3,9 @@ package com.mandarinkafe.mandarin.features.menu.presentation.viewmodel
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
-import com.mandarinkafe.mandarin.util.BaseEffect
-import com.mandarinkafe.mandarin.util.BaseEvent
-import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.presentation.BaseEffect
+import com.mandarinkafe.mandarin.util.presentation.BaseEvent
+import com.mandarinkafe.mandarin.util.presentation.BaseState
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 
 sealed interface MenuContract {

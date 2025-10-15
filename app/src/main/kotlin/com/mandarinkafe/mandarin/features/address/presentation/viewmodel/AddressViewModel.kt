@@ -19,7 +19,7 @@ import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LONGITUDE
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.debounce
-import com.mandarinkafe.mandarin.util.isSameAs
+import com.mandarinkafe.mandarin.util.presentation.isSameAs
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.yandex.mapkit.geometry.Point
 import kotlinx.coroutines.flow.collectLatest

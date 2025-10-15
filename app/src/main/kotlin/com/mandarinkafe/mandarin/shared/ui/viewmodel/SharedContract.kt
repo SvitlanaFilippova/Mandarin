@@ -3,9 +3,9 @@ package com.mandarinkafe.mandarin.shared.ui.viewmodel
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.util.BaseEffect
-import com.mandarinkafe.mandarin.util.BaseEvent
-import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.presentation.BaseEffect
+import com.mandarinkafe.mandarin.util.presentation.BaseEvent
+import com.mandarinkafe.mandarin.util.presentation.BaseState
 
 sealed interface SharedContract {
 

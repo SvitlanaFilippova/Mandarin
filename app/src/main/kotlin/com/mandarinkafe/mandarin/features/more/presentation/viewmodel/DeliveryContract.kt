@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.features.more.presentation.viewmodel
 
 import com.mandarinkafe.mandarin.features.address.address.presentation.ui.models.UiDeliveryArea
-import com.mandarinkafe.mandarin.util.BaseEffect
-import com.mandarinkafe.mandarin.util.BaseEvent
-import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.presentation.BaseEffect
+import com.mandarinkafe.mandarin.util.presentation.BaseEvent
+import com.mandarinkafe.mandarin.util.presentation.BaseState
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LONGITUDE
 import com.yandex.mapkit.geometry.Point

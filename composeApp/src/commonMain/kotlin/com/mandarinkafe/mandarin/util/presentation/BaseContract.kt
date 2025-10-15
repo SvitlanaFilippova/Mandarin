@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.util
+package com.mandarinkafe.mandarin.util.presentation
 
 interface BaseEvent
 interface BaseEffect

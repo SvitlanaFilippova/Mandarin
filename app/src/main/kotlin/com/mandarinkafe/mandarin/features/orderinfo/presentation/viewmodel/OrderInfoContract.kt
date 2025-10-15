@@ -3,9 +3,9 @@ package com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.toUi
-import com.mandarinkafe.mandarin.util.BaseEffect
-import com.mandarinkafe.mandarin.util.BaseEvent
-import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.presentation.BaseEffect
+import com.mandarinkafe.mandarin.util.presentation.BaseEvent
+import com.mandarinkafe.mandarin.util.presentation.BaseState
 
 sealed interface OrderInfoContract {
 

@@ -4,9 +4,9 @@ import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.models.DateFilterType
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.models.DateRange
-import com.mandarinkafe.mandarin.util.BaseEffect
-import com.mandarinkafe.mandarin.util.BaseEvent
-import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.presentation.BaseEffect
+import com.mandarinkafe.mandarin.util.presentation.BaseEvent
+import com.mandarinkafe.mandarin.util.presentation.BaseState
 
 sealed interface OrdersHistoryContract {
     sealed interface OrdersHistoryEvent : BaseEvent {

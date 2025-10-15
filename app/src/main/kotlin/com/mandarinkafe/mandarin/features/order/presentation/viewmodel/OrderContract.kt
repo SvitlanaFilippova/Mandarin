@@ -12,9 +12,9 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Del
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.UserInfoUi
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Utensils
-import com.mandarinkafe.mandarin.util.BaseEffect
-import com.mandarinkafe.mandarin.util.BaseEvent
-import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.presentation.BaseEffect
+import com.mandarinkafe.mandarin.util.presentation.BaseEvent
+import com.mandarinkafe.mandarin.util.presentation.BaseState
 import com.mandarinkafe.mandarin.util.presentation.UiText
 
 sealed interface OrderContract {

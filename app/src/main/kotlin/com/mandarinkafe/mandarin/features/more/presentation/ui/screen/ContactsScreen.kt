@@ -50,7 +50,7 @@ import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_SCALE
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_TEXT_ALPHA
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_TEXT_OFFSET
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_TEXT_SIZE
-import com.mandarinkafe.mandarin.util.openGeoLocation
+import com.mandarinkafe.mandarin.util.presentation.openGeoLocation
 import com.mandarinkafe.mandarin.util.presentation.ui.components.BindMapViewToLifecycle
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InfoCard
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton

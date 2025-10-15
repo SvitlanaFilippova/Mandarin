@@ -11,7 +11,7 @@ import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DeliveryCo
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DeliveryContract.DeliveryState
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.debounce
-import com.mandarinkafe.mandarin.util.isSameAs
+import com.mandarinkafe.mandarin.util.presentation.isSameAs
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.yandex.mapkit.geometry.Point
 import kotlinx.coroutines.flow.collectLatest

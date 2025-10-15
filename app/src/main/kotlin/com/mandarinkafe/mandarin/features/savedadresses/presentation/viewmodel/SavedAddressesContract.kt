@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel
 
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.util.BaseEffect
-import com.mandarinkafe.mandarin.util.BaseEvent
-import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.presentation.BaseEffect
+import com.mandarinkafe.mandarin.util.presentation.BaseEvent
+import com.mandarinkafe.mandarin.util.presentation.BaseState
 
 sealed interface SavedAddressesContract {
     sealed interface SavedAddressesEvent : BaseEvent {

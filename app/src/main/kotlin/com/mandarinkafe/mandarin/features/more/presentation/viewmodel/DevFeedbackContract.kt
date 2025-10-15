@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.features.more.presentation.viewmodel
 
-import com.mandarinkafe.mandarin.util.BaseEffect
-import com.mandarinkafe.mandarin.util.BaseEvent
-import com.mandarinkafe.mandarin.util.BaseState
+import com.mandarinkafe.mandarin.util.presentation.BaseEffect
+import com.mandarinkafe.mandarin.util.presentation.BaseEvent
+import com.mandarinkafe.mandarin.util.presentation.BaseState
 import com.mandarinkafe.mandarin.util.Constants
 
 sealed interface DevFeedbackContract {
