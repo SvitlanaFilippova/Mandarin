@@ -6,29 +6,31 @@ import com.mandarinkafe.mandarin.core.data.network.NetworkMonitor
 import com.mandarinkafe.mandarin.shared.database.AppDatabase
 import com.mandarinkafe.mandarin.shared.datastore.createDataStore
 import com.mandarinkafe.mandarin.shared.device.DeviceInfoProvider
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val infrastructurePlatformModule = module {
     
-    // DataStore (iOS-specific, не требует параметров)
+    // DataStore (Android-specific, требует Context)
     single<DataStore<Preferences>> {
-        createDataStore()
+        createDataStore(androidContext())
     }
     
-    // AppDatabase (iOS-specific)
+    // AppDatabase (Android-specific, требует Context)
     single {
-        val driver = app.cash.sqldelight.driver.native.NativeSqliteDriver(
+        val driver = app.cash.sqldelight.driver.android.AndroidSqliteDriver(
             schema = AppDatabase.Schema,
+            context = androidContext(),
             name = "app.db"
         )
         AppDatabase(driver)
     }
-    
-    // NetworkMonitor (iOS не требует параметров)
-    single { NetworkMonitor() }
 
-    // DeviceInfoProvider (iOS-specific)
+    // NetworkMonitor (требует Context на Android)
+    single { NetworkMonitor(get()) }
+
+    // DeviceInfoProvider (Android-specific)
     singleOf(::DeviceInfoProvider)
 }
 

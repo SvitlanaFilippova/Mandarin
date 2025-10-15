@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.address.presentation.ui.components
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
-import com.mandarinkafe.mandarin.features.address.address.presentation.viewmodel.AddressContract.AddressEffect
+import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressContract.AddressEffect
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
 import kotlinx.coroutines.flow.Flow
 
