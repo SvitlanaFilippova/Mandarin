@@ -5,18 +5,16 @@ import com.mandarinkafe.mandarin.core.domain.api.FavoritesReader
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesWriter
 import com.mandarinkafe.mandarin.features.favorites.data.impl.FavoritesRepositoryImpl
 import com.mandarinkafe.mandarin.features.favorites.data.impl.FavoritesValidator
-import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorage
-import com.mandarinkafe.mandarin.features.favorites.data.sharedprefs.FavoritesStorageImpl
+import com.mandarinkafe.mandarin.features.favorites.data.datastore.FavoritesStorage
+import com.mandarinkafe.mandarin.features.favorites.data.datastore.FavoritesStorageImpl
 import com.mandarinkafe.mandarin.features.favorites.domain.impl.FavoritesInteractorImpl
-import com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel.FavoritesViewModel
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val favoritesModule = module {
 
-    // SharedPreferences storage
+    // DataStore storage
     singleOf(::FavoritesStorageImpl) { bind<FavoritesStorage>() }
 
     // Validator
@@ -27,7 +25,5 @@ val favoritesModule = module {
 
     // Interactor
     singleOf(::FavoritesInteractorImpl) { bind<FavoritesApi>() }
-
-    // ViewModel
-    viewModelOf(::FavoritesViewModel)
 }
+

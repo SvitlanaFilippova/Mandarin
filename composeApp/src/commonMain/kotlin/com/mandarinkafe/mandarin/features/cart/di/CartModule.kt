@@ -13,11 +13,9 @@ import com.mandarinkafe.mandarin.features.cart.domain.impl.ClearCartUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.GetRecommendsUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.shared.database.AppDatabase
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 
@@ -39,7 +37,5 @@ val cartModule = module {
     // UseCases
     singleOf(::GetRecommendsUseCaseImpl) { bind<GetRecommendsUseCase>() }
     singleOf(::ClearCartUseCaseImpl) { bind<ClearCartUseCase>() }
-
-    // ViewModel
-    viewModelOf(::CartViewModel)
 }
+

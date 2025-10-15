@@ -12,11 +12,9 @@ import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersStatuse
 import com.mandarinkafe.mandarin.features.ordershistory.domain.impl.GetOrdersStatusesUseCaseImpl
 import com.mandarinkafe.mandarin.features.ordershistory.domain.impl.OrdersHistoryInteractorImpl
 import com.mandarinkafe.mandarin.features.ordershistory.domain.impl.SaveOrderToHistoryUseCaseImpl
-import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryViewModel
 import com.mandarinkafe.mandarin.shared.database.AppDatabase
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val ordersHistoryModule = module {
@@ -33,8 +31,5 @@ val ordersHistoryModule = module {
     singleOf(::SaveOrderToHistoryUseCaseImpl) { bind<SaveOrderToHistoryUseCase>() }
     singleOf(::OrdersHistoryInteractorImpl) { bind<OrdersHistoryInteractor>() }
     singleOf(::GetOrdersStatusesUseCaseImpl) { bind<GetOrdersStatusesUseCase>() }
-
-    // ViewModel
-    viewModelOf(::OrdersHistoryViewModel)
-
 }
+

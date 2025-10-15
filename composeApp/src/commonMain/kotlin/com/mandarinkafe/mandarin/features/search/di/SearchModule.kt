@@ -8,10 +8,8 @@ import com.mandarinkafe.mandarin.features.search.domain.impl.GetLabelsUseCaseImp
 import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetFullMealListUseCase
 import com.mandarinkafe.mandarin.features.search.domain.usecase.GetLabelsUseCase
-import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchViewModel
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val searchModule = module {
@@ -19,5 +17,5 @@ val searchModule = module {
     singleOf(::GetLabelsUseCaseImpl) { bind<GetLabelsUseCase>() }
     singleOf(::GetFullMealListUseCaseImpl) { bind<GetFullMealListUseCase>() }
     singleOf(::FilterUseCaseImpl) { bind<FilterUseCase>() }
-    viewModelOf(::SearchViewModel)
 }
+
