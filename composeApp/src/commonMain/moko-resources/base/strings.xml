@@ -36,4 +36,8 @@
     
     <!-- Order Messages -->
     <string name="save_name_and_phone">Использовать имя и телефон для будущих заказов</string>
+    
+    <!-- Orders History Messages -->
+    <string name="error_orders_status_update_failed">Что-то пошло не так при попытке обновить статусы заказов</string>
+    <string name="error_no_internet_orders">Нет подключения к интернету</string>
 </resources>
