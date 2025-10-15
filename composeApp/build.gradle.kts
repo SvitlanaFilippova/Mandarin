@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.sqldelight)
-    id("com.android.library")
+    id("com.android.application")
     id("dev.icerock.mobile.multiplatform-resources")
 }
 
@@ -94,6 +94,9 @@ kotlin {
                 implementation(libs.com.yandex.maps.mobile)
                 // Ktor Android engine
                 implementation(libs.ktor.client.okhttp)
+                // Material 3
+                implementation(libs.androidx.material3)
+                implementation(libs.androidx.appcompat)
             }
         }
 

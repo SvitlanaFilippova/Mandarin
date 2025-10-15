@@ -1,8 +1,10 @@
 [versions]
+appcompatVersion = "1.7.1"
 koin = "4.1.1"
 ktor = "3.3.0"
 kamel = "1.0.8"
 lifecycleVersion = "2.9.4"
+material3Version = "1.4.0"
 playServicesLocationVersion = "21.3.0"
 versionCode = "3"
 versionName = "1.01"
@@ -52,6 +54,7 @@ accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-
 
 # AndroidX
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 androidx-compose-material = { group = "androidx.compose.material", name = "material" }
@@ -63,6 +66,7 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3Version" }
 
 # Мультиплатформенные ViewModel и Runtime
 jetbrains-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "lifecycleVersion" }

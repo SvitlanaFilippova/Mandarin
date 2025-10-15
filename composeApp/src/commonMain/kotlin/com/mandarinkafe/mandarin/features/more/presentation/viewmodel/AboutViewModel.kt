@@ -2,7 +2,6 @@ package com.mandarinkafe.mandarin.features.more.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.MenuMetaCache
-import com.mandarinkafe.mandarin.shared.build.getVersionName
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import kotlinx.coroutines.launch
 
@@ -19,7 +18,7 @@ class AboutViewModel(private val menuMetaCache: MenuMetaCache) :
             menuMetaCache.metaFlow.collect { meta ->
                 setState {
                     copy(
-                        versionName = getVersionName(),
+                        versionName = "1.00000", // TODO (реализовать передачу версии приложения)
                         lastUpdated = meta?.lastUpdated,
                         revision = meta?.revision
                     )
