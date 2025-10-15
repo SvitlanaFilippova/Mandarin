@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.features.address.domain.api.AddressRepository
 import com.mandarinkafe.mandarin.features.address.domain.models.AddressSearchResult
 import com.mandarinkafe.mandarin.util.Resource
 import com.yandex.mapkit.geometry.Geometry
+import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.Response
 import com.yandex.mapkit.search.SearchManager
 import com.yandex.mapkit.search.SearchOptions
@@ -51,7 +52,7 @@ class AddressRepositoryImpl(
     }
 
     override suspend fun searchAddressByString(query: String, point: GeoPoint) {
-        val yPoint = point.toYandexPoint()
+        val yPoint = point.toYandexPoint() as Point
         val geometry = Geometry.fromPoint(yPoint)
         val searchOptions = SearchOptions()
         _addressListChannel.trySend(Resource.Loading())
@@ -84,7 +85,7 @@ class AddressRepositoryImpl(
     }
 
     override suspend fun getAddressFromPoint(point: GeoPoint) {
-        val yPoint = point.toYandexPoint()
+        val yPoint = point.toYandexPoint() as Point
         val searchOptions = SearchOptions()
         _addressStringChannel.trySend(Resource.Loading())
 

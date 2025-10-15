@@ -138,7 +138,6 @@ resources-generator = { module = "dev.icerock.moko:resources-generator", version
 
 
 [plugins]
-
 android-application = { id = "com.android.application", version.ref = "agp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
@@ -153,5 +152,3 @@ android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.
 android-lint = { id = "com.android.lint", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
-

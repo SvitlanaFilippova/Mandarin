@@ -4,10 +4,10 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    id("com.android.library")
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.sqldelight)
+    id("com.android.library")
     id("dev.icerock.mobile.multiplatform-resources")
 }
 
