@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
@@ -59,6 +60,7 @@ sealed interface OrderContract {
         // Обработка отправки заказа
         data class ShowSuccess(val orderId: String) : OrderEffect
         data class ShowMessage(val message: StringResource) : OrderEffect
+
     }
 
     data class OrderState(
@@ -77,7 +79,7 @@ sealed interface OrderContract {
         val isLoading: Boolean = false,
         val saveUserInfo: Boolean = false,
         val showSaveUserInfoCheckbox: Boolean = true,
-        val saveUserInfoCheckboxText: StringResource = com.mandarinkafe.mandarin.MR.strings.save_name_and_phone,
+        val saveUserInfoCheckboxText: StringResource = MR.strings.save_name_and_phone,
     ) : BaseContract.BaseState {
         val deliveryCost: Int
             get() = when {
