@@ -10,6 +10,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.api.RepeatOrderIntera
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.CancelOrderUseCaseImpl
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.GetOrderStatusUseCaseImpl
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.RepeatOrderInteractorImpl
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -24,6 +25,10 @@ val orderInfoModule = module {
     singleOf(::GetOrderStatusUseCaseImpl) { bind<GetOrderStatusUseCase>() }
     singleOf(::CancelOrderUseCaseImpl) { bind<CancelOrderUseCase>() }
     singleOf(::RepeatOrderInteractorImpl) { bind<RepeatOrderInteractor>() }
+
+    // --- ViewModel ---
+    singleOf(::OrderInfoViewModel)
+
 }
 
 

@@ -18,6 +18,9 @@ import com.mandarinkafe.mandarin.features.order.domain.impl.CalculateCartTotalWi
 import com.mandarinkafe.mandarin.features.order.domain.impl.CreateOrderUseCaseImpl
 import com.mandarinkafe.mandarin.features.order.domain.impl.PickupOnlyRemoveUseCaseImpl
 import com.mandarinkafe.mandarin.features.order.domain.impl.ResolvePickupPointUseCaseImpl
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.CartObserver
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.OrderCreator
 import com.mandarinkafe.mandarin.features.savedadresses.domain.AddressUseCases
 import com.mandarinkafe.mandarin.features.savedadresses.domain.CartContentUseCases
 import com.mandarinkafe.mandarin.features.savedadresses.domain.OrderInfoUseCases
@@ -50,6 +53,13 @@ val orderModule = module {
     singleOf(::CartContentUseCases)
     singleOf(::OrderInfoUseCases)
     singleOf(::AddressUseCases)
+
+    // Helpers для OrderViewModel
+    singleOf(::CartObserver)
+    singleOf(::OrderCreator)
+
+    // ViewModel
+    singleOf(::OrderViewModel)
 }
 
 
