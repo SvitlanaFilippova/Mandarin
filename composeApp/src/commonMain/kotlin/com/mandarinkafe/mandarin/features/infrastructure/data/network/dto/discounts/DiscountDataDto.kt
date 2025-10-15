@@ -7,3 +7,7 @@ data class DiscountDataDto(
     val items: List<DiscountTypeDto>,
     val organizationId: String
 )
+
+
+
+

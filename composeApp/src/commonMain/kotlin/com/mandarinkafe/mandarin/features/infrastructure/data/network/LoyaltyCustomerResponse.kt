@@ -10,3 +10,7 @@ data class LoyaltyCustomerResponse(
     val isDeleted: Boolean? = null,
     val categories: List<CustomerCategoryDto>? = null
 ) : Response()
+
+
+
+

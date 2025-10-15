@@ -7,3 +7,7 @@ data class RemovalTypeDto(
     val id: String,
     val name: String
 )
+
+
+
+

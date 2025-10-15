@@ -11,3 +11,7 @@ data class OutgoingPaymentDto(
     val isProcessedExternally: Boolean,
     val isFiscalizedExternally: Boolean
 )
+
+
+
+

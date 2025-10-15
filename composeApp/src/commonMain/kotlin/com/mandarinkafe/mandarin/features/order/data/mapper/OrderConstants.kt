@@ -21,3 +21,7 @@ object OrderConstants {
     const val DIVIDER_FOR_USER_COMMENT = " || "
     const val DIVIDER_FOR_TECH_PART = ". "
 }
+
+
+
+

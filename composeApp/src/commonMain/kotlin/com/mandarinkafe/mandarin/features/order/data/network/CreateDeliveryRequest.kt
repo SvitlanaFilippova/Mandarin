@@ -8,3 +8,7 @@ data class CreateDeliveryRequest(
     val order: OutgoingOrderDto,
     val organizationId: String,
 )
+
+
+
+

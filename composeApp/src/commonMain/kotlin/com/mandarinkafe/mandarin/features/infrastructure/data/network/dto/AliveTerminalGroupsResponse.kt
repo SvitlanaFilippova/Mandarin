@@ -8,3 +8,7 @@ data class AliveTerminalGroupsResponse(
     val correlationId: String,
     val isAliveStatus: List<AliveTerminalGroupDto>
 ) : Response()
+
+
+
+

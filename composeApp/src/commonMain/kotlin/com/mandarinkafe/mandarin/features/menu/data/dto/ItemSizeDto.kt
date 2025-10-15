@@ -12,3 +12,7 @@ data class ItemSizeDto(
     val itemModifierGroups: List<ModifierGroupDto>? = null,
     val measureUnitType: String? = null,
 )
+
+
+
+

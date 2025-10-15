@@ -7,3 +7,7 @@ data class BannerDto(
     val imageUrl: String?,
     val targetName: String?,
 )
+
+
+
+

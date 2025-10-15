@@ -10,8 +10,6 @@ import org.koin.dsl.module
 val menuPlatformModule = module {
     // ImageValidator (Android-specific)
     singleOf(::ImageValidatorImpl) { bind<ImageValidator>() }
-    
-    // ViewModel
-//    viewModelOf(::MenuViewModel)
+
 }
 

@@ -6,3 +6,7 @@ import kotlinx.serialization.Serializable
 data class DiscountsRequest(
     val organizationIds: List<String>
 )
+
+
+
+

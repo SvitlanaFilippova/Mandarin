@@ -6,3 +6,7 @@ import kotlinx.serialization.Serializable
 data class PaymentTypesRequest(
     val organizationIds: List<String>
 )
+
+
+
+

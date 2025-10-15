@@ -7,3 +7,7 @@ data class CustomerDto(
     val name: String,
     val type: String // regular or one-time
 )
+
+
+
+

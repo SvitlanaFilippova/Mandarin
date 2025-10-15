@@ -8,3 +8,7 @@ data class OutgoingDiscountTypeDto(
     val selectivePositions: List<String>, // список positionId товаров, на которые распространяется скидка
     val type: String, // RMS или iikoCard
 )
+
+
+
+

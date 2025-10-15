@@ -7,3 +7,7 @@ data class TerminalGroupDto(
     val items: List<TerminalItemDto>,
     val organizationId: String
 )
+
+
+
+

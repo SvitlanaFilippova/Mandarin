@@ -15,3 +15,7 @@ data class IncomingOrderItemDto(
     val deleted: DeletionInfoDto? = null,
     val comment: String? = null,
 )
+
+
+
+

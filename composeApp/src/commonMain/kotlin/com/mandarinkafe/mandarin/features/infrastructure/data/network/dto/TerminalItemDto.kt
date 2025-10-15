@@ -10,3 +10,7 @@ data class TerminalItemDto(
     val organizationId: String,
     val timeZone: String
 )
+
+
+
+

@@ -13,3 +13,7 @@ val mealDetailsModule = module {
     singleOf(::GetMealByIdUseCaseImpl) { bind<GetMealByIdUseCase>() }
 }
 
+
+
+
+

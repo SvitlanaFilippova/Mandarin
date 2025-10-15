@@ -29,7 +29,7 @@ val infrastructureModule = module {
     singleOf(::CheckIfTerminalIsAliveUseCaseImpl) { bind<CheckIfTerminalIsAliveUseCase>() }
 
     // CategoryDiscounts
-    single { get<AppDatabase>().categoryDiscountQueries } // TODO: ок ли тут или нужно в платформенные?
+    single { get<AppDatabase>().categoryDiscountQueries }
     singleOf(::SQLDelightCategoryDiscountsStorage) { bind<CategoryDiscountsStorage>() }
     singleOf(::CategoryDiscountRepositoryImpl) { bind<CategoryDiscountRepository>() }
 

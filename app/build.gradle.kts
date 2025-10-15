@@ -12,7 +12,7 @@ if (!googleServicesFile.exists() && googleServicesSampleFile.exists()) {
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.jetbrains.kotlin.compose)
+//    alias(libs.plugins.jetbrains.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.parcelize)
     // alias(libs.plugins.google.services)
     // alias(libs.plugins.firebase.crashlytics)
@@ -110,10 +110,10 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
 
     // Android Jetpack Lifecycle
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.process)
-    implementation(libs.androidx.lifecycle.viewmodelCompose)
-    implementation(libs.androidx.lifecycle.runtimeCompose)
+//    implementation(libs.androidx.lifecycle.runtime.ktx)
+//    implementation(libs.androidx.lifecycle.process)
+//    implementation(libs.androidx.lifecycle.viewmodelCompose)
+//    implementation(libs.androidx.lifecycle.runtimeCompose)
 
     // Navigation for Compose
     implementation(libs.androidx.navigation.compose)

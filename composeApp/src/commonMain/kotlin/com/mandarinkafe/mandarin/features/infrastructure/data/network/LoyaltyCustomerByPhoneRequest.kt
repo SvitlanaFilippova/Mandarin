@@ -8,3 +8,7 @@ data class LoyaltyCustomerByPhoneRequest(
     val type: String = "phone",
     val organizationId: String,
 )
+
+
+
+

@@ -8,3 +8,7 @@ data class MenuDataDTO(
     val itemCategories: List<CategoryDto>?,
     val revision: Int
 )
+
+
+
+

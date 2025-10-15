@@ -20,3 +20,7 @@ data class OutgoingOrderDto(
     val processedPaymentsSum: Int? = null,
     val sum: Int? = null,
 )
+
+
+
+

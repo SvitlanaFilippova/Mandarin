@@ -8,3 +8,7 @@ data class DeliveryPointDto(
     val address: AddressDto? = null,
     val comment: String? = null,
 )
+
+
+
+

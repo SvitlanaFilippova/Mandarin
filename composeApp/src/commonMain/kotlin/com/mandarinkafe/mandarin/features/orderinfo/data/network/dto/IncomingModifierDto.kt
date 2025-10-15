@@ -10,3 +10,7 @@ data class IncomingModifierDto(
     val resultSum: Double? = null,
     val productGroup: ProductInfoDto,
 )
+
+
+
+

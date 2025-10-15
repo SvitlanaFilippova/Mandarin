@@ -7,3 +7,7 @@ sealed class FavoritesStorageResult {
     data class Corrupted(val cleared: Boolean = true) : FavoritesStorageResult()
 }
 
+
+
+
+

@@ -8,3 +8,7 @@ data class IncomingDiscountInfoDto(
     val sum: Double? = null,
     val selectivePositions: List<String>? = null, // позиции, на которые не действует
 )
+
+
+
+

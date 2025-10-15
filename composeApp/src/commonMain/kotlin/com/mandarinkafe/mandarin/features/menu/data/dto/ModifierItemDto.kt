@@ -14,3 +14,7 @@ data class ModifierItemDto(
     val restrictions: RestrictionsDto? = null,
     val amount: Double? = null,
 )
+
+
+
+

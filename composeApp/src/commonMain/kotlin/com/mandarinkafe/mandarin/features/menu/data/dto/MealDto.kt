@@ -14,3 +14,7 @@ data class MealDto(
     val orderItemType: String,
     val isHidden: Boolean?
 )
+
+
+
+

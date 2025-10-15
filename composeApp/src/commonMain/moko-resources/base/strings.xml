@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <!-- Error Messages -->
+    <string name="error_no_internet">Нет подключения к интернету</string>
+    <string name="error_no_internet_extra">Попробуй ещё раз или просто позвони нам по телефону, чтобы сделать заказ.</string>
+    
+    <string name="error_other">Что-то пошло не так 🤷</string>
+    <string name="error_other_extra">Попробуй ещё раз или просто позвони нам по телефону, чтобы сделать заказ.</string>
+    
+    <string name="error_menu_empty">Сервер вернул пустые данные меню</string>
+    <string name="error_menu_empty_extra">Попробуй ещё раз или просто позвони нам по телефону, чтобы сделать заказ.</string>
+    
+    <string name="error_data_empty">Не удалось загрузить данные</string>
+    <string name="error_data_empty_extra">Попробуй ещё раз или просто позвони нам по телефону, чтобы сделать заказ.</string>
+    
+    <string name="error_favorites_empty">В избранных пока ничего нет.</string>
+    <string name="error_favorites_empty_extra">Скорее добавь свои любимые блюда, чтобы заказывать их было ещё удобнее!</string>
+    
+    <string name="error_cart_empty">В корзине пока ничего нет</string>
+    
+    <string name="error_search_empty">Ничего не найдено :(</string>
+    <string name="error_search_empty_extra">Попробуй написать по-другому или просто полистай наше меню. Там точно найдутся нужные вкусности!</string>
+    
+    <string name="error_order_data_empty">Увы, детали заказа не удалось получить.</string>
+    <string name="error_order_data_empty_extra">Сервер гарантирует их хранение в течение 7 дней. Сейчас, скорее всего, он их уже удалил 😔</string>
+    
+    <!-- System Messages -->
+    <string name="terminal_unavailable">Упс, кажется, сейчас мы не работаем — заказ оформить не получится🤷
+Возвращайся в рабочее время!</string>
+    <string name="check_terminal_failed">Что-то пошло не так — не удалось проверить, работает ли сейчас доставка.</string>
+</resources>

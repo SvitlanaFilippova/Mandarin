@@ -7,3 +7,7 @@ data class PriceDto(
     val organizationId: String,
     val price: Double?
 )
+
+
+
+

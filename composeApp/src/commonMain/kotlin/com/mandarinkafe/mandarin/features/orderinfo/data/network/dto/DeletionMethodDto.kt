@@ -8,3 +8,7 @@ data class DeletionMethodDto(
     val comment: String? = null,
     val removalType: RemovalTypeDto? = null,
 )
+
+
+
+

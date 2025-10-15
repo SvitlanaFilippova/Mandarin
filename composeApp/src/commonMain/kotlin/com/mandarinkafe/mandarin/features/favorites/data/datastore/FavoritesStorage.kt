@@ -8,3 +8,7 @@ interface FavoritesStorage {
     suspend fun saveFavorites(updatedFavorites: Set<StoredFavoriteMeal>)
 }
 
+
+
+
+

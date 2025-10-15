@@ -18,3 +18,7 @@ fun CustomerCategoryDto.toDomain() = CustomerCategory(
     isActive = isActive == true
 )
 
+
+
+
+

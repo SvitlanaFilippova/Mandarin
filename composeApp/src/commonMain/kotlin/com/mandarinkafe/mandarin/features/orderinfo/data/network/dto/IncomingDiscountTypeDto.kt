@@ -7,3 +7,7 @@ data class IncomingDiscountTypeDto(
     val id: String? = null,
     val name: String? = null,
 )
+
+
+
+

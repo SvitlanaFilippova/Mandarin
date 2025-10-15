@@ -4,30 +4,16 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.kotlin.multiplatform.library)
-    alias(libs.plugins.android.lint)
+    id("com.android.library")
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.sqldelight)
+    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 kotlin {
 
-    androidLibrary {
-        namespace = "com.mandarinkafe.mandarin.shared"
-        compileSdk = libs.versions.compileSdk.get().toInt()
-        minSdk = libs.versions.minSdk.get().toInt()
-
-        withHostTestBuilder {
-        }
-
-        withDeviceTestBuilder {
-            sourceSetTreeName = "test"
-        }.configure {
-            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        }
-    }
-
+    androidTarget()
 
     val xcfName = "composeAppKit"
 
@@ -49,7 +35,6 @@ kotlin {
         }
     }
 
-
     sourceSets {
         commonMain {
             dependencies {
@@ -60,24 +45,34 @@ kotlin {
                 implementation(compose.ui)
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
-                implementation(libs.androidx.lifecycle.viewmodelCompose)
-                implementation(libs.androidx.lifecycle.runtimeCompose)
+
+                // Multiplatfrom ViewModel, Runtime
+                implementation(libs.jetbrains.lifecycle.viewmodel)
+                implementation(libs.jetbrains.lifecycle.viewmodel.compose)
+                implementation(libs.jetbrains.lifecycle.runtime.compose)
+
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.napier)
+
+                // Ktor
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.ktor.client.logging)
                 implementation(libs.ktor.client.auth)
-                
+
                 // SQLDelight
                 implementation(libs.sqldelight)
                 implementation(libs.sqldelight.coroutines.extensions)
-                
+
                 // DataStore core
                 implementation(libs.datastore.preferences.core)
+
+                // MOKO Resources
+                implementation(libs.resources)
+                implementation(libs.resources.compose)
             }
         }
 
@@ -109,15 +104,33 @@ kotlin {
             }
         }
 
-        getByName("androidDeviceTest") {
+        androidUnitTest {
             dependencies {
+                implementation(libs.androidx.junit)
                 implementation(libs.androidx.runner)
                 implementation(libs.androidx.core)
-                implementation(libs.androidx.junit)
             }
         }
     }
+}
 
+android {
+    namespace = "com.mandarinkafe.mandarin.shared"
+    compileSdk = libs.versions.compileSdk.get().toInt()
+
+    defaultConfig {
+        minSdk = libs.versions.minSdk.get().toInt()
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 sqldelight {
@@ -164,3 +177,7 @@ object BuildConfig {
 val buildConfigFile = file("src/commonMain/kotlin/com/mandarinkafe/mandarin/core/data/config/BuildConfig.kt")
 buildConfigFile.parentFile.mkdirs()
 buildConfigFile.writeText(buildConfigContent)
+
+multiplatformResources {
+    resourcesPackage.set("com.mandarinkafe.mandarin")
+}

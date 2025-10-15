@@ -7,3 +7,7 @@ import kotlinx.serialization.Serializable
 data class PaymentTypesResponse(
     val paymentTypes: List<PaymentTypeIiko>
 ) : Response()
+
+
+
+

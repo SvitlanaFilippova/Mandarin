@@ -16,3 +16,7 @@ interface IikoNetworkClient {
     suspend fun getTerminalGroupsIds(): Response
     suspend fun getAliveTerminalGroups(terminalGroupIds: List<String>): Response
 }
+
+
+
+

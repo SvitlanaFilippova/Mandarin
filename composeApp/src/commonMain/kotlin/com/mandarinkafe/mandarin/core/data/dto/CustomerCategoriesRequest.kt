@@ -6,3 +6,7 @@ import kotlinx.serialization.Serializable
 class CustomerCategoriesRequest(
     val organizationId: String
 )
+
+
+
+

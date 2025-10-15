@@ -8,3 +8,7 @@ import kotlinx.serialization.Serializable
 data class DiscountsResponse(
     val discounts: List<DiscountDataDto>
 ) : Response()
+
+
+
+

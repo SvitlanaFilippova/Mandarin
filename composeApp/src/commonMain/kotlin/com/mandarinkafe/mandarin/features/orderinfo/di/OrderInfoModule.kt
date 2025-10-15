@@ -26,3 +26,7 @@ val orderInfoModule = module {
     singleOf(::RepeatOrderInteractorImpl) { bind<RepeatOrderInteractor>() }
 }
 
+
+
+
+

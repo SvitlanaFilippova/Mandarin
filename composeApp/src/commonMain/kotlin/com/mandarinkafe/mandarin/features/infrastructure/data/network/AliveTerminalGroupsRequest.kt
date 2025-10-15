@@ -7,3 +7,7 @@ data class AliveTerminalGroupsRequest(
     val organizationIds: List<String>,
     val terminalGroupIds: List<String>
 )
+
+
+
+

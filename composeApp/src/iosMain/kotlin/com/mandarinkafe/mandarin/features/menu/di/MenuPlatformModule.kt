@@ -11,3 +11,7 @@ val menuPlatformModule = module {
     singleOf(::ImageValidatorImpl) { bind<ImageValidator>() }
 }
 
+
+
+
+

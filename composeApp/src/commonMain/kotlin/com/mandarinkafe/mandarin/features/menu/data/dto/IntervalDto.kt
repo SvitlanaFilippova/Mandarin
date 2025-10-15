@@ -8,3 +8,7 @@ data class IntervalDto(
     val fromTime: String,
     val toTime: String,
 )
+
+
+
+

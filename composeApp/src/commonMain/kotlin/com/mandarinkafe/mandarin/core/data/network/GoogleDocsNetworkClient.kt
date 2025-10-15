@@ -8,3 +8,7 @@ interface GoogleDocsNetworkClient {
     suspend fun getDeliveryZonesPoints(): Response
     suspend fun getDeliveryZonesMetaData(): Response
 }
+
+
+
+

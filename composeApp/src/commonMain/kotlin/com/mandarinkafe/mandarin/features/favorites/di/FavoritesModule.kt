@@ -8,6 +8,7 @@ import com.mandarinkafe.mandarin.features.favorites.data.impl.FavoritesValidator
 import com.mandarinkafe.mandarin.features.favorites.data.datastore.FavoritesStorage
 import com.mandarinkafe.mandarin.features.favorites.data.datastore.FavoritesStorageImpl
 import com.mandarinkafe.mandarin.features.favorites.domain.impl.FavoritesInteractorImpl
+import com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel.FavoritesViewModel
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -25,5 +26,9 @@ val favoritesModule = module {
 
     // Interactor
     singleOf(::FavoritesInteractorImpl) { bind<FavoritesApi>() }
+
+    // ViewModel
+    single { FavoritesViewModel(get()) }
 }
+
 

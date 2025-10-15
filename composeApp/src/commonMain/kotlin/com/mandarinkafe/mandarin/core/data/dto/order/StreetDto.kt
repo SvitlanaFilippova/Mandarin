@@ -8,3 +8,7 @@ data class StreetDto(
     val id: String? = null,
     val city: CityDto? = null,
 )
+
+
+
+

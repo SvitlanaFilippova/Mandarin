@@ -9,3 +9,7 @@ data class CancelInfo(
     val comment: String? = null,
     val whenCancelled: String? = null,
 )
+
+
+
+

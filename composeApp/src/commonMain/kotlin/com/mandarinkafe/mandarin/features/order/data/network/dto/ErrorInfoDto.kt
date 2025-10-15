@@ -8,3 +8,7 @@ data class ErrorInfoDto(
     val message: String?,
     val errorReason: String?,
 )
+
+
+
+

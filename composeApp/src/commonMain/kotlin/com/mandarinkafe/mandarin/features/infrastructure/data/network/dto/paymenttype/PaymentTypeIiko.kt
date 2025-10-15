@@ -16,3 +16,7 @@ fun PaymentTypeIiko.toDomain() = PaymentType(
     code = code,
     paymentTypeKind = paymentTypeKind
 )
+
+
+
+

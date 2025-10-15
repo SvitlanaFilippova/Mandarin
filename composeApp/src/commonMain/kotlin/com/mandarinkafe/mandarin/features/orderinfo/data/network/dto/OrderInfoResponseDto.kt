@@ -11,3 +11,7 @@ data class OrderInfoResponseDto(
     val errorInfo: ErrorInfoDto?,
     val order: IncomingOrderDto?,
 )
+
+
+
+

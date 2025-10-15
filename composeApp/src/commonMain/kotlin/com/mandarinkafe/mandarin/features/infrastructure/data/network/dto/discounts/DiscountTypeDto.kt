@@ -18,3 +18,7 @@ data class DiscountTypeDto(
     val mode: String,
     val sum: Double
 )
+
+
+
+

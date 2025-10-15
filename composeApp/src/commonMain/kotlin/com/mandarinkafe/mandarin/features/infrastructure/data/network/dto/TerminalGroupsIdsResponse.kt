@@ -7,3 +7,7 @@ import kotlinx.serialization.Serializable
 data class TerminalGroupsIdsResponse(
     val terminalGroups: List<TerminalGroupDto>,
 ) : Response()
+
+
+
+

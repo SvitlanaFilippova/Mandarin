@@ -8,3 +8,7 @@ import kotlinx.serialization.Serializable
 data class CustomerCategoriesResponse(
     val guestCategories: List<CustomerCategoryDto>?
 ) : Response()
+
+
+
+

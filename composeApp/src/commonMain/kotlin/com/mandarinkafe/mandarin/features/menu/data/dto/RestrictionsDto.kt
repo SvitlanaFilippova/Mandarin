@@ -7,3 +7,7 @@ data class RestrictionsDto(
     val maxQuantity: Int,
     val minQuantity: Int
 )
+
+
+
+

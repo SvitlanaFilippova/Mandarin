@@ -8,3 +8,7 @@ data class ServerMenuResponse(
     val lastUpdated: String, // время последнего ообновления меню из iiko
     val menu: MenuDataDTO,
 ) : Response()
+
+
+
+

@@ -6,3 +6,7 @@ import com.mandarinkafe.mandarin.util.Resource
 interface MenuFetcher {
     suspend fun fetchMenu(): Resource<List<MealCategory>>
 }
+
+
+
+

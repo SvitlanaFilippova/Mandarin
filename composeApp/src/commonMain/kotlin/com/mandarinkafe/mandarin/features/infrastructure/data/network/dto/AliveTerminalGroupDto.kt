@@ -8,3 +8,7 @@ data class AliveTerminalGroupDto(
     val organizationId: String,
     val terminalGroupId: String
 )
+
+
+
+

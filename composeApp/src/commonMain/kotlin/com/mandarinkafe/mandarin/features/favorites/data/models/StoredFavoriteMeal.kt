@@ -35,3 +35,7 @@ fun StoredFavoriteMeal.sameAs(other: StoredFavoriteMeal): Boolean {
             addsIds == other.addsIds &&
             modifiers == other.modifiers
 }
+
+
+
+

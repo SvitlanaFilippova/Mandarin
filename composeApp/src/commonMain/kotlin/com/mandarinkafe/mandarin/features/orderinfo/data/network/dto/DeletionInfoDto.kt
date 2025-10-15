@@ -6,3 +6,7 @@ import kotlinx.serialization.Serializable
 data class DeletionInfoDto(
     val deletionMethod: DeletionMethodDto? = null,
 )
+
+
+
+
