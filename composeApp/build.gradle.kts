@@ -73,6 +73,9 @@ kotlin {
                 // MOKO Resources
                 implementation(libs.resources)
                 implementation(libs.resources.compose)
+
+                // Kamel for image loading
+                implementation(libs.kamel.image.default)
             }
         }
 
