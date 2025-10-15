@@ -28,4 +28,12 @@
     <string name="terminal_unavailable">Упс, кажется, сейчас мы не работаем — заказ оформить не получится🤷
 Возвращайся в рабочее время!</string>
     <string name="check_terminal_failed">Что-то пошло не так — не удалось проверить, работает ли сейчас доставка.</string>
+    
+    <!-- Cart Messages -->
+    <string name="added_to_cart_template">Добавлено в корзину:\n%s</string>
+    <string name="edited_template">Отредактировано:\n%s</string>
+    <string name="replace_or_add_message">В корзине уже есть %s, но без дополнительных опций.\n\nЗаменяем, или просто добавляем ещё одну позицию в корзину?</string>
+    
+    <!-- Order Messages -->
+    <string name="save_name_and_phone">Использовать имя и телефон для будущих заказов</string>
 </resources>
