@@ -7,7 +7,7 @@ import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.Address
 import com.yandex.mapkit.search.ToponymObjectMetadata
 
-object Mapper {
+actual object Mapper {
 
     fun GeoObject.toAddressSearchResult(): AddressSearchResult {
         val poiName = name?.takeIf { it.isNotBlank() }
@@ -63,11 +63,12 @@ object Mapper {
         return parts.joinToString(", ")
     }
 
-    fun GeoPoint.toYandexPoint(): Point {
+    actual fun GeoPoint.toYandexPoint(): Any {
         return Point(latitude, longitude)
     }
 
-    fun Point.toGeoPoint(): GeoPoint {
-        return GeoPoint(latitude, longitude)
+    actual fun Any.toGeoPoint(): GeoPoint {
+        val point = this as Point
+        return GeoPoint(point.latitude, point.longitude)
     }
 }

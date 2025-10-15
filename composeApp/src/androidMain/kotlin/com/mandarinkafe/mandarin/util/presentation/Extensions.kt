@@ -6,9 +6,11 @@ import androidx.core.net.toUri
 import com.yandex.mapkit.geometry.Point
 import kotlin.math.abs
 
-fun Point.isSameAs(other: Point, epsilon: Double = 1e-6): Boolean {
-    return abs(latitude - other.latitude) < epsilon &&
-            abs(longitude - other.longitude) < epsilon
+actual fun Any.isSameAs(other: Any, epsilon: Double): Boolean {
+    val point = this as Point
+    val otherPoint = other as Point
+    return abs(point.latitude - otherPoint.latitude) < epsilon &&
+            abs(point.longitude - otherPoint.longitude) < epsilon
 }
 
 fun Context.openGeoLocation(address: String) {
