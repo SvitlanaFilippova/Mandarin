@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
     id("com.android.application")
     id("dev.icerock.mobile.multiplatform-resources")
 }
