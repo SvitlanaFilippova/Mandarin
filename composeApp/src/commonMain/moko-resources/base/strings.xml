@@ -73,4 +73,7 @@
     <string name="delivery_status_extra_closed">Заказ завершён. Спасибо, что вы с нами!</string>
     <string name="delivery_status_cancelled">Отменён</string>
     <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка — пожалуйста, позвоните.</string>
+    
+    <!-- Splash Screen -->
+    <string name="logo_cafe">Логотип кафе Mandarin</string>
 </resources>
