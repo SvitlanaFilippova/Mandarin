@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.core.data.config.ApiKeys
 import com.mandarinkafe.mandarin.core.di.coreModule
 import com.mandarinkafe.mandarin.core.di.coreNetworkModule
 import com.mandarinkafe.mandarin.features.address.di.addressModule
+import com.mandarinkafe.mandarin.features.address.di.addressPlatformModule
 import com.mandarinkafe.mandarin.features.cart.di.cartModule
 import com.mandarinkafe.mandarin.features.favorites.di.favoritesModule
 import com.mandarinkafe.mandarin.features.infrastructure.di.infrastructureModule
@@ -13,6 +14,7 @@ import com.mandarinkafe.mandarin.features.mealdetails.di.mealDetailsModule
 import com.mandarinkafe.mandarin.features.menu.di.menuModule
 import com.mandarinkafe.mandarin.features.menu.di.menuPlatformModule
 import com.mandarinkafe.mandarin.features.more.di.moreModule
+import com.mandarinkafe.mandarin.features.more.di.morePlatformModule
 import com.mandarinkafe.mandarin.features.order.di.orderModule
 import com.mandarinkafe.mandarin.features.orderinfo.di.orderInfoModule
 import com.mandarinkafe.mandarin.features.ordershistory.di.ordersHistoryModule
@@ -48,7 +50,9 @@ class App : Application() {
                 searchModule,
                 sharedModule,
                 infrastructurePlatformModule,
-                menuPlatformModule
+                menuPlatformModule,
+                addressPlatformModule,
+                morePlatformModule
             )
         }
 

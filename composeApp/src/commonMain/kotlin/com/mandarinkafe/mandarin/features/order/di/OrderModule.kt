@@ -54,12 +54,11 @@ val orderModule = module {
     singleOf(::OrderInfoUseCases)
     singleOf(::AddressUseCases)
 
-    // Helpers для OrderViewModel
-    singleOf(::CartObserver)
-    singleOf(::OrderCreator)
-
     // ViewModel
     singleOf(::OrderViewModel)
+
+    // Helper для OrderViewModel
+    singleOf(::OrderCreator)
 }
 
 

@@ -23,7 +23,7 @@ import io.ktor.http.HttpHeaders
 import moe.tlaster.precompose.lifecycle.setContent
 import java.io.File
 
-class MainActivity : ComponentActivity() {
+class ComposeMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val kamelConfig = initKamel()
@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private companion object {
+    private companion object Companion {
         private const val KAMEL_CACHE_DIR = "kamel_cache"
         private const val HTTP_CACHE_SIZE_BYTES = 50L * 1024L * 1024L // 50 Мб
         private const val HTTP_CACHE_MAX_AGE_SECONDS = 24 * 60 * 60 // 1 день

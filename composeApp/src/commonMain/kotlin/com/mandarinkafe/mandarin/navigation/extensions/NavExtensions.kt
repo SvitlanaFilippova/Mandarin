@@ -23,7 +23,9 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SAVED_ADDRESSES_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
 import kotlinx.serialization.json.Json
+import moe.tlaster.precompose.navigation.NavOptions
 import moe.tlaster.precompose.navigation.Navigator
+import moe.tlaster.precompose.navigation.PopUpTo
 import net.thauvin.erik.urlencoder.UrlEncoderUtil
 
 fun Navigator.navigateToSearchScreen(focusInput: Boolean) {
@@ -106,9 +108,28 @@ fun Navigator.navigateToMealDetails(
     navigate(route)
 }
 
-fun Navigator.navigateToOrderInfo(orderId: String, fromOrderCreation: Boolean = false) {
+fun Navigator.navigateToOrderInfo(
+    orderId: String,
+    fromOrderCreation: Boolean = false,
+) {
     val encodedOrderId = UrlEncoderUtil.encode(orderId)
-    navigate("$ORDER_INFO_ROUTE?$KEY_ORDER_ID=$encodedOrderId&$KEY_FROM_ORDER_CREATION=$fromOrderCreation")
+    val route = "$ORDER_INFO_ROUTE?$KEY_ORDER_ID=$encodedOrderId&$KEY_FROM_ORDER_CREATION=$fromOrderCreation"
+
+    if (fromOrderCreation) {
+        navigate(
+            route,
+            options = NavOptions(
+                launchSingleTop = true,
+                popUpTo = PopUpTo(
+                    route = CART_SCREEN_ROUTE,
+                    inclusive = true
+                )
+            )
+        )
+    } else {
+        navigate(route)
+    }
 }
+
 
 

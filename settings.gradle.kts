@@ -26,5 +26,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Mandarin"
-include(":app")
 include(":composeApp")

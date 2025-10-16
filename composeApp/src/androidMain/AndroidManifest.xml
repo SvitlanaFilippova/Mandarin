@@ -18,7 +18,7 @@
         android:theme="@style/Theme.Mandarin"
    >
         <activity
-            android:name="com.mandarinkafe.mandarin.core.presentation.MainActivity"
+            android:name="com.mandarinkafe.mandarin.core.presentation.ComposeMainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"

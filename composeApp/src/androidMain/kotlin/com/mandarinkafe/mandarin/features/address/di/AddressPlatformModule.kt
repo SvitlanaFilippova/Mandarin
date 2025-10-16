@@ -1,5 +1,7 @@
 package com.mandarinkafe.mandarin.features.address.di
 
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.mandarinkafe.mandarin.features.address.data.impl.AddressRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.data.impl.DeliveryAreaRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.data.impl.FusedLocationRepositoryImpl
@@ -28,15 +30,15 @@ val addressPlatformModule = module {
         SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
     }
 
+    // Провайдер FusedLocationProviderClient
+    single<FusedLocationProviderClient> {
+        LocationServices.getFusedLocationProviderClient(androidContext())
+    }
+
     // Android-specific Repositories
     singleOf(::FusedLocationRepositoryImpl) { bind<FusedLocationRepository>() }
     singleOf(::AddressRepositoryImpl) { bind<AddressRepository>() }
-    singleOf(::DeliveryAreaRepositoryImpl) { bind<DeliveryAreaRepository>() }
 
-//    // ViewModels
-//    viewModelOf(::AddressDetailsViewModel)
-//    viewModelOf(::AddressViewModel)
-//    viewModelOf(::SavedAddressesViewModel)
 }
 
 
