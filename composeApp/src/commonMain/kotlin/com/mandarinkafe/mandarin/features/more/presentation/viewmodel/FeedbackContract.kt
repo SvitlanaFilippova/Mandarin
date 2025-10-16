@@ -39,3 +39,4 @@ sealed interface FeedbackContract {
             get() = isMessageValid && isContactValid
     }
 }
+

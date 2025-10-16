@@ -76,3 +76,4 @@ fun DeliveryStatus.toUi(): UiDeliveryStatus {
     return UiDeliveryStatus.entries.firstOrNull { it.apiName == this.apiName }
         ?: error("Unknown DeliveryStatus: $this")
 }
+

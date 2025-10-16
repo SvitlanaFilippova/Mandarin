@@ -8,3 +8,4 @@ val savedAddressesModule = module {
     // ViewModel
     singleOf(::SavedAddressesViewModel)
 }
+

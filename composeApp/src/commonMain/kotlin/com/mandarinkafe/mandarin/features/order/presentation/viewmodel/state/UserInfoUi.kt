@@ -9,3 +9,4 @@ data class UserInfoUi(
     val phoneIsValid: Boolean
         get() = phone.length == VALID_PHONE_LENGTH
 }
+

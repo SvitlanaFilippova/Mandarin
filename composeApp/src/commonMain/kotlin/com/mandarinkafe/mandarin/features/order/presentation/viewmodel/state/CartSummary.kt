@@ -18,3 +18,4 @@ data class CartSummary(
     val discountSum: Double
         get() = totalCartSum - cartSumWithDiscount
 }
+

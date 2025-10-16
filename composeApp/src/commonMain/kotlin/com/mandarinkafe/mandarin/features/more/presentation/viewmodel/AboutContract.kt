@@ -11,3 +11,4 @@ sealed interface AboutContract {
         val revision: Int? = null
     ) : BaseContract.BaseState
 }
+

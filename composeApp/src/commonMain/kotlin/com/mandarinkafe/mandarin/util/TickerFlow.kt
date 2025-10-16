@@ -18,3 +18,4 @@ fun tickerFlow(
         delay(period)
     }
 }
+

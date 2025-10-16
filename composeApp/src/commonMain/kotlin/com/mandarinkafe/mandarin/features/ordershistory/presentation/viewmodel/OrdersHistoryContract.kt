@@ -31,3 +31,4 @@ sealed interface OrdersHistoryContract {
             get() = chosenOrderTypes.isNotEmpty() || chosenDateFilterType != null
     }
 }
+

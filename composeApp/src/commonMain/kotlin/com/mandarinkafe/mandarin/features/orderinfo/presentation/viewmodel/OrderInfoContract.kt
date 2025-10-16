@@ -31,3 +31,4 @@ sealed interface OrderInfoContract {
             get() = incomingOrder?.status?.toUi() ?: UiDeliveryStatus.UNCONFIRMED
     }
 }
+

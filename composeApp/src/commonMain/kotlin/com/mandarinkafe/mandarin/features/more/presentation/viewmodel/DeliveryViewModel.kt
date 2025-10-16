@@ -119,3 +119,4 @@ class DeliveryViewModel(
         private const val FETCH_ADDRESS_DELAY = 300L
     }
 }
+

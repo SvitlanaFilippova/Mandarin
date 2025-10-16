@@ -6,3 +6,4 @@ data class Utensils(
     val noNeedUtensils: Boolean = false,
     val chosenUtensils: List<Utensil> = emptyList()
 )
+

@@ -11,3 +11,4 @@ sealed class FavoritesStorageResult {
 
 
 
+

@@ -35,3 +35,4 @@ class AboutViewModel(private val menuMetaCache: MenuMetaCache) :
         // не актуально
     }
 }
+

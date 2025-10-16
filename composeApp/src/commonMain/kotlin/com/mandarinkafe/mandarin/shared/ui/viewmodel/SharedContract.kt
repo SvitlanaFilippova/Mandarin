@@ -58,3 +58,4 @@ sealed interface SharedContract {
         val cartItemsCount: Int = 0,
     ) : BaseContract.BaseState
 }
+

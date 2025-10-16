@@ -150,3 +150,4 @@ class OrderInfoViewModel(
         const val ORDER_STATUS_UPD_DELAY_AFTER_CANCEL = 500L
     }
 }
+

@@ -33,3 +33,4 @@ private fun createDefaultPoint(): Any {
     // This will be replaced with expect/actual implementation
     return Any()
 }
+

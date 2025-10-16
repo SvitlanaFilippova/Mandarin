@@ -14,7 +14,9 @@ import moe.tlaster.precompose.navigation.Navigator
 fun CartScreen(
     cartViewModel: CartViewModel,
     sharedViewModel: SharedViewModel,
-    navigator: Navigator
+    navigator: Navigator,
+    snackbarMessage: String?
+
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),

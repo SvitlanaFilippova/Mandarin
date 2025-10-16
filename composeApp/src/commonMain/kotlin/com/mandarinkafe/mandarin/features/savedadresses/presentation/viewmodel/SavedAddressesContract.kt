@@ -23,3 +23,4 @@ sealed interface SavedAddressesContract {
         val isLoading: Boolean? = null
     ) : BaseContract.BaseState
 }
+

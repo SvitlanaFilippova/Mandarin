@@ -30,73 +30,73 @@ import kotlinx.serialization.json.Json
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-fun NavController.navigateToSearchScreen(focusInput: Boolean) {
-    this.navigate("$SEARCH_SCREEN_ROUTE?focusInput=$focusInput") {
-        launchSingleTop = true
-        popUpTo(MENU_SCREEN_ROUTE) {
-            saveState = true
+//fun NavController.navigateToSearchScreen(focusInput: Boolean) {
+//    this.navigate("$SEARCH_SCREEN_ROUTE?focusInput=$focusInput") {
+//        launchSingleTop = true
+//        popUpTo(MENU_SCREEN_ROUTE) {
+//            saveState = true
+//        }
+//    }
+//}
+
+//fun NavController.navigateToMenu() {
+//    this.navigate(MENU_SCREEN_ROUTE)
+//}
+
+//fun NavController.navigateToCart(snackbarMessage: String? = null) {
+//    this.navigate(
+//        route = CART_SCREEN_ROUTE,
+//        navOptions = navOptions {
+//            launchSingleTop = true
+//            restoreState = true
+//            popUpTo(MAIN_GRAPH) {
+//                saveState = true
+//            }
+//        }
+//    )
+//    this.currentBackStackEntry
+//        ?.savedStateHandle
+//        ?.set(SNACKBAR_MESSAGE_KEY, snackbarMessage)
+//}
+
+//fun NavController.navigateToSavedAddresses() {
+//    this.navigate(SAVED_ADDRESSES_ROUTE)
+//}
+//
+//fun NavController.navigateOrdersHistory() {
+//    this.navigate(ORDERS_HISTORY_ROUTE)
+//}
+//
+//fun NavController.navigateToOrder() {
+//    this.navigate(ORDER_SCREEN_ROUTE)
+//}
+//
+//fun NavController.navigateToLegalScreen() {
+//    this.navigate(LEGAL_SCREEN_ROUTE)
+//}
+//
+//fun NavController.navigateToDeliveryScreen() {
+//    this.navigate(DELIVERY_SCREEN_ROUTE)
+//}
+//
+//fun NavController.navigateToContactsScreen() {
+//    this.navigate(CONTACTS_SCREEN_ROUTE)
+}
+
+    fun NavController.navigateToAddress(address: Address? = null, returnToRoute: String) {
+        val encodedReturnRoute = URLEncoder.encode(returnToRoute, StandardCharsets.UTF_8.toString())
+
+        if (address == null) {
+            // Новый адрес → карта
+            val emptyAddress = ""
+            navigate("$ADDRESS_SCREEN_ROUTE/$emptyAddress/$encodedReturnRoute")
+        } else {
+            // Есть уже выбранный адрес
+            val json = Json.encodeToString(address)
+            val encoded = Base64.encodeToString(json.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
+            navigate("$ADDRESS_SCREEN_ROUTE/$encoded/$encodedReturnRoute")
         }
     }
-}
-
-fun NavController.navigateToMenu() {
-    this.navigate(MENU_SCREEN_ROUTE)
-}
-
-fun NavController.navigateToCart(snackbarMessage: String? = null) {
-    this.navigate(
-        route = CART_SCREEN_ROUTE,
-        navOptions = navOptions {
-            launchSingleTop = true
-            restoreState = true
-            popUpTo(MAIN_GRAPH) {
-                saveState = true
-            }
-        }
-    )
-    this.currentBackStackEntry
-        ?.savedStateHandle
-        ?.set(SNACKBAR_MESSAGE_KEY, snackbarMessage)
-}
-
-fun NavController.navigateToSavedAddresses() {
-    this.navigate(SAVED_ADDRESSES_ROUTE)
-}
-
-fun NavController.navigateOrdersHistory() {
-    this.navigate(ORDERS_HISTORY_ROUTE)
-}
-
-fun NavController.navigateToOrder() {
-    this.navigate(ORDER_SCREEN_ROUTE)
-}
-
-fun NavController.navigateToLegalScreen() {
-    this.navigate(LEGAL_SCREEN_ROUTE)
-}
-
-fun NavController.navigateToDeliveryScreen() {
-    this.navigate(DELIVERY_SCREEN_ROUTE)
-}
-
-fun NavController.navigateToContactsScreen() {
-    this.navigate(CONTACTS_SCREEN_ROUTE)
-}
-
-fun NavController.navigateToAddress(address: Address? = null, returnToRoute: String) {
-    val encodedReturnRoute = URLEncoder.encode(returnToRoute, StandardCharsets.UTF_8.toString())
-
-    if (address == null) {
-        // Новый адрес → карта
-        val emptyAddress = ""
-        navigate("$ADDRESS_SCREEN_ROUTE/$emptyAddress/$encodedReturnRoute")
-    } else {
-        // Есть уже выбранный адрес
-        val json = Json.encodeToString(address)
-        val encoded = Base64.encodeToString(json.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
-        navigate("$ADDRESS_SCREEN_ROUTE/$encoded/$encodedReturnRoute")
-    }
-}
 
 fun NavController.navigateToAddressDetails(
     address: Address,

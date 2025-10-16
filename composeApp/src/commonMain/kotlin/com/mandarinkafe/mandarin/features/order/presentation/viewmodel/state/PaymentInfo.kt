@@ -17,3 +17,4 @@ data class PaymentInfo(
     val chosenPaymentTypeDomain: PaymentType
         get() = availablePaymentTypes.first { it.code == chosenPaymentType?.code }
 }
+

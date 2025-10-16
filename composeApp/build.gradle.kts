@@ -82,6 +82,9 @@ kotlin {
                 implementation(libs.precompose)
                 implementation(libs.precompose.viewmodel)
                 implementation(libs.precompose.koin)
+
+                // url encoder
+                implementation("net.thauvin.erik.urlencoder:urlencoder-lib:1.6.0")
             }
         }
 

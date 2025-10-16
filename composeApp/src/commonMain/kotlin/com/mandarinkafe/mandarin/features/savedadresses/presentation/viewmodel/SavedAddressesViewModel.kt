@@ -58,3 +58,4 @@ class SavedAddressesViewModel(
         setState { copy(isLoading = isLoading) }
     }
 }
+

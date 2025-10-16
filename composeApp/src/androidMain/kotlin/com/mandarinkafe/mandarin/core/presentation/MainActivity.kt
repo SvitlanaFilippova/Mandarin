@@ -1,10 +1,9 @@
 package com.mandarinkafe.mandarin.core.presentation
 
-import android.graphics.Color
 import android.os.Bundle
-import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.CompositionLocalProvider
+import com.mandarinkafe.mandarin.kmp.App
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.httpUrlFetcher
 import io.kamel.core.config.takeFrom
@@ -21,6 +20,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.http.HttpHeaders
+import moe.tlaster.precompose.lifecycle.setContent
 import java.io.File
 
 class MainActivity : ComponentActivity() {
@@ -28,22 +28,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val kamelConfig = initKamel()
 
-        // Временно простой UI пока MainScreen не перенесен
-        // TODO: Раскомментировать когда MainScreen будет перенесен
-        // setContent {
-        //     CompositionLocalProvider(LocalKamelConfig provides kamelConfig) {
-        //         MandarinTheme {
-        //             MainScreen()
-        //         }
-        //     }
-        // }
-
-        val textView = TextView(this).apply {
-            text = "Mandarin KMP App, fuck yeah"
-            textSize = 18f
-            setTextColor(Color.WHITE)
+        setContent {
+            CompositionLocalProvider(LocalKamelConfig provides kamelConfig) {
+                App()
+            }
         }
-        setContentView(textView)
     }
 
     // настраиваем Kamel, чтобы работало кэширование изображений

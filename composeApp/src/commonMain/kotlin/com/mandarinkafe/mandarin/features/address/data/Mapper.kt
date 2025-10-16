@@ -6,3 +6,4 @@ expect object Mapper {
     fun GeoPoint.toYandexPoint(): Any
     fun Any.toGeoPoint(): GeoPoint
 }
+

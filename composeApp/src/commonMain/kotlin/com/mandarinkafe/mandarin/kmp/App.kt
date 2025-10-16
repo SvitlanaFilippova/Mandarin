@@ -9,10 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mandarinkafe.mandarin.core.presentation.theme.MandarinTheme
 
 @Composable
 fun App() {
-    MaterialTheme {
+    MandarinTheme {
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {

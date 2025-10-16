@@ -64,11 +64,14 @@ fun NavGraph() {
             )
         }
 
-        scene(NavConstants.CART_SCREEN_ROUTE) {
+        scene(NavConstants.CART_SCREEN_ROUTE_WITH_ARGS) { backStackEntry ->
+            val snackbarMessage = backStackEntry.query<String>(NavConstants.KEY_SNACKBAR_MESSAGE)
+
             CartScreen(
                 cartViewModel = cartViewModel,
                 sharedViewModel = sharedViewModel,
-                navigator = navigator
+                navigator = navigator,
+                snackbarMessage = snackbarMessage?.decodeURLPart(),
             )
         }
 
@@ -122,8 +125,8 @@ fun NavGraph() {
         // --- MEAL DETAILS (BottomSheet) ---
         dialog(NavConstants.MEAL_DETAILS_ROUTE_WITH_ARGS) { backStackEntry ->
             val isEditMode = backStackEntry.query<Boolean>(NavConstants.KEY_IS_EDIT_MODE) ?: false
-            val mealJson = backStackEntry.query<String>(NavConstants.KEY_MEAL_JSON)
-            val mealId = backStackEntry.query<String>(NavConstants.KEY_MEAL_ID)
+            val mealJson = backStackEntry.query<String>(NavConstants.KEY_MEAL_JSON)?.decodeURLPart()
+            val mealId = backStackEntry.query<String>(NavConstants.KEY_MEAL_ID)?.decodeURLPart()
 
             val initItem = mealJson?.let {
                 runCatching { Json.decodeFromString<CartItem>(it) }.getOrNull()
@@ -140,7 +143,7 @@ fun NavGraph() {
 
 
         scene(NavConstants.ADDRESS_SCREEN_ROUTE_WITH_ARGS) { backStackEntry ->
-            val addressJson = backStackEntry.query<String>(NavConstants.KEY_ADDRESS_JSON)
+            val addressJson = backStackEntry.query<String>(NavConstants.KEY_ADDRESS_JSON)?.decodeURLPart()
             val returnToRoute = backStackEntry.query<String>(NavConstants.KEY_RETURN_TO_ROUTE)
                 ?.decodeURLPart()
                 ?: ""
@@ -159,7 +162,7 @@ fun NavGraph() {
 
         scene(NavConstants.ADDRESS_DETAILS_ROUTE_WITH_ARGS) { backStackEntry ->
             val isEditMode = backStackEntry.query<Boolean>(NavConstants.KEY_IS_EDIT_MODE) ?: false
-            val addressJson = backStackEntry.query<String>(NavConstants.KEY_ADDRESS_JSON)
+            val addressJson = backStackEntry.query<String>(NavConstants.KEY_ADDRESS_JSON)?.decodeURLPart()
             val returnToRoute = backStackEntry.query<String>(NavConstants.KEY_RETURN_TO_ROUTE)
                 ?.decodeURLPart()
                 ?: ""
@@ -188,8 +191,7 @@ fun NavGraph() {
 
 
         scene(NavConstants.ORDER_INFO_ROUTE_WITH_ARGS) { backStackEntry ->
-//            val orderId = moe.tlaster.precompose.navigation.path<String>(NavConstants.KEY_ORDER_ID) ?: ""
-            val orderId = "23" // TODO сделать нормальную передачу orderId
+            val orderId = backStackEntry.query<String>(NavConstants.KEY_ORDER_ID)?.decodeURLPart() ?: ""
             val fromOrderCreation = backStackEntry.query<Boolean>(NavConstants.KEY_FROM_ORDER_CREATION) ?: false
 
             OrderInfoScreen(

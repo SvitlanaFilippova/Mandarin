@@ -26,3 +26,4 @@ data class DeliveryInfo(
                 chosenAddress != null &&
                 deliveryZone == null
 }
+
