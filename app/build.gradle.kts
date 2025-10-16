@@ -114,9 +114,9 @@ dependencies {
 //    implementation(libs.androidx.lifecycle.process)
 //    implementation(libs.androidx.lifecycle.viewmodelCompose)
 //    implementation(libs.androidx.lifecycle.runtimeCompose)
-
-    // Navigation for Compose
-    implementation(libs.androidx.navigation.compose)
+//
+//    // Navigation for Compose
+//    implementation(libs.androidx.navigation.compose)
 
     // Kamel
     implementation(libs.kamel.image.default)
@@ -137,8 +137,8 @@ dependencies {
     implementation(libs.com.yandex.maps.mobile)
 
     // Accompanist для управления системными UI + навигацией с BottomSheet
-    implementation(libs.accompanist.navigation.material)
-    implementation(libs.accompanist.systemuicontroller)
+//    implementation(libs.accompanist.navigation.material)
+//    implementation(libs.accompanist.systemuicontroller)
 
     // Firebase (временно отключено)
     // implementation(libs.firebase.analytics)

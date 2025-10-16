@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.core.presentation
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.ComponentActivity
@@ -36,10 +37,11 @@ class MainActivity : ComponentActivity() {
         //         }
         //     }
         // }
-        
+
         val textView = TextView(this).apply {
-            text = "Mandarin KMP App - Kamel настроен"
+            text = "Mandarin KMP App, fuck yeah"
             textSize = 18f
+            setTextColor(Color.WHITE)
         }
         setContentView(textView)
     }

@@ -45,6 +45,7 @@ kotlin {
                 implementation(compose.ui)
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
+                api(compose.animation)
 
                 // Multiplatfrom ViewModel, Runtime
                 implementation(libs.jetbrains.lifecycle.viewmodel)
@@ -76,6 +77,11 @@ kotlin {
 
                 // Kamel for image loading
                 implementation(libs.kamel.image.default)
+
+                // PreCompose (Navogation)
+                implementation(libs.precompose)
+                implementation(libs.precompose.viewmodel)
+                implementation(libs.precompose.koin)
             }
         }
 
@@ -180,7 +186,8 @@ object BuildConfig {
 }
 """.trimIndent()
 
-val buildConfigFile = file("src/commonMain/kotlin/com/mandarinkafe/mandarin/core/data/config/BuildConfig.kt")
+val buildConfigFile =
+    file("src/commonMain/kotlin/com/mandarinkafe/mandarin/core/data/config/BuildConfig.kt")
 buildConfigFile.parentFile.mkdirs()
 buildConfigFile.writeText(buildConfigContent)
 
