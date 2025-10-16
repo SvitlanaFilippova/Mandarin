@@ -8,14 +8,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.rememberOrderViewModel
 import moe.tlaster.precompose.navigation.Navigator
 
 @Composable
 fun OrderScreen(
     navigator: Navigator,
-    orderViewModel: OrderViewModel,
     sharedViewModel: SharedViewModel
 ) {
+    val  orderViewModel = rememberOrderViewModel()
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

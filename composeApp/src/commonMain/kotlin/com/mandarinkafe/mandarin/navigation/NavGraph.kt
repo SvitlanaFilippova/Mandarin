@@ -6,7 +6,6 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.AddressDetailsScreen
 import com.mandarinkafe.mandarin.features.address.presentation.ui.screen.AddressMapScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.screen.CartScreen
-import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.FavoritesScreen
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.screen.MenuScreen
@@ -16,28 +15,25 @@ import com.mandarinkafe.mandarin.features.more.presentation.ui.screen.DeliverySc
 import com.mandarinkafe.mandarin.features.more.presentation.ui.screen.LegalScreen
 import com.mandarinkafe.mandarin.features.more.presentation.ui.screen.MoreMenuScreen
 import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScreen
-import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen.OrderInfoScreen
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.screen.OrdersHistoryScreen
 import com.mandarinkafe.mandarin.features.savedadresses.presentation.ui.screen.SavedAddressesScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
-import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.rememberCartViewModel
+import com.mandarinkafe.mandarin.shared.ui.viewmodel.rememberSharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
 import kotlinx.serialization.json.Json
 import io.ktor.http.decodeURLPart
-import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.query
 import moe.tlaster.precompose.navigation.rememberNavigator
 
 
 @Composable
-fun NavGraph() {
+    fun NavGraph() {
     val navigator = rememberNavigator()
-
-    val cartViewModel: CartViewModel = koinViewModel()
-    val sharedViewModel: SharedViewModel = koinViewModel()
-    val orderViewModel: OrderViewModel = koinViewModel()
+    val cartViewModel = rememberCartViewModel()
+    val sharedViewModel = rememberSharedViewModel()
 
     NavHost(
         navigator = navigator,
@@ -47,7 +43,6 @@ fun NavGraph() {
         scene(NavConstants.SPLASH_SCREEN_ROUTE) {
             SplashScreen()
         }
-
 
         // --- MAIN GRAPH (начало) ---
         scene(NavConstants.MENU_SCREEN_ROUTE) {
@@ -184,7 +179,6 @@ fun NavGraph() {
         scene(NavConstants.ORDER_SCREEN_ROUTE) {
             OrderScreen(
                 navigator = navigator,
-                orderViewModel = orderViewModel,
                 sharedViewModel = sharedViewModel
             )
         }
