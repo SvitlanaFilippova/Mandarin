@@ -1,58 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <!-- Error Messages -->
-    <string name="error_no_internet">Нет подключения к интернету</string>
-    <string name="error_no_internet_extra">Попробуй ещё раз или просто позвони нам по телефону, чтобы сделать заказ.</string>
     
+    
+    
+    
+    
+    <string name="error_no_internet_extra">Попробуй ещё раз или просто позвони нам по телефону, чтобы сделать заказ.</string>
     <string name="error_other">Что-то пошло не так 🤷</string>
     <string name="error_other_extra">Попробуй ещё раз или просто позвони нам по телефону, чтобы сделать заказ.</string>
-    
     <string name="error_menu_empty">Сервер вернул пустые данные меню</string>
     <string name="error_menu_empty_extra">Попробуй ещё раз или просто позвони нам по телефону, чтобы сделать заказ.</string>
-    
     <string name="error_data_empty">Не удалось загрузить данные</string>
     <string name="error_data_empty_extra">Попробуй ещё раз или просто позвони нам по телефону, чтобы сделать заказ.</string>
-    
     <string name="error_favorites_empty">В избранных пока ничего нет.</string>
     <string name="error_favorites_empty_extra">Скорее добавь свои любимые блюда, чтобы заказывать их было ещё удобнее!</string>
-    
     <string name="error_cart_empty">В корзине пока ничего нет</string>
-    
     <string name="error_search_empty">Ничего не найдено :(</string>
     <string name="error_search_empty_extra">Попробуй написать по-другому или просто полистай наше меню. Там точно найдутся нужные вкусности!</string>
-    
     <string name="error_order_data_empty">Увы, детали заказа не удалось получить.</string>
     <string name="error_order_data_empty_extra">Сервер гарантирует их хранение в течение 7 дней. Сейчас, скорее всего, он их уже удалил 😔</string>
+    
+    
     
     <!-- System Messages -->
     <string name="terminal_unavailable">Упс, кажется, сейчас мы не работаем — заказ оформить не получится🤷
 Возвращайся в рабочее время!</string>
     <string name="check_terminal_failed">Что-то пошло не так — не удалось проверить, работает ли сейчас доставка.</string>
     
-    <!-- Cart Messages -->
-    <string name="added_to_cart_template">Добавлено в корзину:\n%s</string>
-    <string name="edited_template">Отредактировано:\n%s</string>
-    <string name="replace_or_add_message">В корзине уже есть %s, но без дополнительных опций.\n\nЗаменяем, или просто добавляем ещё одну позицию в корзину?</string>
     
-    <!-- Order Messages -->
-    <string name="save_name_and_phone">Использовать имя и телефон для будущих заказов</string>
     
     <!-- Orders History Messages -->
     <string name="error_orders_status_update_failed">Что-то пошло не так при попытке обновить статусы заказов</string>
     <string name="error_no_internet_orders">Нет подключения к интернету</string>
     
-    <!-- Order Messages -->
-    <string name="pickup_only_positions_removed">Окей, удалили из заказа все позиции, которые недоступны для доставки</string>
-    <string name="error_payment_types_unavailable">Не удалось получить от сервера доступные способы оплаты</string>
-    <string name="update_saved_name_and_phone">Обновить имя и телефон для будущих заказов</string>
-    <string name="error_missing_required_fields">Нужно заполнить все обязательные поля</string>
-    <string name="error_terminal_unavailable">Упс, кажется, сейчас мы не работаем — заказ оформить не получится🤷
-Возвращайся в рабочее время!</string>
-    <string name="error_unknown">Неизвестная ошибка</string>
-    <string name="error_order_creation_failed">Не удалось создать заказ</string>
-    <string name="error_empty_server_response">Ошибка: пустой ответ от сервера</string>
-    <string name="error_order_status_failed">Ошибка получения статуса заказа</string>
-    <string name="error_order_timeout">Не удалось создать заказ: превышено время ожидания</string>
     
     <!-- Delivery Status -->
     <string name="delivery_status_unconfirmed">Не подтверждён</string>
@@ -74,6 +55,341 @@
     <string name="delivery_status_cancelled">Отменён</string>
     <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка — пожалуйста, позвоните.</string>
     
-    <!-- Splash Screen -->
-    <string name="logo_cafe">Логотип кафе Mandarin</string>
+
+    <!-- Основное -->
+    <string name="cafe_phone_number">+7&#160;(495)&#160;108–70–55</string>
+    <string name="back">Назад</string>
+    <string name="ok">Ок</string>
+    <string name="yes">Да</string>
+    <string name="no_cancel">Нет</string>
+    <string name="cancel">Отмена</string>
+    <string name="edit">Редактировать</string>
+    <string name="remove">Удалить</string>
+    <string name="close">Закрыть</string>
+    <string name="minus">-</string>
+    <string name="plus">+</string>
+    <string name="clear_text">Очистить текст</string>
+    <string name="placeholder_retry">Обновить</string>
+    <string name="placeholder_call">Позвонить</string>
+    <string name="remove_yes">Да 🗑️</string>
+    <string name="remove_no">Нет-нет! 🙈</string>
+
+    <!-- Заголовки экранов -->
+    <string name="menu">Меню</string>
+    <string name="favorite">Избранное</string>
+    <string name="cart">Корзина</string>
+    <string name="more_options">Ещё</string>
+    <string name="order_history">История заказов</string>
+    <string name="saved_addresses">Сохранённые адреса</string>
+    <string name="address_screen_title">Адрес</string>
+    <string name="address_details_screen_title">Детали адреса</string>
+    <string name="submit_order__screen_title">Оформление заказа</string>
+
+
+    <!-- Корзина -->
+    <string name="add_to_cart">Добавить в корзину</string>
+    <string name="clear_cart">Очистить корзину</string>
+    <string name="clear_cart_question">Очистить корзину?</string>
+    <string name="clear_cart_confirmation">Действительно удалить всё из корзины?</string>
+    <string name="sushi_soy_souse_tooltip">Палочки, васаби, имбирь и&#160;соевый соус к&#160;суши и&#160;роллам предоставляются бесплатно. Но&#160;вдруг нужна экстра порция.</string>
+    <string name="recommendations_title">Советуем добавить</string>
+    <string name="comment_for_meal">Комментарий к блюду для повара</string>
+    <string name="remove_from_cart">Убрать из корзины</string>
+    <string name="cancel_removing">Ой, верните!</string>
+    <string name="error_empty_cart">В корзине пока ничего нет</string>
+    <string name="added_to_cart_template">Добавлено в&#160;корзину:\n%s</string>
+    <string name="edited_template">Отредактировано:\n%1$s</string>
+    <string name="comment_template">Комментарий: %1$s</string>
+
+
+    <!-- Избранное -->
+    <string name="error_empty_favorites">В избранных пока ничего нет.</string>
+    <string name="error_empty_favorites_extra">Скорее добавь свои любимые блюда, чтобы заказывать их&#160;было ещё удобнее!</string>
+    <string name="add_to_favorite">Добавить в избранное</string>
+    <string name="favorite_variant_dialog_title">Что сохранить?</string>
+    <string name="favorite_variant_dialog_message">Добавить в&#160;избранное базовое блюдо или&#160;сразу с&#160;выбранными опциями?</string>
+    <string name="favorite_variant_base_button">Базовое блюдо 🍽️</string>
+    <string name="favorite_variant_custom_button">С выбранными опциями ⚙️</string>
+
+
+    <!-- Кастомизация блюда -->
+    <string name="adds">Добавки</string>
+    <string name="add_additionals">Сделать вкуснее</string>
+    <string name="make_more_delicious_description">Можно сделать ещё вкуснее!</string>
+    <string name="to_choose">Выбрать</string>
+    <string name="chosen">Выбрано:</string>
+    <string name="cancel_choice">Отменить выбор</string>
+    <string name="modifier_is_mandatory">(обязательно)</string>
+    <string name="maximum_modifier">В этой группе уже выбрано максимально возможное количество добавок</string>
+    <string name="maximum_modifier_short">(максимум %d)</string>
+    <string name="make_mandatory_choice_before_cart">Выбери нужные опции в обязательных модификаторах — только после этого можно добавить блюдо в корзину</string>
+    <string name="label_selfpickup_only">самовывоз</string>
+    <string name="for_selfpickup_details">Позиция доступна только для заказа самовывозом. Доставка невозможна.</string>
+    <string name="replace_or_add_title">Что делаем?</string>
+    <string name="replace_or_add_message">В корзине уже есть %1$s, но без дополнительных опций.\n\nЗаменяем, или &#160;просто добавляем ещё одну позицию в&#160;корзину?</string>
+    <string name="replace_button">Заменить</string>
+    <string name="add_one_more_button">Добавить ещё</string>
+
+
+    <!-- Оформление заказа - форма -->
+    <string name="your_name">Имя</string>
+    <string name="your_phone_required">Номер телефона *</string>
+    <string name="phone_prefix">+7 </string>
+    <string name="phone_mask">(###) ###-##-##</string>
+    <string name="phone_placeholder">(XXX) XXX-XX-XX</string>
+    <string name="save_user_data">Сохранить имя и номер телефона для будущих заказов</string>
+    <string name="street_and_building">Улица и дом *</string>
+    <string name="address_comment">Комментарий для курьера</string>
+    <string name="your_comment">Комментарий к заказу</string>
+    <string name="shipping">Доставка</string>
+    <string name="shipping_self_pickup">Cамовывоз</string>
+    <string name="choose_address">Выберите адрес *</string>
+    <string name="delivery_type">Способ получения: *</string>
+    <string name="payment_type">Способ оплаты: *</string>
+    <string name="payment_online">картой онлайн</string>
+    <string name="payment_self_card">картой при получении</string>
+    <string name="payment_cash">наличными</string>
+    <string name="no_change_needed">Без сдачи</string>
+    <string name="payment_change">Сдача с </string>
+    <string name="payment_default_value">0</string>
+    <string name="no_utensils">Мне не нужны приборы и салфетки</string>
+    <string name="i_need_utensils">Мне нужны:</string>
+    <string name="total_cart_cost">Сумма заказа</string>
+    <string name="discount_template">Скидка %1$d%%</string>
+    <string name="delivery_cost">Стоимость доставки</string>
+    <string name="submit_order">Оформить заказ</string>
+    <string name="save_name_and_phone">Использовать имя и телефон для будущих заказов</string>
+    <string name="update_saved_name_and_phone">Обновить имя и телефон для будущих заказов</string>
+
+
+    <!-- Оформление заказа - сообщения и ошибки -->
+    <string name="delivery_validation_error">Не&#160;удалось найти адрес в&#160;пределах зон доставки. Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа.</string>
+    <string name="delivery_cost_hint">Для выбранного адреса доставка бесплатна при заказе от&#160;%1&#36;d&#8381; (с&#160;учётом скидок).</string>
+    <string name="discount_hint">Скидка по&#160;карте действует не&#160;на&#160;все позиции.</string>
+    <string name="delivery_request_validation">Нужно ввести адрес для расчёта стоимости доставки</string>
+    <string name="pickup_only">В&#160;заказе есть позиции, доступные только для самовывоза.</string>
+    <string name="remove_pickup_only_from_cart">Убрать их из корзины, хочу доставку!</string>
+    <string name="pickup_only_positions_removed">Окей, удалили из&#160;заказа все позиции, которые недоступны для доставки</string>
+    <string name="alcohol_pickup_only_18_plus">В&#160;заказе содержится алкоголь. Он&#160;доступен только для самовывоза и&#160;отпускается лицам старше 18&#160;лет.</string>
+    <string name="positions_for_pickup_only_template">Позиции, для которых невозможна доставка:\n%1$s</string>
+    <string name="pickup_both_title">Заказ будет готов в&#160;двух точках самовывоза</string>
+    <string name="pickup_both_description">В&#160;заказе есть блюда, которые готовятся в&#160;пиццерии, и&#160;те, что готовятся в&#160;основном кафе.
+        Их&#160;нужно будет забрать по&#160;двум адресам. Это соседние здания 😊</string>
+    <string name="pickup_cafe_address">Кафе: Черноголовка, ул. Береговая, 24</string>
+    <string name="pickup_pizzeria_address">Пиццерия: Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
+    <string name="error_payment_types_unavailable">Не удалось получить от сервера доступные способы оплаты</string>
+    <string name="error_missing_required_fields">Нужно заполнить все обязательные поля</string>
+    <string name="error_terminal_unavailable">Упс, кажется, сейчас мы не работаем — заказ оформить не получится🤷
+        Возвращайся в рабочее время!</string>
+    <string name="error_cant_check_terminal_is_alive">Что-то пошло не так — не удалось проверить, работает ли сейчас доставка.</string>
+    <string name="error_order_creation_failed">Не xcxcxcxc создать заказ</string>
+    <string name="error_order_status_failed">Ошибка получения статуса заказа</string>
+    <string name="error_order_timeout">Не удалось создать заказ: превышено время ожидания</string>
+
+
+    <!-- Адрес -->
+    <string name="deliver_to_this_location">Доставить сюда</string>
+    <string name="to_my_location">Вернуться к моей локации</string>
+    <string name="to_init_location">Вернуться к изначальной позиции</string>
+    <string name="zoom_minus">Отдалить</string>
+    <string name="zoom_plus">Приблизить</string>
+    <string name="save">Сохранить</string>
+    <string name="delete">Удалить</string>
+    <string name="no_saved_addresses">Сохранённых адресов пока нет.</string>
+    <string name="add_address">+ Новый адрес</string>
+    <string name="delete_address_question">Удалить адрес?</string>
+    <string name="delete_address_text">Действительно удалить сохранённый адрес?</string>
+    <string name="address_type">Тип адреса: *</string>
+    <string name="address_apartment_number">Квартира *</string>
+    <string name="address_apartment_entrance">Подъезд *</string>
+    <string name="address_apartment_floor">Этаж *</string>
+    <string name="address_apartment_intercom">Домофон</string>
+    <string name="address_type_apartment">Квартира</string>
+    <string name="address_type_private_house">Частный дом</string>
+    <string name="address_type_other">Другое</string>
+    <string name="addresses_hide">Скрыть</string>
+    <string name="addresses_show_more">Показать ещё %1$d</string>
+
+
+    <!-- Форма обратной связи -->
+    <string name="your_phone">Номер телефона</string>
+    <string name="your_email">E-mail ил Telegram</string>
+    <string name="your_message">Сообщение *</string>
+    <string name="i_need_feedback">Нужна обратная связь</string>
+    <string name="contacts_are_required">Нужно указать хоть какой-то контакт для связи</string>
+
+
+    <!-- История заказов -->
+    <string name="order_history_is_empty">Здесь будут ваши заказы</string>
+    <string name="order_history_is_empty_extra">Сейчас история заказов хранится только на&#160;этом устройстве.
+        После удаления приложения или перехода на&#160;другое устройство данные будут потеряны.</string>
+    <string name="order_history_is_empty_by_filters">По&#160;таким фильтрам заказов нет</string>
+    <string name="order_history_is_empty_by_filters_extra">Попробуй изменить или сбросить фильтры, чтобы увидеть другие заказы.</string>
+    <string name="filter_by_type">Тип заказа</string>
+    <string name="date_filter_today">Сегодня</string>
+    <string name="date_filter_yesterday">Вчера</string>
+    <string name="date_filter_last_7_days">Последние 7 дней</string>
+    <string name="date_filter_current_month">Текущий месяц</string>
+    <string name="date_filter_custom_range">Выбрать диапазон</string>
+    <string name="choose_period">Выбери период</string>
+    <string name="filter_by_date">Период</string>
+    <string name="filter_by_date_start">Начало</string>
+    <string name="filter_by_date_end">Конец</string>
+
+
+    <!-- Детали заказа -->
+    <string name="order_info_screen_title">Заказ</string>
+    <string name="order_info_screen_title_with_number">Заказ №%1$s</string>
+    <string name="order_info_error_empty_data">Увы, детали заказа не&#160;удалось получить.</string>
+    <string name="order_info_error_empty_data_extra">Сервер гарантирует их&#160;хранение в&#160;течение 7&#160;дней. Сейчас, скорее всего, он&#160;их&#160;уже удалил 😔</string>
+    <string name="label_error">Ошибка</string>
+    <string name="label_order_type">Способ получения</string>
+    <string name="label_order_items">Позиции заказа: %1$d</string>
+    <string name="discount_applied">Применена скидка</string>
+    <string name="label_total">Итого</string>
+    <string name="label_paid">Оплачено</string>
+    <string name="label_address">Адрес</string>
+    <string name="label_phone">Телефон</string>
+    <string name="label_customer">Клиент</string>
+    <string name="label_comment">Комментарий к заказу</string>
+    <string name="label_created_when">Создан</string>
+    <string name="label_confirmed_when">Подтверждён</string>
+    <string name="label_cancelled_when">Отменён</string>BY
+    <string name="label_cooking_completed_when">Готов</string>
+    <string name="label_sent_when">Отправлен</string>
+    <string name="label_delivered_when">Доставлен</string>
+    <string name="label_closed_when">Закрыт</string>
+    <string name="back_to_menu">Вернуться в меню</string>
+    <string name="cancel_order_button">Отменить заказ</string>
+    <string name="cancel_order_question">Отменить заказ?</string>
+    <string name="cancel_order_confirmation">Действительно отменить оформленный заказ?</string>
+    <string name="repeat_order_button">Повторить заказ</string>
+    <string name="item_is_no_longer_available">На данный момент в&#160;меню отсутствует позиция «%1$s»</string>
+    <string name="some_items_unavailable">Некоторые блюда недоступны. Остальные добавлены в&#160;корзину</string>
+    <string name="all_items_added_to_cart">Все позиции из&#160;заказа добавлены в&#160;корзину</string>
+
+    <!-- Статусы заказа -->
+    <string name="delivery_status_unconfirmed">Не подтверждён</string>
+    <string name="delivery_status_extra_unconfirmed">Ожидаем подтверждения заказа. В&#160;ближайшее время оператор позвонит, чтобы подтвердить его. Пожалуйста, будь на&#160;связи.</string>
+    <string name="delivery_status_wait_cooking">Ожидает готовки</string>
+    <string name="delivery_status_extra_wait_cooking">Заказ принят и&#160;скоро поступит на&#160;кухню.</string>
+    <string name="delivery_status_cooking_started">Начали готовить</string>
+    <string name="delivery_status_extra_cooking_started">Готовим заказ. Это займёт немного времени.</string>
+    <string name="delivery_status_cooking_completed">Приготовлен</string>
+    <string name="delivery_status_extra_cooking_completed">Блюда готовы. Скоро курьер получит заказ.</string>
+    <string name="delivery_status_waiting">Упакован</string>
+    <string name="delivery_status_extra_waiting">Ожидаем курьера. Это может занять несколько минут.</string>
+    <string name="delivery_status_on_way">В пути</string>
+    <string name="delivery_status_extra_on_way">Курьер уже забрал заказ и&#160;выдвинулся в&#160;путь.</string>
+    <string name="delivery_status_delivered">Доставлен</string>
+    <string name="delivery_status_extra_delivered">Заказ доставлен. Приятного аппетита!</string>
+    <string name="delivery_status_closed">Закрыт</string>
+    <string name="delivery_status_extra_closed">Заказ завершён. Спасибо, что вы&#160;с&#160;нами!</string>
+    <string name="delivery_status_cancelled">Отменён</string>
+    <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка&#160;&#8212; пожалуйста, позвоните.</string>
+
+
+    <!-- Общие ошибки и сообщения -->
+    <string name="placeholder_message_call_us">Попробуй ещё&#160;раз или просто позвони нам по&#160;телефону, чтобы сделать заказ.</string>
+    <string name="error_no_internet">Нет подключения к&#160;интернету</string>
+    <string name="error_something_wrong_for_placeholder">Что-то пошло не так</string>
+    <string name="error_empty_menu">Сервер вернул пустые данные меню</string>
+    <string name="error_empty_data">Не удалось загрузить данные</string>
+    <string name="error_empty_server_response">Ошибка: пустой ответ от сервера</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
+    <string name="error_something_wrong">Что-то пошло не так 🤷 </string>
+
+    <!-- Меню "Ещё" -->
+    <string name="more_orders_history">История заказов</string>
+    <string name="more_saved_addresses">Сохранённые адреса</string>
+    <string name="more_section_legal_info">Правовая информация</string>
+    <string name="more_delivery_info">Условия доставки</string>
+    <string name="more_contacts">Контакты</string>
+    <string name="more_message_manager">Написать руководству</string>
+    <string name="message_sent_successfully">Сообщение успешно отправлено.\n\nСпасибо за&#160;обратную связь, мы&#160;её&#160;очень ценим! &#9829;️</string>
+    <string name="more_privacy_policy">Политика конфиденциальности</string>
+    <string name="more_personal_data_agreement">Соглашение об обработке персональных данных</string>
+    <string name="more_yandex_maps_terms">Условия использования отдельных сервисов «Яндекс.Карт»</string>
+    <string name="cannot_open_link">Не удалось открыть ссылку</string>
+    <string name="mandarin_info">Доставляем по&#160;Черноголовке и&#160;ближайшим населенным пунктам</string>
+
+
+    <!-- consent -->
+    <string name="consent_prefix">Нажимая на кнопку%s, подтверждаю своё согласие с</string>
+    <string name="consent_privacy">политикой конфиденциальности</string>
+    <string name="consent_agreement">пользовательским соглашением.</string>
+    <string name="privacy_policy_url">https://mandarin-kafe.ru/policy</string>
+    <string name="user_agreement_url">https://mandarin-kafe.ru/agreement</string>
+    <string name="yandex_maps_terms_url">https://yandex.ru/legal/maps_api/</string>
+
+
+    <!-- О приложении  -->
+    <string name="about_title">О приложении</string>
+    <string name="version_text">Версия приложения: %s</string>
+    <string name="menu_last_updated_text">Меню актуально на: %s</string>
+    <string name="menu_revision_text">Ревизия меню №%d</string>
+    <string name="about_main_text">Привет! 👋\n\nМеня зовут Светлана&#160;&#8212; я&#160;разработчик этого приложения.\n\nЕсли есть предложения по&#160; его улучшению или просто хочется поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!</string>
+    <string name="message_developer">Связаться с разработчиком:</string>
+    <string name="dev_feedback_label">Форма обратной связи</string>
+    <string name="dev_feedback_form_title">Сообщение разработчику</string>
+    <string name="telegram_label">Telegram</string>
+    <string name="telegram_url">https://t.me/SvitlanaFilippova</string>
+    <string name="thanks_text">P.S: отзывы в сторах тоже приветствуются 😊\n\n**тут будут ссылки, чтобы оставить отзыв**</string>
+
+
+    <!-- Контакты -->
+    <string name="contacts_screen_title">Контакты</string>
+    <string name="working_hours_title">График работы</string>
+    <string name="working_hours_value">Ежедневно с 11:00 до 22:00</string>
+    <string name="addresses_title">Адреса</string>
+    <string name="phone_title">Телефон</string>
+
+
+    <!-- Доставка -->
+    <string name="delivery_areas">Зоны доставки</string>
+    <string name="delivery_free_from">0&#160;₽ от&#160;%1$d&#160;₽</string>
+    <string name="delivery_price">Иначе %1$d&#160;₽</string>
+    <string name="delivery_price_and_free_from">Доставка %2$d&#160;₽;\nПри заказе от&#160;%1$d&#160;₽ — бесплатно</string>
+    <string name="delivery_zones_text">Доставим бесплатно при условии заказа на&#160;минимальную сумму. Чем дальше от&#160;Черноголовки, тем сумма выше.</string>
+    <string name="delivery_duration_title">Время доставки</string>
+    <string name="delivery_duration_value">Время зависит от&#160;удалённости адреса и&#160;загруженности ресторана.
+        Актуальную информацию можно уточнить у&#160;оператора по&#160;телефону.</string>
+
+
+    <!-- Поиск  -->
+    <string name="search_by_meal_or_category">Блюдо или категория</string>
+    <string name="search_in_menu">Поиск по меню</string>
+    <string name="nothing_found">Ничего не найдено :(</string>
+    <string name="nothing_found_extra">Попробуй написать по-другому или просто полистай наше меню. Там точно найдутся нужные вкусности!</string>
+
+
+    <!-- Для contentDescription (описания элементов для слабовидящих)  -->
+    <string name="picture_of_meal_template">Изображение %1$s</string>
+    <string name="icon_of_category">Иконка категории "%1$s"</string>
+    <string name="banner_number">Баннер №%1$d</string>
+    <string name="added_to_cart">Добавлено в корзину</string>
+    <string name="back_to_top">Вернуться в начало</string>
+    <string name="is_selected">Выбрано</string>
+    <string name="logo_cafe">Логотип кафе</string>
+    <string name="send">Отправить</string>
+    <string name="why_is_that_number">Почему такая цифра</string>
+
+
+    <!-- Единицы измерения -->
+    <string name="unit_gram">г</string>
+    <string name="unit_kg">кг</string>
+    <string name="unit_ml">мл</string>
+    <string name="unit_l">л</string>
+    <string name="rub">₽</string>
+
+
+    <!-- Шаблоны текста -->
+    <string name="meal_weight_template">%1$d %2$s</string>
+    <string name="meal_weight_template_for_adds">%1$d %2$s</string>
+    <string name="meal_price_template">%1$d ₽</string>
+    <string name="meal_in_cart_count_template">%1$d шт</string>
+    <string name="save_meal">Сохранить (%1$d ₽)</string>
+    <string name="cart_total_cost_template">%d ₽</string>
+    <string name="float_price_template">%.2f ₽</string>
+    <string name="quantity_x_template">x%.0f</string>
 </resources>
