@@ -85,7 +85,10 @@ kotlin {
                 implementation(libs.precompose.koin)
 
                 // url encoder
-                implementation("net.thauvin.erik.urlencoder:urlencoder-lib:1.6.0")
+                implementation(libs.urlencoder.lib)
+
+                // pull to refresh
+                implementation(libs.materii.pullrefresh)
             }
         }
 
