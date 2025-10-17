@@ -5,7 +5,6 @@ import com.mandarinkafe.mandarin.features.infrastructure.di.infrastructurePlatfo
 import com.mandarinkafe.mandarin.features.menu.di.menuPlatformModule
 import com.mandarinkafe.mandarin.features.more.di.morePlatformModule
 
-
 fun initKoinIOS() = initKoinCommon {
     modules(
         infrastructurePlatformModule,

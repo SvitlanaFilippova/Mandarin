@@ -9,7 +9,7 @@
 /* Begin PBXFileReference section */
 		035EA40E2EA2329800C1DEA6 /* composeAppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = composeAppKit.framework; sourceTree = "<group>"; };
 		035EA40F2EA2329800C1DEA6 /* composeAppKit.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = composeAppKit.framework.dSYM; sourceTree = "<group>"; };
-		8402C1B0CCCF2A0709D7DD61 /* Mandarin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mandarin.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8402C1B0CCCF2A0709D7DD61 /* .app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = .app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -88,7 +88,7 @@
 		55AFEE646A66DFC37EF71D37 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8402C1B0CCCF2A0709D7DD61 /* Mandarin.app */,
+				8402C1B0CCCF2A0709D7DD61 /* .app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -118,7 +118,7 @@
 			packageProductDependencies = (
 			);
 			productName = iosApp;
-			productReference = 8402C1B0CCCF2A0709D7DD61 /* Mandarin.app */;
+			productReference = 8402C1B0CCCF2A0709D7DD61 /* .app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
