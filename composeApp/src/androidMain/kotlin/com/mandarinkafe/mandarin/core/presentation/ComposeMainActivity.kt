@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.core.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
-import com.mandarinkafe.mandarin.kmp.App
+import com.mandarinkafe.mandarin.kmp.MainScreen
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.httpUrlFetcher
 import io.kamel.core.config.takeFrom
@@ -30,7 +30,7 @@ class ComposeMainActivity : ComponentActivity() {
 
         setContent {
             CompositionLocalProvider(LocalKamelConfig provides kamelConfig) {
-                App()
+                MainScreen()
             }
         }
     }

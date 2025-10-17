@@ -15,7 +15,7 @@ fun CartScreen(
     cartViewModel: CartViewModel,
     sharedViewModel: SharedViewModel,
     navigator: Navigator,
-    snackbarMessage: String?
+    snackbarMessage: String? = null
 
 ) {
     Box(

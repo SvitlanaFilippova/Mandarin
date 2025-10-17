@@ -44,7 +44,7 @@ import moe.tlaster.precompose.navigation.rememberNavigator
             SplashScreen()
         }
 
-        // --- MAIN GRAPH (начало) ---
+        // --- ОСНОВНЫЕ ЭКРАНЫ (доступны из Bottom Navigation)---
         scene(NavConstants.MENU_SCREEN_ROUTE) {
             MenuScreen(
                 navigator = navigator,
@@ -70,10 +70,18 @@ import moe.tlaster.precompose.navigation.rememberNavigator
             )
         }
 
+        scene(NavConstants.CART_SCREEN_ROUTE) {
+            CartScreen(
+                cartViewModel = cartViewModel,
+                sharedViewModel = sharedViewModel,
+                navigator = navigator,
+            )
+        }
+
         scene(NavConstants.MORE_MENU_SCREEN_ROUTE) {
             MoreMenuScreen(navigator = navigator)
         }
-        // --- MAIN GRAPH (тут должен быть конец) ---
+
 
 
         // --- ОСТАЛЬНЫЕ ЭКРАНЫ ---

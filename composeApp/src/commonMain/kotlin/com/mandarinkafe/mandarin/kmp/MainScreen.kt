@@ -34,7 +34,7 @@ import moe.tlaster.precompose.navigation.rememberNavigator
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun App(
+fun MainScreen(
     onPhoneClick: () -> Unit = {}
 ) {
     MandarinTheme {
@@ -42,7 +42,10 @@ fun App(
         val sharedViewModel = rememberSharedViewModel()
         val sharedState by sharedViewModel.state.collectAsState()
         val snackbarHostState = remember { SnackbarHostState() }
-        var currentRoute by remember { mutableStateOf<String?>(null) }
+
+        val currentEntry by navigator.currentEntry.collectAsState(initial = null)
+        val currentRoute = currentEntry?.route?.route
+
         var isSplashLoading by remember { mutableStateOf(true) }
         val isSplash = if (isSplashLoading) true else currentRoute == SPLASH_SCREEN_ROUTE
         val showTopBar = !isSplash && sharedState.shouldShowTopBar
