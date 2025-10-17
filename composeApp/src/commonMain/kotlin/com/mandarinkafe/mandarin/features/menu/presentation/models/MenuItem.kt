@@ -28,8 +28,3 @@ sealed interface MenuItem {
         data class MealRow(override val id: String, val left: Meal, val right: Meal) : MealItem
     }
 }
-
-
-
-
-
