@@ -1,17 +1,12 @@
 package com.mandarinkafe.mandarin.core.data.config
 
-import platform.Foundation.*
 
 actual object ApiKeys {
-    private val plist: Map<Any?, *>? by lazy {
-        NSBundle.mainBundle.infoDictionary
-    }
-
-    actual val MAPKIT_API_KEY: String = plist?.get("MAPKIT_API_KEY") as? String ?: ""
-    actual val IIKO_API_KEY: String = plist?.get("IIKO_API_KEY") as? String ?: ""
-    actual val TG_BOT_TOKEN: String = plist?.get("TG_BOT_TOKEN") as? String ?: ""
-    actual val TG_CHANNEL_ID: String = plist?.get("TG_CHANNEL_ID") as? String ?: ""
-    actual val DEV_TG_CHAT_ID: String = plist?.get("DEV_TG_CHAT_ID") as? String ?: ""
-    actual val SERVER_BASE_URL: String = plist?.get("SERVER_BASE_URL") as? String ?: ""
-    actual val MANDARIN_API_KEY: String = plist?.get("MANDARIN_API_KEY") as? String ?: ""
+    actual val MAPKIT_API_KEY: String = BuildConfig.MAPKIT_API_KEY
+    actual val IIKO_API_KEY: String = BuildConfig.IIKO_API_KEY
+    actual val TG_BOT_TOKEN: String = BuildConfig.TG_BOT_TOKEN
+    actual val TG_CHANNEL_ID: String = BuildConfig.TG_CHANNEL_ID
+    actual val DEV_TG_CHAT_ID: String = BuildConfig.DEV_TG_CHAT_ID
+    actual val SERVER_BASE_URL: String = BuildConfig.SERVER_BASE_URL
+    actual val MANDARIN_API_KEY: String = BuildConfig.MANDARIN_API_KEY
 }

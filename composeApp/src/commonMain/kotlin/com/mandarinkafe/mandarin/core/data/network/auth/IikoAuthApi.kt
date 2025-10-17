@@ -7,6 +7,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpStatusCode
 
 class IikoAuthApi(
     private val client: HttpClient
@@ -16,8 +18,21 @@ class IikoAuthApi(
             val response = client.post("/api/1/access_token") {
                 setBody(body)
             }
-            val authResponse = response.body<AuthResponse>()
-            authResponse
+            
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    val authResponse = response.body<AuthResponse>()
+                    authResponse
+                }
+                HttpStatusCode.Unauthorized -> {
+                    Napier.e("401 Unauthorized: Неверный API ключ для iiko")
+                    throw Exception("Неверный API ключ для iiko. Проверьте IIKO_API_KEY в конфигурации.")
+                }
+                else -> {
+                    Napier.e("HTTP ${response.status.value}: ${response.status.description}")
+                    throw Exception("Ошибка сервера iiko: ${response.status.value}")
+                }
+            }
         } catch (e: Exception) {
             Napier.e("Ошибка в IikoAuthApi.authenticate", e)
             throw e

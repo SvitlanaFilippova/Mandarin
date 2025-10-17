@@ -104,7 +104,6 @@
 				088397FB9BC19A36E9A51BD2 /* Sources */,
 				A31567BE1075B2A843519674 /* Frameworks */,
 				F48D4320FD61DFE3A3FF9489 /* Resources */,
-				0390F29F2E9DF1C10029FEF7 /* Merge Info.private.plist */,
 				035EA40C2EA2325300C1DEA6 /* copyFrameworkResourcesToApp */,
 			);
 			buildRules = (
@@ -183,24 +182,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" :composeApp:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.PLATFORM_NAME=\"$PLATFORM_NAME\" \\\n    -Pmoko.resources.CONFIGURATION=\"${KOTLIN_FRAMEWORK_BUILD_TYPE:-$CONFIGURATION}\" \\\n    -Pmoko.resources.ARCHS=\"$ARCHS\" \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\"\n";
-		};
-		0390F29F2E9DF1C10029FEF7 /* Merge Info.private.plist */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Merge Info.private.plist";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "bash \"$PROJECT_DIR/scripts/merge-plist.sh\"\n";
 		};
 		3C64EF4C5D7DDA06745DD2E9 /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -315,7 +296,7 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Мандарин - еда с доставкой";
+				INFOPLIST_KEY_CFBundleDisplayName = "Мандарин";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -357,7 +338,7 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Мандарин - еда с доставкой";
+				INFOPLIST_KEY_CFBundleDisplayName = "Мандарин";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
