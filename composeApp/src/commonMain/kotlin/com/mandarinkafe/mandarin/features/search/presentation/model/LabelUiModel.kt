@@ -6,8 +6,3 @@ data class LabelUiModel(
     val name: String,
     val backgroundColor: Color
 )
-
-
-
-
-

@@ -11,8 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.util.Constants.RATIO_FOR_IMAGE_CROP_MAX
 import com.mandarinkafe.mandarin.util.Constants.RATIO_FOR_IMAGE_CROP_MIN
+import dev.icerock.moko.resources.ImageResource
+import dev.icerock.moko.resources.compose.painterResource
 import io.kamel.core.Resource
 import io.kamel.image.asyncPainterResource
 
@@ -22,8 +25,8 @@ fun KamelSubcomposeAsyncImage(
     modifier: Modifier = Modifier,
     previewModel: Any? = null,
     contentDescription: String?,
-    placeholder: Painter? = null,
-    error: Painter? = null,
+    placeholder: ImageResource? = null,
+    error: ImageResource? = null,
     crossfade: Boolean = true,
     tint: Color? = null,
     contentScale: ContentScale? = null,
@@ -33,7 +36,7 @@ fun KamelSubcomposeAsyncImage(
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
             (placeholder ?: error)?.let {
                 Image(
-                    painter = it,
+                    painter = painterResource(it),
                     contentDescription = contentDescription,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -55,7 +58,7 @@ fun KamelSubcomposeAsyncImage(
             is Resource.Loading -> {
                 LoadingStateContent(
                     previewResource = previewResource,
-                    placeholder = placeholder,
+                    placeholder = painterResource(placeholder ?: MR.images.placeholder_meal_no_photo),
                     contentDescription = contentDescription,
                     contentScale = contentScale
                 )
@@ -74,7 +77,7 @@ fun KamelSubcomposeAsyncImage(
             is Resource.Failure -> {
                 error?.let {
                     Image(
-                        painter = it,
+                        painter = painterResource(it),
                         contentDescription = contentDescription,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop

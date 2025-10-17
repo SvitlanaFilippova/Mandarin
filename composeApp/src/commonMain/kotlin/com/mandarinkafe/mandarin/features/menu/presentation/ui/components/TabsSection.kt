@@ -122,8 +122,8 @@ private fun CategoryTabItem(
                     modifier = Modifier.size(Dimens.IconSize24),
                     contentScale = ContentScale.Fit,
                     tint = if (isSelected) Colors.Orange else Color.White,
-                    placeholder = painterResource(MR.images.logo_orange_simplified),
-                    error = painterResource(MR.images.logo_orange_simplified)
+                    placeholder = MR.images.logo_orange_simplified,
+                    error = MR.images.logo_orange_simplified
                 )
             } else {
                 Image(

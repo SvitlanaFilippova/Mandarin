@@ -387,4 +387,10 @@
     <string name="quantity_x_template">x%.0f</string>
 
     <string name="snackbar_to_cart_button">В корзину</string>
+    
+    <!-- Дополнительные строки для MenuItemCard -->
+    <string name="customize">Настроить</string>
+    <string name="add_to_cart_for_price">В корзину за %1$.0f ₽</string>
+    <string name="picture_of_meal_template">Изображение %1$s</string>
+    <string name="icon_of_category">Иконка категории "%1$s"</string>
 </resources>
