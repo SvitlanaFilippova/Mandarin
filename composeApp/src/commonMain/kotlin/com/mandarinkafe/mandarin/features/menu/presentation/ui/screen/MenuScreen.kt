@@ -1,17 +1,14 @@
 package com.mandarinkafe.mandarin.features.menu.presentation.ui.screen
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
@@ -81,13 +78,34 @@ fun MenuScreen(
                 )
 
             menuItems.isNotEmpty() -> {
-                // Заглушка вместо MenuContentScreen
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("MenuContentScreen - будет перенесен позже")
-                }
+                MenuContentScreen(
+                    menuItems = menuItems,
+                    favoriteIds = favoriteIds,
+                    inProgressItems = cartInProgressItems,
+                    cartItems = cartItems,
+                    onAddToCart = { meal -> 
+                        onCartEvent(CartEvent.AddToCart(customizedMeal = meal.toCustomizedMeal())) 
+                    },
+                    onRemoveFromCart = { meal -> 
+                        onCartEvent(CartEvent.OnReduce(meal = meal)) 
+                    },
+                    onToggleFavorite = { meal -> 
+                        onSharedEvent(SharedEvent.ToggleFavorite(meal)) 
+                    },
+                    onMealDetailsClick = { meal -> 
+                        onSharedEvent(SharedEvent.OnMealDetailsClick(meal)) 
+                    },
+                    onSearchClick = { 
+                        onMenuEvent(MenuEvent.SearchOnOpenSearchClick) 
+                    },
+                    onBannersClick = { 
+                        onMenuEvent(MenuEvent.BannerClick(it)) 
+                    },
+                    bannersAreLoading = bannersAreLoading,
+                    selectedMenuItemIndex = state.selectedMenuItemIndex,
+                    banners = banners,
+                    sharedEffectFlow = sharedEffectFlow
+                )
             }
         }
 
