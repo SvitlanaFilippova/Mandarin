@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEvent
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 

@@ -19,8 +19,8 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen.Order
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.screen.OrdersHistoryScreen
 import com.mandarinkafe.mandarin.features.savedadresses.presentation.ui.screen.SavedAddressesScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
-import com.mandarinkafe.mandarin.shared.ui.viewmodel.rememberCartViewModel
-import com.mandarinkafe.mandarin.shared.ui.viewmodel.rememberSharedViewModel
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberCartViewModel
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberSharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
 import kotlinx.serialization.json.Json
 import io.ktor.http.decodeURLPart

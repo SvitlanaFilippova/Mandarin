@@ -5,12 +5,14 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.features.cart.domain.Mapper.toCartItem
-import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
+import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMealDetails
-import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEffect
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.navigation.Navigator
@@ -22,6 +24,7 @@ fun HandleEffects(
     snackbarHostState: SnackbarHostState,
     onPhoneClick: () -> Unit,
 ) {
+    val toCartButtonText = stringResource(MR.strings.snackbar_to_cart_button)
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
             when (effect) {
@@ -41,7 +44,7 @@ fun HandleEffects(
 
                 is SharedEffect.FinishSplash -> {
                     navigator.navigate(
-                        route = SPLASH_SCREEN_ROUTE
+                        route = NavConstants.MENU_SCREEN_ROUTE
                     )
                 }
 
@@ -52,7 +55,7 @@ fun HandleEffects(
                 is SharedEffect.SnackbarEffect -> {
                     // показываем snackbar асинхронно — не блокируем поток collect
                     launch {
-                        val actionLabel = if (effect.showToCartButton) "В корзину" else null
+                        val actionLabel = if (effect.showToCartButton) toCartButtonText else null
                         val result = snackbarHostState.showSnackbar(
                             message = effect.text,
                             duration = SnackbarDuration.Short,

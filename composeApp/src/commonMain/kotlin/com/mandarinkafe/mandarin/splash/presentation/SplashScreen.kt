@@ -100,7 +100,7 @@ fun SplashScreen() {
                 .graphicsLayer { alpha = logoAlpha.value }
         ) {
             Image(
-                painter = painterResource(MR.images.logo_orange),
+                painter = painterResource(MR.images.logo_orange_simplified),
                 contentDescription = stringResource(MR.strings.logo_cafe),
                 modifier = Modifier
                     .align(Alignment.Center)

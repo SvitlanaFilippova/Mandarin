@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
-import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 
 @Composable
 fun MealDetailsBottomSheet(

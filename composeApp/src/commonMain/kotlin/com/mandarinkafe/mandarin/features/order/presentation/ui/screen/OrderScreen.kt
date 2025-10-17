@@ -6,9 +6,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
-import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
-import com.mandarinkafe.mandarin.shared.ui.viewmodel.rememberOrderViewModel
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberOrderViewModel
 import moe.tlaster.precompose.navigation.Navigator
 
 @Composable

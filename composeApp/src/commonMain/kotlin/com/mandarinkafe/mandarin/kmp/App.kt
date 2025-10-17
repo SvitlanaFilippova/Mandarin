@@ -24,8 +24,8 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.bottomNavigationRoutes
 import com.mandarinkafe.mandarin.navigation.NavGraph
 import com.mandarinkafe.mandarin.navigation.bottomnav.BottomNavigation
-import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedContract.SharedEvent
-import com.mandarinkafe.mandarin.shared.ui.viewmodel.rememberSharedViewModel
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberSharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.AppTopBar
 import com.mandarinkafe.mandarin.util.presentation.ui.components.CustomSnackbarHost

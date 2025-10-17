@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.shared.ui
+package com.mandarinkafe.mandarin.shared.presentation.ui
 
 import androidx.compose.runtime.Composable
 

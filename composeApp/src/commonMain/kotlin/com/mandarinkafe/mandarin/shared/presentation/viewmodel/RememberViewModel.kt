@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.shared.ui.viewmodel
+package com.mandarinkafe.mandarin.shared.presentation.viewmodel
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

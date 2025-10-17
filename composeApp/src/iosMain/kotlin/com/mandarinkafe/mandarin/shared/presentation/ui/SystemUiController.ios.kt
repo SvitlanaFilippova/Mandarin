@@ -1,8 +1,9 @@
-package com.mandarinkafe.mandarin.shared.ui
+package com.mandarinkafe.mandarin.shared.presentation.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import com.mandarinkafe.mandarin.shared.presentation.ui.SystemUiController
 
 /**
  * iOS реализация SystemUiController

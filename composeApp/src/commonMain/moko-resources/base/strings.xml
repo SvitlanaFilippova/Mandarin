@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <!-- Error Messages -->
-    
-    
-    
-    
-    
     <string name="error_no_internet_extra">Попробуй ещё раз или просто позвони нам по телефону, чтобы сделать заказ.</string>
     <string name="error_other">Что-то пошло не так 🤷</string>
     <string name="error_other_extra">Попробуй ещё раз или просто позвони нам по телефону, чтобы сделать заказ.</string>
@@ -20,15 +15,13 @@
     <string name="error_search_empty_extra">Попробуй написать по-другому или просто полистай наше меню. Там точно найдутся нужные вкусности!</string>
     <string name="error_order_data_empty">Увы, детали заказа не удалось получить.</string>
     <string name="error_order_data_empty_extra">Сервер гарантирует их хранение в течение 7 дней. Сейчас, скорее всего, он их уже удалил 😔</string>
-    
-    
+
     
     <!-- System Messages -->
     <string name="terminal_unavailable">Упс, кажется, сейчас мы не работаем — заказ оформить не получится🤷
 Возвращайся в рабочее время!</string>
     <string name="check_terminal_failed">Что-то пошло не так — не удалось проверить, работает ли сейчас доставка.</string>
-    
-    
+
     
     <!-- Orders History Messages -->
     <string name="error_orders_status_update_failed">Что-то пошло не так при попытке обновить статусы заказов</string>
@@ -392,4 +385,6 @@
     <string name="cart_total_cost_template">%d ₽</string>
     <string name="float_price_template">%.2f ₽</string>
     <string name="quantity_x_template">x%.0f</string>
+
+    <string name="snackbar_to_cart_button">В корзину</string>
 </resources>

@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
-import com.mandarinkafe.mandarin.shared.ui.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import moe.tlaster.precompose.navigation.Navigator
 
 @Composable
