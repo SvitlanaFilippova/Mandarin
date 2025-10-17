@@ -8,6 +8,7 @@ build/
 **/kotlin-multiplatform-resources/
 **/xcode-frameworks/
 **/fat-framework/
+.kotlin/sessions/
 
 # Local configuration file (sdk path, etc)
 local.properties

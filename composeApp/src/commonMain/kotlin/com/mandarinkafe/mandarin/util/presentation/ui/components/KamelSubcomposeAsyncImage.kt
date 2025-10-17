@@ -56,12 +56,16 @@ fun KamelSubcomposeAsyncImage(
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         when (resource) {
             is Resource.Loading -> {
-                LoadingStateContent(
-                    previewResource = previewResource,
-                    placeholder = painterResource(placeholder ?: MR.images.placeholder_meal_no_photo),
-                    contentDescription = contentDescription,
-                    contentScale = contentScale
-                )
+                placeholder?.let {
+                    LoadingStateContent(
+                        previewResource = previewResource,
+                        placeholder = painterResource(
+                            placeholder
+                        ),
+                        contentDescription = contentDescription,
+                        contentScale = contentScale
+                    )
+                }
             }
 
             is Resource.Success -> {

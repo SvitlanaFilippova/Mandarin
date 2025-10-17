@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -15,7 +14,6 @@ import com.mandarinkafe.mandarin.core.domain.models.isCustomizable
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.cart.data.getTotalPriceByMealId
 import com.mandarinkafe.mandarin.features.cart.data.getTotalQuantityByMealId
-import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithCircularProgressIndicator
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable

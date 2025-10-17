@@ -7,8 +7,7 @@ struct ComposeView: UIViewControllerRepresentable {
         MainViewControllerKt.MainViewController()
     }
 
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-    }
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct ContentView: View {
@@ -17,3 +16,4 @@ struct ContentView: View {
             .ignoresSafeArea()
     }
 }
+

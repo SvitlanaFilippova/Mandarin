@@ -3,8 +3,10 @@ package com.mandarinkafe.mandarin.features.address.data.di
 import org.koin.dsl.module
 
 val addressPlatformModule = module {
+    // TODO (требует полной реализации)
 
     //  Образец из Android:
+
 //    // MapKit & Search
 //    single<MapKit> {
 //        MapKitFactory.initialize(androidContext())

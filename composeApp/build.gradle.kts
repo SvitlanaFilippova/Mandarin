@@ -202,3 +202,9 @@ buildConfigFile.writeText(buildConfigContent)
 multiplatformResources {
     resourcesPackage.set("com.mandarinkafe.mandarin")
 }
+
+tasks.register("packForXcode") {
+    group = "build"
+    dependsOn("linkDebugFrameworkIosSimulatorArm64")
+    dependsOn("linkReleaseFrameworkIosArm64")
+}
