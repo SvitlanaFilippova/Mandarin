@@ -46,6 +46,15 @@ google-services.json
 # macOS
 .DS_Store
 
+# Xcode
+*.xcuserstate
+*.xcuserdatad/
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
 # Release builds
 **/release/composeApp/src/commonMain/kotlin/com/mandarinkafe/mandarin/core/data/config/BuildConfig.kt
 /app/release/baselineProfiles/0/app-release.dm
