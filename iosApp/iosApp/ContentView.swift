@@ -16,4 +16,3 @@ struct ContentView: View {
             .ignoresSafeArea()
     }
 }
-
