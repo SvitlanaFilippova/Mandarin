@@ -28,7 +28,6 @@ import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.query
 import moe.tlaster.precompose.navigation.rememberNavigator
 
-
 @Composable
     fun NavGraph() {
     val navigator = rememberNavigator()

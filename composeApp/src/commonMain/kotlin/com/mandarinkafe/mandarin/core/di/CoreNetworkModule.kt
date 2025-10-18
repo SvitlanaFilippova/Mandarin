@@ -96,7 +96,6 @@ val coreNetworkModule = module {
 
     // HttpClient для Server API
     single(named(DiConstants.SERVER_CLIENT_QUALIFIER)) {
-        Napier.d("🌐 Creating Server API client with URL: ${ApiKeys.SERVER_BASE_URL}")
         HttpClient {
             install(ContentNegotiation) {
                 json(Json {
