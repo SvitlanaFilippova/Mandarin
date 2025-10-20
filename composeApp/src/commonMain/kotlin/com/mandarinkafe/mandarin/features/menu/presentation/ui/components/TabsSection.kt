@@ -16,7 +16,7 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
-import com.mandarinkafe.mandarin.util.presentation.ui.components.KamelSubcomposeAsyncImage
+import com.mandarinkafe.mandarin.util.presentation.ui.components.KamelSubcomposeAsyncImageSimple
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -102,7 +102,7 @@ private fun CategoryTabItem(
         },
         icon = {
             if (icon != null) {
-                KamelSubcomposeAsyncImage(
+                KamelSubcomposeAsyncImageSimple(
                     model = icon,
                     contentDescription = stringResource(MR.strings.icon_of_category, name),
                     modifier = Modifier.size(Dimens.IconSize24),

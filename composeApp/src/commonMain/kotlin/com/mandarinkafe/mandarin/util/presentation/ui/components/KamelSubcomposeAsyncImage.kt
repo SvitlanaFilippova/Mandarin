@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.util.presentation.ui.components
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -12,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.util.Constants.RATIO_FOR_IMAGE_CROP_MAX
 import com.mandarinkafe.mandarin.util.Constants.RATIO_FOR_IMAGE_CROP_MIN
 import dev.icerock.moko.resources.ImageResource
@@ -33,7 +35,10 @@ fun KamelSubcomposeAsyncImage(
     onStateChange: ((Resource<Painter>) -> Unit)? = null,
 ) {
     if (model == null) {
-        Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        Box(
+            modifier = modifier.background(Colors.AppBlack),
+            contentAlignment = Alignment.Center
+        ) {
             (placeholder ?: error)?.let {
                 Image(
                     painter = painterResource(it),
@@ -53,8 +58,12 @@ fun KamelSubcomposeAsyncImage(
     val previewResource: Resource<Painter>? = previewModel?.let {
         asyncPainterResource(data = it)
     }
+    val backgroundColor = if (resource is Resource.Success) Color.White else Colors.AppBlack
 
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+    Box(
+        modifier = modifier.background(backgroundColor),
+        contentAlignment = Alignment.Center
+    ) {
         when (resource) {
             is Resource.Loading -> {
                 LoadingStateContent(
@@ -78,7 +87,7 @@ fun KamelSubcomposeAsyncImage(
             }
 
             is Resource.Failure -> {
-                error?.let {
+                error?.let { it ->
                     Image(
                         painter = painterResource(it),
                         contentDescription = contentDescription,
