@@ -4,10 +4,10 @@
 
 🛠️ В разработке
 
-## Над приложением работают 👨🏻‍💻
+## Разработчики 👨🏻‍💻
 
-<a href="https://github.com/mandarin-kafe/Mandarin/graphs/contributors">  
-  <img src="https://contrib.rocks/image?repo=mandarin-kafe/Mandarin&max=6" />
+<a href="https://github.com/SvitlanaFilippova/Mandarin/graphs/contributors">  
+  <img src="https://contrib.rocks/image?repo=SvitlanaFilippova/Mandarin&max=6" />
 </a>
 
 
