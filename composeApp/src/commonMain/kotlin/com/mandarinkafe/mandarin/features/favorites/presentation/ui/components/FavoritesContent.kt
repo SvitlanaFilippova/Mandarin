@@ -10,8 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.res.stringResource
-import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -19,6 +18,7 @@ import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_COLUMN_COUNT
 import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_SPACING_COUNT
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitle
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun FavoritesContent(
@@ -41,7 +41,7 @@ fun FavoritesContent(
         (screenWidthDp - horizontalPadding * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
     }
 
-    ScreenTitle(name = stringResource(R.string.favorite))
+    ScreenTitle(name = stringResource(MR.strings.favorite))
     LazyColumn(
         state = listState,
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)

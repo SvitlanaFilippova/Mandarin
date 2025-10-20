@@ -7,8 +7,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.isCustomizable
@@ -20,6 +19,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CartCon
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.CustomizeButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.SelectButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ToCartButtonWithPrice
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun FavoriteItemButtonRow(
@@ -57,8 +57,8 @@ fun FavoriteItemButtonRow(
                     cartItems.firstOrNull { it.customizedMeal == item }?.quantity ?: 0
                 CartControls(
                     modifier = modifier,
-                    totalPrice = totalPrice * numberInCart,
-                    numberInCart = numberInCart,
+                    totalPrice = totalPrice * numberInCart.toDouble(),
+                    numberInCart = numberInCart.toDouble(),
                     onIncrease = { onAddToCart(item) },
                     onDecrease = { onRemoveFromCart(item) },
                 )
@@ -66,7 +66,7 @@ fun FavoriteItemButtonRow(
 
             item.meal.requireSelection && !isCustomized -> {
                 SelectButton(
-                    text = stringResource(R.string.to_choose),
+                    text = stringResource(MR.strings.to_choose),
                     onClick = { onMealDetailsClick(item) },
                     modifier = modifier
                 )
@@ -74,7 +74,7 @@ fun FavoriteItemButtonRow(
 
             else -> {
                 ToCartButtonWithPrice(
-                    price = totalPrice,
+                    price = totalPrice.toDouble(),
                     onClick = {
                         onAddToCart(item)
                     },
