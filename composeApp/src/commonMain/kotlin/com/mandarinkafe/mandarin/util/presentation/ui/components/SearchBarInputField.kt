@@ -24,7 +24,7 @@ import dev.icerock.moko.resources.compose.stringResource
 fun SearchBarInputField(
     modifier: Modifier = Modifier,
     query: String,
-    placeholderRes: String,
+    placeholderText: String,
     enabled: Boolean = true,
     autoFocus: Boolean = false,
     onQueryChange: (String) -> Unit = { },
@@ -65,7 +65,7 @@ fun SearchBarInputField(
         ),
         placeholder = {
             Text(
-                text = placeholderRes,
+                text = placeholderText,
                 color = Colors.White
             )
         },

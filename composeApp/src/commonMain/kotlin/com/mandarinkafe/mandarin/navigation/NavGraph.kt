@@ -84,7 +84,8 @@ import moe.tlaster.precompose.navigation.rememberNavigator
 
 
         // --- ОСТАЛЬНЫЕ ЭКРАНЫ ---
-        scene(NavConstants.SEARCH_SCREEN_ROUTE_WITH_ARGS) { backStackEntry ->
+
+        scene(NavConstants.SEARCH_SCREEN_ROUTE) { backStackEntry ->
             val focusInput = backStackEntry.query<Boolean>(NavConstants.KEY_FOCUS_INPUT) ?: false
             SearchScreen(
                 focusSearchBarInput = focusInput,

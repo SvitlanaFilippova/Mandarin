@@ -23,7 +23,7 @@ fun MenuSearchBar(
             .clickable(onClick = onSearchClick)
             .background(color = Colors.AppBlack),
         query = "",
-        placeholderRes = stringResource(MR.strings.search_in_menu),
+        placeholderText = stringResource(MR.strings.search_in_menu),
         enabled = false,
         leadingIcon = {
             Icon(

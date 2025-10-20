@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.navigation.extensions
 
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.navigation.NavConstants.ABOUT_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_SCREEN_ROUTE
@@ -29,7 +30,11 @@ import moe.tlaster.precompose.navigation.PopUpTo
 import net.thauvin.erik.urlencoder.UrlEncoderUtil
 
 fun Navigator.navigateToSearchScreen(focusInput: Boolean) {
-    this.navigate("$SEARCH_SCREEN_ROUTE?focusInput=$focusInput")
+    val route = buildString {
+        append(SEARCH_SCREEN_ROUTE)
+        append("?${NavConstants.KEY_FOCUS_INPUT}=$focusInput")
+    }
+    navigate(route)
 }
 
 fun Navigator.navigateToMenu() {

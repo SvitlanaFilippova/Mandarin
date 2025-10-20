@@ -1,13 +1,14 @@
 package com.mandarinkafe.mandarin.features.search.presentation.ui.screen
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberSearchViewModel
 
 @Composable
 fun SearchScreen(
@@ -16,10 +17,26 @@ fun SearchScreen(
     sharedViewModel: SharedViewModel,
     onBackClick: () -> Unit
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Search Screen - KMP Migration Placeholder")
-    }
+    val searchViewModel = rememberSearchViewModel()
+    val searchState by searchViewModel.state.collectAsState()
+    val cartState by cartViewModel.state.collectAsState()
+    val onSharedEvent = sharedViewModel::onEvent
+    val onCartEvent = cartViewModel::onEvent
+    val favoriteIds by sharedViewModel.favoritesIDs.collectAsState()
+    val onEvent = searchViewModel::onEvent
+
+    SearchScreenContent(
+        focusSearchBarInput = focusSearchBarInput,
+        cartItems = cartState.cartItems,
+        favoriteIds = favoriteIds,
+        onSearchEvent = onEvent,
+        searchState = searchState,
+        onMealDetailsClick = { meal -> onSharedEvent(SharedContract.SharedEvent.OnMealDetailsClick(meal)) },
+        onToggleFavorite = { meal -> onSharedEvent(SharedContract.SharedEvent.ToggleFavorite(meal)) },
+        onAddToCart = { meal -> onCartEvent(CartEvent.AddToCart(customizedMeal = meal.toCustomizedMeal())) },
+        onRemoveFromCart = { meal -> onCartEvent(CartEvent.OnReduce(meal = meal)) },
+        inProgressItems = cartState.inProgressItems,
+        onBackClick = onBackClick,
+    )
+
 }
