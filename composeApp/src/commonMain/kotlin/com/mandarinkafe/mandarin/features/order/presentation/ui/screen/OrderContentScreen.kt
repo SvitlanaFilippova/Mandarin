@@ -11,9 +11,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
@@ -29,10 +27,10 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Submi
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.UtensilPreferences
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
-import com.mandarinkafe.mandarin.util.presentation.asString
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConsentTextWithLinks
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -47,7 +45,6 @@ fun OrderContent(
     onToggleShowAll: () -> Unit,
     onBackClick: () -> Unit,
 ) {
-    val context = LocalContext.current
 
     LazyColumn(
         modifier = Modifier
@@ -58,7 +55,7 @@ fun OrderContent(
     ) {
         item {
             ScreenTitleWithBackButton(
-                name = stringResource(R.string.submit_order_screen_title),
+                name = stringResource(MR.strings.submit_order_screen_title),
                 onBackClick = onBackClick
             )
         }
@@ -70,7 +67,7 @@ fun OrderContent(
                     isError = isError,
                     phoneIsValid = userInfo.phoneIsValid,
                     showSaveUserInfoCheckbox = showSaveUserInfoCheckbox,
-                    saveUserInfoCheckboxText = saveUserInfoCheckboxText.asString(context),
+                    saveUserInfoCheckboxText = stringResource(saveUserInfoCheckboxText),
                     saveUserInfo = saveUserInfo,
                     onNameEntered = { onEvent(OrderEvent.SetName(it)) },
                     onPhoneChanged = { onEvent(OrderEvent.SetPhone(it)) },
@@ -127,7 +124,7 @@ fun OrderContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = Dimens.MarginSuperSmall4),
-                    text = stringResource(R.string.choose_address),
+                    text = stringResource(MR.strings.choose_address),
                     style = Typography.ErrorTextStyle
                 )
             }
@@ -188,7 +185,7 @@ fun OrderContent(
         item {
             MyTextField(
                 value = state.comment,
-                labelRes = R.string.your_comment,
+                labelRes = MR.strings.your_comment,
                 onValueChange = { onEvent(OrderEvent.SetComment(it)) }
             )
         }
@@ -225,7 +222,7 @@ fun OrderContent(
                 onSubmitOrder = { onEvent(OrderEvent.SubmitOrder) },
                 totalOrderSum = state.totalOrderSum,
             )
-            ConsentTextWithLinks(buttonName = stringResource(R.string.submit_order))
+            ConsentTextWithLinks(buttonName = stringResource(MR.strings.submit_order))
         }
 
         item { Spacer(Modifier.height(Dimens.MarginSuperHugeForCheckoutButton)) }

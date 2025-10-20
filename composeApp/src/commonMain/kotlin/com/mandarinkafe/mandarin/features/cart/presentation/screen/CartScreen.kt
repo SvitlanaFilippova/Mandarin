@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart.presentation.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -15,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import dev.icerock.moko.resources.compose.stringResource
 import com.mandarinkafe.mandarin.MR
@@ -28,7 +26,6 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrder
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
-import com.mandarinkafe.mandarin.util.Constants.SNACKBAR_MESSAGE_KEY
 import com.mandarinkafe.mandarin.util.presentation.asString
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.RemoveConfirmationDialog
@@ -135,8 +132,8 @@ fun CartScreen(
     // Диалог для подтверждения желания очистить корзину
     if (showClearCartDialog) {
         RemoveConfirmationDialog(
-            titleRes = stringResource(MR.strings.clear_cart_question),
-            textRes = stringResource(MR.strings.clear_cart_confirmation),
+            title = stringResource(MR.strings.clear_cart_question),
+            text = stringResource(MR.strings.clear_cart_confirmation),
             onConfirm = {
                 showClearCartDialog = false
                 cartViewModel.onEvent(CartEvent.ConfirmClearCart)

@@ -8,16 +8,15 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun RemoveConfirmationDialog(
-    titleRes: String,
-    textRes: String,
+    title: String,
+    text: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(titleRes) },
-        text = { Text(textRes) },
+        title = { Text(title) },
+        text = { Text(text) },
         confirmButton = {
             TextButton(onClick = onConfirm) {
                 Text("Да")

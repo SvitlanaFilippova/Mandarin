@@ -76,7 +76,7 @@
     <string name="saved_addresses">Сохранённые адреса</string>
     <string name="address_screen_title">Адрес</string>
     <string name="address_details_screen_title">Детали адреса</string>
-    <string name="submit_order__screen_title">Оформление заказа</string>
+    <string name="submit_order_screen_title">Оформление заказа</string>
 
 
     <!-- Корзина -->
@@ -393,4 +393,14 @@
     <string name="add_to_cart_for_price">В корзину за %1$.0f ₽</string>
     <string name="picture_of_meal_template">Изображение %1$s</string>
     <string name="icon_of_category">Иконка категории "%1$s"</string>
+
+    <!-- для UiDeliveryType -->
+    <string name="delivery_type_name">Доставка</string>
+    <string name="selfpickup_type_name">Самовывоз</string>
+
+    <!-- для UiPaymentType -->
+    <string name="payment_type_online">Онлайн</string>
+    <string name="payment_type_cash">Наличные</string>
+    <string name="payment_type_card">Банковская карта</string>
+
 </resources>
