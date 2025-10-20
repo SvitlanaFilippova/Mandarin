@@ -4,6 +4,7 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.util.presentation.BaseContract
+import dev.icerock.moko.resources.StringResource
 
 sealed interface SharedContract {
 
@@ -27,7 +28,7 @@ sealed interface SharedContract {
             val isEditMode: Boolean = false
         ) : SharedEvent
 
-        data class ShowSnackbar(val message: String, val showToCartButton: Boolean = false) :
+        data class ShowSnackbar(val messageRes: StringResource, val showToCartButton: Boolean = false) :
             SharedEvent
 
         data object GoBack : SharedEvent
@@ -47,7 +48,7 @@ sealed interface SharedContract {
         ) : SharedEffect
 
         data object FinishSplash : SharedEffect
-        data class SnackbarEffect(val text: String, val showToCartButton: Boolean = false) :
+        data class SnackbarEffect(val messageRes: StringResource, val showToCartButton: Boolean = false) :
             SharedEffect
     }
 

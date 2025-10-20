@@ -109,7 +109,7 @@ class SharedViewModel(
             is SharedEvent.GoBack -> sendEffect(GoBackEffect)
             is SharedEvent.ShowSnackbar -> sendEffect(
                 SnackbarEffect(
-                    text = event.message,
+                    messageRes = event.messageRes,
                     showToCartButton = event.showToCartButton
                 )
             )

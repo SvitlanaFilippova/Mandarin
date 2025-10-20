@@ -19,12 +19,11 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import dev.icerock.moko.resources.compose.painterResource
-import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun TooltipText(
     modifier: Modifier = Modifier,
-    textRes: String,
+    text: String,
     extraTextRes: String? = null,
     extraText: String? = null,
     extraComposable: @Composable (() -> Unit)? = null,
@@ -49,7 +48,7 @@ fun TooltipText(
             )
             Column(modifier = Modifier.padding(Dimens.MarginStandard16)) {
                 Text(
-                    text = textRes,
+                    text = text,
                     style = Typography.SmallTextStyle.copy(color = Colors.WhiteTransparent75),
                 )
                 extraTextRes?.let {

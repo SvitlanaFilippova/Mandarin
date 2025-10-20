@@ -1,0 +1,103 @@
+package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
+
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import com.mandarinkafe.mandarin.MR
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.ANIMATION_BOUNCE_MODIFIER
+import com.mandarinkafe.mandarin.util.Constants.ANIMATION_BOUNCE_STEP
+import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
+import com.mandarinkafe.mandarin.util.Constants.ANIMATION_REPEAT_NUMBER
+import com.mandarinkafe.mandarin.util.Constants.BOUNCE_OFFSET_INIT
+import dev.icerock.moko.resources.compose.painterResource
+import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
+
+@Composable
+fun MakeMoreDeliciousBlock(
+    onClick: () -> Unit
+) {
+    val offsetY = remember { Animatable(initialValue = BOUNCE_OFFSET_INIT) }
+    val alpha = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        launch {
+            alpha.animateTo(1f, animationSpec = tween(durationMillis = ANIMATION_DURATION_FAST))
+        }
+
+        repeat(ANIMATION_REPEAT_NUMBER) { i ->
+            val bounceHeight = ANIMATION_BOUNCE_STEP - i * ANIMATION_BOUNCE_MODIFIER
+            offsetY.animateTo(
+                targetValue = -bounceHeight,
+                animationSpec = tween(
+                    durationMillis = ANIMATION_DURATION_FAST,
+                    easing = FastOutSlowInEasing
+                )
+            )
+            offsetY.animateTo(
+                targetValue = 0f,
+                animationSpec = tween(
+                    durationMillis = ANIMATION_DURATION_FAST,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .padding(top = Dimens.MarginSmall8)
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(MR.strings.make_more_delicious_description),
+            style = Typography.TitleStyle,
+            fontWeight = FontWeight.Medium,
+            color = Colors.White,
+            textAlign = TextAlign.Center
+        )
+
+        Box(
+            modifier = Modifier.graphicsLayer {
+                translationY = offsetY.value
+                this.alpha = alpha.value
+            },
+            contentAlignment = Alignment.Center
+        ) {
+            IconButton(
+                onClick = onClick,
+                modifier = Modifier.size(Dimens.ButtonBox32)
+            ) {
+                Icon(
+                    modifier = Modifier.size(Dimens.IconSize24),
+                    painter = painterResource(MR.images.ic_arrow_drop_down),
+                    contentDescription = stringResource(MR.strings.make_more_delicious_description),
+                    tint = Colors.White
+                )
+            }
+        }
+    }
+}

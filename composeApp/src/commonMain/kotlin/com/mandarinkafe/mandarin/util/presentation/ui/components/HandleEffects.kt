@@ -5,6 +5,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.features.cart.domain.Mapper.toCartItem
 import com.mandarinkafe.mandarin.navigation.NavConstants
@@ -12,6 +16,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMealDetails
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect
+import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -25,6 +30,8 @@ fun HandleEffects(
     onPhoneClick: () -> Unit,
 ) {
     val toCartButtonText = stringResource(MR.strings.snackbar_to_cart_button)
+    var pendingSnackbarRes: StringResource? by remember { mutableStateOf(null) }
+    var pendingShowToCart by remember { mutableStateOf(false) }
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
             when (effect) {
@@ -53,19 +60,9 @@ fun HandleEffects(
                 }
 
                 is SharedEffect.SnackbarEffect -> {
-                    // показываем snackbar асинхронно — не блокируем поток collect
-                    launch {
-                        val actionLabel = if (effect.showToCartButton) toCartButtonText else null
-                        val result = snackbarHostState.showSnackbar(
-                            message = effect.text,
-                            duration = SnackbarDuration.Short,
-                            withDismissAction = true,
-                            actionLabel = actionLabel
-                        )
-                        if (result == SnackbarResult.ActionPerformed) {
-                            navigator.navigateToCart()
-                        }
-                    }
+                    // сохраняем ресурс и флаг; показ выполнит отдельный LaunchedEffect ниже
+                    pendingSnackbarRes = effect.messageRes
+                    pendingShowToCart = effect.showToCartButton
                 }
 
                 is SharedEffect.ScrollToTop -> {
@@ -73,5 +70,21 @@ fun HandleEffects(
                 }
             }
         }
+    }
+
+    val pendingMessage: String? = pendingSnackbarRes?.let { stringResource(it) }
+    LaunchedEffect(pendingMessage, pendingShowToCart) {
+        val message = pendingMessage ?: return@LaunchedEffect
+        val actionLabel = if (pendingShowToCart) toCartButtonText else null
+        val result = snackbarHostState.showSnackbar(
+            message = message,
+            duration = SnackbarDuration.Short,
+            withDismissAction = true,
+            actionLabel = actionLabel
+        )
+        if (result == SnackbarResult.ActionPerformed) {
+            navigator.navigateToCart()
+        }
+        pendingSnackbarRes = null
     }
 }

@@ -47,7 +47,7 @@ fun RecommendsSection(
     if (separateRecommends.isNotEmpty()) {
         TooltipText(
             modifier = Modifier.padding(Dimens.MarginSmall8),
-            textRes = stringResource(MR.strings.sushi_soy_souse_tooltip)
+            text = stringResource(MR.strings.sushi_soy_souse_tooltip)
         )
         CartRecommendsList(
             recommendsList = separateRecommends,
