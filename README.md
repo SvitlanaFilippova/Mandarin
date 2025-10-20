@@ -37,13 +37,12 @@
 
 | Категория            | Технологии                                                       |
 |----------------------|------------------------------------------------------------------|
-| UI                   | Jetpack Compose, Material3                                       |
+| UI                   | Jetpack Compose, Material3, Moko Resources                                       |
 | Архитектура          | MVI, StateFlow, Coroutines, <del>Hilt</del> ->  Koin             |
 | Навигация            | Navigation Compose, Accompanist Navigation Material              |
-| Работа с данными     | Json, SQLDelight, <del>RSharedPreferences</del> ->  DataStore, <del>Retrofit</del> -> Ktor |
+| Работа с данными     | Json, SQLDelight, <del>SharedPreferences</del> ->  DataStore, <del>Retrofit</del> -> Ktor |
 | Изображения          | <del>Coil</del> -> Kamel                                         |
 | Карты                | Yandex MapKit                                                    |
-| Firebase             | Remote Config, Crashlytics                                       |
 | Интеграции           | iikoCloud API, Telegram Bot API                                  |
 | Инструменты качества | Detekt, Lint                                                     |
 
