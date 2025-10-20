@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen
 
-
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -31,7 +30,7 @@ import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.Mea
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberMealDetailsViewModel
-import com.mandarinkafe.mandarin.util.presentation.ui.SimpleBottomSheet
+import com.mandarinkafe.mandarin.util.presentation.ui.components.KmpModalBottomSheet
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InformationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
@@ -128,9 +127,9 @@ fun MealDetailsBottomSheet(
                 error = error,
                 onCallClick = { onSharedEvent(SharedContract.SharedEvent.OnPhoneClick) },
             )
-            else -> SimpleBottomSheet(
+            else -> KmpModalBottomSheet(
                 visible = showSheet,
-                onDismiss = {
+                onDismissRequest = {
                     showSheet = false
                     coroutineScope.launch {
                         // ждём завершения анимации, если нужно

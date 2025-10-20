@@ -20,44 +20,4 @@ import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 
-@Composable
-fun SimpleBottomSheet(
-    visible: Boolean,
-    onDismiss: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
-        exit = fadeOut() + slideOutVertically(targetOffsetY = { it }),
-    ) {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f))
-                .clickable(onClick = onDismiss)
-        ) {
-            Box(
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .clip(
-                        androidx.compose.foundation.shape.RoundedCornerShape(
-                            topStart = 16.dp,
-                            topEnd = 16.dp
-                        )
-                    )
-                    .background(Colors.AppBlack)
-                    .padding(
-                        top = Dimens.BSMarginForStatusBar40,
-                        bottom = 24.dp,
-                        start = 16.dp,
-                        end = 16.dp
-                    )
-                    .clickable(enabled = false) {}
-            ) {
-                content()
-            }
-        }
-    }
-}
+// Deprecated: replaced by platform-specific KmpModalBottomSheet
