@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import com.mandarinkafe.mandarin.util.Constants.RATIO_FOR_IMAGE_CROP_MAX
@@ -38,7 +39,8 @@ fun KamelSubcomposeAsyncImage(
                     painter = painterResource(it),
                     contentDescription = contentDescription,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    colorFilter = tint?.let { ColorFilter.tint(it) }
                 )
             }
         }
@@ -57,9 +59,10 @@ fun KamelSubcomposeAsyncImage(
             is Resource.Loading -> {
                 LoadingStateContent(
                     previewResource = previewResource,
-                    placeholderRes = placeholder                    ,
+                    placeholderRes = placeholder,
                     contentDescription = contentDescription,
-                    contentScale = contentScale
+                    contentScale = contentScale,
+                    tint = tint
                 )
 
             }
@@ -80,7 +83,8 @@ fun KamelSubcomposeAsyncImage(
                         painter = painterResource(it),
                         contentDescription = contentDescription,
                         modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
+                        colorFilter = tint?.let { ColorFilter.tint(it) }
                     )
                 }
             }
@@ -93,15 +97,19 @@ private fun LoadingStateContent(
     previewResource: Resource<Painter>?,
     placeholderRes: ImageResource?,
     contentDescription: String?,
-    contentScale: ContentScale?
+    contentScale: ContentScale?,
+    tint: Color?
 ) {
+    val colorFilter = tint?.let { ColorFilter.tint(it) }
+
     when {
         previewResource is Resource.Success -> {
             Image(
                 painter = previewResource.value,
                 contentDescription = contentDescription,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = contentScale ?: ContentScale.Crop
+                contentScale = contentScale ?: ContentScale.Crop,
+                colorFilter = colorFilter
             )
         }
 
@@ -110,7 +118,8 @@ private fun LoadingStateContent(
                 painter = painterResource(placeholderRes),
                 contentDescription = contentDescription,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                colorFilter = colorFilter
             )
         }
 
@@ -119,7 +128,8 @@ private fun LoadingStateContent(
                 painter = painterResource(placeholderRes),
                 contentDescription = contentDescription,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                colorFilter = colorFilter
             )
         }
 
@@ -128,7 +138,8 @@ private fun LoadingStateContent(
                 painter = painterResource(placeholderRes),
                 contentDescription = contentDescription,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                colorFilter = colorFilter
             )
         }
 
@@ -158,6 +169,7 @@ private fun SuccessStateContent(
             }
         }
     }
+    val colorFilter = tint?.let { ColorFilter.tint(it) }
 
     if (crossfade) {
         Crossfade(targetState = painter, label = "imageCrossfade") { p ->
@@ -165,7 +177,8 @@ private fun SuccessStateContent(
                 painter = p,
                 contentDescription = contentDescription,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = finalContentScale
+                contentScale = finalContentScale,
+                colorFilter = colorFilter
             )
         }
     } else {
@@ -174,7 +187,7 @@ private fun SuccessStateContent(
             contentDescription = contentDescription,
             modifier = Modifier.fillMaxSize(),
             contentScale = finalContentScale,
-            colorFilter = tint?.let { androidx.compose.ui.graphics.ColorFilter.tint(it) }
+            colorFilter = colorFilter
         )
     }
 }

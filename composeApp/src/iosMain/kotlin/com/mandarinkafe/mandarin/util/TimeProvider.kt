@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.util
 
-import kotlinx.datetime.Clock
+import kotlin.time.ExperimentalTime
 
-actual fun getCurrentTimeMillis(): Long = Clock.System.now().toEpochMilliseconds()
+@OptIn(ExperimentalTime::class)
+actual fun getCurrentTimeMillis(): Long = kotlin.time.Clock.System.now().toEpochMilliseconds()
