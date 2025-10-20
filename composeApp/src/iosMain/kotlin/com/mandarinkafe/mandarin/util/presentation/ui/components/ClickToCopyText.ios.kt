@@ -15,14 +15,16 @@ import platform.UIKit.UIPasteboard
 actual fun ClickToCopyText(
     text: String,
     showHint: Boolean,
+    style: TextStyle,
+    color: Color,
 ) {
     val snackbarHostState = LocalSnackbarHostState.current
     val scope = rememberCoroutineScope()
 
     Text(
         text = text,
-        style = TextStyle.Default,
-        color = Color.Unspecified,
+        style = style,
+        color = color,
         modifier = Modifier.clickable {
             scope.launch {
                 UIPasteboard.generalPasteboard.string = text

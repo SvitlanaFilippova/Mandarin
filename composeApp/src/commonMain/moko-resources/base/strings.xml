@@ -257,7 +257,7 @@
     <string name="cancel_order_question">Отменить заказ?</string>
     <string name="cancel_order_confirmation">Действительно отменить оформленный заказ?</string>
     <string name="repeat_order_button">Повторить заказ</string>
-    <string name="item_is_no_longer_available">На данный момент в&#160;меню отсутствует позиция «%1$s»</string>
+    <string name="item_is_no_longer_available">На данный момент в&#160;меню отсутствует эта позиция</string>
     <string name="some_items_unavailable">Некоторые блюда недоступны. Остальные добавлены в&#160;корзину</string>
     <string name="all_items_added_to_cart">Все позиции из&#160;заказа добавлены в&#160;корзину</string>
 

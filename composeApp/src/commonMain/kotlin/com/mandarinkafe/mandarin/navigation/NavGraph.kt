@@ -58,7 +58,7 @@ import moe.tlaster.precompose.navigation.rememberNavigator
             )
         }
 
-        scene(NavConstants.CART_SCREEN_ROUTE_WITH_ARGS) { backStackEntry ->
+        scene(NavConstants.CART_SCREEN_ROUTE) { backStackEntry ->
             val snackbarMessage = backStackEntry.query<String>(NavConstants.KEY_SNACKBAR_MESSAGE)
 
             CartScreen(
@@ -145,7 +145,7 @@ import moe.tlaster.precompose.navigation.rememberNavigator
         }
 
 
-        scene(NavConstants.ADDRESS_SCREEN_ROUTE_WITH_ARGS) { backStackEntry ->
+        scene(NavConstants.ADDRESS_SCREEN_ROUTE) { backStackEntry ->
             val addressJson = backStackEntry.query<String>(NavConstants.KEY_ADDRESS_JSON)?.decodeURLPart()
             val returnToRoute = backStackEntry.query<String>(NavConstants.KEY_RETURN_TO_ROUTE)
                 ?.decodeURLPart()
@@ -163,7 +163,7 @@ import moe.tlaster.precompose.navigation.rememberNavigator
         }
 
 
-        scene(NavConstants.ADDRESS_DETAILS_ROUTE_WITH_ARGS) { backStackEntry ->
+        scene(NavConstants.ADDRESS_DETAILS_ROUTE) { backStackEntry ->
             val isEditMode = backStackEntry.query<Boolean>(NavConstants.KEY_IS_EDIT_MODE) ?: false
             val addressJson = backStackEntry.query<String>(NavConstants.KEY_ADDRESS_JSON)?.decodeURLPart()
             val returnToRoute = backStackEntry.query<String>(NavConstants.KEY_RETURN_TO_ROUTE)
@@ -192,7 +192,7 @@ import moe.tlaster.precompose.navigation.rememberNavigator
         }
 
 
-        scene(NavConstants.ORDER_INFO_ROUTE_WITH_ARGS) { backStackEntry ->
+        scene(NavConstants.ORDER_INFO_ROUTE) { backStackEntry ->
             val orderId = backStackEntry.query<String>(NavConstants.KEY_ORDER_ID)?.decodeURLPart() ?: ""
             val fromOrderCreation = backStackEntry.query<Boolean>(NavConstants.KEY_FROM_ORDER_CREATION) ?: false
 

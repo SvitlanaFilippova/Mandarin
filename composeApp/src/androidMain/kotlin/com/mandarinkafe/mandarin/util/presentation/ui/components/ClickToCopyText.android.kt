@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 actual fun ClickToCopyText(
     text: String,
     showHint: Boolean,
+    style: TextStyle,
+    color: Color,
 ) {
     val clipboard = LocalClipboard.current
     val snackbarHostState = LocalSnackbarHostState.current
@@ -24,8 +26,8 @@ actual fun ClickToCopyText(
 
     Text(
         text = text,
-        style = TextStyle.Default,
-        color = Color.Unspecified,
+        style = style,
+        color = color,
         modifier = Modifier.clickable {
             scope.launch {
                 val clipData = ClipData.newPlainText(text, text)
