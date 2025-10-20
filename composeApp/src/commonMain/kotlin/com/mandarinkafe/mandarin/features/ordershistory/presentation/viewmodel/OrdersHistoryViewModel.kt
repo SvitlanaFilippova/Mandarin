@@ -18,7 +18,6 @@ import com.mandarinkafe.mandarin.util.tickerFlow
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -170,6 +169,7 @@ class OrdersHistoryViewModel(
         return filteredByDate
     }
 
+    @OptIn(kotlin.time.ExperimentalTime::class)
     private fun applyDateFilter(
         orders: List<SavedOrder>,
         filter: DateFilterType?,
@@ -182,7 +182,7 @@ class OrdersHistoryViewModel(
             DateFilterType.LAST_7_DAYS -> OrdersFilter.lastNDays(orders, SEVEN_DAYS_TIME_FILTER)
             DateFilterType.CURRENT_MONTH -> {
                 val zone = TimeZone.currentSystemDefault()
-                val today = Clock.System.now().toLocalDateTime(zone).date
+                val today = kotlin.time.Clock.System.now().toLocalDateTime(zone).date
                 val firstDayOfMonth = LocalDate(today.year, today.month, 1)
 
                OrdersFilter.betweenDates(

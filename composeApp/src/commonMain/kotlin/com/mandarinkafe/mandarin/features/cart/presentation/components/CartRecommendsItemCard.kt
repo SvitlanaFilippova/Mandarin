@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -55,11 +56,12 @@ fun CartRecommendsItemCard(
                     .clip(RoundedCornerShape(Dimens.CornerRadius8)),
                 model = meal.imagePreviewUrl,
                 previewModel = meal.placeholderUrl,
-                contentDescription = "Изображение ${meal.name}", // TODO: Заменить на MOKO Resources
-                placeholder = null, // TODO: Добавить placeholder
-                error = null, // TODO: Добавить error image
+                contentDescription = "Изображение ${meal.name}",
+                placeholder = MR.images.placeholder_meal_no_photo,
+                error = MR.images.placeholder_meal_no_photo,
                 crossfade = true
             )
+
             // Название блюда
             Text(
                 text = meal.name,

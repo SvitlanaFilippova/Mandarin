@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.util.Constants.RATIO_FOR_IMAGE_CROP_MAX
 import com.mandarinkafe.mandarin.util.Constants.RATIO_FOR_IMAGE_CROP_MIN
 import dev.icerock.moko.resources.ImageResource
@@ -56,16 +55,13 @@ fun KamelSubcomposeAsyncImage(
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         when (resource) {
             is Resource.Loading -> {
-                placeholder?.let {
-                    LoadingStateContent(
-                        previewResource = previewResource,
-                        placeholder = painterResource(
-                            placeholder
-                        ),
-                        contentDescription = contentDescription,
-                        contentScale = contentScale
-                    )
-                }
+                LoadingStateContent(
+                    previewResource = previewResource,
+                    placeholderRes = placeholder                    ,
+                    contentDescription = contentDescription,
+                    contentScale = contentScale
+                )
+
             }
 
             is Resource.Success -> {
@@ -95,7 +91,7 @@ fun KamelSubcomposeAsyncImage(
 @Composable
 private fun LoadingStateContent(
     previewResource: Resource<Painter>?,
-    placeholder: Painter?,
+    placeholderRes: ImageResource?,
     contentDescription: String?,
     contentScale: ContentScale?
 ) {
@@ -109,27 +105,27 @@ private fun LoadingStateContent(
             )
         }
 
-        previewResource is Resource.Loading && placeholder != null -> {
+        previewResource is Resource.Loading && placeholderRes != null -> {
             Image(
-                painter = placeholder,
+                painter = painterResource(placeholderRes),
                 contentDescription = contentDescription,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
         }
 
-        previewResource is Resource.Failure && placeholder != null -> {
+        previewResource is Resource.Failure && placeholderRes != null -> {
             Image(
-                painter = placeholder,
+                painter = painterResource(placeholderRes),
                 contentDescription = contentDescription,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
         }
 
-        placeholder != null -> {
+        placeholderRes != null -> {
             Image(
-                painter = placeholder,
+                painter = painterResource(placeholderRes),
                 contentDescription = contentDescription,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
