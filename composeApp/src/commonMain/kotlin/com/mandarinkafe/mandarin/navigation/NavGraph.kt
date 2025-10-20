@@ -126,7 +126,7 @@ import moe.tlaster.precompose.navigation.rememberNavigator
         }
 
         // --- MEAL DETAILS (BottomSheet) ---
-        dialog(NavConstants.MEAL_DETAILS_ROUTE_WITH_ARGS) { backStackEntry ->
+        dialog(NavConstants.MEAL_DETAILS_ROUTE) { backStackEntry ->
             val isEditMode = backStackEntry.query<Boolean>(NavConstants.KEY_IS_EDIT_MODE) ?: false
             val mealJson = backStackEntry.query<String>(NavConstants.KEY_MEAL_JSON)?.decodeURLPart()
             val mealId = backStackEntry.query<String>(NavConstants.KEY_MEAL_ID)?.decodeURLPart()
