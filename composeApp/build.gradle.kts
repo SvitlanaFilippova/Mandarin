@@ -114,6 +114,8 @@ kotlin {
                 // Material 3
                 implementation(libs.androidx.material3)
                 implementation(libs.androidx.appcompat)
+                // Activity Compose для permission requests
+                implementation(libs.androidx.activity.compose)
             }
         }
 

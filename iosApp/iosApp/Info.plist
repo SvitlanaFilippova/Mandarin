@@ -4,5 +4,7 @@
     <dict>
         <key>CADisableMinimumFrameDurationOnPhone</key>
         <true />
+        <key>NSLocationWhenInUseUsageDescription</key>
+        <string>Мы используем вашу геолокацию для определения адреса доставки</string>
     </dict>
 </plist>
