@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.util.presentation.ui.components
+package com.mandarinkafe.mandarin.util.presentation.ui.components.map
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -9,22 +9,21 @@ import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.mapview.MapView
 
 @Composable
-actual fun BindMapViewToLifecycle(mapView: Any?) {
-    val mapViewTyped = mapView as? MapView
+fun BindMapViewToLifecycle(mapView: MapView?) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    DisposableEffect(lifecycleOwner, mapViewTyped) {
+    DisposableEffect(lifecycleOwner, mapView) {
         val lifecycle = lifecycleOwner.lifecycle
 
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_START -> {
                     MapKitFactory.getInstance().onStart()
-                    mapViewTyped?.onStart()
+                    mapView?.onStart()
                 }
 
                 Lifecycle.Event.ON_STOP -> {
-                    mapViewTyped?.onStop()
+                    mapView?.onStop()
                     MapKitFactory.getInstance().onStop()
                 }
 

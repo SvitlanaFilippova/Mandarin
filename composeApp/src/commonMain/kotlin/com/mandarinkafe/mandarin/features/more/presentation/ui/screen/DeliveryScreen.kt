@@ -27,7 +27,7 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun DeliveryScreen(
-    onBackClick: () -> Boolean
+    onBackClick: () -> Unit
 ) {
     val viewModel = rememberDeliveryViewModel()
     val state by viewModel.state.collectAsState()

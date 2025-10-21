@@ -51,12 +51,12 @@ import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_SCALE
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_TEXT_ALPHA
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_TEXT_OFFSET
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_TEXT_SIZE
-import com.mandarinkafe.mandarin.util.presentation.openGeoLocation
 import com.mandarinkafe.mandarin.util.presentation.ui.components.BindMapViewToLifecycle
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InfoCard
-import com.mandarinkafe.mandarin.util.presentation.ui.components.OnPhoneClick
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.RoundedButton
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.MakeCall
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.OpenGeoLocation
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -77,14 +77,19 @@ fun ContactsScreen(onBackClick: () -> Boolean) {
     
     val phoneNumber = stringResource(R.string.cafe_phone_number)
     var shouldMakePhoneCall by remember { mutableStateOf(false) }
+    var addressToOpen by remember { mutableStateOf<String?>(null) }
     
     if (shouldMakePhoneCall) {
-        OnPhoneClick(
-            phoneNumber = phoneNumber,
-            onFail = { /* Handle error if needed */ }
-        )
+        MakeCall(phoneNumber = phoneNumber)
         LaunchedEffect(Unit) {
             shouldMakePhoneCall = false
+        }
+    }
+    
+    addressToOpen?.let { address ->
+        OpenGeoLocation(address = address)
+        LaunchedEffect(Unit) {
+            addressToOpen = null
         }
     }
 
@@ -122,8 +127,9 @@ fun ContactsScreen(onBackClick: () -> Boolean) {
 
         OurAddressesCard(
             lines = addresses.map { resId ->
-                stringResource(resId) to {
-                    context.openGeoLocation(context.getString(resId))
+                val address = stringResource(resId)
+                address to {
+                    addressToOpen = address
                 }
             }
         )

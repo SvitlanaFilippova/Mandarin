@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.util.presentation.ui.components
+package com.mandarinkafe.mandarin.util.presentation.ui.components.textfields
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

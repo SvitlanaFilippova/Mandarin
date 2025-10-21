@@ -37,7 +37,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants.ALPHA_50
 import com.mandarinkafe.mandarin.util.LabelSize
 import com.mandarinkafe.mandarin.util.presentation.ui.components.images.MealItemImageBox
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MealCommentTextField
+import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.MealCommentTextField
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 

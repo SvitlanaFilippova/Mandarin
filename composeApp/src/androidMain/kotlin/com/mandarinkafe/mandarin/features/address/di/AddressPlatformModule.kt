@@ -3,10 +3,8 @@ package com.mandarinkafe.mandarin.features.address.di
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.mandarinkafe.mandarin.features.address.data.impl.AddressRepositoryImpl
-import com.mandarinkafe.mandarin.features.address.data.impl.DeliveryAreaRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.data.impl.FusedLocationRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.domain.api.AddressRepository
-import com.mandarinkafe.mandarin.features.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.address.domain.api.FusedLocationRepository
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory

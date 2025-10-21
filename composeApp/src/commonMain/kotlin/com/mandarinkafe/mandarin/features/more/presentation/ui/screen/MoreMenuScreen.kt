@@ -26,7 +26,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import moe.tlaster.precompose.navigation.Navigator
 
 @Composable
-fun MoreMenuScreen(navController: Navigator) {
+fun MoreMenuScreen(navigator: Navigator) {
     val ordersHistory = stringResource(MR.strings.more_orders_history)
     val savedAddresses = stringResource(MR.strings.more_saved_addresses)
     val sectionLegal = stringResource(MR.strings.more_section_legal_info)
@@ -51,7 +51,7 @@ fun MoreMenuScreen(navController: Navigator) {
                 title = ordersHistory,
                 iconRes = MR.images.ic_history,
                 onClick = {
-                    navController.navigateOrdersHistory()
+                    navigator.navigateOrdersHistory()
                 })
         }
 
@@ -60,7 +60,7 @@ fun MoreMenuScreen(navController: Navigator) {
                 title = savedAddresses,
                 iconRes = MR.images.ic_cottage,
                 onClick = {
-                    navController.navigateToSavedAddresses()
+                    navigator.navigateToSavedAddresses()
                 })
         }
 
@@ -69,7 +69,7 @@ fun MoreMenuScreen(navController: Navigator) {
                 title = delivery,
                 iconRes = MR.images.ic_courier,
                 onClick = {
-                    navController.navigateToDeliveryScreen()
+                    navigator.navigateToDeliveryScreen()
                 })
         }
 
@@ -78,7 +78,7 @@ fun MoreMenuScreen(navController: Navigator) {
                 title = contactsTitle,
                 iconRes = MR.images.ic_selfpickup,
                 onClick = {
-                    navController.navigateToContactsScreen()
+                    navigator.navigateToContactsScreen()
                 })
         }
 
@@ -96,7 +96,7 @@ fun MoreMenuScreen(navController: Navigator) {
                 title = sectionLegal,
                 iconRes = MR.images.ic_legal,
                 onClick = {
-                    navController.navigateToLegalScreen()
+                    navigator.navigateToLegalScreen()
                 })
         }
 
@@ -105,7 +105,7 @@ fun MoreMenuScreen(navController: Navigator) {
                 title = aboutTitle,
                 iconRes = MR.images.ic_info,
                 onClick = {
-                    navController.navigateToAboutScreen()
+                    navigator.navigateToAboutScreen()
                 })
         }
     }

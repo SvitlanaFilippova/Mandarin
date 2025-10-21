@@ -1,0 +1,70 @@
+package com.mandarinkafe.mandarin.features.more.presentation.ui.components
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.features.address.data.Mapper.toGeoPoint
+import com.mandarinkafe.mandarin.features.address.data.Mapper.toYandexPoint
+import com.mandarinkafe.mandarin.features.address.presentation.ui.models.UiDeliveryArea
+import com.mandarinkafe.mandarin.util.presentation.ui.components.map.BindMapViewToLifecycle
+import com.mandarinkafe.mandarin.util.presentation.ui.components.map.MapWithButtons
+import com.mandarinkafe.mandarin.util.presentation.ui.components.map.moveCamera
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.mapview.MapView
+
+
+@Composable
+actual fun MapDeliveryScreenContent(
+    deliveryAreas: List<UiDeliveryArea>,
+    displayAddress: String?,
+    deliveryArea: UiDeliveryArea?,
+    isLoading: Boolean,
+    isError: Boolean,
+    initLocation: GeoPoint,
+    onCameraMoved: (GeoPoint) -> Unit,
+    locationChosen: Boolean
+) {
+    var mapView by remember { mutableStateOf<MapView?>(null) }
+    val initLocationYandex = initLocation.toYandexPoint() as Point
+
+    LaunchedEffect(initLocation, mapView) {
+        moveCamera(initLocationYandex, mapView)
+    }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimens.MapOnDeliveryScreenHeight)
+                .padding(bottom = Dimens.MarginStandard16)
+        ) {
+            MapWithButtons(
+                mapView = mapView,
+                deliveryAreas = deliveryAreas,
+                displayAddress = displayAddress,
+                deliveryArea = deliveryArea,
+                isLoading = isLoading,
+                isError = isError,
+                onMapReady = { mapView = it },
+                onCameraMoved = { point -> onCameraMoved(point.toGeoPoint()) },
+                onBackToInitLocationClick = {
+                    moveCamera(
+                        point = initLocationYandex,
+                        mapView = mapView
+                    )
+                },
+                locationChosen = locationChosen
+            )
+        }
+
+    BindMapViewToLifecycle(mapView)
+}
