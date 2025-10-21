@@ -20,7 +20,7 @@ import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberOrderViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
-import com.mandarinkafe.mandarin.util.presentation.ui.components.RemoveConfirmationDialog
+import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
 import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState

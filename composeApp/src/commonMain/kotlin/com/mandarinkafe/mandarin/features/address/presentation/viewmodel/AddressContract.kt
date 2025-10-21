@@ -1,9 +1,11 @@
 package com.mandarinkafe.mandarin.features.address.presentation.viewmodel
 
 import com.mandarinkafe.mandarin.core.domain.models.Address
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.domain.models.AddressSearchResult
 import com.mandarinkafe.mandarin.features.address.presentation.ui.models.UiDeliveryArea
 import com.mandarinkafe.mandarin.util.presentation.BaseContract
+import dev.icerock.moko.resources.StringResource
 
 sealed interface AddressContract {
 
@@ -22,7 +24,7 @@ sealed interface AddressContract {
         data class ChangeSearchQuery(val query: String) : AddressEvent
 
         // Взаимодействие с картой
-        data class CameraMoved(val center: Any) : AddressEvent
+        data class CameraMoved(val center: GeoPoint) : AddressEvent
     }
 
     sealed interface AddressEffect : BaseContract.BaseEffect {
@@ -32,16 +34,16 @@ sealed interface AddressContract {
 
     data class AddressState(
         val initAddress: Address? = null,
-        val initPinPoint: Any? = null,
-        val userLocation: Any? = null,
-        val currentPinPoint: Any? = null,
+        val initPinPoint: GeoPoint? = null,
+        val userLocation: GeoPoint? = null,
+        val currentPinPoint: GeoPoint? = null,
         val displayAddress: String? = null,
         val currentDeliveryArea: UiDeliveryArea? = null,
         val allDeliveryAreas: List<UiDeliveryArea> = listOf(),
         val error: String? = null,
         val fetchAddressInProgress: Boolean = false,
         val searchInProgress: Boolean = false,
-        val searchError: String? = null,
+        val searchError: StringResource? = null,
         val searchResults: List<AddressSearchResult> = listOf()
     ) : BaseContract.BaseState {
         val locationChosen: Boolean

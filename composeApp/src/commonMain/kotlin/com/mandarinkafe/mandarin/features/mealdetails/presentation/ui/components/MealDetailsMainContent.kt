@@ -26,7 +26,7 @@ import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.Mea
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent.SetComment
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
+import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.MyTextField
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable

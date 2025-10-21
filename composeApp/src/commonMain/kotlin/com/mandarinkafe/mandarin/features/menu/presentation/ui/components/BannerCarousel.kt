@@ -34,7 +34,7 @@ import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_SLOW
 import com.mandarinkafe.mandarin.util.Constants.BANNERS_ASPECT_RATIO
 import com.mandarinkafe.mandarin.util.Constants.BANNERS_AUTO_SCROLL_INTERVAL
-import com.mandarinkafe.mandarin.util.presentation.ui.components.KamelSubcomposeAsyncImageSimple
+import com.mandarinkafe.mandarin.util.presentation.ui.components.images.KamelSubcomposeAsyncImageSimple
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

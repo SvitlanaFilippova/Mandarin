@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.features.address.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.features.address.data.Mapper.toGeoPoint
-import com.mandarinkafe.mandarin.features.address.data.Mapper.toYandexPoint
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.domain.api.AddressSearchInteractor
 import com.mandarinkafe.mandarin.features.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.address.domain.api.GetCurrentLocationUseCase
@@ -15,12 +15,11 @@ import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.Address
 import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressContract.AddressEffect.GoToAddressDetailsEffect
 import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressContract.AddressEvent
 import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressContract.AddressState
-import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LATITUDE
-import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LONGITUDE
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.debounce
 import com.mandarinkafe.mandarin.util.presentation.isSameAs
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
+import com.mandarinkafe.mandarin.util.presentation.createDefaultPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -30,7 +29,7 @@ class AddressViewModel(
     private val getDeliveryZone: GetDeliveryZoneUseCase,
     private val deliveryAreaRepository: DeliveryAreaRepository
 ) : BaseViewModel<AddressEvent, AddressEffect, AddressState>() {
-    private val fetchAddressDebounce = debounce<Any>(
+    private val fetchAddressDebounce = debounce<GeoPoint>(
         FETCH_ADDRESS_DELAY,
         viewModelScope,
         useLastParam = true
@@ -66,7 +65,7 @@ class AddressViewModel(
     }
 
     private fun setInitAddress(address: Address) {
-        setState { copy(initAddress = address, initPinPoint = address.point?.toYandexPoint()) }
+        setState { copy(initAddress = address, initPinPoint = address.point) }
     }
 
     private fun getDeliveryZones() {
@@ -79,7 +78,7 @@ class AddressViewModel(
         }
     }
 
-    private fun onCameraMoved(point: Any) {
+    private fun onCameraMoved(point: GeoPoint) {
         val oldPoint = state.value.currentPinPoint
         if (oldPoint == null || !point.isSameAs(oldPoint)) {
             viewModelScope.launch {
@@ -101,7 +100,7 @@ class AddressViewModel(
                     else -> {
                         setState {
                             copy(
-                                searchError = "Не удалось найти адрес",
+                                searchError = MR.strings.fail_to_fetch_address,
                                 searchInProgress = false
                             )
                         }
@@ -131,7 +130,7 @@ class AddressViewModel(
             return
         } else {
             viewModelScope.launch {
-                searchInteractor.searchAddressByText(searchText, point.toGeoPoint())
+                searchInteractor.searchAddressByText(searchText, point)
             }
         }
     }
@@ -155,13 +154,13 @@ class AddressViewModel(
         when {
             initAddress != null && point != null -> {
                 val address =
-                    initAddress.copy(point = point.toGeoPoint(), streetAndBuilding = address)
+                    initAddress.copy(point = point, streetAndBuilding = address)
                 sendEffect(GoToAddressDetailsEffect(address))
             }
 
             point != null -> {
                 val address = Address(
-                    point = point.toGeoPoint(),
+                    point = point,
                     streetAndBuilding = address
                 )
                 sendEffect(GoToAddressDetailsEffect(address))
@@ -169,15 +168,15 @@ class AddressViewModel(
         }
     }
 
-    private fun fetchAddressWithDebounce(point: Any) {
+    private fun fetchAddressWithDebounce(point: GeoPoint) {
         setState { copy(fetchAddressInProgress = true, error = null, currentPinPoint = point) }
         fetchAddressDebounce.cancel()
         fetchAddressDebounce.invoke(point)
     }
 
-    private fun fetchAddress(point: Any) {
+    private fun fetchAddress(point: GeoPoint) {
         viewModelScope.launch {
-            searchInteractor.getAddressByPoint(point.toGeoPoint())
+            searchInteractor.getAddressByPoint(point)
         }
     }
 
@@ -217,22 +216,22 @@ class AddressViewModel(
 
     private fun requestLocation() {
         viewModelScope.launch {
-            when (val result = getUserLocation()) {
+            val point = when (val result = getUserLocation()) {
                 is Resource.Success -> {
-                    val point = result.data?.toYandexPoint()
-                    setState { copy(userLocation = point) }
+                    result.data
                 }
 
                 else -> {
                     // В случае ошибки используем дефолтные координаты кафе
-                    // TODO: Создать Point через expect/actual
+                    createDefaultPoint()
                 }
             }
+            setState { copy(userLocation = point) }
         }
     }
 
-    private suspend fun checkDeliveryArea(point: Any) {
-        val deliveryArea = getDeliveryZone(point.toGeoPoint())
+    private suspend fun checkDeliveryArea(point: GeoPoint) {
+        val deliveryArea = getDeliveryZone(point)
         setState { copy(currentDeliveryArea = deliveryArea?.toUi()) }
     }
 
@@ -254,6 +253,8 @@ class AddressViewModel(
         private const val SEARCH_DELAY = 1000L
         private const val FETCH_ADDRESS_DELAY = 300L
         private const val MAX_ADDRESS_LENGTH =
-            250 // вынуждены обрезать слишком длинные адреса, чтобы iiko при оформлении заказа не вернул ошибку
+            250 // вынуждены обрезать длинные адреса, чтобы iiko не вернул ошибку
     }
 }
+
+

@@ -1,25 +1,28 @@
 package com.mandarinkafe.mandarin.features.more.presentation.viewmodel
 
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.presentation.ui.models.UiDeliveryArea
 import com.mandarinkafe.mandarin.util.presentation.BaseContract
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LONGITUDE
+import com.mandarinkafe.mandarin.util.presentation.createDefaultPoint
+import dev.icerock.moko.resources.StringResource
 
 sealed interface DeliveryContract {
     sealed interface DeliveryEvent : BaseContract.BaseEvent {
-        data class CameraMoved(val center: Any) : DeliveryEvent
+        data class CameraMoved(val center: GeoPoint) : DeliveryEvent
     }
 
     sealed interface DeliveryEffect : BaseContract.BaseEffect
 
     data class DeliveryState(
         val isLoading: Boolean = true,
-        val initPinPoint: Any = createDefaultPoint(), // TODO: Create expect/actual function
+        val initPinPoint: GeoPoint = createDefaultPoint(),
         val deliveryAreas: List<UiDeliveryArea> = listOf(),
-        val currentPinPoint: Any? = null,
+        val currentPinPoint: GeoPoint? = null,
         val displayAddress: String? = null,
         val deliveryArea: UiDeliveryArea? = null,
-        val error: String? = null,
+        val error: StringResource? = null,
         val fetchAddressInProgress: Boolean = false,
 
         ) : BaseContract.BaseState {
@@ -28,9 +31,5 @@ sealed interface DeliveryContract {
     }
 }
 
-// TODO: Move to expect/actual
-private fun createDefaultPoint(): Any {
-    // This will be replaced with expect/actual implementation
-    return Any()
-}
+
 

@@ -18,8 +18,8 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.presentation.ui.components.CheckboxWithTextRow
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MyTextField
-import com.mandarinkafe.mandarin.util.presentation.ui.utils.MaskVisualTransformation
+import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.MyTextField
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MaskVisualTransformation
 
 @Composable
 fun PersonalInfo(

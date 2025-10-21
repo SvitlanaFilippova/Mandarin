@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.util.presentation.ui.components
+package com.mandarinkafe.mandarin.util.presentation.ui.components.images
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,8 +18,9 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.search.presentation.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.util.LabelSize
+import com.mandarinkafe.mandarin.util.presentation.ui.components.LabelChip
+import com.mandarinkafe.mandarin.util.presentation.ui.components.NoDeliveryChip
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.FavoriteButton
-import io.github.aakira.napier.Napier
 
 @Composable
 fun MealItemImageBox(

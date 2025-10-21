@@ -1,7 +1,8 @@
 package com.mandarinkafe.mandarin.features.more.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.features.address.data.Mapper.toGeoPoint
+import com.mandarinkafe.mandarin.MR
+import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.domain.api.AddressSearchInteractor
 import com.mandarinkafe.mandarin.features.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.address.domain.api.GetDeliveryZoneUseCase
@@ -23,7 +24,7 @@ class DeliveryViewModel(
 ) :
     BaseViewModel<DeliveryEvent, DeliveryEffect, DeliveryState>() {
     override fun setInitialState() = DeliveryState()
-    private val fetchAddressDebounce = debounce<Any>(
+    private val fetchAddressDebounce = debounce<GeoPoint>(
         FETCH_ADDRESS_DELAY,
         viewModelScope,
         useLastParam = true
@@ -52,7 +53,7 @@ class DeliveryViewModel(
         }
     }
 
-    private fun onCameraMoved(point: Any) {
+    private fun onCameraMoved(point: GeoPoint) {
         val oldPoint = state.value.currentPinPoint
         if (oldPoint == null || !point.isSameAs(oldPoint)) {
             viewModelScope.launch {
@@ -62,15 +63,15 @@ class DeliveryViewModel(
         }
     }
 
-    private fun fetchAddressWithDebounce(point: Any) {
+    private fun fetchAddressWithDebounce(point: GeoPoint) {
         setState { copy(fetchAddressInProgress = true, error = null, currentPinPoint = point) }
         fetchAddressDebounce.cancel()
         fetchAddressDebounce.invoke(point)
     }
 
-    private fun fetchAddress(point: Any) {
+    private fun fetchAddress(point: GeoPoint) {
         viewModelScope.launch {
-            searchInteractor.getAddressByPoint(point.toGeoPoint())
+            searchInteractor.getAddressByPoint(point)
         }
     }
 
@@ -95,7 +96,7 @@ class DeliveryViewModel(
                     else -> {
                         setState {
                             copy(
-                                error = "Не удалось определить адрес", // TODO: Use MR.strings
+                                error = MR.strings.fail_to_fetch_address,
                                 fetchAddressInProgress = false,
                                 displayAddress = null
                             )
@@ -106,8 +107,8 @@ class DeliveryViewModel(
         }
     }
 
-    private suspend fun checkDeliveryArea(point: Any) {
-        val deliveryArea = getDeliveryZone(point.toGeoPoint())
+    private suspend fun checkDeliveryArea(point: GeoPoint) {
+        val deliveryArea = getDeliveryZone(point)
         setState { copy(deliveryArea = deliveryArea?.toUi()) }
     }
 

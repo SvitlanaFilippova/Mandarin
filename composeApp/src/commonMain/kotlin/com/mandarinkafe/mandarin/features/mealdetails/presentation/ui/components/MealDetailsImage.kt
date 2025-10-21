@@ -18,7 +18,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.search.presentation.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.util.LabelSize
-import com.mandarinkafe.mandarin.util.presentation.ui.components.KamelSubcomposeAsyncImage
+import com.mandarinkafe.mandarin.util.presentation.ui.components.images.KamelSubcomposeAsyncImage
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LabelChip
 import com.mandarinkafe.mandarin.util.presentation.ui.components.NoDeliveryChip
 import dev.icerock.moko.resources.compose.stringResource

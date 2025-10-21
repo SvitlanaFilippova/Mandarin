@@ -403,4 +403,8 @@
     <string name="payment_type_cash">Наличные</string>
     <string name="payment_type_card">Банковская карта</string>
 
+    <!-- Address -->
+    <string name="fail_to_fetch_address">Не удалось определить адрес</string>
+
+
 </resources>

@@ -32,7 +32,7 @@ import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_DESCRIPTION_I
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_TITLE_IN_MENU
 import com.mandarinkafe.mandarin.util.LabelSize
 import com.mandarinkafe.mandarin.util.presentation.localizedShortText
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
+import com.mandarinkafe.mandarin.util.presentation.ui.components.images.MealItemImageBox
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MealButtonsRow
 import dev.icerock.moko.resources.compose.stringResource
 

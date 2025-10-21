@@ -40,7 +40,6 @@ import moe.tlaster.precompose.navigation.rememberNavigator
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MainScreen(
-    onPhoneClick: () -> Unit = {}
 ) {
     MandarinTheme {
         val navigator = rememberNavigator()
@@ -127,8 +126,7 @@ fun MainScreen(
         HandleEffects(
             effectFlow = sharedViewModel.effect,
             snackbarHostState = snackbarHostState,
-            navigator = navigator,
-            onPhoneClick = onPhoneClick,
+            navigator = navigator
         )
     }
 }

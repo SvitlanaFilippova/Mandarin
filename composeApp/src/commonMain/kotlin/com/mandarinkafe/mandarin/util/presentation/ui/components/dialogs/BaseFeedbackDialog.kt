@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.util.presentation.ui.components
+package com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,7 +23,11 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.util.presentation.ui.utils.MaskVisualTransformation
+import com.mandarinkafe.mandarin.util.presentation.ui.components.CheckboxWithTextRow
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ConsentTextWithLinks
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MaskVisualTransformation
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
+import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.MyTextField
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.Flow

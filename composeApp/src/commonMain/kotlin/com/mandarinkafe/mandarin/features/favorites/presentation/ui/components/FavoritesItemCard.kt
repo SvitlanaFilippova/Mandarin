@@ -29,7 +29,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_TITLE_IN_MENU
 import com.mandarinkafe.mandarin.util.LabelSize
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
+import com.mandarinkafe.mandarin.util.presentation.ui.components.images.MealItemImageBox
 
 /**
  * Компонент для отображения товара, добавленного в избранное. Поддерживает и базовые, и кастомизированные блюда.

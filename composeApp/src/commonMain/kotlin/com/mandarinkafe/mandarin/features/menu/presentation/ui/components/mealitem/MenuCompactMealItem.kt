@@ -25,7 +25,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.LabelSize
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MealItemImageBox
+import com.mandarinkafe.mandarin.util.presentation.ui.components.images.MealItemImageBox
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MealButtonsRow
 
 @Composable

@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.util.presentation.ui.components.SearchBarInputField
+import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.SearchBarInputField
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 

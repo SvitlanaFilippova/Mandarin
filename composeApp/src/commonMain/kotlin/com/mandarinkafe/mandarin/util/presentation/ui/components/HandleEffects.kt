@@ -12,14 +12,13 @@ import androidx.compose.runtime.setValue
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.features.cart.domain.Mapper.toCartItem
 import com.mandarinkafe.mandarin.navigation.NavConstants
-import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMealDetails
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.MakeCall
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 import moe.tlaster.precompose.navigation.Navigator
 
 @Composable
@@ -27,11 +26,22 @@ fun HandleEffects(
     effectFlow: Flow<SharedEffect>,
     navigator: Navigator,
     snackbarHostState: SnackbarHostState,
-    onPhoneClick: () -> Unit,
 ) {
     val toCartButtonText = stringResource(MR.strings.snackbar_to_cart_button)
+    val phoneNumber = stringResource(MR.strings.cafe_phone_number)
     var pendingSnackbarRes: StringResource? by remember { mutableStateOf(null) }
     var pendingShowToCart by remember { mutableStateOf(false) }
+    var shouldMakePhoneCall by remember { mutableStateOf(false) }
+    
+    if (shouldMakePhoneCall) {
+        MakeCall(
+            phoneNumber = phoneNumber,
+        )
+        LaunchedEffect(Unit) {
+            shouldMakePhoneCall = false
+        }
+    }
+    
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
             when (effect) {
@@ -46,7 +56,7 @@ fun HandleEffects(
                 }
 
                 is SharedEffect.OnPhoneClick -> {
-                    onPhoneClick()
+                    shouldMakePhoneCall = true
                 }
 
                 is SharedEffect.FinishSplash -> {

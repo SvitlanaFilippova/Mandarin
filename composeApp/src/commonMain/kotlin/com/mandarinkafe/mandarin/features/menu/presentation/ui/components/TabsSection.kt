@@ -16,7 +16,7 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
-import com.mandarinkafe.mandarin.util.presentation.ui.components.KamelSubcomposeAsyncImageSimple
+import com.mandarinkafe.mandarin.util.presentation.ui.components.images.KamelSubcomposeAsyncImageSimple
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 

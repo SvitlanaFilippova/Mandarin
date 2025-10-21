@@ -20,7 +20,7 @@ import com.mandarinkafe.mandarin.features.search.presentation.ui.components.Labe
 import com.mandarinkafe.mandarin.features.search.presentation.ui.components.SearchResults
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
-import com.mandarinkafe.mandarin.util.presentation.ui.components.SearchBarInputField
+import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.SearchBarInputField
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 

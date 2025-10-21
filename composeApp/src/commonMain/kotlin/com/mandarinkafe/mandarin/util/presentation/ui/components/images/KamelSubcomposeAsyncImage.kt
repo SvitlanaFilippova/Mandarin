@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.util.presentation.ui.components
+package com.mandarinkafe.mandarin.util.presentation.ui.components.images
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image

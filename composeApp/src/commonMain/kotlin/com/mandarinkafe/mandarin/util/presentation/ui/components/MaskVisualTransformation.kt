@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.util.presentation.ui.utils
+package com.mandarinkafe.mandarin.util.presentation.ui.components
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
@@ -20,7 +20,7 @@ class MaskVisualTransformation(private val mask: String) : VisualTransformation 
             out += char
             maskIndex++
         }
-        return TransformedText(AnnotatedString(out), offsetTranslator())
+        return TransformedText(androidx.compose.ui.text.AnnotatedString(out), offsetTranslator())
     }
 
     private fun offsetTranslator() = object : OffsetMapping {
@@ -40,5 +40,3 @@ class MaskVisualTransformation(private val mask: String) : VisualTransformation 
         }
     }
 }
-
-

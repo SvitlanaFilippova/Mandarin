@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +54,7 @@ import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_TEXT_SIZE
 import com.mandarinkafe.mandarin.util.presentation.openGeoLocation
 import com.mandarinkafe.mandarin.util.presentation.ui.components.BindMapViewToLifecycle
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InfoCard
+import com.mandarinkafe.mandarin.util.presentation.ui.components.OnPhoneClick
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.RoundedButton
 import com.yandex.mapkit.Animation
@@ -72,6 +74,19 @@ fun ContactsScreen(onBackClick: () -> Boolean) {
         R.string.pickup_cafe_address,
         R.string.pickup_pizzeria_address
     )
+    
+    val phoneNumber = stringResource(R.string.cafe_phone_number)
+    var shouldMakePhoneCall by remember { mutableStateOf(false) }
+    
+    if (shouldMakePhoneCall) {
+        OnPhoneClick(
+            phoneNumber = phoneNumber,
+            onFail = { /* Handle error if needed */ }
+        )
+        LaunchedEffect(Unit) {
+            shouldMakePhoneCall = false
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -99,12 +114,8 @@ fun ContactsScreen(onBackClick: () -> Boolean) {
             iconVector = Icons.Default.Phone,
             title = stringResource(R.string.phone_title),
             lines = listOf(
-                stringResource(R.string.cafe_phone_number) to {
-                    val intent = Intent(
-                        Intent.ACTION_DIAL,
-                        "tel:${context.getString(R.string.cafe_phone_number)}".toUri()
-                    )
-                    context.startActivity(intent)
+                phoneNumber to {
+                    shouldMakePhoneCall = true
                 }
             )
         )

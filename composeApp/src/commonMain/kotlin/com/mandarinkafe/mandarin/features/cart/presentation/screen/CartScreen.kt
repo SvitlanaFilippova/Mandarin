@@ -28,7 +28,7 @@ import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.Sh
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.asString
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
-import com.mandarinkafe.mandarin.util.presentation.ui.components.RemoveConfirmationDialog
+import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.navigation.Navigator
