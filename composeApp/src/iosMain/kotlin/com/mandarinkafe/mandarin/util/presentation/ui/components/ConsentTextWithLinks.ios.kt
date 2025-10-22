@@ -45,7 +45,12 @@ actual fun ConsentTextWithLinks(modifier: Modifier, buttonName: String?) {
             LinkAnnotation.Clickable(
                 tag = "PRIVACY",
                 linkInteractionListener = {
-                    UIApplication.sharedApplication.openURL(NSURL(string = privacyUrl))
+                    UIApplication.sharedApplication.openURL(
+                        NSURL(string = privacyUrl),
+                        mapOf<Any?, Any>()
+                    ) { success ->
+                        // URL открыт
+                    }
                 },
                 styles = linkStyle
             )
@@ -57,7 +62,12 @@ actual fun ConsentTextWithLinks(modifier: Modifier, buttonName: String?) {
             LinkAnnotation.Clickable(
                 tag = "AGREEMENT",
                 linkInteractionListener = {
-                    UIApplication.sharedApplication.openURL(NSURL(string = agreementUrl))
+                    UIApplication.sharedApplication.openURL(
+                        NSURL(string = agreementUrl),
+                        mapOf<Any?, Any>()
+                    ) { success ->
+                        // URL открыт
+                    }
                 },
                 styles = linkStyle
             )

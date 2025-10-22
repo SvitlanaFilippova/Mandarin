@@ -15,7 +15,9 @@ actual fun OpenGeoLocation(address: String) {
     val url = NSURL.URLWithString(urlString)
     
     if (url != null && UIApplication.sharedApplication.canOpenURL(url)) {
-        UIApplication.sharedApplication.openURL(url)
+        UIApplication.sharedApplication.openURL(url, mapOf<Any?, Any>()) { success ->
+            // Можно добавить логирование если нужно
+        }
     }
 }
 

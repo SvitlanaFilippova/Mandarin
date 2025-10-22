@@ -9,7 +9,11 @@ actual fun OpenUrl(url: String, onFail: () -> Unit) {
     try {
         val nsUrl = NSURL.URLWithString(url)
         if (nsUrl != null && UIApplication.sharedApplication.canOpenURL(nsUrl)) {
-            UIApplication.sharedApplication.openURL(nsUrl)
+            UIApplication.sharedApplication.openURL(nsUrl, mapOf<Any?, Any>()) { success ->
+                if (!success) {
+                    onFail()
+                }
+            }
         } else {
             onFail()
         }

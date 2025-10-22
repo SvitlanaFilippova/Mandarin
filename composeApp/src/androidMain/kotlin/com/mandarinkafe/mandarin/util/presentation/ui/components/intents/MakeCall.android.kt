@@ -13,7 +13,12 @@ actual fun MakeCall(
 ) {
     val context = LocalContext.current
     try {
-        val intent = Intent(Intent.ACTION_DIAL, "tel:$phoneNumber".toUri())
+        // Очищаем номер от пробелов, скобок и других символов для tel: URL scheme
+        val cleanPhoneNumber = phoneNumber
+            .replace(Regex("[\\s()–—-]"), "") // удаляем пробелы, скобки, дефисы и тире
+            .replace("\u00A0", "") // удаляем неразрывные пробелы
+        
+        val intent = Intent(Intent.ACTION_DIAL, "tel:$cleanPhoneNumber".toUri())
         context.startActivity(intent)
     } catch (e: ActivityNotFoundException) {
         onFail()
