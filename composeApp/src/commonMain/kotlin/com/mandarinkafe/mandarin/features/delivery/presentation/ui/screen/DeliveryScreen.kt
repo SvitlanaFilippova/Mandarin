@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.more.presentation.ui.screen
+package com.mandarinkafe.mandarin.features.delivery.presentation.ui.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,9 +15,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.more.presentation.ui.components.DeliveryZonesSection
-import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DeliveryContract.DeliveryEvent
-import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DeliveryViewModel
+import com.mandarinkafe.mandarin.features.delivery.presentation.ui.components.DeliveryZonesSection
+import com.mandarinkafe.mandarin.features.delivery.presentation.viewmodel.DeliveryContract.DeliveryEvent
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberDeliveryViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InfoCard
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen

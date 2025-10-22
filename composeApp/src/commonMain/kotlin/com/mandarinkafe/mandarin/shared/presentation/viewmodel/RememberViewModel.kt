@@ -9,7 +9,7 @@ import com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel.Favor
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsViewModel
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuViewModel
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.AboutViewModel
-import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DeliveryViewModel
+import com.mandarinkafe.mandarin.features.delivery.presentation.viewmodel.DeliveryViewModel
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackViewModel
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackViewModel
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel

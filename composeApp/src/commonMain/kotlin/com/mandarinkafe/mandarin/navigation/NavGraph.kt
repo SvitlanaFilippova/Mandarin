@@ -15,8 +15,8 @@ import com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen.Favor
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen.MealDetailsBottomSheet
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.screen.MenuScreen
 import com.mandarinkafe.mandarin.features.more.presentation.ui.screen.AboutScreen
-import com.mandarinkafe.mandarin.features.more.presentation.ui.screen.ContactsScreen
-import com.mandarinkafe.mandarin.features.more.presentation.ui.screen.DeliveryScreen
+import com.mandarinkafe.mandarin.features.contacts.presentation.screen.ContactsScreen
+import com.mandarinkafe.mandarin.features.delivery.presentation.ui.screen.DeliveryScreen
 import com.mandarinkafe.mandarin.features.more.presentation.ui.screen.LegalScreen
 import com.mandarinkafe.mandarin.features.more.presentation.ui.screen.MoreMenuScreen
 import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScreen

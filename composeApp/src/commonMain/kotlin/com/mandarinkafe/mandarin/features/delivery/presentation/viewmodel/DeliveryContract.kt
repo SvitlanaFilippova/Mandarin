@@ -1,10 +1,8 @@
-package com.mandarinkafe.mandarin.features.more.presentation.viewmodel
+package com.mandarinkafe.mandarin.features.delivery.presentation.viewmodel
 
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.presentation.ui.models.UiDeliveryArea
 import com.mandarinkafe.mandarin.util.presentation.BaseContract
-import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LATITUDE
-import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LONGITUDE
 import com.mandarinkafe.mandarin.util.presentation.createDefaultPoint
 import dev.icerock.moko.resources.StringResource
 

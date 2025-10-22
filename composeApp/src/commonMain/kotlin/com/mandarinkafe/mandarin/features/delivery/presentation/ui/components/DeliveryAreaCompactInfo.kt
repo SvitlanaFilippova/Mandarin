@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.more.presentation.ui.components
+package com.mandarinkafe.mandarin.features.delivery.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

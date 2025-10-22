@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.more.presentation.ui.screen
+package com.mandarinkafe.mandarin.features.contacts.presentation.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,8 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.more.presentation.ui.components.MapWithCafePins
-import com.mandarinkafe.mandarin.features.more.presentation.ui.components.OurAddressesCard
+import com.mandarinkafe.mandarin.features.contacts.presentation.components.MapWithCafePins
+import com.mandarinkafe.mandarin.features.contacts.presentation.components.OurAddressesCard
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InfoCard
 import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.MakeCall
 import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.OpenGeoLocation

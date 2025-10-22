@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.more.presentation.ui.components
+package com.mandarinkafe.mandarin.features.contacts.presentation.components
 
 import android.graphics.PointF
 import androidx.compose.foundation.layout.Box
@@ -17,6 +17,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.shared.R
+import com.mandarinkafe.mandarin.util.ConstantsMap
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LONGITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LATITUDE
@@ -47,7 +48,8 @@ import com.yandex.runtime.image.ImageProvider
 @Composable
 actual fun MapWithCafePins() {
     var mapView by remember { mutableStateOf<MapView?>(null) }
-    val mandarinInitPoint = Point(MANDARIN_CENTER_LATITUDE, MANDARIN_CENTER_LONGITUDE)
+    val mandarinInitPoint =
+        Point(MANDARIN_CENTER_LATITUDE, MANDARIN_CENTER_LONGITUDE)
 
     val onMapReady: (MapView) -> Unit = {
         mapView = it
@@ -58,12 +60,12 @@ actual fun MapWithCafePins() {
     }
 
     Box(
-        modifier = Modifier
+        modifier = Modifier.Companion
             .fillMaxSize()
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
     ) {
         AndroidView(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.Companion.fillMaxSize(),
             factory = { context ->
                 CustomMapView(context)
             }
@@ -73,8 +75,8 @@ actual fun MapWithCafePins() {
         }
         // Блок с кнопками для управления картой
         MapButtons(
-            modifier = Modifier
-                .align(Alignment.CenterEnd),
+            modifier = Modifier.Companion
+                .align(Alignment.Companion.CenterEnd),
 
             onBackToInitLocationClick = {
                 moveCamera(

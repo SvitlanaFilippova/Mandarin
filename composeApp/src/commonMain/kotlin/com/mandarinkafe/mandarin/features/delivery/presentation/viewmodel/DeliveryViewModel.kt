@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.more.presentation.viewmodel
+package com.mandarinkafe.mandarin.features.delivery.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.MR
@@ -7,9 +7,6 @@ import com.mandarinkafe.mandarin.features.address.domain.api.AddressSearchIntera
 import com.mandarinkafe.mandarin.features.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.presentation.ui.models.toUi
-import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DeliveryContract.DeliveryEffect
-import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DeliveryContract.DeliveryEvent
-import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DeliveryContract.DeliveryState
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.debounce
 import com.mandarinkafe.mandarin.util.presentation.isSameAs
@@ -22,8 +19,8 @@ class DeliveryViewModel(
     private val searchInteractor: AddressSearchInteractor,
     private val getDeliveryZone: GetDeliveryZoneUseCase,
 ) :
-    BaseViewModel<DeliveryEvent, DeliveryEffect, DeliveryState>() {
-    override fun setInitialState() = DeliveryState()
+    BaseViewModel<DeliveryContract.DeliveryEvent, DeliveryContract.DeliveryEffect, DeliveryContract.DeliveryState>() {
+    override fun setInitialState() = DeliveryContract.DeliveryState()
     private val fetchAddressDebounce = debounce<GeoPoint>(
         FETCH_ADDRESS_DELAY,
         viewModelScope,
@@ -37,9 +34,9 @@ class DeliveryViewModel(
         observeDisplayAddress()
     }
 
-    override fun onEvent(event: DeliveryEvent) {
+    override fun onEvent(event: DeliveryContract.DeliveryEvent) {
         when (event) {
-            is DeliveryEvent.CameraMoved -> onCameraMoved(event.center)
+            is DeliveryContract.DeliveryEvent.CameraMoved -> onCameraMoved(event.center)
         }
     }
 
