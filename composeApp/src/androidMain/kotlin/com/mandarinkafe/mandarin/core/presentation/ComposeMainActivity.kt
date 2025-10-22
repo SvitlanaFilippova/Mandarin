@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.core.presentation
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import com.mandarinkafe.mandarin.kmp.MainScreen

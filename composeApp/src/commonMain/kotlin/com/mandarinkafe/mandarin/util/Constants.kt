@@ -52,6 +52,7 @@ object Constants {
     const val SNACKBAR_MESSAGE_KEY = "snackbarMessage"
     const val RATIO_FOR_IMAGE_CROP_MIN = 0.75f
     const val RATIO_FOR_IMAGE_CROP_MAX = 1.5f
+    const val DELAY_FOR_FOCUS_ENABLING = 300L
 
     // Order
     const val VALID_PHONE_LENGTH = 10
