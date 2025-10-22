@@ -54,7 +54,10 @@ sealed interface MealDetailsContract {
             val onReplace: () -> Unit
         ) : MealDetailsEffect
 
-        data class CloseAndShowMessage(val message: StringResource? = null) : MealDetailsEffect
+        data class CloseAndShowMessage(
+            val message: StringResource? = null,
+            val mealName: String? = null
+        ) : MealDetailsEffect
     }
 
     data class MealDetailsState(

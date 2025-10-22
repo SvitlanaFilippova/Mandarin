@@ -85,7 +85,8 @@ class MealDetailsViewModel(
                     )
 
                     is MealAddResult.Added -> showMessageAndCloseMealDetails(
-                        message = MR.strings.added_to_cart_template // TODO: Add string resource with parameter
+                        message = MR.strings.added_to_cart_template,
+                        mealName = item.customizedMeal.meal.name
                     )
                 }
             }
@@ -93,9 +94,12 @@ class MealDetailsViewModel(
         }
     }
 
-    private fun showMessageAndCloseMealDetails(message: dev.icerock.moko.resources.StringResource) {
+    private fun showMessageAndCloseMealDetails(
+        message: dev.icerock.moko.resources.StringResource,
+        mealName: String? = null
+    ) {
         sendEffect(
-            CloseAndShowMessage(message = message)
+            CloseAndShowMessage(message = message, mealName = mealName)
         )
     }
 
@@ -124,7 +128,8 @@ class MealDetailsViewModel(
         }
 
         showMessageAndCloseMealDetails(
-            message = MR.strings.added_to_cart_template // TODO: Add string resource with parameter
+            message = MR.strings.added_to_cart_template,
+            mealName = item.customizedMeal.meal.name
         )
 
     }
@@ -133,11 +138,12 @@ class MealDetailsViewModel(
         viewModelScope.launch {
             val wasUpdated = cartInteractor.updateItem(newCartItem = newItem, oldItem = oldItem)
             val message = if (wasUpdated) {
-                MR.strings.edited_template // TODO: Add string resource with parameter
+                MR.strings.edited_template
             } else {
                 null
             }
-            sendEffect(CloseAndShowMessage(message))
+            val mealName = if (wasUpdated) newItem.customizedMeal.meal.name else null
+            sendEffect(CloseAndShowMessage(message, mealName))
         }
     }
 

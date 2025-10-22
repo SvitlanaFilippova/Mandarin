@@ -30,6 +30,7 @@ fun HandleEffects(
     val toCartButtonText = stringResource(MR.strings.snackbar_to_cart_button)
     val phoneNumber = stringResource(MR.strings.cafe_phone_number)
     var pendingSnackbarRes: StringResource? by remember { mutableStateOf(null) }
+    var pendingSnackbarMessage: String? by remember { mutableStateOf(null) }
     var pendingShowToCart by remember { mutableStateOf(false) }
     var shouldMakePhoneCall by remember { mutableStateOf(false) }
     
@@ -70,8 +71,9 @@ fun HandleEffects(
                 }
 
                 is SharedEffect.SnackbarEffect -> {
-                    // сохраняем ресурс и флаг; показ выполнит отдельный LaunchedEffect ниже
+                    // сохраняем ресурс/сообщение и флаг; показ выполнит отдельный LaunchedEffect ниже
                     pendingSnackbarRes = effect.messageRes
+                    pendingSnackbarMessage = effect.message
                     pendingShowToCart = effect.showToCartButton
                 }
 
@@ -82,7 +84,9 @@ fun HandleEffects(
         }
     }
 
-    val pendingMessage: String? = pendingSnackbarRes?.let { stringResource(it) }
+    val pendingMessageFromRes: String? = pendingSnackbarRes?.let { stringResource(it) }
+    val pendingMessage: String? = pendingSnackbarMessage ?: pendingMessageFromRes
+    
     LaunchedEffect(pendingMessage, pendingShowToCart) {
         val message = pendingMessage ?: return@LaunchedEffect
         val actionLabel = if (pendingShowToCart) toCartButtonText else null
@@ -96,5 +100,6 @@ fun HandleEffects(
             navController.navigateToCart()
         }
         pendingSnackbarRes = null
+        pendingSnackbarMessage = null
     }
 }

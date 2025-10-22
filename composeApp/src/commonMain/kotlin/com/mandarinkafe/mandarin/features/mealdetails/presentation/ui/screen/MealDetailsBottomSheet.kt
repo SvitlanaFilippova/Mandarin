@@ -75,6 +75,7 @@ fun MealDetailsBottomSheet(
     var showRequiredModifiersDialog by remember { mutableStateOf(false) }
     var showMaxModifiersQuantity by remember { mutableStateOf(false) }
     var replaceOrAddData by remember { mutableStateOf<ReplaceOrAddData?>(null) }
+    var pendingCloseAndShowMessage by remember { mutableStateOf<CloseAndShowMessage?>(null) }
 
     val error = state.error
     val customizedMeal = state.customizedMeal ?: initItem?.customizedMeal
@@ -181,17 +182,36 @@ fun MealDetailsBottomSheet(
                 }
 
                 is CloseAndShowMessage -> {
-                    effect.message?.let {
-                        onSharedEvent(
-                            SharedContract.SharedEvent.ShowSnackbar(
-                                messageRes = effect.message,
-                                showToCartButton = !state.isEditMode
-                            )
-                        )
-                    }
-                    onClose()
+                    pendingCloseAndShowMessage = effect
                 }
             }
+        }
+    }
+
+    // Форматирование строки в Composable контексте
+    val formattedMessage: String? = pendingCloseAndShowMessage?.let { effect ->
+        effect.message?.let { messageRes ->
+            if (effect.mealName != null) {
+                // Форматируем строку с параметром (название блюда)
+                stringResource(messageRes, effect.mealName)
+            } else {
+                // Используем строку без параметров
+                stringResource(messageRes)
+            }
+        }
+    }
+
+    // Обработка CloseAndShowMessage
+    LaunchedEffect(formattedMessage) {
+        formattedMessage?.let { message ->
+            onSharedEvent(
+                SharedContract.SharedEvent.ShowSnackbar(
+                    message = message,
+                    showToCartButton = !state.isEditMode
+                )
+            )
+            onClose()
+            pendingCloseAndShowMessage = null
         }
     }
 }
