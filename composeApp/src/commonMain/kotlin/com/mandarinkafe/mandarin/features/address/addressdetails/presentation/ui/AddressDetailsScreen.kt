@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -20,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
 import com.mandarinkafe.mandarin.core.domain.models.Address
@@ -28,7 +25,7 @@ import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.components.AddressTypeChooser
+import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.components.AddressTypeChooser
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsContract.AddressDetailsEffect
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsContract.AddressDetailsEvent
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.ApartmentDetails
@@ -43,8 +40,6 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.BigButt
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.MyTextField
 import dev.icerock.moko.resources.compose.stringResource
-import io.github.aakira.napier.Napier
-import kotlin.collections.set
 
 @Composable
 fun AddressDetailsScreen(

@@ -13,6 +13,7 @@ import com.yandex.mapkit.search.SearchManager
 import com.yandex.mapkit.search.SearchOptions
 import com.yandex.mapkit.search.Session
 import com.yandex.runtime.Error
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +31,6 @@ class AddressRepositoryImpl(
     private val _addressStringChannel = Channel<Resource<AddressSearchResult>>(Channel.BUFFERED)
     override val addressStringFlow: Flow<Resource<AddressSearchResult>> =
         _addressStringChannel.receiveAsFlow()
-
 
     // Слушатель для поиска по текстовому запросу
     private val listenerForSearchByText = object : Session.SearchListener {
@@ -52,7 +52,7 @@ class AddressRepositoryImpl(
     }
 
     override suspend fun searchAddressByString(query: String, point: GeoPoint) {
-        val yPoint = point.toYandexPoint() as Point
+        val yPoint = point.toYandexPoint()
         val geometry = Geometry.fromPoint(yPoint)
         val searchOptions = SearchOptions()
         _addressListChannel.trySend(Resource.Loading())
@@ -85,7 +85,7 @@ class AddressRepositoryImpl(
     }
 
     override suspend fun getAddressFromPoint(point: GeoPoint) {
-        val yPoint = point.toYandexPoint() as Point
+        val yPoint = point.toYandexPoint()
         val searchOptions = SearchOptions()
         _addressStringChannel.trySend(Resource.Loading())
 

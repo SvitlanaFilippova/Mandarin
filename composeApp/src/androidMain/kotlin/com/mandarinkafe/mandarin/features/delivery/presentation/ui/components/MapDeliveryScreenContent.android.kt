@@ -34,7 +34,7 @@ actual fun MapDeliveryScreenContent(
     locationChosen: Boolean
 ) {
     var mapView by remember { mutableStateOf<MapView?>(null) }
-    val initLocationYandex = initLocation.toYandexPoint() as Point
+    val initLocationYandex = initLocation.toYandexPoint()
 
     LaunchedEffect(initLocation, mapView) {
         moveCamera(initLocationYandex, mapView)

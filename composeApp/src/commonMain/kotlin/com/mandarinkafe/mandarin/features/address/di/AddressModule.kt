@@ -21,6 +21,7 @@ import com.mandarinkafe.mandarin.features.savedadresses.domain.impl.RemoveAddres
 import com.mandarinkafe.mandarin.features.savedadresses.domain.impl.SaveAddressUseCaseImpl
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsViewModel
 import com.mandarinkafe.mandarin.features.address.data.impl.DeliveryAreaRepositoryImpl
+import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressViewModel
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -46,11 +47,6 @@ val addressModule = module {
 
     // ViewModel
     singleOf(::AddressDetailsViewModel)
-
+    singleOf(::AddressViewModel)
 
 }
-
-
-
-
-

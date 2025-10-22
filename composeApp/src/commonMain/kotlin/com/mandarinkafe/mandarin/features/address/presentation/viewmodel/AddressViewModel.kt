@@ -176,7 +176,7 @@ class AddressViewModel(
 
     private fun fetchAddress(point: GeoPoint) {
         viewModelScope.launch {
-            searchInteractor.getAddressByPoint(point)
+//            searchInteractor.getAddressByPoint(point)
         }
     }
 
