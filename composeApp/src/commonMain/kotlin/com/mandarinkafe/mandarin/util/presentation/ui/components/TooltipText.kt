@@ -18,14 +18,16 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.painterResource
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun TooltipText(
     modifier: Modifier = Modifier,
     text: String,
-    extraTextRes: String? = null,
     extraText: String? = null,
+    extraTextRes: StringResource? = null,
     extraComposable: @Composable (() -> Unit)? = null,
 ) {
     Box(
@@ -54,7 +56,7 @@ fun TooltipText(
                 extraTextRes?.let {
                     Text(
                         modifier = Modifier.padding(top = Dimens.MarginStandard16),
-                        text = it,
+                        text = stringResource(it) ,
                         style = Typography.SmallTextStyle.copy(
                             color = Colors.WhiteTransparent75,
                             fontWeight = FontWeight.Light

@@ -7,8 +7,3 @@ enum class DateFilterType {
     CURRENT_MONTH,
     CUSTOM_RANGE
 }
-
-
-
-
-

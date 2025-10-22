@@ -142,6 +142,7 @@ fun MenuContentScreen(
                 )
             }
 
+            // Поиск и табы категорий
             stickyHeader {
                 MenuStickyHeader(
                     isAtTop = isAtTop,
