@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.core.presentation
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import com.mandarinkafe.mandarin.kmp.MainScreen
 import io.kamel.core.config.KamelConfig
@@ -20,17 +20,20 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.http.HttpHeaders
-import moe.tlaster.precompose.lifecycle.setContent
+import androidx.activity.compose.setContent
+import moe.tlaster.precompose.PreComposeApp
 import java.io.File
 
-class ComposeMainActivity : ComponentActivity() {
+class ComposeMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val kamelConfig = initKamel()
 
         setContent {
-            CompositionLocalProvider(LocalKamelConfig provides kamelConfig) {
-                MainScreen()
+            PreComposeApp {
+                CompositionLocalProvider(LocalKamelConfig provides kamelConfig) {
+                    MainScreen()
+                }
             }
         }
     }

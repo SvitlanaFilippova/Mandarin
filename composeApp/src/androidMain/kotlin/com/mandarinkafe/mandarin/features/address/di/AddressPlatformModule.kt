@@ -25,6 +25,7 @@ val addressPlatformModule = module {
     }
 
     single<SearchManager> {
+        val mapKit: MapKit = get() // форсируем инициализацию MapKit
         SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
     }
 

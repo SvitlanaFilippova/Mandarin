@@ -11,16 +11,14 @@ import io.github.aakira.napier.Napier
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
-
-        // Инициализация Koin
-        initKoinAndroid(this)
+        // Инициализация Napier (логгер)
+        Napier.base(DebugAntilog())
 
         // Настройка MapKit
         MapKitFactory.setApiKey(ApiKeys.MAPKIT_API_KEY)
         MapKitFactory.setLocale(LOCALE_RU)
 
-        // Инициализация Napier (логгер)
-        Napier.base(DebugAntilog())
-
+        // Инициализация Koin
+        initKoinAndroid(this)
     }
 }
