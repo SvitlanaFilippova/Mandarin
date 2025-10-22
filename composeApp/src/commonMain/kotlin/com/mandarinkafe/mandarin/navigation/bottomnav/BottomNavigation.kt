@@ -21,12 +21,13 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.navigation.bottomnav.components.CartIconBox
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
-import moe.tlaster.precompose.navigation.Navigator
+import androidx.navigation.NavController
+import androidx.navigation.navOptions
 
 @Composable
 fun BottomNavigation(
     visible: Boolean,
-    navigator: Navigator,
+    navController: NavController,
     cartCount: Int,
     currentRoute: String?,
 ) {
@@ -51,11 +52,11 @@ fun BottomNavigation(
                 NavigationBarItem(
                     selected = routeWithoutArgs == item.route,
                     onClick = {
-                        navigator.navigate(
+                        navController.navigate(
                             route = item.route,
-                            options = moe.tlaster.precompose.navigation.NavOptions(
+                            navOptions {
                                 launchSingleTop = true
-                            )
+                            }
                         )
                     },
                     icon = {

@@ -35,27 +35,32 @@ import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.AppTopBar
 import com.mandarinkafe.mandarin.util.presentation.ui.components.CustomSnackbarHost
 import com.mandarinkafe.mandarin.util.presentation.ui.components.HandleEffects
-import moe.tlaster.precompose.navigation.rememberNavigator
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MainScreen(
 ) {
     MandarinTheme {
-        val navigator = rememberNavigator()
+        val navController = rememberNavController()
         val sharedViewModel = rememberSharedViewModel()
         val sharedState by sharedViewModel.state.collectAsState()
         val snackbarHostState = remember { SnackbarHostState() }
 
-        val currentEntry by navigator.currentEntry.collectAsState(initial = null)
-        val currentRoute = currentEntry?.route?.route
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
 
         var isSplashLoading by remember { mutableStateOf(true) }
         val isSplash = if (isSplashLoading) true else currentRoute == SPLASH_SCREEN_ROUTE
         val showTopBar = !isSplash && sharedState.shouldShowTopBar
         val onEvent = sharedViewModel::onEvent
         val selectedMeal = sharedState.selectedMealForFavoriteChoice
-        val isInnerScreen = currentRoute?.let { route -> route !in bottomNavigationRoutes } == true
+        val isInnerScreen = currentRoute?.let { route -> 
+            // Извлекаем базовый маршрут без параметров
+            val baseRoute = route.substringBefore("?")
+            baseRoute !in bottomNavigationRoutes 
+        } == true
         val showBottomBar = !isSplash && !isInnerScreen
 
         LaunchedEffect(Unit) {
@@ -83,9 +88,9 @@ fun MainScreen(
             bottomBar = {
                 BottomNavigation(
                     visible = showBottomBar,
-                    navigator = navigator,
+                    navController = navController,
                     cartCount = sharedState.cartItemsCount,
-                    currentRoute = currentRoute
+                    currentRoute = currentRoute?.substringBefore("?")
                 )
             }
         ) { innerPadding ->
@@ -95,7 +100,7 @@ fun MainScreen(
                         .padding(innerPadding)
                         .background(Colors.AppBlack)
                 ) {
-                    NavGraph()
+                    NavGraph(navController = navController)
                 }
             }
         }
@@ -126,7 +131,7 @@ fun MainScreen(
         HandleEffects(
             effectFlow = sharedViewModel.effect,
             snackbarHostState = snackbarHostState,
-            navigator = navigator
+            navController = navController
         )
     }
 }

@@ -19,12 +19,12 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.MakeCal
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.Flow
-import moe.tlaster.precompose.navigation.Navigator
+import androidx.navigation.NavController
 
 @Composable
 fun HandleEffects(
     effectFlow: Flow<SharedEffect>,
-    navigator: Navigator,
+    navController: NavController,
     snackbarHostState: SnackbarHostState,
 ) {
     val toCartButtonText = stringResource(MR.strings.snackbar_to_cart_button)
@@ -46,7 +46,7 @@ fun HandleEffects(
         effectFlow.collect { effect ->
             when (effect) {
                 is SharedEffect.OpenMealDetailsBS -> {
-                    navigator.navigateToMealDetails(
+                    navController.navigateToMealDetails(
                         item = effect.cartItem
                             ?: effect.item?.toCartItem()
                             ?: effect.meal?.toCartItem(),
@@ -60,13 +60,13 @@ fun HandleEffects(
                 }
 
                 is SharedEffect.FinishSplash -> {
-                    navigator.navigate(
+                    navController.navigate(
                         route = NavConstants.MENU_SCREEN_ROUTE
                     )
                 }
 
                 is SharedEffect.GoBackEffect -> {
-                    navigator.goBack()
+                    navController.popBackStack()
                 }
 
                 is SharedEffect.SnackbarEffect -> {
@@ -93,7 +93,7 @@ fun HandleEffects(
             actionLabel = actionLabel
         )
         if (result == SnackbarResult.ActionPerformed) {
-            navigator.navigateToCart()
+            navController.navigateToCart()
         }
         pendingSnackbarRes = null
     }

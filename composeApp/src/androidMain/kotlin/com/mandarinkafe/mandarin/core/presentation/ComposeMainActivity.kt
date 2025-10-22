@@ -21,7 +21,6 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.http.HttpHeaders
 import androidx.activity.compose.setContent
-import moe.tlaster.precompose.PreComposeApp
 import java.io.File
 
 class ComposeMainActivity : AppCompatActivity() {
@@ -30,10 +29,8 @@ class ComposeMainActivity : AppCompatActivity() {
         val kamelConfig = initKamel()
 
         setContent {
-            PreComposeApp {
-                CompositionLocalProvider(LocalKamelConfig provides kamelConfig) {
-                    MainScreen()
-                }
+            CompositionLocalProvider(LocalKamelConfig provides kamelConfig) {
+                MainScreen()
             }
         }
     }

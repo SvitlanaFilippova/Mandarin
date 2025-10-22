@@ -16,12 +16,12 @@ import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import moe.tlaster.precompose.navigation.Navigator
+import androidx.navigation.NavController
 
 @Composable
 fun HandleOrderEffects(
     effectFlow: Flow<OrderEffect>,
-    navController: Navigator,
+    navController: NavController,
     snackbarHostState: SnackbarHostState
 ) {
     var pendingMessageRes: StringResource? by remember { mutableStateOf(null) }

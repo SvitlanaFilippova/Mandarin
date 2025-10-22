@@ -12,11 +12,11 @@ kamel = "1.0.8"
 lifecycleVersion = "2.9.5"
 material3Version = "1.4.0"
 playServicesLocationVersion = "21.3.0"
-precompose = "1.6.2"
 composeMultiplatform = "1.9.1"
 activity = "1.11.0"
 agp = "8.13.0"
 composeBom = "2025.10.00"
+navigation = "2.9.1"
 coreKtx = "1.17.0"
 detekt = "1.23.8"
 firebaseBomVersion = "34.3.0"
@@ -133,10 +133,8 @@ resources = { module = "dev.icerock.moko:resources", version.ref = "moko-resourc
 resources-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "moko-resources" }
 resources-generator = { module = "dev.icerock.moko:resources-generator", version.ref = "moko-resources" }
 
-# PreCompose (навигация)
-precompose = { module = "moe.tlaster:precompose", version.ref = "precompose" }
-precompose-koin = { module = "moe.tlaster:precompose-koin", version.ref = "precompose" }
-precompose-viewmodel = { module = "moe.tlaster:precompose-viewmodel", version.ref = "precompose" }
+# Navigation Compose (навигация)
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation" }
 
 # URL encoder
 urlencoder-lib = { module = "net.thauvin.erik.urlencoder:urlencoder-lib", version.ref = "urlencoderLib" }

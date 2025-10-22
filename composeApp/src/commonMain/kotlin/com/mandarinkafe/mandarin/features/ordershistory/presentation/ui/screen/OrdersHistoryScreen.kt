@@ -7,11 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
-import moe.tlaster.precompose.navigation.Navigator
+import androidx.navigation.NavController
 
 @Composable
 fun OrdersHistoryScreen(
-    navigator: Navigator,
+    navController: NavController,
     sharedViewModel: SharedViewModel,
 ) {
     Box(

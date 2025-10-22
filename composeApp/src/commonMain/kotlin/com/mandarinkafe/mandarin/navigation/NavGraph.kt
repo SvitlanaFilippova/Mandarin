@@ -1,6 +1,11 @@
 package com.mandarinkafe.mandarin.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
+import androidx.navigation.compose.rememberNavController
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.AddressDetailsScreen
@@ -24,103 +29,108 @@ import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberSharedVie
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
 import kotlinx.serialization.json.Json
 import io.ktor.http.decodeURLPart
-import moe.tlaster.precompose.navigation.NavHost
-import moe.tlaster.precompose.navigation.query
-import moe.tlaster.precompose.navigation.rememberNavigator
 
 @Composable
-    fun NavGraph() {
-    val navigator = rememberNavigator()
+fun NavGraph(navController: NavHostController = rememberNavController()) {
     val cartViewModel = rememberCartViewModel()
     val sharedViewModel = rememberSharedViewModel()
 
     NavHost(
-        navigator = navigator,
-        initialRoute = NavConstants.SPLASH_SCREEN_ROUTE
+        navController = navController,
+        startDestination = NavConstants.SPLASH_SCREEN_ROUTE
     ) {
         // --- SPLASH ---
-        scene(NavConstants.SPLASH_SCREEN_ROUTE) {
+        composable(NavConstants.SPLASH_SCREEN_ROUTE) {
             SplashScreen()
         }
 
         // --- ОСНОВНЫЕ ЭКРАНЫ (доступны из Bottom Navigation)---
-        scene(NavConstants.MENU_SCREEN_ROUTE) {
+        composable(NavConstants.MENU_SCREEN_ROUTE) {
             MenuScreen(
-                navigator = navigator,
+                navController = navController,
                 cartViewModel = cartViewModel,
                 sharedViewModel = sharedViewModel
             )
         }
-        scene(NavConstants.FAVORITES_SCREEN_ROUTE) {
+        composable(NavConstants.FAVORITES_SCREEN_ROUTE) {
             FavoritesScreen(
                 cartViewModel = cartViewModel,
                 sharedViewModel = sharedViewModel
             )
         }
 
-        scene(NavConstants.CART_SCREEN_ROUTE) { backStackEntry ->
-            val snackbarMessage = backStackEntry.query<String>(NavConstants.KEY_SNACKBAR_MESSAGE)
+        composable(
+            route = "${NavConstants.CART_SCREEN_ROUTE}?${NavConstants.KEY_SNACKBAR_MESSAGE}={${NavConstants.KEY_SNACKBAR_MESSAGE}}"
+        ) { backStackEntry ->
+            val snackbarMessage = backStackEntry.arguments?.getString(NavConstants.KEY_SNACKBAR_MESSAGE)
 
             CartScreen(
                 cartViewModel = cartViewModel,
                 sharedViewModel = sharedViewModel,
-                navigator = navigator,
+                navController = navController,
                 snackbarMessage = snackbarMessage?.decodeURLPart(),
             )
         }
 
-        scene(NavConstants.MORE_MENU_SCREEN_ROUTE) {
-            MoreMenuScreen(navigator = navigator)
+        composable(NavConstants.MORE_MENU_SCREEN_ROUTE) {
+            MoreMenuScreen(navController = navController)
         }
 
 
         // --- ОСТАЛЬНЫЕ ЭКРАНЫ ---
 
-        scene(NavConstants.SEARCH_SCREEN_ROUTE) { backStackEntry ->
-            val focusInput = backStackEntry.query<Boolean>(NavConstants.KEY_FOCUS_INPUT) ?: false
+        composable(
+            route = "${NavConstants.SEARCH_SCREEN_ROUTE}?${NavConstants.KEY_FOCUS_INPUT}={${NavConstants.KEY_FOCUS_INPUT}}"
+        ) { backStackEntry ->
+            val focusInput = backStackEntry.arguments?.getString(NavConstants.KEY_FOCUS_INPUT)?.toBoolean() ?: false
             SearchScreen(
                 focusSearchBarInput = focusInput,
                 cartViewModel = cartViewModel,
                 sharedViewModel = sharedViewModel,
-                onBackClick = { navigator.goBack() }
+                onBackClick = { navController.popBackStack() }
             )
         }
 
-        scene(NavConstants.ORDERS_HISTORY_ROUTE) {
+        composable(NavConstants.ORDERS_HISTORY_ROUTE) {
             OrdersHistoryScreen(
-                navigator = navigator,
+                navController = navController,
                 sharedViewModel = sharedViewModel
             )
         }
 
-        scene(NavConstants.SAVED_ADDRESSES_ROUTE) {
-            SavedAddressesScreen(navigator = navigator)
+        composable(NavConstants.SAVED_ADDRESSES_ROUTE) {
+            SavedAddressesScreen(navController = navController)
         }
 
-        scene(NavConstants.ABOUT_SCREEN_ROUTE) {
-            AboutScreen(onBackClick = { navigator.goBack() })
+        composable(NavConstants.ABOUT_SCREEN_ROUTE) {
+            AboutScreen(onBackClick = { navController.popBackStack() })
         }
 
-        scene(NavConstants.LEGAL_SCREEN_ROUTE) {
+        composable(NavConstants.LEGAL_SCREEN_ROUTE) {
             LegalScreen(
-                onBackClick = { navigator.goBack() },
+                onBackClick = { navController.popBackStack() },
                 onSharedEvent = sharedViewModel::onEvent
             )
         }
 
-        scene(NavConstants.DELIVERY_SCREEN_ROUTE) {
-            DeliveryScreen(onBackClick = { navigator.goBack() })
+        composable(NavConstants.DELIVERY_SCREEN_ROUTE) {
+            DeliveryScreen(onBackClick = { navController.popBackStack() })
         }
 
-        scene(NavConstants.CONTACTS_SCREEN_ROUTE) {
-            ContactsScreen(onBackClick = { navigator.goBack() })
+        composable(NavConstants.CONTACTS_SCREEN_ROUTE) {
+            ContactsScreen(onBackClick = { navController.popBackStack() })
         }
 
         // --- MEAL DETAILS (BottomSheet) ---
-        dialog(NavConstants.MEAL_DETAILS_ROUTE) { backStackEntry ->
-            val isEditMode = backStackEntry.query<Boolean>(NavConstants.KEY_IS_EDIT_MODE) ?: false
-            val mealJson = backStackEntry.query<String>(NavConstants.KEY_MEAL_JSON)?.decodeURLPart()
-            val mealId = backStackEntry.query<String>(NavConstants.KEY_MEAL_ID)?.decodeURLPart()
+        dialog(
+            route = "${NavConstants.MEAL_DETAILS_ROUTE}?" +
+                    "${NavConstants.KEY_MEAL_JSON}={${NavConstants.KEY_MEAL_JSON}}&" +
+                    "${NavConstants.KEY_MEAL_ID}={${NavConstants.KEY_MEAL_ID}}&" +
+                    "${NavConstants.KEY_IS_EDIT_MODE}={${NavConstants.KEY_IS_EDIT_MODE}}"
+        ) { backStackEntry ->
+            val isEditMode = backStackEntry.arguments?.getString(NavConstants.KEY_IS_EDIT_MODE)?.toBoolean() ?: false
+            val mealJson = backStackEntry.arguments?.getString(NavConstants.KEY_MEAL_JSON)?.decodeURLPart()
+            val mealId = backStackEntry.arguments?.getString(NavConstants.KEY_MEAL_ID)?.decodeURLPart()
 
             val initItem = mealJson?.let {
                 runCatching { Json.decodeFromString<CartItem>(it) }.getOrNull()
@@ -131,14 +141,18 @@ import moe.tlaster.precompose.navigation.rememberNavigator
                 mealId = if (mealId != "null") mealId else null,
                 initItem = initItem,
                 isEditMode = isEditMode,
-                onClose = { navigator.goBack() },
+                onClose = { navController.popBackStack() },
             )
         }
 
 
-        scene(NavConstants.ADDRESS_SCREEN_ROUTE) { backStackEntry ->
-            val addressJson = backStackEntry.query<String>(NavConstants.KEY_ADDRESS_JSON)?.decodeURLPart()
-            val returnToRoute = backStackEntry.query<String>(NavConstants.KEY_RETURN_TO_ROUTE)
+        composable(
+            route = "${NavConstants.ADDRESS_SCREEN_ROUTE}?" +
+                    "${NavConstants.KEY_ADDRESS_JSON}={${NavConstants.KEY_ADDRESS_JSON}}&" +
+                    "${NavConstants.KEY_RETURN_TO_ROUTE}={${NavConstants.KEY_RETURN_TO_ROUTE}}"
+        ) { backStackEntry ->
+            val addressJson = backStackEntry.arguments?.getString(NavConstants.KEY_ADDRESS_JSON)?.decodeURLPart()
+            val returnToRoute = backStackEntry.arguments?.getString(NavConstants.KEY_RETURN_TO_ROUTE)
                 ?.decodeURLPart()
                 ?: ""
 
@@ -147,17 +161,22 @@ import moe.tlaster.precompose.navigation.rememberNavigator
             }
 
             AddressMapScreen(
-                navigator = navigator,
+                navController = navController,
                 initAddress = address,
                 returnToRoute = returnToRoute
             )
         }
 
 
-        scene(NavConstants.ADDRESS_DETAILS_ROUTE) { backStackEntry ->
-            val isEditMode = backStackEntry.query<Boolean>(NavConstants.KEY_IS_EDIT_MODE) ?: false
-            val addressJson = backStackEntry.query<String>(NavConstants.KEY_ADDRESS_JSON)?.decodeURLPart()
-            val returnToRoute = backStackEntry.query<String>(NavConstants.KEY_RETURN_TO_ROUTE)
+        composable(
+            route = "${NavConstants.ADDRESS_DETAILS_ROUTE}?" +
+                    "${NavConstants.KEY_IS_EDIT_MODE}={${NavConstants.KEY_IS_EDIT_MODE}}&" +
+                    "${NavConstants.KEY_ADDRESS_JSON}={${NavConstants.KEY_ADDRESS_JSON}}&" +
+                    "${NavConstants.KEY_RETURN_TO_ROUTE}={${NavConstants.KEY_RETURN_TO_ROUTE}}"
+        ) { backStackEntry ->
+            val isEditMode = backStackEntry.arguments?.getString(NavConstants.KEY_IS_EDIT_MODE)?.toBoolean() ?: false
+            val addressJson = backStackEntry.arguments?.getString(NavConstants.KEY_ADDRESS_JSON)?.decodeURLPart()
+            val returnToRoute = backStackEntry.arguments?.getString(NavConstants.KEY_RETURN_TO_ROUTE)
                 ?.decodeURLPart()
                 ?: ""
 
@@ -169,29 +188,33 @@ import moe.tlaster.precompose.navigation.rememberNavigator
                 initAddress = address,
                 returnToRoute = returnToRoute,
                 isEditMode = isEditMode,
-                navigator = navigator,
+                navController = navController,
                 callerEntry = backStackEntry
             )
         }
 
 
-        scene(NavConstants.ORDER_SCREEN_ROUTE) {
+        composable(NavConstants.ORDER_SCREEN_ROUTE) {
             OrderScreen(
-                navigator = navigator,
+                navController = navController,
                 sharedViewModel = sharedViewModel
             )
         }
 
 
-        scene(NavConstants.ORDER_INFO_ROUTE) { backStackEntry ->
-            val orderId = backStackEntry.query<String>(NavConstants.KEY_ORDER_ID)?.decodeURLPart() ?: ""
-            val fromOrderCreation = backStackEntry.query<Boolean>(NavConstants.KEY_FROM_ORDER_CREATION) ?: false
+        composable(
+            route = "${NavConstants.ORDER_INFO_ROUTE}?" +
+                    "${NavConstants.KEY_ORDER_ID}={${NavConstants.KEY_ORDER_ID}}&" +
+                    "${NavConstants.KEY_FROM_ORDER_CREATION}={${NavConstants.KEY_FROM_ORDER_CREATION}}"
+        ) { backStackEntry ->
+            val orderId = backStackEntry.arguments?.getString(NavConstants.KEY_ORDER_ID)?.decodeURLPart() ?: ""
+            val fromOrderCreation = backStackEntry.arguments?.getString(NavConstants.KEY_FROM_ORDER_CREATION)?.toBoolean() ?: false
 
             OrderInfoScreen(
                 orderID = orderId,
                 fromOrderCreation = fromOrderCreation,
                 sharedViewModel = sharedViewModel,
-                navigator = navigator
+                navController = navController
             )
         }
     }

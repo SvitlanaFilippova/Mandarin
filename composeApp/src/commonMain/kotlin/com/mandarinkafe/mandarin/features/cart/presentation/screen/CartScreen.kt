@@ -31,14 +31,14 @@ import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.launch
-import moe.tlaster.precompose.navigation.Navigator
+import androidx.navigation.NavController
 
 // Pull-to-refresh уже подключен через dev.materii.pullrefresh
 @Composable
 fun CartScreen(
     cartViewModel: CartViewModel,
     sharedViewModel: SharedViewModel,
-    navigator: Navigator,
+    navController: NavController,
     snackbarMessage: String? = null
 ) {
     val listState = rememberLazyListState()
@@ -149,7 +149,7 @@ fun CartScreen(
             effectFlow.collect { effect ->
                 when (effect) {
                     is CartEffect.ShowClearCartConfirmDialog -> showClearCartDialog = true
-                    is CartEffect.ProceedOrder -> navigator.navigateToOrder()
+                    is CartEffect.ProceedOrder -> navController.navigateToOrder()
                     is CartEffect.ShowSnackbar -> {
                         snackbarHostState.showSnackbar(
                             message = effect.message.asString(),

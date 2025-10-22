@@ -1,5 +1,8 @@
 package com.mandarinkafe.mandarin.navigation.extensions
 
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
+import androidx.navigation.navOptions
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.navigation.NavConstants
@@ -24,12 +27,9 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SAVED_ADDRESSES_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
 import kotlinx.serialization.json.Json
-import moe.tlaster.precompose.navigation.NavOptions
-import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.PopUpTo
 import net.thauvin.erik.urlencoder.UrlEncoderUtil
 
-fun Navigator.navigateToSearchScreen(focusInput: Boolean) {
+fun NavController.navigateToSearchScreen(focusInput: Boolean) {
     val route = buildString {
         append(SEARCH_SCREEN_ROUTE)
         append("?${NavConstants.KEY_FOCUS_INPUT}=$focusInput")
@@ -37,11 +37,11 @@ fun Navigator.navigateToSearchScreen(focusInput: Boolean) {
     navigate(route)
 }
 
-fun Navigator.navigateToMenu() {
-    this.navigate(MENU_SCREEN_ROUTE)
+fun NavController.navigateToMenu() {
+    navigate(MENU_SCREEN_ROUTE)
 }
 
-fun Navigator.navigateToCart(snackbarMessage: String? = null) {
+fun NavController.navigateToCart(snackbarMessage: String? = null) {
     val encodedMessage = snackbarMessage?.let { UrlEncoderUtil.encode(it) }
     val route = if (encodedMessage != null)
         "$CART_SCREEN_ROUTE?$KEY_SNACKBAR_MESSAGE=$encodedMessage"
@@ -50,35 +50,35 @@ fun Navigator.navigateToCart(snackbarMessage: String? = null) {
     navigate(route)
 }
 
-fun Navigator.navigateToSavedAddresses() = navigate(SAVED_ADDRESSES_ROUTE)
+fun NavController.navigateToSavedAddresses() = navigate(SAVED_ADDRESSES_ROUTE)
 
-fun Navigator.navigateOrdersHistory() = navigate(ORDERS_HISTORY_ROUTE)
+fun NavController.navigateOrdersHistory() = navigate(ORDERS_HISTORY_ROUTE)
 
-fun Navigator.navigateToOrder() = navigate(ORDER_SCREEN_ROUTE)
+fun NavController.navigateToOrder() = navigate(ORDER_SCREEN_ROUTE)
 
-fun Navigator.navigateToLegalScreen() = navigate(LEGAL_SCREEN_ROUTE)
+fun NavController.navigateToLegalScreen() = navigate(LEGAL_SCREEN_ROUTE)
 
-fun Navigator.navigateToDeliveryScreen() = navigate(DELIVERY_SCREEN_ROUTE)
+fun NavController.navigateToDeliveryScreen() = navigate(DELIVERY_SCREEN_ROUTE)
 
-fun Navigator.navigateToContactsScreen() = navigate(CONTACTS_SCREEN_ROUTE)
+fun NavController.navigateToContactsScreen() = navigate(CONTACTS_SCREEN_ROUTE)
 
-fun Navigator.navigateToAboutScreen() = navigate(ABOUT_SCREEN_ROUTE)
+fun NavController.navigateToAboutScreen() = navigate(ABOUT_SCREEN_ROUTE)
 
-fun Navigator.navigateToAddress(address: Address? = null, returnToRoute: String) {
+fun NavController.navigateToAddress(address: Address? = null, returnToRoute: String) {
     val json = address?.let { Json.encodeToString(it) }
     val encodedJson = json?.let { UrlEncoderUtil.encode(it) }
     val encodedReturnRoute = UrlEncoderUtil.encode(returnToRoute)
 
     val route = buildString {
         append(ADDRESS_SCREEN_ROUTE)
-        append("?returnTo=$encodedReturnRoute")
-        if (encodedJson != null) append("&address=$encodedJson")
+        append("?${NavConstants.KEY_RETURN_TO_ROUTE}=$encodedReturnRoute")
+        if (encodedJson != null) append("&${NavConstants.KEY_ADDRESS_JSON}=$encodedJson")
     }
     navigate(route)
 }
 
 
-fun Navigator.navigateToAddressDetails(
+fun NavController.navigateToAddressDetails(
     address: Address,
     isEditMode: Boolean = false,
     returnToRoute: String
@@ -87,14 +87,14 @@ fun Navigator.navigateToAddressDetails(
     val encodedReturn = UrlEncoderUtil.encode(returnToRoute)
 
     val route = "$ADDRESS_DETAILS_ROUTE?" +
-            "address=$encodedAddress&" +
-            "isEditMode=$isEditMode&" +
-            "returnTo=$encodedReturn"
+            "${NavConstants.KEY_IS_EDIT_MODE}=$isEditMode&" +
+            "${NavConstants.KEY_ADDRESS_JSON}=$encodedAddress&" +
+            "${NavConstants.KEY_RETURN_TO_ROUTE}=$encodedReturn"
 
     navigate(route)
 }
 
-fun Navigator.navigateToMealDetails(
+fun NavController.navigateToMealDetails(
     item: CartItem? = null,
     mealId: String? = null,
     isEditMode: Boolean = false
@@ -113,7 +113,7 @@ fun Navigator.navigateToMealDetails(
     navigate(route)
 }
 
-fun Navigator.navigateToOrderInfo(
+fun NavController.navigateToOrderInfo(
     orderId: String,
     fromOrderCreation: Boolean = false,
 ) {
@@ -123,13 +123,12 @@ fun Navigator.navigateToOrderInfo(
     if (fromOrderCreation) {
         navigate(
             route,
-            options = NavOptions(
-                launchSingleTop = true,
-                popUpTo = PopUpTo(
-                    route = CART_SCREEN_ROUTE,
+            navOptions {
+                launchSingleTop = true
+                popUpTo(CART_SCREEN_ROUTE) {
                     inclusive = true
-                )
-            )
+                }
+            }
         )
     } else {
         navigate(route)

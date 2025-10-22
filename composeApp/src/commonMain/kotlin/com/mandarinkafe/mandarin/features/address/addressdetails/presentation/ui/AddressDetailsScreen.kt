@@ -7,14 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import moe.tlaster.precompose.navigation.Navigator
+import androidx.navigation.NavController
 
 @Composable
 fun AddressDetailsScreen(
     initAddress: Address?,
     returnToRoute: String,
     isEditMode: Boolean,
-    navigator: Navigator,
+    navController: NavController,
     callerEntry: Any
 ) {
     Box(

@@ -24,11 +24,11 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveC
 import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
-import moe.tlaster.precompose.navigation.Navigator
+import androidx.navigation.NavController
 
 @Composable
 fun OrderScreen(
-    navigator: Navigator,
+    navController: NavController,
     sharedViewModel: SharedViewModel
 ) {
     val orderViewModel = rememberOrderViewModel()
@@ -72,7 +72,7 @@ fun OrderScreen(
                 addressIdToDelete = it
                 showConfirmDeleteDialog = true
             },
-            onBackClick = { navigator.popBackStack() }
+            onBackClick = { navController.popBackStack() }
         )
 
 
@@ -98,7 +98,7 @@ fun OrderScreen(
 
         HandleOrderEffects(
             effectFlow = effectFlow,
-            navController = navigator,
+            navController = navController,
             snackbarHostState = snackbarHostState
         )
         DisposableEffect(Unit) {

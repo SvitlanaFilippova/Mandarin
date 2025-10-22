@@ -13,7 +13,6 @@ import com.mandarinkafe.mandarin.kmp.di.initKoinIOS
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.cinterop.ExperimentalForeignApi
-import moe.tlaster.precompose.PreComposeApp
 
 @OptIn(ExperimentalForeignApi::class)
 fun MainViewController() = ComposeUIViewController {
@@ -25,18 +24,15 @@ fun MainViewController() = ComposeUIViewController {
 
     // TODO добавить инициализацию Mapkit SDK
 
-
-    PreComposeApp {
-        androidx.compose.foundation.layout.Box(
-            modifier = Modifier
-                .background(Colors.AppBlack)
-                .windowInsetsPadding(
-                    WindowInsets.safeContent.only(
-                        WindowInsetsSides.Top
-                    )
+    androidx.compose.foundation.layout.Box(
+        modifier = Modifier
+            .background(Colors.AppBlack)
+            .windowInsetsPadding(
+                WindowInsets.safeContent.only(
+                    WindowInsetsSides.Top
                 )
-        ) {
-            MainScreen()
-        }
+            )
+    ) {
+        MainScreen()
     }
 }

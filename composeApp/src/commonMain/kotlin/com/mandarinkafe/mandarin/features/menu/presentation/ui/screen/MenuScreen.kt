@@ -22,11 +22,11 @@ import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberMenuViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.flow.map
-import moe.tlaster.precompose.navigation.Navigator
+import androidx.navigation.NavController
 
 @Composable
 fun MenuScreen(
-    navigator: Navigator,
+    navController: NavController,
     cartViewModel: CartViewModel,
     sharedViewModel: SharedViewModel
 ) {
@@ -112,7 +112,7 @@ fun MenuScreen(
         LaunchedEffect(effectFlow) {
             effectFlow.collect { effect ->
                 if (effect is MenuContract.MenuEffect.OpenSearch) {
-                    navigator.navigateToSearchScreen(effect.focusSearch)
+                    navController.navigateToSearchScreen(effect.focusSearch)
                 }
             }
         }

@@ -79,10 +79,8 @@ kotlin {
                 // Kamel for image loading
                 implementation(libs.kamel.image.default)
 
-                // PreCompose (Navogation)
-                implementation(libs.precompose)
-                implementation(libs.precompose.viewmodel)
-                implementation(libs.precompose.koin)
+                // Navigation Compose
+                implementation(libs.navigation.compose)
 
                 // url encoder
                 implementation(libs.urlencoder.lib)

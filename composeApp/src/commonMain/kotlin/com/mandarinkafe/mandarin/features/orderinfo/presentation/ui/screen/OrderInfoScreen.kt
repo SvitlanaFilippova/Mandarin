@@ -25,14 +25,14 @@ import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.coroutines.flow.collectLatest
-import moe.tlaster.precompose.navigation.Navigator
+import androidx.navigation.NavController
 
 @Composable
 fun OrderInfoScreen(
     orderID: String?,
     fromOrderCreation: Boolean,
     sharedViewModel: SharedViewModel,
-    navigator: Navigator,
+    navController: NavController,
 ) {
     val viewModel = rememberOrderInfoViewModel()
     if (orderID == null) return
@@ -69,7 +69,7 @@ fun OrderInfoScreen(
             ScreenTitleWithBackButton(
                 name = title,
                 showBackButton = !fromOrderCreation,
-                onBackClick = { navigator.popBackStack() }
+                onBackClick = { navController.popBackStack() }
             )
 
             when {
@@ -78,7 +78,7 @@ fun OrderInfoScreen(
                         order = state.incomingOrder,
                         state = state,
                         onEvent = onEvent,
-                        navController = navigator,
+                        navController = navController,
                         orderRepeatingInProgress = state.orderRepeatingInProgress,
                         fromOrderCreation = fromOrderCreation,
                         onOpenMealDetails = { mealId ->
@@ -126,7 +126,7 @@ fun OrderInfoScreen(
                         } else {
                             allItemsAddedText
                         }
-                        navigator.navigateToCart(message)
+                        navController.navigateToCart(message)
                     }
                 }
             }

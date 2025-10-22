@@ -31,14 +31,14 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickToCopyText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
 import dev.icerock.moko.resources.compose.stringResource
-import moe.tlaster.precompose.navigation.Navigator
+import androidx.navigation.NavController
 
 @Composable
 fun OrderInfoContentScreen(
     order: IncomingOrder?,
     state: OrderInfoState,
     onEvent: (OrderInfoEvent) -> Unit,
-    navController: Navigator,
+    navController: NavController,
     onOpenMealDetails: (String) -> Unit,
     orderRepeatingInProgress: Boolean,
     fromOrderCreation: Boolean,
