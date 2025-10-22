@@ -1,22 +1,25 @@
 package com.mandarinkafe.mandarin.features.address.addressdetails.presentation.models
 
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.AddressType
+import dev.icerock.moko.resources.ImageResource
+import dev.icerock.moko.resources.StringResource
 
 enum class UiAddressType(
-    val nameRes: String,
-    val iconRes: String
+    val nameRes: StringResource,
+    val iconRes: ImageResource
 ) {
     APARTMENT(
-        nameRes = "Квартира",
-        iconRes = "ic_apartment"
+        nameRes = MR.strings.address_type_apartment,
+        iconRes = MR.images.ic_apartment
     ),
     PRIVATE_HOUSE(
-        nameRes = "Частный дом",
-        iconRes = "ic_cottage"
+        nameRes = MR.strings.address_type_private_house,
+        iconRes = MR.images.ic_cottage
     ),
     OTHER(
-        nameRes = "Другое",
-        iconRes = "ic_nature_peple"
+        nameRes = MR.strings.address_type_other,
+        iconRes = MR.images.ic_nature_peple
     ),
 }
 

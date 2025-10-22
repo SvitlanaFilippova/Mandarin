@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.navigation.extensions
 
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
@@ -26,6 +27,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_INFO_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SAVED_ADDRESSES_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
+import io.github.aakira.napier.Napier
 import kotlinx.serialization.json.Json
 import net.thauvin.erik.urlencoder.UrlEncoderUtil
 
@@ -135,5 +137,11 @@ fun NavController.navigateToOrderInfo(
     }
 }
 
-
-
+fun NavController.tryGetBackStackEntry(route: String): NavBackStackEntry? {
+    return try {
+        getBackStackEntry(route)
+    } catch (e: IllegalArgumentException) {
+        Napier.e("error: $e")
+        null // экрана в стеке нет
+    }
+}
