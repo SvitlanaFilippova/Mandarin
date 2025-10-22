@@ -62,7 +62,7 @@ fun NavGraph(navController: NavHostController = rememberNavController()) {
         composable(
             route = "${NavConstants.CART_SCREEN_ROUTE}?${NavConstants.KEY_SNACKBAR_MESSAGE}={${NavConstants.KEY_SNACKBAR_MESSAGE}}"
         ) { backStackEntry ->
-            val snackbarMessage = backStackEntry.arguments?.getString(NavConstants.KEY_SNACKBAR_MESSAGE)
+            val snackbarMessage = backStackEntry.getStringArgument(NavConstants.KEY_SNACKBAR_MESSAGE)
 
             CartScreen(
                 cartViewModel = cartViewModel,
@@ -82,7 +82,7 @@ fun NavGraph(navController: NavHostController = rememberNavController()) {
         composable(
             route = "${NavConstants.SEARCH_SCREEN_ROUTE}?${NavConstants.KEY_FOCUS_INPUT}={${NavConstants.KEY_FOCUS_INPUT}}"
         ) { backStackEntry ->
-            val focusInput = backStackEntry.arguments?.getString(NavConstants.KEY_FOCUS_INPUT)?.toBoolean() ?: false
+            val focusInput = backStackEntry.getBooleanArgument(NavConstants.KEY_FOCUS_INPUT, defaultValue = false)
             SearchScreen(
                 focusSearchBarInput = focusInput,
                 cartViewModel = cartViewModel,
@@ -128,9 +128,9 @@ fun NavGraph(navController: NavHostController = rememberNavController()) {
                     "${NavConstants.KEY_MEAL_ID}={${NavConstants.KEY_MEAL_ID}}&" +
                     "${NavConstants.KEY_IS_EDIT_MODE}={${NavConstants.KEY_IS_EDIT_MODE}}"
         ) { backStackEntry ->
-            val isEditMode = backStackEntry.arguments?.getString(NavConstants.KEY_IS_EDIT_MODE)?.toBoolean() ?: false
-            val mealJson = backStackEntry.arguments?.getString(NavConstants.KEY_MEAL_JSON)?.decodeURLPart()
-            val mealId = backStackEntry.arguments?.getString(NavConstants.KEY_MEAL_ID)?.decodeURLPart()
+            val isEditMode = backStackEntry.getBooleanArgument(NavConstants.KEY_IS_EDIT_MODE, defaultValue = false)
+            val mealJson = backStackEntry.getStringArgument(NavConstants.KEY_MEAL_JSON)?.decodeURLPart()
+            val mealId = backStackEntry.getStringArgument(NavConstants.KEY_MEAL_ID)?.decodeURLPart()
 
             val initItem = mealJson?.let {
                 runCatching { Json.decodeFromString<CartItem>(it) }.getOrNull()
@@ -151,8 +151,8 @@ fun NavGraph(navController: NavHostController = rememberNavController()) {
                     "${NavConstants.KEY_ADDRESS_JSON}={${NavConstants.KEY_ADDRESS_JSON}}&" +
                     "${NavConstants.KEY_RETURN_TO_ROUTE}={${NavConstants.KEY_RETURN_TO_ROUTE}}"
         ) { backStackEntry ->
-            val addressJson = backStackEntry.arguments?.getString(NavConstants.KEY_ADDRESS_JSON)?.decodeURLPart()
-            val returnToRoute = backStackEntry.arguments?.getString(NavConstants.KEY_RETURN_TO_ROUTE)
+            val addressJson = backStackEntry.getStringArgument(NavConstants.KEY_ADDRESS_JSON)?.decodeURLPart()
+            val returnToRoute = backStackEntry.getStringArgument(NavConstants.KEY_RETURN_TO_ROUTE)
                 ?.decodeURLPart()
                 ?: ""
 
@@ -174,9 +174,9 @@ fun NavGraph(navController: NavHostController = rememberNavController()) {
                     "${NavConstants.KEY_ADDRESS_JSON}={${NavConstants.KEY_ADDRESS_JSON}}&" +
                     "${NavConstants.KEY_RETURN_TO_ROUTE}={${NavConstants.KEY_RETURN_TO_ROUTE}}"
         ) { backStackEntry ->
-            val isEditMode = backStackEntry.arguments?.getString(NavConstants.KEY_IS_EDIT_MODE)?.toBoolean() ?: false
-            val addressJson = backStackEntry.arguments?.getString(NavConstants.KEY_ADDRESS_JSON)?.decodeURLPart()
-            val returnToRoute = backStackEntry.arguments?.getString(NavConstants.KEY_RETURN_TO_ROUTE)
+            val isEditMode = backStackEntry.getBooleanArgument(NavConstants.KEY_IS_EDIT_MODE, defaultValue = false)
+            val addressJson = backStackEntry.getStringArgument(NavConstants.KEY_ADDRESS_JSON)?.decodeURLPart()
+            val returnToRoute = backStackEntry.getStringArgument(NavConstants.KEY_RETURN_TO_ROUTE)
                 ?.decodeURLPart()
                 ?: ""
 
@@ -207,8 +207,8 @@ fun NavGraph(navController: NavHostController = rememberNavController()) {
                     "${NavConstants.KEY_ORDER_ID}={${NavConstants.KEY_ORDER_ID}}&" +
                     "${NavConstants.KEY_FROM_ORDER_CREATION}={${NavConstants.KEY_FROM_ORDER_CREATION}}"
         ) { backStackEntry ->
-            val orderId = backStackEntry.arguments?.getString(NavConstants.KEY_ORDER_ID)?.decodeURLPart() ?: ""
-            val fromOrderCreation = backStackEntry.arguments?.getString(NavConstants.KEY_FROM_ORDER_CREATION)?.toBoolean() ?: false
+            val orderId = backStackEntry.getStringArgument(NavConstants.KEY_ORDER_ID)?.decodeURLPart() ?: ""
+            val fromOrderCreation = backStackEntry.getBooleanArgument(NavConstants.KEY_FROM_ORDER_CREATION, defaultValue = false)
 
             OrderInfoScreen(
                 orderID = orderId,
