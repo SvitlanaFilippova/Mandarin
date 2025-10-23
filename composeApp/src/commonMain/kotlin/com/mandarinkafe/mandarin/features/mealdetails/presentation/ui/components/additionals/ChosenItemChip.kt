@@ -35,7 +35,8 @@ fun ChosenItemChip(
                     Icon(
                         painter = painterResource(MR.images.ic_close),
                         contentDescription = stringResource(MR.strings.cancel_choice),
-                        modifier = Modifier.size(FilterChipDefaults.IconSize)
+                        modifier = Modifier.size(FilterChipDefaults.IconSize),
+                        tint = Colors.LightGrey
                     )
                 }
         )

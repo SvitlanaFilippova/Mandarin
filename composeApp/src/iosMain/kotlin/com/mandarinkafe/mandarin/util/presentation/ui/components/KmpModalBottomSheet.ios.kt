@@ -56,9 +56,8 @@ actual fun KmpModalBottomSheet(
 
             val sheet = vc.presentationController as? UISheetPresentationController
             sheet?.let {
-                val medium = UISheetPresentationControllerDetent.mediumDetent()
                 val large = UISheetPresentationControllerDetent.largeDetent()
-                it.detents = listOf(medium, large)
+                it.detents = listOf(large)
                 it.prefersGrabberVisible = true
                 it.prefersScrollingExpandsWhenScrolledToEdge = true
             }
