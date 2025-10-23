@@ -10,3 +10,10 @@ import androidx.compose.ui.Modifier
 @Composable
 expect fun Modifier.bottomSheetContentModifier(): Modifier
 
+
+/**
+ * Возвращает platform-specific модификатор для шапки в ModalBottomSheet.
+ * Для iOS добавляет отступ сверху, для Android возвращает пустой модификатор.
+ */
+@Composable
+expect fun Modifier.bottomSheetHeaderModifier(): Modifier

@@ -28,10 +28,11 @@ fun BottomSheetHeader(
     meal: Meal,
     isFavorite: Boolean?,
     onToggleFavorite: () -> Unit,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(
                 start = Dimens.MarginSmall8,

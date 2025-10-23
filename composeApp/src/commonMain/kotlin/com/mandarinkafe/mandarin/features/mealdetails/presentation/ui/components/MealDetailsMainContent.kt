@@ -169,7 +169,7 @@ fun MealDetailsMainContent(
         item {
             MyTextField(
                 modifier = Modifier.padding(
-                    top = Dimens.MarginSmall8,
+                    top = Dimens.MarginStandard16,
                     bottom = Dimens.MarginBig24
                 ),
                 value = comment,

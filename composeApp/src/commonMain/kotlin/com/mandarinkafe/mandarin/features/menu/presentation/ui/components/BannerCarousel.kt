@@ -68,7 +68,7 @@ fun BannerCarousel(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimens.MarginSmall8)
+            .padding(start = Dimens.MarginSmall8, end = Dimens.MarginSmall8, top = Dimens.MarginSmall8)
     ) {
         HorizontalPager(
             state = pagerState,

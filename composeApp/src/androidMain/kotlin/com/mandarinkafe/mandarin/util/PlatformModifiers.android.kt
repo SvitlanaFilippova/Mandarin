@@ -8,3 +8,7 @@ actual fun Modifier.bottomSheetContentModifier(): Modifier {
     return this
 }
 
+@Composable
+actual fun Modifier.bottomSheetHeaderModifier(): Modifier {
+    return this
+}

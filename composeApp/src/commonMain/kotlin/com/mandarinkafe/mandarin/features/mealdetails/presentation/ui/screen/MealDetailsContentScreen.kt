@@ -26,6 +26,7 @@ import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.Mea
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
 import com.mandarinkafe.mandarin.util.bottomSheetContentModifier
+import com.mandarinkafe.mandarin.util.bottomSheetHeaderModifier
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -76,7 +77,8 @@ fun MealDetailsContentScreen(
             meal = meal,
             onToggleFavorite = { onToggleFavorite() },
             onClose = onClose,
-            isFavorite = isFavorite
+            isFavorite = isFavorite,
+            modifier = Modifier.bottomSheetHeaderModifier()
         )
 
         Box(modifier = Modifier.bottomSheetContentModifier()) {
