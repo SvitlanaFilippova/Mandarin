@@ -43,7 +43,10 @@ fun BottomSheetHeader(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         IconButton(
-            onClick = onClose,
+            onClick = {
+                Napier.d("🟢 BottomSheetHeader: Close button clicked")
+                onClose()
+            },
             modifier = Modifier.size(Dimens.ButtonBox32)
         ) {
             Icon(

@@ -49,10 +49,9 @@ object Constants {
     const val ALPHA_50 = 0.5f
     const val TITLE_FONT_WEIGHT = 800
     const val NON_BRAKING_SPACE = "\u00A0"
-    const val SNACKBAR_MESSAGE_KEY = "snackbarMessage"
     const val RATIO_FOR_IMAGE_CROP_MIN = 0.75f
     const val RATIO_FOR_IMAGE_CROP_MAX = 1.5f
-    const val DELAY_FOR_FOCUS_ENABLING = 300L
+    const val DELAY_FOR_UI_RENDERING = 300L
 
     // Order
     const val VALID_PHONE_LENGTH = 10
@@ -76,8 +75,6 @@ object Constants {
     const val CATEGORY_ADDS = "Добавки"
 
     // remoteConfig
-    const val PHONE_NUMBER_DEFAULT = "tel:+74951087055"
-    const val PHONE_NUMBER_KEY = "phone_number_key"
     const val VEG_LABEL_DEFAULT = "veg"
     const val HOT_LABEL_DEFAULT = "hot"
     const val NEW_LABEL_DEFAULT = "new"

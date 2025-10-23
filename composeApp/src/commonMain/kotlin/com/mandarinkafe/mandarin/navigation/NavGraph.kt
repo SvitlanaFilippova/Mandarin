@@ -138,10 +138,10 @@ fun NavGraph(navController: NavHostController = rememberNavController()) {
 
             MealDetailsBottomSheet(
                 sharedViewModel = sharedViewModel,
+                navController = navController,
                 mealId = if (mealId != "null") mealId else null,
                 initItem = initItem,
                 isEditMode = isEditMode,
-                onClose = { navController.popBackStack() },
             )
         }
 

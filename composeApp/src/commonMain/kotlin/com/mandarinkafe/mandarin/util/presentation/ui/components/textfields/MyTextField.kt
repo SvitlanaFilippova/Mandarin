@@ -17,7 +17,7 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.util.Constants.DELAY_FOR_FOCUS_ENABLING
+import com.mandarinkafe.mandarin.util.Constants.DELAY_FOR_UI_RENDERING
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
@@ -46,7 +46,7 @@ fun MyTextField(
 
     // Разрешаем фокус только после небольшой задержки, когда всё отрисуется
     LaunchedEffect(Unit) {
-        delay(DELAY_FOR_FOCUS_ENABLING) // иначе TextField успевает сам запросить фокус
+        delay(DELAY_FOR_UI_RENDERING) // иначе TextField успевает сам запросить фокус
         focusEnabled = true
     }
 

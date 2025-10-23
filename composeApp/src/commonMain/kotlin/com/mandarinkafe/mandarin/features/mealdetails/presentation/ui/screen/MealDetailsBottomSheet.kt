@@ -10,8 +10,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
@@ -30,20 +30,20 @@ import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.Mea
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberMealDetailsViewModel
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.ui.components.KmpModalBottomSheet
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.InformationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import dev.icerock.moko.resources.compose.stringResource
-import kotlinx.coroutines.launch
 
 @Composable
 fun MealDetailsBottomSheet(
     sharedViewModel: SharedViewModel,
+    navController: NavHostController,
     mealId: String?,
     initItem: CartItem?,
     isEditMode: Boolean,
-    onClose: () -> Unit,
 ) {
     val viewModel = rememberMealDetailsViewModel()
 
@@ -60,7 +60,6 @@ fun MealDetailsBottomSheet(
         )
     }
 
-    val coroutineScope = rememberCoroutineScope()
     val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
 
     val onSharedEvent = sharedViewModel::onEvent
@@ -80,46 +79,24 @@ fun MealDetailsBottomSheet(
     val error = state.error
     val customizedMeal = state.customizedMeal ?: initItem?.customizedMeal
 
-    var showSheet by remember { mutableStateOf(false) }
+    var showSheet by remember { mutableStateOf(true) }
 
-    LaunchedEffect(Unit) {
-        showSheet = true
+    // Закрытие bottom sheet с анимацией
+    val handleClose: () -> Unit = {
+        showSheet = false
+    }
+
+    // Отслеживаем когда iOS bottom sheet закрылся
+    LaunchedEffect(showSheet) {
+        if (!showSheet) {
+            kotlinx.coroutines.delay(Constants.DELAY_FOR_UI_RENDERING) // Даем время на анимацию закрытия
+            navController.popBackStack()
+        }
     }
 
     customizedMeal?.let {
         val isFavorite by remember(customizedMeal, favorites) {
             derivedStateOf { customizedMeal.isFavorite(favorites) }
-        }
-
-        // Диалоги
-        RequiredModifiersDialog(
-            show = showRequiredModifiersDialog,
-            onDismiss = { showRequiredModifiersDialog = false }
-        )
-
-        MaxModifiersDialog(
-            show = showMaxModifiersQuantity,
-            onDismiss = { showMaxModifiersQuantity = false }
-        )
-
-        FavoriteVariantDialog(
-            show = showFavoriteVariantChoiceDialog,
-            onBaseSelected = {
-                onSharedEvent(SharedContract.SharedEvent.ToggleFavorite(meal = customizedMeal.meal))
-            },
-            onCustomSelected = {
-                onToggleFavorite(customizedMeal)
-            },
-            onDismiss = { showFavoriteVariantChoiceDialog = false }
-        )
-
-        replaceOrAddData?.let { data ->
-            ReplaceOrAddDialog(
-                message = stringResource(data.messageRes),
-                onDismiss = { replaceOrAddData = null },
-                onAddNew = data.onAddNew,
-                onReplace = data.onReplace
-            )
         }
 
         when {
@@ -128,41 +105,45 @@ fun MealDetailsBottomSheet(
                 error = error,
                 onCallClick = { onSharedEvent(SharedContract.SharedEvent.OnPhoneClick) },
             )
-            else -> KmpModalBottomSheet(
-                visible = showSheet,
-                onDismissRequest = {
-                    showSheet = false
-                    coroutineScope.launch {
-                        // ждём завершения анимации, если нужно
-                        onClose()
+
+            else -> {
+                KmpModalBottomSheet(
+                    visible = showSheet,
+                    onDismissRequest = {
+                        // При свайпе вниз iOS сам закрывает sheet, просто удаляем из навигации
+                        navController.popBackStack()
                     }
-                }
-            ) {
-                MealDetailsContentScreen(
-                    customizedMeal = customizedMeal,
-                    onEvent = viewModel::onEvent,
-                    selectedTabIndex = state.selectedTabIndex,
-                    addons = state.addons,
-                    isFavorite = isFavorite,
-                    isEditMode = isEditMode,
-                    onClose = onClose,
-                    onRequestAddMeal = { onEvent(TryAddMeal(state.actualCartItem)) },
-                    onEdit = {
-                        onEvent(
-                            EditMealInCart(
-                                state.actualCartItem ?: customizedMeal.toCartItem()
+                ) {
+                    MealDetailsContentScreen(
+                        customizedMeal = customizedMeal,
+                        onEvent = viewModel::onEvent,
+                        selectedTabIndex = state.selectedTabIndex,
+                        addons = state.addons,
+                        isFavorite = isFavorite,
+                        isEditMode = isEditMode,
+                        onClose = handleClose,
+                        onRequestAddMeal = { onEvent(TryAddMeal(state.actualCartItem)) },
+                        onEdit = {
+                            onEvent(
+                                EditMealInCart(
+                                    state.actualCartItem ?: customizedMeal.toCartItem()
+                                )
                             )
-                        )
-                    },
-                    onToggleFavorite = {
-                        if (!isFavorite && customizedMeal.isCustomized) {
-                            onSharedEvent(SharedContract.SharedEvent.ShowFavoriteDialog(customizedMeal))
-                        } else {
-                            onToggleFavorite(customizedMeal)
-                        }
-                    },
-                    comment = state.comment
-                )
+                        },
+                        onToggleFavorite = {
+                            if (!isFavorite && customizedMeal.isCustomized) {
+                                onSharedEvent(
+                                    SharedContract.SharedEvent.ShowFavoriteDialog(
+                                        customizedMeal
+                                    )
+                                )
+                            } else {
+                                onToggleFavorite(customizedMeal)
+                            }
+                        },
+                        comment = state.comment
+                    )
+                }
             }
         }
     }
@@ -210,9 +191,41 @@ fun MealDetailsBottomSheet(
                     showToCartButton = !state.isEditMode
                 )
             )
-            onClose()
+            handleClose()
             pendingCloseAndShowMessage = null
         }
+    }
+
+    // Диалоги
+    RequiredModifiersDialog(
+        show = showRequiredModifiersDialog,
+        onDismiss = { showRequiredModifiersDialog = false }
+    )
+
+    MaxModifiersDialog(
+        show = showMaxModifiersQuantity,
+        onDismiss = { showMaxModifiersQuantity = false }
+    )
+
+    customizedMeal?.let {
+        FavoriteVariantDialog(
+            show = showFavoriteVariantChoiceDialog,
+            onBaseSelected = {
+                onSharedEvent(SharedContract.SharedEvent.ToggleFavorite(meal = customizedMeal.meal))
+            },
+            onCustomSelected = {
+                onToggleFavorite(customizedMeal)
+            },
+            onDismiss = { showFavoriteVariantChoiceDialog = false }
+        )
+    }
+    replaceOrAddData?.let { data ->
+        ReplaceOrAddDialog(
+            message = stringResource(data.messageRes),
+            onDismiss = { replaceOrAddData = null },
+            onAddNew = data.onAddNew,
+            onReplace = data.onReplace
+        )
     }
 }
 
