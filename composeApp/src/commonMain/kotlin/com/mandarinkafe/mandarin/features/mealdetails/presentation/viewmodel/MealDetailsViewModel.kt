@@ -143,8 +143,6 @@ class MealDetailsViewModel(
             val message = if (wasUpdated) MR.strings.edited_template else null
             val mealName = newItem.customizedMeal.meal.name
 
-            Napier.w("EDIT meal: VM editMealInCart, mealName: $mealName, $message")
-
             showMessageAndCloseMealDetails(
                 message = MR.strings.edited_template,
                 mealName = mealName

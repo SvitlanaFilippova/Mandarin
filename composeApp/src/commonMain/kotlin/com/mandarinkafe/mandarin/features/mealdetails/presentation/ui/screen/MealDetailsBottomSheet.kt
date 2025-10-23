@@ -146,7 +146,6 @@ fun MealDetailsBottomSheet(
 
                 is CloseAndShowMessage -> {
                     pendingCloseAndShowMessage = effect
-                    Napier.w("EDIT meal: got CloseAndShowMessage effect, $effect ")
                 }
             }
         }
@@ -156,7 +155,6 @@ fun MealDetailsBottomSheet(
     val formattedMessage: String? = pendingCloseAndShowMessage?.let { effect ->
         effect.message?.let { messageRes ->
             if (effect.mealName != null) {
-                Napier.w("EDIT meal: formattingMessage, got mealName: ${effect.mealName}")
                 // Форматируем строку с параметром (название блюда)
                 stringResource(messageRes, effect.mealName)
             } else {
@@ -168,7 +166,6 @@ fun MealDetailsBottomSheet(
 
     // Обработка CloseAndShowMessage
     LaunchedEffect(formattedMessage) {
-        Napier.w("EDIT meal: Обработка CloseAndShowMessage - отправляю onSharedEvent: $formattedMessage")
         formattedMessage?.let { message ->
             onSharedEvent(
                 SharedContract.SharedEvent.ShowSnackbar(
