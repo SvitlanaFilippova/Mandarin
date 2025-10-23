@@ -41,7 +41,7 @@ class MenuCacheImpl(
         val isLoading = _allVisibleMenu.value is Resource.Loading
         val current = _allVisibleMenu.value
         if (current is Resource.Success || isLoading) return
-        CoroutineScope(kotlinx.coroutines.Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             _allVisibleMenu.value = Resource.Loading()
             val result = fetchWithRetries()
             _allVisibleMenu.value = result

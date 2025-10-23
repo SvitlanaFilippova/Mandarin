@@ -54,8 +54,8 @@ fun CartRecommendsItemCard(
                     .size(Dimens.MealSmallImage80)
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(Dimens.CornerRadius8)),
-                model = meal.imagePreviewUrl,
-                previewModel = meal.placeholderUrl,
+                model = meal.smallImageUrl,
+                previewModel = meal.blurredPreviewUrl,
                 contentDescription = "Изображение ${meal.name}",
                 placeholder = MR.images.placeholder_meal_no_photo,
                 error = MR.images.placeholder_meal_no_photo,

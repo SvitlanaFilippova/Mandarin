@@ -49,9 +49,9 @@ fun MealDto.toDomain(
         weight = baseInfo.weight,
         measureUnitType = MeasureUnitType.from(firstSize.measureUnitType) ?: MeasureUnitType.GRAM,
         price = baseInfo.price,
-        imageUrl = baseInfo.imageUrl ?: "",
-        imagePreviewUrl = baseInfo.thumbnailUrl ?: "",
-        placeholderUrl = baseInfo.placeholderUrl ?: "",
+        mainImageUrl = baseInfo.imageUrl ?: "",
+        smallImageUrl = baseInfo.thumbnailUrl ?: "",
+        blurredPreviewUrl = baseInfo.placeholderUrl ?: "",
         labels = finalMealLabels,
         tags = finalMealTags,
         isHidden = isHidden == true,
@@ -149,8 +149,8 @@ private fun extractBaseInfo(firstSize: ItemSizeDto): BaseMealInfo? {
     val price = firstSize.prices?.firstOrNull()?.price?.toInt() ?: return null
     val imageUrl = firstSize.buttonImageUrl
     val thumbnailUrl = ApiKeys.SERVER_BASE_URL + firstSize.thumbnailUrl
-    val placeholderUrl = firstSize.placeholderUrl
-    return BaseMealInfo(weight, price, imageUrl, thumbnailUrl, placeholderUrl)
+    val blurredPreviewUrl = ApiKeys.SERVER_BASE_URL + firstSize.placeholderUrl
+    return BaseMealInfo(weight, price, imageUrl, thumbnailUrl, blurredPreviewUrl)
 }
 
 private fun checkIfAddable(tags: List<Tag>, catIsAddable: Boolean): Boolean {

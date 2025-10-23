@@ -42,8 +42,8 @@ fun MealItemImageBox(
 
     ) {
         KamelSubcomposeAsyncImage(
-            model = meal.imagePreviewUrl,
-            previewModel = meal.placeholderUrl,
+            model = meal.smallImageUrl,
+            previewModel = meal.blurredPreviewUrl,
             contentDescription = "Picture of ${meal.name}",
             modifier = Modifier.fillMaxSize(),
             placeholder = MR.images.placeholder_meal_no_photo,

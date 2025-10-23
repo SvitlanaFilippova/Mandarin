@@ -25,6 +25,7 @@ import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
+import com.mandarinkafe.mandarin.util.bottomSheetContentModifier
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -41,6 +42,7 @@ fun MealDetailsContentScreen(
     onEdit: () -> Unit,
     onToggleFavorite: () -> Unit,
     comment: String,
+    modifier: Modifier = Modifier
 ) {
     val meal = remember(customizedMeal) { customizedMeal.meal }
     val chosenModifiers = remember(customizedMeal) { customizedMeal.modifiers }
@@ -67,7 +69,7 @@ fun MealDetailsContentScreen(
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(vertical = Dimens.MarginSmall8, horizontal = Dimens.MarginStandard16)
     ) {
         BottomSheetHeader(
@@ -77,7 +79,7 @@ fun MealDetailsContentScreen(
             isFavorite = isFavorite
         )
 
-        Box {
+        Box(modifier = Modifier.bottomSheetContentModifier()) {
             MealDetailsMainContent(
                 customizedMeal = customizedMeal,
                 listState = listState,
