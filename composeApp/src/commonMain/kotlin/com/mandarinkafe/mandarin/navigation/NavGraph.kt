@@ -39,10 +39,6 @@ fun NavGraph(navController: NavHostController) {
     val cartViewModel = rememberCartViewModel()
     val sharedViewModel = rememberSharedViewModel()
 
-    LaunchedEffect(Unit) {
-        Napier.w("❗❗❗NavGraph composed again ❗❗❗")
-    }
-
     NavHost(
         navController = navController,
         startDestination = NavConstants.SPLASH_SCREEN_ROUTE

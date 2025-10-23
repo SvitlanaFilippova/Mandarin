@@ -38,7 +38,7 @@ val coreNetworkModule = module {
                 json(Json { ignoreUnknownKeys = true; isLenient = true })
             }
             install(Logging) {
-                level = LogLevel.HEADERS
+                level = LogLevel.NONE
             }
             defaultRequest {
                 url(DiConstants.IIKO_BASE_URL)
@@ -67,7 +67,7 @@ val coreNetworkModule = module {
                         Napier.d(message)
                     }
                 }
-                level = LogLevel.ALL
+                level = LogLevel.NONE
             }
 
             install(Auth) {
