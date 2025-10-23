@@ -11,10 +11,9 @@ import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaReposi
 import com.mandarinkafe.mandarin.features.cart.domain.impl.CartInteractorImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.ClearCartUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.GetRecommendsUseCaseImpl
-import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
+import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
 import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
-import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.shared.database.AppDatabase
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf

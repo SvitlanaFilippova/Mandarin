@@ -35,13 +35,19 @@ class GetRecommendsUseCaseImpl(
                 // ids элементов в корзине
                 val inCartIds = cartItems.map { it.id }.toSet()
 
-                val (globalRules, normalRules) = rules.partition { it.sourceName == SOURCE_ALL }
+                // Сначала выделяем отдельные правила
+                val separateRules = rules.filter { it.isSeparate }
+                
+                // Затем разделяем оставшиеся правила на глобальные и обычные
+                val nonSeparateRules = rules.filter { !it.isSeparate }
+                val (globalRules, normalRules) = nonSeparateRules.partition { it.sourceName == SOURCE_ALL }
+                
                 val matchingRules = filterRules(normalRules, cartItemsWithNorm)
 
-                val separateRules = rules.filter { it.isSeparate }
-
                 // Сначала обычные, потом глобальные
-                val recommendedSkus = (matchingRules + globalRules)
+                val allMainRules = matchingRules + globalRules
+                
+                val recommendedSkus = allMainRules
                     .flatMap { it.recommendedSku }
                     .map { it.trim() }
                     .filter { it.isNotEmpty() }

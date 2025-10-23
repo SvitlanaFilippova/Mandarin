@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
-import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
+import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.CancelOrderUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.RepeatOrderInteractor

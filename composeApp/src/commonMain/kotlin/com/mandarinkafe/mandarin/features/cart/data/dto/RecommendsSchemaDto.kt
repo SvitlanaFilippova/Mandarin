@@ -9,8 +9,3 @@ data class RecommendsSchemaDto(
     val recommendedSku: List<String>?,
     val isSeparate: Boolean = false
 )
-
-
-
-
-

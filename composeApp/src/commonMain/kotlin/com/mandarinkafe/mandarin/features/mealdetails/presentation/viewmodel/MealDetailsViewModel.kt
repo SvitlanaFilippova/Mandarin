@@ -10,7 +10,7 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.cart.domain.Mapper.toCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.model.MealAddResult
-import com.mandarinkafe.mandarin.features.cart.domain.usecase.CartInteractor
+import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetMealByIdUseCase
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect
@@ -27,7 +27,6 @@ import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dev.icerock.moko.resources.StringResource
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

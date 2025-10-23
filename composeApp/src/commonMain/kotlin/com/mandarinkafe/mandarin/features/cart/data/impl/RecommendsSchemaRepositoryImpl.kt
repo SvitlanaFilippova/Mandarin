@@ -40,7 +40,7 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
             .lineSequence()
             .drop(1) // пропускаем заголовок
             .mapNotNull { line ->
-                val parts = line.split(",")
+                val parts = parseCsvLine(line)
 
                 if (parts.size < CSV_COLUMNS_NUMBER) return@mapNotNull null
 
@@ -75,12 +75,39 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
             .toList()
     }
 
+    private fun parseCsvLine(line: String): List<String> {
+        val result = mutableListOf<String>()
+        var current = StringBuilder()
+        var inQuotes = false
+        
+        for (i in line.indices) {
+            val char = line[i]
+            when {
+                char == '"' -> {
+                    inQuotes = !inQuotes
+                    // Не добавляем кавычку в результат
+                }
+                char == ',' && !inQuotes -> {
+                    result.add(current.toString().trim())
+                    current = StringBuilder()
+                }
+                else -> {
+                    current.append(char)
+                }
+            }
+        }
+        // Добавляем последний элемент
+        result.add(current.toString().trim())
+        
+        return result
+    }
+
     companion object {
         private const val SOURCE_NAME_INDEX = 0
         private const val EXCLUDE_SKU_INDEX = 1
         private const val RECOMMEND_SKU_INDEX = 2
-        private const val IS_SEPARATE_INDEX = 3
-        private const val CSV_COLUMNS_NUMBER = 4
+        private const val IS_SEPARATE_INDEX = 4  // Изменили с 3 на 4!
+        private const val CSV_COLUMNS_NUMBER = 5  // Изменили с 4 на 5!
         private const val TRUE_STRING = "TRUE"
     }
 }

@@ -48,16 +48,6 @@ object Mapper {
         comment = comment
     )
 
-    fun StoredCartItem.toCustomizedMeal(
-        meal: Meal,
-        adds: List<MealAdditional>,
-        modifiers: List<ModifierGroup>
-    ) = CustomizedMeal(
-        meal = meal,
-        adds = adds,
-        modifiers = modifiers,
-    )
-
     fun RecommendsSchemaDto.toDomain() = RecommendsSchemaRule(
         sourceName = sourceName ?: "",
         excludeSku = excludeSku ?: emptyList<String>(),
