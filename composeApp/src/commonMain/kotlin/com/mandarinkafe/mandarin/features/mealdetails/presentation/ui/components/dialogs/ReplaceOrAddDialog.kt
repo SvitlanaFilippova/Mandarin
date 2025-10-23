@@ -10,6 +10,7 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun ReplaceOrAddDialog(
     message: String,
+    mealName: String? = null,
     onDismiss: () -> Unit,
     onAddNew: () -> Unit,
     onReplace: () -> Unit,
@@ -17,7 +18,15 @@ fun ReplaceOrAddDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(MR.strings.replace_or_add_title)) },
-        text = { Text(message) },
+        text = { 
+            Text(
+                if (mealName != null) {
+                    stringResource(MR.strings.replace_or_add_message, mealName)
+                } else {
+                    message
+                }
+            ) 
+        },
         confirmButton = {
             TextButton(onClick = onReplace) {
                 Text(stringResource(MR.strings.replace_button))

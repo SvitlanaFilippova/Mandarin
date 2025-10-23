@@ -26,13 +26,15 @@ import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
+import dev.icerock.moko.resources.StringResource
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class MealDetailsViewModel(
     private val getAddonsUseCase: GetAddonsUseCase,
     private val getMealById: GetMealByIdUseCase,
-    private val cartInteractor: CartInteractor
+    private val cartInteractor: CartInteractor,
 ) : BaseViewModel<MealDetailsEvent, MealDetailsEffect, MealDetailsState>() {
     override fun setInitialState() = MealDetailsState()
 
@@ -81,7 +83,7 @@ class MealDetailsViewModel(
                     is MealAddResult.AlreadyExistBaseMeal -> showReplaceOrAddDialog(
                         newItem = item,
                         existingItem = result.existing,
-                        message = MR.strings.replace_or_add_message // TODO: Add string resource with parameter
+                        message = MR.strings.replace_or_add_message
                     )
 
                     is MealAddResult.Added -> showMessageAndCloseMealDetails(
@@ -95,8 +97,8 @@ class MealDetailsViewModel(
     }
 
     private fun showMessageAndCloseMealDetails(
-        message: dev.icerock.moko.resources.StringResource,
-        mealName: String? = null
+        message: StringResource,
+        mealName: String,
     ) {
         sendEffect(
             CloseAndShowMessage(message = message, mealName = mealName)
@@ -106,11 +108,12 @@ class MealDetailsViewModel(
     private fun showReplaceOrAddDialog(
         newItem: CartItem,
         existingItem: CartItem,
-        message: dev.icerock.moko.resources.StringResource
+        message: StringResource,
     ) {
         sendEffect(
             MealDetailsEffect.AskReplaceOrAdd(
                 message = message,
+                mealName = newItem.customizedMeal.meal.name,
                 onAddNew = { addItem(newItem) },
                 onReplace = {
                     editMealInCart(
@@ -137,13 +140,15 @@ class MealDetailsViewModel(
     private fun editMealInCart(newItem: CartItem, oldItem: CartItem? = null) {
         viewModelScope.launch {
             val wasUpdated = cartInteractor.updateItem(newCartItem = newItem, oldItem = oldItem)
-            val message = if (wasUpdated) {
-                MR.strings.edited_template
-            } else {
-                null
-            }
-            val mealName = if (wasUpdated) newItem.customizedMeal.meal.name else null
-            sendEffect(CloseAndShowMessage(message, mealName))
+            val message = if (wasUpdated) MR.strings.edited_template else null
+            val mealName = newItem.customizedMeal.meal.name
+
+            Napier.w("EDIT meal: VM editMealInCart, mealName: $mealName, $message")
+
+            showMessageAndCloseMealDetails(
+                message = MR.strings.edited_template,
+                mealName = mealName
+            )
         }
     }
 
@@ -194,7 +199,7 @@ class MealDetailsViewModel(
     private fun chooseMultiModifiers(
         group: ModifierGroup,
         item: ModifierItem,
-        isChecked: Boolean
+        isChecked: Boolean,
     ) {
         setState {
             val currentItem = customizedMeal ?: return@setState this
@@ -245,7 +250,7 @@ class MealDetailsViewModel(
     private fun isLimitExceeded(
         group: ModifierGroup,
         isChecked: Boolean,
-        selectedCount: Int
+        selectedCount: Int,
     ): Boolean {
         return group.maxQuantity > 1 && isChecked && selectedCount >= group.maxQuantity
     }
@@ -263,7 +268,7 @@ class MealDetailsViewModel(
         currentItem: CustomizedMeal,
         group: ModifierGroup,
         item: ModifierItem,
-        isChecked: Boolean
+        isChecked: Boolean,
     ): List<ModifierGroup> {
         val modifiersList = currentItem.modifiers.toMutableList()
         val groupIndex = modifiersList.indexOfFirst { it.id == group.id }

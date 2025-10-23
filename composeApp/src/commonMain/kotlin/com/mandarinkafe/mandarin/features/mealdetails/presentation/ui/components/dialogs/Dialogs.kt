@@ -50,6 +50,7 @@ fun Dialogs(
         if (showReplaceOrAddDialog) {
             ReplaceOrAddDialog(
                 message = stringResource(data.messageRes),
+                mealName = data.mealName,
                 onDismiss = onReplaceOrAddDismiss,
                 onAddNew = data.onAddNew,
                 onReplace = data.onReplace

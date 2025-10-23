@@ -29,6 +29,7 @@ import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberMealDetai
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import dev.icerock.moko.resources.compose.stringResource
+import io.github.aakira.napier.Napier
 
 @Composable
 fun MealDetailsBottomSheet(
@@ -136,6 +137,7 @@ fun MealDetailsBottomSheet(
                 is AskReplaceOrAdd -> {
                     replaceOrAddData = ReplaceOrAddData(
                         messageRes = effect.message,
+                        mealName = effect.mealName,
                         onAddNew = { effect.onAddNew() },
                         onReplace = { effect.onReplace() }
                     )
@@ -144,6 +146,7 @@ fun MealDetailsBottomSheet(
 
                 is CloseAndShowMessage -> {
                     pendingCloseAndShowMessage = effect
+                    Napier.w("EDIT meal: got CloseAndShowMessage effect, $effect ")
                 }
             }
         }
@@ -153,6 +156,7 @@ fun MealDetailsBottomSheet(
     val formattedMessage: String? = pendingCloseAndShowMessage?.let { effect ->
         effect.message?.let { messageRes ->
             if (effect.mealName != null) {
+                Napier.w("EDIT meal: formattingMessage, got mealName: ${effect.mealName}")
                 // Форматируем строку с параметром (название блюда)
                 stringResource(messageRes, effect.mealName)
             } else {
@@ -164,6 +168,7 @@ fun MealDetailsBottomSheet(
 
     // Обработка CloseAndShowMessage
     LaunchedEffect(formattedMessage) {
+        Napier.w("EDIT meal: Обработка CloseAndShowMessage - отправляю onSharedEvent: $formattedMessage")
         formattedMessage?.let { message ->
             onSharedEvent(
                 SharedContract.SharedEvent.ShowSnackbar(

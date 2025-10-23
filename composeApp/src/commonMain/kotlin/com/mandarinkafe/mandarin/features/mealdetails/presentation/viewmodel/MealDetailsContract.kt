@@ -50,6 +50,7 @@ sealed interface MealDetailsContract {
         data class ShowMaxModifiersQuantity(val groupName: String, val max: Int) : MealDetailsEffect
         data class AskReplaceOrAdd(
             val message: StringResource,
+            val mealName: String? = null,
             val onAddNew: () -> Unit,
             val onReplace: () -> Unit
         ) : MealDetailsEffect
