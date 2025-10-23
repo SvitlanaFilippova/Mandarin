@@ -23,8 +23,10 @@ import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberOrdersHis
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import dev.icerock.moko.resources.compose.stringResource
+import dev.materii.pullrefresh.PullRefreshIndicator
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -46,7 +48,13 @@ fun OrdersHistoryScreen(
     )
     PullRefreshLayout(
         modifier = Modifier.fillMaxSize(),
-        state = pullRefreshState
+        state = pullRefreshState,
+        indicator = {
+            PullRefreshIndicator(
+                state = pullRefreshState,
+                contentColor = Colors.Orange,
+            )
+        }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             ScreenTitleWithBackButton(

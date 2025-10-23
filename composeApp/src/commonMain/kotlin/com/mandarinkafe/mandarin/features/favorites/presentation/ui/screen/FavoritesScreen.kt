@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -52,7 +51,13 @@ fun FavoritesScreen(
 
     PullRefreshLayout(
         modifier = Modifier.fillMaxSize(),
-        state = pullRefreshState
+        state = pullRefreshState,
+        indicator = {
+            PullRefreshIndicator(
+                state = pullRefreshState,
+                contentColor = Colors.Orange,
+            )
+        }
     ) {
         Column(
             modifier = Modifier

@@ -96,7 +96,7 @@ class MealDetailsViewModel(
     }
 
     private fun showMessageAndCloseMealDetails(
-        message: StringResource,
+        message: StringResource?,
         mealName: String,
     ) {
         sendEffect(
@@ -143,7 +143,7 @@ class MealDetailsViewModel(
             val mealName = newItem.customizedMeal.meal.name
 
             showMessageAndCloseMealDetails(
-                message = MR.strings.edited_template,
+                message = message,
                 mealName = mealName
             )
         }

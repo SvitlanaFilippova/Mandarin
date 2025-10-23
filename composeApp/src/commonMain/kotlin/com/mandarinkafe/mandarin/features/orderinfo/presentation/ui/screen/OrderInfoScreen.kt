@@ -22,8 +22,10 @@ import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import dev.icerock.moko.resources.compose.stringResource
+import dev.materii.pullrefresh.PullRefreshIndicator
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import kotlinx.coroutines.flow.collectLatest
 import androidx.navigation.NavController
 
@@ -54,7 +56,13 @@ fun OrderInfoScreen(
     )
     PullRefreshLayout(
         modifier = Modifier.fillMaxSize(),
-        state = pullRefreshState
+        state = pullRefreshState,
+        indicator = {
+            PullRefreshIndicator(
+                state = pullRefreshState,
+                contentColor = Colors.Orange,
+            )
+        }
     ) {
         Column(
             modifier = Modifier

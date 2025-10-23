@@ -32,8 +32,9 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveC
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import kotlinx.coroutines.launch
 import androidx.navigation.NavController
+import dev.materii.pullrefresh.PullRefreshIndicator
 
-// Pull-to-refresh уже подключен через dev.materii.pullrefresh
+
 @Composable
 fun CartScreen(
     cartViewModel: CartViewModel,
@@ -66,7 +67,13 @@ fun CartScreen(
 
     PullRefreshLayout(
         modifier = Modifier.fillMaxSize(),
-        state = pullRefreshState
+        state = pullRefreshState,
+        indicator = {
+            PullRefreshIndicator(
+                state = pullRefreshState,
+                contentColor = Colors.Orange,
+            )
+        }
     ) {
         Column(
             modifier = Modifier
