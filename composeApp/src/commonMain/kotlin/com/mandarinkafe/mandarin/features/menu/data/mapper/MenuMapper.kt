@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.features.menu.data.mapper
 
-import com.mandarinkafe.mandarin.core.data.config.ApiKeys
+import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.core.domain.models.Label
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType
@@ -148,8 +148,8 @@ private fun extractBaseInfo(firstSize: ItemSizeDto): BaseMealInfo? {
     val weight = firstSize.portionWeightGrams?.toInt() ?: 0
     val price = firstSize.prices?.firstOrNull()?.price?.toInt() ?: return null
     val imageUrl = firstSize.buttonImageUrl
-    val thumbnailUrl = ApiKeys.SERVER_BASE_URL + firstSize.thumbnailUrl
-    val blurredPreviewUrl = ApiKeys.SERVER_BASE_URL + firstSize.placeholderUrl
+    val thumbnailUrl = BuildKonfig.SERVER_BASE_URL + firstSize.thumbnailUrl
+    val blurredPreviewUrl = BuildKonfig.SERVER_BASE_URL + firstSize.placeholderUrl
     return BaseMealInfo(weight, price, imageUrl, thumbnailUrl, blurredPreviewUrl)
 }
 

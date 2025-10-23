@@ -1,6 +1,7 @@
 @file:Suppress("MagicNumber")
 
 import java.util.Properties
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -10,6 +11,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.serialization)
     id("com.android.application")
     id("dev.icerock.mobile.multiplatform-resources")
+    id("com.codingfeline.buildkonfig") version "0.17.1"
 }
 
 kotlin {
@@ -163,41 +165,40 @@ sqldelight {
     linkSqlite = true
 }
 
-// Чтение ключей из apikeys.properties
-val keystoreFile = file("${project.rootDir}/apikeys.properties")
-val keystoreSampleFile = file("${project.rootDir}/apikeys.sample.properties")
+// --- Чтение ключей из apikeys.properties ---
+val apiKeysFile = rootProject.file("apikeys.properties")
+val apiKeysSample = rootProject.file("apikeys.sample.properties")
 
-// Создаём apikeys.properties, если его нет
-if (!keystoreFile.exists() && keystoreSampleFile.exists()) {
+if (!apiKeysFile.exists() && apiKeysSample.exists()) {
     println("!!! apikeys.properties не найден. Копирую sample...")
-    keystoreFile.writeText(keystoreSampleFile.readText())
+    apiKeysFile.writeText(apiKeysSample.readText())
 }
 
-val properties = Properties().apply {
-    load(keystoreFile.inputStream())
+val props = Properties().apply {
+    load(apiKeysFile.inputStream())
 }
 
-fun getKey(name: String): String = properties.getProperty(name) ?: ""
+val keys = listOf(
+    "MAPKIT_API_KEY",
+    "IIKO_API_KEY",
+    "TG_BOT_TOKEN",
+    "TG_CHANNEL_ID",
+    "DEV_TG_CHAT_ID",
+    "SERVER_BASE_URL",
+    "MANDARIN_API_KEY"
+)
 
-// Генерируем BuildConfig.kt файл с ключами
-val buildConfigContent = """
-package com.mandarinkafe.mandarin.core.data.config
+// --- Генерация BuildKonfig для KMP ---
+buildkonfig {
+    packageName = "com.mandarinkafe.mandarin.shared"
 
-object BuildConfig {
-    const val MAPKIT_API_KEY = "${getKey("MAPKIT_API_KEY")}"
-    const val IIKO_API_KEY = "${getKey("IIKO_API_KEY")}"
-    const val TG_BOT_TOKEN = "${getKey("TG_BOT_TOKEN")}"
-    const val TG_CHANNEL_ID = "${getKey("TG_CHANNEL_ID")}"
-    const val DEV_TG_CHAT_ID = "${getKey("DEV_TG_CHAT_ID")}"
-    const val SERVER_BASE_URL = "${getKey("SERVER_BASE_URL")}"
-    const val MANDARIN_API_KEY = "${getKey("MANDARIN_API_KEY")}"
+    defaultConfigs {
+        keys.forEach { key ->
+            val value = props.getProperty(key) ?: ""
+            buildConfigField(Type.STRING, key, value)
+        }
+    }
 }
-""".trimIndent()
-
-val buildConfigFile =
-    file("src/commonMain/kotlin/com/mandarinkafe/mandarin/core/data/config/BuildConfig.kt")
-buildConfigFile.parentFile.mkdirs()
-buildConfigFile.writeText(buildConfigContent)
 
 multiplatformResources {
     resourcesPackage.set("com.mandarinkafe.mandarin")

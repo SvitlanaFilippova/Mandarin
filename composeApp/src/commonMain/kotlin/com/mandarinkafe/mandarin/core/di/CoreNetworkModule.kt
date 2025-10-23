@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.core.di
 
-import com.mandarinkafe.mandarin.core.data.config.ApiKeys
+import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
@@ -105,7 +105,7 @@ val coreNetworkModule = module {
                 })
             }
             defaultRequest {
-                url(ApiKeys.SERVER_BASE_URL)
+                url(BuildKonfig.SERVER_BASE_URL)
                 contentType(ContentType.Application.Json)
             }
         }

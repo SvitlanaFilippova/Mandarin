@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.features.more.data.impl
 
-import com.mandarinkafe.mandarin.core.data.config.ApiKeys
+import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.features.more.data.network.TelegramApi
 import com.mandarinkafe.mandarin.features.more.domain.api.DevFeedbackRepository
 import com.mandarinkafe.mandarin.features.more.domain.models.Feedback
@@ -37,8 +37,8 @@ class DevFeedbackRepositoryImpl(
 
     companion object {
         private const val DEV_FEEDBACK_TITLE = "<b>Новое обращение из приложения Мандарина</b>\n\n"
-        private val TELEGRAM_BOT_TOKEN = ApiKeys.TG_BOT_TOKEN
-        private val DEV_TELEGRAM_CHANNEL_ID = ApiKeys.DEV_TG_CHAT_ID
+        private val TELEGRAM_BOT_TOKEN = BuildKonfig.TG_BOT_TOKEN
+        private val DEV_TELEGRAM_CHANNEL_ID = BuildKonfig.DEV_TG_CHAT_ID
         private const val TELEGRAM_API_URL = "https://api.telegram.org/bot%s/sendMessage"
 
         private const val NAME_LABEL = "\uD83D\uDC64 Имя: "

@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.core.presentation
 
 import android.app.Application
-import com.mandarinkafe.mandarin.core.data.config.ApiKeys
+import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.kmp.di.initKoinAndroid
 import com.mandarinkafe.mandarin.util.Constants.LOCALE_RU
 import com.yandex.mapkit.MapKitFactory
@@ -15,7 +15,7 @@ class App : Application() {
         Napier.base(DebugAntilog())
 
         // Настройка MapKit
-        MapKitFactory.setApiKey(ApiKeys.MAPKIT_API_KEY)
+        MapKitFactory.setApiKey(BuildKonfig.MAPKIT_API_KEY)
         MapKitFactory.setLocale(LOCALE_RU)
 
         // Инициализация Koin
