@@ -17,9 +17,9 @@ import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.Address
 import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressContract.AddressState
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.debounce
-import com.mandarinkafe.mandarin.util.presentation.isSameAs
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.mandarinkafe.mandarin.util.presentation.createDefaultPoint
+import com.mandarinkafe.mandarin.util.presentation.isSameAs
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

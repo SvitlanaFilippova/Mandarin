@@ -24,10 +24,10 @@ val addressPlatformModule = module {
         MapKitFactory.getInstance()
     }
 
-//    single<SearchManager> {
-//        val mapKit: MapKit = get() // форсируем инициализацию MapKit
-//        SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
-//    }
+    single<SearchManager> {
+        val mapKit: MapKit = get() // форсируем инициализацию MapKit
+        SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+    }
 
     // Провайдер FusedLocationProviderClient
     single<FusedLocationProviderClient> {

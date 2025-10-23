@@ -68,20 +68,20 @@ fun DeliveryScreen(
                     Text("Тут будет карта, когда починю её. Наверно. Надеюсь.")
                 }
 
-                // Все зоны доставки
-//                    with(state) {
-//                        DeliveryZonesSection(
-//                            deliveryAreas = deliveryAreas,
-//                            initLocation = initLocation,
-//                            displayAddress = displayAddress,
-//                            deliveryArea = deliveryArea,
-//                            isLoading = fetchAddressInProgress,
-//                            isError = error != null,
-//                            locationChosen = locationChosen,
-//                            mapShouldBeVisible = mapShouldBeVisible,
-//                            onCameraMoved = { onEvent(DeliveryEvent.CameraMoved(it)) }
-//                        )
-//                    }
+//                 Все зоны доставки
+                    with(state) {
+                        DeliveryZonesSection(
+                            deliveryAreas = deliveryAreas,
+                            initLocation = initLocation,
+                            displayAddress = displayAddress,
+                            deliveryArea = deliveryArea,
+                            isLoading = fetchAddressInProgress,
+                            isError = error != null,
+                            locationChosen = locationChosen,
+                            mapShouldBeVisible = mapShouldBeVisible,
+                            onCameraMoved = { onEvent(DeliveryEvent.CameraMoved(it)) }
+                        )
+                    }
             }
 
             item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }

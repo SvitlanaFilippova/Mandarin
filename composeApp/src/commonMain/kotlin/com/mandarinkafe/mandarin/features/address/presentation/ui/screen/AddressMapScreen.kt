@@ -40,11 +40,11 @@ fun AddressMapScreen(
             Text("Тут будет карта, когда починю её. Наверно. Надеюсь.")
         }
 
-//        AddressMapContentScreen(
-//            navController = navController,
-//            initAddress = initAddress,
-//            returnToRoute = returnToRoute
-//        )
+        AddressMapContentScreen(
+            navController = navController,
+            initAddress = initAddress,
+            returnToRoute = returnToRoute
+        )
     }
 }
 

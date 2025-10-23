@@ -91,14 +91,6 @@ fun ContactsScreen(onBackClick: () -> Unit) {
                 }
             }
         )
-
-        Box(
-            modifier = Modifier.fillMaxSize().padding(horizontal = Dimens.MarginStandard16),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("Тут будет карта, когда починю её. Наверно. Надеюсь.")
-        }
-
-//        MapWithCafePins()
+        MapWithCafePins()
     }
 }

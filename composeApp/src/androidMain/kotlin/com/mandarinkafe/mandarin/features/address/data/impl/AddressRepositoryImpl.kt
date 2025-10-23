@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withContext
 
 class AddressRepositoryImpl(
-//    private val searchManager: SearchManager
+    private val searchManager: SearchManager
 ) : AddressRepository {
     private var session: Session? = null
     private val _addressListChannel = Channel<Resource<List<AddressSearchResult>>>(Channel.BUFFERED)
@@ -59,12 +59,12 @@ class AddressRepositoryImpl(
 
         withContext(Dispatchers.Main) {
             session?.cancel()
-//            session = searchManager.submit(
-//                query,
-//                geometry,
-//                searchOptions,
-//                listenerForSearchByText
-//            )
+            session = searchManager.submit(
+                query,
+                geometry,
+                searchOptions,
+                listenerForSearchByText
+            )
         }
     }
 
@@ -91,12 +91,12 @@ class AddressRepositoryImpl(
 
         withContext(Dispatchers.Main) {
             session?.cancel()
-//            session = searchManager.submit(
-//                yPoint,
-//                DEFAULT_ZOOM_FOR_SEARCH,
-//                searchOptions,
-//                listener
-//            )
+            session = searchManager.submit(
+                yPoint,
+                DEFAULT_ZOOM_FOR_SEARCH,
+                searchOptions,
+                listener
+            )
         }
     }
 
