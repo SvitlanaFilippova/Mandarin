@@ -1,8 +1,5 @@
 package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.screen
 
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -12,14 +9,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
-import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.isFavorite
 import com.mandarinkafe.mandarin.features.cart.domain.Mapper.toCartItem
-import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.models.ReplaceOrAddData
+import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.dialogs.Dialogs
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.AskReplaceOrAdd
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.CloseAndShowMessage
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowMaxModifiersQuantity
@@ -30,9 +25,6 @@ import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.Mea
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberMealDetailsViewModel
-import com.mandarinkafe.mandarin.util.Constants
-import com.mandarinkafe.mandarin.util.presentation.ui.components.KmpModalBottomSheet
-import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.InformationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.LoadingScreen
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import dev.icerock.moko.resources.compose.stringResource
@@ -66,13 +58,14 @@ fun MealDetailsBottomSheet(
     val onEvent = viewModel::onEvent
     val effectFlow = viewModel.effect
 
-    val onToggleFavorite = { item: CustomizedMeal ->
+    val onToggleFavorite = { item: com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal ->
         onSharedEvent(SharedContract.SharedEvent.ToggleFavorite(item = item))
     }
 
     var showFavoriteVariantChoiceDialog by remember { mutableStateOf(false) }
     var showRequiredModifiersDialog by remember { mutableStateOf(false) }
     var showMaxModifiersQuantity by remember { mutableStateOf(false) }
+    var showReplaceOrAddDialog by remember { mutableStateOf(false) }
     var replaceOrAddData by remember { mutableStateOf<ReplaceOrAddData?>(null) }
     var pendingCloseAndShowMessage by remember { mutableStateOf<CloseAndShowMessage?>(null) }
 
@@ -85,16 +78,13 @@ fun MealDetailsBottomSheet(
     val handleClose: () -> Unit = {
         showSheet = false
     }
-
-    // Отслеживаем когда iOS bottom sheet закрылся
     LaunchedEffect(showSheet) {
         if (!showSheet) {
-            kotlinx.coroutines.delay(Constants.DELAY_FOR_UI_RENDERING) // Даем время на анимацию закрытия
             navController.popBackStack()
         }
     }
 
-    customizedMeal?.let {
+    customizedMeal?.let { customizedMeal ->
         val isFavorite by remember(customizedMeal, favorites) {
             derivedStateOf { customizedMeal.isFavorite(favorites) }
         }
@@ -107,12 +97,9 @@ fun MealDetailsBottomSheet(
             )
 
             else -> {
-                KmpModalBottomSheet(
+                MealDetailsContainer(
                     visible = showSheet,
-                    onDismissRequest = {
-                        // При свайпе вниз iOS сам закрывает sheet, просто удаляем из навигации
-                        navController.popBackStack()
-                    }
+                    onDismissRequest = { navController.popBackStack() }
                 ) {
                     MealDetailsContentScreen(
                         customizedMeal = customizedMeal,
@@ -160,6 +147,7 @@ fun MealDetailsBottomSheet(
                         onAddNew = { effect.onAddNew() },
                         onReplace = { effect.onReplace() }
                     )
+                    showReplaceOrAddDialog = true
                 }
 
                 is CloseAndShowMessage -> {
@@ -196,100 +184,29 @@ fun MealDetailsBottomSheet(
         }
     }
 
-    // Диалоги
-    RequiredModifiersDialog(
-        show = showRequiredModifiersDialog,
-        onDismiss = { showRequiredModifiersDialog = false }
-    )
-
-    MaxModifiersDialog(
-        show = showMaxModifiersQuantity,
-        onDismiss = { showMaxModifiersQuantity = false }
-    )
-
-    customizedMeal?.let {
-        FavoriteVariantDialog(
-            show = showFavoriteVariantChoiceDialog,
-            onBaseSelected = {
-                onSharedEvent(SharedContract.SharedEvent.ToggleFavorite(meal = customizedMeal.meal))
-            },
-            onCustomSelected = {
-                onToggleFavorite(customizedMeal)
-            },
-            onDismiss = { showFavoriteVariantChoiceDialog = false }
-        )
-    }
-    replaceOrAddData?.let { data ->
-        ReplaceOrAddDialog(
-            message = stringResource(data.messageRes),
-            onDismiss = { replaceOrAddData = null },
-            onAddNew = data.onAddNew,
-            onReplace = data.onReplace
-        )
-    }
-}
-
-/* ---------- Вспомогательные диалоги ---------- */
-
-@Composable
-private fun RequiredModifiersDialog(show: Boolean, onDismiss: () -> Unit) {
-    if (show) {
-        InformationDialog(
-            textRes = MR.strings.make_mandatory_choice_before_cart,
-            onDismiss = onDismiss
-        )
-    }
-}
-
-@Composable
-private fun MaxModifiersDialog(show: Boolean, onDismiss: () -> Unit) {
-    if (show) {
-        InformationDialog(
-            textRes = MR.strings.maximum_modifier,
-            onDismiss = onDismiss
-        )
-    }
-}
-
-@Composable
-private fun FavoriteVariantDialog(
-    show: Boolean,
-    onBaseSelected: () -> Unit,
-    onCustomSelected: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    if (show) {
-        FavoriteVariantChoiceDialog(
-            onBaseSelected = {
-                onBaseSelected()
-                onDismiss()
-            },
-            onCustomSelected = {
-                onCustomSelected()
-                onDismiss()
-            },
-            onDismiss = onDismiss
-        )
-    }
-}
-
-@Composable
-private fun ReplaceOrAddDialog(
-    message: String,
-    onDismiss: () -> Unit,
-    onAddNew: () -> Unit,
-    onReplace: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(MR.strings.replace_or_add_title)) },
-        text = { Text(message) },
-        confirmButton = {
-            TextButton(onClick = onReplace) { Text(stringResource(MR.strings.replace_button)) }
+    // Платформенные диалоги
+    Dialogs(
+        showRequiredModifiersDialog = showRequiredModifiersDialog,
+        showMaxModifiersQuantity = showMaxModifiersQuantity,
+        showReplaceOrAddDialog = showReplaceOrAddDialog,
+        showFavoriteVariantChoiceDialog = showFavoriteVariantChoiceDialog,
+        replaceOrAddData = replaceOrAddData,
+        customizedMeal = customizedMeal,
+        onRequiredModifiersDismiss = { showRequiredModifiersDialog = false },
+        onMaxModifiersDismiss = { showMaxModifiersQuantity = false },
+        onReplaceOrAddDismiss = { 
+            showReplaceOrAddDialog = false
+            replaceOrAddData = null
         },
-        dismissButton = {
-            TextButton(onClick = onAddNew) { Text(stringResource(MR.strings.add_one_more_button)) }
-        }
+        onFavoriteVariantDismiss = { showFavoriteVariantChoiceDialog = false },
+        onToggleFavorite = onToggleFavorite,
+        onSharedEvent = onSharedEvent
     )
 }
 
+@Composable
+expect fun MealDetailsContainer(
+    visible: Boolean,
+    onDismissRequest: () -> Unit,
+    content: @Composable () -> Unit,
+)

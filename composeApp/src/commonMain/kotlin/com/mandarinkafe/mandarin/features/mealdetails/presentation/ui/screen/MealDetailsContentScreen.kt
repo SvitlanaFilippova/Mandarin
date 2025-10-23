@@ -81,7 +81,7 @@ fun MealDetailsContentScreen(
             modifier = Modifier.bottomSheetHeaderModifier()
         )
 
-        Box(modifier = Modifier.bottomSheetContentModifier()) {
+        Box {
             MealDetailsMainContent(
                 customizedMeal = customizedMeal,
                 listState = listState,

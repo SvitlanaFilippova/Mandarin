@@ -44,7 +44,6 @@ fun BottomSheetHeader(
     ) {
         IconButton(
             onClick = {
-                Napier.d("🟢 BottomSheetHeader: Close button clicked")
                 onClose()
             },
             modifier = Modifier.size(Dimens.ButtonBox32)

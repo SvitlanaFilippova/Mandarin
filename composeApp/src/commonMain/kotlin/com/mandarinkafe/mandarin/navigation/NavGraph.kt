@@ -1,6 +1,8 @@
 package com.mandarinkafe.mandarin.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,14 +26,16 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen.Order
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.screen.OrdersHistoryScreen
 import com.mandarinkafe.mandarin.features.savedadresses.presentation.ui.screen.SavedAddressesScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberCartViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberSharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
+import io.github.aakira.napier.Napier
 import kotlinx.serialization.json.Json
 import io.ktor.http.decodeURLPart
 
 @Composable
-fun NavGraph(navController: NavHostController = rememberNavController()) {
+fun NavGraph(navController: NavHostController) {
     val cartViewModel = rememberCartViewModel()
     val sharedViewModel = rememberSharedViewModel()
 
@@ -122,11 +126,7 @@ fun NavGraph(navController: NavHostController = rememberNavController()) {
         }
 
         // --- MEAL DETAILS (BottomSheet) ---
-        dialog(
-            route = "${NavConstants.MEAL_DETAILS_ROUTE}?" +
-                    "${NavConstants.KEY_MEAL_JSON}={${NavConstants.KEY_MEAL_JSON}}&" +
-                    "${NavConstants.KEY_MEAL_ID}={${NavConstants.KEY_MEAL_ID}}&" +
-                    "${NavConstants.KEY_IS_EDIT_MODE}={${NavConstants.KEY_IS_EDIT_MODE}}"
+        this.platformMealDetailsRoute(
         ) { backStackEntry ->
             val isEditMode = backStackEntry.getBooleanArgument(NavConstants.KEY_IS_EDIT_MODE, defaultValue = false)
             val mealJson = backStackEntry.getStringArgument(NavConstants.KEY_MEAL_JSON)?.decodeURLPart()

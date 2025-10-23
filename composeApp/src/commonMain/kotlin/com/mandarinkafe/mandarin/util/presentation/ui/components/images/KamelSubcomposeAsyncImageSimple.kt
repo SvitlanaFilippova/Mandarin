@@ -43,7 +43,6 @@ fun KamelSubcomposeAsyncImageSimple(
         is Resource.Success -> resource.value
         is Resource.Loading -> placeholder?.let { painterResource(it) }
         is Resource.Failure -> error?.let { painterResource(it) } ?: placeholder?.let { painterResource(it) }
-        else -> placeholder?.let { painterResource(it) }
     }
 
     painterToShow?.let { painter ->

@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
@@ -45,11 +46,11 @@ fun MealDetailsMainContent(
     val meal = remember { customizedMeal.meal }
     val shouldShowChosen =
         remember(customizedMeal.isCustomized) { !meal.isOnlySingleRequiredChoice() && customizedMeal.isCustomized }
+    
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth(),
         state = listState
-
     ) {
         // Изображение блюда и нформация о нём
         item {
@@ -118,8 +119,7 @@ fun MealDetailsMainContent(
                 }
             }
             if (addons.isNotEmpty()) {
-                val addsItems =
-                    addons[selectedTabIndex].items
+                val addsItems = addons[selectedTabIndex].items
                 // Список доступных добавок
                 itemsIndexed(addsItems) { _, item ->
                     AddsItem(
