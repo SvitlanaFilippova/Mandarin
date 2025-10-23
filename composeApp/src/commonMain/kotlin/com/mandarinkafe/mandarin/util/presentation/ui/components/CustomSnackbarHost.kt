@@ -14,6 +14,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
+import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -35,11 +37,23 @@ fun CustomSnackbarHost(
                 action = {
                     // Кнопка действия
                     snackbarData.visuals.actionLabel?.let { actionLabel ->
-                        TextButton(
+                        ButtonWithText(
+                            modifier = Modifier.padding(start = Dimens.MarginSmall8),
+                            text = actionLabel,
                             onClick = { snackbarData.performAction() }
-                        ) {
-                            Text(actionLabel)
-                        }
+                        )
+                    }
+                },
+                dismissAction = {
+                    // Иконка закрытия для dismiss action
+                    IconButton(
+                        onClick = { snackbarData.dismiss() },
+                    ) {
+                        Icon(
+                            painter = painterResource(MR.images.ic_close),
+                            contentDescription = stringResource(MR.strings.close),
+                            tint = Colors.DarkGrey
+                        )
                     }
                 }
             ) {
