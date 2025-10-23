@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.isFavorite
 import com.mandarinkafe.mandarin.features.cart.domain.Mapper.toCartItem
@@ -58,7 +59,7 @@ fun MealDetailsBottomSheet(
     val onEvent = viewModel::onEvent
     val effectFlow = viewModel.effect
 
-    val onToggleFavorite = { item: com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal ->
+    val onToggleFavorite = { item: CustomizedMeal ->
         onSharedEvent(SharedContract.SharedEvent.ToggleFavorite(item = item))
     }
 
@@ -72,16 +73,8 @@ fun MealDetailsBottomSheet(
     val error = state.error
     val customizedMeal = state.customizedMeal ?: initItem?.customizedMeal
 
-    var showSheet by remember { mutableStateOf(true) }
-
-    // Закрытие bottom sheet с анимацией
     val handleClose: () -> Unit = {
-        showSheet = false
-    }
-    LaunchedEffect(showSheet) {
-        if (!showSheet) {
-            navController.popBackStack()
-        }
+        navController.popBackStack()
     }
 
     customizedMeal?.let { customizedMeal ->
@@ -98,7 +91,6 @@ fun MealDetailsBottomSheet(
 
             else -> {
                 MealDetailsContainer(
-                    visible = showSheet,
                     onDismissRequest = { navController.popBackStack() }
                 ) {
                     MealDetailsContentScreen(
@@ -194,7 +186,7 @@ fun MealDetailsBottomSheet(
         customizedMeal = customizedMeal,
         onRequiredModifiersDismiss = { showRequiredModifiersDialog = false },
         onMaxModifiersDismiss = { showMaxModifiersQuantity = false },
-        onReplaceOrAddDismiss = { 
+        onReplaceOrAddDismiss = {
             showReplaceOrAddDialog = false
             replaceOrAddData = null
         },
@@ -206,7 +198,6 @@ fun MealDetailsBottomSheet(
 
 @Composable
 expect fun MealDetailsContainer(
-    visible: Boolean,
     onDismissRequest: () -> Unit,
     content: @Composable () -> Unit,
 )

@@ -83,7 +83,7 @@ fun NavController.navigateToAddress(address: Address? = null, returnToRoute: Str
 fun NavController.navigateToAddressDetails(
     address: Address,
     isEditMode: Boolean = false,
-    returnToRoute: String
+    returnToRoute: String,
 ) {
     val encodedAddress = UrlEncoderUtil.encode(Json.encodeToString(address))
     val encodedReturn = UrlEncoderUtil.encode(returnToRoute)
@@ -99,7 +99,7 @@ fun NavController.navigateToAddressDetails(
 fun NavController.navigateToMealDetails(
     item: CartItem? = null,
     mealId: String? = null,
-    isEditMode: Boolean = false
+    isEditMode: Boolean = false,
 ) {
     val json = item?.let { Json.encodeToString(it) }
 
@@ -120,7 +120,8 @@ fun NavController.navigateToOrderInfo(
     fromOrderCreation: Boolean = false,
 ) {
     val encodedOrderId = UrlEncoderUtil.encode(orderId)
-    val route = "$ORDER_INFO_ROUTE?$KEY_ORDER_ID=$encodedOrderId&$KEY_FROM_ORDER_CREATION=$fromOrderCreation"
+    val route =
+        "$ORDER_INFO_ROUTE?$KEY_ORDER_ID=$encodedOrderId&$KEY_FROM_ORDER_CREATION=$fromOrderCreation"
 
     if (fromOrderCreation) {
         navigate(

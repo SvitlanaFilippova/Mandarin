@@ -47,8 +47,7 @@ fun MealItemImageBox(
             contentDescription = "Picture of ${meal.name}",
             modifier = Modifier.fillMaxSize(),
             placeholder = MR.images.placeholder_meal_no_photo,
-            error = MR.images.placeholder_meal_no_photo,
-            crossfade = true
+            error = MR.images.placeholder_meal_no_photo
         )
 
         // Тэги блюда

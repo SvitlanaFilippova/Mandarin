@@ -39,9 +39,9 @@ fun KamelSubcomposeAsyncImage(
             modifier = modifier.background(Colors.AppBlack),
             contentAlignment = Alignment.Center
         ) {
-            (placeholder ?: error)?.let {
+            (placeholder ?: error)?.let { placeholder ->
                 Image(
-                    painter = painterResource(it),
+                    painter = painterResource(placeholder),
                     contentDescription = contentDescription,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
@@ -87,9 +87,9 @@ fun KamelSubcomposeAsyncImage(
             }
 
             is Resource.Failure -> {
-                error?.let { it ->
+                error?.let { placeholder ->
                     Image(
-                        painter = painterResource(it),
+                        painter = painterResource(placeholder),
                         contentDescription = contentDescription,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop,
