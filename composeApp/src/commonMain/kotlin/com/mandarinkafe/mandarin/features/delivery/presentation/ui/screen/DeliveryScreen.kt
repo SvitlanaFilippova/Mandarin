@@ -29,7 +29,7 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun DeliveryScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     val viewModel = rememberDeliveryViewModel()
     val state by viewModel.state.collectAsState()
@@ -61,27 +61,20 @@ fun DeliveryScreen(
 
             item {
 
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(horizontal = Dimens.MarginStandard16),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("Тут будет карта, когда починю её. Наверно. Надеюсь.")
-                }
-
 //                 Все зоны доставки
-                    with(state) {
-                        DeliveryZonesSection(
-                            deliveryAreas = deliveryAreas,
-                            initLocation = initLocation,
-                            displayAddress = displayAddress,
-                            deliveryArea = deliveryArea,
-                            isLoading = fetchAddressInProgress,
-                            isError = error != null,
-                            locationChosen = locationChosen,
-                            mapShouldBeVisible = mapShouldBeVisible,
-                            onCameraMoved = { onEvent(DeliveryEvent.CameraMoved(it)) }
-                        )
-                    }
+                with(state) {
+                    DeliveryZonesSection(
+                        deliveryAreas = deliveryAreas,
+                        initLocation = initLocation,
+                        displayAddress = displayAddress,
+                        deliveryArea = deliveryArea,
+                        isLoading = fetchAddressInProgress,
+                        isError = error != null,
+                        locationChosen = locationChosen,
+                        mapShouldBeVisible = mapShouldBeVisible,
+                        onCameraMoved = { onEvent(DeliveryEvent.CameraMoved(it)) }
+                    )
+                }
             }
 
             item { Spacer(modifier = Modifier.height(Dimens.MarginSmall8)) }

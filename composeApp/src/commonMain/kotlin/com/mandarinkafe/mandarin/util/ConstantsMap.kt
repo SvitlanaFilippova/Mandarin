@@ -22,6 +22,6 @@ object ConstantsMap {
     const val PIN_ANCHOR_X = 0.5f
     const val PIN_ANCHOR_Y = 1.1f
     const val PIN_SCALE = 0.4f
-    const val PIN_OPACITY = 0.7f
+    const val PIN_OPACITY = 0.9f
 
 }

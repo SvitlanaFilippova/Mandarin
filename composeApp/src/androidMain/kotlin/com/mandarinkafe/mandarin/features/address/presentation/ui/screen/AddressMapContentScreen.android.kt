@@ -29,7 +29,7 @@ import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.MIN_LINES_FOR_ADDRESS_INPUT
 import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.BindMapViewToLifecycle
-import com.mandarinkafe.mandarin.util.presentation.ui.components.map.MapWithButtons
+import com.mandarinkafe.mandarin.util.presentation.ui.components.map.MapWithDeliveryAreas
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.RequestLocationPermission
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.moveCamera
 import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.MyTextField
@@ -109,7 +109,7 @@ actual fun AddressMapContentScreen(
                 val onBackToInitClick = initLocation?.let { { moveCamera(it, mapView) } }
                 val onBackToUserClick = userLocation?.let { { moveCamera(it, mapView) } }
 
-                MapWithButtons(
+                MapWithDeliveryAreas(
                     mapView = mapView,
                     deliveryAreas = allDeliveryAreas,
                     displayAddress = displayAddress,

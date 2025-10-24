@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.contacts.presentation.components
 
-import android.graphics.PointF
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,33 +11,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.viewinterop.AndroidView
-import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.shared.R
-import com.mandarinkafe.mandarin.util.ConstantsMap
-import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LATITUDE
-import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LONGITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LONGITUDE
-import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_PIZZERIA_LATITUDE
-import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_PIZZERIA_LONGITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN
-import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_ANCHOR_X
-import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_ANCHOR_Y
-import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_OPACITY
-import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_SCALE
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.BindMapViewToLifecycle
+import com.mandarinkafe.mandarin.util.presentation.ui.components.map.CafePinsOnMap
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.CustomMapView
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.MapButtons
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.changeZoom
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.moveCamera
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.IconStyle
-import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.mapview.MapView
-import com.yandex.runtime.image.ImageProvider
 
 @Composable
 actual fun MapWithCafePins() {
@@ -67,7 +52,11 @@ actual fun MapWithCafePins() {
             }
         ) {
             onMapReady(it)
-            addPins(it)
+        }
+        
+        // Добавляем пины кафе с оптимизацией
+        mapView?.let { 
+            CafePinsOnMap(mapView = it)
         }
         // Блок с кнопками для управления картой
         MapButtons(
@@ -90,35 +79,3 @@ actual fun MapWithCafePins() {
     BindMapViewToLifecycle(mapView)
 }
 
-
-private fun addPins(mapView: MapView?) {
-    mapView?.mapWindow?.map?.mapObjects?.let { mapObjects ->
-        val pinsCollection = mapObjects.addCollection()
-
-        val cafePoint = Point(MANDARIN_CAFE_LATITUDE, MANDARIN_CAFE_LONGITUDE)
-        val pizzeriaPoint = Point(MANDARIN_PIZZERIA_LATITUDE, MANDARIN_PIZZERIA_LONGITUDE)
-        val pinIconCafe = ImageProvider.fromResource(mapView.context, R.drawable.map_pin_cafe)
-        val pinIconPizza = ImageProvider.fromResource(mapView.context, R.drawable.map_pin_pizza)
-
-        val iconStyle = IconStyle().apply {
-            anchor = PointF(PIN_ANCHOR_X, PIN_ANCHOR_Y)
-            scale = PIN_SCALE
-        }
-
-        addPin(pinsCollection, cafePoint, pinIconCafe, iconStyle)
-        addPin(pinsCollection, pizzeriaPoint, pinIconPizza, iconStyle)
-    }
-}
-
-private fun addPin(
-    collection: MapObjectCollection,
-    point: Point,
-    icon: ImageProvider,
-    iconStyle: IconStyle,
-) {
-    collection.addPlacemark().apply {
-        geometry = point
-        opacity = PIN_OPACITY
-        setIcon(icon, iconStyle)
-    }
-}

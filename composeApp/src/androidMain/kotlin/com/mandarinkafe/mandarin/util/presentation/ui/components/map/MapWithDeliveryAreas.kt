@@ -21,12 +21,11 @@ import com.mandarinkafe.mandarin.features.address.presentation.ui.models.UiDeliv
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraListener
-import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
-fun MapWithButtons(
+fun MapWithDeliveryAreas(
     mapView: MapView?,
     deliveryAreas: List<UiDeliveryArea>,
     displayAddress: String?,

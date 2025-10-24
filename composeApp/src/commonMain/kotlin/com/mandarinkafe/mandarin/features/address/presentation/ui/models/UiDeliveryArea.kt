@@ -34,7 +34,6 @@ fun DeliveryZone.toUi(): UiDeliveryArea {
 }
 
 private fun parseColor(colorHex: String): Long {
-    // Простой парсер hex цвета для commonMain
     val hex = colorHex.removePrefix("#")
     return hex.toLong(16) or 0xFF000000L
 }
