@@ -22,7 +22,12 @@ object ConstantsMap {
     // Для пинов на странице "Контакты"
     const val PIN_ANCHOR_X = 0.5f
     const val PIN_ANCHOR_Y = 1.1f
-    const val PIN_SCALE = 0.4f
-    const val PIN_OPACITY = 0.9f
+     const val PIN_OPACITY = 0.9f
+    
+    // Динамическое масштабирование пинов
+    const val PIN_SCALE_MIN = 0.10f
+    const val PIN_SCALE_MAX = 0.6f
+    const val PIN_SCALE_ZOOM_MIN = 10f
+    const val PIN_SCALE_ZOOM_MAX = 20f
 
 }

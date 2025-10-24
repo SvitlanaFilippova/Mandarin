@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -17,7 +18,6 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LONGITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN
-import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_MIN_ZOOM_TO_SHOW_BIG_PINS
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.BindMapViewToLifecycle
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.CafePinsOnMap
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.CustomMapView
@@ -46,16 +46,12 @@ actual fun MapWithCafePins() {
             }
         }
     }
-    var showBigPins by remember { mutableStateOf(true) }
+    var currentZoom by remember { mutableFloatStateOf(MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN) }
 
     val cameraListener = remember {
-        CameraListener { _, cameraPosition, _, finished ->
-            if (finished) {
-                showBigPins = when {
-                    cameraPosition.zoom > MAP_MIN_ZOOM_TO_SHOW_BIG_PINS -> true
-                    else -> false
-                }
-            }
+        CameraListener { _, cameraPosition, _, _ ->
+            currentZoom = cameraPosition.zoom
+
         }
     }
 
@@ -78,9 +74,9 @@ actual fun MapWithCafePins() {
             onMapReady(it)
         }
 
-        // Добавляем пины кафе с оптимизацией
+        // Добавляем пины кафе с динамическим масштабированием
         mapView?.let {
-            CafePinsOnMap(mapView = it, showBigPins = showBigPins)
+            CafePinsOnMap(mapView = it, currentZoom = currentZoom)
         }
         // Блок с кнопками для управления картой
         MapButtons(

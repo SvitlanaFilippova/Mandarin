@@ -11,7 +11,7 @@ import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_PIZZERIA_LONGITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_ANCHOR_X
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_ANCHOR_Y
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_OPACITY
-import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_SCALE
+import com.mandarinkafe.mandarin.util.calculatePinScale
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.MapObjectCollection
@@ -21,15 +21,15 @@ import com.yandex.runtime.image.ImageProvider
 @Composable
 fun CafePinsOnMap(
     mapView: MapView,
-    showBigPins: Boolean,
+    currentZoom: Float,
 ) {
-    // Используем LaunchedEffect с ключом, который включает и mapView и zoomIsClose
-    LaunchedEffect(mapView, showBigPins) {
+    // Используем LaunchedEffect с ключом, который включает и mapView и currentZoom
+    LaunchedEffect(mapView, currentZoom) {
         // Очищаем старые пины
         clearCafePins(mapView)
 
         // Добавляем новые пины
-        addCafePins(mapView, showBigPins)
+        addCafePins(mapView, currentZoom)
     }
 }
 
@@ -38,22 +38,22 @@ private fun clearCafePins(mapView: MapView) {
     mapObjects.clear()
 }
 
-private fun addCafePins(mapView: MapView, zoomIsClose: Boolean) {
+private fun addCafePins(mapView: MapView, currentZoom: Float) {
     val mapObjects = mapView.mapWindow?.map?.mapObjects ?: return
     val pinsCollection = mapObjects.addCollection()
 
     val cafePoint = Point(MANDARIN_CAFE_LATITUDE, MANDARIN_CAFE_LONGITUDE)
     val pizzeriaPoint = Point(MANDARIN_PIZZERIA_LATITUDE, MANDARIN_PIZZERIA_LONGITUDE)
 
-    val pinIconCafeRes = if (zoomIsClose) R.drawable.map_pin_cafe else R.drawable.map_pin_cafe_small
-    val pinIconPizzaRes = if (zoomIsClose) R.drawable.map_pin_pizza else R.drawable.map_pin_pizza_small
+    val pinIconCafe = ImageProvider.fromResource(mapView.context, R.drawable.map_pin_cafe)
+    val pinIconPizza = ImageProvider.fromResource(mapView.context, R.drawable.map_pin_pizza)
 
-    val pinIconCafe = ImageProvider.fromResource(mapView.context, pinIconCafeRes)
-    val pinIconPizza = ImageProvider.fromResource(mapView.context, pinIconPizzaRes)
+    // Вычисляем динамический масштаб на основе зума
+    val dynamicScale = calculatePinScale(currentZoom)
 
     val iconStyle = IconStyle().apply {
         anchor = PointF(PIN_ANCHOR_X, PIN_ANCHOR_Y)
-        scale = PIN_SCALE
+        scale = dynamicScale
     }
 
     addPin(pinsCollection, cafePoint, pinIconCafe, iconStyle)
