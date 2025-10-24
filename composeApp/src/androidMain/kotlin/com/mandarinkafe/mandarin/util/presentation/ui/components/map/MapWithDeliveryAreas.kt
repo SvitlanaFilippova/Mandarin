@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +55,11 @@ fun MapWithDeliveryAreas(
         )
     }
 
+    // Добавляем слушатель камеры
+    LaunchedEffect(mapView) {
+        mapView?.mapWindow?.map?.addCameraListener(cameraListener)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -66,7 +72,6 @@ fun MapWithDeliveryAreas(
                 CustomMapView(context)
             }
         ) {
-            it.mapWindow.map.addCameraListener(cameraListener)
             onMapReady(it)
         }
 

@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.util.presentation.ui.components.map
 import android.graphics.PointF
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import com.mandarinkafe.mandarin.shared.R
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LONGITUDE
@@ -21,17 +20,16 @@ import com.yandex.runtime.image.ImageProvider
 
 @Composable
 fun CafePinsOnMap(
-    mapView: MapView
+    mapView: MapView,
+    showBigPins: Boolean,
 ) {
-    // Создаем ключ для отслеживания изменений (в данном случае статичный, так как пины не меняются)
-    val pinsKey = remember { "cafe_pins_static" }
-    
-    LaunchedEffect(pinsKey) {
+    // Используем LaunchedEffect с ключом, который включает и mapView и zoomIsClose
+    LaunchedEffect(mapView, showBigPins) {
         // Очищаем старые пины
         clearCafePins(mapView)
-        
+
         // Добавляем новые пины
-        addCafePins(mapView)
+        addCafePins(mapView, showBigPins)
     }
 }
 
@@ -40,14 +38,18 @@ private fun clearCafePins(mapView: MapView) {
     mapObjects.clear()
 }
 
-private fun addCafePins(mapView: MapView) {
+private fun addCafePins(mapView: MapView, zoomIsClose: Boolean) {
     val mapObjects = mapView.mapWindow?.map?.mapObjects ?: return
     val pinsCollection = mapObjects.addCollection()
 
     val cafePoint = Point(MANDARIN_CAFE_LATITUDE, MANDARIN_CAFE_LONGITUDE)
     val pizzeriaPoint = Point(MANDARIN_PIZZERIA_LATITUDE, MANDARIN_PIZZERIA_LONGITUDE)
-    val pinIconCafe = ImageProvider.fromResource(mapView.context, R.drawable.map_pin_cafe)
-    val pinIconPizza = ImageProvider.fromResource(mapView.context, R.drawable.map_pin_pizza)
+
+    val pinIconCafeRes = if (zoomIsClose) R.drawable.map_pin_cafe else R.drawable.map_pin_cafe_small
+    val pinIconPizzaRes = if (zoomIsClose) R.drawable.map_pin_pizza else R.drawable.map_pin_pizza_small
+
+    val pinIconCafe = ImageProvider.fromResource(mapView.context, pinIconCafeRes)
+    val pinIconPizza = ImageProvider.fromResource(mapView.context, pinIconPizzaRes)
 
     val iconStyle = IconStyle().apply {
         anchor = PointF(PIN_ANCHOR_X, PIN_ANCHOR_Y)

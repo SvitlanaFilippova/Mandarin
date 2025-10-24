@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,6 +17,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LONGITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_MIN_ZOOM_TO_SHOW_BIG_PINS
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.BindMapViewToLifecycle
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.CafePinsOnMap
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.CustomMapView
@@ -23,6 +25,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.map.MapButtons
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.changeZoom
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.moveCamera
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.mapview.MapView
 
 @Composable
@@ -31,13 +34,34 @@ actual fun MapWithCafePins() {
     val mandarinInitPoint =
         Point(MANDARIN_CENTER_LATITUDE, MANDARIN_CENTER_LONGITUDE)
 
-    val onMapReady: (MapView) -> Unit = {
-        mapView = it
-        moveCamera(
-            mapView = mapView,
-            point = mandarinInitPoint,
-            zoom = MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN
-        )
+    val onMapReady: (MapView) -> Unit = remember {
+        {
+            if (mapView == null) {
+                mapView = it
+                moveCamera(
+                    mapView = mapView,
+                    point = mandarinInitPoint,
+                    zoom = MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN
+                )
+            }
+        }
+    }
+    var showBigPins by remember { mutableStateOf(true) }
+
+    val cameraListener = remember {
+        CameraListener { _, cameraPosition, _, finished ->
+            if (finished) {
+                showBigPins = when {
+                    cameraPosition.zoom > MAP_MIN_ZOOM_TO_SHOW_BIG_PINS -> true
+                    else -> false
+                }
+            }
+        }
+    }
+
+    // Добавляем слушатель камеры
+    LaunchedEffect(mapView) {
+        mapView?.mapWindow?.map?.addCameraListener(cameraListener)
     }
 
     Box(
@@ -53,10 +77,10 @@ actual fun MapWithCafePins() {
         ) {
             onMapReady(it)
         }
-        
+
         // Добавляем пины кафе с оптимизацией
-        mapView?.let { 
-            CafePinsOnMap(mapView = it)
+        mapView?.let {
+            CafePinsOnMap(mapView = it, showBigPins = showBigPins)
         }
         // Блок с кнопками для управления картой
         MapButtons(
