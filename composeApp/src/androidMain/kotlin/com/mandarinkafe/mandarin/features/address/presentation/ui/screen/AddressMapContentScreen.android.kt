@@ -27,6 +27,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.ui.components.Locat
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberAddressViewModel
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.MIN_LINES_FOR_ADDRESS_INPUT
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.BindMapViewToLifecycle
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.MapWithButtons
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.RequestLocationPermission
@@ -38,7 +39,7 @@ import com.yandex.mapkit.mapview.MapView
 actual fun AddressMapContentScreen(
     navController: NavController,
     initAddress: Address?,
-    returnToRoute: String
+    returnToRoute: String,
 ) {
     val viewModel = rememberAddressViewModel()
     val state by viewModel.state.collectAsState()
@@ -84,71 +85,75 @@ actual fun AddressMapContentScreen(
     }
 
 
-        // Строка с адресом
-        MyTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .animateContentSize(
-                    animationSpec = tween(durationMillis = Constants.ANIMATION_DURATION_FAST)
-                ),
-            minLines = MIN_LINES_FOR_ADDRESS_INPUT,
-            value = addressValue,
-            labelRes = MR.strings.street_and_building,
-            onValueChange = { onValueChange(it) },
-            leadingIcon = { LocationIcon(enabled = false) }
-        )
-        // Родительский контейнер для отображения результатов поиска поверх карты
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            // Контейнер для карты и её элементов управления
-            if (mapShouldBeVisible) {
-                with(state) {
-                    val onBackToInitClick = initLocation?.let { { moveCamera(it, mapView) } }
-                    val onBackToUserClick = userLocation?.let { { moveCamera(it, mapView) } }
+    // Строка с адресом
+    MyTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize(
+                animationSpec = tween(durationMillis = Constants.ANIMATION_DURATION_FAST)
+            ),
+        minLines = MIN_LINES_FOR_ADDRESS_INPUT,
+        value = addressValue,
+        labelRes = MR.strings.street_and_building,
+        onValueChange = { onValueChange(it) },
+        leadingIcon = { LocationIcon(enabled = false) }
+    )
+    // Родительский контейнер для отображения результатов поиска поверх карты
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        // Контейнер для карты и её элементов управления
+        if (mapShouldBeVisible) {
+            with(state) {
+                val onBackToInitClick = initLocation?.let { { moveCamera(it, mapView) } }
+                val onBackToUserClick = userLocation?.let { { moveCamera(it, mapView) } }
 
-                    MapWithButtons(
-                        mapView = mapView,
-                        deliveryAreas = allDeliveryAreas,
-                        displayAddress = displayAddress,
-                        deliveryArea = currentDeliveryArea,
-                        isLoading = fetchAddressInProgress,
-                        locationChosen = locationChosen,
-                        isError = error != null,
-                        onMapReady = { mapView = it },
-                        onCameraMoved = { onEvent(AddressContract.AddressEvent.CameraMoved(it.toGeoPoint())) },
-                        onDeliverHereClick = {
-                            onEvent(AddressContract.AddressEvent.GoToAddressDetails)
-                            mapShouldBeVisible = false
-                        },
-                        onBackToInitLocationClick = onBackToInitClick,
-                        onBackToUserLocationClick = onBackToUserClick
-                    )
-                }
-            }
-
-            if (searchResultsBeVisible) {
-                SearchByTextResults(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter),
-                    isLoading = state.searchInProgress,
-                    data = state.searchResults,
-                    searchError = state.searchError,
-                    onItemClick = {
-                        searchResultsBeVisible = false
-                        keyboardController?.hide()
-                        moveCamera(it.point?.toYandexPoint(), mapView)
-
+                MapWithButtons(
+                    mapView = mapView,
+                    deliveryAreas = allDeliveryAreas,
+                    displayAddress = displayAddress,
+                    deliveryArea = currentDeliveryArea,
+                    isLoading = fetchAddressInProgress,
+                    locationChosen = locationChosen,
+                    isError = error != null,
+                    onMapReady = { mapView = it },
+                    onCameraMoved = { onEvent(AddressContract.AddressEvent.CameraMoved(it.toGeoPoint())) },
+                    onDeliverHereClick = {
+                        onEvent(AddressContract.AddressEvent.GoToAddressDetails)
+                        mapShouldBeVisible = false
                     },
-                    onDismiss = {
-                        searchResultsBeVisible = false
-                        keyboardController?.hide()
-                    },
+                    onBackToInitLocationClick = onBackToInitClick,
+                    onBackToUserLocationClick = onBackToUserClick
                 )
             }
-
         }
+
+        if (searchResultsBeVisible) {
+            SearchByTextResults(
+                modifier = Modifier
+                    .align(Alignment.TopCenter),
+                isLoading = state.searchInProgress,
+                data = state.searchResults,
+                searchError = state.searchError,
+                onItemClick = {
+                    searchResultsBeVisible = false
+                    keyboardController?.hide()
+                    moveCamera(
+                        point = it.point?.toYandexPoint(),
+                        mapView = mapView,
+                        zoom = MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN
+                    )
+
+                },
+                onDismiss = {
+                    searchResultsBeVisible = false
+                    keyboardController?.hide()
+                },
+            )
+        }
+
+    }
 
     HandleAddressEffects(
         effectFlow = viewModel.effect,

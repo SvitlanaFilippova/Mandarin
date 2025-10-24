@@ -6,6 +6,7 @@ object ConstantsMap {
     const val MAP_ANIMATION_DURATION = 1f
     const val MAP_DEFAULT_TILT = 30.0f
     const val MAP_DEFAULT_AZIMUTH = 0.0f
+    const val MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN = 18.0f
     const val MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN = 17.0f
     const val MAP_DEFAULT_ZOOM_FOR_DELIVERY_SCREEN = 12.0f
     const val MAP_MIN_ZOOM = 2f
@@ -19,14 +20,8 @@ object ConstantsMap {
 
     // Для пинов на странице "Контакты"
     const val PIN_ANCHOR_X = 0.5f
-    const val PIN_ANCHOR_Y = 1.2f
-    const val PIN_SCALE = 0.8f
-    const val PIN_OPACITY = 0.3f
+    const val PIN_ANCHOR_Y = 1.1f
+    const val PIN_SCALE = 0.4f
+    const val PIN_OPACITY = 0.7f
 
-    const val PIN_TEXT_SIZE = 10f
-    const val PIN_TEXT_OFFSET = 5f
-    const val PIN_TEXT_ALPHA = 0.5f
-
-    const val PIN_LABEL_CAFE = "Основное кафе"
-    const val PIN_LABEL_PIZZERIA = "Пиццерия"
 }
