@@ -60,7 +60,7 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         orderType = orderType,
         processedPaymentsSum = order?.processedPaymentsSum,
         sum = order?.sum,
-        discountReason = order?.discounts?.firstOrNull()?.discountType?.name,
+        discountReason = order?.discounts?.firstOrNull()?.discountType?.name?.applyTypography(),
         whenCancelled = order?.cancelInfo?.whenCancelled?.toHumanDateTimeOrNull(),
         whenClosed = order?.whenClosed?.toHumanDateTimeOrNull(),
         whenConfirmed = order?.whenConfirmed?.toHumanDateTimeOrNull(),
