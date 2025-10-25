@@ -151,8 +151,8 @@ fun NavGraph(navController: NavHostController) {
 
         composable(
             route = "${NavConstants.ADDRESS_SCREEN_ROUTE}?" +
-                    "${NavConstants.KEY_ADDRESS_JSON}={${NavConstants.KEY_ADDRESS_JSON}}&" +
-                    "${NavConstants.KEY_RETURN_TO_ROUTE}={${NavConstants.KEY_RETURN_TO_ROUTE}}"
+                    "${NavConstants.KEY_RETURN_TO_ROUTE}={${NavConstants.KEY_RETURN_TO_ROUTE}}&" +
+                    "${NavConstants.KEY_ADDRESS_JSON}={${NavConstants.KEY_ADDRESS_JSON}}"
         ) { backStackEntry ->
             val addressJson =
                 backStackEntry.getStringArgument(NavConstants.KEY_ADDRESS_JSON)?.decodeURLPart()

@@ -39,6 +39,7 @@ fun MyTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     colors: TextFieldColors? = null,
+    onClick: (() -> Unit)? = null,
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -69,8 +70,10 @@ fun MyTextField(
         modifier = modifier
             .fillMaxWidth()
             .clickable {
-                if (focusEnabled) {
+                if (enabled && focusEnabled) {
                     focusRequester.requestFocus()
+                } else if (!enabled) {
+                    onClick?.invoke()
                 }
             }
     ) {

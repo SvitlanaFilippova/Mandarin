@@ -82,12 +82,13 @@ fun AddressDetailsScreen(
 
         // Улица и дом. При клике - переход на экран выбора адреса на карте
         MyTextField(
-            modifier = Modifier.clickable(onClick = { onEvent(AddressDetailsEvent.ChangeLocation) }),
+            modifier = Modifier,
             enabled = false,
             minLines = 2,
             isError = isError && state.address.streetAndBuilding.isEmpty(),
             value = state.address.streetAndBuilding,
             labelRes = MR.strings.street_and_building,
+            onClick = { onEvent(AddressDetailsEvent.ChangeLocation) },
             leadingIcon = {
                 LocationIcon(enabled = false)
             }
