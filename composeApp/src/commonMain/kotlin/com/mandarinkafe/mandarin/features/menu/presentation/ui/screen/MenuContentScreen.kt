@@ -63,7 +63,6 @@ fun MenuContentScreen(
     onBannersClick: (Banner) -> Unit,
     onToggleFavorite: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
-    onSearchClick: () -> Unit,
     bannersAreLoading: Boolean,
     selectedMenuItemIndex: Int,
     banners: List<Banner>,
@@ -145,12 +144,9 @@ fun MenuContentScreen(
             // Поиск и табы категорий
             stickyHeader {
                 MenuStickyHeader(
-                    isAtTop = isAtTop,
-                    isScrollingUp = isScrollingUp,
                     menuItems = menuItems,
                     activeTabIndex = activeTabIndex.intValue,
                     activeSubTabIndex = activeSubTabIndex.intValue,
-                    onSearchClick = onSearchClick,
                     onCategorySelected = { index ->
                         activeTabIndex.intValue = index
                         activeSubTabIndex.intValue = 0
@@ -218,12 +214,9 @@ fun MenuContentScreen(
 
 @Composable
 private fun MenuStickyHeader(
-    isAtTop: Boolean,
-    isScrollingUp: Boolean,
     menuItems: List<MenuItem>,
     activeTabIndex: Int,
     activeSubTabIndex: Int,
-    onSearchClick: () -> Unit,
     onCategorySelected: (Int) -> Unit,
     onSubCategorySelected: (Int) -> Unit,
 ) {
@@ -233,20 +226,6 @@ private fun MenuStickyHeader(
             .animateContentSize(animationSpec = tween(durationMillis = Constants.ANIMATION_DURATION_FAST))
             .background(color = Colors.AppBlack)
     ) {
-        AnimatedVisibility(
-            visible = isAtTop || isScrollingUp,
-            enter = fadeIn(animationSpec = tween(Constants.ANIMATION_DURATION_SUPER_FAST)) + slideInVertically(
-                animationSpec = tween(
-                    Constants.ANIMATION_DURATION_SUPER_FAST
-                )
-            ),
-            exit = fadeOut(animationSpec = tween(Constants.ANIMATION_DURATION_SUPER_FAST)) + slideOutVertically(
-                animationSpec = tween(Constants.ANIMATION_DURATION_SUPER_FAST)
-            ),
-        ) {
-            MenuSearchBar(onSearchClick = onSearchClick)
-        }
-
         // Табы категорий
         val headers = menuItems.filterIsInstance<MenuItem.HeaderItem>()
         TabsSection(

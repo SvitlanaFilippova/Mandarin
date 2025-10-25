@@ -15,7 +15,6 @@ fun SearchScreen(
     focusSearchBarInput: Boolean,
     cartViewModel: CartViewModel,
     sharedViewModel: SharedViewModel,
-    onBackClick: () -> Unit
 ) {
     val searchViewModel = rememberSearchViewModel()
     val searchState by searchViewModel.state.collectAsState()
@@ -36,7 +35,6 @@ fun SearchScreen(
         onAddToCart = { meal -> onCartEvent(CartEvent.AddToCart(customizedMeal = meal.toCustomizedMeal())) },
         onRemoveFromCart = { meal -> onCartEvent(CartEvent.OnReduce(meal = meal)) },
         inProgressItems = cartState.inProgressItems,
-        onBackClick = onBackClick,
     )
 
 }

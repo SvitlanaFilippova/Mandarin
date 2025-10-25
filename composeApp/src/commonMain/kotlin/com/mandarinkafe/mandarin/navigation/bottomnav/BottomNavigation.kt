@@ -31,12 +31,7 @@ fun BottomNavigation(
     cartCount: Int,
     currentRoute: String?,
 ) {
-    val arrayOFItems = arrayOf(
-        BottomNavigationItem.Menu,
-        BottomNavigationItem.Favorites,
-        BottomNavigationItem.Cart,
-        BottomNavigationItem.Other,
-    )
+    val arrayOFItems = BottomNavigationItem.entries.toTypedArray()
 
     AnimatedVisibility(
         visible = visible,

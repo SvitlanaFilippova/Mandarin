@@ -17,14 +17,9 @@ sealed interface MenuContract {
 
         // Обновление данных
         data object ForceRefresh : MenuEvent
-
-        // Поиск
-        data object SearchOnOpenSearchClick : MenuEvent
     }
 
-    sealed interface MenuEffect : BaseContract.BaseEffect {
-        data class OpenSearch(val focusSearch: Boolean) : MenuEffect
-    }
+    sealed interface MenuEffect : BaseContract.BaseEffect
 
     data class MenuState(
         val isLoading: Boolean = false,

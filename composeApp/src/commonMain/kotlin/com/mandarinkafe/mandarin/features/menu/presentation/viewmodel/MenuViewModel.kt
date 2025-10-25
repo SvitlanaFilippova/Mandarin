@@ -12,7 +12,6 @@ import com.mandarinkafe.mandarin.features.menu.presentation.mappers.MenuItemMapp
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.presentation.models.extensions.getName
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEffect
-import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEffect.OpenSearch
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuState
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
@@ -43,7 +42,6 @@ class MenuViewModel(
         when (event) {
             is MenuEvent.BannerClick -> findMenuItemByBanner(event.banner)
             is MenuEvent.ResetSelectedMenuItemIndex -> resetSelectedMenuItemIndex()
-            is MenuEvent.SearchOnOpenSearchClick -> sendEffect(OpenSearch(focusSearch = true))
             is MenuEvent.ForceRefresh -> forceRefresh()
         }
     }

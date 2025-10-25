@@ -51,7 +51,6 @@ fun NavGraph(navController: NavHostController) {
         // --- ОСНОВНЫЕ ЭКРАНЫ (доступны из Bottom Navigation)---
         composable(NavConstants.MENU_SCREEN_ROUTE) {
             MenuScreen(
-                navController = navController,
                 cartViewModel = cartViewModel,
                 sharedViewModel = sharedViewModel
             )
@@ -94,8 +93,7 @@ fun NavGraph(navController: NavHostController) {
             SearchScreen(
                 focusSearchBarInput = focusInput,
                 cartViewModel = cartViewModel,
-                sharedViewModel = sharedViewModel,
-                onBackClick = { navController.popBackStack() }
+                sharedViewModel = sharedViewModel
             )
         }
 

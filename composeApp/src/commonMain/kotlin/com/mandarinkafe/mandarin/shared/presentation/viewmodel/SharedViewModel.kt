@@ -143,13 +143,16 @@ class SharedViewModel(
 
             // Сбор из Flow в отдельной корутине, ждём первого успеха
             launch {
-                getInitialDataUseCase()
-                    .filterIsInstance<Resource.Success<*>>()
-                    .first()
-                done.complete(Unit)
-
+                try {
+                    getInitialDataUseCase()
+                        .filterIsInstance<Resource.Success<*>>()
+                        .first()
+                    done.complete(Unit)
+                } catch (e: Exception) {
+                    done.complete(Unit)
+                }
             }
-            // Ждём, пока одна из двух корутин вызовет complete()
+            
             done.await()
             sendEffect(FinishSplash)
         }

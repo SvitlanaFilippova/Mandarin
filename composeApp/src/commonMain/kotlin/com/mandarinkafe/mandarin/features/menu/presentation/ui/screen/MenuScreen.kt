@@ -27,9 +27,8 @@ import androidx.navigation.NavController
 
 @Composable
 fun MenuScreen(
-    navController: NavController,
     cartViewModel: CartViewModel,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
 ) {
     val menuViewModel = rememberMenuViewModel()
     val state by menuViewModel.state.collectAsState()
@@ -50,7 +49,6 @@ fun MenuScreen(
     val onMenuEvent = menuViewModel::onEvent
     val onCartEvent = cartViewModel::onEvent
 
-    val effectFlow = menuViewModel.effect
     val sharedEffectFlow = sharedViewModel.effect
 
     val isLoading = state.isLoading
@@ -90,37 +88,26 @@ fun MenuScreen(
                     favoriteIds = favoriteIds,
                     inProgressItems = cartInProgressItems,
                     cartItems = cartItems,
-                    onAddToCart = { meal -> 
-                        onCartEvent(CartEvent.AddToCart(customizedMeal = meal.toCustomizedMeal())) 
+                    onAddToCart = { meal ->
+                        onCartEvent(CartEvent.AddToCart(customizedMeal = meal.toCustomizedMeal()))
                     },
-                    onRemoveFromCart = { meal -> 
-                        onCartEvent(CartEvent.OnReduce(meal = meal)) 
+                    onRemoveFromCart = { meal ->
+                        onCartEvent(CartEvent.OnReduce(meal = meal))
                     },
-                    onToggleFavorite = { meal -> 
-                        onSharedEvent(SharedEvent.ToggleFavorite(meal)) 
+                    onToggleFavorite = { meal ->
+                        onSharedEvent(SharedEvent.ToggleFavorite(meal))
                     },
-                    onMealDetailsClick = { meal -> 
-                        onSharedEvent(SharedEvent.OnMealDetailsClick(meal)) 
+                    onMealDetailsClick = { meal ->
+                        onSharedEvent(SharedEvent.OnMealDetailsClick(meal))
                     },
-                    onSearchClick = { 
-                        onMenuEvent(MenuEvent.SearchOnOpenSearchClick) 
-                    },
-                    onBannersClick = { 
-                        onMenuEvent(MenuEvent.BannerClick(it)) 
+                    onBannersClick = {
+                        onMenuEvent(MenuEvent.BannerClick(it))
                     },
                     bannersAreLoading = bannersAreLoading,
                     selectedMenuItemIndex = state.selectedMenuItemIndex,
                     banners = banners,
                     sharedEffectFlow = sharedEffectFlow
                 )
-            }
-        }
-
-        LaunchedEffect(effectFlow) {
-            effectFlow.collect { effect ->
-                if (effect is MenuContract.MenuEffect.OpenSearch) {
-                    navController.navigateToSearchScreen(effect.focusSearch)
-                }
             }
         }
     }

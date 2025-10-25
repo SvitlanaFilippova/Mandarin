@@ -71,6 +71,7 @@
     <string name="menu">Меню</string>
     <string name="favorite">Избранное</string>
     <string name="cart">Корзина</string>
+    <string name="search">Поиск</string>
     <string name="more_options">Ещё</string>
     <string name="order_history">История заказов</string>
     <string name="saved_addresses">Сохранённые адреса</string>

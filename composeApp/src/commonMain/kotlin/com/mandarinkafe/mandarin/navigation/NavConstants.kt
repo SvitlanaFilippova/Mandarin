@@ -1,5 +1,7 @@
 package com.mandarinkafe.mandarin.navigation
 
+import com.mandarinkafe.mandarin.navigation.bottomnav.BottomNavigationItem
+
 object NavConstants {
     // --- Keys ---
     const val KEY_MEAL_JSON = "mealJson"
@@ -31,10 +33,13 @@ object NavConstants {
     const val SEARCH_SCREEN_ROUTE = "search"
     const val ORDER_INFO_ROUTE = "order_info"
 
-    val bottomNavigationRoutes = setOf(
-        FAVORITES_SCREEN_ROUTE,
-        MENU_SCREEN_ROUTE,
-        CART_SCREEN_ROUTE,
-        MORE_MENU_SCREEN_ROUTE,
-    )
+    val bottomNavigationRoutes = getBottomNavigationRoutesFromItems()
+
+    /**
+     * Автоматически извлекает все маршруты из BottomNavigationItem
+     * Используется для синхронизации с bottomNavigationRoutes
+     */
+    fun getBottomNavigationRoutesFromItems(): Set<String> {
+        return BottomNavigationItem.entries.map { it.route }.toSet()
+    }
 }

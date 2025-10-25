@@ -37,7 +37,6 @@ fun SearchScreenContent(
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
     onToggleFavorite: (Meal) -> Unit,
-    onBackClick: () -> Unit
 ) {
     val filteredMenuItems = searchState.filteredMealList
     val latestSearchText = searchState.latestSearchText
@@ -52,12 +51,7 @@ fun SearchScreenContent(
             .background(Colors.AppBlack)
             .padding(horizontal = Dimens.MarginSmall8),
     ) {
-        ScreenTitleWithBackButton(
-            name = stringResource(MR.strings.search_in_menu),
-            onBackClick = onBackClick,
-        )
-
-        SearchBarInputField(
+         SearchBarInputField(
             query = latestSearchText,
             onQueryChange = { text ->
                 if (text.isEmpty()) {
