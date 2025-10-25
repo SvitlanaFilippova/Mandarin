@@ -63,7 +63,9 @@ fun HandleEffects(
                 is SharedEffect.FinishSplash -> {
                     navController.navigate(
                         route = NavConstants.MENU_SCREEN_ROUTE
-                    )
+                    ) {
+                        popUpTo(NavConstants.SPLASH_SCREEN_ROUTE) { inclusive = true }
+                    }
                 }
 
                 is SharedEffect.GoBackEffect -> {

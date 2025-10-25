@@ -29,10 +29,6 @@ class OrdersHistoryViewModel(
 ) : BaseViewModel<OrdersHistoryEvent, OrdersHistoryEffect, OrdersHistoryState>() {
     override fun setInitialState() = OrdersHistoryState()
 
-    init {
-        refreshData()
-    }
-
     private var observeJob: Job? = null
 
     override fun onEvent(event: OrdersHistoryEvent) {

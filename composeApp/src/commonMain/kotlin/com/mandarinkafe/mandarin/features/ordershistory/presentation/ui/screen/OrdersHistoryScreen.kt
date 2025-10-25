@@ -46,6 +46,8 @@ fun OrdersHistoryScreen(
         refreshing = state.isLoading == true,
         onRefresh = { onEvent(OrdersHistoryEvent.ForceRefresh) }
     )
+    LaunchedEffect(Unit) { onEvent(OrdersHistoryEvent.ForceRefresh) }
+
     PullRefreshLayout(
         modifier = Modifier.fillMaxSize(),
         state = pullRefreshState,
