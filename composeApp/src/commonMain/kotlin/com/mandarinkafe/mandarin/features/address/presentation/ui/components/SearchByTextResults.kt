@@ -18,6 +18,8 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.address.domain.models.AddressSearchResult
+import com.mandarinkafe.mandarin.features.map.MapCameraController
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.painterResource
@@ -31,6 +33,7 @@ fun SearchByTextResults(
     searchError: StringResource?,
     onItemClick: (AddressSearchResult) -> Unit,
     onDismiss: () -> Unit,
+    cameraController: MapCameraController? = null,
 ) {
     LazyColumn(
         modifier = modifier
@@ -67,11 +70,17 @@ fun SearchByTextResults(
             }
         }
 
-        items(data) {
+        items(data) { searchResult ->
             AddressSearchResultItem(
-                text = it.addressLineOne,
-                extraText = it.addressLineTwo,
-                onClick = { onItemClick(it) }
+                text = searchResult.addressLineOne,
+                extraText = searchResult.addressLineTwo,
+                onClick = { 
+                    // Перемещаем камеру к выбранному адресу, если есть координаты и контроллер
+                    searchResult.point?.let { point ->
+                        cameraController?.moveCamera(point, MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN)
+                    }
+                    onItemClick(searchResult) 
+                }
             )
         }
 

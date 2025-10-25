@@ -109,17 +109,5 @@ fun MapWithDeliveryAreas(
             isError = isError
         )
 
-        // Кнопка "Доставить сюда"
-        onDeliverHereClick?.let {
-            ButtonWithText(
-                modifier = Modifier
-                    .padding(Dimens.MarginBig24)
-                    .align(Alignment.BottomCenter),
-                shouldBeActive = locationChosen,
-                text = stringResource(MR.strings.deliver_to_this_location),
-                onClick = onDeliverHereClick
-            )
-        }
-
     }
 }

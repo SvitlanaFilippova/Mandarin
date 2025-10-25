@@ -176,7 +176,7 @@ class AddressViewModel(
 
     private fun fetchAddress(point: GeoPoint) {
         viewModelScope.launch {
-//            searchInteractor.getAddressByPoint(point)
+           searchInteractor.getAddressByPoint(point)
         }
     }
 
@@ -187,7 +187,7 @@ class AddressViewModel(
                     is Resource.Loading -> setLoading()
                     is Resource.Success -> {
                         val address = result.data
-                        address?.let {
+                        if (address != null) {
                             setState {
                                 copy(
                                     displayAddress = address.addressSingleLine.take(
@@ -195,6 +195,14 @@ class AddressViewModel(
                                     ),
                                     fetchAddressInProgress = false,
                                     error = null,
+                                )
+                            }
+                        } else {
+                            setState {
+                                copy(
+                                    error = "Не удалось определить адрес",
+                                    fetchAddressInProgress = false,
+                                    displayAddress = null
                                 )
                             }
                         }
