@@ -61,7 +61,7 @@ class OrderRepositoryImpl(
                 comment = comment,
                 customer = CustomerDto(
                     name = name,
-                    type = OrderConstants.CUSTOMER_TYPE_ONE_TIME
+                    type = OrderConstants.CUSTOMER_TYPE_REGULAR
                 ),
                 items = orderItems,
                 payments = null,

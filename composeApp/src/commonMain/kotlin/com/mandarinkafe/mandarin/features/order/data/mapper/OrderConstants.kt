@@ -5,6 +5,7 @@ object OrderConstants {
     const val DELIVERY_TYPE_DELIVERY = "DeliveryByCourier"
     const val DELIVERY_TYPE_PICKUP = "DeliveryByClient"
     const val CUSTOMER_TYPE_ONE_TIME = "one-time"
+    const val CUSTOMER_TYPE_REGULAR = "regular"
     const val ADDRESS_TYPE_LEGACY = "legacy"
     const val DISCOUNT_TYPE_RMS = "RMS"
     const val PAYMENT_CASH_CODE = "CASH"
