@@ -20,12 +20,13 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun AppTopBar(
+    modifier: Modifier= Modifier,
     onEvent: (SharedEvent) -> Unit,
     showAppBar: Boolean,
 ) {
     if (showAppBar) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .height(Dimens.ToolbarHeadHeight40)
         ) {

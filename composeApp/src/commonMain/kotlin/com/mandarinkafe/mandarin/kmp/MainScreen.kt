@@ -57,10 +57,10 @@ fun MainScreen(
         val showTopBar = !isSplash && sharedState.shouldShowTopBar
         val onEvent = sharedViewModel::onEvent
         val selectedMeal = sharedState.selectedMealForFavoriteChoice
-        val isInnerScreen = currentRoute?.let { route -> 
+        val isInnerScreen = currentRoute?.let { route ->
             // Извлекаем базовый маршрут без параметров
             val baseRoute = route.substringBefore("?")
-            baseRoute !in bottomNavigationRoutes 
+            baseRoute !in bottomNavigationRoutes
         } == true
         val showBottomBar = !isSplash && !isInnerScreen
 
@@ -77,12 +77,12 @@ fun MainScreen(
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.statusBars)
                 .imePadding(),
-
             snackbarHost = { CustomSnackbarHost(snackbarHostState) },
             topBar = {
                 AppTopBar(
+                    modifier = Modifier
+                        .windowInsetsPadding(WindowInsets.statusBars),
                     showAppBar = showTopBar,
                     onEvent = onEvent,
                 )
