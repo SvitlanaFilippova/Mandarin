@@ -15,6 +15,7 @@ import com.mandarinkafe.mandarin.features.ordershistory.domain.impl.SaveOrderToH
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryViewModel
 import com.mandarinkafe.mandarin.shared.database.AppDatabase
 import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
