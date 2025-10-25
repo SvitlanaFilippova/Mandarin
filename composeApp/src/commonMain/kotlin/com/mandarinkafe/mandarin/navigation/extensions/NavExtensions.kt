@@ -127,7 +127,6 @@ fun NavController.navigateToOrderInfo(
         navigate(
             route,
             navOptions {
-                launchSingleTop = true
                 popUpTo(CART_SCREEN_ROUTE) {
                     inclusive = true
                 }

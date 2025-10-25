@@ -12,6 +12,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.GetOrderStatusUs
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.RepeatOrderInteractorImpl
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
 import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -27,7 +28,7 @@ val orderInfoModule = module {
     singleOf(::RepeatOrderInteractorImpl) { bind<RepeatOrderInteractor>() }
 
     // --- ViewModel ---
-    singleOf(::OrderInfoViewModel)
+    factoryOf(::OrderInfoViewModel)
 
 }
 

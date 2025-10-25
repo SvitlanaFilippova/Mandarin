@@ -36,8 +36,8 @@ fun OrderInfoScreen(
     sharedViewModel: SharedViewModel,
     navController: NavController,
 ) {
-    val viewModel = rememberOrderInfoViewModel()
     if (orderID == null) return
+    val viewModel = rememberOrderInfoViewModel()
 
     val onEvent = viewModel::onEvent
     val state by viewModel.state.collectAsState()
@@ -47,7 +47,7 @@ fun OrderInfoScreen(
     val someItemsUnavailableText = stringResource(MR.strings.some_items_unavailable)
     val allItemsAddedText = stringResource(MR.strings.all_items_added_to_cart)
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(orderID) {
         onEvent(OrderInfoEvent.SetInitId(orderID))
     }
     val pullRefreshState = rememberPullRefreshState(
@@ -76,7 +76,6 @@ fun OrderInfoScreen(
             } ?: stringResource(MR.strings.order_info_screen_title)
             ScreenTitleWithBackButton(
                 name = title,
-                showBackButton = !fromOrderCreation,
                 onBackClick = { navController.popBackStack() }
             )
 
