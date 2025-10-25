@@ -46,7 +46,7 @@ fun SearchByTextResults(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .size(Dimens.MarginForCartButton72),
+                        .size(Dimens.AddressSearchResultsHeight),
                     contentAlignment = Alignment.Center
                 ) {
                     if (isLoading) {

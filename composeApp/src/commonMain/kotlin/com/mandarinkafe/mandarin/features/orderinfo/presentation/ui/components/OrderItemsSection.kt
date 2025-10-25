@@ -25,7 +25,6 @@ import dev.icerock.moko.resources.compose.stringResource
 fun OrderItemsSection(
     items: List<IncomingOrderItem>,
     sum: Double?,
-    processedPaymentsSum: Double?,
     discountName: String?,
     onOpenMealDetails: (String) -> Unit,
     showNoLongerInMenuMessage: () -> Unit,
@@ -87,29 +86,6 @@ fun OrderItemsSection(
                     )
                 }
             }
-
-            processedPaymentsSum?.let {
-                if (it > 0) {
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(MR.strings.label_paid),
-                            style = Typography.RegularTextStyle
-                        )
-                        Text(
-                            text = stringResource(
-                                MR.strings.float_price_template,
-                                it.toFloat()
-                            ),
-                            style = Typography.RegularTextStyle
-                        )
-                    }
-                }
-            }
-
         }
     }
 }

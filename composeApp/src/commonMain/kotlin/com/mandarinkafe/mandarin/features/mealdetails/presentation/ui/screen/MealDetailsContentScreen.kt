@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -93,8 +94,9 @@ fun MealDetailsContentScreen(
                 comment = comment,
                 imeVisible = imeVisible,
                 bottomContent = {
-                    if (imeVisible) {
+                    Box(modifier = Modifier.height(Dimens.MarginForCartButton)) {
                         ToCartButton(
+                            modifier = Modifier.align(Alignment.BottomCenter),
                             totalPrice = customizedMeal.totalPrice(),
                             onRequestAddMeal = onRequestAddMeal,
                             shouldBeActive = toCartShouldBeActive,

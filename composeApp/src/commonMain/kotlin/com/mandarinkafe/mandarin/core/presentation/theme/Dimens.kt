@@ -33,7 +33,8 @@ object Dimens {
     val MarginSuperSmall2 = 2.dp
     val MarginBig24 = 24.dp
     val MarginBig32 = 32.dp
-    val MarginForCartButton72 = 72.dp
+    val MarginForCartButton = 72.dp
+    val AddressSearchResultsHeight =  72.dp
     val MarginSuperHugeForCheckoutButton = 200.dp
     val BSMarginForStatusBar40 = 40.dp
     val ModifierRowHeight48 = 48.dp

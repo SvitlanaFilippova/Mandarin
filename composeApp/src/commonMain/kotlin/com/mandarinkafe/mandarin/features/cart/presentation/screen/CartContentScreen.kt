@@ -151,7 +151,7 @@ fun CartContentScreen(
 
                 // Отступ для кнопки "Оформить заказ"
                 if (!ifCartIsEmpty && !imeVisible) {
-                    item { Spacer(modifier = Modifier.height(Dimens.MarginForCartButton72)) }
+                    item { Spacer(modifier = Modifier.height(Dimens.MarginForCartButton)) }
                 }
             }
 
