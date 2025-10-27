@@ -1,12 +1,15 @@
 package com.mandarinkafe.mandarin.features.more.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.BuildConfig
 import com.mandarinkafe.mandarin.core.domain.api.MenuMetaCache
+import com.mandarinkafe.mandarin.shared.device.AppVersionProvider
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import kotlinx.coroutines.launch
 
-class AboutViewModel(private val menuMetaCache: MenuMetaCache) :
+class AboutViewModel(
+    private val menuMetaCache: MenuMetaCache,
+    private val appVersionProvider: AppVersionProvider
+) :
     BaseViewModel<AboutContract.AboutEvent, AboutContract.AboutEffect, AboutContract.AboutState>() {
     init {
         getInitData()
@@ -19,7 +22,7 @@ class AboutViewModel(private val menuMetaCache: MenuMetaCache) :
             menuMetaCache.metaFlow.collect { meta ->
                 setState {
                     copy(
-                        versionName = BuildConfig.VERSION_NAME,
+                        versionName = appVersionProvider.getVersionName(),
                         lastUpdated = meta?.lastUpdated,
                         revision = meta?.revision
                     )

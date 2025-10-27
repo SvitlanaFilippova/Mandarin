@@ -213,3 +213,28 @@ tasks.register("packForXcode") {
     dependsOn("linkDebugFrameworkIosSimulatorArm64")
     dependsOn("linkReleaseFrameworkIosArm64")
 }
+
+// Update iOS version from gradle
+tasks.register("updateIOSVersion") {
+    group = "build"
+    
+    doLast {
+        val configFile = file("${rootProject.projectDir}/iosApp/Configuration/Config.xcconfig")
+        val versionName = libs.versions.versionName.get()
+        val versionCode = libs.versions.versionCode.get()
+        
+        val content = configFile.readText()
+        val updated = content
+            .replace(Regex("MARKETING_VERSION=(.*)"), "MARKETING_VERSION=$versionName")
+            .replace(Regex("CURRENT_PROJECT_VERSION=(.*)"), "CURRENT_PROJECT_VERSION=$versionCode")
+        
+        configFile.writeText(updated)
+        
+        println("✅ Updated iOS version: MARKETING_VERSION=$versionName, CURRENT_PROJECT_VERSION=$versionCode")
+    }
+}
+
+// Make packForXcode depend on version update
+tasks.named("packForXcode") {
+    dependsOn("updateIOSVersion")
+}
