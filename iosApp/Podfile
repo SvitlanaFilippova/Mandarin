@@ -4,4 +4,5 @@ use_frameworks!
 
 target 'iosApp' do
 pod 'YandexMapsMobile', '4.25.0-full'
+pod 'composeAppKit', :path => '../composeApp'
 end

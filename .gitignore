@@ -64,3 +64,5 @@ DerivedData/
 /app/release/output-metadata.json
 /tombstone_31
 /iosApp/Pods/
+/composeApp/composeApp.podspec
+/.kotlin/metadata/*
