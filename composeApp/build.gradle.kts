@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.kotlinCocoapods)
-    id("com.android.library")
+    id("com.android.application")
     id("dev.icerock.mobile.multiplatform-resources")
     id("com.codingfeline.buildkonfig") version "0.17.1"
 }
@@ -178,14 +178,14 @@ android {
     namespace = "com.mandarinkafe.mandarin.shared"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
-//    defaultConfig {
-//        applicationId = "com.mandarinkafe.mandarin.shared"
-//        minSdk = libs.versions.minSdk.get().toInt()
-//        targetSdk = libs.versions.targetSdk.get().toInt()
-//        versionCode = libs.versions.versionCode.get().toInt()
-//        versionName = libs.versions.versionName.get()
-//        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-//    }
+    defaultConfig {
+        applicationId = "com.mandarinkafe.mandarin.shared"
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionCode = libs.versions.versionCode.get().toInt()
+        versionName = libs.versions.versionName.get()
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
