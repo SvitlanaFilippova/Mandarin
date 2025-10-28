@@ -31,6 +31,7 @@ kotlin {
 
         pod("YandexMapsMobile") { version = "4.24.0-lite" }
     }
+    
     val xcfName = "composeAppKit"
     val yandexMapsXcframework = file("${project.rootDir}/iosApp/Pods/YandexMapsMobile/YandexMapsMobile.xcframework")
     

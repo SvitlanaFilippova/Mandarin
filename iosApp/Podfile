@@ -7,3 +7,13 @@ target 'iosApp' do
 pod 'YandexMapsMobile', '4.24.0-lite'
 pod 'composeApp', :path => '../composeApp'
 end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    if target.name == 'composeApp'
+      target.build_configurations.each do |config|
+        config.build_settings['OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED'] = 'YES'
+      end
+    end
+  end
+end
