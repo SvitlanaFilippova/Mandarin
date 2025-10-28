@@ -29,7 +29,7 @@ kotlin {
             isStatic = false
         }
 
-        pod("YandexMapsMobile") { version = "4.24.0-lite" }
+        pod("YandexMapsMobile") { version = "4.25.0-full" }
     }
     
     val xcfName = "composeAppKit"
@@ -87,9 +87,9 @@ kotlin {
                 api(compose.animation)
 
                 // KMP-wrapper for Yandex MapKit
-                implementation(libs.yandex.mapkit.kmp)
-                implementation(libs.yandex.mapkit.kmp.compose)
-                implementation(libs.yandex.mapkit.kmp.moko.compose)
+//                implementation(libs.yandex.mapkit.kmp)
+//                implementation(libs.yandex.mapkit.kmp.compose)
+//                implementation(libs.yandex.mapkit.kmp.moko.compose)
 
                 // Multiplatfrom ViewModel, Runtime
                 implementation(libs.jetbrains.lifecycle.viewmodel)

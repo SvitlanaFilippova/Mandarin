@@ -4,7 +4,7 @@ use_frameworks!
 use_modular_headers!
 
 target 'iosApp' do
-pod 'YandexMapsMobile', '4.24.0-lite'
+pod 'YandexMapsMobile', '4.25.0-full'
 pod 'composeApp', :path => '../composeApp'
 end
 
