@@ -42,6 +42,7 @@ coreVersion = "1.7.0"
 datastore = "1.1.7"
 pullrefresh = "1.4.0-beta03"
 urlencoderLib = "1.6.0"
+yandexMapkitKmp = "0.4.1"
 
 
 [libraries]
@@ -138,6 +139,11 @@ urlencoder-lib = { module = "net.thauvin.erik.urlencoder:urlencoder-lib", versio
 
 #  Pull to refresh
 materii-pullrefresh = { group = "dev.materii.pullrefresh", name = "pullrefresh", version.ref = "pullrefresh" }
+
+#  kmp-wrapper for Yandex MapKit
+yandex-mapkit-kmp = { module = "ru.sulgik.mapkit:yandex-mapkit-kmp", version.ref = "yandexMapkitKmp" }
+yandex-mapkit-kmp-compose = { module = "ru.sulgik.mapkit:yandex-mapkit-kmp-compose", version.ref = "yandexMapkitKmp" }
+yandex-mapkit-kmp-moko-compose = { module = "ru.sulgik.mapkit:yandex-mapkit-kmp-moko-compose", version.ref = "yandexMapkitKmp" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

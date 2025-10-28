@@ -1,8 +1,9 @@
-platform :ios, '15.0'
+platform :ios, '16.0'
 
 use_frameworks!
+use_modular_headers!
 
 target 'iosApp' do
-pod 'YandexMapsMobile', '4.25.0-full'
-pod 'composeAppKit', :path => '../composeApp'
+pod 'YandexMapsMobile', '4.24.0-lite'
+pod 'composeApp', :path => '../composeApp'
 end
