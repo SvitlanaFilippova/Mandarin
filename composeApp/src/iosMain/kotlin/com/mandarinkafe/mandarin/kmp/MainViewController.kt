@@ -22,7 +22,6 @@ fun MainViewController() = ComposeUIViewController {
     // Инициализируем Napier
     Napier.base(DebugAntilog())
 
-    // TODO добавить инициализацию Mapkit SDK
 
     androidx.compose.foundation.layout.Box(
         modifier = Modifier

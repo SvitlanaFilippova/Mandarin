@@ -63,3 +63,4 @@ DerivedData/
 /app/release/app-release.aab
 /app/release/output-metadata.json
 /tombstone_31
+/iosApp/Pods/

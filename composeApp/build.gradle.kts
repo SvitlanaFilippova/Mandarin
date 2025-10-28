@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.jetbrains.kotlin.serialization)
+    alias(libs.plugins.kotlinCocoapods)
     id("com.android.application")
     id("dev.icerock.mobile.multiplatform-resources")
     id("com.codingfeline.buildkonfig") version "0.17.1"
@@ -18,6 +19,16 @@ kotlin {
 
     androidTarget()
 
+    cocoapods {
+        version = "1.0"
+        summary = "Shared code for Mandarin"
+        homepage = "https://example.com"
+
+        framework {
+            baseName = "composeAppKit"
+            isStatic = false
+        }
+    }
     val xcfName = "composeAppKit"
 
     iosX64 {

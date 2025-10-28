@@ -15,5 +15,5 @@ actual fun MapDeliveryScreenContent(
     onCameraMoved: (GeoPoint) -> Unit,
     locationChosen: Boolean
 ) {
-    // TODO реализовать по примеру androidMain, но с использованием  SDK MapKit for Ios
+    // TODO реализовать по примеру androidMain, но с использованием  Apple MapKit
 }

@@ -1,0 +1,7 @@
+platform :ios, '15.0'
+
+use_frameworks!
+
+target 'iosApp' do
+pod 'YandexMapsMobile', '4.25.0-full'
+end
