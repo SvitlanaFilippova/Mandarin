@@ -42,7 +42,8 @@ kotlin {
         binaries.all {
             linkerOpts.addAll(listOf(
                 "-F${yandexMapsXcframework.absolutePath}/ios-x86_64_arm64-simulator",
-                "-framework", "YandexMapsMobile"
+                "-framework", "YandexMapsMobile",
+                "-framework", "SystemConfiguration"
             ))
         }
     }
@@ -54,7 +55,8 @@ kotlin {
         binaries.all {
             linkerOpts.addAll(listOf(
                 "-F${yandexMapsXcframework.absolutePath}/ios-arm64",
-                "-framework", "YandexMapsMobile"
+                "-framework", "YandexMapsMobile",
+                "-framework", "SystemConfiguration"
             ))
         }
     }
@@ -66,7 +68,8 @@ kotlin {
         binaries.all {
             linkerOpts.addAll(listOf(
                 "-F${yandexMapsXcframework.absolutePath}/ios-x86_64_arm64-simulator",
-                "-framework", "YandexMapsMobile"
+                "-framework", "YandexMapsMobile",
+                "-framework", "SystemConfiguration"
             ))
         }
     }
@@ -85,8 +88,8 @@ kotlin {
 
                 // KMP-wrapper for Yandex MapKit
                 implementation(libs.yandex.mapkit.kmp)
-//                implementation(libs.yandex.mapkit.kmp.compose)
-//                implementation(libs.yandex.mapkit.kmp.moko.compose)
+                implementation(libs.yandex.mapkit.kmp.compose)
+                implementation(libs.yandex.mapkit.kmp.moko.compose)
 
                 // Multiplatfrom ViewModel, Runtime
                 implementation(libs.jetbrains.lifecycle.viewmodel)

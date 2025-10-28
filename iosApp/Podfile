@@ -16,4 +16,34 @@ post_install do |installer|
       end
     end
   end
+  
+  # Исправление для Pods-iosApp-frameworks.sh
+  pods_target = installer.pods_project.targets.find { |t| t.name == 'Pods-iosApp' }
+  if pods_target
+    frameworks_script_path = File.join(installer.sandbox.target_support_files_dir('Pods-iosApp'), 'Pods-iosApp-frameworks.sh')
+    if File.exist?(frameworks_script_path)
+      script_content = File.read(frameworks_script_path)
+      
+      # Если правка еще не применена
+      unless script_content.include?('if [ -z "${source:-}" ]; then')
+        script_content.gsub!(
+          /if \[ -n "\$\{source:-}" \] && \[ -L "\$\{source\}" \]; then\n    echo "Symlinked\.\.\."\n    source="\$\(readlink -f "\$\{source\}"\)"\n  fi\n\n  if \[ -d "\$\{source\}\/BCSYMBOLMAP_DIR}" \]; then/,
+          'if [ -n "${source:-}" ] && [ -L "${source}" ]; then
+    echo "Symlinked..."
+    source="$(readlink -f "${source}")"
+  fi
+
+  if [ -z "${source:-}" ]; then
+    echo "warning: Could not find source for framework $1"
+    return
+  fi
+
+  if [ -d "${source}/${BCSYMBOLMAP_DIR}" ]; then'
+        )
+        
+        File.write(frameworks_script_path, script_content)
+        puts "✓ Исправление применено к Pods-iosApp-frameworks.sh"
+      end
+    end
+  end
 end
