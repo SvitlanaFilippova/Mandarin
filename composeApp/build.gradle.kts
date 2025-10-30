@@ -16,7 +16,11 @@ plugins {
 }
 
 kotlin {
+
     androidTarget()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     cocoapods {
         version = "1.0"
@@ -25,60 +29,17 @@ kotlin {
         ios.deploymentTarget = "16.0"
 
         framework {
-            baseName = "composeAppKit"
+            baseName = "composeApp"
             isStatic = true
         }
 
-        pod("YandexMapsMobile") { version = "4.25.0-full" }
-
-        // Ensure the generated Podspec links required system libraries
-        extraSpecAttributes["libraries"] = "c++, sqlite3"
-    }
-    
-    val xcfName = "composeAppKit"
-    val yandexMapsXcframework = file("${project.rootDir}/iosApp/Pods/YandexMapsMobile/YandexMapsMobile.xcframework")
-    
-    iosX64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-        binaries.all {
-            linkerOpts.addAll(listOf(
-                "-F${yandexMapsXcframework.absolutePath}/ios-x86_64_arm64-simulator",
-                "-framework", "YandexMapsMobile",
-                "-framework", "SystemConfiguration",
-                "-lsqlite3"
-            ))
+        pod("YandexMapsMobile") {
+            version = "4.25.0-full"
+            packageName = "YandexMapKit"
         }
     }
 
-    iosArm64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-        binaries.all {
-            linkerOpts.addAll(listOf(
-                "-F${yandexMapsXcframework.absolutePath}/ios-arm64",
-                "-framework", "YandexMapsMobile",
-                "-framework", "SystemConfiguration",
-                "-lsqlite3"
-            ))
-        }
-    }
 
-    iosSimulatorArm64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-        binaries.all {
-            linkerOpts.addAll(listOf(
-                "-F${yandexMapsXcframework.absolutePath}/ios-x86_64_arm64-simulator",
-                "-framework", "YandexMapsMobile",
-                "-framework", "SystemConfiguration",
-                "-lsqlite3"
-            ))
-        }
-    }
 
     sourceSets {
         commonMain {
@@ -91,11 +52,6 @@ kotlin {
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
                 api(compose.animation)
-
-                // KMP-wrapper for Yandex MapKit
-//                implementation(libs.yandex.mapkit.kmp)
-//                implementation(libs.yandex.mapkit.kmp.compose)
-//                implementation(libs.yandex.mapkit.kmp.moko.compose)
 
                 // Multiplatfrom ViewModel, Runtime
                 implementation(libs.jetbrains.lifecycle.viewmodel)
@@ -263,26 +219,21 @@ tasks.register("packForXcode") {
 
 // Update iOS version from gradle
 tasks.register("updateIOSVersion") {
+    group = "build"
+    
     doLast {
-        group = "build"
-
-        doLast {
-            val configFile = file("${rootProject.projectDir}/iosApp/Configuration/Config.xcconfig")
-            val versionName = libs.versions.versionName.get()
-            val versionCode = libs.versions.versionCode.get()
-
-            val content = configFile.readText()
-            val updated = content
-                .replace(Regex("MARKETING_VERSION=(.*)"), "MARKETING_VERSION=$versionName")
-                .replace(
-                    Regex("CURRENT_PROJECT_VERSION=(.*)"),
-                    "CURRENT_PROJECT_VERSION=$versionCode"
-                )
-
-            configFile.writeText(updated)
-
-            println("✅ Updated iOS version: MARKETING_VERSION=$versionName, CURRENT_PROJECT_VERSION=$versionCode")
-        }
+        val configFile = file("${rootProject.projectDir}/iosApp/Configuration/Config.xcconfig")
+        val versionName = libs.versions.versionName.get()
+        val versionCode = libs.versions.versionCode.get()
+        
+        val content = configFile.readText()
+        val updated = content
+            .replace(Regex("MARKETING_VERSION=(.*)"), "MARKETING_VERSION=$versionName")
+            .replace(Regex("CURRENT_PROJECT_VERSION=(.*)"), "CURRENT_PROJECT_VERSION=$versionCode")
+        
+        configFile.writeText(updated)
+        
+        println("✅ Updated iOS version: MARKETING_VERSION=$versionName, CURRENT_PROJECT_VERSION=$versionCode")
     }
 }
 

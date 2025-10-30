@@ -1,47 +1,50 @@
 platform :ios, '16.0'
 
-use_frameworks!
-use_modular_headers!
+use_frameworks! :linkage => :static
 
 target 'iosApp' do
+pod 'YandexMapsMobile', '4.25.0-full'
 pod 'composeApp', :path => '../composeApp'
 end
 
 post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    if target.name == 'composeApp'
-      target.build_configurations.each do |config|
-        config.build_settings.delete('OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED')
+  installer.pods_project.targets.each do |t|
+    if t.name == 'composeApp'
+      t.build_configurations.each do |c|
+        c.build_settings.delete('OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED')
       end
-    end
-  end
-  
-  # Исправление для Pods-iosApp-frameworks.sh
-  pods_target = installer.pods_project.targets.find { |t| t.name == 'Pods-iosApp' }
-  if pods_target
-    frameworks_script_path = File.join(installer.sandbox.target_support_files_dir('Pods-iosApp'), 'Pods-iosApp-frameworks.sh')
-    if File.exist?(frameworks_script_path)
-      script_content = File.read(frameworks_script_path)
-      
-      # Если правка еще не применена
-      unless script_content.include?('if [ -z "${source:-}" ]; then')
-        script_content.gsub!(
-          /if \[ -n "\$\{source:-}" \] && \[ -L "\$\{source\}" \]; then\n    echo "Symlinked\.\.\."\n    source="\$\(readlink -f "\$\{source\}"\)"\n  fi\n\n  if \[ -d "\$\{source\}\/BCSYMBOLMAP_DIR}" \]; then/,
-          'if [ -n "${source:-}" ] && [ -L "${source}" ]; then
-    echo "Symlinked..."
-    source="$(readlink -f "${source}")"
-  fi
+      t.shell_script_build_phases.each do |phase|
+        if phase.name&.include?('Build composeApp')
+          phase.shell_script = <<~'SCRIPT'
+            if [ "YES" = "$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED" ]; then
+              echo "Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED=YES"
+              exit 0
+            fi
+            set -exo pipefail
+            REPO_ROOT="$PODS_TARGET_SRCROOT"
 
-  if [ -z "${source:-}" ]; then
-    echo "warning: Could not find source for framework $1"
-    return
-  fi
+            export ARCHS="${ARCHS:-}"
+            export CONFIGURATION="${CONFIGURATION:-Debug}"
+            export PODS_ROOT="${PODS_ROOT:-}"
+            export BUILT_PRODUCTS_DIR="${BUILT_PRODUCTS_DIR:-}"
+            export CONFIGURATION_BUILD_DIR="${CONFIGURATION_BUILD_DIR:-$BUILT_PRODUCTS_DIR}"
+            # Ensure compatible JDK (Gradle/Kotlin tooling fails on Java 25)
+            export JAVA_HOME="${JAVA_HOME:-/Applications/Android Studio.app/Contents/jbr/Contents/Home}"
+            export PATH="$JAVA_HOME/bin:$PATH"
 
-  if [ -d "${source}/${BCSYMBOLMAP_DIR}" ]; then'
-        )
-        
-        File.write(frameworks_script_path, script_content)
-        puts "✓ Исправление применено к Pods-iosApp-frameworks.sh"
+            "$REPO_ROOT/../gradlew" -p "$REPO_ROOT" $KOTLIN_PROJECT_PATH:syncFramework \
+              -Pkotlin.native.cocoapods.platform=$PLATFORM_NAME \
+              -Pkotlin.native.cocoapods.archs="$ARCHS" \
+              -Pkotlin.native.cocoapods.configuration="$CONFIGURATION" \
+              -Pmoko.resources.PLATFORM_NAME="$PLATFORM_NAME" \
+              -Pmoko.resources.CONFIGURATION="$CONFIGURATION" \
+              -Pmoko.resources.ARCHS="$ARCHS" \
+              -Pmoko.resources.BUILT_PRODUCTS_DIR="$BUILT_PRODUCTS_DIR" \
+              -Pmoko.resources.CONTENTS_FOLDER_PATH="$CONFIGURATION_BUILD_DIR" \
+              -Pmoko.resources.PODS_ROOT="$PODS_ROOT" \
+              --info --stacktrace
+          SCRIPT
+        end
       end
     end
   end
