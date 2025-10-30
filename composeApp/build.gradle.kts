@@ -18,36 +18,28 @@ plugins {
 kotlin {
 
     androidTarget()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     cocoapods {
         version = "1.0"
         summary = "Shared code for Mandarin"
         homepage = "https://example.com"
+        ios.deploymentTarget = "16.0"
 
         framework {
-            baseName = "composeAppKit"
-            isStatic = false
+            baseName = "composeApp"
+            isStatic = true
         }
-    }
-    val xcfName = "composeAppKit"
 
-    iosX64 {
-        binaries.framework {
-            baseName = xcfName
+        pod("YandexMapsMobile") {
+            version = "4.25.0-full"
+            packageName = "YandexMapKit"
         }
     }
 
-    iosArm64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-    }
 
-    iosSimulatorArm64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-    }
 
     sourceSets {
         commonMain {
