@@ -26,10 +26,13 @@ kotlin {
 
         framework {
             baseName = "composeAppKit"
-            isStatic = false
+            isStatic = true
         }
 
         pod("YandexMapsMobile") { version = "4.25.0-full" }
+
+        // Ensure the generated Podspec links required system libraries
+        extraSpecAttributes["libraries"] = "c++, sqlite3"
     }
     
     val xcfName = "composeAppKit"
@@ -43,7 +46,8 @@ kotlin {
             linkerOpts.addAll(listOf(
                 "-F${yandexMapsXcframework.absolutePath}/ios-x86_64_arm64-simulator",
                 "-framework", "YandexMapsMobile",
-                "-framework", "SystemConfiguration"
+                "-framework", "SystemConfiguration",
+                "-lsqlite3"
             ))
         }
     }
@@ -56,7 +60,8 @@ kotlin {
             linkerOpts.addAll(listOf(
                 "-F${yandexMapsXcframework.absolutePath}/ios-arm64",
                 "-framework", "YandexMapsMobile",
-                "-framework", "SystemConfiguration"
+                "-framework", "SystemConfiguration",
+                "-lsqlite3"
             ))
         }
     }
@@ -69,7 +74,8 @@ kotlin {
             linkerOpts.addAll(listOf(
                 "-F${yandexMapsXcframework.absolutePath}/ios-x86_64_arm64-simulator",
                 "-framework", "YandexMapsMobile",
-                "-framework", "SystemConfiguration"
+                "-framework", "SystemConfiguration",
+                "-lsqlite3"
             ))
         }
     }

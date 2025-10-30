@@ -5,7 +5,6 @@ PODS:
 
 DEPENDENCIES:
   - composeApp (from `../composeApp`)
-  - YandexMapsMobile (= 4.25.0-full)
 
 SPEC REPOS:
   trunk:
@@ -16,9 +15,9 @@ EXTERNAL SOURCES:
     :path: "../composeApp"
 
 SPEC CHECKSUMS:
-  composeApp: 7b0407fe4502ca9667d0fa52555c2c24ed1b137d
+  composeApp: b2020eb3e7c6b4566167a3b3b388fac5440b6478
   YandexMapsMobile: cce1234188709e580cf7f27612ec3267699ab046
 
-PODFILE CHECKSUM: 3e7bb6c9fa7723c78147ee6e5ce900779dc7ef0e
+PODFILE CHECKSUM: cf92d93dbbaab3863e1c8da92c0530ad465ae580
 
 COCOAPODS: 1.16.2
