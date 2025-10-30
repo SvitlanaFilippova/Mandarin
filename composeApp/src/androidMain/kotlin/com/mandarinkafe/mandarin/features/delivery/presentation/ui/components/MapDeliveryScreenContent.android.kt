@@ -31,13 +31,17 @@ actual fun MapDeliveryScreenContent(
     isError: Boolean,
     initLocation: GeoPoint,
     onCameraMoved: (GeoPoint) -> Unit,
-    locationChosen: Boolean
+    locationChosen: Boolean,
 ) {
     var mapView by remember { mutableStateOf<MapView?>(null) }
     val initLocationYandex = initLocation.toYandexPoint()
 
     LaunchedEffect(initLocation, mapView) {
-        moveCamera(initLocationYandex, mapView, MAP_DEFAULT_ZOOM_FOR_DELIVERY_SCREEN)
+        moveCamera(
+            point = initLocationYandex,
+            mapView = mapView,
+            zoom = MAP_DEFAULT_ZOOM_FOR_DELIVERY_SCREEN
+        )
     }
 
     Box(

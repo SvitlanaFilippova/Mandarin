@@ -36,7 +36,7 @@ object Mapper {
         if (fullAddress.isBlank()) {
             try {
                 val attr = attributionMap
-                if (attr != null && attr.isNotEmpty()) {
+                if (attr.isNotEmpty()) {
                     // берем первый value как запасной адрес
                     val firstValue = attr.values.firstOrNull()?.toString()
                     if (!firstValue.isNullOrBlank()) fullAddress = firstValue

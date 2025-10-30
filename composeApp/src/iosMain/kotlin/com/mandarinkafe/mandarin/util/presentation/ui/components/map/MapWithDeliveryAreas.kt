@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components.map
 
+import YandexMapKit.*
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -16,26 +17,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.viewinterop.AndroidView
-import com.mandarinkafe.mandarin.MR
+import androidx.compose.ui.viewinterop.UIKitView
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.presentation.ui.models.UiDeliveryArea
-import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
-import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraListener
-import com.yandex.mapkit.mapview.MapView
-import dev.icerock.moko.resources.compose.stringResource
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.readValue
+import platform.CoreGraphics.CGRectZero
+import platform.darwin.NSObject
 
+@OptIn(ExperimentalForeignApi::class)
 @Composable
 fun MapWithDeliveryAreas(
-    mapView: MapView?,
+    mapView: YMKMapView?,
     deliveryAreas: List<UiDeliveryArea>,
     displayAddress: String?,
     deliveryArea: UiDeliveryArea?,
     isLoading: Boolean,
-    onMapReady: (MapView) -> Unit,
     isError: Boolean,
-    onCameraMoved: (Point) -> Unit,
+    initLocation: YMKPoint,
+    onCameraMoved: (YMKPoint) -> Unit,
+    onMapReady: (YMKMapView) -> Unit,
     locationChosen: Boolean,
     onBackToInitLocationClick: (() -> Unit)?,
     onBackToUserLocationClick: (() -> Unit)? = null,
@@ -43,9 +45,16 @@ fun MapWithDeliveryAreas(
     val didCallOnMapReady = remember { mutableStateOf(false) }
 
     val cameraListener = remember {
-        CameraListener { _, cameraPosition, _, finished ->
-            if (finished) {
-                onCameraMoved(cameraPosition.target)
+        object : NSObject(), YMKMapCameraListenerProtocol {
+            override fun onCameraPositionChangedWithMap(
+                map: YMKMap,
+                cameraPosition: YMKCameraPosition,
+                cameraUpdateReason: YMKCameraUpdateReason,
+                finished: Boolean,
+            ) {
+                if (finished) {
+                    onCameraMoved(cameraPosition.target)
+                }
             }
         }
     }
@@ -59,7 +68,7 @@ fun MapWithDeliveryAreas(
 
     // Добавляем слушатель камеры
     LaunchedEffect(mapView) {
-        mapView?.mapWindow?.map?.addCameraListener(cameraListener)
+        mapView?.mapWindow?.map?.addCameraListenerWithCameraListener(cameraListener)
     }
 
     Box(
@@ -68,17 +77,28 @@ fun MapWithDeliveryAreas(
             .padding(top = Dimens.MarginSmall8)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
     ) {
-        AndroidView(
+
+        UIKitView(
             modifier = Modifier.fillMaxSize(),
-            factory = { context ->
-                CustomMapView(context)
+            factory = {
+                MapContainerView(frame = CGRectZero.readValue()).apply {
+                    moveCamera(
+                        mapView = this.mapView,
+                        point = initLocation,
+                        zoom = MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN
+                    )
+                }
+            },
+            update = { view ->
+                if (!didCallOnMapReady.value) {
+                    didCallOnMapReady.value = true
+                    onMapReady(view.mapView)
+                }
+            },
+            onRelease = { view ->
+                view.mapView.mapWindow?.map?.removeCameraListenerWithCameraListener(cameraListener)
             }
-        ) {
-            if (!didCallOnMapReady.value) {
-                didCallOnMapReady.value = true
-                onMapReady(it)
-            }
-        }
+        )
 
         // Окно с информацией о текущей зоне доставки
         AnimatedVisibility(

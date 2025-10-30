@@ -26,8 +26,9 @@ import platform.CoreGraphics.CGRectZero
 @Composable
 actual fun MapWithCafePins() {
     var mapView: YMKMapView? by remember { mutableStateOf(null) }
-    val mandarinInitPoint =
+    val mandarinInitPoint = remember {
         YMKPoint.pointWithLatitude(MANDARIN_CENTER_LATITUDE, MANDARIN_CENTER_LONGITUDE)
+    }
     var currentZoom by remember { mutableFloatStateOf(MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN) }
 
     val cameraListener = remember {
@@ -46,7 +47,7 @@ actual fun MapWithCafePins() {
     LaunchedEffect(mapView) {
         val map = mapView?.mapWindow?.map ?: return@LaunchedEffect
         map.addCameraListenerWithCameraListener(cameraListener)
-     }
+    }
 
 
     Box(
@@ -65,6 +66,9 @@ actual fun MapWithCafePins() {
                         zoom = MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN
                     )
                 }
+            },
+            onRelease = { view ->
+                view.mapWindow?.map?.removeCameraListenerWithCameraListener(cameraListener)
             }
         )
 
