@@ -51,7 +51,6 @@ actual fun MapWithCafePins() {
     val cameraListener = remember {
         CameraListener { _, cameraPosition, _, _ ->
             currentZoom = cameraPosition.zoom
-
         }
     }
 
