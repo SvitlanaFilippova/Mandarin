@@ -18,9 +18,11 @@ import platform.Foundation.setValue
 
 @OptIn(ExperimentalForeignApi::class)
 class AddressRepositoryImpl : AddressRepository {
-
     private val searchManager: YMKSearchManager by lazy {
-        YMKSearch().createSearchManagerWithSearchManagerType(YMKSearchManagerType.YMKSearchManagerTypeCombined)
+        YMKMapKit.sharedInstance()
+        YMKSearchFactory.instance().createSearchManagerWithSearchManagerType(
+            YMKSearchManagerType.YMKSearchManagerTypeCombined
+        )
     }
 
     private var session: YMKSearchSession? = null

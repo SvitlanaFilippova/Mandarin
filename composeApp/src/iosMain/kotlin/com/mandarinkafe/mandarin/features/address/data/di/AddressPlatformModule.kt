@@ -1,30 +1,15 @@
 package com.mandarinkafe.mandarin.features.address.data.di
 
+import com.mandarinkafe.mandarin.features.address.data.impl.AddressRepositoryImpl
+import com.mandarinkafe.mandarin.features.address.data.impl.FusedLocationRepositoryImpl
+import com.mandarinkafe.mandarin.features.address.domain.api.AddressRepository
+import com.mandarinkafe.mandarin.features.address.domain.api.FusedLocationRepository
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val addressPlatformModule = module {
-    // TODO (требует полной реализации)
-
-    //  Образец из Android:
-
-//    // MapKit & Search
-//    single<MapKit> {
-//        MapKitFactory.initialize(androidContext())
-//        MapKitFactory.getInstance()
-//    }
-//
-//    single<SearchManager> {
-//        SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
-//    }
-//
-//    // Провайдер FusedLocationProviderClient
-//    single<FusedLocationProviderClient> {
-//        LocationServices.getFusedLocationProviderClient(androidContext())
-//    }
-//
-//    // Android-specific Repositories
-//    singleOf(::FusedLocationRepositoryImpl) { bind<FusedLocationRepository>() }
-//    singleOf(::AddressRepositoryImpl) { bind<AddressRepository>() }
-//    singleOf(::DeliveryAreaRepositoryImpl) { bind<DeliveryAreaRepository>() }
-
+    // iOS-specific Repositories
+    singleOf(::FusedLocationRepositoryImpl) { bind<FusedLocationRepository>() }
+    singleOf(::AddressRepositoryImpl) { bind<AddressRepository>() }
 }
