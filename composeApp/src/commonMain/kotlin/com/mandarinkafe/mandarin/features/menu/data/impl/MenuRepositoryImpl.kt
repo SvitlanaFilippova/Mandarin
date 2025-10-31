@@ -123,7 +123,7 @@ class MenuRepositoryImpl(
         return MealCategory(
             id = dto?.id ?: run {
                 val bytes = builder.fullPath.joinToString("/").encodeToByteArray()
-                val uuidBytes = ByteArray(16) { if (it < bytes.size) bytes[it] else 0 }
+                val uuidBytes = ByteArray(BYTE_ARRAY_SIZE) { if (it < bytes.size) bytes[it] else 0 }
                 Uuid.fromByteArray(uuidBytes).toString()
             },
             name = builder.name.applyTypography(),
@@ -153,4 +153,8 @@ class MenuRepositoryImpl(
         val fullPath: List<String>,
         val children: MutableList<Builder> = mutableListOf(),
     )
+
+    private companion object {
+        const val BYTE_ARRAY_SIZE = 16
+    }
 }

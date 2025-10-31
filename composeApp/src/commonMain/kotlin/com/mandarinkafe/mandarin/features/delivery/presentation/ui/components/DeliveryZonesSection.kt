@@ -35,7 +35,6 @@ fun DeliveryZonesSection(
     mapShouldBeVisible: Boolean,
     onCameraMoved: (GeoPoint) -> Unit,
 ) {
-
     Card(
         modifier = Modifier
             .fillMaxWidth(),

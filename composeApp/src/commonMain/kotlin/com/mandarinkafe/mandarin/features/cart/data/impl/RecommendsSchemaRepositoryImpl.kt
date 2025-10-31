@@ -108,8 +108,8 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
         private const val SOURCE_NAME_INDEX = 0
         private const val EXCLUDE_SKU_INDEX = 1
         private const val RECOMMEND_SKU_INDEX = 2
-        private const val IS_SEPARATE_INDEX = 4  // Изменили с 3 на 4!
-        private const val CSV_COLUMNS_NUMBER = 5  // Изменили с 4 на 5!
+        private const val IS_SEPARATE_INDEX = 4
+        private const val CSV_COLUMNS_NUMBER = 5
         private const val TRUE_STRING = "TRUE"
     }
 }

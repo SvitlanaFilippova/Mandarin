@@ -35,5 +35,8 @@ fun DeliveryZone.toUi(): UiDeliveryArea {
 
 private fun parseColor(colorHex: String): Long {
     val hex = colorHex.removePrefix("#")
-    return hex.toLong(16) or 0xFF000000L
+    return hex.toLong(HEX_RADIX) or OPAQUE_ALPHA_MASK
 }
+
+private const val HEX_RADIX = 16
+private const val OPAQUE_ALPHA_MASK = 0xFF000000L

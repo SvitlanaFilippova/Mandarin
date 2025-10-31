@@ -82,12 +82,10 @@ fun AddressMapScreen(
             .fillMaxSize()
             .padding(Dimens.MarginSmall8)
     ) {
-
         ScreenTitleWithBackButton(
             name = stringResource(MR.strings.address_screen_title),
             onBackClick = { navController.popBackStack() }
         )
-
 
         // Строка с адресом
         MyTextField(

@@ -39,7 +39,7 @@ val addressModule = module {
     singleOf(::RemoveAddressUseCaseImpl) { bind<RemoveAddressUseCase>() }
     singleOf(::GetSavedAddressesUseCaseImpl) { bind<GetSavedAddressesUseCase>() }
 
-    // Delivery Areas  
+    // Delivery Areas
     singleOf(::GetDeliveryZoneUseCaseImpl) { bind<GetDeliveryZoneUseCase>() }
     singleOf(::DeliveryAreaRepositoryImpl) { bind<DeliveryAreaRepository>() }
 

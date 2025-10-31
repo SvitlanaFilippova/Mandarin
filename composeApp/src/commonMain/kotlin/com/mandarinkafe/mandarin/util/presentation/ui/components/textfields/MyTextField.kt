@@ -53,7 +53,11 @@ fun MyTextField(
 ) {
     val focusRequester = remember { FocusRequester() }
 
-    var focusEnabled by remember { mutableStateOf(autofocus) } // изначально нельзя фокусироваться, если не передано autofocus=true
+    var focusEnabled by remember {
+        mutableStateOf(
+            autofocus
+        )
+    } // по дефолту нельзя фокусироваться, если не передано autofocus=true
 
     // Разрешаем фокус только после небольшой задержки, когда всё отрисуется
     LaunchedEffect(Unit) {

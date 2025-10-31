@@ -20,7 +20,6 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun LegalScreen(onSharedEvent: (SharedContract.SharedEvent) -> Unit, onBackClick: () -> Unit) {
-
     val privacyLabel = stringResource(MR.strings.more_privacy_policy)
     val privacyUrl = stringResource(MR.strings.privacy_policy_url)
     val personalDataLabel = stringResource(MR.strings.more_personal_data_agreement)
@@ -29,7 +28,6 @@ fun LegalScreen(onSharedEvent: (SharedContract.SharedEvent) -> Unit, onBackClick
     val yandexMapsUrl = stringResource(MR.strings.yandex_maps_terms_url)
 
     var urlToOpen by remember { mutableStateOf<String?>(null) }
-
 
     urlToOpen?.let { url ->
         OpenUrl(

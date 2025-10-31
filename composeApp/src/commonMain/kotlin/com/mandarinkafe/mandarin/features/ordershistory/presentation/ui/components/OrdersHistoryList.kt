@@ -46,7 +46,7 @@ fun OrdersHistoryList(
                     text = if (isInitialEmpty) {
                         stringResource(MR.strings.order_history_is_empty) // нет заказов в истории
                     } else {
-                        stringResource(MR.strings.order_history_is_empty_by_filters)// пусто из-за фильтров
+                        stringResource(MR.strings.order_history_is_empty_by_filters) // пусто из-за фильтров
                     },
                     extraTextRes = if (isInitialEmpty) {
                         MR.strings.order_history_is_empty_extra

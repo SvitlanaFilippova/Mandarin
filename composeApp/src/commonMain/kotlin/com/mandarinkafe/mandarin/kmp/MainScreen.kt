@@ -38,8 +38,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.HandleEffects
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun MainScreen(
-) {
+fun MainScreen() {
     MandarinTheme {
         val navController = rememberNavController()
         val sharedViewModel = rememberSharedViewModel()
