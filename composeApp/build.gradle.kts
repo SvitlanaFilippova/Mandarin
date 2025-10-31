@@ -1,7 +1,7 @@
 @file:Suppress("MagicNumber")
 
-import java.util.Properties
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -221,17 +221,17 @@ tasks.register("packForXcode") {
 // Update iOS version from gradle
 tasks.register("updateIOSVersion") {
     group = "build"
-    
+
     doLast {
         val configFile = file("${rootProject.projectDir}/iosApp/Configuration/Config.xcconfig")
         val versionName = libs.versions.versionName.get()
         val versionCode = libs.versions.versionCode.get()
-        
+
         val content = configFile.readText()
         val updated = content
             .replace(Regex("MARKETING_VERSION=(.*)"), "MARKETING_VERSION=$versionName")
             .replace(Regex("CURRENT_PROJECT_VERSION=(.*)"), "CURRENT_PROJECT_VERSION=$versionCode")
-        
+
         configFile.writeText(updated)
     }
 }

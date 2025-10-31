@@ -1,12 +1,14 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components.map
 
-import platform.UIKit.*
-import platform.CoreGraphics.CGRectZero
 import YandexMapKit.YMKMapView
 import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.readValue
 import platform.CoreGraphics.CGRect
+import platform.CoreGraphics.CGRectZero
+import platform.UIKit.UIEvent
+import platform.UIKit.UIScrollView
+import platform.UIKit.UIView
 
 @OptIn(ExperimentalForeignApi::class)
 class MapContainerView(frame: CValue<CGRect>) : UIView(frame) {

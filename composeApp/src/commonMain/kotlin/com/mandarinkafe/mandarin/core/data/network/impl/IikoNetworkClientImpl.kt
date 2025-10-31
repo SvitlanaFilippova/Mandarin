@@ -16,10 +16,10 @@ import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryReque
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
-import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -50,7 +50,7 @@ class IikoNetworkClientImpl(
 
     override suspend fun getMenu(): Response {
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
-        return withContext(kotlinx.coroutines.Dispatchers.Default) {
+        return withContext(Dispatchers.Default) {
             try {
                 val menuResponse = menuApi.getMenu()
                 organizationId = menuResponse.menu.intervals?.firstOrNull()?.organizationId ?: ""

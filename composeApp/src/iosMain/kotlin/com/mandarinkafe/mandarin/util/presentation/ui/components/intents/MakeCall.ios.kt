@@ -11,9 +11,9 @@ actual fun MakeCall(phoneNumber: String, onFail: () -> Unit) {
         val cleanPhoneNumber = phoneNumber
             .replace(Regex("[\\s()–—-]"), "") // удаляем пробелы, скобки, дефисы и тире
             .replace("\u00A0", "") // удаляем неразрывные пробелы
-        
+
         val telUrl = NSURL.URLWithString("tel:$cleanPhoneNumber")
-        
+
         if (telUrl != null && UIApplication.sharedApplication.canOpenURL(telUrl)) {
             UIApplication.sharedApplication.openURL(telUrl, mapOf<Any?, Any>()) { success ->
                 if (!success) {
