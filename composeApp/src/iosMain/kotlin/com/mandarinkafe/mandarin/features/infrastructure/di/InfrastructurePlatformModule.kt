@@ -10,12 +10,12 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val infrastructurePlatformModule = module {
-    
+
     // DataStore (iOS-specific, не требует параметров)
     single<DataStore<Preferences>> {
         createDataStore()
     }
-    
+
     // AppDatabase (iOS-specific)
     single {
         val driver = app.cash.sqldelight.driver.native.NativeSqliteDriver(
@@ -24,7 +24,7 @@ val infrastructurePlatformModule = module {
         )
         AppDatabase(driver)
     }
-    
+
     // NetworkMonitor (iOS не требует параметров)
     single { NetworkMonitor() }
 

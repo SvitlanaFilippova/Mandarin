@@ -18,31 +18,35 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.models.DateRange
 import dev.icerock.moko.resources.compose.stringResource
-import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun CustomDateRangePickerDialog(
     initialRange: DateRange?,
     onDismiss: () -> Unit,
-    onConfirm: (DateRange) -> Unit
+    onConfirm: (DateRange) -> Unit,
 ) {
     fun Long?.toDateText(placeholder: String): String =
         this?.let {
             val localDate = Instant.fromEpochMilliseconds(it)
                 .toLocalDateTime(TimeZone.UTC)
                 .date
-            "${localDate.day.toString().padStart(2, '0')}-${localDate.month.number.toString().padStart(2, '0')}-${localDate.year.toString().takeLast(2)}"
+            "${localDate.day.toString().padStart(2, '0')}-${
+                localDate.month.number.toString().padStart(2, '0')
+            }-${localDate.year.toString().takeLast(2)}"
         } ?: placeholder
 
     val datePickerState = rememberDateRangePickerState(
-        initialSelectedStartDateMillis = initialRange?.start?.atStartOfDayIn(TimeZone.UTC)?.toEpochMilliseconds(),
-        initialSelectedEndDateMillis = initialRange?.end?.atStartOfDayIn(TimeZone.UTC)?.toEpochMilliseconds()
+        initialSelectedStartDateMillis = initialRange?.start?.atStartOfDayIn(TimeZone.UTC)
+            ?.toEpochMilliseconds(),
+        initialSelectedEndDateMillis = initialRange?.end?.atStartOfDayIn(TimeZone.UTC)
+            ?.toEpochMilliseconds()
     )
 
     DatePickerDialog(

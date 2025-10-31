@@ -7,6 +7,7 @@ import YandexMapKit.YMKMapView
 import YandexMapKit.YMKPoint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import com.mandarinkafe.mandarin.features.map.calculatePinScale
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LONGITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_PIZZERIA_LATITUDE
@@ -14,7 +15,6 @@ import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_PIZZERIA_LONGITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_ANCHOR_X
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_ANCHOR_Y
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_OPACITY
-import com.mandarinkafe.mandarin.features.map.calculatePinScale
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.CoreGraphics.CGPointMake
 import platform.Foundation.NSNumber
@@ -25,7 +25,7 @@ import platform.UIKit.valueWithCGPoint
 
 @Composable
 fun CafePinsOnMap(mapView: YMKMapView, currentZoom: Float) {
-    LaunchedEffect(mapView, currentZoom)  {
+    LaunchedEffect(mapView, currentZoom) {
         clearCafePins(mapView)
         addCafePins(mapView, currentZoom)
     }
@@ -61,11 +61,12 @@ private fun addCafePins(mapView: YMKMapView, currentZoom: Float) {
                         )
                     )
                 )
-                setScale (NSNumber.numberWithDouble(dynamicScale))
+                setScale(NSNumber.numberWithDouble(dynamicScale))
             }
 
-            mapObjects . addPlacemarkWithPoint (point =
-                point, image = icon, style = iconStyle).apply { setOpacity(PIN_OPACITY) }
+            mapObjects.addPlacemarkWithPoint(
+                point = point, image = icon, style = iconStyle
+            ).apply { setOpacity(PIN_OPACITY) }
         }
     }
     addPin(cafePoint, cafeIcon)

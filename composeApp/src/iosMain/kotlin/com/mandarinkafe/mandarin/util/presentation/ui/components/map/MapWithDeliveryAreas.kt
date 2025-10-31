@@ -1,6 +1,11 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components.map
 
-import YandexMapKit.*
+import YandexMapKit.YMKCameraPosition
+import YandexMapKit.YMKCameraUpdateReason
+import YandexMapKit.YMKMap
+import YandexMapKit.YMKMapCameraListenerProtocol
+import YandexMapKit.YMKMapView
+import YandexMapKit.YMKPoint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -77,7 +82,6 @@ fun MapWithDeliveryAreas(
             .padding(top = Dimens.MarginSmall8)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
     ) {
-
         UIKitView(
             modifier = Modifier.fillMaxSize(),
             factory = {

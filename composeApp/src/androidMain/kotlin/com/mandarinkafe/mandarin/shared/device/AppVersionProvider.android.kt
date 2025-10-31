@@ -14,7 +14,7 @@ actual class AppVersionProvider(private val context: Context) {
             "Unknown"
         }
     }
-    
+
     actual fun getVersionCode(): String {
         return try {
             val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)

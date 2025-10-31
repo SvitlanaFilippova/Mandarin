@@ -7,7 +7,7 @@ actual class AppVersionProvider {
         val bundle = NSBundle.mainBundle
         return bundle.objectForInfoDictionaryKey("CFBundleShortVersionString") as? String ?: "Unknown"
     }
-    
+
     actual fun getVersionCode(): String {
         val bundle = NSBundle.mainBundle
         return bundle.objectForInfoDictionaryKey("CFBundleVersion") as? String ?: "0"

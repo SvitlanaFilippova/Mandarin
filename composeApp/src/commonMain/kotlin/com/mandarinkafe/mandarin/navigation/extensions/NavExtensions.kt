@@ -2,7 +2,6 @@ package com.mandarinkafe.mandarin.navigation.extensions
 
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
@@ -89,7 +88,7 @@ fun NavController.navigateToAddressDetails(
     val encodedReturn = UrlEncoderUtil.encode(returnToRoute)
 
     val route = "$ADDRESS_DETAILS_ROUTE?" +
-            "${NavConstants.KEY_IS_EDIT_MODE}=$isEditMode&" +
+            "${KEY_IS_EDIT_MODE}=$isEditMode&" +
             "${NavConstants.KEY_ADDRESS_JSON}=$encodedAddress&" +
             "${NavConstants.KEY_RETURN_TO_ROUTE}=$encodedReturn"
 
