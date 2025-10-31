@@ -2,22 +2,28 @@
 
 # Мультиплатформенное приложение для заказа еды из локальной службы доставки Mandarin 🔎
 
-Kotlin Multiplatform проект, объединяющий Android и iOS клиенты с общим интерфейсом, изнес-логикой,
+Kotlin Multiplatform проект, объединяющий Android и iOS клиенты с общим интерфейсом, бизнес-логикой,
 сетевым слоем, репозиториями и базой данных.
 Приложение предназначено для удобного заказа блюд, кастомизации ингредиентов и отслеживания статуса
 доставки в реальном времени.
 
 Изначально Mandarin был полностью нативным Android-приложением, созданным на Kotlin + Jetpack
 Compose, с архитектурой MVI + Hilt + Retrofit + Coil + SharedPreferences.
-После завершения основной Android-версии проект был полностью мигрирован на Kotlin Multiplatform (
-KMP)
+После завершения основной Android-версии проект был полностью мигрирован на Kotlin + Compose Multiplatform
 
 ## Над приложением работают 👨🏻‍💻
 
 <a href="https://github.com/mandarin-kafe/Mandarin/graphs/contributors">  
   <img src="https://contrib.rocks/image?repo=mandarin-kafe/Mandarin&max=6" />
 </a>
-[**Александр Родионов**](https://github.com/AlexDeyl) — Серверная часть проекта. [репозиторий сервера](https://github.com/SvitlanaFilippova/Mandarin-server)
+
+[**Светлана Филиппова**](https://github.com/SvitlanaFilippova)
+
+[**Сергей Шахов**](https://github.com/SergeySh97)
+
+[**Евгений Артеменко**](https://github.com/Ar-Eugene)  
+
+[**Александр Родионов**](https://github.com/AlexDeyl) — [серверная часть проекта](https://github.com/SvitlanaFilippova/Mandarin-server)
 
 ## Возможности приложения ✨
 
@@ -35,8 +41,8 @@ KMP)
 | История заказов                               | ✔️ Реализовано   |
 | Сохранение адресов доставки                   | ✔️ Реализовано   |
 | Форма обратной связи                          | ✔️ Реализовано   |
-| Авторизация через sms                         | 🛠️ В разработке |
-| Онлайн-оплата заказа                          | 🛠️ Планируется  |
+| Авторизация через sms                         | 🛠️ В разработке  |
+| Онлайн-оплата заказа                          | ⏳ Планируется   |
 
 ## Используемые инструменты и технологии 📚
 
@@ -44,7 +50,7 @@ KMP)
 |------------------|----------------------------------------------------------------------|
 | UI               | Compose Multiplatform, Material3, Moko Resources                     |
 | Архитектура      | MVI, StateFlow, Coroutines, <del>Hilt</del> ->  Koin                 |
-| Навигация        | Navigation Compose, Accompanist Navigation Material                  |
+| Навигация        | Navigation Compose (KMP)                                             |
 | Работа с данными | SQLDelight, <del>SharedPreferences</del> -> DataStore                |
 | Работа с данными | <del>Retrofit</del> -> Ktor (OkHttp / Darwin), kotlinx.serialization |
 | Изображения      | <del>Coil</del> -> Kamel                                             |
@@ -62,14 +68,13 @@ KMP)
 
 ## Общие требования 🗒️
 
-Приложение поддерживает устройства, начиная с Android 8.0 (minSdkVersion = 26)/ iOS - iOS 16.0 и выше .
+Приложение поддерживает устройства, начиная с Android 8.0 (minSdkVersion = 26) или iOS 16.0 и выше .
 
 ## Начало работы 🛠️
 
-Клонируйте этот репозиторий на свой компьютер.
+Клонируйте этот репозиторий на свой компьютер: [git clone](https://github.com/mandarin-kafe/Mandarin)
 
-[git clone](https://github.com/mandarin-kafe/Mandarin)
-**Android**
+### Android
 Откройте проект в Android Studio.
 
 Подключите свой телефон/эмулятор.
@@ -77,7 +82,7 @@ KMP)
 Соберите и запустите проект.
 
 
-**iOS**
+### iOS
 Откройте /iosApp/ в Xcode
 
 Установите зависимости (pod install)
@@ -88,7 +93,4 @@ KMP)
 исходный код. Поэтому при сборке проекта через Android Studio часть функциональности будет
 недоступна.
 
-📦 Рабочая версия приложения (APK) доступна в
-разделе [Releases](https://github.com/mandarin-kafe/Mandarin/releases).
-
-📱 Для сборки iOS версии смотрите [инструкции](./iosApp/README.md).
+📦 Полноценная Android-версия приложения (APK) доступна для скачивания в [RuStore](https://www.rustore.ru/catalog/app/com.mandarinkafe.mandarin) и в разделе [Releases](https://github.com/mandarin-kafe/Mandarin/releases)
