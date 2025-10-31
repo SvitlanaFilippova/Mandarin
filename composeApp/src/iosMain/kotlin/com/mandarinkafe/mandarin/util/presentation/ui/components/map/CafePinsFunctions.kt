@@ -65,7 +65,9 @@ private fun addCafePins(mapView: YMKMapView, currentZoom: Float) {
             }
 
             mapObjects.addPlacemarkWithPoint(
-                point = point, image = icon, style = iconStyle
+                point = point,
+                image = icon,
+                style = iconStyle
             ).apply { setOpacity(PIN_OPACITY) }
         }
     }

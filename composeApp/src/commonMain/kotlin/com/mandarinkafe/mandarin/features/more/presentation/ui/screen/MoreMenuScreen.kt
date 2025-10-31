@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.more.presentation.ui.components.FeedbackDialog
@@ -23,7 +24,6 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToDeliveryScreen
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToLegalScreen
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToSavedAddresses
 import dev.icerock.moko.resources.compose.stringResource
-import androidx.navigation.NavController
 
 @Composable
 fun MoreMenuScreen(navController: NavController) {
@@ -52,7 +52,8 @@ fun MoreMenuScreen(navController: NavController) {
                 iconRes = MR.images.ic_history,
                 onClick = {
                     navController.navigateOrdersHistory()
-                })
+                }
+            )
         }
 
         item {
@@ -61,7 +62,8 @@ fun MoreMenuScreen(navController: NavController) {
                 iconRes = MR.images.ic_cottage,
                 onClick = {
                     navController.navigateToSavedAddresses()
-                })
+                }
+            )
         }
 
         item {
@@ -70,7 +72,8 @@ fun MoreMenuScreen(navController: NavController) {
                 iconRes = MR.images.ic_courier,
                 onClick = {
                     navController.navigateToDeliveryScreen()
-                })
+                }
+            )
         }
 
         item {
@@ -79,7 +82,8 @@ fun MoreMenuScreen(navController: NavController) {
                 iconRes = MR.images.ic_selfpickup,
                 onClick = {
                     navController.navigateToContactsScreen()
-                })
+                }
+            )
         }
 
         item {
@@ -88,7 +92,8 @@ fun MoreMenuScreen(navController: NavController) {
                 iconRes = MR.images.ic_email,
                 onClick = {
                     showDialog = true
-                })
+                }
+            )
         }
 
         item {
@@ -97,7 +102,8 @@ fun MoreMenuScreen(navController: NavController) {
                 iconRes = MR.images.ic_legal,
                 onClick = {
                     navController.navigateToLegalScreen()
-                })
+                }
+            )
         }
 
         item {
@@ -106,7 +112,8 @@ fun MoreMenuScreen(navController: NavController) {
                 iconRes = MR.images.ic_info,
                 onClick = {
                     navController.navigateToAboutScreen()
-                })
+                }
+            )
         }
     }
 

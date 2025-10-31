@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.core.presentation
 
 import android.os.Bundle
-import android.view.WindowManager
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import com.mandarinkafe.mandarin.kmp.MainScreen
@@ -21,7 +21,6 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.http.HttpHeaders
-import androidx.activity.compose.setContent
 import java.io.File
 
 class ComposeMainActivity : AppCompatActivity() {
