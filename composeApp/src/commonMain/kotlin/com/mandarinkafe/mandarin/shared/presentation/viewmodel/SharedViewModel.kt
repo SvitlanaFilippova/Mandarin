@@ -25,6 +25,7 @@ import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.Sh
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_SCREEN_DURATION
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -150,6 +151,7 @@ class SharedViewModel(
                     done.complete(Unit)
                 } catch (e: Exception) {
                     done.complete(Unit)
+                    Napier.e("SharedViewModel, loadInitialData error: $e")
                 }
             }
 
