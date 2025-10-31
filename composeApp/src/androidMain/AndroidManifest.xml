@@ -14,8 +14,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Mandarin"
-   >
+        android:theme="@style/Theme.Mandarin">
         <activity
             android:name="com.mandarinkafe.mandarin.core.presentation.ComposeMainActivity"
             android:exported="true"

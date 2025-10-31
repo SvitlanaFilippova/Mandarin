@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 class FavoritesInteractorImpl(
     private val reader: FavoritesReader,
     private val writer: FavoritesWriter,
-    private val forceRefreshMenu: ForceRefreshMenuUseCase
+    private val forceRefreshMenu: ForceRefreshMenuUseCase,
 ) : FavoritesApi {
 
     override fun observeFavoritesItems(): Flow<Resource<List<CustomizedMeal>>> =

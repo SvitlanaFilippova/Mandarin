@@ -26,7 +26,6 @@ import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.SCROLL_TARGET_KEY
-import com.mandarinkafe.mandarin.util.bottomSheetContentModifier
 import com.mandarinkafe.mandarin.util.bottomSheetHeaderModifier
 import kotlinx.coroutines.launch
 
@@ -44,7 +43,7 @@ fun MealDetailsContentScreen(
     onEdit: () -> Unit,
     onToggleFavorite: () -> Unit,
     comment: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val meal = remember(customizedMeal) { customizedMeal.meal }
     val chosenModifiers = remember(customizedMeal) { customizedMeal.modifiers }

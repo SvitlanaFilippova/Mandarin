@@ -10,15 +10,14 @@ import com.mandarinkafe.mandarin.features.favorites.data.models.sameAs
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class FavoritesStorageImpl(
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
 ) : FavoritesStorage {
 
     private val json = Json { ignoreUnknownKeys = true }
-    
+
     override suspend fun toggleFavorite(meal: StoredFavoriteMeal): Boolean {
         val currentSetResult = getFavorites()
         if (currentSetResult is FavoritesStorageResult.Success) {

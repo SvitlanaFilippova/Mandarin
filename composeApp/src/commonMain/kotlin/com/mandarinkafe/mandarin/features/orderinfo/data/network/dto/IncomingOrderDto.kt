@@ -28,7 +28,7 @@ data class IncomingOrderDto(
     val whenDelivered: String? = null,
     val whenSended: String? = null,
     val problem: Problem? = null,
-    val number: String? = null
+    val number: String? = null,
 )
 
 

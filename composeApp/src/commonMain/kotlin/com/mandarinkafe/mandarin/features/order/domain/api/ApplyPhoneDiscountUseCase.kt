@@ -5,6 +5,6 @@ import com.mandarinkafe.mandarin.features.order.domain.models.DiscountByPhoneRes
 interface ApplyPhoneDiscountUseCase {
     suspend operator fun invoke(
         rawPhone: String,
-        currentDiscount: Int
+        currentDiscount: Int,
     ): DiscountByPhoneResult
 }

@@ -9,7 +9,7 @@ data class PaymentInfo(
     val availablePaymentTypes: List<PaymentType> = emptyList(),
     val chosenPaymentType: UiPaymentType? = null,
     val noChange: Boolean = false,
-    val changeFrom: String = ""
+    val changeFrom: String = "",
 ) {
     val paymentTypeIsChosen: Boolean
         get() = chosenPaymentType != null

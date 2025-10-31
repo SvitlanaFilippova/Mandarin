@@ -29,7 +29,7 @@ import com.mandarinkafe.mandarin.util.removeLeadingDash
 fun ModifierMultiSelectItem(
     item: ModifierItem,
     onCheckedChange: (Boolean) -> Unit,
-    isAdded: Boolean
+    isAdded: Boolean,
 ) {
     val backgroundColor by animateColorAsState(
         targetValue = if (isAdded) Colors.Orange.copy(alpha = 0.1f) else Color.Transparent,

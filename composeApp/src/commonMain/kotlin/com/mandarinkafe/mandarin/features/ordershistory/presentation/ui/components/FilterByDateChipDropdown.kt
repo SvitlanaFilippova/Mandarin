@@ -28,7 +28,7 @@ fun FilterByDateChipDropdown(
     chosenDateRange: DateRange?,
     allItems: List<DateFilterType>,
     onSelectionChange: (DateFilterType?) -> Unit,
-    onCustomRangeChange: (DateRange) -> Unit
+    onCustomRangeChange: (DateRange) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var showCustomRangeDialog by remember { mutableStateOf(false) }

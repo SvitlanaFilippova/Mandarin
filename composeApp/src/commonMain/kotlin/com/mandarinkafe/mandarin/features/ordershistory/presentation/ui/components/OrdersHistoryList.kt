@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
@@ -26,7 +25,7 @@ fun OrdersHistoryList(
     fullData: List<SavedOrder>,
     anyFiltersAreApplied: Boolean,
     navController: NavController,
-    listState: LazyListState
+    listState: LazyListState,
 ) {
     val isInitialEmpty = fullData.isEmpty()
     val listToShow = if (anyFiltersAreApplied) filteredData else fullData

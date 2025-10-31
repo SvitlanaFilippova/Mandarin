@@ -7,7 +7,7 @@ import dev.icerock.moko.resources.StringResource
 sealed class UiError(
     val msg: StringResource,
     val extraMsg: StringResource? = null,
-    val imageRes: ImageResource
+    val imageRes: ImageResource,
 ) {
     object NoInternet : UiError(
         MR.strings.error_no_internet,

@@ -18,7 +18,7 @@ class GetInitialDataUseCaseImpl(
     private val menuCache: MenuCache,
     private val bannersRepository: BannersRepository,
     private val categoryDiscountRepository: CategoryDiscountRepository,
-    private val deliveryAreaRepository: DeliveryAreaRepository
+    private val deliveryAreaRepository: DeliveryAreaRepository,
 ) : GetInitialDataUseCase {
     override suspend operator fun invoke(): Flow<Resource<List<MealCategory>>> = flow {
         // сначала меню

@@ -13,7 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class DevFeedbackViewModel(
-    private val repository: DevFeedbackRepository
+    private val repository: DevFeedbackRepository,
 ) :
     BaseViewModel<DevFeedbackEvent, DevFeedbackEffect, DevFeedbackState>() {
     override fun setInitialState() = DevFeedbackState()

@@ -19,7 +19,7 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 class MenuRepositoryImpl(
     private val iikoNetworkClient: IikoNetworkClient,
-    private val menuMetaCache: MenuMetaCache
+    private val menuMetaCache: MenuMetaCache,
 ) : MenuRepository, MenuFetcher {
 
     override suspend fun fetchMenu(): Resource<List<MealCategory>> {
@@ -138,7 +138,7 @@ class MenuRepositoryImpl(
 
     private fun isAddableForPath(
         categoryPath: List<String>,
-        addonPaths: List<List<String>>
+        addonPaths: List<List<String>>,
     ): Boolean {
         if (categoryPath.isEmpty()) return false
         val mainCategory = categoryPath.firstOrNull() ?: return false
@@ -151,6 +151,6 @@ class MenuRepositoryImpl(
         var dto: CategoryDto?,
         val name: String,
         val fullPath: List<String>,
-        val children: MutableList<Builder> = mutableListOf()
+        val children: MutableList<Builder> = mutableListOf(),
     )
 }

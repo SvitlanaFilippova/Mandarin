@@ -11,7 +11,7 @@ import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_LABEL_FLOW_ROW
 fun LabelChipsRow(
     labels: List<LabelUiModel>,
     checkedLabels: List<String>,
-    onLabelClick: (String, Boolean) -> Unit
+    onLabelClick: (String, Boolean) -> Unit,
 ) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),

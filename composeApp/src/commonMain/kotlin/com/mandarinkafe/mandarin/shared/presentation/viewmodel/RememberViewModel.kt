@@ -5,11 +5,11 @@ import androidx.compose.runtime.remember
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsViewModel
 import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressViewModel
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
+import com.mandarinkafe.mandarin.features.delivery.presentation.viewmodel.DeliveryViewModel
 import com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel.FavoritesViewModel
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsViewModel
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuViewModel
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.AboutViewModel
-import com.mandarinkafe.mandarin.features.delivery.presentation.viewmodel.DeliveryViewModel
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackViewModel
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackViewModel
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel

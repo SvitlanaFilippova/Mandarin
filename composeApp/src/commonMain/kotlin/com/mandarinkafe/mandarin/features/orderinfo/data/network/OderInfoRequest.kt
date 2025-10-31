@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OderInfoRequest(
     val organizationId: String,
-    val orderIds: List<String>
+    val orderIds: List<String>,
 )
 
 

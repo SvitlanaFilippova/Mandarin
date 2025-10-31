@@ -14,9 +14,9 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
-import com.mandarinkafe.mandarin.util.presentation.ui.components.SavedAddressCard
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SAVED_ADDRESSES_NUMBER
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyClickableText
+import com.mandarinkafe.mandarin.util.presentation.ui.components.SavedAddressCard
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -28,7 +28,7 @@ fun SavedAddressesSection(
     onDeleteRequest: (String) -> Unit,
     showAllAddresses: Boolean,
     onToggleShowAll: () -> Unit,
-    visible: Boolean
+    visible: Boolean,
 ) {
     val addressesToShow = if (showAllAddresses) {
         allSavedAddresses

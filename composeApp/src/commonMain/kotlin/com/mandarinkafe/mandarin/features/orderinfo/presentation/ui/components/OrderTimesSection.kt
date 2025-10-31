@@ -38,7 +38,12 @@ fun OrderTimesSection(order: IncomingOrder) {
                 verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
             ) {
                 with(order) {
-                    whenCreated?.let { LabelValue(stringResource(MR.strings.label_created_when), it) }
+                    whenCreated?.let {
+                        LabelValue(
+                            stringResource(MR.strings.label_created_when),
+                            it
+                        )
+                    }
                     whenConfirmed?.let {
                         LabelValue(
                             stringResource(MR.strings.label_confirmed_when),

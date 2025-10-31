@@ -9,7 +9,7 @@ data class OutgoingPaymentDto(
     val paymentTypeId: String,
     val isPrepay: Boolean,
     val isProcessedExternally: Boolean,
-    val isFiscalizedExternally: Boolean
+    val isFiscalizedExternally: Boolean,
 )
 
 

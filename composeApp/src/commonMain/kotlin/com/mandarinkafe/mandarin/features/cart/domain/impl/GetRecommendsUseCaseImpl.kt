@@ -2,10 +2,10 @@ package com.mandarinkafe.mandarin.features.cart.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.features.cart.domain.api.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
-import com.mandarinkafe.mandarin.features.cart.domain.models.RecommendsSchemaRule
-import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.domain.models.Recommends
+import com.mandarinkafe.mandarin.features.cart.domain.models.RecommendsSchemaRule
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
 import com.mandarinkafe.mandarin.util.Resource.ErrorNoInternet
@@ -37,16 +37,16 @@ class GetRecommendsUseCaseImpl(
 
                 // Сначала выделяем отдельные правила
                 val separateRules = rules.filter { it.isSeparate }
-                
+
                 // Затем разделяем оставшиеся правила на глобальные и обычные
                 val nonSeparateRules = rules.filter { !it.isSeparate }
                 val (globalRules, normalRules) = nonSeparateRules.partition { it.sourceName == SOURCE_ALL }
-                
+
                 val matchingRules = filterRules(normalRules, cartItemsWithNorm)
 
                 // Сначала обычные, потом глобальные
                 val allMainRules = matchingRules + globalRules
-                
+
                 val recommendedSkus = allMainRules
                     .flatMap { it.recommendedSku }
                     .map { it.trim() }
@@ -88,7 +88,7 @@ class GetRecommendsUseCaseImpl(
 
     private fun filterRules(
         rules: List<RecommendsSchemaRule>,
-        cartItemsWithNorm: List<Meal>
+        cartItemsWithNorm: List<Meal>,
     ): List<RecommendsSchemaRule> =
         rules.filter { rule ->
             val rawRuleName = rule.sourceName

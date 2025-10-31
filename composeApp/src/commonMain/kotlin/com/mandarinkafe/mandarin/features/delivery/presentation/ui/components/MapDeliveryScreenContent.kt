@@ -14,5 +14,5 @@ expect fun MapDeliveryScreenContent(
     initLocation: GeoPoint,
     userLocation: GeoPoint?,
     onCameraMoved: (GeoPoint) -> Unit,
-    locationChosen: Boolean
+    locationChosen: Boolean,
 )

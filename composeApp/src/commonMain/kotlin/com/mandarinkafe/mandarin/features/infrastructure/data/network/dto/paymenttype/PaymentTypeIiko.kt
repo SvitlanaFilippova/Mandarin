@@ -8,7 +8,7 @@ data class PaymentTypeIiko(
     val id: String,
     val code: String,
     val paymentTypeKind: String,
-    val isDeleted: Boolean
+    val isDeleted: Boolean,
 )
 
 fun PaymentTypeIiko.toDomain() = PaymentType(

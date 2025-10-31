@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RestrictionsDto(
     val maxQuantity: Int,
-    val minQuantity: Int
+    val minQuantity: Int,
 )
 
 

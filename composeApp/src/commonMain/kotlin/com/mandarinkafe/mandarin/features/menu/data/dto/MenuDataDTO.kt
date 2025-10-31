@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class MenuDataDTO(
     val intervals: List<IntervalDto>?,
     val itemCategories: List<CategoryDto>?,
-    val revision: Int
+    val revision: Int,
 )
 
 

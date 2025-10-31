@@ -32,7 +32,7 @@ data class IncomingOrder(
     val whenCreated: String? = null,
     val whenDelivered: String? = null,
     val whenSent: String? = null,
-    val isDelivery: Boolean
+    val isDelivery: Boolean,
 ) {
     val isClosed: Boolean
         get() = status == DeliveryStatus.CANCELLED || status == DeliveryStatus.CLOSED

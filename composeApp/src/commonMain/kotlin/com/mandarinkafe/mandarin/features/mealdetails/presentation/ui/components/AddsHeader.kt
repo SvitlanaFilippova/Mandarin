@@ -7,7 +7,7 @@ import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components
 fun AddsHeader(
     selectedTabIndex: Int,
     categories: List<String>,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
 ) {
     // Категории добавок
     AddsCategoryTabsRow(

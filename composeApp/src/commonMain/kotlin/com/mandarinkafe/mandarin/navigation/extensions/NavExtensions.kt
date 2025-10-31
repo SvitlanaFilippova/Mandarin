@@ -44,10 +44,11 @@ fun NavController.navigateToMenu() {
 
 fun NavController.navigateToCart(snackbarMessage: String? = null) {
     val encodedMessage = snackbarMessage?.let { UrlEncoderUtil.encode(it) }
-    val route = if (encodedMessage != null)
+    val route = if (encodedMessage != null) {
         "$CART_SCREEN_ROUTE?$KEY_SNACKBAR_MESSAGE=$encodedMessage"
-    else
+    } else {
         CART_SCREEN_ROUTE
+    }
     navigate(route)
 }
 

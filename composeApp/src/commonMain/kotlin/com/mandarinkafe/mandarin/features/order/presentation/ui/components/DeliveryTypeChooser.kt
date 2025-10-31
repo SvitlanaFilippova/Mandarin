@@ -18,8 +18,6 @@ import com.mandarinkafe.mandarin.features.order.presentation.models.toDomain
 import com.mandarinkafe.mandarin.util.presentation.ui.components.SegmentedButtonLabel
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun DeliveryTypeChooser(
@@ -72,7 +70,7 @@ fun DeliveryTypeChooser(
                     SegmentedButtonLabel(
                         selected = selected,
                         name = stringResource(item.nameRes),
-                        icon = painterResource(item.iconRes) ,
+                        icon = painterResource(item.iconRes),
                         isEnabled = itemEnabled
                     )
                 }

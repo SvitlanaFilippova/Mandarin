@@ -25,7 +25,7 @@ import dev.icerock.moko.resources.compose.stringResource
 fun FilterByTypeChipDropdown(
     selectedItems: List<DeliveryType>,
     allItems: List<DeliveryType>,
-    onSelectionChange: (List<DeliveryType>) -> Unit
+    onSelectionChange: (List<DeliveryType>) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val isSelected = remember(selectedItems) { selectedItems.isNotEmpty() }

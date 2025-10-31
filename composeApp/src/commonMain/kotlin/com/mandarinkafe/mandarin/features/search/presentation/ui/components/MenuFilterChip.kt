@@ -20,7 +20,7 @@ import dev.icerock.moko.resources.compose.stringResource
 fun MenuFilterChip(
     label: LabelUiModel,
     selected: Boolean,
-    onLabelClick: (String, Boolean) -> Unit
+    onLabelClick: (String, Boolean) -> Unit,
 ) {
     val textColor = if (selected) Colors.White else Colors.LightGrey
     Box(modifier = Modifier.padding(horizontal = Dimens.MarginSuperSmall4)) {

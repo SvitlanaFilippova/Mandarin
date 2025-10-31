@@ -28,7 +28,7 @@ import com.mandarinkafe.mandarin.util.presentation.localizedShortText
 fun AddsItem(
     add: MealAdditional,
     onCheckedChange: (Boolean, MealAdditional) -> Unit,
-    isAdded: Boolean
+    isAdded: Boolean,
 ) {
     val backgroundColor by animateColorAsState(
         targetValue = if (isAdded) Colors.Orange.copy(alpha = 0.1f) else Color.Transparent,

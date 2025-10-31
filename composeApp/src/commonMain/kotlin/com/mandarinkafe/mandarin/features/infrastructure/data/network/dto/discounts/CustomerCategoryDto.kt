@@ -7,7 +7,7 @@ data class CustomerCategoryDto(
     val id: String? = null,
     val name: String? = null,
     val isActive: Boolean? = null,
-    val isDefaultForNewGuests: Boolean? = null
+    val isDefaultForNewGuests: Boolean? = null,
 )
 
 

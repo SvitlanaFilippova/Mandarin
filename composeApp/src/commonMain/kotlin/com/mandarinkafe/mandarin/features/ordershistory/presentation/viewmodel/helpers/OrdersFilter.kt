@@ -10,7 +10,6 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
-
 @OptIn(kotlin.time.ExperimentalTime::class)
 object OrdersFilter {
     /**
@@ -32,7 +31,8 @@ object OrdersFilter {
         val zone = TimeZone.currentSystemDefault()
         val today = Clock.System.now().toLocalDateTime(zone).date
         val startOfToday = today.atStartOfDayIn(zone).toEpochMilliseconds()
-        val startOfYesterday = today.minus(DatePeriod(days = 1)).atStartOfDayIn(zone).toEpochMilliseconds()
+        val startOfYesterday =
+            today.minus(DatePeriod(days = 1)).atStartOfDayIn(zone).toEpochMilliseconds()
         return orders.filter { it.timestamp in startOfYesterday until startOfToday }
     }
 
@@ -55,7 +55,7 @@ object OrdersFilter {
     fun betweenDates(
         orders: List<SavedOrder>,
         fromDate: LocalDate,
-        toDate: LocalDate
+        toDate: LocalDate,
     ): List<SavedOrder> {
         val zone = TimeZone.currentSystemDefault()
         val startMillis = fromDate.atStartOfDayIn(zone).toEpochMilliseconds()

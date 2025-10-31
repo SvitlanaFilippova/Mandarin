@@ -30,8 +30,8 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.more.presentation.ui.components.DevFeedbackDialog
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberAboutViewModel
-import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.OpenUrl
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.OpenUrl
 import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
@@ -160,7 +160,7 @@ private fun ContactLink(
     label: String,
     iconRes: ImageResource,
     url: String,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     var shouldOpenUrl by remember { mutableStateOf<Boolean?>(null) }
 
@@ -191,7 +191,7 @@ private fun ContactLink(
 @Composable
 private fun DevFeedbackLink(
     onClick: () -> Unit,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     Row(
         modifier = modifier

@@ -20,7 +20,7 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun AppTopBar(
-    modifier: Modifier= Modifier,
+    modifier: Modifier = Modifier,
     onEvent: (SharedEvent) -> Unit,
     showAppBar: Boolean,
 ) {

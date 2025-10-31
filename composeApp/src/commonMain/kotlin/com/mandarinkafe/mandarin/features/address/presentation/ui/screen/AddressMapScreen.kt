@@ -1,7 +1,5 @@
 package com.mandarinkafe.mandarin.features.address.presentation.ui.screen
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,7 +25,6 @@ import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.Address
 import com.mandarinkafe.mandarin.features.map.MapCameraController
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.LocationIcon
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberAddressViewModel
-import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.MIN_LINES_FOR_ADDRESS_INPUT
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
@@ -158,7 +155,7 @@ fun AddressMapScreen(
                     modifier = Modifier
                         .padding(Dimens.MarginBig24)
                         .align(Alignment.BottomCenter),
-                    shouldBeActive =  state.locationChosen,
+                    shouldBeActive = state.locationChosen,
                     text = stringResource(MR.strings.deliver_to_this_location),
                     onClick = {
                         onEvent(AddressContract.AddressEvent.GoToAddressDetails)

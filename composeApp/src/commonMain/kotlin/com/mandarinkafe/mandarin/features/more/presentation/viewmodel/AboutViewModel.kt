@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 
 class AboutViewModel(
     private val menuMetaCache: MenuMetaCache,
-    private val appVersionProvider: AppVersionProvider
+    private val appVersionProvider: AppVersionProvider,
 ) :
     BaseViewModel<AboutContract.AboutEvent, AboutContract.AboutEffect, AboutContract.AboutState>() {
     init {

@@ -5,15 +5,15 @@ import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.NetworkMonitor
-import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.GOOGLE_DOCS_BASE_URL
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
+import io.github.aakira.napier.Napier
 
 class GoogleDocsNetworkClientImpl(
     private val networkMonitor: NetworkMonitor,
-    private val googleDocsApi: GoogleDocsApiService
+    private val googleDocsApi: GoogleDocsApiService,
 ) : GoogleDocsNetworkClient {
 
     private fun isConnected(): Boolean {

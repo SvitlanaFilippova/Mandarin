@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CancelOrderRequest(
     val organizationId: String,
-    val orderId: String
+    val orderId: String,
 )
 
 

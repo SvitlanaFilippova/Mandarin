@@ -8,7 +8,7 @@ import com.mandarinkafe.mandarin.util.Resource
 
 class CheckDiscountByPhoneUseCaseImpl(
     private val repository: LoyaltyCustomerRepository,
-    private val categoryDiscountRepository: CategoryDiscountRepository
+    private val categoryDiscountRepository: CategoryDiscountRepository,
 ) : CheckDiscountByPhoneUseCase {
     override suspend fun invoke(phone: String): Resource<CustomersMaxDiscount?> {
         val resource = repository.getLoyaltyCustomerInfo(phone)

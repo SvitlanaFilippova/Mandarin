@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.GetOrdersStatusesUseCase
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryInteractor
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
@@ -25,7 +24,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class OrdersHistoryViewModel(
     private val historyInteractor: OrdersHistoryInteractor,
-    private val getOrdersStatuses: GetOrdersStatusesUseCase
+    private val getOrdersStatuses: GetOrdersStatusesUseCase,
 ) : BaseViewModel<OrdersHistoryEvent, OrdersHistoryEffect, OrdersHistoryState>() {
     override fun setInitialState() = OrdersHistoryState()
 
@@ -55,7 +54,6 @@ class OrdersHistoryViewModel(
             }
         }
     }
-
 
 
     private fun refreshData() {
@@ -169,7 +167,7 @@ class OrdersHistoryViewModel(
     private fun applyDateFilter(
         orders: List<SavedOrder>,
         filter: DateFilterType?,
-        dateRange: DateRange? = null
+        dateRange: DateRange? = null,
     ): List<SavedOrder> {
         return when (filter) {
             null -> orders
@@ -181,7 +179,7 @@ class OrdersHistoryViewModel(
                 val today = kotlin.time.Clock.System.now().toLocalDateTime(zone).date
                 val firstDayOfMonth = LocalDate(today.year, today.month, 1)
 
-               OrdersFilter.betweenDates(
+                OrdersFilter.betweenDates(
                     orders,
                     firstDayOfMonth,
                     today

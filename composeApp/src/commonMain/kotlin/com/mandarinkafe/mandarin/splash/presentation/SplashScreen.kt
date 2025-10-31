@@ -24,10 +24,10 @@ import com.mandarinkafe.mandarin.util.Constants.SPLASH_ANIMATION_DURATION
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_APPEARING_DURATION
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_GLOBAL_ALPHA_INIT
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_LOGO_ALPHA_INIT
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SplashScreen() {

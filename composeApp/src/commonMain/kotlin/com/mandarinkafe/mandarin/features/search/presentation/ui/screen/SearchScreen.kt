@@ -30,7 +30,13 @@ fun SearchScreen(
         favoriteIds = favoriteIds,
         onSearchEvent = onEvent,
         searchState = searchState,
-        onMealDetailsClick = { meal -> onSharedEvent(SharedContract.SharedEvent.OnMealDetailsClick(meal)) },
+        onMealDetailsClick = { meal ->
+            onSharedEvent(
+                SharedContract.SharedEvent.OnMealDetailsClick(
+                    meal
+                )
+            )
+        },
         onToggleFavorite = { meal -> onSharedEvent(SharedContract.SharedEvent.ToggleFavorite(meal)) },
         onAddToCart = { meal -> onCartEvent(CartEvent.AddToCart(customizedMeal = meal.toCustomizedMeal())) },
         onRemoveFromCart = { meal -> onCartEvent(CartEvent.OnReduce(meal = meal)) },

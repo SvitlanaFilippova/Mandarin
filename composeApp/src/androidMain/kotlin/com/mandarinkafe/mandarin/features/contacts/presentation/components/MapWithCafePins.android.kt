@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.viewinterop.AndroidView
-import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CENTER_LONGITUDE
@@ -36,7 +35,6 @@ actual fun MapWithCafePins() {
     var mapView by remember { mutableStateOf<MapView?>(null) }
     val mandarinInitPoint =
         remember { Point(MANDARIN_CENTER_LATITUDE, MANDARIN_CENTER_LONGITUDE) }
-
 
 
     val onMapReady: (MapView) -> Unit = remember {

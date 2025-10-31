@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDate
 
 data class DateRange(
     val start: LocalDate,
-    val end: LocalDate
+    val end: LocalDate,
 )
 
 

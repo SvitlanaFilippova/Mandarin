@@ -13,20 +13,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import dev.icerock.moko.resources.compose.stringResource
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.util.presentation.ui.components.CheckboxWithTextRow
 import com.mandarinkafe.mandarin.util.presentation.ui.components.SwitchWithTextRow
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun UtensilPreferences(
     noUtensils: Boolean,
     chosenUtensils: List<Utensil>,
     onChangeNoUtensils: (Boolean) -> Unit,
-    onChooseUtensil: (Utensil, Boolean) -> Unit
+    onChooseUtensil: (Utensil, Boolean) -> Unit,
 ) {
     Column {
         SwitchWithTextRow(

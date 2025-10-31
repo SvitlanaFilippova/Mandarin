@@ -6,7 +6,7 @@ import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWit
 class CalculateCartTotalWithDiscountUseCaseImpl : CalculateCartTotalWithDiscountUseCase {
     override fun invoke(
         items: List<CartItem>,
-        discountAmount: Int
+        discountAmount: Int,
     ): Double {
         return items.sumOf { item ->
             val mealPrice = item.customizedMeal.meal.price.toDouble()

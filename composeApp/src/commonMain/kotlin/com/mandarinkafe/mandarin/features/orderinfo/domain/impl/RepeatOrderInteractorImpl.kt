@@ -11,7 +11,7 @@ import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.first
 
 class RepeatOrderInteractorImpl(
-    private val menuCache: MenuCache
+    private val menuCache: MenuCache,
 ) : RepeatOrderInteractor {
 
     override suspend fun mapToCartItems(incoming: List<IncomingOrderItem>): RepeatOrderResult {

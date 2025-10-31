@@ -29,7 +29,7 @@ fun MealItemImageBox(
     cardIsSmall: Boolean,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
-    labelSize: LabelSize
+    labelSize: LabelSize,
 ) {
     val spacerSize = if (cardIsSmall) Dimens.MarginSuperSmall2 else Dimens.MarginSuperSmall4
     val paddingSize = if (cardIsSmall) Dimens.MarginSuperSmall4 else Dimens.MarginSmall8

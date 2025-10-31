@@ -19,7 +19,6 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.search.presentation.ui.components.LabelChipsRow
 import com.mandarinkafe.mandarin.features.search.presentation.ui.components.SearchResults
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.SearchBarInputField
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
@@ -51,7 +50,7 @@ fun SearchScreenContent(
             .background(Colors.AppBlack)
             .padding(horizontal = Dimens.MarginSmall8),
     ) {
-         SearchBarInputField(
+        SearchBarInputField(
             query = latestSearchText,
             onQueryChange = { text ->
                 if (text.isEmpty()) {

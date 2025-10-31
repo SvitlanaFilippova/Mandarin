@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PriceDto(
     val organizationId: String,
-    val price: Double?
+    val price: Double?,
 )
 
 

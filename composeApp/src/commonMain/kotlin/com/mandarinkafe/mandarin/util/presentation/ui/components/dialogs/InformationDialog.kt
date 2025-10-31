@@ -11,7 +11,7 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun InformationDialog(
     textRes: StringResource,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,

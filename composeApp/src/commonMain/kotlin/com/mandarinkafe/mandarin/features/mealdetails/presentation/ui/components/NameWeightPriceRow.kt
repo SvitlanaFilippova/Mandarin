@@ -19,7 +19,7 @@ fun NameWeightPriceRow(
     name: String,
     weight: Int,
     measureUnit: String?,
-    price: Int
+    price: Int,
 ) {
     Row(
         modifier = modifier

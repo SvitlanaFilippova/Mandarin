@@ -20,7 +20,7 @@ fun SearchResultsLazyColumn(
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
-    inProgressItems: Set<String>
+    inProgressItems: Set<String>,
 ) {
     val listState = rememberLazyListState()
 

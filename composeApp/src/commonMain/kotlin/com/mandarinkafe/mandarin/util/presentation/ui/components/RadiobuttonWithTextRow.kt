@@ -22,7 +22,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 fun RadiobuttonWithTextRow(
     label: String,
     selected: Boolean,
-    onItemSelected: () -> Unit
+    onItemSelected: () -> Unit,
 ) {
     Row(
         modifier = Modifier

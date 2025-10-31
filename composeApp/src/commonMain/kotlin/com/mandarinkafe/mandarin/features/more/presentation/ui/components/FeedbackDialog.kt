@@ -14,8 +14,8 @@ import dev.icerock.moko.resources.compose.stringResource
 fun FeedbackDialog(
     onDismissRequest: () -> Unit,
 
-) {
-   val viewModel = rememberFeedbackViewModel()
+    ) {
+    val viewModel = rememberFeedbackViewModel()
     val state by viewModel.state.collectAsState()
     val successTitle = stringResource(MR.strings.message_sent_successfully)
 

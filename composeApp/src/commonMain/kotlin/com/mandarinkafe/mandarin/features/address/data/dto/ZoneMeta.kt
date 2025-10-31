@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class ZoneMeta(
     val id: Int,
     val freeDeliveryThreshold: Int,
-    val colorHex: String
+    val colorHex: String,
 )

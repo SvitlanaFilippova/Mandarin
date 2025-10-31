@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CustomerCategoriesResponse(
-    val guestCategories: List<CustomerCategoryDto>?
+    val guestCategories: List<CustomerCategoryDto>?,
 ) : Response()
 
 

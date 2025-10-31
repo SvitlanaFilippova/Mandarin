@@ -12,7 +12,7 @@ data class SavedOrder(
     val addressLine1: String = "",
     val addressDetails: String = "",
     val mealNames: String = "",
-    val status: DeliveryStatus? = null
+    val status: DeliveryStatus? = null,
 ) {
     val isActive: Boolean
         get() = status != DeliveryStatus.CANCELLED && status != DeliveryStatus.CLOSED

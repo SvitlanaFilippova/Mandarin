@@ -1,12 +1,10 @@
 package com.mandarinkafe.mandarin.features.favorites.presentation.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,7 +30,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun FavoritesScreen(
     cartViewModel: CartViewModel,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
 ) {
     val favoritesViewModel = rememberFavoritesViewModel()
     val state by favoritesViewModel.state.collectAsState()
@@ -91,7 +89,13 @@ fun FavoritesScreen(
                             )
                         )
                     },
-                    onToggleFavorite = { onSharedEvent(SharedContract.SharedEvent.ToggleFavorite(item = it)) }
+                    onToggleFavorite = {
+                        onSharedEvent(
+                            SharedContract.SharedEvent.ToggleFavorite(
+                                item = it
+                            )
+                        )
+                    }
                 )
             }
 

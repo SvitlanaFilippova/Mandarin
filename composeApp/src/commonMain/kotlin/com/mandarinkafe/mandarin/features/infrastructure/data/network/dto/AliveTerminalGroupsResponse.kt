@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AliveTerminalGroupsResponse(
     val correlationId: String,
-    val isAliveStatus: List<AliveTerminalGroupDto>
+    val isAliveStatus: List<AliveTerminalGroupDto>,
 ) : Response()
 
 

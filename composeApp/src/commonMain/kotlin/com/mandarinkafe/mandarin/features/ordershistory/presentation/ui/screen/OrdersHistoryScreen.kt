@@ -4,21 +4,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.MR
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.components.FiltersSection
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.components.OrdersHistoryList
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryContract.OrdersHistoryEffect
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryContract.OrdersHistoryEvent
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberOrdersHistoryViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
@@ -26,7 +25,6 @@ import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshIndicator
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
-import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

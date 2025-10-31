@@ -7,13 +7,13 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 
 class TelegramApi(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) {
     suspend fun sendMessage(
         url: String,
         chatId: String,
         text: String,
-        parseMode: String = "HTML"
+        parseMode: String = "HTML",
     ): TelegramResponse {
         return client.post(url) {
             parameter("chat_id", chatId)

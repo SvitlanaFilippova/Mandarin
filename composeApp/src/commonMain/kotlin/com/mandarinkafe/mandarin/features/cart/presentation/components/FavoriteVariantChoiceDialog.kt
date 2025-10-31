@@ -14,7 +14,7 @@ import dev.icerock.moko.resources.compose.stringResource
 fun FavoriteVariantChoiceDialog(
     onBaseSelected: () -> Unit,
     onCustomSelected: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,

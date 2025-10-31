@@ -25,7 +25,7 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun DeliveryAreaCompactInfo(
     modifier: Modifier = Modifier,
-    deliveryArea: UiDeliveryArea
+    deliveryArea: UiDeliveryArea,
 ) {
     Box(
         modifier = modifier

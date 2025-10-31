@@ -14,6 +14,7 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.cinterop.ExperimentalForeignApi
 
+@Suppress("FunctionNaming")
 @OptIn(ExperimentalForeignApi::class)
 fun MainViewController() = ComposeUIViewController {
     // Инициализируем Koin

@@ -18,7 +18,7 @@ fun SwitchWithTextRow(
     modifier: Modifier = Modifier,
     value: Boolean,
     onValueChange: (Boolean) -> Unit,
-    text: String
+    text: String,
 ) {
     Row(
         modifier = modifier

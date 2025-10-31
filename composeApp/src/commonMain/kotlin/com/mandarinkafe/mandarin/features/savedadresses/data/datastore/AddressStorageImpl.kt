@@ -8,11 +8,10 @@ import com.mandarinkafe.mandarin.core.domain.models.Address
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class AddressStorageImpl(
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
 ) : AddressStorage {
 
     private val json = Json { ignoreUnknownKeys = true }

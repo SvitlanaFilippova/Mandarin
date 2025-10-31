@@ -47,7 +47,7 @@ class FavoritesValidator(
 
 
     private fun processRecords(
-        raw: Set<FavoriteRecord>
+        raw: Set<FavoriteRecord>,
     ): ValidationResult {
         val validPairs = mutableListOf<Pair<FavoriteRecord, CustomizedMeal>>()
 

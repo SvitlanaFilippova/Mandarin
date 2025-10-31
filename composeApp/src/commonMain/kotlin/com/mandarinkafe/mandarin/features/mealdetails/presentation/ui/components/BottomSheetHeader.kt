@@ -29,7 +29,7 @@ fun BottomSheetHeader(
     isFavorite: Boolean?,
     onToggleFavorite: () -> Unit,
     onClose: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier

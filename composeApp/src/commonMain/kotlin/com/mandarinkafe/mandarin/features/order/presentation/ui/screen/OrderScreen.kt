@@ -12,8 +12,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.mandarinkafe.mandarin.MR
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.HandleOrderEffects
+import com.mandarinkafe.mandarin.features.order.presentation.ui.components.ObserveNavBackstack
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract
@@ -25,10 +29,6 @@ import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshIndicator
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
-import com.mandarinkafe.mandarin.core.presentation.theme.Colors
-import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.mandarinkafe.mandarin.features.order.presentation.ui.components.ObserveNavBackstack
 
 @Composable
 fun OrderScreen(

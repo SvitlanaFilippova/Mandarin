@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.features.menu.data.impl
 
 import com.mandarinkafe.mandarin.features.menu.data.api.ImageValidator
-import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.IMAGE_VALIDATOR_TIMEOUT
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection

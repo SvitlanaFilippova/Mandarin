@@ -11,5 +11,5 @@ data class IncomingMealAdditional(
     val weight: Int,
     val measureUnitType: MeasureUnitType,
     val isDeleted: Boolean = false,
-    val isValidated: Boolean = false
+    val isValidated: Boolean = false,
 )

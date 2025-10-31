@@ -25,10 +25,10 @@ fun ModifierGroupItem(
     onChooseMultiModifiers: (
         modifierGroup: ModifierGroup,
         modifierItem: ModifierItem,
-        isChecked: Boolean
-    ) -> Unit
+        isChecked: Boolean,
+    ) -> Unit,
 
-) {
+    ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(Dimens.MarginSmall8)

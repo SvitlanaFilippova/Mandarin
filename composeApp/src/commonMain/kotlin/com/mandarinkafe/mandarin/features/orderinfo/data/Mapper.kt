@@ -40,7 +40,7 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
             append(comment)
         }
     }
-    val orderType =order?.orderType?.toDomain()
+    val orderType = order?.orderType?.toDomain()
 
     return IncomingOrder(
         id = id,
@@ -95,7 +95,7 @@ fun IncomingOrderItemDto.toDomain(): IncomingOrderItem {
 }
 
 fun List<IncomingOrderItemDto>.toDomainWithAdds(
-    addonsCategories: List<MealAdditionalCategory>
+    addonsCategories: List<MealAdditionalCategory>,
 ): List<IncomingOrderItem> {
     val addonIds = collectAddonIds(addonsCategories)
     val builders = associateItemsWithAdds(this, addonIds)
@@ -149,7 +149,7 @@ private fun collectAddonIds(addonsCategories: List<MealAdditionalCategory>): Set
 
 private fun associateItemsWithAdds(
     dtos: List<IncomingOrderItemDto>,
-    addonIds: Set<String>
+    addonIds: Set<String>,
 ): List<IncomingOrderItemBuilder> {
     val result = mutableListOf<IncomingOrderItemBuilder>()
 
@@ -191,7 +191,7 @@ private class IncomingOrderItemBuilder private constructor(
     private val isDeleted: Boolean,
     private val comment: String,
     var chosenModifiers: List<IncomingModifier> = emptyList(),
-    val chosenAdds: MutableList<IncomingMealAdditional> = mutableListOf()
+    val chosenAdds: MutableList<IncomingMealAdditional> = mutableListOf(),
 ) {
     fun build() = IncomingOrderItem(
         id = id,

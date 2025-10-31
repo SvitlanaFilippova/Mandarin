@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.search.domain.impl
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
-import com.mandarinkafe.mandarin.features.search.domain.usecase.GetFullMealListUseCase
+import com.mandarinkafe.mandarin.features.search.domain.api.GetFullMealListUseCase
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
 import com.mandarinkafe.mandarin.util.Resource.ErrorNoInternet
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class GetFullMealListUseCaseImpl(
-    private val menuCache: MenuCache
+    private val menuCache: MenuCache,
 ) : GetFullMealListUseCase {
 
     override fun invoke(): Flow<Resource<List<Meal>>> {

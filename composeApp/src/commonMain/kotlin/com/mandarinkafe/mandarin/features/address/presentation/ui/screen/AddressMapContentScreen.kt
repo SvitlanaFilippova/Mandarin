@@ -23,5 +23,5 @@ expect fun AddressMapContentScreen(
     addressValue: String,
     isError: Boolean,
     onCameraMoved: (GeoPoint) -> Unit,
-    cameraController: MapCameraController
+    cameraController: MapCameraController,
 )

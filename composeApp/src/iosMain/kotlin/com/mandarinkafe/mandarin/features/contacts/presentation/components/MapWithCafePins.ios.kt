@@ -101,6 +101,6 @@ actual fun MapWithCafePins() {
             onZoomIn = { changeZoom(mapView = mapView, delta = +1f) },
             onZoomOut = { changeZoom(mapView = mapView, delta = -1f) },
 
-        )
+            )
     }
 }

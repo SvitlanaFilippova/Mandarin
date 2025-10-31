@@ -1,14 +1,15 @@
 package com.mandarinkafe.mandarin.features.address.di
 
-import com.mandarinkafe.mandarin.features.address.domain.api.AddressRepository
+import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsViewModel
+import com.mandarinkafe.mandarin.features.address.data.impl.DeliveryAreaRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.domain.api.AddressSearchInteractor
 import com.mandarinkafe.mandarin.features.address.domain.api.DeliveryAreaRepository
-import com.mandarinkafe.mandarin.features.address.domain.api.FusedLocationRepository
 import com.mandarinkafe.mandarin.features.address.domain.api.GetCurrentLocationUseCase
 import com.mandarinkafe.mandarin.features.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.domain.impl.AddressSearchInteractorImpl
 import com.mandarinkafe.mandarin.features.address.domain.impl.GetCurrentLocationUseCaseImpl
 import com.mandarinkafe.mandarin.features.address.domain.impl.GetDeliveryZoneUseCaseImpl
+import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressViewModel
 import com.mandarinkafe.mandarin.features.savedadresses.data.datastore.AddressStorage
 import com.mandarinkafe.mandarin.features.savedadresses.data.datastore.AddressStorageImpl
 import com.mandarinkafe.mandarin.features.savedadresses.data.impl.SavedAddressRepositoryImpl
@@ -19,9 +20,6 @@ import com.mandarinkafe.mandarin.features.savedadresses.domain.api.SavedAddressR
 import com.mandarinkafe.mandarin.features.savedadresses.domain.impl.GetSavedAddressesUseCaseImpl
 import com.mandarinkafe.mandarin.features.savedadresses.domain.impl.RemoveAddressUseCaseImpl
 import com.mandarinkafe.mandarin.features.savedadresses.domain.impl.SaveAddressUseCaseImpl
-import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsViewModel
-import com.mandarinkafe.mandarin.features.address.data.impl.DeliveryAreaRepositoryImpl
-import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressViewModel
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module

@@ -13,10 +13,10 @@ actual fun MealDetailsContainer(
     content: @Composable () -> Unit,
 ) {
     // На iOS показываем фуллскрин вместо bottom sheet
-        Column(
-            modifier = Modifier.fillMaxSize()
-                .background(Colors.AppBlack)
-        ) {
-            content()
-        }
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .background(Colors.AppBlack)
+    ) {
+        content()
     }
+}

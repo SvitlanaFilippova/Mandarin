@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class AliveTerminalGroupDto(
     val isAlive: Boolean,
     val organizationId: String,
-    val terminalGroupId: String
+    val terminalGroupId: String,
 )
 
 

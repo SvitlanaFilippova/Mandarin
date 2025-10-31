@@ -20,7 +20,7 @@ sealed interface SavedAddressesContract {
 
     data class SavedAddressesState(
         val data: List<Address> = emptyList(),
-        val isLoading: Boolean? = null
+        val isLoading: Boolean? = null,
     ) : BaseContract.BaseState
 }
 

@@ -77,7 +77,7 @@ data class Meal(
     /**
     Является ли позиция доставкой
      */
-    val isDelivery: Boolean
+    val isDelivery: Boolean,
 )
 
 /**

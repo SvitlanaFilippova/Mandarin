@@ -6,7 +6,7 @@ data class ReplaceOrAddData(
     val messageRes: StringResource,
     val mealName: String? = null,
     val onAddNew: () -> Unit,
-    val onReplace: () -> Unit
+    val onReplace: () -> Unit,
 )
 
 

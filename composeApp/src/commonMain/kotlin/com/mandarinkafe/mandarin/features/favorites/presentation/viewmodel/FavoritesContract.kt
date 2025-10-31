@@ -16,7 +16,7 @@ sealed interface FavoritesContract {
     data class FavoritesState(
         val isLoading: Boolean = false,
         val data: List<CustomizedMeal> = emptyList(),
-        val error: UiError? = null
+        val error: UiError? = null,
     ) : BaseContract.BaseState
 }
 

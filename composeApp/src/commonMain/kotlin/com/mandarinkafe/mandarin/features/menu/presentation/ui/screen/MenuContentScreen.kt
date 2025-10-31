@@ -1,12 +1,7 @@
 package com.mandarinkafe.mandarin.features.menu.presentation.ui.screen
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,7 +35,6 @@ import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BannersSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuItemCard
-import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuSearchBar
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.TabsSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.rememberScrollUiState
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect

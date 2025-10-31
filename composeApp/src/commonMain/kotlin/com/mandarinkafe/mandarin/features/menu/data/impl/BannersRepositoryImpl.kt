@@ -7,16 +7,16 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.BannerDto
 import com.mandarinkafe.mandarin.features.menu.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
-import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
 class BannersRepositoryImpl(
     private val networkClient: GoogleDocsNetworkClient,
-    private val imageValidator: ImageValidator
+    private val imageValidator: ImageValidator,
 ) : BannersRepository {
 
     var bannersCsv: String? = null

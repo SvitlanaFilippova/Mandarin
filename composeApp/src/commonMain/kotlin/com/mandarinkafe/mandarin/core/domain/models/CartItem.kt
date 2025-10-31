@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.core.domain.models
 
 import androidx.compose.runtime.Immutable
-import kotlinx.serialization.Serializable
 import com.mandarinkafe.mandarin.util.generateUuid
+import kotlinx.serialization.Serializable
 
 @Serializable
 @Immutable
@@ -10,7 +10,7 @@ data class CartItem(
     val id: String = generateUuid(),
     val customizedMeal: CustomizedMeal,
     val quantity: Int = 1,
-    val comment: String = ""
+    val comment: String = "",
 ) {
     val name: String
         get() = customizedMeal.meal.name

@@ -9,7 +9,7 @@ import dev.icerock.moko.resources.StringResource
 sealed interface DeliveryContract {
     sealed interface DeliveryEvent : BaseContract.BaseEvent {
         data class CameraMoved(val center: GeoPoint) : DeliveryEvent
-        data object RequestAddress: DeliveryEvent
+        data object RequestAddress : DeliveryEvent
     }
 
     sealed interface DeliveryEffect : BaseContract.BaseEffect

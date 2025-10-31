@@ -20,7 +20,7 @@ fun BigButtonWithText(
     text: String = "",
     onMissingRequiredInfo: () -> Unit = {},
     onSubmit: () -> Unit,
-    activeContainerColor: Color
+    activeContainerColor: Color,
 ) {
     val contentColor = if (shouldBeActive) {
         Color.White

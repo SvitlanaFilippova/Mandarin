@@ -19,7 +19,7 @@ fun ButtonWithText(
     text: String = "",
     onMissingRequiredInfo: () -> Unit = {},
     onClick: () -> Unit,
-    containerColor: Color = Colors.Orange
+    containerColor: Color = Colors.Orange,
 ) {
     val contentColor = if (shouldBeActive) {
         Color.White

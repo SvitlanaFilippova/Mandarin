@@ -18,7 +18,7 @@ fun FiltersSection(
     onOrderTypesChange: (List<DeliveryType>) -> Unit,
     onDateFilterChange: (DateFilterType?) -> Unit,
     chosenDateRange: DateRange?,
-    onCustomRangeChange: (DateRange) -> Unit
+    onCustomRangeChange: (DateRange) -> Unit,
 ) {
     FlowRow(
         modifier = Modifier

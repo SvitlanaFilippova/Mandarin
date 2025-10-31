@@ -44,7 +44,7 @@ fun BannerCarousel(
     banners: List<Banner>,
     autoScrollInterval: Long = BANNERS_AUTO_SCROLL_INTERVAL,
     easing: androidx.compose.animation.core.Easing = androidx.compose.animation.core.LinearEasing,
-    onBannerClick: (Banner) -> Unit
+    onBannerClick: (Banner) -> Unit,
 ) {
     val pagerState = rememberPagerState { banners.size }
     val coroutineScope = rememberCoroutineScope()
@@ -68,7 +68,11 @@ fun BannerCarousel(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = Dimens.MarginSmall8, end = Dimens.MarginSmall8, top = Dimens.MarginSmall8)
+            .padding(
+                start = Dimens.MarginSmall8,
+                end = Dimens.MarginSmall8,
+                top = Dimens.MarginSmall8
+            )
     ) {
         HorizontalPager(
             state = pagerState,

@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.mealdetails.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
-import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetAddonsUseCase
+import com.mandarinkafe.mandarin.features.mealdetails.domain.api.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.CATEGORY_ADDS
 import com.mandarinkafe.mandarin.util.Resource

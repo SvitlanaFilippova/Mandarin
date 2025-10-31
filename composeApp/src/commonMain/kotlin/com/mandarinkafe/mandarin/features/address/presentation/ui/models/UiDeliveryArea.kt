@@ -11,7 +11,7 @@ data class UiDeliveryArea(
     val parentArea: List<GeoPoint>?,
     val deliveryPrice: Int,
     val freeDeliveryThreshold: Int,
-    val color: Color
+    val color: Color,
 )
 
 fun DeliveryZone.toUi(): UiDeliveryArea {

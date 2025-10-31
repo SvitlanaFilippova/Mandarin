@@ -42,7 +42,7 @@ fun OurAddressesCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                  painter = painterResource(MR.images.ic_location_on),
+                    painter = painterResource(MR.images.ic_location_on),
                     contentDescription = null,
                     tint = Colors.Transparent // псевдоиконка для отступа
                 )

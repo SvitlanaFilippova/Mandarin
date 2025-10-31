@@ -11,7 +11,7 @@ object Mapper {
     fun IncomingOrderItem.toCartItem(
         baseMeal: Meal,
         adds: List<MealAdditional>,
-        modifiers: List<ModifierGroup>
+        modifiers: List<ModifierGroup>,
     ): CartItem {
         return CartItem(
             customizedMeal = CustomizedMeal(

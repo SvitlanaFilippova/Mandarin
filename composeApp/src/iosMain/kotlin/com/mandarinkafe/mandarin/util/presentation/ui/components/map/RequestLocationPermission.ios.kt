@@ -26,7 +26,8 @@ actual fun RequestLocationPermission(onGranted: () -> Unit) {
                 authorizationStatus = CLLocationManager.authorizationStatus()
                 when (authorizationStatus) {
                     kCLAuthorizationStatusAuthorizedWhenInUse,
-                    kCLAuthorizationStatusAuthorizedAlways -> {
+                    kCLAuthorizationStatusAuthorizedAlways,
+                        -> {
                         onGranted()
                     }
                 }
@@ -41,8 +42,10 @@ actual fun RequestLocationPermission(onGranted: () -> Unit) {
             kCLAuthorizationStatusNotDetermined -> {
                 locationManager.requestWhenInUseAuthorization()
             }
+
             kCLAuthorizationStatusAuthorizedWhenInUse,
-            kCLAuthorizationStatusAuthorizedAlways -> {
+            kCLAuthorizationStatusAuthorizedAlways,
+                -> {
                 onGranted()
             }
         }

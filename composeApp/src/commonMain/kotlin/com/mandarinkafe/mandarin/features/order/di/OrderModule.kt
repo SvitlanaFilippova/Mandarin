@@ -19,7 +19,6 @@ import com.mandarinkafe.mandarin.features.order.domain.impl.CreateOrderUseCaseIm
 import com.mandarinkafe.mandarin.features.order.domain.impl.PickupOnlyRemoveUseCaseImpl
 import com.mandarinkafe.mandarin.features.order.domain.impl.ResolvePickupPointUseCaseImpl
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
-import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.CartObserver
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.OrderCreator
 import com.mandarinkafe.mandarin.features.savedadresses.domain.AddressUseCases
 import com.mandarinkafe.mandarin.features.savedadresses.domain.CartContentUseCases

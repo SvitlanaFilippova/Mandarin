@@ -12,14 +12,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import dev.icerock.moko.resources.compose.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.presentation.ui.components.CheckboxWithTextRow
-import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.MyTextField
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MaskVisualTransformation
+import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.MyTextField
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun PersonalInfo(
@@ -32,7 +32,7 @@ fun PersonalInfo(
     showSaveUserInfoCheckbox: Boolean,
     saveUserInfoCheckboxText: String,
     saveUserInfo: Boolean,
-    onSaveUserInfoToggled: (Boolean) -> Unit
+    onSaveUserInfoToggled: (Boolean) -> Unit,
 ) {
     val mask = MaskVisualTransformation(stringResource(MR.strings.phone_mask))
     MyTextField(

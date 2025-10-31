@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.features.menu.domain.impl
 
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
+import com.mandarinkafe.mandarin.features.menu.domain.api.GetBannersUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
-import com.mandarinkafe.mandarin.features.menu.domain.usecase.GetBannersUseCase
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.Success
 

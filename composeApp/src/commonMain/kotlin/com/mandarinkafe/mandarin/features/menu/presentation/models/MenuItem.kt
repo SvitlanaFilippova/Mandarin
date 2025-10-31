@@ -20,7 +20,7 @@ sealed interface MenuItem {
         override val id: String,
         val categoryName: String,
         val sku: String,
-        val description: String
+        val description: String,
     ) : MenuItem
 
     sealed interface MealItem : MenuItem {

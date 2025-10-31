@@ -17,14 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.viewinterop.AndroidView
-import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.presentation.ui.models.UiDeliveryArea
-import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.mapview.MapView
-import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun MapWithDeliveryAreas(

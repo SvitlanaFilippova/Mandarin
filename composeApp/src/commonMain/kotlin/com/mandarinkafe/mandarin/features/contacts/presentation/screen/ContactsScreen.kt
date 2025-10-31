@@ -1,29 +1,26 @@
 package com.mandarinkafe.mandarin.features.contacts.presentation.screen
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.contacts.presentation.components.MapWithCafePins
 import com.mandarinkafe.mandarin.features.contacts.presentation.components.OurAddressesCard
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InfoCard
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.MakeCall
 import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.OpenGeoLocation
-import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 

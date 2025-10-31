@@ -24,7 +24,7 @@ fun AddressSearchResultItem(
     text: String,
     extraText: String?,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = modifier

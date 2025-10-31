@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.stateIn
 class ScrollUiState(
     val listState: LazyListState,
     private val categoryPositions: List<Int>,
-    private val subCategoryPositionsMap: Map<Int, List<Int>>
+    private val subCategoryPositionsMap: Map<Int, List<Int>>,
 ) {
     /**
      * Направление скролла: true — вверх, false — вниз
@@ -90,7 +90,7 @@ class ScrollUiState(
 @Composable
 fun rememberScrollUiState(
     categoryPositions: List<Int>,
-    subCategoryPositionsMap: Map<Int, List<Int>>
+    subCategoryPositionsMap: Map<Int, List<Int>>,
 ): ScrollUiState {
     val listState = rememberLazyListState()
     return remember(categoryPositions) {

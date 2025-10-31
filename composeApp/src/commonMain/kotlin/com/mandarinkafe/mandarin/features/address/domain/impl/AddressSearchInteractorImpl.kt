@@ -12,7 +12,7 @@ class AddressSearchInteractorImpl(private val repository: AddressRepository) :
 
     override suspend fun searchAddressByText(
         query: String,
-        point: GeoPoint
+        point: GeoPoint,
     ) {
         repository.searchAddressByString(query, point)
     }

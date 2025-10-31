@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.features.ordershistory.data.local
 
-import com.mandarinkafe.mandarin.shared.database.SavedOrderQueries
 import com.mandarinkafe.mandarin.features.ordershistory.data.Mapper.toSavedOrder
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
+import com.mandarinkafe.mandarin.shared.database.SavedOrderQueries
 
 class SQLDelightOrdersHistoryStorage(private val queries: SavedOrderQueries) :
     OrdersHistoryStorage {

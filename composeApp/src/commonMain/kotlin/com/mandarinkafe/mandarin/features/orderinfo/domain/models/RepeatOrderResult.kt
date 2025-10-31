@@ -4,5 +4,5 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 
 data class RepeatOrderResult(
     val cartItems: List<CartItem>,
-    val hasInvalidItems: Boolean
+    val hasInvalidItems: Boolean,
 )

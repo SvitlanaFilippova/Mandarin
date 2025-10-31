@@ -12,7 +12,7 @@ data class MenuIdResponse(
 @Serializable
 data class Menu(
     val id: String,
-    val name: String
+    val name: String,
 )
 
 

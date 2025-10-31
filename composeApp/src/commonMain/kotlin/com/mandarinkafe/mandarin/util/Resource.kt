@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.util
 
 sealed class Resource<T>(
     val data: T? = null,
-    val message: String? = null
+    val message: String? = null,
 ) {
     /**
      * Исходное состояние, когда загрузка ещё не начиналась

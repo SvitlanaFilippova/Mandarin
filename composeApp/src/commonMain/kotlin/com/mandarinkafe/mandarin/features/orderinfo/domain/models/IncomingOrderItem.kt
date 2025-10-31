@@ -13,7 +13,7 @@ data class IncomingOrderItem(
     val positionId: String?,
     val isDeleted: Boolean = false,
     val comment: String,
-    val isValidated: Boolean = false
+    val isValidated: Boolean = false,
 ) {
     // Цена за одну единицу без скидки (включая модификаторы и добавки)
     val unitPrice: Double

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.search.domain.usecase
+package com.mandarinkafe.mandarin.features.search.domain.api
 
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 
@@ -7,6 +7,6 @@ interface FilterUseCase {
         meals: List<Meal>,
         searchText: String,
         checkedLabels: List<String>,
-        favoritesIds: Set<String>
+        favoritesIds: Set<String>,
     ): List<Meal>
 }

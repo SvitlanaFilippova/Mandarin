@@ -8,9 +8,9 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.equalsByContent
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.features.cart.domain.Mapper.toCartItem
-import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
-import com.mandarinkafe.mandarin.features.cart.domain.model.MealAddResult
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
+import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
+import com.mandarinkafe.mandarin.features.cart.domain.models.MealAddResult
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.first
 
@@ -38,7 +38,7 @@ class CartInteractorImpl(
     override suspend fun addItem(
         cartItem: CartItem?,
         customizedMeal: CustomizedMeal?,
-        meal: Meal?
+        meal: Meal?,
     ) {
         when {
             cartItem != null -> addOrIncrement(cartItem)
@@ -104,7 +104,7 @@ class CartInteractorImpl(
     override suspend fun removeFromCart(
         cartItemId: String?,
         customizedMeal: CustomizedMeal?,
-        meal: Meal?
+        meal: Meal?,
     ) {
         val currentItems = getCurrentCartItems()
         val target: CartItem? = when {

@@ -92,7 +92,7 @@ fun CustomizedMeal.customizedText(): String {
 private fun generateUniqueId(
     meal: Meal,
     adds: List<MealAdditional>,
-    modifiers: List<ModifierGroup>
+    modifiers: List<ModifierGroup>,
 ): String {
     return buildString {
         append(meal.id)

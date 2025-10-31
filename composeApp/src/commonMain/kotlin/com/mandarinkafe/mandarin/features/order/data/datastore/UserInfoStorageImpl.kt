@@ -8,11 +8,10 @@ import com.mandarinkafe.mandarin.core.domain.models.UserInfo
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class UserInfoStorageImpl(
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
 ) : UserInfoStorage {
 
     private val json = Json { ignoreUnknownKeys = true }

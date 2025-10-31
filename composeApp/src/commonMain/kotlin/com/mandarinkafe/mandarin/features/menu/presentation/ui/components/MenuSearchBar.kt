@@ -15,7 +15,7 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun MenuSearchBar(
-    onSearchClick: () -> Unit
+    onSearchClick: () -> Unit,
 ) {
     SearchBarInputField(
         modifier = Modifier

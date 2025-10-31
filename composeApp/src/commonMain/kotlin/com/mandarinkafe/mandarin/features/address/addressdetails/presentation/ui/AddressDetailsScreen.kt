@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,9 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
-import com.mandarinkafe.mandarin.core.domain.models.Address
 import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.MR
+import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.components.AddressTypeChooser
@@ -47,7 +46,7 @@ fun AddressDetailsScreen(
     returnToRoute: String,
     isEditMode: Boolean,
     navController: NavController,
-    callerEntry: NavBackStackEntry
+    callerEntry: NavBackStackEntry,
 ) {
     if (initAddress == null) return
     val viewModel = rememberAddressDetailsViewModel()
@@ -137,7 +136,7 @@ fun AddressDetailsScreen(
             if (isEditMode) {
                 BigButtonWithText(
                     modifier = Modifier.weight(1f),
-                    text= stringResource(MR.strings.delete),
+                    text = stringResource(MR.strings.delete),
                     onSubmit = { showConfirmDeleteDialog = true },
                     activeContainerColor = Colors.Red
                 )

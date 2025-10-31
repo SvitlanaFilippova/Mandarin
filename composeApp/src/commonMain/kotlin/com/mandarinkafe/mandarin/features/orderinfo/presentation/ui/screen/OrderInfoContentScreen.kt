@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -31,7 +32,6 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickToCopyText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
 import dev.icerock.moko.resources.compose.stringResource
-import androidx.navigation.NavController
 
 @Composable
 fun OrderInfoContentScreen(
@@ -118,7 +118,7 @@ fun OrderInfoContentScreen(
 // Диалог для подтверждения желания отменить заказ
     if (showCancelDialog) {
         RemoveConfirmationDialog(
-            title = stringResource( MR.strings.cancel_order_question),
+            title = stringResource(MR.strings.cancel_order_question),
             text = stringResource(MR.strings.cancel_order_confirmation),
             onConfirm = {
                 showCancelDialog = false

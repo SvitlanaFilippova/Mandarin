@@ -5,24 +5,21 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import com.mandarinkafe.mandarin.MR
+import androidx.navigation.NavController
+import androidx.navigation.navOptions
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.navigation.bottomnav.components.CartIconBox
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
-import androidx.navigation.NavController
-import androidx.navigation.navOptions
 
 @Composable
 fun BottomNavigation(
@@ -56,7 +53,7 @@ fun BottomNavigation(
                     },
                     icon = {
                         val painter: Painter = painterResource(item.icon)
-                        
+
                         if (item == BottomNavigationItem.Cart && routeWithoutArgs != item.route) {
                             CartIconBox(
                                 cartCount = cartCount,

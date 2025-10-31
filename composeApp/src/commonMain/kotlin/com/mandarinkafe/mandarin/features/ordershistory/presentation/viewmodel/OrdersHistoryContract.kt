@@ -25,7 +25,7 @@ sealed interface OrdersHistoryContract {
         val filteredData: List<SavedOrder> = emptyList(),
         val chosenOrderTypes: List<DeliveryType> = emptyList(),
         val chosenDateFilterType: DateFilterType? = null,
-        val chosenDateRange: DateRange? = null
+        val chosenDateRange: DateRange? = null,
     ) : BaseContract.BaseState {
         val anyFiltersAreApplied: Boolean
             get() = chosenOrderTypes.isNotEmpty() || chosenDateFilterType != null

@@ -4,7 +4,7 @@ import com.mandarinkafe.mandarin.features.savedadresses.domain.api.RemoveAddress
 import com.mandarinkafe.mandarin.features.savedadresses.domain.api.SavedAddressRepository
 
 class RemoveAddressUseCaseImpl(
-    private val repository: SavedAddressRepository
+    private val repository: SavedAddressRepository,
 ) : RemoveAddressUseCase {
     override suspend operator fun invoke(id: String) {
         repository.removeAddress(id)

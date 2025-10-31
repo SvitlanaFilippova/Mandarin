@@ -11,7 +11,7 @@ data class CategoryDto(
     val description: String?,
     val isHidden: Boolean?,
     val tags: List<TagDto>?,
-    val labels: List<LabelDto>?
+    val labels: List<LabelDto>?,
 )
 
 

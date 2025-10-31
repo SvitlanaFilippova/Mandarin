@@ -51,7 +51,7 @@ object Mapper {
     fun StoredCartItem.toCustomizedMeal(
         meal: Meal,
         adds: List<MealAdditional>,
-        modifiers: List<ModifierGroup>
+        modifiers: List<ModifierGroup>,
     ) = CustomizedMeal(
         meal = meal,
         adds = adds,

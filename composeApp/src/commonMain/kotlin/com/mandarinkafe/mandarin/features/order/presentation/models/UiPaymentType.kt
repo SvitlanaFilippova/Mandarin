@@ -9,7 +9,7 @@ import dev.icerock.moko.resources.StringResource
 
 enum class UiPaymentType(
     val code: String,
-    val nameRes: StringResource
+    val nameRes: StringResource,
 ) {
     ONLINE(
         code = PAYMENT_ONLINE_CODE,

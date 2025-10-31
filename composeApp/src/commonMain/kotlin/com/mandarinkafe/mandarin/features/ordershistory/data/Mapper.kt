@@ -5,7 +5,7 @@ import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 import com.mandarinkafe.mandarin.shared.database.Saved_order
 
 object Mapper {
-    
+
     fun Saved_order.toSavedOrder() = SavedOrder(
         id = id,
         timestamp = timestamp,
@@ -16,7 +16,7 @@ object Mapper {
         addressDetails = addressDetails,
         mealNames = mealNames,
     )
-    
+
     private fun String?.toDeliveryTypeOrNull(): DeliveryType? {
         if (this.isNullOrBlank()) return null
         return when (trim().lowercase()) {

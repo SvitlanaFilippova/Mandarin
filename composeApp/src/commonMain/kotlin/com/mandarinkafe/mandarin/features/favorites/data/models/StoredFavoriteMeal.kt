@@ -8,7 +8,7 @@ data class StoredFavoriteMeal(
     val mealId: String,
     val timestamp: Long,
     val addsIds: List<String> = emptyList(),
-    val modifiers: List<ModifierGroup> = emptyList()
+    val modifiers: List<ModifierGroup> = emptyList(),
 ) {
     override fun equals(other: Any?): Boolean {
         return other is StoredFavoriteMeal &&

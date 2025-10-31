@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun MandarinTheme(
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme =
         darkColorScheme(

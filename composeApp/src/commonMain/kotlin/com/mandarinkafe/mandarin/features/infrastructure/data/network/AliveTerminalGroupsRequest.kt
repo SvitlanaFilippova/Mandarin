@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AliveTerminalGroupsRequest(
     val organizationIds: List<String>,
-    val terminalGroupIds: List<String>
+    val terminalGroupIds: List<String>,
 )
 
 

@@ -7,7 +7,7 @@ import dev.icerock.moko.resources.StringResource
 
 enum class UiDeliveryType(
     val nameRes: StringResource,
-    val iconRes: ImageResource
+    val iconRes: ImageResource,
 ) {
     DELIVERY(
         nameRes = MR.strings.delivery_type_name,

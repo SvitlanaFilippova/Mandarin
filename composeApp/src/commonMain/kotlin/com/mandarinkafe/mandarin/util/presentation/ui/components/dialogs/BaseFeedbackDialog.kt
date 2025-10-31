@@ -53,7 +53,7 @@ fun <Effect, Event> BaseFeedbackDialog(
     onMessageChange: (String) -> Unit,
     onSetNeedFeedback: (Boolean) -> Unit,
     isFormValid: Boolean,
-    isLoading: Boolean
+    isLoading: Boolean,
 ) {
     var isError by remember { mutableStateOf(false) }
     var dialogMessage by remember { mutableStateOf<String?>(null) }
@@ -232,7 +232,7 @@ private fun PhoneField(
     value: String,
     isError: Boolean,
     onValueChange: (String) -> Unit,
-    colors: TextFieldColors
+    colors: TextFieldColors,
 ) {
     val mask = MaskVisualTransformation(stringResource(MR.strings.phone_mask))
 

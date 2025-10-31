@@ -4,7 +4,7 @@ import com.mandarinkafe.mandarin.shared.database.Category_discount
 
 data class CategoryDiscountMap(
     val categoryId: String,
-    val discountId: String
+    val discountId: String,
 )
 
 fun Category_discount.toDomain() = CategoryDiscountMap(

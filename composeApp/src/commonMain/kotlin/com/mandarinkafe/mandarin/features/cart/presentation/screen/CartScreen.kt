@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
-import dev.materii.pullrefresh.PullRefreshLayout
-import dev.materii.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,10 +13,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import dev.icerock.moko.resources.compose.stringResource
+import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
-import dev.icerock.moko.resources.StringResource
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
@@ -30,9 +27,12 @@ import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
-import kotlinx.coroutines.launch
-import androidx.navigation.NavController
+import dev.icerock.moko.resources.StringResource
+import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshIndicator
+import dev.materii.pullrefresh.PullRefreshLayout
+import dev.materii.pullrefresh.rememberPullRefreshState
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -40,7 +40,7 @@ fun CartScreen(
     cartViewModel: CartViewModel,
     sharedViewModel: SharedViewModel,
     navController: NavController,
-    snackbarMessage: String? = null
+    snackbarMessage: String? = null,
 ) {
     val listState = rememberLazyListState()
     val state by cartViewModel.state.collectAsState()
@@ -176,7 +176,7 @@ fun CartScreen(
     }
 
     val pendingMessage: String? = pendingSnackbarRes?.let { stringResource(it) }
-    
+
     LaunchedEffect(pendingMessage, pendingShowToCart) {
         val message = pendingMessage ?: return@LaunchedEffect
         snackbarHostState.showSnackbar(

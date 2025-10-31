@@ -3,8 +3,8 @@ package com.mandarinkafe.mandarin.features.menu.presentation.viewmodel
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
-import com.mandarinkafe.mandarin.util.presentation.BaseContract
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
+import com.mandarinkafe.mandarin.util.presentation.BaseContract
 
 sealed interface MenuContract {
 

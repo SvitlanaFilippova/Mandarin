@@ -17,7 +17,7 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun CustomizeButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Button(
         modifier = modifier.size(Dimens.ButtonToCartSmall36),

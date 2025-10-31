@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PaymentDto(
-    val paymentType: PaymentTypeDto?
+    val paymentType: PaymentTypeDto?,
 )
 
 

@@ -24,7 +24,7 @@ class OrderInfoViewModel(
     private val getOrderStatus: GetOrderStatusUseCase,
     private val cancelOrderUseCase: CancelOrderUseCase,
     private val repeatOrderInteractor: RepeatOrderInteractor,
-    private val cartInteractor: CartInteractor
+    private val cartInteractor: CartInteractor,
 ) : BaseViewModel<OrderInfoEvent, OrderInfoEffect, OrderInfoState>() {
     override fun setInitialState() = OrderInfoState()
 

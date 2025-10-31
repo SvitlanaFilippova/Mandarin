@@ -9,12 +9,12 @@ import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.discou
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CategoryDiscountRepository
 import com.mandarinkafe.mandarin.features.infrastructure.domain.models.CategoryDiscountMap
 import com.mandarinkafe.mandarin.features.infrastructure.domain.models.toDomain
-import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
+import io.github.aakira.napier.Napier
 
 class CategoryDiscountRepositoryImpl(
     private val storage: CategoryDiscountsStorage,
-    private val networkClient: IikoNetworkClient
+    private val networkClient: IikoNetworkClient,
 ) : CategoryDiscountRepository {
     override suspend fun getDiscountIdForCategory(categoryId: String): String? {
         return storage.selectDiscountByCategory(categoryId)
@@ -37,7 +37,7 @@ class CategoryDiscountRepositoryImpl(
 
     private fun buildCategoryDiscountMap(
         categories: List<CustomerCategoryDto>,
-        discounts: List<DiscountTypeDto>
+        discounts: List<DiscountTypeDto>,
     ): List<CategoryDiscountMap> {
         return categories.mapNotNull { category ->
             // Проверяем что category.id не null

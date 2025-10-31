@@ -3,5 +3,5 @@ package com.mandarinkafe.mandarin.util.presentation.ui.components.intents
 import androidx.compose.runtime.Composable
 
 @Composable
-expect fun MakeCall(phoneNumber: String, onFail: () -> Unit =  {})
+expect fun MakeCall(phoneNumber: String, onFail: () -> Unit = {})
 

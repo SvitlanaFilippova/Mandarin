@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.search.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.isFavorite
-import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
+import com.mandarinkafe.mandarin.features.search.domain.api.FilterUseCase
 import com.mandarinkafe.mandarin.util.fuzzyContains
 import com.mandarinkafe.mandarin.util.levenshteinDistance
 import com.mandarinkafe.mandarin.util.toTranslitVariants
@@ -12,7 +12,7 @@ class FilterUseCaseImpl : FilterUseCase {
         meals: List<Meal>,
         searchText: String,
         checkedLabels: List<String>,
-        favoritesIds: Set<String>
+        favoritesIds: Set<String>,
     ): List<Meal> {
         if (searchText.isBlank()) {
             return meals.filter { meal ->

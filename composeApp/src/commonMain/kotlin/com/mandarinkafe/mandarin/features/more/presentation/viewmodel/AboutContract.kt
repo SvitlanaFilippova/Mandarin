@@ -8,7 +8,7 @@ sealed interface AboutContract {
     data class AboutState(
         val versionName: String? = null,
         val lastUpdated: String? = null,
-        val revision: Int? = null
+        val revision: Int? = null,
     ) : BaseContract.BaseState
 }
 

@@ -12,9 +12,9 @@ import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.validateBy
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
 import com.mandarinkafe.mandarin.features.menu.domain.toMealAdditional
-import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.MENU_WAIT_TIMEOUT
 import com.mandarinkafe.mandarin.util.Resource
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -90,7 +90,7 @@ class CartRepositoryImpl(
 
     private fun mapAndValidate(
         raw: List<StoredCartItem>,
-        menu: List<MealCategory>
+        menu: List<MealCategory>,
     ): List<CartItem> {
         val valid = mutableListOf<CartItem>()
 

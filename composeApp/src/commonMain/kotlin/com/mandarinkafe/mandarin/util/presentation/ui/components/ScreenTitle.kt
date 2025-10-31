@@ -12,7 +12,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 @Composable
 fun ScreenTitle(
     modifier: Modifier = Modifier,
-    name: String
+    name: String,
 ) {
     Row(modifier = modifier.fillMaxWidth()) {
         Text(

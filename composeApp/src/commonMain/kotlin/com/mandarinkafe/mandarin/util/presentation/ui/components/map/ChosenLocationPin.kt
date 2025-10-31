@@ -22,7 +22,7 @@ fun ChosenLocationPin(
     modifier: Modifier,
     isLoading: Boolean,
     isError: Boolean,
-    addressFound: Boolean
+    addressFound: Boolean,
 ) {
     val iconRes = remember(isLoading, isError, addressFound) {
         when {

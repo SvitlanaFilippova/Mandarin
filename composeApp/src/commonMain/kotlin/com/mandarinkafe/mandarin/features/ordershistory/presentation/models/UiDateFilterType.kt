@@ -4,7 +4,7 @@ import com.mandarinkafe.mandarin.MR
 import dev.icerock.moko.resources.StringResource
 
 enum class UiDateFilterType(
-    val nameRes: StringResource
+    val nameRes: StringResource,
 ) {
     TODAY(nameRes = MR.strings.date_filter_today),
     YESTERDAY(nameRes = MR.strings.date_filter_yesterday),

@@ -7,13 +7,13 @@ import com.mandarinkafe.mandarin.core.domain.models.DeliveryZone
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.data.dto.ZoneMeta
 import com.mandarinkafe.mandarin.features.address.domain.api.DeliveryAreaRepository
-import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Resource
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
 
 class DeliveryAreaRepositoryImpl(
     private val networkClient: GoogleDocsNetworkClient,
-    private val menuCache: MenuCache
+    private val menuCache: MenuCache,
 ) : DeliveryAreaRepository {
     private var cachedZones: List<DeliveryZone>? = null
 
@@ -64,7 +64,7 @@ class DeliveryAreaRepositoryImpl(
     private fun buildDeliveryZones(
         polygonsMap: Map<Int, List<GeoPoint>>,
         metaMap: Map<Int, ZoneMeta>,
-        pricesMap: Map<Int, Int>
+        pricesMap: Map<Int, Int>,
     ): List<DeliveryZone> {
         return polygonsMap.mapNotNull { (id, polygon) ->
             val meta = metaMap[id]

@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OrdersInfoResponse(
     val correlationId: String,
-    val orders: List<OrderInfoResponseDto>
+    val orders: List<OrderInfoResponseDto>,
 ) : Response()
 
 

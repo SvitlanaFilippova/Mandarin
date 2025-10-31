@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.more.presentation.viewmodel
 
-import com.mandarinkafe.mandarin.util.presentation.BaseContract
 import com.mandarinkafe.mandarin.util.Constants
+import com.mandarinkafe.mandarin.util.presentation.BaseContract
 
 sealed interface DevFeedbackContract {
     sealed interface DevFeedbackEvent : BaseContract.BaseEvent {
@@ -25,7 +25,7 @@ sealed interface DevFeedbackContract {
         val phone: String = "",
         val email: String = "",
         val message: String = "",
-        val needAnswer: Boolean = false
+        val needAnswer: Boolean = false,
     ) : BaseContract.BaseState {
         val isContactValid: Boolean
             get() =

@@ -7,8 +7,8 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
-import com.mandarinkafe.mandarin.util.presentation.BaseContract
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_SELECTED_FIRST_INDEX
+import com.mandarinkafe.mandarin.util.presentation.BaseContract
 import dev.icerock.moko.resources.StringResource
 
 sealed interface MealDetailsContract {
@@ -29,7 +29,7 @@ sealed interface MealDetailsContract {
         data class ChooseMultiModifiers(
             val modifierGroup: ModifierGroup,
             val modifierItem: ModifierItem,
-            val isChecked: Boolean
+            val isChecked: Boolean,
         ) : MealDetailsEvent
 
         // Навигация по категориям
@@ -52,12 +52,12 @@ sealed interface MealDetailsContract {
             val message: StringResource,
             val mealName: String? = null,
             val onAddNew: () -> Unit,
-            val onReplace: () -> Unit
+            val onReplace: () -> Unit,
         ) : MealDetailsEffect
 
         data class CloseAndShowMessage(
             val message: StringResource? = null,
-            val mealName: String? = null
+            val mealName: String? = null,
         ) : MealDetailsEffect
     }
 

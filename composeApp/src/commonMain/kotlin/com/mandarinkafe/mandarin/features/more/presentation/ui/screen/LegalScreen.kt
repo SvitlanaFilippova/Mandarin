@@ -14,8 +14,8 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.more.presentation.ui.components.MenuItem
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract
-import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.OpenUrl
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.OpenUrl
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable

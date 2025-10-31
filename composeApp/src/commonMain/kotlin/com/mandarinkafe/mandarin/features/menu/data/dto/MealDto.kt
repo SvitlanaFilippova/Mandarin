@@ -12,7 +12,7 @@ data class MealDto(
     val labels: List<LabelDto>?,
     val itemSizes: List<ItemSizeDto>?,
     val orderItemType: String,
-    val isHidden: Boolean?
+    val isHidden: Boolean?,
 )
 
 

@@ -29,7 +29,7 @@ fun SearchBarInputField(
     autoFocus: Boolean = false,
     onQueryChange: (String) -> Unit = { },
     onClear: () -> Unit = { },
-    leadingIcon: @Composable (() -> Unit)? = null
+    leadingIcon: @Composable (() -> Unit)? = null,
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current

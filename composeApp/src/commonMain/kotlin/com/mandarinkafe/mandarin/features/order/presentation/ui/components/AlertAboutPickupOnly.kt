@@ -14,7 +14,7 @@ fun AlertAboutPickupOnly(
     pickupOnly: Boolean,
     containsAlcohol: Boolean,
     pickupOnlyPositionsNames: List<String>,
-    onRemovePickupOnly: () -> Unit
+    onRemovePickupOnly: () -> Unit,
 ) {
     val extraComposable: (@Composable () -> Unit)? =
         if (pickupOnlyPositionsNames.isNotEmpty()) {
@@ -34,7 +34,7 @@ fun AlertAboutPickupOnly(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = Dimens.MarginStandard16),
-                text = stringResource( MR.strings.alcohol_pickup_only_18_plus),
+                text = stringResource(MR.strings.alcohol_pickup_only_18_plus),
                 extraComposable = extraComposable
             )
         }
@@ -44,7 +44,7 @@ fun AlertAboutPickupOnly(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = Dimens.MarginStandard16),
-                text = stringResource( MR.strings.pickup_only),
+                text = stringResource(MR.strings.pickup_only),
                 extraComposable = extraComposable
             )
         }

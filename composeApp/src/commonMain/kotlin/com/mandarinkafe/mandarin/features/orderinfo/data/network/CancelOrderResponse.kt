@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CancelOrderResponse(
-    val correlationId: String
+    val correlationId: String,
 ) : Response()
 
 

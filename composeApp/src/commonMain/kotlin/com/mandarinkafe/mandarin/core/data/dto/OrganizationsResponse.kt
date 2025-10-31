@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OrganizationsResponse(
-    val organizations: List<Organization>
+    val organizations: List<Organization>,
 ) : Response()
 
 @Serializable

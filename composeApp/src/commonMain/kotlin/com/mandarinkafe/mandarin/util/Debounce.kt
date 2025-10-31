@@ -9,7 +9,7 @@ fun <T> debounce(
     delayMillis: Long,
     coroutineScope: CoroutineScope,
     useLastParam: Boolean,
-    action: (T) -> Unit
+    action: (T) -> Unit,
 ): DebounceResult<T> {
     // Коллекция для хранения активных задач
     val debounceJobs = mutableMapOf<T, Job>()

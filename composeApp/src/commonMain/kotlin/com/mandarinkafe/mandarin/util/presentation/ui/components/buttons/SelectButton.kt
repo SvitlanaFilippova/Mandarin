@@ -25,7 +25,7 @@ import dev.icerock.moko.resources.compose.painterResource
 fun SelectButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onClick,

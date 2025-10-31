@@ -1,13 +1,13 @@
 package com.mandarinkafe.mandarin.features.more.data.impl
 
-import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.features.more.data.network.TelegramApi
 import com.mandarinkafe.mandarin.features.more.domain.api.FeedbackRepository
 import com.mandarinkafe.mandarin.features.more.domain.models.Feedback
+import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.Result
 
 class FeedbackRepositoryImpl(
-    private val telegramApi: TelegramApi
+    private val telegramApi: TelegramApi,
 ) : FeedbackRepository {
 
     override suspend fun sendFeedback(feedback: Feedback): Result<Unit> {

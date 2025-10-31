@@ -5,6 +5,6 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 interface CalculateCartTotalWithDiscountUseCase {
     operator fun invoke(
         items: List<CartItem>,
-        discountAmount: Int
+        discountAmount: Int,
     ): Double
 }

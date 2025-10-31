@@ -5,5 +5,5 @@ import com.mandarinkafe.mandarin.features.infrastructure.domain.models.CustomerC
 data class LoyaltyCustomer(
     val id: String,
     val isDeleted: Boolean,
-    val categories: List<CustomerCategory>
+    val categories: List<CustomerCategory>,
 )

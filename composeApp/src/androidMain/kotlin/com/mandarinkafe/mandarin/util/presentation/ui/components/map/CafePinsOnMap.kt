@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.util.presentation.ui.components.map
 import android.graphics.PointF
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import com.mandarinkafe.mandarin.features.map.calculatePinScale
 import com.mandarinkafe.mandarin.shared.R
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LONGITUDE
@@ -11,7 +12,6 @@ import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_PIZZERIA_LONGITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_ANCHOR_X
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_ANCHOR_Y
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_OPACITY
-import com.mandarinkafe.mandarin.features.map.calculatePinScale
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.MapObjectCollection

@@ -7,7 +7,7 @@ sealed class FavoriteRecord {
     /** Простая запись — без кастомизации */
     data class Base(
         override val mealId: String,
-        override val timestamp: Long
+        override val timestamp: Long,
     ) : FavoriteRecord() {
 
         override fun equals(other: Any?): Boolean {
@@ -25,7 +25,7 @@ sealed class FavoriteRecord {
         override val mealId: String,
         override val timestamp: Long,
         val addsIds: List<String>,
-        val modifiers: List<ModifierGroup>
+        val modifiers: List<ModifierGroup>,
     ) : FavoriteRecord() {
 
         override fun equals(other: Any?): Boolean {

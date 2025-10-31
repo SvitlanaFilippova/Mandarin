@@ -7,7 +7,7 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
-import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
+import com.mandarinkafe.mandarin.features.cart.domain.api.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.domain.models.Recommends
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect.ShowSnackbar
@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 class CartViewModel(
     private val cartInteractor: CartInteractor,
     private val recommendsUseCase: GetRecommendsUseCase,
-    private val checkIfTerminalIsAlive: CheckIfTerminalIsAliveUseCase
+    private val checkIfTerminalIsAlive: CheckIfTerminalIsAliveUseCase,
 ) : BaseViewModel<CartEvent, CartEffect, CartState>() {
     override fun setInitialState() = CartState()
     private val itemTimers = mutableMapOf<CartItem, Job>()
@@ -214,7 +214,10 @@ class CartViewModel(
         }
     }
 
-    private fun showSnackbar(message: dev.icerock.moko.resources.StringResource, showToCartButton: Boolean = false) {
+    private fun showSnackbar(
+        message: dev.icerock.moko.resources.StringResource,
+        showToCartButton: Boolean = false,
+    ) {
         sendEffect(ShowSnackbar(message, showToCartButton))
     }
 

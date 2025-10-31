@@ -123,8 +123,12 @@ fun NavGraph(navController: NavHostController) {
 
         // --- MEAL DETAILS (BottomSheet на Android и composable у IOS) ---
         this.platformMealDetailsRoute { backStackEntry ->
-            val isEditMode = backStackEntry.getBooleanArgument(NavConstants.KEY_IS_EDIT_MODE, defaultValue = false)
-            val mealJson = backStackEntry.getStringArgument(NavConstants.KEY_MEAL_JSON)?.decodeURLPart()
+            val isEditMode = backStackEntry.getBooleanArgument(
+                NavConstants.KEY_IS_EDIT_MODE,
+                defaultValue = false
+            )
+            val mealJson =
+                backStackEntry.getStringArgument(NavConstants.KEY_MEAL_JSON)?.decodeURLPart()
             val mealId = backStackEntry.getStringArgument(NavConstants.KEY_MEAL_ID)?.decodeURLPart()
 
             val initItem = mealJson?.let {

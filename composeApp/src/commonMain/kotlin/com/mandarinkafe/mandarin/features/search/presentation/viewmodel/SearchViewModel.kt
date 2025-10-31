@@ -4,9 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.models.isFavorite
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
-import com.mandarinkafe.mandarin.features.search.domain.usecase.FilterUseCase
-import com.mandarinkafe.mandarin.features.search.domain.usecase.GetFullMealListUseCase
-import com.mandarinkafe.mandarin.features.search.domain.usecase.GetLabelsUseCase
+import com.mandarinkafe.mandarin.features.search.domain.api.FilterUseCase
+import com.mandarinkafe.mandarin.features.search.domain.api.GetFullMealListUseCase
+import com.mandarinkafe.mandarin.features.search.domain.api.GetLabelsUseCase
 import com.mandarinkafe.mandarin.features.search.presentation.SearchMapper.toUiModel
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract.SearchEffect
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchContract.SearchEvent
@@ -25,7 +25,7 @@ class SearchViewModel(
     private val getLabelsUseCase: GetLabelsUseCase,
     private val getFullMealListUseCase: GetFullMealListUseCase,
     private val favoritesApi: FavoritesApi,
-    private val filterUseCase: FilterUseCase
+    private val filterUseCase: FilterUseCase,
 ) : BaseViewModel<SearchEvent, SearchEffect, SearchState>() {
     override fun setInitialState() = SearchState()
 

@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class RefreshMenuIfStaleUseCaseImpl(
     private val forceRefreshMenuUseCase: ForceRefreshMenuUseCase,
-    private val menuCache: MenuCache
+    private val menuCache: MenuCache,
 ) : RefreshMenuIfStaleUseCase {
     override suspend fun invoke() {
         val now = getCurrentTimeMillis()

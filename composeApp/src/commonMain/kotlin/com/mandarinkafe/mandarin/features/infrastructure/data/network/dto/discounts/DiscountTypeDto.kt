@@ -16,7 +16,7 @@ data class DiscountTypeDto(
     val isCategorisedDiscount: Boolean,
     val isManual: Boolean,
     val mode: String,
-    val sum: Double
+    val sum: Double,
 )
 
 

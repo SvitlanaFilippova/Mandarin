@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Immutable
 data class Label(
     val id: String,
-    val name: String
+    val name: String,
 )

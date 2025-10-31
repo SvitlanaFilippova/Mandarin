@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MakeMoreDeliciousBlock(
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val offsetY = remember { Animatable(initialValue = BOUNCE_OFFSET_INIT) }
     val alpha = remember { Animatable(0f) }

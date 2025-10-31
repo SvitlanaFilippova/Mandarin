@@ -10,7 +10,7 @@ class ApplyPhoneDiscountUseCaseImpl(
 ) : ApplyPhoneDiscountUseCase {
     override suspend fun invoke(
         rawPhone: String,
-        currentDiscount: Int
+        currentDiscount: Int,
     ): DiscountByPhoneResult {
         return when {
             rawPhone.length != VALID_PHONE_LENGTH && currentDiscount > 0 -> {

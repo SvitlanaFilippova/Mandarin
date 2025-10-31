@@ -7,7 +7,7 @@ import com.mandarinkafe.mandarin.features.address.domain.api.GetDeliveryZoneUseC
 import com.mandarinkafe.mandarin.util.Resource
 
 class GetDeliveryZoneUseCaseImpl(
-    private val deliveryAreaRepository: DeliveryAreaRepository
+    private val deliveryAreaRepository: DeliveryAreaRepository,
 ) : GetDeliveryZoneUseCase {
 
     override suspend fun invoke(location: GeoPoint?): DeliveryZone? {

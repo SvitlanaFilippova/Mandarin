@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DiscountsResponse(
-    val discounts: List<DiscountDataDto>
+    val discounts: List<DiscountDataDto>,
 ) : Response()
 
 

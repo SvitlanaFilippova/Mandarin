@@ -18,7 +18,7 @@ import dev.icerock.moko.resources.compose.stringResource
 fun BackToTopFAB(
     modifier: Modifier,
     visible: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     AnimatedVisibility(
         visible = visible,

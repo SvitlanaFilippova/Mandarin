@@ -8,8 +8,10 @@ actual class DeviceInfoProvider {
         val device = UIDevice.currentDevice
         val bundle = NSBundle.mainBundle
 
-        val appVersion = bundle.objectForInfoDictionaryKey("CFBundleShortVersionString") as? String ?: "Unknown"
-        val buildNumber = bundle.objectForInfoDictionaryKey("CFBundleVersion") as? String ?: "Unknown"
+        val appVersion =
+            bundle.objectForInfoDictionaryKey("CFBundleShortVersionString") as? String ?: "Unknown"
+        val buildNumber =
+            bundle.objectForInfoDictionaryKey("CFBundleVersion") as? String ?: "Unknown"
 
         return "iOS ${device.systemVersion}, " +
                 "App v$appVersion ($buildNumber), " +

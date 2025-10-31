@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.infrastructure.data.local
 
-import com.mandarinkafe.mandarin.shared.database.Category_discount
 import com.mandarinkafe.mandarin.features.infrastructure.domain.models.CategoryDiscountMap
+import com.mandarinkafe.mandarin.shared.database.Category_discount
 
 interface CategoryDiscountsStorage {
     suspend fun getAll(): List<Category_discount>

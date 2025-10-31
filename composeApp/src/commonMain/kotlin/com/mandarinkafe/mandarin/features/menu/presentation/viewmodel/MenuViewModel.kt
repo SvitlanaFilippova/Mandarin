@@ -5,9 +5,9 @@ import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
+import com.mandarinkafe.mandarin.features.menu.domain.api.GetBannersUseCase
+import com.mandarinkafe.mandarin.features.menu.domain.api.MenuInteractor
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
-import com.mandarinkafe.mandarin.features.menu.domain.usecase.GetBannersUseCase
-import com.mandarinkafe.mandarin.features.menu.domain.usecase.MenuInteractor
 import com.mandarinkafe.mandarin.features.menu.presentation.mappers.MenuItemMapper.menuToMenuItems
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.presentation.models.extensions.getName

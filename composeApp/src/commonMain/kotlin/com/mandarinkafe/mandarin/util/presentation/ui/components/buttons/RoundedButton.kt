@@ -20,7 +20,7 @@ fun RoundedButton(
     painter: Painter? = null,
     image: ImageVector? = null,
     contentDescription: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     IconButton(
         modifier = modifier

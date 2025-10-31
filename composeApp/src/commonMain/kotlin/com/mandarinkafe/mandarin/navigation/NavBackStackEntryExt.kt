@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.navigation
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavBackStackEntry
 
 /**

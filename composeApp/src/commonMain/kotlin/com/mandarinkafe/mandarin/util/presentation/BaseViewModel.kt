@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<Event :  BaseContract.BaseEvent, Effect :  BaseContract.BaseEffect, State :  BaseContract.BaseState> :
+abstract class BaseViewModel<Event : BaseContract.BaseEvent, Effect : BaseContract.BaseEffect, State : BaseContract.BaseState> :
     ViewModel() {
 
     protected abstract fun setInitialState(): State

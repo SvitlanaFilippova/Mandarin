@@ -13,7 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class FeedbackViewModel(
-    private val repository: FeedbackRepository
+    private val repository: FeedbackRepository,
 ) :
     BaseViewModel<FeedbackEvent, FeedbackEffect, FeedbackState>() {
     override fun setInitialState() = FeedbackState()

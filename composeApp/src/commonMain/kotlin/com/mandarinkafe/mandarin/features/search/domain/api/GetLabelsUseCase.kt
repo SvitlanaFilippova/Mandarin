@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.features.search.domain.usecase
+package com.mandarinkafe.mandarin.features.search.domain.api
 
 import com.mandarinkafe.mandarin.core.domain.models.Label
 

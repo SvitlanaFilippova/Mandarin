@@ -27,7 +27,7 @@ fun InfoCard(
     iconPainter: Painter? = null,
     title: String,
     lines: List<Pair<String, (() -> Unit)?>> = emptyList(),
-    backgroundColor: Color = Colors.DarkGrey
+    backgroundColor: Color = Colors.DarkGrey,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),

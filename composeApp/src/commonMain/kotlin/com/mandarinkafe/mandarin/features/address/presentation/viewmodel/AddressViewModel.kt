@@ -27,7 +27,7 @@ class AddressViewModel(
     private val searchInteractor: AddressSearchInteractor,
     private val getUserLocation: GetCurrentLocationUseCase,
     private val getDeliveryZone: GetDeliveryZoneUseCase,
-    private val deliveryAreaRepository: DeliveryAreaRepository
+    private val deliveryAreaRepository: DeliveryAreaRepository,
 ) : BaseViewModel<AddressEvent, AddressEffect, AddressState>() {
     private val fetchAddressDebounce = debounce<GeoPoint>(
         FETCH_ADDRESS_DELAY,
@@ -176,7 +176,7 @@ class AddressViewModel(
 
     private fun fetchAddress(point: GeoPoint) {
         viewModelScope.launch {
-           searchInteractor.getAddressByPoint(point)
+            searchInteractor.getAddressByPoint(point)
         }
     }
 

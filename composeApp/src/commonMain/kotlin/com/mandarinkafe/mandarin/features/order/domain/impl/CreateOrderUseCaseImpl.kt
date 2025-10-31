@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.firstOrNull
 
 class CreateOrderUseCaseImpl(
     private val repository: OrderRepository,
-    private val menuCache: MenuCache
+    private val menuCache: MenuCache,
 ) : CreateOrderUseCase {
     override suspend fun invoke(outgoingOrder: OutgoingOrder): Resource<IncomingOrder> {
         val updatedOrder = withDeliveryItemIfNeeded(outgoingOrder)

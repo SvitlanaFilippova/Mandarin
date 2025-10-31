@@ -17,7 +17,6 @@ import com.mandarinkafe.mandarin.features.address.data.Mapper.toGeoPoint
 import com.mandarinkafe.mandarin.features.address.data.Mapper.toYandexPoint
 import com.mandarinkafe.mandarin.features.address.presentation.ui.models.UiDeliveryArea
 import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN
-import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN
 import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_DELIVERY_SCREEN
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.BindMapViewToLifecycle
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.MapWithDeliveryAreas

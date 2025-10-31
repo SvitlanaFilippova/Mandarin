@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class LoyaltyCustomerResponse(
     val id: String? = null,
     val isDeleted: Boolean? = null,
-    val categories: List<CustomerCategoryDto>? = null
+    val categories: List<CustomerCategoryDto>? = null,
 ) : Response()
 
 

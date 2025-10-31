@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class AddressDetailsViewModel(
     private val saveAddressUseCase: SaveAddressUseCase,
-    private val removeAddressUseCase: RemoveAddressUseCase
+    private val removeAddressUseCase: RemoveAddressUseCase,
 ) :
     BaseViewModel<AddressDetailsEvent, AddressDetailsEffect, AddressDetailState>() {
     override fun setInitialState() = AddressDetailState()

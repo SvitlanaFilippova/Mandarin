@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CustomerDto(
     val name: String,
-    val type: String // regular or one-time
+    val type: String, // regular or one-time
 )
 
 

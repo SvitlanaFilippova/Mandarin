@@ -9,7 +9,7 @@ import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 
 class AliveTerminalRepositoryImpl(
-    private val networkClient: IikoNetworkClient
+    private val networkClient: IikoNetworkClient,
 ) : AliveTerminalRepository {
 
     override suspend fun checkAliveTerminals(): Resource<Boolean> {

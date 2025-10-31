@@ -15,17 +15,17 @@ import com.yandex.mapkit.mapview.MapView
 @Composable
 fun DeliveryAreasOnMap(
     mapView: MapView,
-    deliveryAreas: List<UiDeliveryArea>
+    deliveryAreas: List<UiDeliveryArea>,
 ) {
     // Создаем ключ для отслеживания изменений зон доставки
     val areasKey = remember(deliveryAreas) {
         deliveryAreas.joinToString { "${it.id}-${it.polygon.size}-${it.color.toArgb()}" }
     }
-    
+
     LaunchedEffect(areasKey) {
         // Очищаем старые полигоны
         clearDeliveryAreas(mapView)
-        
+
         // Добавляем новые полигоны с учётом вложенности
         deliveryAreas.forEachIndexed { index, area ->
             val parent = deliveryAreas.getOrNull(index - 1)
@@ -48,7 +48,7 @@ private fun addColoredArea(
     mapView: MapView,
     outer: List<GeoPoint>,
     hole: List<GeoPoint>?,
-    color: Color
+    color: Color,
 ) {
     val colorArea = color.copy(alpha = 0.3f).toArgb()
     val colorStroke = color.copy(alpha = 0.1f).toArgb()

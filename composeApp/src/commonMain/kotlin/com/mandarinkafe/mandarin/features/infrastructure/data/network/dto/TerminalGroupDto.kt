@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TerminalGroupDto(
     val items: List<TerminalItemDto>,
-    val organizationId: String
+    val organizationId: String,
 )
 
 

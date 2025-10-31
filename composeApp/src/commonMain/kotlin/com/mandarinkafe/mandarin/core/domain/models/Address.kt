@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.core.domain.models
 
 import androidx.compose.runtime.Stable
-import kotlinx.serialization.Serializable
 import com.mandarinkafe.mandarin.util.generateUuid
+import kotlinx.serialization.Serializable
 
 @Serializable
 @Stable

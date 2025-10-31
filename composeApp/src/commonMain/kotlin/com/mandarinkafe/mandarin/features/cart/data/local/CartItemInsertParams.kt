@@ -7,5 +7,5 @@ data class CartItemInsertParams(
     val addsJson: String, // JSON-строка с List<String> id добавок
     val modifiersJson: String, // JSON-строка с List<ModifierGroup>
     val quantity: Long,
-    val comment: String?
+    val comment: String?,
 )

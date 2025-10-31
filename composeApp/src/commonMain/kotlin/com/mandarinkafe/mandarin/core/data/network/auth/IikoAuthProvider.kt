@@ -1,13 +1,13 @@
 package com.mandarinkafe.mandarin.core.data.network.auth
 
-import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.core.data.dto.AuthRequest
+import com.mandarinkafe.mandarin.shared.BuildKonfig
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class IikoAuthProvider(
-    private val authApi: IikoAuthApi
+    private val authApi: IikoAuthApi,
 ) {
     private var token: String? = null
     private val mutex = Mutex()

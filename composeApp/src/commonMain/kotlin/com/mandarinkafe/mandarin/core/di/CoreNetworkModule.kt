@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.core.di
 
-import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
 import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
@@ -10,6 +9,7 @@ import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthApi
 import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthProvider
 import com.mandarinkafe.mandarin.core.data.network.impl.GoogleDocsNetworkClientImpl
 import com.mandarinkafe.mandarin.core.data.network.impl.IikoNetworkClientImpl
+import com.mandarinkafe.mandarin.shared.BuildKonfig
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth

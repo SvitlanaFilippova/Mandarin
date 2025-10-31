@@ -19,7 +19,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class OrderCreator(
     private val createOrder: CreateOrderUseCase,
-    private val getOrderStatus: GetOrderStatusUseCase
+    private val getOrderStatus: GetOrderStatusUseCase,
 ) {
     private var observeJob: Job? = null
 
@@ -28,7 +28,7 @@ class OrderCreator(
         order: OutgoingOrder,
         onSuccess: (IncomingOrder) -> Unit,
         onError: (StringResource) -> Unit,
-        onLoading: () -> Unit
+        onLoading: () -> Unit,
     ) {
         when (val result = createOrder(order)) {
             is Resource.Success -> {
@@ -70,7 +70,7 @@ class OrderCreator(
         orderId: String?,
         onSuccess: (IncomingOrder) -> Unit,
         onError: (StringResource) -> Unit,
-        onLoading: () -> Unit
+        onLoading: () -> Unit,
     ) {
         stopObserving()
 
@@ -103,7 +103,7 @@ class OrderCreator(
         result: Resource<IncomingOrder>,
         onSuccess: (IncomingOrder) -> Unit,
         onError: (StringResource) -> Unit,
-        onLoading: () -> Unit
+        onLoading: () -> Unit,
     ) {
         when (result) {
             is Resource.Success -> handleCreationStatus(result, onSuccess, onError, onLoading)
@@ -128,7 +128,7 @@ class OrderCreator(
         result: Resource.Success<IncomingOrder>,
         onSuccess: (IncomingOrder) -> Unit,
         onError: (StringResource) -> Unit,
-        onLoading: () -> Unit
+        onLoading: () -> Unit,
     ) {
         when (result.data?.creationStatus) {
             CreationStatus.SUCCESS -> {

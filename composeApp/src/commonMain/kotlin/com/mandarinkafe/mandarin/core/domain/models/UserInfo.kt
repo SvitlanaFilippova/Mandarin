@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserInfo(
     val name: String,
-    val phone: String
+    val phone: String,
 )

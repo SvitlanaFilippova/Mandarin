@@ -22,7 +22,7 @@ import dev.icerock.moko.resources.compose.stringResource
 fun ScreenTitleWithBackButton(
     name: String,
     showBackButton: Boolean = true,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),

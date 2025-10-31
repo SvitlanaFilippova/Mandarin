@@ -11,12 +11,12 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val infrastructurePlatformModule = module {
-    
+
     // DataStore (Android-specific, требует Context)
     single<DataStore<Preferences>> {
         createDataStore(androidContext())
     }
-    
+
     // AppDatabase (Android-specific, требует Context)
     single {
         val driver = app.cash.sqldelight.driver.android.AndroidSqliteDriver(

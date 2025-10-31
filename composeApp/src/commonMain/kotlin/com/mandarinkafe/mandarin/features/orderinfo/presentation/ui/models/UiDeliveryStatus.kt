@@ -9,7 +9,7 @@ enum class UiDeliveryStatus(
     val apiName: String,
     val nameRes: StringResource,
     val extraTextResId: StringResource,
-    val iconRes: ImageResource
+    val iconRes: ImageResource,
 ) {
     UNCONFIRMED(
         "Unconfirmed",

@@ -4,7 +4,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.SavedAddressesContract.SavedAddressesEffect
 import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
@@ -16,7 +15,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun HandleSavedAddressesEffects(
     effectFlow: Flow<SavedAddressesEffect>,
     navController: NavController,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
 ) {
     LaunchedEffect(Unit) {
         effectFlow.collectLatest { effect ->

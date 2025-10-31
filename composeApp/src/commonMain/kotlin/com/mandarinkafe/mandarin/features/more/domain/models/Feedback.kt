@@ -5,5 +5,5 @@ data class Feedback(
     val phone: String,
     val email: String,
     val message: String,
-    val needAnswer: Boolean
+    val needAnswer: Boolean,
 )

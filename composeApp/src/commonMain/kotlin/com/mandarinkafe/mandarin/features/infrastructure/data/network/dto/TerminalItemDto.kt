@@ -8,7 +8,7 @@ data class TerminalItemDto(
     val id: String,
     val name: String,
     val organizationId: String,
-    val timeZone: String
+    val timeZone: String,
 )
 
 

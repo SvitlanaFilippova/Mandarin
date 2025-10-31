@@ -16,7 +16,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgr
 fun BannersSection(
     bannersAreLoading: Boolean,
     banners: List<Banner>,
-    onBannerClick: (Banner) -> Unit
+    onBannerClick: (Banner) -> Unit,
 ) {
     if (bannersAreLoading) {
         Box(

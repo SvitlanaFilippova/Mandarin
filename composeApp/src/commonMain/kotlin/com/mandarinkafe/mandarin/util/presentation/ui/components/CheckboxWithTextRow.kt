@@ -19,7 +19,7 @@ fun CheckboxWithTextRow(
     checked: Boolean,
     modifier: Modifier = Modifier,
     text: String,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         modifier = modifier

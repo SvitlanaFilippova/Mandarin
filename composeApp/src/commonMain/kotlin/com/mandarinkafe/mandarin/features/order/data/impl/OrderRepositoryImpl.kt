@@ -17,10 +17,10 @@ import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrderItem
 import com.mandarinkafe.mandarin.features.orderinfo.data.toDomain
-import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
+import io.github.aakira.napier.Napier
 
 class OrderRepositoryImpl(
     private val networkClient: IikoNetworkClient,
@@ -47,7 +47,7 @@ class OrderRepositoryImpl(
     private fun buildOrderDto(
         outgoingOrder: OutgoingOrder,
         orderItems: List<OutgoingOrderItem>,
-        discountInfo: OutgoingDiscountInfoDto?
+        discountInfo: OutgoingDiscountInfoDto?,
     ): OutgoingOrderDto {
         return with(outgoingOrder) {
             OutgoingOrderDto(
@@ -100,7 +100,7 @@ class OrderRepositoryImpl(
 
     private fun createDiscountInfo(
         discountTypeId: String?,
-        items: List<OutgoingOrderItem>
+        items: List<OutgoingOrderItem>,
     ): OutgoingDiscountInfoDto? {
         if (discountTypeId.isNullOrBlank()) return null
 

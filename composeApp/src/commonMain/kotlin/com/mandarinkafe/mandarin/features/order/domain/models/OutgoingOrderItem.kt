@@ -12,5 +12,5 @@ data class OutgoingOrderItem(
     val type: String,
     val comment: String = "",
     @kotlinx.serialization.Transient
-    val discountable: Boolean = true
+    val discountable: Boolean = true,
 )

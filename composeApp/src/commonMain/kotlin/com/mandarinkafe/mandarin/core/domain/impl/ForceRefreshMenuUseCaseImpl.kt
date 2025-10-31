@@ -6,7 +6,7 @@ import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
 
 class ForceRefreshMenuUseCaseImpl(
     private val repository: MenuRepository,
-    private val cache: MenuCache
+    private val cache: MenuCache,
 ) : ForceRefreshMenuUseCase {
     /**
      * метод, чтобы принудительно перезагрузить меню

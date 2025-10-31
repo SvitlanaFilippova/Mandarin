@@ -2,13 +2,13 @@ package com.mandarinkafe.mandarin.features.more.di
 
 import com.mandarinkafe.mandarin.core.di.DiConstants.TELEGRAM_API_BASE_URL
 import com.mandarinkafe.mandarin.core.di.DiConstants.TELEGRAM_CLIENT_QUALIFIER
+import com.mandarinkafe.mandarin.features.delivery.presentation.viewmodel.DeliveryViewModel
 import com.mandarinkafe.mandarin.features.more.data.impl.DevFeedbackRepositoryImpl
 import com.mandarinkafe.mandarin.features.more.data.impl.FeedbackRepositoryImpl
 import com.mandarinkafe.mandarin.features.more.data.network.TelegramApi
 import com.mandarinkafe.mandarin.features.more.domain.api.DevFeedbackRepository
 import com.mandarinkafe.mandarin.features.more.domain.api.FeedbackRepository
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.AboutViewModel
-import com.mandarinkafe.mandarin.features.delivery.presentation.viewmodel.DeliveryViewModel
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackViewModel
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackViewModel
 import io.ktor.client.HttpClient

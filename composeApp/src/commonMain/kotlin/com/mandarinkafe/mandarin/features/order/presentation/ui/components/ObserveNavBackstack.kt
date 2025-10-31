@@ -14,7 +14,7 @@ import com.mandarinkafe.mandarin.util.Constants.SHOULD_SELECT_ADDRESS_ID
 @Composable
 fun ObserveNavBackstack(
     savedStateHandle: SavedStateHandle?,
-    onEvent: (OrderEvent) -> Unit
+    onEvent: (OrderEvent) -> Unit,
 ) {
     val shouldRefreshFlow = remember(savedStateHandle) {
         savedStateHandle?.getStateFlow(SHOULD_REFRESH_ADDRESSES_KEY, false)

@@ -1,1 +1,14 @@
-<svg id="vector" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 511.97 511.97"><path fill="@android:color/white" d="M447.97,335.98l-266.44,0l-112,-256l-69.53,0l0,-32l90.47,0l112,256l245.5,0z" id="path_0"/><path fill="@android:color/white" d="M511.97,111.98l-64,160l-223.99,0l-63.98,-160z" id="path_1"/><path fill="@android:color/white" d="M287.97,415.98c0,26.5 -21.48,48 -47.98,48c-26.5,0 -47.98,-21.5 -47.98,-48s21.48,-48 47.98,-48C266.48,367.98 287.97,389.48 287.97,415.98z" id="path_2"/><path fill="@android:color/white" d="M447.97,415.98c0,26.5 -21.5,48 -48,48s-48,-21.5 -48,-48s21.5,-48 48,-48S447.97,389.48 447.97,415.98z" id="path_3"/></svg>
+<svg height="25" id="vector" viewBox="0 0 511.97 511.97" width="25"
+    xmlns="http://www.w3.org/2000/svg">
+    <path d="M447.97,335.98l-266.44,0l-112,-256l-69.53,0l0,-32l90.47,0l112,256l245.5,0z"
+        fill="@android:color/white"
+        id="path_0" />
+    <path d="M511.97,111.98l-64,160l-223.99,0l-63.98,-160z" fill="@android:color/white"
+        id="path_1" />
+    <path d="M287.97,415.98c0,26.5 -21.48,48 -47.98,48c-26.5,0 -47.98,-21.5 -47.98,-48s21.48,-48 47.98,-48C266.48,367.98 287.97,389.48 287.97,415.98z"
+        fill="@android:color/white"
+        id="path_2" />
+    <path d="M447.97,415.98c0,26.5 -21.5,48 -48,48s-48,-21.5 -48,-48s21.5,-48 48,-48S447.97,389.48 447.97,415.98z"
+        fill="@android:color/white"
+        id="path_3" />
+</svg>

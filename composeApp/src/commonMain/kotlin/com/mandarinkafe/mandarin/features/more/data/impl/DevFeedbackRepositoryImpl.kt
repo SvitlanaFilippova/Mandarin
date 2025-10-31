@@ -1,15 +1,15 @@
 package com.mandarinkafe.mandarin.features.more.data.impl
 
-import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.features.more.data.network.TelegramApi
 import com.mandarinkafe.mandarin.features.more.domain.api.DevFeedbackRepository
 import com.mandarinkafe.mandarin.features.more.domain.models.Feedback
+import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.shared.device.DeviceInfoProvider
 import com.mandarinkafe.mandarin.util.Result
 
 class DevFeedbackRepositoryImpl(
     private val telegramApi: TelegramApi,
-    private val deviceInfoProvider: DeviceInfoProvider
+    private val deviceInfoProvider: DeviceInfoProvider,
 ) : DevFeedbackRepository {
 
     override suspend fun sendDevFeedback(feedback: Feedback): Result<Unit> {

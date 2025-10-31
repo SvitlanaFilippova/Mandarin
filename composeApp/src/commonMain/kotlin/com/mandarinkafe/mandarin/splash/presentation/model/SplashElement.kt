@@ -11,5 +11,5 @@ data class SplashElement(
     val targetOffsetX: Float,
     val targetOffsetY: Float,
     val offsetX: Float,
-    val offsetY: Float
+    val offsetY: Float,
 )

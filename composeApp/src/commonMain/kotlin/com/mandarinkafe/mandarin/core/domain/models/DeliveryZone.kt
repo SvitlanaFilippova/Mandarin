@@ -6,5 +6,5 @@ data class DeliveryZone(
     val parentArea: List<GeoPoint>?, // Для вычитания меньших зон
     val colorHex: String,
     val freeDeliveryThreshold: Int,
-    val deliveryPrice: Int
+    val deliveryPrice: Int,
 )

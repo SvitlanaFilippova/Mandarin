@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import dev.icerock.moko.resources.compose.stringResource
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
@@ -34,6 +33,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.components.ProcessOr
 import com.mandarinkafe.mandarin.features.cart.presentation.components.RecommendsSection
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
+import dev.icerock.moko.resources.compose.stringResource
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

@@ -9,10 +9,10 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.cart.domain.Mapper.toCartItem
-import com.mandarinkafe.mandarin.features.cart.domain.model.MealAddResult
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
-import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetAddonsUseCase
-import com.mandarinkafe.mandarin.features.mealdetails.domain.usecase.GetMealByIdUseCase
+import com.mandarinkafe.mandarin.features.cart.domain.models.MealAddResult
+import com.mandarinkafe.mandarin.features.mealdetails.domain.api.GetAddonsUseCase
+import com.mandarinkafe.mandarin.features.mealdetails.domain.api.GetMealByIdUseCase
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.CloseAndShowMessage
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowMaxModifiersQuantity

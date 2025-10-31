@@ -14,8 +14,6 @@ import com.mandarinkafe.mandarin.core.domain.models.isCustomizable
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.totalPrice
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.features.cart.presentation.components.MealDetailsButton
-import com.mandarinkafe.mandarin.features.cart.presentation.components.CartControlWithUndo
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable

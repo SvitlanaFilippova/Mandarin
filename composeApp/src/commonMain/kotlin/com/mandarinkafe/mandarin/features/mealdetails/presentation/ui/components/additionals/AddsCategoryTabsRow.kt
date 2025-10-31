@@ -16,7 +16,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 fun AddsCategoryTabsRow(
     categories: List<String>,
     selectedTabIndex: Int,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         ScrollableTabRow(

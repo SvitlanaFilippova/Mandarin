@@ -23,7 +23,6 @@ import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -31,7 +30,7 @@ import dev.icerock.moko.resources.compose.stringResource
 fun PlaceholderScreen(
     error: UiError?,
     onRetryClick: (() -> Unit)? = null,
-    onCallClick: () -> Unit = { }
+    onCallClick: () -> Unit = { },
 ) {
     error?.let {
         Column(

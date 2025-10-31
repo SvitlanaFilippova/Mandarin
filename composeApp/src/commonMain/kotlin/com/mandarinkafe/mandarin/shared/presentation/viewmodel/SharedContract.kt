@@ -25,13 +25,13 @@ sealed interface SharedContract {
             val item: CustomizedMeal? = null,
             val cartItem: CartItem? = null,
             val mealId: String? = null,
-            val isEditMode: Boolean = false
+            val isEditMode: Boolean = false,
         ) : SharedEvent
 
         data class ShowSnackbar(
             val messageRes: StringResource? = null,
             val message: String? = null,
-            val showToCartButton: Boolean = false
+            val showToCartButton: Boolean = false,
         ) : SharedEvent
 
         data object GoBack : SharedEvent
@@ -47,14 +47,14 @@ sealed interface SharedContract {
             val meal: Meal? = null,
             val item: CustomizedMeal? = null,
             val mealId: String? = null,
-            val isEditMode: Boolean = false
+            val isEditMode: Boolean = false,
         ) : SharedEffect
 
         data object FinishSplash : SharedEffect
         data class SnackbarEffect(
             val messageRes: StringResource? = null,
             val message: String? = null,
-            val showToCartButton: Boolean = false
+            val showToCartButton: Boolean = false,
         ) : SharedEffect
     }
 

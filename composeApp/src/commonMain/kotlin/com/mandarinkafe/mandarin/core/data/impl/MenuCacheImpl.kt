@@ -4,12 +4,12 @@ import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
-import com.mandarinkafe.mandarin.features.menu.domain.toMealAdditionalCategory
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
-import io.github.aakira.napier.Napier
+import com.mandarinkafe.mandarin.features.menu.domain.toMealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.CATEGORY_ADDS
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.getCurrentTimeMillis
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -139,7 +139,7 @@ class MenuCacheImpl(
 
     private fun extractSpecialCategory(
         allCategories: List<MealCategory>,
-        criterionName: String
+        criterionName: String,
     ): MealCategory? {
         fun dfs(cat: MealCategory): MealCategory? {
             if (cat.name.equals(criterionName, ignoreCase = true)) {
@@ -158,7 +158,7 @@ class MenuCacheImpl(
         categories: List<MealCategory>,
         addons: List<MealAdditionalCategory>,
         delivery: MealCategory?,
-        recommends: MealCategory?
+        recommends: MealCategory?,
     ): List<MealCategory> =
         categories.mapNotNull { category ->
             // Проверяем, не является ли категория добавкой или доставкой

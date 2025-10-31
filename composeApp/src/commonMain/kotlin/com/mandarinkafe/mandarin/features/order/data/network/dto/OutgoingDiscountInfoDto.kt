@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OutgoingDiscountInfoDto(
-    val discounts: List<OutgoingDiscountTypeDto>
+    val discounts: List<OutgoingDiscountTypeDto>,
 )
 
 

@@ -23,7 +23,7 @@ import dev.icerock.moko.resources.compose.painterResource
 fun MenuItem(
     title: String,
     iconRes: ImageResource? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier

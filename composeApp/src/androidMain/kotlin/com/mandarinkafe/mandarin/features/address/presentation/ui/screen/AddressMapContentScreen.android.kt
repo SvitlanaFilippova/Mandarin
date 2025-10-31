@@ -3,8 +3,8 @@ package com.mandarinkafe.mandarin.features.address.presentation.ui.screen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.core.domain.models.Address
@@ -14,7 +14,6 @@ import com.mandarinkafe.mandarin.features.address.data.Mapper.toYandexPoint
 import com.mandarinkafe.mandarin.features.address.presentation.ui.models.UiDeliveryArea
 import com.mandarinkafe.mandarin.features.map.MapCameraController
 import com.mandarinkafe.mandarin.features.map.MapCameraControllerImpl
-import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.BindMapViewToLifecycle
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.MapWithDeliveryAreas
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.moveCamera
@@ -35,13 +34,13 @@ actual fun AddressMapContentScreen(
     addressValue: String,
     isError: Boolean,
     onCameraMoved: (GeoPoint) -> Unit,
-    cameraController: MapCameraController
+    cameraController: MapCameraController,
 ) {
     val initLocationYandex = remember(initLocation) { initLocation?.toYandexPoint() }
     val userLocationYandex = remember(userLocation) { userLocation?.toYandexPoint() }
 
     var mapView by remember { mutableStateOf<MapView?>(null) }
-    
+
     // Обновляем MapView в контроллере камеры
     LaunchedEffect(mapView) {
         (cameraController as? MapCameraControllerImpl)?.updateMapView(mapView)

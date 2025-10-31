@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.shared.datastore
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
 import okio.Path.Companion.toPath
 
 /**
@@ -16,4 +16,4 @@ fun createDataStore(producePath: () -> String): DataStore<Preferences> =
 /**
  * Имя файла для хранения настроек
  */
-internal const val dataStoreFileName = "mandarin.preferences_pb"
+internal const val DATA_STORE_FILE_NAME = "mandarin.preferences_pb"

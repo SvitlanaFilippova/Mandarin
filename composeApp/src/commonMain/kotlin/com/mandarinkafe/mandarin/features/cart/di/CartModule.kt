@@ -6,13 +6,13 @@ import com.mandarinkafe.mandarin.features.cart.data.impl.CartRepositoryImpl
 import com.mandarinkafe.mandarin.features.cart.data.impl.RecommendsSchemaRepositoryImpl
 import com.mandarinkafe.mandarin.features.cart.data.local.CartStorage
 import com.mandarinkafe.mandarin.features.cart.data.local.SQLDelightCartStorage
+import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartWriter
+import com.mandarinkafe.mandarin.features.cart.domain.api.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.domain.api.RecommendsSchemaRepository
 import com.mandarinkafe.mandarin.features.cart.domain.impl.CartInteractorImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.ClearCartUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.GetRecommendsUseCaseImpl
-import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
-import com.mandarinkafe.mandarin.features.cart.domain.usecase.GetRecommendsUseCase
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.shared.database.AppDatabase
 import org.koin.core.module.dsl.bind

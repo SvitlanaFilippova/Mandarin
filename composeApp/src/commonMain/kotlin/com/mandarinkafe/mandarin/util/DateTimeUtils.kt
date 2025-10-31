@@ -7,7 +7,7 @@ object DateTimeUtils {
     fun String?.toHumanDateTimeOrNull(): String? = try {
         this?.let {
             if (it.isBlank()) return null
-            
+
             // Парсим формат "yyyy-MM-dd HH:mm:ss.SSS" или "yyyy-MM-dd HH:mm:ss"
             val dateString = if (it.contains('.')) {
                 it.substringBefore('.')

@@ -22,7 +22,7 @@ fun KamelSubcomposeAsyncImageSimple(
     contentScale: ContentScale = ContentScale.Crop,
     tint: Color? = null,
     placeholder: ImageResource? = null,
-    error: ImageResource? = null
+    error: ImageResource? = null,
 ) {
     if (model == null) {
         placeholder?.let {
@@ -42,7 +42,8 @@ fun KamelSubcomposeAsyncImageSimple(
     val painterToShow: Painter? = when (resource) {
         is Resource.Success -> resource.value
         is Resource.Loading -> placeholder?.let { painterResource(it) }
-        is Resource.Failure -> error?.let { painterResource(it) } ?: placeholder?.let { painterResource(it) }
+        is Resource.Failure -> error?.let { painterResource(it) }
+            ?: placeholder?.let { painterResource(it) }
     }
 
     painterToShow?.let { painter ->

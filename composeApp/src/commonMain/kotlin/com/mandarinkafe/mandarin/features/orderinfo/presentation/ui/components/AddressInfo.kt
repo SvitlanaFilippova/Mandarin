@@ -25,7 +25,7 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun AddressInfo(
-    address: Address?
+    address: Address?,
 ) {
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Row(

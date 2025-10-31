@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.cart.domain.api
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.features.cart.domain.model.MealAddResult
+import com.mandarinkafe.mandarin.features.cart.domain.models.MealAddResult
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -15,7 +15,7 @@ interface CartInteractor {
     suspend fun addItem(
         cartItem: CartItem? = null,
         customizedMeal: CustomizedMeal? = null,
-        meal: Meal? = null
+        meal: Meal? = null,
     )
 
     /**
@@ -33,7 +33,7 @@ interface CartInteractor {
     suspend fun removeFromCart(
         cartItemId: String? = null,
         customizedMeal: CustomizedMeal? = null,
-        meal: Meal? = null
+        meal: Meal? = null,
     )
 
     suspend fun clearCart()

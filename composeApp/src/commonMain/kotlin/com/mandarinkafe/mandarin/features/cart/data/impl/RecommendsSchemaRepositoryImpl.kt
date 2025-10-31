@@ -79,7 +79,7 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
         val result = mutableListOf<String>()
         var current = StringBuilder()
         var inQuotes = false
-        
+
         for (i in line.indices) {
             val char = line[i]
             when {
@@ -87,10 +87,12 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
                     inQuotes = !inQuotes
                     // Не добавляем кавычку в результат
                 }
+
                 char == ',' && !inQuotes -> {
                     result.add(current.toString().trim())
                     current = StringBuilder()
                 }
+
                 else -> {
                     current.append(char)
                 }
@@ -98,7 +100,7 @@ class RecommendsSchemaRepositoryImpl(private val networkClient: GoogleDocsNetwor
         }
         // Добавляем последний элемент
         result.add(current.toString().trim())
-        
+
         return result
     }
 

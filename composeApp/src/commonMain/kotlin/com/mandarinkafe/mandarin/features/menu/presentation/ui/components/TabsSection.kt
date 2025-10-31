@@ -5,7 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.PrimaryScrollableTabRow
+import androidx.compose.material3.SecondaryScrollableTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -62,7 +66,7 @@ private fun CategoryTabsRow(
             containerColor = Colors.AppBlack,
             divider = { },
             indicator = { },
-        )  {
+        ) {
             categories.forEachIndexed { index, category ->
                 CategoryTabItem(
                     name = category.categoryName,
@@ -86,7 +90,7 @@ private fun CategoryTabItem(
     name: String,
     icon: String?,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val colorFilter = ColorFilter.tint(
         if (isSelected) Colors.Orange else Color.White
@@ -128,7 +132,7 @@ private fun CategoryTabItem(
 private fun SubCategoryTabsRow(
     categories: List<String>,
     selectedTabIndex: Int,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         SecondaryScrollableTabRow(

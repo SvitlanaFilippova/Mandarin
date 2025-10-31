@@ -6,7 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.dialog
 
 actual fun NavGraphBuilder.platformMealDetailsRoute(
-    content: @Composable (backStackEntry: NavBackStackEntry) -> Unit
+    content: @Composable (backStackEntry: NavBackStackEntry) -> Unit,
 ) {
     dialog(
         route = "${NavConstants.MEAL_DETAILS_ROUTE}?" +

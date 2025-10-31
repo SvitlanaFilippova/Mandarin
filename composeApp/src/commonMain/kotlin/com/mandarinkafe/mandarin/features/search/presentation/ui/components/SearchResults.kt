@@ -21,7 +21,7 @@ fun SearchResults(
     onAddToCart: (Meal) -> Unit,
     onRemoveFromCart: (Meal) -> Unit,
     onMealDetailsClick: (Meal) -> Unit,
-    inProgressItems: Set<String>
+    inProgressItems: Set<String>,
 ) {
     Column(
         modifier = Modifier

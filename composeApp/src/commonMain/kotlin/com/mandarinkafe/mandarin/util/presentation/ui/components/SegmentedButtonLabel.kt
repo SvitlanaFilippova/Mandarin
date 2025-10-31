@@ -11,21 +11,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
-import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import dev.icerock.moko.resources.ImageResource
-import dev.icerock.moko.resources.compose.painterResource
-import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun SegmentedButtonLabel(
     name: String,
     icon: Painter,
     selected: Boolean,
-    isEnabled: Boolean = true
+    isEnabled: Boolean = true,
 ) {
     val color = if (selected) {
         Colors.Orange
@@ -56,5 +51,3 @@ fun SegmentedButtonLabel(
         )
     }
 }
-
-

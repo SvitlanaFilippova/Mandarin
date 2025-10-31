@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class CustomerCategoriesRequest(
-    val organizationId: String
+    val organizationId: String,
 )
 
 

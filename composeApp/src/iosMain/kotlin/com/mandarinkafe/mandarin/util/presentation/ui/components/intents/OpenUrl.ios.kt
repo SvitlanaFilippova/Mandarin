@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components.intents
 
 import androidx.compose.runtime.Composable
+import io.github.aakira.napier.Napier
 import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
 
@@ -19,5 +20,6 @@ actual fun OpenUrl(url: String, onFail: () -> Unit) {
         }
     } catch (e: Exception) {
         onFail()
+        Napier.e("OpenUrl error: $e")
     }
 }

@@ -43,7 +43,7 @@ class OrderInfoRepositoryImpl(
     }
 
     private fun validateOrderItemsWithMenu(
-        order: IncomingOrder
+        order: IncomingOrder,
     ): IncomingOrder {
         val validatedItems = order.items.map { item ->
             val meal = menuCache.getMealById(item.id)

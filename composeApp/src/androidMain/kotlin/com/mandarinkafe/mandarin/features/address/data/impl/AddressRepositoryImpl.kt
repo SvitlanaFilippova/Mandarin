@@ -7,13 +7,11 @@ import com.mandarinkafe.mandarin.features.address.domain.api.AddressRepository
 import com.mandarinkafe.mandarin.features.address.domain.models.AddressSearchResult
 import com.mandarinkafe.mandarin.util.Resource
 import com.yandex.mapkit.geometry.Geometry
-import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.Response
 import com.yandex.mapkit.search.SearchManager
 import com.yandex.mapkit.search.SearchOptions
 import com.yandex.mapkit.search.Session
 import com.yandex.runtime.Error
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +19,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withContext
 
 class AddressRepositoryImpl(
-    private val searchManager: SearchManager
+    private val searchManager: SearchManager,
 ) : AddressRepository {
     private var session: Session? = null
     private val _addressListChannel = Channel<Resource<List<AddressSearchResult>>>(Channel.BUFFERED)

@@ -107,7 +107,7 @@ private fun LoadingStateContent(
     placeholderRes: ImageResource?,
     contentDescription: String?,
     contentScale: ContentScale?,
-    tint: Color?
+    tint: Color?,
 ) {
     val colorFilter = tint?.let { ColorFilter.tint(it) }
 
@@ -162,7 +162,7 @@ private fun SuccessStateContent(
     contentDescription: String?,
     crossfade: Boolean,
     tint: Color?,
-    contentScale: ContentScale?
+    contentScale: ContentScale?,
 ) {
     val finalContentScale = when {
         contentScale != null -> contentScale

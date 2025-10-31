@@ -28,7 +28,7 @@ import dev.icerock.moko.resources.compose.stringResource
 fun FavoriteButtonForMealDetails(
     modifier: Modifier = Modifier,
     isFavorite: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val scaleAnim = remember { Animatable(1f) }
 

@@ -10,7 +10,7 @@ data class StoredCartItem(
     val addsIds: List<String>,
     val modifiers: List<ModifierGroup>,
     val quantity: Int,
-    val comment: String
+    val comment: String,
 ) {
     companion object {
         private fun generateId(): String {

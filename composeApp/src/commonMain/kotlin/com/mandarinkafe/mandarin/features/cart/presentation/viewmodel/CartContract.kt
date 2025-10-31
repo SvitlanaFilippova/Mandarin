@@ -14,7 +14,7 @@ sealed interface CartContract {
         // Управление элементами корзины
         data class AddToCart(
             val item: CartItem? = null,
-            val customizedMeal: CustomizedMeal? = null
+            val customizedMeal: CustomizedMeal? = null,
         ) : CartEvent
 
         data class AddCommentToItem(val item: CartItem, val comment: String) : CartEvent
@@ -22,7 +22,7 @@ sealed interface CartContract {
         data class CancelRemove(val item: CartItem) : CartEvent
         data class OnReduce(
             val customizedMeal: CustomizedMeal? = null,
-            val meal: Meal? = null
+            val meal: Meal? = null,
         ) : CartEvent
 
         data object ForceRefresh : CartEvent
@@ -37,7 +37,10 @@ sealed interface CartContract {
 
     sealed interface CartEffect : BaseContract.BaseEffect {
         data object ProceedOrder : CartEffect
-        data class ShowSnackbar(val message: StringResource, val showToCartButton: Boolean = false) :
+        data class ShowSnackbar(
+            val message: StringResource,
+            val showToCartButton: Boolean = false,
+        ) :
             CartEffect
 
         data object ShowClearCartConfirmDialog : CartEffect

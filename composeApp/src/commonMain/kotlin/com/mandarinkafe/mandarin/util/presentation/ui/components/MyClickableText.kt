@@ -16,7 +16,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 fun MyClickableText(
     modifier: Modifier = Modifier,
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Text(
         modifier = modifier

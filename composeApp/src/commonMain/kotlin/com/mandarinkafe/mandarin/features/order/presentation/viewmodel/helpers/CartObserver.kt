@@ -6,12 +6,11 @@ import com.mandarinkafe.mandarin.features.order.domain.api.ResolvePickupPointUse
 import com.mandarinkafe.mandarin.features.order.domain.models.OrderPickupPoint
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Resource
-import kotlinx.coroutines.flow.collect
 
 class CartObserver(
     private val observeCartItems: ObserveCartItemsUseCase,
     private val resolvePickupPoint: ResolvePickupPointUseCase,
-    private val recalculateCartSummary: (Int?) -> Unit
+    private val recalculateCartSummary: (Int?) -> Unit,
 ) {
     suspend fun observe(onStateUpdate: (List<CartItem>, Boolean, Boolean, OrderPickupPoint, Boolean) -> Unit) {
         observeCartItems().collect { resource ->

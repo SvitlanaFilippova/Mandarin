@@ -15,5 +15,5 @@ data class OutgoingOrder(
     val totalOrderSum: Double,
     val deliveryRealCost: Int,
     val deliveryZoneID: Int?,
-    val discountTypeId: String?
+    val discountTypeId: String?,
 )

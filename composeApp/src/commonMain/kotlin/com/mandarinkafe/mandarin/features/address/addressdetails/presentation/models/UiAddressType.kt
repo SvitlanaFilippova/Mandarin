@@ -7,7 +7,7 @@ import dev.icerock.moko.resources.StringResource
 
 enum class UiAddressType(
     val nameRes: StringResource,
-    val iconRes: ImageResource
+    val iconRes: ImageResource,
 ) {
     APARTMENT(
         nameRes = MR.strings.address_type_apartment,

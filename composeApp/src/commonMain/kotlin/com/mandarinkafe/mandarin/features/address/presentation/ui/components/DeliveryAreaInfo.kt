@@ -23,7 +23,7 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun DeliveryAreaInfo(
     modifier: Modifier = Modifier,
-    deliveryArea: UiDeliveryArea?
+    deliveryArea: UiDeliveryArea?,
 ) {
     Box(
         modifier = modifier

@@ -39,7 +39,7 @@ class SharedViewModel(
     private val favoritesApi: FavoritesApi,
     private val getInitialDataUseCase: GetInitialDataUseCase,
     private val observeCartCountUseCase: ObserveCartCountUseCase,
-    private val refreshMenuIfStaleUseCase: RefreshMenuIfStaleUseCase
+    private val refreshMenuIfStaleUseCase: RefreshMenuIfStaleUseCase,
 ) :
     BaseViewModel<SharedEvent, SharedEffect, SharedState>() {
     override fun setInitialState() = SharedState()
@@ -152,7 +152,7 @@ class SharedViewModel(
                     done.complete(Unit)
                 }
             }
-            
+
             done.await()
             sendEffect(FinishSplash)
         }

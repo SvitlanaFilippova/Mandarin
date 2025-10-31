@@ -37,7 +37,7 @@ fun ExpandableText(
     style: TextStyle,
     isExpanded: Boolean,
     onClick: () -> Unit,
-    maxLinesCollapsed: Int
+    maxLinesCollapsed: Int,
 ) {
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
     val isTextOverflow = textLayoutResult?.hasVisualOverflow == true

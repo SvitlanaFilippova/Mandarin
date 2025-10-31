@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
@@ -16,13 +17,12 @@ import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import androidx.navigation.NavController
 
 @Composable
 fun HandleOrderEffects(
     effectFlow: Flow<OrderEffect>,
     navController: NavController,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
 ) {
     var pendingMessageRes: StringResource? by remember { mutableStateOf(null) }
 
@@ -55,7 +55,7 @@ fun HandleOrderEffects(
     }
 
     val pendingMessage: String? = pendingMessageRes?.let { stringResource(it) }
-    
+
     LaunchedEffect(pendingMessage) {
         val msg = pendingMessage ?: return@LaunchedEffect
         snackbarHostState.showSnackbar(msg)

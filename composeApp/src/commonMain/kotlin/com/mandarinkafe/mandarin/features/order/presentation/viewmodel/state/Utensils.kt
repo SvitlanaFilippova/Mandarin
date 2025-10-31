@@ -4,6 +4,6 @@ import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 
 data class Utensils(
     val noNeedUtensils: Boolean = false,
-    val chosenUtensils: List<Utensil> = emptyList()
+    val chosenUtensils: List<Utensil> = emptyList(),
 )
 

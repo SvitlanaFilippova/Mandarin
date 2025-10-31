@@ -74,12 +74,12 @@ fun SearchByTextResults(
             AddressSearchResultItem(
                 text = searchResult.addressLineOne,
                 extraText = searchResult.addressLineTwo,
-                onClick = { 
+                onClick = {
                     // Перемещаем камеру к выбранному адресу, если есть координаты и контроллер
                     searchResult.point?.let { point ->
                         cameraController?.moveCamera(point, MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN)
                     }
-                    onItemClick(searchResult) 
+                    onItemClick(searchResult)
                 }
             )
         }

@@ -2,28 +2,24 @@ package com.mandarinkafe.mandarin.features.menu.presentation.ui.screen
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import dev.materii.pullrefresh.PullRefreshIndicator
-import dev.materii.pullrefresh.PullRefreshLayout
-import dev.materii.pullrefresh.rememberPullRefreshState
-import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
-import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
-import com.mandarinkafe.mandarin.navigation.extensions.navigateToSearchScreen
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberMenuViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
+import dev.materii.pullrefresh.PullRefreshIndicator
+import dev.materii.pullrefresh.PullRefreshLayout
+import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.coroutines.flow.map
-import androidx.navigation.NavController
 
 @Composable
 fun MenuScreen(

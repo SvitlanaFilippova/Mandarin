@@ -7,5 +7,5 @@ data class RecommendsSchemaDto(
     val sourceName: String?,
     val excludeSku: List<String>?,
     val recommendedSku: List<String>?,
-    val isSeparate: Boolean = false
+    val isSeparate: Boolean = false,
 )

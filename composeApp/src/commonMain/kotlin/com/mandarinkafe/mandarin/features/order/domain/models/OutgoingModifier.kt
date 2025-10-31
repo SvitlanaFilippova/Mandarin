@@ -10,5 +10,5 @@ data class OutgoingModifier(
     val price: Double,
     val positionId: String,
     @kotlinx.serialization.Transient
-    val discountable: Boolean = true
+    val discountable: Boolean = true,
 )

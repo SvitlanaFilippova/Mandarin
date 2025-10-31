@@ -10,19 +10,20 @@ import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
 
 class IikoAuthApi(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) {
     suspend fun authenticate(body: AuthRequest): AuthResponse {
         return try {
             val response = client.post("/api/1/access_token") {
                 setBody(body)
             }
-            
+
             when (response.status) {
                 HttpStatusCode.OK -> {
                     val authResponse = response.body<AuthResponse>()
                     authResponse
                 }
+
                 else -> {
                     Napier.e("HTTP ${response.status.value}: ${response.status.description}")
                     throw Exception("Ошибка сервера iiko: ${response.status.value}")

@@ -11,5 +11,5 @@ data class ModifierGroup(
     val items: List<ModifierItem>,
     val isSingleChoice: Boolean,
     val isRequired: Boolean,
-    val maxQuantity: Int
+    val maxQuantity: Int,
 )

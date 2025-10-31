@@ -20,7 +20,7 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun PickupOnlyPositionsTooltip(
     pickupOnlyPositionsNames: List<String>,
-    onRemovePickupOnly: () -> Unit
+    onRemovePickupOnly: () -> Unit,
 ) {
     val onlyPickUpPositionsText = stringResource(
         MR.strings.positions_for_pickup_only_template,
