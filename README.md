@@ -9,8 +9,7 @@ Kotlin Multiplatform проект, объединяющий Android и iOS кл�
 
 Изначально Mandarin был полностью нативным Android-приложением, созданным на Kotlin + Jetpack
 Compose, с архитектурой MVI + Hilt + Retrofit + Coil + SharedPreferences.
-После завершения основной Android-версии проект был полностью мигрирован на Kotlin Multiplatform (
-KMP)
+После завершения основной Android-версии проект был полностью мигрирован на Kotlin + Compose Multiplatform
 
 ## Над приложением работают 👨🏻‍💻
 
@@ -18,7 +17,13 @@ KMP)
   <img src="https://contrib.rocks/image?repo=mandarin-kafe/Mandarin&max=6" />
 </a>
 
-[**Александр Родионов**](https://github.com/AlexDeyl) — Серверная часть проекта. [репозиторий сервера](https://github.com/SvitlanaFilippova/Mandarin-server)
+[**Светлана Филиппова**](https://github.com/SvitlanaFilippova)
+
+[**Сергей Шахов**](https://github.com/SergeySh97)
+
+[**Евгений Артеменко**](https://github.com/Ar-Eugene)  
+
+[**Александр Родионов**](https://github.com/AlexDeyl) — [серверная часть проекта](https://github.com/SvitlanaFilippova/Mandarin-server)
 
 ## Возможности приложения ✨
 
