@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.util
 
+import io.github.aakira.napier.Napier
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.number
 
@@ -29,6 +30,7 @@ object DateTimeUtils {
             "$hour:$minute, $day.$month.$year"
         }
     } catch (e: Exception) {
+        Napier.e("String toHumanDateTimeOrNull error: $e")
         null
     }
 }
