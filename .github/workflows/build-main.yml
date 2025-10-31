@@ -41,9 +41,9 @@ jobs:
 
       - name: Create google-services.json from secret
         run: |
-          mkdir -p app/src/debug
-          echo '${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}' > app/google-services.json
-          echo '${{ secrets.GOOGLE_SERVICES_JSON_DEBUG }}' > app/src/debug/google-services.json
+          mkdir -p composeApp/src/androidMain
+          echo '${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}' > composeApp/google-services.json
+          echo '${{ secrets.GOOGLE_SERVICES_JSON_DEBUG }}' > composeApp/src/androidMain/google-services.json
 
       - name: Create apikeys.properties from secrets
         run: |
@@ -70,7 +70,7 @@ jobs:
 
       - name: Assemble Release APK
         run: |
-          ./gradlew assembleRelease \
+          ./gradlew :composeApp:assembleRelease \
           -Pandroid.injected.signing.store.file=$PWD/release.keystore \
           -Pandroid.injected.signing.store.password="${{ secrets.KEYSTORE_PASSWORD }}" \
           -Pandroid.injected.signing.key.alias="${{ secrets.KEY_ALIAS }}" \
@@ -82,14 +82,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-release.apk
-          path: app/build/outputs/apk/release/*.apk
+          path: composeApp/build/outputs/apk/release/*.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest-${{ github.run_number }}
           name: Release Build-${{ github.run_number }}
-          files: app/build/outputs/apk/release/*.apk
+          files: composeApp/build/outputs/apk/release/*.apk
           draft: false
           make_latest: true
         env:
