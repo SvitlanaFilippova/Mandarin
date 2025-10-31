@@ -1,0 +1,212 @@
+package com.mandarinkafe.mandarin.features.more.presentation.ui.screen
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import com.mandarinkafe.mandarin.MR
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.more.presentation.ui.components.DevFeedbackDialog
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberAboutViewModel
+import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.OpenUrl
+import dev.icerock.moko.resources.ImageResource
+import dev.icerock.moko.resources.compose.painterResource
+import dev.icerock.moko.resources.compose.stringResource
+
+@Composable
+fun AboutScreen(
+    onBackClick: () -> Unit,
+) {
+    val viewModel = rememberAboutViewModel()
+    val state by viewModel.state.collectAsState()
+    val aboutMainText = stringResource(MR.strings.about_main_text)
+    val thanksText = stringResource(MR.strings.thanks_text)
+    var showDialog by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = Dimens.MarginStandard16),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ScreenTitleWithBackButton(
+            name = stringResource(MR.strings.about_title),
+            onBackClick = { onBackClick() },
+        )
+
+        Spacer(modifier = Modifier.height(Dimens.MarginBig32))
+
+        Text(
+            modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
+            text = aboutMainText,
+            style = Typography.RegularLightTextStyle,
+            textAlign = TextAlign.Start,
+        )
+
+        Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
+
+        Text(
+            modifier = Modifier.padding(Dimens.MarginSmall8),
+            text = stringResource(MR.strings.message_developer),
+            style = Typography.RegularTextStyle,
+        )
+
+        Row(
+            modifier = Modifier
+                .padding(horizontal = Dimens.MarginSmall8),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val modifier = Modifier
+                .weight(1f)
+                .padding(vertical = Dimens.MarginStandard16, horizontal = Dimens.MarginSmall8)
+
+            DevFeedbackLink(
+                modifier = modifier,
+                onClick = {
+                    showDialog = true
+                }
+            )
+
+            ContactLink(
+                modifier = modifier,
+                url = stringResource(MR.strings.telegram_url),
+                label = stringResource(MR.strings.telegram_label),
+                iconRes = MR.images.ic_telegram
+            )
+
+        }
+
+        Spacer(modifier = Modifier.height(Dimens.MarginBig32))
+
+        // Спасибо
+        Text(
+            text = thanksText,
+            style = Typography.RegularLightTextStyle,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+
+        Column(
+            modifier = Modifier.padding(bottom = Dimens.MarginStandard16),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
+        ) {
+            // Время и дата последнего обновления меню из iiko
+            state.lastUpdated?.let {
+                Text(
+                    text = stringResource(MR.strings.menu_last_updated_text, it),
+                    style = Typography.SmallTextStyle,
+                    color = Colors.LightGrey
+                )
+            }
+            state.revision?.let {
+                // Ревизия меню
+                Text(
+                    text = stringResource(MR.strings.menu_revision_text, it),
+                    style = Typography.SmallTextStyle,
+                    color = Colors.LightGrey
+                )
+            }
+
+            state.versionName?.let {
+                // Версия приложения
+                Text(
+                    text = stringResource(MR.strings.version_text, it),
+                    style = Typography.SmallTextStyle,
+                    color = Colors.LightGrey
+                )
+            }
+        }
+
+    }
+
+    if (showDialog) {
+        DevFeedbackDialog(
+            onDismissRequest = { showDialog = false },
+        )
+    }
+}
+
+@Composable
+private fun ContactLink(
+    label: String,
+    iconRes: ImageResource,
+    url: String,
+    modifier: Modifier,
+) {
+    var shouldOpenUrl by remember { mutableStateOf<Boolean?>(null) }
+
+
+    shouldOpenUrl?.let {
+        OpenUrl(url = url)
+        LaunchedEffect(Unit) {
+            shouldOpenUrl = null
+        }
+    }
+
+    Row(
+        modifier = modifier
+            .clickable(onClick = { shouldOpenUrl = true }),
+
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = label,
+            tint = Colors.WhiteTransparent75
+        )
+        Spacer(modifier = Modifier.width(Dimens.MarginSmall8))
+        Text(text = label, style = Typography.RegularTextStyle)
+    }
+}
+
+@Composable
+private fun DevFeedbackLink(
+    onClick: () -> Unit,
+    modifier: Modifier,
+) {
+    Row(
+        modifier = modifier
+            .clickable { onClick() },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(MR.images.ic_email),
+            contentDescription = null,
+            tint = Colors.WhiteTransparent75
+        )
+        Spacer(modifier = Modifier.width(Dimens.MarginSmall8))
+        Text(
+            text = stringResource(MR.strings.dev_feedback_label),
+            style = Typography.RegularTextStyle
+        )
+    }
+}

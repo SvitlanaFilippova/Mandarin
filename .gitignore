@@ -2,11 +2,20 @@
 .gradle/
 build/
 
+# Kotlin Multiplatform build artifacts
+**/kotlinTransformedMetadataLibraries/
+**/kotlinProjectStructureMetadata/
+**/kotlin-multiplatform-resources/
+**/xcode-frameworks/
+**/fat-framework/
+.kotlin/sessions/
+
 # Local configuration file (sdk path, etc)
 local.properties
 apikeys.properties
-
-apikeys.properties
+Info.private.plist
+iosApp/iosApp/Info.private.plist
+BuildConfig.kt
 
 # Log/OS Files
 *.log
@@ -34,3 +43,27 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# macOS
+.DS_Store
+
+# Xcode
+*.xcuserstate
+*.xcuserdatad/
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Release builds
+**/release/composeApp/src/commonMain/kotlin/com/mandarinkafe/mandarin/core/data/config/BuildConfig.kt
+/app/release/baselineProfiles/0/app-release.dm
+/app/release/baselineProfiles/1/app-release.dm
+/app/release/app-release.aab
+/app/release/output-metadata.json
+/tombstone_31
+/iosApp/Pods/
+/composeApp/composeApp.podspec
+/.kotlin/metadata/*
+/.kotlin/

@@ -1,0 +1,10 @@
+TEAM_ID=
+
+PRODUCT_NAME=Mandarin
+PRODUCT_BUNDLE_IDENTIFIER=com.mandarinkafe.mandarin
+
+CURRENT_PROJECT_VERSION=3
+MARKETING_VERSION=1.03kmp
+
+JAVA_HOME=/Applications/Android Studio.app/Contents/jbr/Contents/Home
+OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED=NO

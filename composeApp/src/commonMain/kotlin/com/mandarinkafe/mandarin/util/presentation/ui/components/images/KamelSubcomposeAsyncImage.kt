@@ -1,0 +1,202 @@
+package com.mandarinkafe.mandarin.util.presentation.ui.components.images
+
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.util.Constants.RATIO_FOR_IMAGE_CROP_MAX
+import com.mandarinkafe.mandarin.util.Constants.RATIO_FOR_IMAGE_CROP_MIN
+import dev.icerock.moko.resources.ImageResource
+import dev.icerock.moko.resources.compose.painterResource
+import io.kamel.core.Resource
+import io.kamel.image.asyncPainterResource
+
+@Composable
+fun KamelSubcomposeAsyncImage(
+    model: Any?,
+    modifier: Modifier = Modifier,
+    previewModel: Any? = null,
+    contentDescription: String?,
+    placeholder: ImageResource? = null,
+    error: ImageResource? = null,
+    crossfade: Boolean = true,
+    tint: Color? = null,
+    contentScale: ContentScale? = null,
+    onStateChange: ((Resource<Painter>) -> Unit)? = null,
+) {
+    if (model == null) {
+        Box(
+            modifier = modifier.background(Colors.AppBlack),
+            contentAlignment = Alignment.Center
+        ) {
+            (placeholder ?: error)?.let { placeholder ->
+                Image(
+                    painter = painterResource(placeholder),
+                    contentDescription = contentDescription,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    colorFilter = tint?.let { ColorFilter.tint(it) }
+                )
+            }
+        }
+        return
+    }
+
+    val resource: Resource<Painter> = asyncPainterResource(data = model)
+    onStateChange?.invoke(resource)
+
+    val previewResource: Resource<Painter>? = previewModel?.let {
+        asyncPainterResource(data = it)
+    }
+    val backgroundColor = if (resource is Resource.Success) Color.White else Colors.AppBlack
+
+    Box(
+        modifier = modifier.background(backgroundColor),
+        contentAlignment = Alignment.Center
+    ) {
+        when (resource) {
+            is Resource.Loading -> {
+                LoadingStateContent(
+                    previewResource = previewResource,
+                    placeholderRes = placeholder,
+                    contentDescription = contentDescription,
+                    contentScale = contentScale,
+                    tint = tint
+                )
+
+            }
+
+            is Resource.Success -> {
+                SuccessStateContent(
+                    painter = resource.value,
+                    contentDescription = contentDescription,
+                    crossfade = crossfade,
+                    tint = tint,
+                    contentScale = contentScale
+                )
+            }
+
+            is Resource.Failure -> {
+                error?.let { placeholder ->
+                    Image(
+                        painter = painterResource(placeholder),
+                        contentDescription = contentDescription,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                        colorFilter = tint?.let { ColorFilter.tint(it) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadingStateContent(
+    previewResource: Resource<Painter>?,
+    placeholderRes: ImageResource?,
+    contentDescription: String?,
+    contentScale: ContentScale?,
+    tint: Color?,
+) {
+    val colorFilter = tint?.let { ColorFilter.tint(it) }
+
+    when {
+        previewResource is Resource.Success -> {
+            Image(
+                painter = previewResource.value,
+                contentDescription = contentDescription,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = contentScale ?: ContentScale.Crop,
+                colorFilter = colorFilter
+            )
+        }
+
+        previewResource is Resource.Loading && placeholderRes != null -> {
+            Image(
+                painter = painterResource(placeholderRes),
+                contentDescription = contentDescription,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+                colorFilter = colorFilter
+            )
+        }
+
+        previewResource is Resource.Failure && placeholderRes != null -> {
+            Image(
+                painter = painterResource(placeholderRes),
+                contentDescription = contentDescription,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+                colorFilter = colorFilter
+            )
+        }
+
+        placeholderRes != null -> {
+            Image(
+                painter = painterResource(placeholderRes),
+                contentDescription = contentDescription,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+                colorFilter = colorFilter
+            )
+        }
+
+        else -> CircularProgressIndicator()
+    }
+}
+
+@Composable
+private fun SuccessStateContent(
+    painter: Painter,
+    contentDescription: String?,
+    crossfade: Boolean,
+    tint: Color?,
+    contentScale: ContentScale?,
+) {
+    val finalContentScale = when {
+        contentScale != null -> contentScale
+        else -> {
+            val ratio = if (painter.intrinsicSize.height != 0f) {
+                painter.intrinsicSize.width / painter.intrinsicSize.height
+            } else {
+                1f
+            }
+            when {
+                ratio in RATIO_FOR_IMAGE_CROP_MIN..RATIO_FOR_IMAGE_CROP_MAX -> ContentScale.Crop
+                else -> ContentScale.Fit
+            }
+        }
+    }
+    val colorFilter = tint?.let { ColorFilter.tint(it) }
+
+    if (crossfade) {
+        Crossfade(targetState = painter, label = "imageCrossfade") { p ->
+            Image(
+                painter = p,
+                contentDescription = contentDescription,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = finalContentScale,
+                colorFilter = colorFilter
+            )
+        }
+    } else {
+        Image(
+            painter = painter,
+            contentDescription = contentDescription,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = finalContentScale,
+            colorFilter = colorFilter
+        )
+    }
+}

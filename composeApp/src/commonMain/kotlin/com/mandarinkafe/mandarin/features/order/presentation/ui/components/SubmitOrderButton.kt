@@ -1,0 +1,77 @@
+package com.mandarinkafe.mandarin.features.order.presentation.ui.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import com.mandarinkafe.mandarin.MR
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
+import dev.icerock.moko.resources.compose.stringResource
+
+@Composable
+fun SubmitOrderButton(
+    modifier: Modifier = Modifier,
+    shouldBeActive: Boolean,
+    totalOrderSum: Double,
+    onMissingRequiredInfo: () -> Unit,
+    onSubmitOrder: () -> Unit,
+    isLoading: Boolean,
+) {
+    val onClickAction = when {
+        !shouldBeActive -> onMissingRequiredInfo
+        else -> onSubmitOrder
+    }
+
+    Button(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(Dimens.BigButtonWithTextHeight),
+        onClick = onClickAction,
+        enabled = !isLoading,
+        shape = RoundedCornerShape(Dimens.CornerRadius8),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Colors.Orange,
+            contentColor = Color.White
+        ),
+
+        ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
+        ) {
+            Text(
+                text = stringResource(MR.strings.submit_order),
+                style = Typography.ToCartButtonBigStyle,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            when (isLoading) {
+                true -> {
+                    MyCircularProgressIndicator(
+                        strokeWidth = Dimens.ProgressBarStroke6,
+                    )
+                }
+
+                false -> {
+                    Text(
+                        text = stringResource(MR.strings.float_price_template, totalOrderSum),
+                        style = Typography.ToCartButtonBigStyle,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+    }
+}

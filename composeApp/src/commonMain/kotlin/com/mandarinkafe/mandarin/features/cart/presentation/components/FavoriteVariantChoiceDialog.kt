@@ -1,0 +1,50 @@
+package com.mandarinkafe.mandarin.features.cart.presentation.components
+
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import com.mandarinkafe.mandarin.MR
+import dev.icerock.moko.resources.compose.stringResource
+
+@Composable
+fun FavoriteVariantChoiceDialog(
+    onBaseSelected: () -> Unit,
+    onCustomSelected: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = stringResource(MR.strings.favorite_variant_dialog_title))
+        },
+        text = {
+            Text(text = stringResource(MR.strings.favorite_variant_dialog_message))
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onCustomSelected
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start,
+                    text = stringResource(MR.strings.favorite_variant_custom_button)
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onBaseSelected
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start,
+                    text = stringResource(MR.strings.favorite_variant_base_button)
+                )
+            }
+        }
+    )
+}

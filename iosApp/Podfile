@@ -1,0 +1,51 @@
+platform :ios, '16.0'
+
+use_frameworks! :linkage => :static
+
+target 'iosApp' do
+pod 'YandexMapsMobile', '4.25.0-full'
+pod 'composeApp', :path => '../composeApp'
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |t|
+    if t.name == 'composeApp'
+      t.build_configurations.each do |c|
+        c.build_settings.delete('OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED')
+      end
+      t.shell_script_build_phases.each do |phase|
+        if phase.name&.include?('Build composeApp')
+          phase.shell_script = <<~'SCRIPT'
+            if [ "YES" = "$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED" ]; then
+              echo "Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED=YES"
+              exit 0
+            fi
+            set -exo pipefail
+            REPO_ROOT="$PODS_TARGET_SRCROOT"
+
+            export ARCHS="${ARCHS:-}"
+            export CONFIGURATION="${CONFIGURATION:-Debug}"
+            export PODS_ROOT="${PODS_ROOT:-}"
+            export BUILT_PRODUCTS_DIR="${BUILT_PRODUCTS_DIR:-}"
+            export CONFIGURATION_BUILD_DIR="${CONFIGURATION_BUILD_DIR:-$BUILT_PRODUCTS_DIR}"
+            # Ensure compatible JDK (Gradle/Kotlin tooling fails on Java 25)
+            export JAVA_HOME="${JAVA_HOME:-/Applications/Android Studio.app/Contents/jbr/Contents/Home}"
+            export PATH="$JAVA_HOME/bin:$PATH"
+
+            "$REPO_ROOT/../gradlew" -p "$REPO_ROOT" $KOTLIN_PROJECT_PATH:syncFramework \
+              -Pkotlin.native.cocoapods.platform=$PLATFORM_NAME \
+              -Pkotlin.native.cocoapods.archs="$ARCHS" \
+              -Pkotlin.native.cocoapods.configuration="$CONFIGURATION" \
+              -Pmoko.resources.PLATFORM_NAME="$PLATFORM_NAME" \
+              -Pmoko.resources.CONFIGURATION="$CONFIGURATION" \
+              -Pmoko.resources.ARCHS="$ARCHS" \
+              -Pmoko.resources.BUILT_PRODUCTS_DIR="$BUILT_PRODUCTS_DIR" \
+              -Pmoko.resources.CONTENTS_FOLDER_PATH="$CONFIGURATION_BUILD_DIR" \
+              -Pmoko.resources.PODS_ROOT="$PODS_ROOT" \
+              --info --stacktrace
+          SCRIPT
+        end
+      end
+    end
+  end
+end

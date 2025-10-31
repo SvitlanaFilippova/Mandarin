@@ -1,70 +1,58 @@
 [versions]
-gson = "2.13.2"
-koin = "4.1.1"
-ktor = "3.3.0"
-kamel = "1.0.8"
-lifecycleVersion = "2.9.4"
-versionCode = "4"
-versionName = "1.02"
 compileSdk = "36"
 minSdk = "26"
-targetSdk = "35"
+targetSdk = "36"
+versionCode = "3"
+versionName = "1.03kmp"
 java = "VERSION_17"
-accompanistNavigationMaterialVersion = "0.36.0"
-accompanistSystemuicontrollerVersion = "0.36.0"
+
 activity = "1.11.0"
-agp = "8.13.0"
-compiler = "1.5.15"
-composeActivity = "1.11.0"
-composeBom = "2025.09.00"
-composeViewModel = "2.9.4"
-coreKtx = "1.17.0"
+agp = "8.11.1"
+appcompatVersion = "1.7.1"
+composeMultiplatform = "1.9.1"
+coreVersion = "1.7.0"
+datastore = "1.1.7"
 detekt = "1.23.8"
-espressoCore = "3.7.0"
-firebaseBomVersion = "33.16.0"
 firebaseCrashlytics = "3.0.4"
 googleService = "4.4.3"
-junit = "4.13.2"
 junitVersion = "1.3.0"
-kotlin = "2.2.20"
+kamel = "1.0.8"
+koin = "4.1.1"
 ksp = "2.2.20-2.0.2"
-mapkit = "4.22.0-full"
-material = "1.13.0"
-navigationCompose = "2.9.4"
-parcelize = "2.2.20"
-sqldelight = "2.1.0"
-kotlinx-serialization = "1.6.0"
+ktor = "3.3.1"
+kotlin = "2.2.21"
 kotlinStdlibVersion = "2.2.20"
 kotlinTestVersion = "2.2.20"
+kotlinx-datetime = "0.7.1"
+kotlinx-serialization = "1.9.0"
+lifecycleVersion = "2.9.5"
+#noinspection NewerVersionAvailable
+mapkit = "4.25.0-full"
+material3Version = "1.4.0"
+moko-resources = "0.25.1"
 napier = "2.7.1"
-runnerVersion = "1.5.2"
-coreVersion = "1.5.0"
+navigation = "2.9.1"
+parcelize = "2.2.20"
+playServicesLocationVersion = "21.3.0"
+pullrefresh = "1.4.0-beta03"
+runnerVersion = "1.7.0"
+sqldelight = "2.1.0"
+urlencoderLib = "1.6.0"
 
 
 [libraries]
-# Accompanist
-accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanistNavigationMaterialVersion" }
-accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontrollerVersion" }
-
 # AndroidX
-androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
-androidx-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compiler" }
-androidx-compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "composeActivity" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
-androidx-compose-material = { group = "androidx.compose.material", name = "material" }
-androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
-androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
-androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeViewModel" }
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
+androidx-core = { group = "androidx.test", name = "core", version.ref = "coreVersion" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
-androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycleVersion" }
-androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleVersion" }
+androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3Version" }
+androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runnerVersion" }
+
+# Мультиплатформенные ViewModel и Runtime
+jetbrains-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "lifecycleVersion" }
+jetbrains-lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleVersion" }
+jetbrains-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleVersion" }
 
 # Kamel
 kamel-image-default = { module = "media.kamel:kamel-image-default", version.ref = "kamel" }
@@ -74,33 +62,20 @@ staticAnalysis-detektCli = { module = "io.gitlab.arturbosch.detekt:detekt-cli", 
 staticAnalysis-detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 staticAnalysis-detektLibraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-libraries", version.ref = "detekt" }
 
-# Firebase
-firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
-firebase-config-ktx = { module = "com.google.firebase:firebase-config-ktx" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
-
 # Napier(логгер)
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 # Koin
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 
 # MapKit
 com-yandex-maps-mobile = { group = "com.yandex.android", name = "maps.mobile", version.ref = "mapkit" }
 
-# Material
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-
-# Testing
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-
 # SQLDelight
 sqldelight = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 
 # Ktor
@@ -110,23 +85,41 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 
 # Kotlinx Serialization
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlibVersion" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinTestVersion" }
-androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runnerVersion" }
-androidx-core = { group = "androidx.test", name = "core", version.ref = "coreVersion" }
+
+# DataStore
+datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
+# Google Play Services Location
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocationVersion" }
+
+# MOKO Resources
+resources = { module = "dev.icerock.moko:resources", version.ref = "moko-resources" }
+resources-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "moko-resources" }
+resources-generator = { module = "dev.icerock.moko:resources-generator", version.ref = "moko-resources" }
+
+# Navigation Compose (навигация)
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation" }
+
+# URL encoder
+urlencoder-lib = { module = "net.thauvin.erik.urlencoder:urlencoder-lib", version.ref = "urlencoderLib" }
+
+# Pull to refresh
+materii-pullrefresh = { group = "dev.materii.pullrefresh", name = "pullrefresh", version.ref = "pullrefresh" }
 
 [plugins]
-
 android-application = { id = "com.android.application", version.ref = "agp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleService" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-jetbrains-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "parcelize" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
@@ -134,4 +127,6 @@ sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 android-lint = { id = "com.android.lint", version.ref = "agp" }
-
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }

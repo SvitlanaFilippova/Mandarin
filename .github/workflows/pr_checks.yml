@@ -42,9 +42,9 @@ jobs:
 
       - name: Create google-services.json from secret
         run: |
-          mkdir -p app/src/debug
-          echo '${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}' > app/google-services.json
-          echo '${{ secrets.GOOGLE_SERVICES_JSON_DEBUG }}' > app/src/debug/google-services.json
+          mkdir -p composeApp/src/androidMain
+          echo '${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}' > composeApp/google-services.json
+          echo '${{ secrets.GOOGLE_SERVICES_JSON_DEBUG }}' > composeApp/src/androidMain/google-services.json
 
       - name: Create apikeys.properties from secrets
         run: |
@@ -95,9 +95,9 @@ jobs:
 
       - name: Create google-services.json from secret
         run: |
-          mkdir -p app/src/debug
-          echo '${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}' > app/google-services.json
-          echo '${{ secrets.GOOGLE_SERVICES_JSON_DEBUG }}' > app/src/debug/google-services.json
+          mkdir -p composeApp/src/androidMain
+          echo '${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}' > composeApp/google-services.json
+          echo '${{ secrets.GOOGLE_SERVICES_JSON_DEBUG }}' > composeApp/src/androidMain/google-services.json
 
       - name: Create apikeys.properties from secrets
         run: |
@@ -115,12 +115,12 @@ jobs:
           SERVER_BASE_URL: ${{ secrets.SERVER_BASE_URL }}
           MANDARIN_API_KEY: ${{ secrets.MANDARIN_API_KEY }}
 
-      - name: Assemble app
-        run: ./gradlew :app:assembleDebug $commonGradleFlags
+      - name: Assemble composeApp
+        run: ./gradlew :composeApp:assembleDebug $commonGradleFlags
 
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug.apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: composeApp-debug.apk
+          path: composeApp/build/outputs/apk/debug/*.apk
