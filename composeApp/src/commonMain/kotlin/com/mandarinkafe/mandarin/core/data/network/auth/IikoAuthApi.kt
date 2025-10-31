@@ -29,9 +29,6 @@ class IikoAuthApi(
                     throw IikoAuthenticationException("Ошибка сервера iiko: ${response.status.value}")
                 }
             }
-        } catch (e: IikoAuthenticationException) {
-            Napier.e("Ошибка в IikoAuthApi.authenticate", e)
-            throw e
         } catch (e: Throwable) {
             Napier.e("Ошибка в IikoAuthApi.authenticate", e)
             throw IikoAuthenticationException("Ошибка при аутентификации: ${e.message}", e)
