@@ -35,7 +35,7 @@ fun MapWithDeliveryAreas(
     deliveryArea: UiDeliveryArea?,
     isLoading: Boolean,
     isError: Boolean,
-    initLocation: YMKPoint,
+    initLocation: YMKPoint?,
     onCameraMoved: (YMKPoint) -> Unit,
     onMapReady: (YMKMapView) -> Unit,
     locationChosen: Boolean,

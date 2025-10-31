@@ -47,7 +47,7 @@ actual fun MapDeliveryScreenContent(
     Box(
         modifier = Modifier.Companion
             .fillMaxWidth()
-            .height(Dimens.MapOnDeliveryScreenHeight)
+            .height(Dimens.MapHeight)
             .padding(bottom = Dimens.MarginStandard16)
     ) {
         MapWithDeliveryAreas(

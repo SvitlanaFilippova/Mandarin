@@ -61,7 +61,7 @@ fun DeliveryScreen(
 
             item {
 
-//                 Все зоны доставки
+                // Все зоны доставки
                 with(state) {
                     DeliveryZonesSection(
                         deliveryAreas = deliveryAreas,

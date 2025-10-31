@@ -5,7 +5,7 @@ import androidx.compose.ui.unit.sp
 
 object Dimens {
     val MapPinSize = 64.dp
-    val MapOnDeliveryScreenHeight = 500.dp
+    val MapHeight = 450.dp
     val ToolbarHeadHeight40 = 40.dp
     val RecommendsItemWidth96 = 96.dp
     val Border1 = 1.dp
@@ -36,7 +36,6 @@ object Dimens {
     val MarginForCartButton = 72.dp
     val AddressSearchResultsHeight =  72.dp
     val MarginSuperHugeForCheckoutButton = 200.dp
-    val BSMarginForStatusBar40 = 40.dp
     val ModifierRowHeight48 = 48.dp
     val RadiusImageCorner2 = 2.dp
     val MealItemInSearchResults96 = 96.dp
@@ -47,7 +46,6 @@ object Dimens {
     val ProgressBarStroke6 = 6.dp
     val ProgressBarWidth24 = 24.dp
     val DividerHeight1 = 1.dp
-    val TabActivatedIndicatorHeight2 = 2.dp
     val ZeroDp0 = 0.dp
     val TextSizeRegular16 = 16.sp
     val TextSizeSuperSmall10 = 10.sp
