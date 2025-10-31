@@ -27,11 +27,13 @@ import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.mandarinkafe.mandarin.features.order.presentation.ui.components.ObserveNavBackstack
 
 @Composable
 fun OrderScreen(
     navController: NavController,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
 ) {
     val orderViewModel = rememberOrderViewModel()
     val state by orderViewModel.state.collectAsState()
@@ -43,13 +45,12 @@ fun OrderScreen(
     val coroutineScope = rememberCoroutineScope()
     var showAllAddresses by remember { mutableStateOf(false) }
 
-    // TODO! добавить передачу инфо для корректного возврата с экрана добавления адреса
-//    val currentBackStackEntry by navigator.currentBackStackEntryAsState()
-//
-//    ObserveNavBackstack(
-//        savedStateHandle = currentBackStackEntry?.savedStateHandle,
-//        onEvent = onEvent
-//    )
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+
+    ObserveNavBackstack(
+        savedStateHandle = currentBackStackEntry?.savedStateHandle,
+        onEvent = onEvent
+    )
 
     LaunchedEffect(Unit) {
         onEvent(OrderEvent.GetInitData)

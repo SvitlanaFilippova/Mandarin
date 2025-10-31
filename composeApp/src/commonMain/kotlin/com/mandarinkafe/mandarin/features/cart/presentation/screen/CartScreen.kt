@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import dev.icerock.moko.resources.compose.stringResource
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
+import dev.icerock.moko.resources.StringResource
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEffect
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent
@@ -26,7 +27,6 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrder
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
-import com.mandarinkafe.mandarin.util.presentation.asString
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
@@ -50,6 +50,8 @@ fun CartScreen(
     val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
     var showClearCartDialog by remember { mutableStateOf(false) }
     val snackbarHostState = LocalSnackbarHostState.current
+    var pendingSnackbarRes: StringResource? by remember { mutableStateOf(null) }
+    var pendingShowToCart: Boolean by remember { mutableStateOf(false) }
 
     snackbarMessage?.let { message ->
         LaunchedEffect(message) {
@@ -158,11 +160,8 @@ fun CartScreen(
                     is CartEffect.ShowClearCartConfirmDialog -> showClearCartDialog = true
                     is CartEffect.ProceedOrder -> navController.navigateToOrder()
                     is CartEffect.ShowSnackbar -> {
-                        snackbarHostState.showSnackbar(
-                            message = effect.message.asString(),
-                            duration = SnackbarDuration.Long,
-                            withDismissAction = true,
-                        )
+                        pendingSnackbarRes = effect.message
+                        pendingShowToCart = effect.showToCartButton
                     }
                 }
             }
@@ -174,5 +173,18 @@ fun CartScreen(
                 }
             }
         }
+    }
+
+    val pendingMessage: String? = pendingSnackbarRes?.let { stringResource(it) }
+    
+    LaunchedEffect(pendingMessage, pendingShowToCart) {
+        val message = pendingMessage ?: return@LaunchedEffect
+        snackbarHostState.showSnackbar(
+            message = message,
+            duration = SnackbarDuration.Long,
+            withDismissAction = true,
+        )
+        pendingSnackbarRes = null
+        pendingShowToCart = false
     }
 }

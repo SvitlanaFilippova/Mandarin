@@ -1,18 +1,23 @@
     # Mandarin
 
-# Приложение для заказа еды из локальной службы доставки Mandarin 🔎
+# Мультиплатформенное приложение для заказа еды из локальной службы доставки Mandarin 🔎
 
-🛠️ В разработке
+Kotlin Multiplatform проект, объединяющий Android и iOS клиенты с общим интерфейсом, изнес-логикой,
+сетевым слоем, репозиториями и базой данных.
+Приложение предназначено для удобного заказа блюд, кастомизации ингредиентов и отслеживания статуса
+доставки в реальном времени.
+
+Изначально Mandarin был полностью нативным Android-приложением, созданным на Kotlin + Jetpack
+Compose, с архитектурой MVI + Hilt + Retrofit + Coil + SharedPreferences.
+После завершения основной Android-версии проект был полностью мигрирован на Kotlin Multiplatform (
+KMP)
 
 ## Над приложением работают 👨🏻‍💻
 
 <a href="https://github.com/mandarin-kafe/Mandarin/graphs/contributors">  
   <img src="https://contrib.rocks/image?repo=mandarin-kafe/Mandarin&max=6" />
 </a>
-
-
-Серверная часть проекта:  
-[**Родионов Александр**](https://github.com/AlexDeyl) — [репозиторий сервера](https://github.com/SvitlanaFilippova/Mandarin-server)
+[**Александр Родионов**](https://github.com/AlexDeyl) — Серверная часть проекта. [репозиторий сервера](https://github.com/SvitlanaFilippova/Mandarin-server)
 
 ## Возможности приложения ✨
 
@@ -30,24 +35,24 @@
 | История заказов                               | ✔️ Реализовано   |
 | Сохранение адресов доставки                   | ✔️ Реализовано   |
 | Форма обратной связи                          | ✔️ Реализовано   |
-| Онлайн-оплата заказа                          | 🛠️ В разработке |
-
+| Авторизация через sms                         | 🛠️ В разработке |
+| Онлайн-оплата заказа                          | 🛠️ Планируется  |
 
 ## Используемые инструменты и технологии 📚
 
-| Категория            | Технологии                                                       |
-|----------------------|------------------------------------------------------------------|
-| UI                   | Jetpack Compose, Material3                                       |
-| Архитектура          | MVI, StateFlow, Coroutines, <del>Hilt</del> ->  Koin             |
-| Навигация            | Navigation Compose, Accompanist Navigation Material              |
-| Работа с данными     | SQLDelight, <del>SharedPreferences</del> -> DataStore, <del>Retrofit</del> -> Ktor |
-| Изображения          | <del>Coil</del> -> Kamel                                         |
-| Карты                | Yandex MapKit                                                    |
-| Firebase             | Remote Config, Crashlytics                                       |
-| Интеграции           | iikoCloud API, Telegram Bot API                                  |
-| Инструменты качества | Detekt, Lint                                                     |
-
-
+| Категория        | Технологии                                                           |
+|------------------|----------------------------------------------------------------------|
+| UI               | Compose Multiplatform, Material3, Moko Resources                     |
+| Архитектура      | MVI, StateFlow, Coroutines, <del>Hilt</del> ->  Koin                 |
+| Навигация        | Navigation Compose, Accompanist Navigation Material                  |
+| Работа с данными | SQLDelight, <del>SharedPreferences</del> -> DataStore                |
+| Работа с данными | <del>Retrofit</del> -> Ktor (OkHttp / Darwin), kotlinx.serialization |
+| Изображения      | <del>Coil</del> -> Kamel                                             |
+| Карты            | Yandex MapKit                                                        |
+| Интеграции       | iikoCloud API, Telegram Bot API                                      |
+| Качество кода    | Detekt, Lint                                                         |
+| Логирование      | Napier                                                               |
+| Pull-to-refresh  | Materii PullRefresh                                                  |
 
 ## Скриншоты приложения 📱
 
@@ -57,22 +62,33 @@
 
 ## Общие требования 🗒️
 
-Приложение поддерживает устройства, начиная с Android 8.0 (minSdkVersion = 26).
+Приложение поддерживает устройства, начиная с Android 8.0 (minSdkVersion = 26)/ iOS - iOS 16.0 и выше .
 
 ## Начало работы 🛠️
 
 Клонируйте этот репозиторий на свой компьютер.
 
 [git clone](https://github.com/mandarin-kafe/Mandarin)
-
+**Android**
 Откройте проект в Android Studio.
 
 Подключите свой телефон/эмулятор.
 
-Создайте и запустите проект.
+Соберите и запустите проект.
 
-⚠️ Из соображений безопасности API-ключи внешних сервисов, таких как карты и iiko, не включены в исходный код. Поэтому при сборке проекта через Android Studio часть функциональности будет недоступна.
 
-📦 Рабочая версия приложения (APK) доступна в разделе [Releases](https://github.com/mandarin-kafe/Mandarin/releases).
+**iOS**
+Откройте /iosApp/ в Xcode
+
+Установите зависимости (pod install)
+
+Запустите сборку и установите приложение на симулятор или реальное устройство
+
+⚠️ Из соображений безопасности API-ключи внешних сервисов, таких как карты и iiko, не включены в
+исходный код. Поэтому при сборке проекта через Android Studio часть функциональности будет
+недоступна.
+
+📦 Рабочая версия приложения (APK) доступна в
+разделе [Releases](https://github.com/mandarin-kafe/Mandarin/releases).
 
 📱 Для сборки iOS версии смотрите [инструкции](./iosApp/README.md).

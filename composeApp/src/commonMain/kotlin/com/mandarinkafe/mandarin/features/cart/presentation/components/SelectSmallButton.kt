@@ -12,9 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun SelectSmallButton(
@@ -36,10 +38,9 @@ fun SelectSmallButton(
             horizontalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
         ) {
             Text(
-                text = "Выбрать", // TODO: Заменить на MOKO Resources
+                text = stringResource(MR.strings.to_choose),
                 style = Typography.CartButtonSmallTextStyle
             )
-
         }
     }
 }

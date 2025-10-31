@@ -233,8 +233,6 @@ tasks.register("updateIOSVersion") {
             .replace(Regex("CURRENT_PROJECT_VERSION=(.*)"), "CURRENT_PROJECT_VERSION=$versionCode")
         
         configFile.writeText(updated)
-        
-        println("✅ Updated iOS version: MARKETING_VERSION=$versionName, CURRENT_PROJECT_VERSION=$versionCode")
     }
 }
 
