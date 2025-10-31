@@ -33,11 +33,11 @@ fun ContactsScreen(onBackClick: () -> Unit) {
         MR.strings.pickup_cafe_address,
         MR.strings.pickup_pizzeria_address
     )
-    
+
     val phoneNumber = stringResource(MR.strings.cafe_phone_number)
     var shouldMakePhoneCall by remember { mutableStateOf(false) }
     var addressToOpen by remember { mutableStateOf<String?>(null) }
-    
+
     if (shouldMakePhoneCall) {
         MakeCall(
             phoneNumber = phoneNumber
@@ -46,56 +46,59 @@ fun ContactsScreen(onBackClick: () -> Unit) {
             shouldMakePhoneCall = false
         }
     }
-    
+
     addressToOpen?.let { address ->
         OpenGeoLocation(address = address)
         LaunchedEffect(Unit) {
             addressToOpen = null
         }
     }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(Dimens.MarginSmall8),
-        verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
         // Заголовок экрана
         ScreenTitleWithBackButton(
             name = stringResource(MR.strings.contacts_screen_title),
             onBackClick = { onBackClick() },
         )
-
-        // График
-        InfoCard(
-            iconPainter = painterResource(MR.images.ic_clock),
-            title = stringResource(MR.strings.working_hours_title),
-            lines = listOf(
-                stringResource(MR.strings.working_hours_value) to null
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(Dimens.MarginSmall8),
+            verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
+        ) {
+            // График
+            InfoCard(
+                iconPainter = painterResource(MR.images.ic_clock),
+                title = stringResource(MR.strings.working_hours_title),
+                lines = listOf(
+                    stringResource(MR.strings.working_hours_value) to null
+                )
             )
-        )
 
-        // Телефон
-        InfoCard(
-            iconPainter = painterResource(MR.images.ic_phone),
-            title = stringResource(MR.strings.phone_title),
-            lines = listOf(
-                phoneNumber to {
-                    shouldMakePhoneCall = true
+            // Телефон
+            InfoCard(
+                iconPainter = painterResource(MR.images.ic_phone),
+                title = stringResource(MR.strings.phone_title),
+                lines = listOf(
+                    phoneNumber to {
+                        shouldMakePhoneCall = true
+                    }
+                )
+            )
+
+            MapWithCafePins()
+
+            OurAddressesCard(
+                lines = addresses.map { resId ->
+                    val address = stringResource(resId)
+                    address to {
+                        addressToOpen = address
+                    }
                 }
             )
-        )
-
-        MapWithCafePins()
-
-        OurAddressesCard(
-            lines = addresses.map { resId ->
-                val address = stringResource(resId)
-                address to {
-                    addressToOpen = address
-                }
-            }
-        )
+        }
     }
 }

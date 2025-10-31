@@ -71,12 +71,13 @@ fun AddressMapScreen(
     val initLocation = state.initPinPoint
     val userLocation = state.userLocation
 
+    // Проверяем разрешение на определение местоположения. Если его нет - запрашиваем. Если есть - определеяем.
     RequestLocationPermission(
         onGranted = { onEvent(AddressContract.AddressEvent.RequestAddress) }
     )
 
     val keyboardController =
-        LocalSoftwareKeyboardController.current // Добавляем на карту зоны доставки
+        LocalSoftwareKeyboardController.current
 
 
     Column(

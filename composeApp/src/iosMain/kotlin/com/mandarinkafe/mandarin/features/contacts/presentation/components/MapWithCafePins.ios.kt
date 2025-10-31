@@ -32,6 +32,7 @@ actual fun MapWithCafePins() {
     val mandarinInitPoint = remember {
         YMKPoint.pointWithLatitude(MANDARIN_CENTER_LATITUDE, MANDARIN_CENTER_LONGITUDE)
     }
+
     var currentZoom by remember { mutableFloatStateOf(MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN) }
 
     val cameraListener = remember {
@@ -88,6 +89,7 @@ actual fun MapWithCafePins() {
             },
             onZoomIn = { changeZoom(mapView = mapView, delta = +1f) },
             onZoomOut = { changeZoom(mapView = mapView, delta = -1f) },
+
         )
     }
 }

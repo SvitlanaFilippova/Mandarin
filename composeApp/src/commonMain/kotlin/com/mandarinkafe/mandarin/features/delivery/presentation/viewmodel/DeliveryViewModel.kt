@@ -5,12 +5,14 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.domain.api.AddressSearchInteractor
 import com.mandarinkafe.mandarin.features.address.domain.api.DeliveryAreaRepository
+import com.mandarinkafe.mandarin.features.address.domain.api.GetCurrentLocationUseCase
 import com.mandarinkafe.mandarin.features.address.domain.api.GetDeliveryZoneUseCase
 import com.mandarinkafe.mandarin.features.address.presentation.ui.models.toUi
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.debounce
 import com.mandarinkafe.mandarin.util.presentation.isSameAs
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
+import com.mandarinkafe.mandarin.util.presentation.createDefaultPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -18,6 +20,7 @@ class DeliveryViewModel(
     private val deliveryAreaRepository: DeliveryAreaRepository,
     private val searchInteractor: AddressSearchInteractor,
     private val getDeliveryZone: GetDeliveryZoneUseCase,
+    private val getUserLocation: GetCurrentLocationUseCase,
 ) :
     BaseViewModel<DeliveryContract.DeliveryEvent, DeliveryContract.DeliveryEffect, DeliveryContract.DeliveryState>() {
     override fun setInitialState() = DeliveryContract.DeliveryState()
@@ -37,6 +40,22 @@ class DeliveryViewModel(
     override fun onEvent(event: DeliveryContract.DeliveryEvent) {
         when (event) {
             is DeliveryContract.DeliveryEvent.CameraMoved -> onCameraMoved(event.center)
+            DeliveryContract.DeliveryEvent.RequestAddress -> requestLocation()
+        }
+    }
+
+    private fun requestLocation() {
+        viewModelScope.launch {
+            val point = when (val result = getUserLocation()) {
+                is Resource.Success -> {
+                    result.data
+                }
+
+                else -> {
+                    null
+                }
+            }
+            setState { copy(userLocation = point) }
         }
     }
 

@@ -31,6 +31,7 @@ fun DeliveryZonesSection(
     deliveryArea: UiDeliveryArea?,
     displayAddress: String?,
     initLocation: GeoPoint,
+    userLocation: GeoPoint?,
     mapShouldBeVisible: Boolean,
     onCameraMoved: (GeoPoint) -> Unit,
 ) {
@@ -79,7 +80,8 @@ fun DeliveryZonesSection(
                     isError = isError,
                     onCameraMoved = onCameraMoved,
                     locationChosen = locationChosen,
-                    initLocation = initLocation
+                    initLocation = initLocation,
+                    userLocation = userLocation
                 )
             }
 

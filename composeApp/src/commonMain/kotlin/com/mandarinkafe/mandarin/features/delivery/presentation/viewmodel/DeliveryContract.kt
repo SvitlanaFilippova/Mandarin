@@ -9,6 +9,7 @@ import dev.icerock.moko.resources.StringResource
 sealed interface DeliveryContract {
     sealed interface DeliveryEvent : BaseContract.BaseEvent {
         data class CameraMoved(val center: GeoPoint) : DeliveryEvent
+        data object RequestAddress: DeliveryEvent
     }
 
     sealed interface DeliveryEffect : BaseContract.BaseEffect
@@ -16,12 +17,14 @@ sealed interface DeliveryContract {
     data class DeliveryState(
         val isLoading: Boolean = true,
         val initPinPoint: GeoPoint = createDefaultPoint(),
+        val userLocation: GeoPoint? = null,
         val deliveryAreas: List<UiDeliveryArea> = listOf(),
         val currentPinPoint: GeoPoint? = null,
         val displayAddress: String? = null,
         val deliveryArea: UiDeliveryArea? = null,
         val error: StringResource? = null,
         val fetchAddressInProgress: Boolean = false,
+
 
         ) : BaseContract.BaseState {
         val locationChosen: Boolean

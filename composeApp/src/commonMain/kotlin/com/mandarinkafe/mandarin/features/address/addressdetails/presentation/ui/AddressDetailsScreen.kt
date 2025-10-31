@@ -118,6 +118,7 @@ fun AddressDetailsScreen(
             )
         }
         Spacer(Modifier.height(Dimens.MarginSmall8))
+
         // Опциональное поле для примечания к адресу
         MyTextField(
             value = state.address.comment,

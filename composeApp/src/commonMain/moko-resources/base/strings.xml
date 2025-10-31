@@ -157,7 +157,7 @@
 
 
     <!-- Оформление заказа - сообщения и ошибки -->
-    <string name="delivery_validation_error">Не&#160;удалось найти адрес в&#160;пределах зон доставки. Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа.</string>
+    <string name="delivery_validation_error">Не&#160;удалось найти адрес в&#160;пределах зон доставки.Возможность доставки и&#160;её&#160;стоимость уточнит оператор после оформления заказа. Мы доставляем по&#160;Черноголовке и&#160;её&#160;окрестностям.</string>
     <string name="delivery_cost_hint">Для выбранного адреса доставка бесплатна при заказе от&#160;%1&#36;d&#8381; (с&#160;учётом скидок).</string>
     <string name="discount_hint">Скидка по&#160;карте действует не&#160;на&#160;все позиции.</string>
     <string name="delivery_request_validation">Нужно ввести адрес для расчёта стоимости доставки</string>
@@ -173,7 +173,7 @@
     <string name="pickup_pizzeria_address">Пиццерия: Черноголовка, ул. Спортивный б-р, 9, с&#160;торца дома</string>
     <string name="error_payment_types_unavailable">Не удалось получить от сервера доступные способы оплаты</string>
     <string name="error_missing_required_fields">Нужно заполнить все обязательные поля</string>
-    <string name="error_terminal_unavailable">Упс, кажется, сейчас мы не работаем — заказ оформить не получится🤷
+    <string name="error_terminal_unavailable">Упс, кажется, сейчас мы не&#160;работаем — заказ оформить не&#160;получится 🤷
         Возвращайся в рабочее время!</string>
     <string name="error_cant_check_terminal_is_alive">Что-то пошло не так — не удалось проверить, работает ли сейчас доставка.</string>
     <string name="error_order_creation_failed">Не xcxcxcxc создать заказ</string>

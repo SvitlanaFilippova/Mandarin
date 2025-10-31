@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.delivery.presentation.ui.components
 
 import YandexMapKit.YMKMapView
+import YandexMapKit.YMKPoint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +18,8 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.address.data.Mapper.toGeoPoint
 import com.mandarinkafe.mandarin.features.address.data.Mapper.toYandexPoint
 import com.mandarinkafe.mandarin.features.address.presentation.ui.models.UiDeliveryArea
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN
+import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN
 import com.mandarinkafe.mandarin.util.ConstantsMap.MAP_DEFAULT_ZOOM_FOR_DELIVERY_SCREEN
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.MapWithDeliveryAreas
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.moveCamera
@@ -31,11 +34,21 @@ actual fun MapDeliveryScreenContent(
     isLoading: Boolean,
     isError: Boolean,
     initLocation: GeoPoint,
+    userLocation: GeoPoint?,
     onCameraMoved: (GeoPoint) -> Unit,
     locationChosen: Boolean,
 ) {
     var mapView: YMKMapView? by remember { mutableStateOf(null) }
+
     val initLocationYandex = initLocation.toYandexPoint()
+    val userLocationYandex = remember(userLocation) {
+        userLocation?.let { location ->
+            YMKPoint.pointWithLatitude(
+                location.latitude,
+                location.longitude
+            )
+        }
+    }
 
     LaunchedEffect(initLocation, mapView) {
         moveCamera(
@@ -69,6 +82,13 @@ actual fun MapDeliveryScreenContent(
                     zoom = MAP_DEFAULT_ZOOM_FOR_DELIVERY_SCREEN
                 )
             },
+            onBackToUserLocationClick = {
+                moveCamera(
+                    mapView = mapView,
+                    point = userLocationYandex,
+                    zoom = MAP_DEFAULT_ZOOM_FOR_ADDRESS_SCREEN
+                )
+            }
         )
     }
 }
