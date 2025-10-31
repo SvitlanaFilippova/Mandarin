@@ -2,6 +2,8 @@ package com.mandarinkafe.mandarin.features.contacts.presentation.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,7 +63,8 @@ actual fun MapWithCafePins() {
 
     Box(
         modifier = Modifier.Companion
-            .fillMaxSize()
+            .fillMaxWidth()
+            .height(Dimens.MapHeight)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
     ) {
         AndroidView(

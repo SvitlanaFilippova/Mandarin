@@ -11,7 +11,7 @@ import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_PIZZERIA_LONGITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_ANCHOR_X
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_ANCHOR_Y
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_OPACITY
-import com.mandarinkafe.mandarin.util.calculatePinScale
+import com.mandarinkafe.mandarin.features.map.calculatePinScale
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.MapObjectCollection

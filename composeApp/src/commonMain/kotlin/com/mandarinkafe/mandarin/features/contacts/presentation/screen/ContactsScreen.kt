@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,6 +57,7 @@ fun ContactsScreen(onBackClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(Dimens.MarginSmall8),
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
@@ -83,6 +86,9 @@ fun ContactsScreen(onBackClick: () -> Unit) {
                 }
             )
         )
+
+        MapWithCafePins()
+
         OurAddressesCard(
             lines = addresses.map { resId ->
                 val address = stringResource(resId)
@@ -91,6 +97,5 @@ fun ContactsScreen(onBackClick: () -> Unit) {
                 }
             }
         )
-        MapWithCafePins()
     }
 }

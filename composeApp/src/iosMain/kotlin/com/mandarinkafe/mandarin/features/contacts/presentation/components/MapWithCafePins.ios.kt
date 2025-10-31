@@ -3,6 +3,8 @@ package com.mandarinkafe.mandarin.features.contacts.presentation.components
 import YandexMapKit.*
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +18,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.map.MapButtons
 import platform.darwin.NSObject
 import androidx.compose.ui.viewinterop.UIKitView
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.CafePinsOnMap
+import com.mandarinkafe.mandarin.util.presentation.ui.components.map.MapContainerView
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.changeZoom
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.moveCamera
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -52,29 +55,30 @@ actual fun MapWithCafePins() {
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
+            .height(Dimens.MapHeight)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
     ) {
         UIKitView(
             modifier = Modifier.fillMaxSize(),
             factory = {
-                YMKMapView(frame = CGRectZero.readValue()).apply {
-                    mapView = this
+                MapContainerView(frame = CGRectZero.readValue()).apply {
+                    mapView = this.mapView
                     moveCamera(
-                        mapView = this,
+                        mapView = this.mapView,
                         point = mandarinInitPoint,
                         zoom = MAP_DEFAULT_ZOOM_FOR_CONTACTS_SCREEN
                     )
                 }
             },
             onRelease = { view ->
-                view.mapWindow?.map?.removeCameraListenerWithCameraListener(cameraListener)
+                view.mapView.mapWindow?.map?.removeCameraListenerWithCameraListener(cameraListener)
             }
         )
 
         // Добавляем пины кафе с динамическим масштабированием
         mapView?.let {
-            CafePinsOnMap(mapView = it)
+            CafePinsOnMap(mapView = it, currentZoom = currentZoom)
         }
 
         MapButtons(

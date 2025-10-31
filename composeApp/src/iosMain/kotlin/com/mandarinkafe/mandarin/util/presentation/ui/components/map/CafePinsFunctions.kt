@@ -11,10 +11,10 @@ import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LONGITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_PIZZERIA_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_PIZZERIA_LONGITUDE
-import com.mandarinkafe.mandarin.util.ConstantsMap.PINS_DEFAULT_SCALE
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_ANCHOR_X
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_ANCHOR_Y
 import com.mandarinkafe.mandarin.util.ConstantsMap.PIN_OPACITY
+import com.mandarinkafe.mandarin.features.map.calculatePinScale
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.CoreGraphics.CGPointMake
 import platform.Foundation.NSNumber
@@ -24,10 +24,10 @@ import platform.UIKit.UIImage
 import platform.UIKit.valueWithCGPoint
 
 @Composable
-fun CafePinsOnMap(mapView: YMKMapView) {
-    LaunchedEffect(mapView) {
+fun CafePinsOnMap(mapView: YMKMapView, currentZoom: Float) {
+    LaunchedEffect(mapView, currentZoom)  {
         clearCafePins(mapView)
-        addCafePins(mapView)
+        addCafePins(mapView, currentZoom)
     }
 }
 
@@ -38,13 +38,18 @@ private fun clearCafePins(
     mapObjects?.clear()
 }
 
-private fun addCafePins(mapView: YMKMapView) {
+private fun addCafePins(mapView: YMKMapView, currentZoom: Float) {
     val mapObjects = mapView.mapWindow?.map?.mapObjects ?: return
+
     val cafePoint = YMKPoint.pointWithLatitude(MANDARIN_CAFE_LATITUDE, MANDARIN_CAFE_LONGITUDE)
     val pizzeriaPoint =
         YMKPoint.pointWithLatitude(MANDARIN_PIZZERIA_LATITUDE, MANDARIN_PIZZERIA_LONGITUDE)
+
     val cafeIcon = UIImage.imageNamed("map_pin_cafe")
     val pizzaIcon = UIImage.imageNamed("map_pin_pizza")
+
+    val dynamicScale = calculatePinScale(currentZoom).toDouble()
+
     fun addPin(point: YMKPoint, icon: UIImage?) {
         icon?.let {
             val iconStyle = YMKIconStyle().apply {
@@ -56,7 +61,7 @@ private fun addCafePins(mapView: YMKMapView) {
                         )
                     )
                 )
-                setScale (NSNumber.numberWithDouble(PINS_DEFAULT_SCALE))
+                setScale (NSNumber.numberWithDouble(dynamicScale))
             }
 
             mapObjects . addPlacemarkWithPoint (point =
