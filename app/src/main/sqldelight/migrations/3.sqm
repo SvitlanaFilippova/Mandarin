@@ -1,1 +1,0 @@
-ALTER TABLE saved_order ADD COLUMN number TEXT NOT NULL DEFAULT '';
