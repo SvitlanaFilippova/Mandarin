@@ -1,4 +1,5 @@
 @file:OptIn(ExperimentalForeignApi::class)
+
 package com.mandarinkafe.mandarin.features.address.data
 
 import YandexMapKit.*
@@ -15,64 +16,52 @@ object Mapper {
     }
 
     fun YMKGeoObject.toAddressSearchResult(): AddressSearchResult {
-        // POI name (название объекта)
+        // Название объекта (POI)
         val poiName = try {
             name?.takeIf { it.isNotBlank() }
         } catch (_: Throwable) {
             null
         }
 
-        // Попытка получить "готовое" описание / адрес из descriptionText
+        // Описание (обычно "Город, область, страна")
         val rawDescription = try {
             descriptionText?.takeIf { it.isNotBlank() }
         } catch (_: Throwable) {
             null
         }
 
-        // fullAddress — приоритет: descriptionText -> name -> ""
         var fullAddress = rawDescription ?: poiName ?: ""
 
-        // Эвристика: если descriptionText пустой, возможно есть текст в attributionMap или в aref — но это опционально.
+        // Если обе строки пусты — пробуем вытащить что-нибудь из attributionMap
         if (fullAddress.isBlank()) {
             try {
-                val attr = attributionMap
-                if (attr.isNotEmpty()) {
-                    // берем первый value как запасной адрес
-                    val firstValue = attr.values.firstOrNull()?.toString()
-                    if (!firstValue.isNullOrBlank()) fullAddress = firstValue
-                }
-            } catch (_: Throwable) { /* ignore */ }
+                val firstValue = attributionMap.values.firstOrNull()?.toString()
+                if (!firstValue.isNullOrBlank()) fullAddress = firstValue
+            } catch (_: Throwable) { /* ignore */
+            }
         }
 
-        // Выделяем locality из fullAddress простыми правилами (разделитель ",")
+        // Попробуем достать город или район из descriptionText — обычно он ближе к началу
         val locality: String? = run {
-            if (fullAddress.isBlank()) return@run null
-            val parts = fullAddress.split(',')
+            if (rawDescription.isNullOrBlank()) return@run null
+            val parts = rawDescription.split(',')
                 .map { it.trim() }
                 .filter { it.isNotEmpty() }
 
-            when {
-                parts.size >= 3 -> parts[parts.size - 2] // часто: Country, City, Street -> берём City
-                parts.size == 2 -> parts[0] // City, Street -> City
-                parts.size == 1 -> null
-                else -> parts.firstOrNull()
-            }?.takeIf { it.isNotBlank() }
+            // выбираем первый элемент, если в нём нет слова "область" или "край"
+            parts.firstOrNull { !it.contains("область", true) && !it.contains("край", true) }
+                ?: parts.getOrNull(parts.size - 2)
         }
 
-        // Очистка fullAddress: убираем локалити или poiName, если они дублируются
-        if (!locality.isNullOrBlank() && fullAddress.startsWith("$locality, ")) {
-            fullAddress = fullAddress.removePrefix("$locality, ").trimStart()
-        }
+        // Очищаем fullAddress от дублирования
+        fullAddress = fullAddress
+            .removePrefix("${poiName ?: ""}, ").trim()
+            .removePrefix("${locality ?: ""}, ").trim()
+            .removeSuffix(", ${poiName ?: ""}").trim()
+            .removeSuffix(", ${locality ?: ""}").trim()
+            .trim(',', ' ', '\u00A0')
 
-        if (!poiName.isNullOrBlank()) {
-            fullAddress = fullAddress
-                .removePrefix("$poiName, ")
-                .removeSuffix(", $poiName")
-                .removeSuffix(poiName)
-                .trim(',', ' ', '\u00A0')
-        }
-
-        // Сохраняем требуемую логику выбора строк
+        // Собираем две строки по заданной логике
         val addressLineOne = poiName ?: locality.orEmpty()
         val addressLineTwo = if (locality == null || locality == poiName) {
             fullAddress.ifBlank { null }
@@ -80,8 +69,14 @@ object Mapper {
             locality
         }
 
-        // Извлекаем точку из geometry (если есть)
-        val yPoint = extractFirstPointFromGeometryList(try { geometry } catch (_: Throwable) { null })
+        // Извлекаем точку
+        val yPoint = extractFirstPointFromGeometryList(
+            try {
+                geometry
+            } catch (_: Throwable) {
+                null
+            }
+        )
         val point = yPoint?.toGeoPoint()
 
         return AddressSearchResult(
@@ -92,12 +87,8 @@ object Mapper {
     }
 
     private fun extractFirstPointFromGeometryList(geometryList: Any?): YMKPoint? {
-        // geometryList обычно — kotlin.collections.List<*>
         val list = (geometryList as? List<*>) ?: return null
-
-        // Первый элемент часто YMKGeometry
         val firstGeom = list.firstOrNull() ?: return null
-
         return try {
             // Попробуем привести и получить point() (метод) или point property
             val geom = firstGeom as? YMKGeometry
@@ -112,7 +103,6 @@ object Mapper {
             null
         }
     }
-
 }
 
 
