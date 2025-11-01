@@ -26,7 +26,7 @@ class GetInitialDataUseCaseImpl(
 
         // параллельно грузим всё остальное
         coroutineScope {
-            launch { bannersRepository.loadBannersCsv() }
+            launch { bannersRepository.loadBanners() }
             launch { categoryDiscountRepository.refreshFromApi() }
             launch { deliveryAreaRepository.getAllAreas() }
         }

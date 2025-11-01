@@ -1,9 +1,6 @@
 package com.mandarinkafe.mandarin.features.cart.data
 
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
-import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.Meal
-import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendsSchemaDto
 import com.mandarinkafe.mandarin.features.cart.data.local.CartItemInsertParams
@@ -48,22 +45,20 @@ object Mapper {
         comment = comment
     )
 
-    fun StoredCartItem.toCustomizedMeal(
-        meal: Meal,
-        adds: List<MealAdditional>,
-        modifiers: List<ModifierGroup>,
-    ) = CustomizedMeal(
-        meal = meal,
-        adds = adds,
-        modifiers = modifiers,
-    )
-
-    fun RecommendsSchemaDto.toDomain() = RecommendsSchemaRule(
-        sourceName = sourceName ?: "",
-        excludeSku = excludeSku ?: emptyList<String>(),
-        recommendedSku = recommendedSku ?: emptyList(),
-        isSeparate = isSeparate
-    )
+    fun RecommendsSchemaDto.toDomain(): RecommendsSchemaRule {
+        return RecommendsSchemaRule(
+            sourceName = sourceName.orEmpty(),
+            excludeSku = excludeSku?.split(";")
+                ?.map { it.trim() }
+                ?.filter { it.isNotEmpty() }
+                ?: emptyList(),
+            recommendedSku = recommendedSku?.split(";")
+                ?.map { it.trim() }
+                ?.filter { it.isNotEmpty() }
+                ?: emptyList(),
+            isSeparate = isSeparate
+        )
+    }
 
     fun List<ModifierGroup>.validateBy(mealModifiers: List<ModifierGroup>): List<ModifierGroup> {
         return this.mapNotNull { selectedGroup ->

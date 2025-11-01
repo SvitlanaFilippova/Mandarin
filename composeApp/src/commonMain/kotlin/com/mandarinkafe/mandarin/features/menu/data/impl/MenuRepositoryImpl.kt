@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.menu.data.impl
 
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
-import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.core.data.network.ServerNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuMetaCache
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.menu.data.dto.CategoryDto
@@ -18,13 +18,13 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
 class MenuRepositoryImpl(
-    private val iikoNetworkClient: IikoNetworkClient,
+    private val networkClient: ServerNetworkClient,
     private val menuMetaCache: MenuMetaCache,
 ) : MenuRepository, MenuFetcher {
 
     override suspend fun fetchMenu(): Resource<List<MealCategory>> {
         return try {
-            val response = iikoNetworkClient.getMenu()
+            val response = networkClient.getMenu()
             when (response.resultCode) {
                 NO_CONNECTION -> Resource.ErrorNoInternet()
                 HTTP_SUCCESS -> {

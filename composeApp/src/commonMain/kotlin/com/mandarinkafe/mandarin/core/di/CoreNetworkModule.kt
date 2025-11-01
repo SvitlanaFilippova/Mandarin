@@ -1,14 +1,13 @@
 package com.mandarinkafe.mandarin.core.di
 
-import com.mandarinkafe.mandarin.core.data.network.GoogleDocsApiService
-import com.mandarinkafe.mandarin.core.data.network.GoogleDocsNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
+import com.mandarinkafe.mandarin.core.data.network.ServerNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.api.IikoApi
 import com.mandarinkafe.mandarin.core.data.network.api.ServerApi
 import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthApi
 import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthProvider
-import com.mandarinkafe.mandarin.core.data.network.impl.GoogleDocsNetworkClientImpl
 import com.mandarinkafe.mandarin.core.data.network.impl.IikoNetworkClientImpl
+import com.mandarinkafe.mandarin.core.data.network.impl.ServerNetworkClientImpl
 import com.mandarinkafe.mandarin.shared.BuildKonfig
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -111,35 +110,17 @@ val coreNetworkModule = module {
         }
     }
 
-
-    // HttpClient (GoogleDocs)
-    single(named(DiConstants.GOOGLE_DOCS_CLIENT_QUALIFIER)) {
-        HttpClient {
-            install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                    isLenient = true
-                })
-            }
-            defaultRequest {
-                contentType(ContentType.Text.Plain)
-            }
-        }
-    }
-
-
     // Network Clients
     single<IikoNetworkClient> {
         IikoNetworkClientImpl(
-            menuApi = get(),
             iikoApi = get(),
             networkMonitor = get()
         )
     }
 
-    single<GoogleDocsNetworkClient> {
-        GoogleDocsNetworkClientImpl(
-            googleDocsApi = get(),
+    single<ServerNetworkClient> {
+        ServerNetworkClientImpl(
+            serverApi = get(),
             networkMonitor = get()
         )
     }
@@ -159,16 +140,11 @@ val coreNetworkModule = module {
         ServerApi(get(named(DiConstants.SERVER_CLIENT_QUALIFIER)))
     }
 
-    // GoogleDocsApiService
-    single {
-        GoogleDocsApiService(get(named(DiConstants.GOOGLE_DOCS_CLIENT_QUALIFIER)))
-    }
-
     // IikoAuthProvider
     singleOf(::IikoAuthProvider)
 
     // Network Clients
     singleOf(::IikoNetworkClientImpl) { bind<IikoNetworkClient>() }
-    singleOf(::GoogleDocsNetworkClientImpl) { bind<GoogleDocsNetworkClient>() }
+    singleOf(::ServerNetworkClientImpl) { bind<ServerNetworkClient>() }
 
 }

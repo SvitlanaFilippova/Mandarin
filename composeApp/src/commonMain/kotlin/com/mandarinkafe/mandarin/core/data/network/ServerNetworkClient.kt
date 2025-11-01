@@ -2,14 +2,9 @@ package com.mandarinkafe.mandarin.core.data.network
 
 import com.mandarinkafe.mandarin.core.data.dto.Response
 
-interface GoogleDocsNetworkClient {
+interface ServerNetworkClient {
     suspend fun getBanners(): Response
     suspend fun getRecommendations(): Response
-    suspend fun getDeliveryZonesPoints(): Response
-    suspend fun getDeliveryZonesMetaData(): Response
+    suspend fun getDeliveryZones(): Response
+    suspend fun getMenu(): Response
 }
-
-
-
-
-
