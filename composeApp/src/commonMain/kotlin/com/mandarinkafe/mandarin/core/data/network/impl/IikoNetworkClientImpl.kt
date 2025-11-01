@@ -6,7 +6,6 @@ import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.NetworkMonitor
 import com.mandarinkafe.mandarin.core.data.network.api.IikoApi
-import com.mandarinkafe.mandarin.core.data.network.api.ServerApi
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.AliveTerminalGroupsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.DiscountsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCustomerByPhoneRequest
@@ -20,13 +19,10 @@ import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class IikoNetworkClientImpl(
     private val networkMonitor: NetworkMonitor,
     private val iikoApi: IikoApi,
-    private val menuApi: ServerApi,
 ) : IikoNetworkClient {
 
     private var organizationId: String = ""
@@ -44,22 +40,6 @@ class IikoNetworkClientImpl(
         } catch (e: Exception) {
             Napier.e("Ошибка получения organizationId", e)
             throw e
-        }
-    }
-
-
-    override suspend fun getMenu(): Response {
-        if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
-        return withContext(Dispatchers.Default) {
-            try {
-                val menuResponse = menuApi.getMenu()
-                organizationId = menuResponse.menu.intervals?.firstOrNull()?.organizationId ?: ""
-
-                menuResponse.apply { resultCode = HTTP_SUCCESS }
-            } catch (e: Throwable) {
-                Napier.e("Ошибка при получении меню: ${e.message}", e)
-                Response().apply { resultCode = HTTP_SERVER_ERROR }
-            }
         }
     }
 

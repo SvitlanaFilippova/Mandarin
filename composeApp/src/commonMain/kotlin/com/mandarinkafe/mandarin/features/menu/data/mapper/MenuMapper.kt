@@ -6,14 +6,12 @@ import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.domain.models.Tag
-import com.mandarinkafe.mandarin.features.menu.data.dto.BannerDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ItemSizeDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.LabelDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.MealDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierItemDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.TagDto
-import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealPickupPoint
 import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.TAG_CAFE
@@ -111,11 +109,6 @@ fun ModifierGroupDto.toDomain(): ModifierGroup {
     )
 
 }
-
-fun BannerDto.toDomain() = Banner(
-    imageUrl = imageUrl ?: "",
-    targetName = targetName ?: "",
-)
 
 private fun getSafeModifiers(firstSize: ItemSizeDto?) = firstSize
     ?.itemModifierGroups

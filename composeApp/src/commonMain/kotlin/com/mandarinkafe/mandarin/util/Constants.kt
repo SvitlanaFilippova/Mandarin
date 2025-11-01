@@ -8,8 +8,6 @@ object Constants {
     const val IMAGE_VALIDATOR_TIMEOUT = 1000
     const val MENU_WAIT_TIMEOUT = 10000L
 
-    const val GOOGLE_DOCS_BASE_URL = "https://docs.google.com/spreadsheets/d/e/"
-
     // Menu UI
     const val BANNERS_AUTO_SCROLL_INTERVAL: Long = 5000L
     const val BANNERS_ASPECT_RATIO = 2.91f
@@ -44,7 +42,6 @@ object Constants {
     // common UI
     const val ANIMATION_DURATION_SLOW = 1000
     const val ANIMATION_DURATION_FAST = 300
-    const val ANIMATION_DURATION_SUPER_FAST = 150
     const val GRADIENT_HEIGHT_RATIO = 0.5f
     const val ALPHA_50 = 0.5f
     const val TITLE_FONT_WEIGHT = 800
