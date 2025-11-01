@@ -175,7 +175,6 @@ class OrderViewModel(
 
             setState {
                 copy(
-                    userInfo = newInfo,
                     showSaveUserInfoCheckbox = showCheckbox,
                     saveUserInfoCheckboxText = text
                 )
@@ -317,6 +316,8 @@ class OrderViewModel(
     private fun setName(query: String) {
         val newInfo = state.value.userInfo.copy(name = query)
         updateUserInfo(newInfo)
+        setState { copy(userInfo = newInfo) }
+
     }
 
     private fun setNoNeedUtensils(noNeedUtensils: Boolean) {
@@ -330,16 +331,18 @@ class OrderViewModel(
     }
 
     private fun setPhone(rawPhone: String) {
-        viewModelScope.launch {
-            val digitsOnly = rawPhone.filter { it.isDigit() }
-            val normalized = when {
-                digitsOnly.startsWith("7") -> digitsOnly.drop(1)
-                digitsOnly.startsWith("8") -> digitsOnly.drop(1)
-                else -> digitsOnly
-            }
-            val phone = normalized.take(VALID_PHONE_LENGTH)
+        val digitsOnly = rawPhone.filter { it.isDigit() }
+        val normalized = when {
+            digitsOnly.startsWith("7") -> digitsOnly.drop(1)
+            digitsOnly.startsWith("8") -> digitsOnly.drop(1)
+            else -> digitsOnly
+        }
+        val phone = normalized.take(VALID_PHONE_LENGTH)
 
-            val newInfo = state.value.userInfo.copy(phone = phone)
+        val newInfo = state.value.userInfo.copy(phone = phone)
+        setState { copy(userInfo = newInfo) }
+
+        viewModelScope.launch {
             updateUserInfo(newInfo)
             checkDiscount(phone)
         }
