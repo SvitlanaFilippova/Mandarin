@@ -1,6 +1,9 @@
 package com.mandarinkafe.mandarin.features.cart.data
 
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendsSchemaDto
 import com.mandarinkafe.mandarin.features.cart.data.local.CartItemInsertParams
@@ -43,6 +46,16 @@ object Mapper {
         modifiers = customizedMeal.modifiers,
         quantity = quantity,
         comment = comment
+    )
+
+    fun StoredCartItem.toCustomizedMeal(
+        meal: Meal,
+        adds: List<MealAdditional>,
+        modifiers: List<ModifierGroup>,
+    ) = CustomizedMeal(
+        meal = meal,
+        adds = adds,
+        modifiers = modifiers,
     )
 
     fun RecommendsSchemaDto.toDomain(): RecommendsSchemaRule {

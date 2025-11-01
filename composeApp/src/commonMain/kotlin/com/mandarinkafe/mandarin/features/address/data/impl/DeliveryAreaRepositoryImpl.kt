@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.address.data.impl
 
+import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.core.data.network.ServerNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.DeliveryZone
@@ -27,31 +28,12 @@ class DeliveryAreaRepositoryImpl(
 
         return try {
             val response = networkClient.getDeliveryZones()
-
-            val zonesDto = when (response.resultCode) {
-                com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION -> {
-                    return Resource.ErrorNoInternet()
-                }
-
-                com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS -> {
-                    val zonesResponse = response as? DeliveryZonesResponse
-                    if (zonesResponse == null) {
-                        return Resource.ErrorOther("Неожиданный формат ответа от сервера")
-                    }
-
-                    val dto = zonesResponse.data
-
-                    if (dto.isEmpty()) {
-                        return Resource.ErrorEmptyData()
-                    }
-
-                    dto
-                }
-
-                else -> {
-                    return Resource.ErrorOther("Ошибка сервера при получении зон доставки (код: ${response.resultCode})")
-                }
+            val validationResult = validateResponse(response)
+            if (validationResult != null) {
+                return validationResult
             }
+
+            val zonesDto = (response as DeliveryZonesResponse).data
 
             menuCache.mainMenu.first { it is Resource.Success }
 
@@ -71,6 +53,34 @@ class DeliveryAreaRepositoryImpl(
         }
     }
 
+    private fun validateResponse(response: Response): Resource<List<DeliveryZone>>? {
+        return when (response.resultCode) {
+            com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION -> {
+                Resource.ErrorNoInternet()
+            }
+
+            com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS -> {
+                val zonesResponse = response as? DeliveryZonesResponse
+                if (zonesResponse == null) {
+                    return Resource.ErrorOther("Неожиданный формат ответа от сервера")
+                }
+
+                val dto = zonesResponse.data
+                if (dto.isEmpty()) {
+                    return Resource.ErrorEmptyData()
+                }
+
+                null
+            }
+
+            else -> {
+                Resource.ErrorOther(
+                    "Ошибка сервера при получении зон доставки (код: ${response.resultCode})"
+                )
+            }
+        }
+    }
+
     private fun extractZoneIdFromDeliveryName(name: String): Int? {
         val regex = Regex(DELIVERY_ZONE_NAME_REGEX)
         return regex.find(name)?.groupValues?.getOrNull(REGEX_GROUP_INDEX)?.toIntOrNull()
@@ -80,58 +90,78 @@ class DeliveryAreaRepositoryImpl(
         zonesDto: List<DeliveryZoneDto>,
         pricesMap: Map<Int, Int>,
     ): List<DeliveryZone> {
-        // Сортируем по извлеченному ID из name
         val sortedDto = zonesDto.sortedBy { dto ->
             extractZoneIdFromName(dto.name) ?: DEFAULT_SORT_ID
         }
 
         return sortedDto.mapIndexed { index, dto ->
-            if (dto.points.isEmpty()) {
-                Napier.w("${LOG_TAG}: ${WARNING_NO_POINTS}: ${dto.name}")
-                null
-            } else {
-                val zoneId = extractZoneIdFromName(dto.name)
-                if (zoneId == null) {
-                    Napier.w("${LOG_TAG}: ${WARNING_CANNOT_EXTRACT_ID}: ${dto.name}")
-                }
-
-                val parentArea = if (index > FIRST_INDEX) {
-                    val prevGeometry = sortedDto[index - 1].points.firstOrNull()?.geometry
-
-                    when (prevGeometry) {
-                        is GeometryDto.PolygonGeometry -> {
-                            prevGeometry.coordinates.firstOrNull()?.mapNotNull { coord ->
-                                if (coord.size >= MIN_COORD_SIZE) {
-                                    GeoPoint(
-                                        coord[LATITUDE_INDEX],
-                                        coord[LONGITUDE_INDEX]
-                                    )
-                                } else null
-                            }
-                        }
-
-                        is GeometryDto.MultiPolygonGeometry -> {
-                            prevGeometry.coordinates.firstOrNull()?.firstOrNull()
-                                ?.mapNotNull { coord ->
-                                    if (coord.size >= MIN_COORD_SIZE) {
-                                        GeoPoint(
-                                            coord[LATITUDE_INDEX],
-                                            coord[LONGITUDE_INDEX]
-                                        )
-                                    } else null
-                                }
-                        }
-
-                        else -> null
-                    }
-                } else null
-
-                dto.toDomain(
-                    deliveryPrice = zoneId?.let { pricesMap[it] } ?: DEFAULT_DELIVERY_PRICE,
-                    parentArea = parentArea
-                )
-            }
+            mapSingleZoneToDomain(dto, index, sortedDto, pricesMap)
         }.filterNotNull()
+    }
+
+    private fun mapSingleZoneToDomain(
+        dto: DeliveryZoneDto,
+        index: Int,
+        sortedDto: List<DeliveryZoneDto>,
+        pricesMap: Map<Int, Int>,
+    ): DeliveryZone? {
+        if (dto.points.isEmpty()) {
+            Napier.w("${LOG_TAG}: ${WARNING_NO_POINTS}: ${dto.name}")
+            return null
+        }
+
+        val zoneId = extractZoneIdFromName(dto.name)
+        if (zoneId == null) {
+            Napier.w("${LOG_TAG}: ${WARNING_CANNOT_EXTRACT_ID}: ${dto.name}")
+        }
+
+        val parentArea = extractParentArea(index, sortedDto)
+        val deliveryPrice = zoneId?.let { pricesMap[it] } ?: DEFAULT_DELIVERY_PRICE
+
+        return dto.toDomain(
+            deliveryPrice = deliveryPrice,
+            parentArea = parentArea
+        )
+    }
+
+    private fun extractParentArea(
+        index: Int,
+        sortedDto: List<DeliveryZoneDto>,
+    ): List<GeoPoint>? {
+        if (index <= FIRST_INDEX) return null
+
+        val prevGeometry = sortedDto[index - 1].points.firstOrNull()?.geometry
+        return extractGeoPointsFromGeometry(prevGeometry)
+    }
+
+    private fun extractGeoPointsFromGeometry(geometry: GeometryDto?): List<GeoPoint>? {
+        return when (geometry) {
+            is GeometryDto.PolygonGeometry -> {
+                geometry.coordinates.firstOrNull()?.mapNotNull { coord ->
+                    convertCoordToGeoPoint(coord)
+                }
+            }
+
+            is GeometryDto.MultiPolygonGeometry -> {
+                geometry.coordinates.firstOrNull()?.firstOrNull()
+                    ?.mapNotNull { coord ->
+                        convertCoordToGeoPoint(coord)
+                    }
+            }
+
+            else -> null
+        }
+    }
+
+    private fun convertCoordToGeoPoint(coord: List<Double>): GeoPoint? {
+        return if (coord.size >= MIN_COORD_SIZE) {
+            GeoPoint(
+                coord[LATITUDE_INDEX],
+                coord[LONGITUDE_INDEX]
+            )
+        } else {
+            null
+        }
     }
 
     private fun extractZoneIdFromName(name: String): Int? {

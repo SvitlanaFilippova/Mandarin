@@ -12,8 +12,8 @@ import com.mandarinkafe.mandarin.features.address.data.dto.GeometryDto
 private fun extractZoneIdFromName(name: String): Int? {
     // Пробуем найти число в конце строки или после слова "Зона"
     val regexes = listOf(
-        Regex("""[Зз]она\s+(\d+)"""),  // "Зона 1", "зона 10"
-        Regex("""(\d+)""")              // "10" или просто число в строке
+        Regex("""[Зз]она\s+(\d+)"""), // "Зона 1", "зона 10"
+        Regex("""(\d+)""") // "10" или просто число в строке
     )
 
     for (regex in regexes) {
