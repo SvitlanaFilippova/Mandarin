@@ -8,6 +8,7 @@ import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.AddressDetailsScreen
 import com.mandarinkafe.mandarin.features.address.presentation.ui.screen.AddressMapScreen
+import com.mandarinkafe.mandarin.features.auth.presentation.ui.screen.AuthScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.screen.CartScreen
 import com.mandarinkafe.mandarin.features.contacts.presentation.screen.ContactsScreen
 import com.mandarinkafe.mandarin.features.delivery.presentation.ui.screen.DeliveryScreen
@@ -220,6 +221,13 @@ fun NavGraph(navController: NavHostController) {
             OrderInfoScreen(
                 orderID = orderId,
                 fromOrderCreation = fromOrderCreation,
+                sharedViewModel = sharedViewModel,
+                navController = navController
+            )
+        }
+
+        composable(NavConstants.AUTH_ROUTE) {
+            AuthScreen(
                 sharedViewModel = sharedViewModel,
                 navController = navController
             )

@@ -20,7 +20,3 @@ sealed interface FavoritesContract {
     ) : BaseContract.BaseState
 }
 
-
-
-
-

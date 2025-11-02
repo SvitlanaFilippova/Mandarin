@@ -79,7 +79,10 @@ object Constants {
     const val SALE_LABEL_DEFAULT = "sale"
 
     const val LOCALE_RU = "ru_RU"
-    const val COMMENT_DIVIDER_1 = "\\\\"
-    const val COMMENT_DIVIDER_2 = "//"
+
+    const val MANDARIN_PHONE = "+7(495)108–70–55"
+
+    const val SMS_CODE_LENGTH = 4
+
 }
 

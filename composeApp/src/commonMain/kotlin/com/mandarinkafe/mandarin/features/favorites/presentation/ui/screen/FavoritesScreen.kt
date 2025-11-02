@@ -65,13 +65,13 @@ fun FavoritesScreen(
             when {
                 state.error != null -> PlaceholderScreen(
                     state.error,
-                    onCallClick = { onSharedEvent(SharedContract.SharedEvent.OnPhoneClick) },
+                    onCallClick = { onSharedEvent(SharedContract.SharedEvent.OnPhoneClick()) },
                     onRetryClick = { onEvent(FavoritesContract.FavoritesEvent.ForceRefresh) },
                 )
 
                 state.data.isEmpty() && !state.isLoading -> PlaceholderScreen(
                     UiError.FavoritesEmpty,
-                    onCallClick = { onSharedEvent(SharedContract.SharedEvent.OnPhoneClick) },
+                    onCallClick = { onSharedEvent(SharedContract.SharedEvent.OnPhoneClick()) },
                 )
 
                 else -> FavoritesContent(

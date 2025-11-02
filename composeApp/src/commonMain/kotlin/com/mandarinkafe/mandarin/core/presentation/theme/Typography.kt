@@ -5,7 +5,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.mandarinkafe.mandarin.util.Constants.TITLE_FONT_WEIGHT
 
 object Typography {
-    val ToCartButtonStyle = TextStyle(
+    val ButtonTextStyle = TextStyle(
         fontSize = Dimens.TextSizeSmall12,
         fontWeight = FontWeight.Normal,
         color = Colors.White

@@ -9,7 +9,7 @@ import dev.icerock.moko.resources.StringResource
 sealed interface SharedContract {
 
     sealed interface SharedEvent : BaseContract.BaseEvent {
-        data object OnPhoneClick : SharedEvent
+        data class OnPhoneClick(val phone: String? = null) : SharedEvent
         data object OnLogoClick : SharedEvent
         data object HideTopBar : SharedEvent
         data object ShowTopBar : SharedEvent
@@ -40,7 +40,7 @@ sealed interface SharedContract {
     sealed interface SharedEffect : BaseContract.BaseEffect {
         data object GoBackEffect : SharedEffect
         data object ScrollToTop : SharedEffect
-        data object OnPhoneClick : SharedEffect
+        data class OnPhoneClick(val phoneToCall: String) : SharedEffect
 
         data class OpenMealDetailsBS(
             val cartItem: CartItem? = null,

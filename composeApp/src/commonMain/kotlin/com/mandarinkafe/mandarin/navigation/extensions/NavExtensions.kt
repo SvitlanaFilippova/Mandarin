@@ -66,6 +66,8 @@ fun NavController.navigateToContactsScreen() = navigate(CONTACTS_SCREEN_ROUTE)
 
 fun NavController.navigateToAboutScreen() = navigate(ABOUT_SCREEN_ROUTE)
 
+fun NavController.navigateToAuthScreen() = navigate(NavConstants.AUTH_ROUTE)
+
 fun NavController.navigateToAddress(address: Address? = null, returnToRoute: String) {
     val json = address?.let { Json.encodeToString(it) }
     val encodedJson = json?.let { UrlEncoderUtil.encode(it) }

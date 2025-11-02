@@ -32,6 +32,7 @@ object NavConstants {
     const val MEAL_DETAILS_ROUTE = "meal_details"
     const val SEARCH_SCREEN_ROUTE = "search"
     const val ORDER_INFO_ROUTE = "order_info"
+    const val AUTH_ROUTE = "auth_screen"
 
     val bottomNavigationRoutes = getBottomNavigationRoutesFromItems()
 

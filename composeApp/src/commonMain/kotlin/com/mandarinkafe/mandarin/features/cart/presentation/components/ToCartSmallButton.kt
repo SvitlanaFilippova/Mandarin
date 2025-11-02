@@ -51,7 +51,7 @@ fun ToCartSmallButton(
                 )
                 Text(
                     text = stringResource(MR.strings.meal_price_template, price),
-                    style = Typography.ToCartButtonStyle
+                    style = Typography.ButtonTextStyle
                 )
             } else {
                 Icon(

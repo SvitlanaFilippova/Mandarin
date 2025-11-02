@@ -6,8 +6,8 @@ import com.mandarinkafe.mandarin.features.more.domain.models.Feedback
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackContract.DevFeedbackEffect
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackContract.DevFeedbackEvent
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackContract.DevFeedbackState
-import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Result
+import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -66,16 +66,7 @@ class DevFeedbackViewModel(
     }
 
     private fun setPhone(rawPhone: String) {
-        val digitsOnly = rawPhone.filter { it.isDigit() }
-        val normalized = when {
-            digitsOnly.startsWith("7") -> digitsOnly.drop(1)
-            digitsOnly.startsWith("8") -> digitsOnly.drop(1)
-            else -> digitsOnly
-        }
-        val phone = normalized.take(VALID_PHONE_LENGTH)
-
-        setState { copy(phone = phone) }
-
+        setState { copy(phone = rawPhone.formatPhoneNumberForDomain()) }
     }
 
     override fun setLoading(isLoading: Boolean) {

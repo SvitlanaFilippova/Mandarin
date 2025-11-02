@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.kmp.di
 import com.mandarinkafe.mandarin.core.di.coreModule
 import com.mandarinkafe.mandarin.core.di.coreNetworkModule
 import com.mandarinkafe.mandarin.features.address.di.addressModule
+import com.mandarinkafe.mandarin.features.auth.di.authModule
 import com.mandarinkafe.mandarin.features.cart.di.cartModule
 import com.mandarinkafe.mandarin.features.favorites.di.favoritesModule
 import com.mandarinkafe.mandarin.features.infrastructure.di.infrastructureModule
@@ -25,6 +26,7 @@ fun initKoinCommon(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         coreModule,
         coreNetworkModule,
         addressModule,
+        authModule,
         cartModule,
         favoritesModule,
         infrastructureModule,

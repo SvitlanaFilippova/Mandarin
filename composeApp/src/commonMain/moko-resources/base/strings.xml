@@ -516,5 +516,23 @@
     <!-- Address -->
     <string name="fail_to_fetch_address">Не удалось определить адрес</string>
 
+    <!-- Авторизация -->
+    <string name="auth_screen_title">Авторизация</string>
+    <string name="why_need_auth">Чтобы оформить заказ и&#160;пользоваться всеми плюшками
+        личного кабинета, нужно подтвердить свой номер телефона.
+    </string>
+    <string name="enter_valid_phone">Нужен валидный номер телефона</string>
+    <string name="login">Подтвердить</string>
+    <string name="verification_by_phone_instruction">Чтобы подтвердить номер телефона %1$s,
+        достаточно набрать с&#160;него&#160;номер&#160;%2$s в&#160;течение 5&#160;минут.\n\nЗвонок
+        бесплатный и&#160;сбросится автоматически.
+    </string>
+    <string name="want_sms">Лучше через SMS</string>
+    <string name="enter_code_from_sms">Введи код из SMS</string>
+    <string name="cant_get_sms">Не приходит SMS - лучше позвоню</string>
+
+
+    <!-- Личный кабинет -->
+    <string name="personal_account">Личный кабинет</string>
 
 </resources>

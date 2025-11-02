@@ -29,8 +29,8 @@ import com.mandarinkafe.mandarin.features.savedadresses.domain.AddressUseCases
 import com.mandarinkafe.mandarin.features.savedadresses.domain.CartContentUseCases
 import com.mandarinkafe.mandarin.features.savedadresses.domain.OrderInfoUseCases
 import com.mandarinkafe.mandarin.util.Constants
-import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
@@ -331,14 +331,7 @@ class OrderViewModel(
 
     private fun setPhone(rawPhone: String) {
         viewModelScope.launch {
-            val digitsOnly = rawPhone.filter { it.isDigit() }
-            val normalized = when {
-                digitsOnly.startsWith("7") -> digitsOnly.drop(1)
-                digitsOnly.startsWith("8") -> digitsOnly.drop(1)
-                else -> digitsOnly
-            }
-            val phone = normalized.take(VALID_PHONE_LENGTH)
-
+            val phone = rawPhone.formatPhoneNumberForDomain()
             val newInfo = state.value.userInfo.copy(phone = phone)
             updateUserInfo(newInfo)
             checkDiscount(phone)

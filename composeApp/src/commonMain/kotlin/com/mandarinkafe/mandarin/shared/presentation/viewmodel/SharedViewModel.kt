@@ -22,6 +22,7 @@ import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.Sh
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEvent.ShowFavoriteDialog
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEvent.ShowTopBar
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedState
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_SCREEN_DURATION
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
@@ -77,7 +78,7 @@ class SharedViewModel(
             is HideTopBar -> setState { copy(shouldShowTopBar = false) }
             is ShowTopBar -> setState { copy(shouldShowTopBar = true) }
             is ResetTopBar -> setState { copy(shouldShowTopBar = true) }
-            is OnPhoneClick -> sendEffect(SharedEffect.OnPhoneClick)
+            is OnPhoneClick -> onPhoneClick(event.phone)
             is SharedEvent.OnLogoClick -> sendEffect(ScrollToTop)
             is OnMealDetailsClick -> {
                 sendEffect(
@@ -118,6 +119,11 @@ class SharedViewModel(
 
             is SharedEvent.RefreshMenuIfStale -> viewModelScope.launch { refreshMenuIfStaleUseCase() }
         }
+    }
+
+    private fun onPhoneClick(phone: String?) {
+        sendEffect(SharedEffect.OnPhoneClick(phone ?: Constants.MANDARIN_PHONE))
+
     }
 
     private fun toggleFavorite(meal: Meal?, item: CustomizedMeal?) {

@@ -28,19 +28,17 @@ fun HandleEffects(
     snackbarHostState: SnackbarHostState,
 ) {
     val toCartButtonText = stringResource(MR.strings.snackbar_to_cart_button)
-    val phoneNumber = stringResource(MR.strings.cafe_phone_number)
-
     var pendingSnackbarRes: StringResource? by remember { mutableStateOf(null) }
     var pendingSnackbarMessage: String? by remember { mutableStateOf(null) }
     var pendingShowToCart by remember { mutableStateOf(false) }
-    var shouldMakePhoneCall by remember { mutableStateOf(false) }
+    var shouldMakeCallToPhone: String? by remember { mutableStateOf(null) }
 
-    if (shouldMakePhoneCall) {
+    shouldMakeCallToPhone?.let {
         MakeCall(
-            phoneNumber = phoneNumber,
+            phoneNumber = it,
         )
         LaunchedEffect(Unit) {
-            shouldMakePhoneCall = false
+            shouldMakeCallToPhone = null
         }
     }
 
@@ -52,7 +50,7 @@ fun HandleEffects(
                 setPendingRes = { pendingSnackbarRes = it },
                 setPendingMessage = { pendingSnackbarMessage = it },
                 setPendingShowToCart = { pendingShowToCart = it },
-                setShouldMakePhoneCall = { shouldMakePhoneCall = it }
+                setShouldMakePhoneCall = { shouldMakeCallToPhone = it }
             )
         }
     }
@@ -83,7 +81,7 @@ private fun processSharedEffect(
     setPendingRes: (StringResource?) -> Unit,
     setPendingMessage: (String?) -> Unit,
     setPendingShowToCart: (Boolean) -> Unit,
-    setShouldMakePhoneCall: (Boolean) -> Unit,
+    setShouldMakePhoneCall: (String) -> Unit,
 ) {
     when (effect) {
         is SharedEffect.OpenMealDetailsBS -> {
@@ -97,7 +95,7 @@ private fun processSharedEffect(
         }
 
         is SharedEffect.OnPhoneClick -> {
-            setShouldMakePhoneCall(true)
+            setShouldMakePhoneCall(effect.phoneToCall)
         }
 
         is SharedEffect.FinishSplash -> {
