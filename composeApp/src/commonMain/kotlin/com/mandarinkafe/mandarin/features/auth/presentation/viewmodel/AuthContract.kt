@@ -7,15 +7,22 @@ import com.mandarinkafe.mandarin.util.presentation.BaseContract
 
 sealed interface AuthContract {
     sealed interface AuthEvent : BaseContract.BaseEvent {
-        data object RequestAuth : AuthEvent
+        // Звонок
         data class SetPhone(val query: String) : AuthEvent
+        data object RequestAuth : AuthEvent
         data object ForceRefresh : AuthEvent
+
+        // SMS
         data object AskSmsCode : AuthEvent
         data class SetCodeQuery(val query: String) : AuthEvent
         data object CodeEntered : AuthEvent
+
+
     }
 
-    sealed interface AuthEffect : BaseContract.BaseEffect
+    sealed interface AuthEffect : BaseContract.BaseEffect {
+        data object SuccessAuth : AuthEffect
+    }
 
     data class AuthState(
         val isLoading: Boolean = false,
@@ -23,10 +30,13 @@ sealed interface AuthContract {
         val phoneQuery: String = "",
         val phoneVerificationData: PhoneVerificationDataUi? = null,
         val smsCodeQuery: String = "",
+        val remainingTimeToCall: Int? = null,
+        val remainingTimeToResendSms: Int? = null,
+        val smsCheckError: Boolean = false,
+        val isVerified: Boolean = false,
     ) : BaseContract.BaseState {
         val isPhoneValid: Boolean
             get() =
                 phoneQuery.length == Constants.VALID_PHONE_LENGTH
-
     }
 }

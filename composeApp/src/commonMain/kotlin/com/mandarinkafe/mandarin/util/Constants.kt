@@ -81,8 +81,11 @@ object Constants {
     const val LOCALE_RU = "ru_RU"
 
     const val MANDARIN_PHONE = "+7(495)108–70–55"
-
+    const val PHONE_PREFIX_RU = "+7"
     const val SMS_CODE_LENGTH = 4
+    const val SECONDS_TO_CALL_DEFAULT = 300
+    const val SECONDS_TO_RESEND_SMS_DEFAULT = 60
+    const val DELAY_1_SECOND = 1000L
 
 }
 

@@ -8,6 +8,7 @@ import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthApi
 import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthProvider
 import com.mandarinkafe.mandarin.core.data.network.impl.IikoNetworkClientImpl
 import com.mandarinkafe.mandarin.core.data.network.impl.ServerNetworkClientImpl
+import com.mandarinkafe.mandarin.features.auth.data.network.AuthApi
 import com.mandarinkafe.mandarin.shared.BuildKonfig
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -138,6 +139,11 @@ val coreNetworkModule = module {
     // ServerApi
     single {
         ServerApi(get(named(DiConstants.SERVER_CLIENT_QUALIFIER)))
+    }
+
+    // ServerApi for Auth
+    single {
+        AuthApi(get(named(DiConstants.SERVER_CLIENT_QUALIFIER)))
     }
 
     // IikoAuthProvider

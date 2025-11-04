@@ -1,11 +1,13 @@
 package com.mandarinkafe.mandarin.features.auth.di
 
 import com.mandarinkafe.mandarin.features.auth.data.impl.AuthRepositoryImpl
+import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClient
+import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClientImpl
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
-import com.mandarinkafe.mandarin.features.auth.domain.api.CheckVerificationStatusUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.RequestPhoneVerificationUseCase
-import com.mandarinkafe.mandarin.features.auth.domain.impl.CheckVerificationStatusUseCaseImpl
+import com.mandarinkafe.mandarin.features.auth.domain.api.VerificationStatusInteractor
 import com.mandarinkafe.mandarin.features.auth.domain.impl.RequestPhoneVerificationUseCaseImpl
+import com.mandarinkafe.mandarin.features.auth.domain.impl.VerificationStatusInteractorImpl
 import com.mandarinkafe.mandarin.features.auth.presentation.viewmodel.AuthViewModel
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
@@ -13,11 +15,13 @@ import org.koin.dsl.module
 
 val authModule = module {
     // Data Layer
+
+    singleOf(::AuthNetworkClientImpl) { bind<AuthNetworkClient>() }
     singleOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
 
     // Domain Layer
     singleOf(::RequestPhoneVerificationUseCaseImpl) { bind<RequestPhoneVerificationUseCase>() }
-    singleOf(::CheckVerificationStatusUseCaseImpl) { bind<CheckVerificationStatusUseCase>() }
+    singleOf(::VerificationStatusInteractorImpl) { bind<VerificationStatusInteractor>() }
     // ViewModel
     singleOf(::AuthViewModel)
 }

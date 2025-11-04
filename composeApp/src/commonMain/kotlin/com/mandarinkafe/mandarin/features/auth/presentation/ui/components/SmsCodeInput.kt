@@ -30,6 +30,7 @@ import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_LENGTH
 @Composable
 fun SmsCodeInput(
     code: String,
+    isError: Boolean,
     onCodeChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     onComplete: (String) -> Unit,
@@ -40,6 +41,7 @@ fun SmsCodeInput(
     val focusManager = LocalFocusManager.current
     val boxSize = Dimens.CodeBoxSize
     val boxSpacing = Dimens.MarginSmall8
+
     LaunchedEffect(code) {
         if (code.length == length) {
             onComplete(code)
@@ -76,6 +78,11 @@ fun SmsCodeInput(
             for (i in 0 until length) {
                 val char = code.getOrNull(i)?.toString() ?: ""
                 val isActive = code.length == i
+                val boxBorderColor = when {
+                    isError -> Colors.Red
+                    isActive -> Colors.Orange
+                    else -> Colors.LightGrey
+                }
 
                 Box(
                     contentAlignment = Alignment.Center,
@@ -83,8 +90,7 @@ fun SmsCodeInput(
                         .size(boxSize)
                         .border(
                             width = 1.dp,
-                            color = if (isActive) Colors.Orange
-                            else Colors.LightGrey,
+                            color = boxBorderColor,
                             shape = RoundedCornerShape(Dimens.CornerRadius8)
                         )
                 ) {

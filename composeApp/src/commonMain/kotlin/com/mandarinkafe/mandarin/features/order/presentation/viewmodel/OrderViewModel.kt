@@ -41,7 +41,8 @@ class OrderViewModel(
     private val orderCreator: OrderCreator,
     private val addressUseCases: AddressUseCases,
     private val infoUseCases: OrderInfoUseCases,
-    private val applyPhoneDiscount: ApplyPhoneDiscountUseCase,
+    private val
+    applyPhoneDiscount: ApplyPhoneDiscountUseCase,
     private val saveOrderToHistory: SaveOrderToHistoryUseCase,
     private val userInfoRepository: UserInfoRepository,
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
@@ -339,20 +340,21 @@ class OrderViewModel(
     }
 
     private fun checkDiscount(phone: String) {
-        viewModelScope.launch {
-            val discount = applyPhoneDiscount(phone, state.value.cartSummary.discountPercent)
-            if (discount.shouldUpdate) {
-                setState {
-                    copy(
-                        cartSummary = cartSummary.copy(
-                            discountPercent = discount.discountSize,
-                            discountId = discount.discountId
-                        )
-                    )
-                }
-                recalculateCartSummary(discount.discountSize)
-            }
-        }
+        // TODO() временно закоментировано, до решения ошибки с дублированием скидки
+//        viewModelScope.launch {
+//            val discount = applyPhoneDiscount(phone, state.value.cartSummary.discountPercent)
+//            if (discount.shouldUpdate) {
+//                setState {
+//                    copy(
+//                        cartSummary = cartSummary.copy(
+//                            discountPercent = discount.discountSize,
+//                            discountId = discount.discountId
+//                        )
+//                    )
+//                }
+//                recalculateCartSummary(discount.discountSize)
+//            }
+//        }
     }
 
     private fun showMissingRequiredInfo() {

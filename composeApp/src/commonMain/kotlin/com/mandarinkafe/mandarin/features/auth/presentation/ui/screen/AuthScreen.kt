@@ -67,6 +67,7 @@ fun AuthScreen(sharedViewModel: SharedViewModel, navController: NavController) {
                     onRequestAuth = {
                         onEvent(AuthContract.AuthEvent.RequestAuth)
                         showCallVerificationDialog =
+                                //TODO временно для отладки СМС, потом заменить на showCallVerificationDialog
                             true
                     },
                 )
@@ -75,6 +76,8 @@ fun AuthScreen(sharedViewModel: SharedViewModel, navController: NavController) {
                 if (showCallVerificationDialog && phoneVerificationData != null) {
                     VerificationByCallDialog(
                         data = phoneVerificationData,
+                        remainingTimeSeconds = remainingTimeToCall,
+                        isVerified = isVerified,
                         onCallClick = {
                             onSharedEvent(
                                 SharedEvent.OnPhoneClick(
@@ -87,7 +90,10 @@ fun AuthScreen(sharedViewModel: SharedViewModel, navController: NavController) {
                             showCallVerificationDialog = false
                             showSMSVerificationDialog = true
                         },
-                        onDismissRequest = { showCallVerificationDialog = false },
+                        onDismissRequest = {
+                            showCallVerificationDialog = false
+                        },
+                        onForceRefresh = { onEvent(AuthContract.AuthEvent.ForceRefresh) },
                     )
                 }
 
@@ -95,13 +101,12 @@ fun AuthScreen(sharedViewModel: SharedViewModel, navController: NavController) {
                     VerificationBySmsDialog(
                         onDismissRequest = { showSMSVerificationDialog = false },
                         code = smsCodeQuery,
+                        isError = smsCheckError,
+                        userPhone = phoneQuery,
                         onCodeChange = { onEvent(AuthContract.AuthEvent.SetCodeQuery(it)) },
                         onComplete = { onEvent(AuthContract.AuthEvent.CodeEntered) },
-                        onCantGetSmsClick = {
-                            showSMSVerificationDialog = false
-                            onEvent(AuthContract.AuthEvent.RequestAuth)
-                            showCallVerificationDialog = true
-                        },
+                        onResendSms = { onEvent(AuthContract.AuthEvent.AskSmsCode) },
+                        timeToResendLeft = state.remainingTimeToResendSms,
                     )
                 }
 

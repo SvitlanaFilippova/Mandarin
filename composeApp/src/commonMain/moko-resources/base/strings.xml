@@ -524,13 +524,15 @@
     <string name="enter_valid_phone">Нужен валидный номер телефона</string>
     <string name="login">Подтвердить</string>
     <string name="verification_by_phone_instruction">Чтобы подтвердить номер телефона %1$s,
-        достаточно набрать с&#160;него&#160;номер&#160;%2$s в&#160;течение 5&#160;минут.\n\nЗвонок
+        достаточно в&#160;течение 5&#160;минут набрать с&#160;него номер %2$s\n\nЗвонок
         бесплатный и&#160;сбросится автоматически.
     </string>
     <string name="want_sms">Лучше через SMS</string>
-    <string name="enter_code_from_sms">Введи код из SMS</string>
-    <string name="cant_get_sms">Не приходит SMS - лучше позвоню</string>
-
+    <string name="enter_code_from_sms">Код из SMS</string>
+    <string name="code_sent_to_number">Код подтверждения отправлен на номер</string>
+    <string name="resend_sms_timer">Запросить sms повторно можно будет через: %1$s</string>
+    <string name="resend_sms_ask">Отправить sms ещё раз</string>
+    <string name="phone_verified">Ура! Номер телефона подтверждён</string>
 
     <!-- Личный кабинет -->
     <string name="personal_account">Личный кабинет</string>

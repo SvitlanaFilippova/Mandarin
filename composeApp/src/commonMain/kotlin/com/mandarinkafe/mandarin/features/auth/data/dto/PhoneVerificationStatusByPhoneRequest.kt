@@ -1,9 +1,10 @@
 package com.mandarinkafe.mandarin.features.auth.data.dto
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PhoneVerificationStatusRequest(
+data class PhoneVerificationStatusByPhoneRequest(
+    @SerialName("phone")
     val phone: String,
 )
-
