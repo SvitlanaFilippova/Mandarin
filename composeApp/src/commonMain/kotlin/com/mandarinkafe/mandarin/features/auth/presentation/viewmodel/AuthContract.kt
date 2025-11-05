@@ -4,6 +4,7 @@ import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.auth.presentation.models.PhoneVerificationDataUi
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.BaseContract
+import dev.icerock.moko.resources.StringResource
 
 sealed interface AuthContract {
     sealed interface AuthEvent : BaseContract.BaseEvent {
@@ -22,6 +23,7 @@ sealed interface AuthContract {
 
     sealed interface AuthEffect : BaseContract.BaseEffect {
         data object SuccessAuth : AuthEffect
+        data class RequestAlreadyActive(val remainingSeconds: Int) : AuthEffect
     }
 
     data class AuthState(
@@ -29,11 +31,13 @@ sealed interface AuthContract {
         val error: UiError? = null,
         val phoneQuery: String = "",
         val phoneVerificationData: PhoneVerificationDataUi? = null,
-        val smsCodeQuery: String = "",
         val remainingTimeToCall: Int? = null,
         val remainingTimeToResendSms: Int? = null,
+        val smsCodeQuery: String = "",
+        val smsValidationError: StringResource?? = null,
         val smsCheckError: Boolean = false,
-        val isVerified: Boolean = false,
+        val activeVerificationPhone: String? = null, // Номер, для которого активна сессия верификации
+
     ) : BaseContract.BaseState {
         val isPhoneValid: Boolean
             get() =

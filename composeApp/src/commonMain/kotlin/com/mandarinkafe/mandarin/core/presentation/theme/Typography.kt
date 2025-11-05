@@ -112,4 +112,10 @@ object Typography {
         fontWeight = FontWeight.Light,
         color = Colors.Red
     )
+
+    val SmsCodeInputStyle = TextStyle(
+        fontSize = Dimens.TextSizeRegular14,
+        fontWeight = FontWeight.Medium,
+        color = Colors.White
+    )
 }

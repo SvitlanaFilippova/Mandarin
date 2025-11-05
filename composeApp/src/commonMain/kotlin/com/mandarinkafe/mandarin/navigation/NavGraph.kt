@@ -226,10 +226,17 @@ fun NavGraph(navController: NavHostController) {
             )
         }
 
-        composable(NavConstants.AUTH_ROUTE) {
+        composable(
+            route = "${NavConstants.AUTH_ROUTE}?" +
+                    "${NavConstants.KEY_TARGET_ROUTE}={${NavConstants.KEY_TARGET_ROUTE}}"
+        ) { backStackEntry ->
+            val targetRoute =
+                backStackEntry.getStringArgument(NavConstants.KEY_TARGET_ROUTE)?.decodeURLPart()
+
             AuthScreen(
                 sharedViewModel = sharedViewModel,
-                navController = navController
+                navController = navController,
+                targetRoute = targetRoute
             )
         }
     }

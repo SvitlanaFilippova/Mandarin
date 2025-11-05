@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +25,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_LENGTH
+import com.mandarinkafe.mandarin.util.presentation.ui.components.OtpTextField
 
 @Composable
 fun SmsCodeInput(
@@ -36,11 +36,10 @@ fun SmsCodeInput(
     onComplete: (String) -> Unit,
 ) {
     val length = SMS_CODE_LENGTH
-
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val boxSize = Dimens.CodeBoxSize
-    val boxSpacing = Dimens.MarginSmall8
+    val boxSpacing = Dimens.MarginSuperSmall4
 
     LaunchedEffect(code) {
         if (code.length == length) {
@@ -52,8 +51,8 @@ fun SmsCodeInput(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        // Основной скрытый текстфилд
-        BasicTextField(
+        // Основной скрытый текстфилд с поддержкой автозаполнения OTP
+        OtpTextField(
             value = code,
             onValueChange = { new ->
                 val digitsOnly = new.filter { it.isDigit() }.take(length)
@@ -70,7 +69,7 @@ fun SmsCodeInput(
             singleLine = true
         )
 
-        // Рисуем 4 "ячейки" поверх скрытого поля
+        // Рисуем 6 "ячееек" поверх скрытого поля
         Row(
             horizontalArrangement = Arrangement.spacedBy(boxSpacing),
             verticalAlignment = Alignment.CenterVertically
@@ -96,7 +95,7 @@ fun SmsCodeInput(
                 ) {
                     Text(
                         text = char,
-                        style = Typography.RegularTextStyle
+                        style = Typography.SmsCodeInputStyle
                     )
                 }
             }

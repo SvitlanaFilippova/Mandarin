@@ -3,9 +3,11 @@ package com.mandarinkafe.mandarin.features.auth.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.auth.domain.api.RequestPhoneVerificationUseCase
+import com.mandarinkafe.mandarin.features.auth.domain.api.RequestSmsVerificationUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.VerificationStatusInteractor
 import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationData
 import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationStatus
+import com.mandarinkafe.mandarin.features.auth.domain.models.VerifySmsCodeResult
 import com.mandarinkafe.mandarin.features.auth.presentation.models.toUi
 import com.mandarinkafe.mandarin.features.auth.presentation.viewmodel.AuthContract.AuthEffect
 import com.mandarinkafe.mandarin.features.auth.presentation.viewmodel.AuthContract.AuthEvent
@@ -24,6 +26,7 @@ import kotlinx.coroutines.launch
 class AuthViewModel(
     private val requestPhoneVerification: RequestPhoneVerificationUseCase,
     private val statusInteractor: VerificationStatusInteractor,
+    private val requestSmsVerification: RequestSmsVerificationUseCase,
 ) : BaseViewModel<AuthEvent, AuthEffect, AuthState>() {
 
     private var callTimerJob: Job? = null
@@ -54,13 +57,23 @@ class AuthViewModel(
     }
 
     private fun checkIfCodeIsValid() {
-        // TODO()
+        viewModelScope.launch {
+            setLoading()
+            val code = state.value.smsCodeQuery
+            val phone = state.value.phoneQuery
+            val response = statusInteractor.checkSms(phone = phone, code = code)
+            setLoading(false)
+            proceedSmsAuthStatusResponse(response)
+        }
     }
 
     private fun sendAuthRequestBySms() {
-        // TODO()
-        // реализовать тут вызов смс-авторизации и передать в ЮИ сигнал о необходимости показать поле для ввода
+        val phone = state.value.phoneQuery
+        setState { copy(activeVerificationPhone = phone) }
         startSmsTimer()
+        viewModelScope.launch {
+            requestSmsVerification.invoke(phone = phone)
+        }
     }
 
     private fun setCodeQuery(query: String) {
@@ -70,14 +83,27 @@ class AuthViewModel(
     }
 
     private fun requestAuth() {
-        // тут проверять, есть ли активные запросы авторизации сначала, потом решать, что показать
-//        sendAuthRequestBySms() // SMS
+        val currentPhone = state.value.phoneQuery
+        val activePhone = state.value.activeVerificationPhone
+        val remainingSms = state.value.remainingTimeToResendSms
+        val remainingCall = state.value.remainingTimeToCall
+
+        // Проверяем, есть ли уже активный запрос для этого номера
+        if (activePhone == currentPhone) {
+            val activeTimer = remainingSms ?: remainingCall
+            if (activeTimer != null && activeTimer > 0) {
+                Napier.d("AUTH DEBUG: Request already active for phone: $currentPhone, remaining: $activeTimer seconds")
+                sendEffect(AuthEffect.RequestAlreadyActive(activeTimer))
+                return
+            }
+        }
         sendAuthRequestByPhone() // Phone
     }
 
     private fun sendAuthRequestByPhone() {
+        val phone = state.value.phoneQuery
+        setState { copy(activeVerificationPhone = phone) }
         viewModelScope.launch {
-            val phone = state.value.phoneQuery
             Napier.d("AUTH DEBUG: Requesting phone verification for phone: $phone")
             val response: Resource<PhoneVerificationData> =
                 requestPhoneVerification(
@@ -117,28 +143,13 @@ class AuthViewModel(
         Napier.d("AUTH DEBUG: Setting error state")
         when (response) {
             is Resource.ErrorNoInternet -> {
-                Napier.d("AUTH DEBUG: Error: No internet connection")
-            }
-
-            is Resource.ErrorOther -> {
-                Napier.d("AUTH DEBUG: Error: ${response.message}")
-            }
-
-            is Resource.ErrorEmptyData -> {
-                Napier.d("AUTH DEBUG: Error: Empty data received")
+                setState { copy(error = UiError.NoInternet) }
             }
 
             else -> {
-                Napier.d("AUTH DEBUG: Error: Unknown error type")
+                setState { copy(error = UiError.OtherError) }
             }
         }
-        setState { copy(error = UiError.OtherError) }
-//        when (response) {
-//            is Resource.ErrorEmptyData<*> -> TODO()
-//            is Resource.ErrorNoInternet<*> -> TODO()
-//            is Resource.ErrorOther<*> ->  set
-//            else -> return
-//        }
     }
 
     private fun setPhone(rawPhone: String) {
@@ -172,7 +183,8 @@ class AuthViewModel(
         setState {
             copy(
                 phoneVerificationData = null,
-                remainingTimeToCall = null
+                remainingTimeToCall = null,
+                activeVerificationPhone = null
             )
         }
     }
@@ -181,7 +193,7 @@ class AuthViewModel(
         // Отменяем предыдущий таймер, если он был
         smsTimerJob?.cancel()
 
-        // Сбрасываем время на 5 минут
+        // Сбрасываем время до 1 минуты
         setState { copy(remainingTimeToResendSms = Constants.SECONDS_TO_RESEND_SMS_DEFAULT) }
 
         // Запускаем новый таймер
@@ -203,13 +215,14 @@ class AuthViewModel(
         smsTimerJob = null
         setState {
             copy(
-                remainingTimeToResendSms = null
+                remainingTimeToResendSms = null,
+                activeVerificationPhone = null
             )
         }
     }
 
     override fun setLoading(isLoading: Boolean) {
-        setState { copy(isLoading = isLoading, error = null) }
+        setState { copy(isLoading = isLoading, error = null, smsValidationError = null) }
     }
 
     private fun startObservingAuthByPhoneStatus() {
@@ -257,8 +270,8 @@ class AuthViewModel(
                         // Верификация успешна - останавливаем пулинг и таймеры
                         stopStatusPolling()
                         stopCallTimer()
-                        setState { copy(isVerified = true) }
-                        sendEffect(AuthEffect.SuccessAuth) // TODO добавить обработку эффекта для редиректа юзера дальше
+                        setState { copy(activeVerificationPhone = null, error = null) }
+                        sendEffect(AuthEffect.SuccessAuth)
                     }
 
                     if (status.shouldStopPolling == true && status.isVerified != true) {
@@ -270,25 +283,52 @@ class AuthViewModel(
                 }
             }
 
-            is Resource.ErrorNoInternet -> {
-                Napier.d("AUTH DEBUG: Status check failed: No internet connection")
-            }
-
-            is Resource.ErrorOther -> {
-                Napier.d("AUTH DEBUG: Status check failed: ${response.message}")
-            }
-
-            is Resource.ErrorEmptyData -> {
-                Napier.d("AUTH DEBUG: Status check failed: Empty data received")
-            }
-
-            is Resource.Idle -> {
+            is Resource.Idle, is Resource.Loading -> {
                 Napier.d("AUTH DEBUG: Idle state")
             }
 
-            is Resource.Loading -> {
-                Napier.d("AUTH DEBUG: Loading state")
+            else -> setError(response)
+        }
+    }
+
+    private fun proceedSmsAuthStatusResponse(response: Resource<VerifySmsCodeResult>) {
+        Napier.d("SMS AUTH DEBUG: Starting proceedAuthStatusResponse")
+        when (response) {
+            is Resource.Success -> {
+                val status = response.data
+                if (status == null) {
+                    Napier.d("SMS AUTH DEBUG: Status data is null")
+                    setState { copy(error = UiError.OtherError) }
+                } else {
+                    Napier.d(
+                        "SMS AUTH DEBUG: Status check successful - isVerified: ${status.isVerified}, "
+                    )
+
+                    if (status.isVerified) {
+                        Napier.d("SMS AUTH DEBUG: Phone verification completed successfully!")
+                        // Верификация успешна - останавливаем пулинг и таймеры
+                        stopSmsTimer()
+                        setState {
+                            copy(
+                                smsValidationError = null,
+                                smsCodeQuery = "",
+                                activeVerificationPhone = null,
+                                error = null
+                            )
+                        }
+                        sendEffect(AuthEffect.SuccessAuth)
+                    } else {
+                        setState { copy(smsValidationError = status.reason, smsCodeQuery = "") }
+                    }
+                }
             }
+
+
+            is Resource.Idle, is Resource.Loading -> {
+                Napier.d("AUTH DEBUG: Idle state")
+            }
+
+            else -> setError(response)
         }
     }
 

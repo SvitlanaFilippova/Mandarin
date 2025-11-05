@@ -25,18 +25,10 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.ORDERS_HISTORY_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_INFO_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SAVED_ADDRESSES_ROUTE
-import com.mandarinkafe.mandarin.navigation.NavConstants.SEARCH_SCREEN_ROUTE
 import io.github.aakira.napier.Napier
 import kotlinx.serialization.json.Json
 import net.thauvin.erik.urlencoder.UrlEncoderUtil
 
-fun NavController.navigateToSearchScreen(focusInput: Boolean) {
-    val route = buildString {
-        append(SEARCH_SCREEN_ROUTE)
-        append("?${NavConstants.KEY_FOCUS_INPUT}=$focusInput")
-    }
-    navigate(route)
-}
 
 fun NavController.navigateToMenu() {
     navigate(MENU_SCREEN_ROUTE)
@@ -65,8 +57,6 @@ fun NavController.navigateToDeliveryScreen() = navigate(DELIVERY_SCREEN_ROUTE)
 fun NavController.navigateToContactsScreen() = navigate(CONTACTS_SCREEN_ROUTE)
 
 fun NavController.navigateToAboutScreen() = navigate(ABOUT_SCREEN_ROUTE)
-
-fun NavController.navigateToAuthScreen() = navigate(NavConstants.AUTH_ROUTE)
 
 fun NavController.navigateToAddress(address: Address? = null, returnToRoute: String) {
     val json = address?.let { Json.encodeToString(it) }
@@ -137,6 +127,16 @@ fun NavController.navigateToOrderInfo(
     } else {
         navigate(route)
     }
+}
+
+fun NavController.navigateToAuthScreen(targetRoute: String? = null) {
+    val encodedTarget = targetRoute?.let { UrlEncoderUtil.encode(it) }
+    val route = if (encodedTarget != null) {
+        "${NavConstants.AUTH_ROUTE}?${NavConstants.KEY_TARGET_ROUTE}=$encodedTarget"
+    } else {
+        NavConstants.AUTH_ROUTE
+    }
+    navigate(route)
 }
 
 fun NavController.tryGetBackStackEntry(route: String): NavBackStackEntry? {

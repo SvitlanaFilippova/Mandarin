@@ -6,11 +6,16 @@ import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationRespons
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusByCheckIdRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusByPhoneRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusResponse
+import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationRequest
+import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationResponse
+import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeRequest
+import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeResponse
 import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClient
-import com.mandarinkafe.mandarin.features.auth.data.toDomain
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationData
 import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationStatus
+import com.mandarinkafe.mandarin.features.auth.domain.models.SmsVerificationData
+import com.mandarinkafe.mandarin.features.auth.domain.models.VerifySmsCodeResult
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
@@ -23,7 +28,6 @@ import kotlinx.coroutines.flow.flow
 class AuthRepositoryImpl(
     private val networkClient: AuthNetworkClient,
 ) : AuthRepository {
-
 
     override suspend fun requestPhoneVerification(phone: String): Resource<PhoneVerificationData> {
         Napier.d("AUTH DEBUG: AuthRepository.requestPhoneVerification() called with phone: ${phone}")
@@ -218,6 +222,98 @@ class AuthRepositoryImpl(
             }
         } catch (e: Exception) {
             Napier.d("AUTH DEBUG: Exception in checkVerificationStatusByCheckId: ${e.message}")
+            Resource.ErrorOther("Ошибка: ${e.message}")
+        }
+    }
+
+    override suspend fun requestSmsVerification(phone: String): Resource<SmsVerificationData> {
+        Napier.d("SMS AUTH DEBUG: AuthRepository.requestSmsVerification() called with phone: $phone")
+        return try {
+            val response = networkClient.requestSmsVerification(SmsVerificationRequest(phone))
+            Napier.d("SMS AUTH DEBUG: NetworkClient returned response with resultCode: ${response.resultCode}")
+            when (response.resultCode) {
+                NO_CONNECTION -> {
+                    Napier.w("SMS AUTH DEBUG: No internet connection")
+                    Resource.ErrorNoInternet()
+                }
+
+                HTTP_SUCCESS -> {
+                    val wrapper = response as SmsVerificationResponse
+                    Napier.d("SMS AUTH DEBUG: HTTP_SUCCESS, raw data: ${wrapper.data}")
+                    wrapper.data?.let { dto ->
+                        Napier.d("SMS AUTH DEBUG: DTO fields - status: ${dto.status}, expiresIn: ${dto.expiresIn}")
+                        val domainData = dto.toDomain()
+                        Napier.d("SMS AUTH DEBUG: Converted to domain model: status=${domainData.status}, expiresIn=${domainData.expiresIn}")
+                        Resource.Success(domainData)
+                    } ?: run {
+                        Napier.e("SMS AUTH DEBUG: ⚠️ wrapper.data is NULL! Returning ErrorOther")
+                        Resource.ErrorOther("Пустой ответ от сервера")
+                    }
+                }
+
+                HTTP_SERVER_ERROR -> {
+                    Napier.e("SMS AUTH DEBUG: ❌ HTTP_SERVER_ERROR (500) - см. логи AuthApi для деталей")
+                    Resource.ErrorOther("Ошибка сервера")
+                }
+
+                else -> {
+                    Napier.e("SMS AUTH DEBUG: ❌ Unknown error code: ${response.resultCode}")
+                    Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
+                }
+            }
+        } catch (e: Exception) {
+            Napier.e("SMS AUTH DEBUG: ❌ Exception in requestSmsVerification", e)
+            Napier.e("SMS AUTH DEBUG: Exception type: ${e::class.simpleName}, message: ${e.message}")
+            Resource.ErrorOther("Ошибка: ${e.message}")
+        }
+    }
+
+    override suspend fun verifySmsCode(phone: String, code: String): Resource<VerifySmsCodeResult> {
+        Napier.d("SMS AUTH DEBUG: AuthRepository.verifySmsCode() called with phone: $phone, code: $code")
+        return try {
+            val response = networkClient.verifySmsCode(VerifySmsCodeRequest(phone, code))
+            Napier.d("SMS AUTH DEBUG: NetworkClient returned response with resultCode: ${response.resultCode}")
+            when (response.resultCode) {
+                NO_CONNECTION -> {
+                    Napier.w("SMS AUTH DEBUG: No internet connection")
+                    Resource.ErrorNoInternet()
+                }
+
+                HTTP_SUCCESS -> {
+                    val wrapper = response as VerifySmsCodeResponse
+                    Napier.d("SMS AUTH DEBUG: HTTP_SUCCESS, raw data: ${wrapper.data}")
+                    wrapper.data?.let { dto ->
+                        Napier.d("SMS AUTH DEBUG: DTO fields - isVerified: ${dto.isVerified}, reason: ${dto.reason}")
+                        val domainResult = dto.toDomain()
+
+                        if (domainResult.isVerified) {
+                            Napier.d("SMS AUTH DEBUG: ✅ Verification SUCCESSFUL")
+                        } else {
+                            val reasonLog =
+                                domainResult.reason?.let { " (reason: ${dto.reason})" } ?: ""
+                            Napier.w("SMS AUTH DEBUG: ❌ Verification FAILED$reasonLog")
+                        }
+
+                        Resource.Success(domainResult)
+                    } ?: run {
+                        Napier.e("SMS AUTH DEBUG: ⚠️ wrapper.data is NULL! Returning ErrorOther")
+                        Resource.ErrorOther("Пустой ответ от сервера")
+                    }
+                }
+
+                HTTP_SERVER_ERROR -> {
+                    Napier.e("SMS AUTH DEBUG: ❌ HTTP_SERVER_ERROR (500) - см. логи AuthApi для деталей")
+                    Resource.ErrorOther("Ошибка сервера")
+                }
+
+                else -> {
+                    Napier.e("SMS AUTH DEBUG: ❌ Unknown error code: ${response.resultCode}")
+                    Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
+                }
+            }
+        } catch (e: Exception) {
+            Napier.e("SMS AUTH DEBUG: ❌ Exception in verifySmsCode", e)
+            Napier.e("SMS AUTH DEBUG: Exception type: ${e::class.simpleName}, message: ${e.message}")
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }

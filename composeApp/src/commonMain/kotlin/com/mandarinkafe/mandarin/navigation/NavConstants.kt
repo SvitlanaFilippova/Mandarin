@@ -13,6 +13,7 @@ object NavConstants {
     const val KEY_RETURN_TO_ROUTE = "returnTo"
     const val KEY_FROM_ORDER_CREATION = "fromOrderCreation"
     const val KEY_SNACKBAR_MESSAGE = "snackbarMessage"
+    const val KEY_TARGET_ROUTE = "targetRoute"
 
     // --- Routes ---
     const val MENU_SCREEN_ROUTE = "menu"
