@@ -1,10 +1,12 @@
 package com.mandarinkafe.mandarin.features.auth.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.core.domain.models.AuthTokens
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.auth.domain.api.RequestPhoneVerificationUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.RequestSmsVerificationUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.VerificationStatusInteractor
+import com.mandarinkafe.mandarin.features.auth.domain.impl.UserSessionManager
 import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationData
 import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationStatus
 import com.mandarinkafe.mandarin.features.auth.domain.models.VerifySmsCodeResult
@@ -26,6 +28,7 @@ class AuthViewModel(
     private val requestPhoneVerification: RequestPhoneVerificationUseCase,
     private val statusInteractor: VerificationStatusInteractor,
     private val requestSmsVerification: RequestSmsVerificationUseCase,
+    private val userSessionManager: UserSessionManager,
 ) : BaseViewModel<AuthEvent, AuthEffect, AuthState>() {
 
     private var callTimerJob: Job? = null
@@ -245,7 +248,7 @@ class AuthViewModel(
                         stopStatusPolling()
                         stopCallTimer()
                         setState { copy(activeVerificationPhone = null, error = null) }
-                        sendEffect(AuthEffect.SuccessAuth)
+                        proceedSuccessAuth(tokens = status.tokens)
                     }
 
                     if (status.shouldStopPolling == true && status.isVerified != true) {
@@ -282,7 +285,8 @@ class AuthViewModel(
                                 error = null
                             )
                         }
-                        sendEffect(AuthEffect.SuccessAuth)
+                        proceedSuccessAuth(tokens = status.tokens)
+
                     } else {
                         setState { copy(smsValidationError = status.reason, smsCodeQuery = "") }
                     }
@@ -294,6 +298,13 @@ class AuthViewModel(
             }
 
             else -> setError(response)
+        }
+    }
+
+    private fun proceedSuccessAuth(tokens: AuthTokens?) {
+        sendEffect(AuthEffect.SuccessAuth)
+        viewModelScope.launch {
+        userSessionManager.onUserAuthorized(tokens)
         }
     }
 

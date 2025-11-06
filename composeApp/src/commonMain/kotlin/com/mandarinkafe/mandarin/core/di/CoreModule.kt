@@ -12,11 +12,19 @@ import com.mandarinkafe.mandarin.core.domain.impl.ForceRefreshMenuUseCaseImpl
 import com.mandarinkafe.mandarin.core.domain.impl.GetInitialDataUseCaseImpl
 import com.mandarinkafe.mandarin.core.domain.impl.ObserveCartCountUseCaseImpl
 import com.mandarinkafe.mandarin.core.domain.impl.ObserveCartItemsUseCaseImpl
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val coreModule = module {
+    // Application-wide CoroutineScope
+    single<CoroutineScope> {
+        CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    }
+
     //  Menu Cache
     singleOf(::MenuCacheImpl) { bind<MenuCache>() }
 

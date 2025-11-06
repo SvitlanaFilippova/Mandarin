@@ -13,5 +13,11 @@ data class VerifySmsCodeDataDto(
     val isVerified: Boolean,
     @SerialName("reason")
     val reason: String? = null,
+    @SerialName("access_token")
+    val accessToken: String? = null,
+    @SerialName("refresh_token")
+    val refreshToken: String? = null,
+    @SerialName("token_type")
+    val tokenType: String? = null,
 )
 

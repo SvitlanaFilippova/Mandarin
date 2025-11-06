@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.auth.data.impl
 
+import com.mandarinkafe.mandarin.core.domain.models.AuthTokens
 import com.mandarinkafe.mandarin.features.auth.data.Mapper.toDomain
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationResponse
@@ -23,11 +24,17 @@ import com.mandarinkafe.mandarin.util.Resource
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 
 class AuthRepositoryImpl(
     private val networkClient: AuthNetworkClient,
 ) : AuthRepository {
+
+    override val authState: MutableStateFlow<Boolean> // TODO()
+
+    override suspend fun isAuthorized() = authState.value
+
 
     override suspend fun requestPhoneVerification(phone: String): Resource<PhoneVerificationData> {
         return try {
@@ -59,6 +66,7 @@ class AuthRepositoryImpl(
         }
     }
 
+    // ручная проверка статуса, не дожидаясь webhook от сервиса
     override suspend fun checkVerificationStatusByCheckId(checkId: String): Resource<PhoneVerificationStatus> {
         return try {
             val response = networkClient.checkVerificationStatusByCheckId(
@@ -91,6 +99,7 @@ class AuthRepositoryImpl(
         }
     }
 
+    // ждём подтверждение по webhook
     override fun observeVerificationStatusByPhone(phone: String): Flow<Resource<PhoneVerificationStatus>> =
         flow {
             val request = PhoneVerificationStatusByPhoneRequest(phone = phone)
@@ -214,6 +223,7 @@ class AuthRepositoryImpl(
         }
     }
 
+    // попытка подтверждения кодом из SMS
     override suspend fun verifySmsCode(phone: String, code: String): Resource<VerifySmsCodeResult> {
         return try {
             val response = networkClient.verifySmsCode(VerifySmsCodeRequest(phone, code))
@@ -242,6 +252,18 @@ class AuthRepositoryImpl(
             Napier.e("AuthRepository.verifySmsCode: Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
+    }
+
+    override suspend fun saveTokens(tokens: AuthTokens) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun clearTokens() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAccessToken(): String? {
+        TODO("Not yet implemented")
     }
 
     companion object {
