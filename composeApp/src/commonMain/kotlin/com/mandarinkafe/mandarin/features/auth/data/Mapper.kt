@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.auth.data
 import com.mandarinkafe.mandarin.core.domain.models.AuthTokens
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusDto
+import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerificationFailReason
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeDataDto
@@ -47,6 +48,12 @@ object Mapper {
             refreshToken = refreshToken,
             tokenType = tokenType
         )
+    )
+
+    fun RefreshTokenDataDto.toDomain() = AuthTokens(
+        accessToken = accessToken,
+        refreshToken = refreshToken,
+        tokenType = tokenType
     )
 
     private fun extractTokens(

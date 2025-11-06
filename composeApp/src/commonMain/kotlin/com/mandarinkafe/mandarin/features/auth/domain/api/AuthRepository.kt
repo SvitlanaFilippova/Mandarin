@@ -21,9 +21,11 @@ interface AuthRepository {
     // --- Токены ---
     suspend fun saveTokens(tokens: AuthTokens)
     suspend fun clearTokens()
+    suspend fun validateToken(): Boolean // проверяет токен на сервере и обновляет authState
 
     // --- Авторизация ---
-    val authState: Flow<Boolean>       // реактивный поток для UI
+    suspend fun initializeAuth(): Boolean // проверяет и валидирует токены при старте приложения
+    val authState: Flow<Boolean> // реактивный поток для UI
     suspend fun isAuthorized(): Boolean // разовая проверка
     suspend fun getAccessToken(): String? // возвращает null, если токен невалиден или не найден
 }

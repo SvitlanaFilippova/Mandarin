@@ -1,5 +1,7 @@
 package com.mandarinkafe.mandarin.features.auth.di
 
+import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorage
+import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorageImpl
 import com.mandarinkafe.mandarin.features.auth.data.impl.AuthRepositoryImpl
 import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClient
 import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClientImpl
@@ -20,6 +22,7 @@ import org.koin.dsl.module
 
 val authModule = module {
     // Data Layer
+    singleOf(::TokenStorageImpl) { bind<TokenStorage>() }
     singleOf(::AuthNetworkClientImpl) { bind<AuthNetworkClient>() }
     singleOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
 

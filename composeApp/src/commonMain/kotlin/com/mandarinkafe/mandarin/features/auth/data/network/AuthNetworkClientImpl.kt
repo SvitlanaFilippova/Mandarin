@@ -63,4 +63,22 @@ class AuthNetworkClientImpl(
         }
         return api.verifySmsCode(request)
     }
+
+    override suspend fun validateToken(accessToken: String): Response {
+        if (!isConnected()) {
+            Napier.d("AUTH DEBUG: No network connection, returning NO_CONNECTION")
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return api.validateToken(accessToken)
+    }
+
+    override suspend fun refreshToken(refreshToken: String): Response {
+        if (!isConnected()) {
+            Napier.d("AUTH DEBUG: No network connection, returning NO_CONNECTION")
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return api.refreshToken(
+            com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenRequest(refreshToken)
+        )
+    }
 }

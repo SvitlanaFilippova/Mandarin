@@ -8,18 +8,25 @@ import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusB
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusByPhoneRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusResponse
+import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenDataDto
+import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenRequest
+import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationResponse
+import com.mandarinkafe.mandarin.features.auth.data.dto.UserInfoDto
+import com.mandarinkafe.mandarin.features.auth.data.dto.ValidateTokenResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeResponse
 import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.util.Constants.BEARER_TOKEN_TYPE
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -153,6 +160,69 @@ class AuthApi(
             }
         } catch (e: Throwable) {
             Napier.e("ServerApi: verifySmsCode(): Exception occurred", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun validateToken(accessToken: String): Response {
+        return try {
+            val httpResponse = client.get("/auth/me") {
+                header("x-api-key", key)
+                header("Authorization", "$BEARER_TOKEN_TYPE $accessToken")
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> {
+                    val data: UserInfoDto = httpResponse.body()
+                    ValidateTokenResponse(data = data).apply { resultCode = HTTP_SUCCESS }
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    Napier.d("AuthApi: validateToken() - Token is invalid or expired (401)")
+                    Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
+                }
+
+                else -> {
+                    Napier.e("AuthApi: validateToken() HTTP error: ${httpResponse.status.value}")
+                    Response().apply { resultCode = HTTP_SERVER_ERROR }
+                }
+            }
+        } catch (e: Throwable) {
+            Napier.e("AuthApi: validateToken(): Exception occurred", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun refreshToken(request: RefreshTokenRequest): Response {
+        return try {
+            val httpResponse = client.post("/auth/refresh_token") {
+                header("x-api-key", key)
+                setBody(request)
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> {
+                    val data: RefreshTokenDataDto = httpResponse.body()
+                    RefreshTokenResponse(data = data).apply { resultCode = HTTP_SUCCESS }
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    Napier.d("AuthApi: refreshToken() - Refresh token is invalid or expired (401)")
+                    Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
+                }
+
+                else -> {
+                    val errorBody = try {
+                        httpResponse.body<String>()
+                    } catch (e: Exception) {
+                        "Failed to read error body: ${e.message}"
+                    }
+                    Napier.e("AuthApi: refreshToken() HTTP error: ${httpResponse.status.value}, body: $errorBody")
+                    Response().apply { resultCode = HTTP_SERVER_ERROR }
+                }
+            }
+        } catch (e: Throwable) {
+            Napier.e("AuthApi: refreshToken(): Exception occurred", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

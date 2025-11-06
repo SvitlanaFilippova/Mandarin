@@ -2,6 +2,8 @@ package com.mandarinkafe.mandarin.features.auth.data.impl
 
 import com.mandarinkafe.mandarin.core.domain.models.AuthTokens
 import com.mandarinkafe.mandarin.features.auth.data.Mapper.toDomain
+import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorage
+import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusByCheckIdRequest
@@ -29,11 +31,24 @@ import kotlinx.coroutines.flow.flow
 
 class AuthRepositoryImpl(
     private val networkClient: AuthNetworkClient,
+    private val tokenStorage: TokenStorage,
 ) : AuthRepository {
 
-    override val authState: MutableStateFlow<Boolean> // TODO()
+    private val _authState = MutableStateFlow(false)
+    override val authState: Flow<Boolean> = _authState
 
-    override suspend fun isAuthorized() = authState.value
+    override suspend fun initializeAuth(): Boolean {
+        val hasTokens = tokenStorage.getTokens() != null
+        return if (hasTokens) {
+            // Если есть токены, валидируем их на сервере
+            validateToken()
+        } else {
+            _authState.value = false
+            false
+        }
+    }
+
+    override suspend fun isAuthorized() = _authState.value
 
 
     override suspend fun requestPhoneVerification(phone: String): Resource<PhoneVerificationData> {
@@ -255,15 +270,128 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun saveTokens(tokens: AuthTokens) {
-        TODO("Not yet implemented")
+        try {
+            tokenStorage.saveTokens(tokens)
+            _authState.value = true
+            Napier.d("Токены успешно сохранены")
+        } catch (e: Exception) {
+            Napier.e("AuthRepository.saveTokens: Exception", e)
+            throw e
+        }
     }
 
     override suspend fun clearTokens() {
-        TODO("Not yet implemented")
+        try {
+            tokenStorage.clearTokens()
+            _authState.value = false
+            Napier.d("Токены успешно очищены")
+        } catch (e: Exception) {
+            Napier.e("AuthRepository.clearTokens: Exception", e)
+            throw e
+        }
     }
 
     override suspend fun getAccessToken(): String? {
-        TODO("Not yet implemented")
+        return try {
+            tokenStorage.getTokens()?.accessToken
+        } catch (e: Exception) {
+            Napier.e("AuthRepository.getAccessToken: Exception", e)
+            null
+        }
+    }
+
+    override suspend fun validateToken(): Boolean {
+        return try {
+            val accessToken = getAccessToken()
+            if (accessToken == null) {
+                _authState.value = false
+                return false
+            }
+
+            val response = networkClient.validateToken(accessToken)
+            
+            when (response.resultCode) {
+                NO_CONNECTION -> {
+                    // При отсутствии сети считаем токен валидным (оптимистичный сценарий)
+                    Napier.d("AuthRepository.validateToken: No internet, keeping current auth state")
+                    true
+                }
+
+                HTTP_SUCCESS -> {
+                    _authState.value = true
+                    Napier.d("AuthRepository.validateToken: Token is valid")
+                    true
+                }
+
+                401 -> {
+                    // Токен невалиден - пытаемся обновить через refresh token
+                    Napier.d("AuthRepository.validateToken: Token is invalid (401), trying to refresh")
+                    tryRefreshToken()
+                }
+
+                else -> {
+                    // Ошибка сервера - считаем токен валидным (оптимистичный сценарий)
+                    Napier.e("AuthRepository.validateToken: Server error, keeping current auth state")
+                    true
+                }
+            }
+        } catch (e: Exception) {
+            Napier.e("AuthRepository.validateToken: Exception", e)
+            // При ошибке считаем токен валидным (оптимистичный сценарий)
+            true
+        }
+    }
+
+    private suspend fun tryRefreshToken(): Boolean {
+        return try {
+            val tokens = tokenStorage.getTokens()
+            if (tokens?.refreshToken == null) {
+                Napier.d("AuthRepository.tryRefreshToken: No refresh token, clearing auth")
+                clearTokens()
+                return false
+            }
+
+            val response = networkClient.refreshToken(tokens.refreshToken)
+
+            when (response.resultCode) {
+                NO_CONNECTION -> {
+                    Napier.d("AuthRepository.tryRefreshToken: No internet, keeping current auth state")
+                    true
+                }
+
+                HTTP_SUCCESS -> {
+                    val refreshResponse = response as? RefreshTokenResponse
+                    val newTokens = refreshResponse?.data?.toDomain()
+                    
+                    if (newTokens != null) {
+                        saveTokens(newTokens)
+                        Napier.d("AuthRepository.tryRefreshToken: Tokens successfully refreshed")
+                        true
+                    } else {
+                        Napier.e("AuthRepository.tryRefreshToken: Empty response data")
+                        clearTokens()
+                        false
+                    }
+                }
+
+                401 -> {
+                    // Refresh token тоже невалиден - очищаем всё
+                    Napier.d("AuthRepository.tryRefreshToken: Refresh token is invalid (401), clearing tokens")
+                    clearTokens()
+                    false
+                }
+
+                else -> {
+                    // Ошибка сервера при refresh - не трогаем текущие токены
+                    Napier.e("AuthRepository.tryRefreshToken: Server error, keeping current tokens")
+                    true
+                }
+            }
+        } catch (e: Exception) {
+            Napier.e("AuthRepository.tryRefreshToken: Exception", e)
+            // При ошибке не трогаем текущие токены
+            true
+        }
     }
 
     companion object {
