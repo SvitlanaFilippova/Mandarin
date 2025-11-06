@@ -15,6 +15,10 @@ import com.google.android.gms.auth.api.phone.SmsRetriever as GoogleSmsRetriever
 /**
  * Android реализация автоматического получения SMS-кодов
  * Использует Google SMS Retriever API
+ *
+ * ВАЖНО: SMS должна содержать 11-символьный хеш приложения в конце!
+ * Формат SMS: "<#> Your code is 123456\n\nFA+9qCX9VSu"
+ * Где FA+9qCX9VSu - хеш приложения (см. логи при запуске)
  */
 class AndroidSmsRetriever(private val context: Context) : SmsRetriever {
 

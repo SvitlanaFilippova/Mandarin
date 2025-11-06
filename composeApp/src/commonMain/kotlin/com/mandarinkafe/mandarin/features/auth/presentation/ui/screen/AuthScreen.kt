@@ -177,9 +177,6 @@ fun AuthScreen(
             showSuccessDialog = it
             showSMSVerificationDialog = false
             showCallVerificationDialog = false
-        },
-        onRequestAlreadyActive = { remainingSeconds ->
-            requestAlreadyActiveSeconds = remainingSeconds
-        },
+        }
     )
 }

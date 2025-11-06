@@ -18,12 +18,10 @@ sealed interface AuthContract {
         data class SetCodeQuery(val query: String) : AuthEvent
         data object CodeEntered : AuthEvent
 
-
     }
 
     sealed interface AuthEffect : BaseContract.BaseEffect {
         data object SuccessAuth : AuthEffect
-        data class RequestAlreadyActive(val remainingSeconds: Int) : AuthEffect
     }
 
     data class AuthState(

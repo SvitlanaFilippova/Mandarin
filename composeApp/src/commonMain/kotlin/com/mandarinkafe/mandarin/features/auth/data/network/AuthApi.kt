@@ -31,7 +31,6 @@ class AuthApi(
     private val key = BuildKonfig.MANDARIN_API_KEY
 
     suspend fun requestPhoneVerification(request: PhoneVerificationRequest): Response {
-        Napier.d("AUTH DEBUG: Sending POST /auth/request with phone: ${request.phone}")
         return try {
             val httpResponse = client.post("/auth/request") {
                 header("x-api-key", key)
@@ -41,12 +40,10 @@ class AuthApi(
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
                     val data: PhoneVerificationDataDto = httpResponse.body()
-                    Napier.d("AUTH DEBUG: Received response from /auth/request, checkId: ${data.checkId}, phoneToCall: ${data.phoneToCall}")
                     PhoneVerificationResponse(data = data).apply { resultCode = HTTP_SUCCESS }
                 }
 
                 else -> {
-                    Napier.d("AUTH DEBUG: HTTP error status: ${httpResponse.status.value}")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
@@ -57,7 +54,6 @@ class AuthApi(
     }
 
     suspend fun checkVerificationStatusByPhone(request: PhoneVerificationStatusByPhoneRequest): Response {
-        Napier.d("AUTH DEBUG: Sending POST /auth/verify-status with phone: ${request.phone}")
         return try {
             val httpResponse = client.post("/auth/verify-status") {
                 header("x-api-key", key)
@@ -67,12 +63,10 @@ class AuthApi(
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
                     val data: PhoneVerificationStatusDto = httpResponse.body()
-                    Napier.d("AUTH DEBUG: Received response from /auth/verify-status, isVerified: ${data.isVerified}, shouldStopPolling: ${data.shouldStopPolling}, expiresInSeconds: ${data.expiresInSeconds}")
                     PhoneVerificationStatusResponse(data = data).apply { resultCode = HTTP_SUCCESS }
                 }
 
                 else -> {
-                    Napier.d("AUTH DEBUG: HTTP error status: ${httpResponse.status.value}")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
@@ -83,7 +77,6 @@ class AuthApi(
     }
 
     suspend fun checkVerificationStatusByCheckId(request: PhoneVerificationStatusByCheckIdRequest): Response {
-        Napier.d("AUTH DEBUG: Sending POST /auth/status with checkId: ${request.checkId}")
         return try {
             val httpResponse = client.post("/auth/status") {
                 header("x-api-key", key)
@@ -93,12 +86,10 @@ class AuthApi(
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
                     val data: PhoneVerificationStatusDto = httpResponse.body()
-                    Napier.d("AUTH DEBUG: Received response from /auth/status, checkId: ${data.checkId}, status: ${data.status}")
                     PhoneVerificationStatusResponse(data = data).apply { resultCode = HTTP_SUCCESS }
                 }
 
                 else -> {
-                    Napier.d("AUTH DEBUG: HTTP error status: ${httpResponse.status.value}")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
@@ -109,19 +100,15 @@ class AuthApi(
     }
 
     suspend fun requestSmsVerification(request: SmsVerificationRequest): Response {
-        Napier.d("SMS AUTH DEBUG: Sending POST /auth/request_sms with phone: ${request.phone}")
         return try {
             val httpResponse = client.post("/auth/request_sms") {
                 header("x-api-key", key)
                 setBody(request)
             }
 
-            Napier.d("SMS AUTH DEBUG: Response status code: ${httpResponse.status.value} (${httpResponse.status.description})")
-
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
                     val data: SmsVerificationDataDto = httpResponse.body()
-                    Napier.d("SMS AUTH DEBUG: Received response from /auth/request_sms, status: ${data.status}, expiresIn: ${data.expiresIn}")
                     SmsVerificationResponse(data = data).apply { resultCode = HTTP_SUCCESS }
                 }
 
@@ -131,31 +118,26 @@ class AuthApi(
                     } catch (e: Exception) {
                         "Failed to read error body: ${e.message}"
                     }
-                    Napier.e("SMS AUTH DEBUG: HTTP error status: ${httpResponse.status.value}, body: $errorBody")
+                    Napier.e("ServerApi: requestSmsVerification() HTTP error: ${httpResponse.status.value}, body: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
             Napier.e("ServerApi: requestSmsVerification(): Exception occurred", e)
-            Napier.e("SMS AUTH DEBUG: Exception type: ${e::class.simpleName}, message: ${e.message}")
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
     suspend fun verifySmsCode(request: VerifySmsCodeRequest): Response {
-        Napier.d("SMS AUTH DEBUG: Sending POST /auth/verify_sms with phone: ${request.phone}, code: ${request.code}")
         return try {
             val httpResponse = client.post("/auth/verify_sms") {
                 header("x-api-key", key)
                 setBody(request)
             }
 
-            Napier.d("SMS AUTH DEBUG: Response status code: ${httpResponse.status.value} (${httpResponse.status.description})")
-
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
                     val data: VerifySmsCodeDataDto = httpResponse.body()
-                    Napier.d("SMS AUTH DEBUG: Received response from /auth/verify_sms, isVerified: ${data.isVerified}")
                     VerifySmsCodeResponse(data = data).apply { resultCode = HTTP_SUCCESS }
                 }
 
@@ -165,14 +147,12 @@ class AuthApi(
                     } catch (e: Exception) {
                         "Failed to read error body: ${e.message}"
                     }
-                    Napier.e("SMS AUTH DEBUG: HTTP error status: ${httpResponse.status.value}, body: $errorBody")
+                    Napier.e("ServerApi: verifySmsCode() HTTP error: ${httpResponse.status.value}, body: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
             Napier.e("ServerApi: verifySmsCode(): Exception occurred", e)
-            Napier.e("SMS AUTH DEBUG: Exception type: ${e::class.simpleName}, message: ${e.message}")
-            e.printStackTrace()
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

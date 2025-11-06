@@ -18,7 +18,6 @@ import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForUi
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -35,7 +34,6 @@ class AuthViewModel(
     override fun setInitialState() = AuthState()
 
     override fun onEvent(event: AuthEvent) {
-        Napier.d("AUTH DEBUG: Received event: $event")
         when (event) {
             is AuthEvent.RequestAuth -> requestAuth()
             is AuthEvent.SetPhone -> setPhone(rawPhone = event.query)
@@ -79,47 +77,42 @@ class AuthViewModel(
     private fun setCodeQuery(query: String) {
         val clearedCode = query.filter { it.isDigit() }.take(SMS_CODE_LENGTH)
         setState { copy(smsCodeQuery = clearedCode, smsCheckError = false) }
-
     }
 
     private fun requestAuth() {
-        val currentPhone = state.value.phoneQuery
-        val activePhone = state.value.activeVerificationPhone
-        val remainingSms = state.value.remainingTimeToResendSms
-        val remainingCall = state.value.remainingTimeToCall
+        with(state.value) {
+            val currentPhone = phoneQuery
+            val activePhone = activeVerificationPhone
+            val remainingSms = remainingTimeToResendSms
+            val remainingCall = remainingTimeToCall
 
-        // Проверяем, есть ли уже активный запрос для этого номера
-        if (activePhone == currentPhone) {
-            val activeTimer = remainingSms ?: remainingCall
-            if (activeTimer != null && activeTimer > 0) {
-                Napier.d("AUTH DEBUG: Request already active for phone: $currentPhone, remaining: $activeTimer seconds")
-                sendEffect(AuthEffect.RequestAlreadyActive(activeTimer))
-                return
+            // Проверяем, есть ли уже активный запрос для этого номера
+            if (activePhone == currentPhone) {
+                val activeTimer = remainingSms ?: remainingCall
+                if (activeTimer != null && activeTimer > 0) {
+                    return
+                }
             }
+            sendAuthRequestByPhone()
         }
-        sendAuthRequestByPhone() // Phone
     }
 
     private fun sendAuthRequestByPhone() {
         val phone = state.value.phoneQuery
-        setState { copy(activeVerificationPhone = phone) }
+        setState { copy(activeVerificationPhone = phone, smsValidationError = null, error = null) }
         viewModelScope.launch {
-            Napier.d("AUTH DEBUG: Requesting phone verification for phone: $phone")
             val response: Resource<PhoneVerificationData> =
                 requestPhoneVerification(
                     phone = phone
                 )
-            Napier.d("AUTH DEBUG: Phone verification response received")
             when (response) {
                 is Resource.Success -> {
-                    Napier.d("AUTH DEBUG: Verification request successful, data: ${response.data}")
                     proceedSuccessAuthRequest(data = response.data, userPhone = phone)
-                    startCallTimer()
+                    startCallTimer(response.data?.expiresInSeconds)
                     startObservingAuthByPhoneStatus()
                 }
 
                 else -> {
-                    Napier.d("AUTH DEBUG: Verification request is NOT Success")
                     setError(response)
                 }
             }
@@ -128,19 +121,15 @@ class AuthViewModel(
 
     private fun proceedSuccessAuthRequest(data: PhoneVerificationData?, userPhone: String) {
         data?.let {
-            Napier.d("AUTH DEBUG: Processing successful auth request, checkId: ${it.checkId}, callPhone: ${it.phoneToCall}")
             setState {
                 copy(
                     phoneVerificationData = data.toUi(userPhone = userPhone.formatPhoneNumberForUi())
                 )
             }
-        } ?: run {
-            Napier.d("AUTH DEBUG: Warning: proceedSuccessAuthRequest called with null data")
         }
     }
 
     private fun setError(response: Resource<*>) {
-        Napier.d("AUTH DEBUG: Setting error state")
         when (response) {
             is Resource.ErrorNoInternet -> {
                 setState { copy(error = UiError.NoInternet) }
@@ -156,12 +145,13 @@ class AuthViewModel(
         setState { copy(phoneQuery = rawPhone.formatPhoneNumberForDomain()) }
     }
 
-    private fun startCallTimer() {
+    private fun startCallTimer(expiresInSeconds: Int?) {
         // Отменяем предыдущий таймер, если он был
         callTimerJob?.cancel()
+        val remainingTimeToCall = expiresInSeconds ?: Constants.SECONDS_TO_CALL_DEFAULT
 
-        // Сбрасываем время на 5 минут
-        setState { copy(remainingTimeToCall = Constants.SECONDS_TO_CALL_DEFAULT) }
+        // Сбрасываем время
+        setState { copy(remainingTimeToCall = remainingTimeToCall) }
 
         // Запускаем новый таймер
         callTimerJob = viewModelScope.launch {
@@ -232,41 +222,25 @@ class AuthViewModel(
 
         val phone = state.value.phoneQuery
         if (phone.isEmpty()) {
-            Napier.d("AUTH DEBUG: Cannot start polling: phone is empty")
             return
         }
 
-        Napier.d("AUTH DEBUG: Starting auth status polling for phone: $phone")
-
         statusPollingJob = viewModelScope.launch {
             statusInteractor.observeStatusByPhone(phone).collect { response ->
-                Napier.d("AUTH DEBUG: Received status update from Flow")
                 proceedAuthStatusResponse(response)
-
             }
-
-            Napier.d("AUTH DEBUG: Status polling Flow completed")
         }
     }
 
     private fun proceedAuthStatusResponse(response: Resource<PhoneVerificationStatus>) {
-        Napier.d("AUTH DEBUG: Starting proceedAuthStatusResponse")
         when (response) {
             is Resource.Success -> {
                 val status = response.data
 
                 if (status == null) {
-                    Napier.d("AUTH DEBUG: Status data is null")
                     setState { copy(error = UiError.OtherError) }
                 } else {
-                    Napier.d(
-                        "AUTH DEBUG: Status check successful - isVerified: ${status.isVerified}, " +
-                                "shouldStopPolling: ${status.shouldStopPolling}, " +
-                                "expiresInSeconds: ${status.expiresInSeconds}"
-                    )
-
                     if (status.isVerified == true) {
-                        Napier.d("AUTH DEBUG: Phone verification completed successfully!")
                         // Верификация успешна - останавливаем пулинг и таймеры
                         stopStatusPolling()
                         stopCallTimer()
@@ -275,7 +249,6 @@ class AuthViewModel(
                     }
 
                     if (status.shouldStopPolling == true && status.isVerified != true) {
-                        Napier.d("AUTH DEBUG: Should stop polling (verification expired or failed)")
                         stopStatusPolling()
                         stopCallTimer()
                         setState { copy(error = UiError.OtherError) }
@@ -284,7 +257,7 @@ class AuthViewModel(
             }
 
             is Resource.Idle, is Resource.Loading -> {
-                Napier.d("AUTH DEBUG: Idle state")
+                // Игнорируем
             }
 
             else -> setError(response)
@@ -292,21 +265,14 @@ class AuthViewModel(
     }
 
     private fun proceedSmsAuthStatusResponse(response: Resource<VerifySmsCodeResult>) {
-        Napier.d("SMS AUTH DEBUG: Starting proceedAuthStatusResponse")
         when (response) {
             is Resource.Success -> {
                 val status = response.data
                 if (status == null) {
-                    Napier.d("SMS AUTH DEBUG: Status data is null")
                     setState { copy(error = UiError.OtherError) }
                 } else {
-                    Napier.d(
-                        "SMS AUTH DEBUG: Status check successful - isVerified: ${status.isVerified}, "
-                    )
-
                     if (status.isVerified) {
-                        Napier.d("SMS AUTH DEBUG: Phone verification completed successfully!")
-                        // Верификация успешна - останавливаем пулинг и таймеры
+                        // Верификация успешна - останавливаем таймеры
                         stopSmsTimer()
                         setState {
                             copy(
@@ -323,9 +289,8 @@ class AuthViewModel(
                 }
             }
 
-
             is Resource.Idle, is Resource.Loading -> {
-                Napier.d("AUTH DEBUG: Idle state")
+                // Игнорируем
             }
 
             else -> setError(response)
@@ -333,7 +298,6 @@ class AuthViewModel(
     }
 
     private fun stopStatusPolling() {
-        Napier.d("AUTH DEBUG: Stopping status polling")
         statusPollingJob?.cancel()
         statusPollingJob = null
     }

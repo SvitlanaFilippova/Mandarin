@@ -9,6 +9,6 @@ data class PhoneVerificationDataDto(
     val checkId: String,
     @SerialName("call_phone")
     val phoneToCall: String,
-    @SerialName("call_phone_pretty")
-    val phoneToCallPretty: String,
+    @SerialName("expires_in_seconds")
+    val expiresInSeconds: Int? = null,
 )

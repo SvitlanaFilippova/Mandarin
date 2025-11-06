@@ -15,7 +15,6 @@ fun HandleEffects(
     effectFlow: Flow<AuthContract.AuthEffect>,
     navController: NavController,
     showSuccessDialog: (Boolean) -> Unit,
-    onRequestAlreadyActive: (remainingSeconds: Int) -> Unit,
     targetRoute: String?,
 ) {
     LaunchedEffect(Unit) {
@@ -24,7 +23,6 @@ fun HandleEffects(
                 AuthContract.AuthEffect.SuccessAuth -> {
                     showSuccessDialog(true)
                     delay(DELAY_1_SECOND)
-                    showSuccessDialog(false)
                     val destination = targetRoute ?: NavConstants.MENU_SCREEN_ROUTE
                     navController.navigate(destination) {
                         popUpTo(NavConstants.AUTH_ROUTE) {
@@ -32,8 +30,6 @@ fun HandleEffects(
                         }
                     }
                 }
-
-                is AuthContract.AuthEffect.RequestAlreadyActive -> onRequestAlreadyActive(effect.remainingSeconds)
             }
         }
     }

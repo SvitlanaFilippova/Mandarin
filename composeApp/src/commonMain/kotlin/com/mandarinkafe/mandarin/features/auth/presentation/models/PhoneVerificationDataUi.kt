@@ -4,15 +4,16 @@ import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationDa
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PhoneVerificationDataUi
-    (
+data class PhoneVerificationDataUi(
     val checkId: String,
     val phoneToCall: String,
     val userPhone: String,
+    val expiresInSeconds: Int?,
 )
 
 fun PhoneVerificationData.toUi(userPhone: String) = PhoneVerificationDataUi(
     checkId = checkId,
     phoneToCall = phoneToCall,
-    userPhone = userPhone
+    userPhone = userPhone,
+    expiresInSeconds = expiresInSeconds
 )

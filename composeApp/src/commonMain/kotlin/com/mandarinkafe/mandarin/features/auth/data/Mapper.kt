@@ -23,7 +23,8 @@ object Mapper {
 
     fun PhoneVerificationDataDto.toDomain() = PhoneVerificationData(
         checkId = checkId,
-        phoneToCall = phoneToCall
+        phoneToCall = phoneToCall,
+        expiresInSeconds = expiresInSeconds
     )
 
     fun SmsVerificationDataDto.toDomain() = SmsVerificationData(
