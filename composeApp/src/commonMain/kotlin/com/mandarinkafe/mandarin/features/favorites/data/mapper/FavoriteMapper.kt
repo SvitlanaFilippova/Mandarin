@@ -1,10 +1,12 @@
 package com.mandarinkafe.mandarin.features.favorites.data.mapper
 
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.FavoriteRecord
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
+import com.mandarinkafe.mandarin.features.favorites.data.network.dto.FavoriteDto
 
 object FavoriteMapper {
 
@@ -59,9 +61,28 @@ object FavoriteMapper {
             timestamp = timestamp
         )
     }
+
+    fun StoredFavoriteMeal.toDto(): FavoriteDto {
+        val modifierIds = modifiers.associate { group ->
+            group.id to group.items.map { it.id }
+        }
+        return FavoriteDto(
+            mealId = mealId,
+            addsIds = addsIds,
+            modifierIds = modifierIds,
+            timestamp = timestamp
+        )
+    }
+
+    fun FavoriteDto.toStored(menuCache: MenuCache): StoredFavoriteMeal {
+        val resolvedModifiers = modifierIds.mapNotNull { (groupId, itemIds) ->
+            menuCache.findModifierGroup(groupId, itemIds)
+        }
+        return StoredFavoriteMeal(
+            mealId = mealId,
+            addsIds = addsIds,
+            modifiers = resolvedModifiers,
+            timestamp = timestamp
+        )
+    }
 }
-
-
-
-
-

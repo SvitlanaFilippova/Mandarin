@@ -4,6 +4,7 @@ import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
+import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.features.menu.domain.toMealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.CATEGORY_ADDS
@@ -238,6 +239,15 @@ class MenuCacheImpl(
             return cat.subCategories?.any { dfs(it) } == true
         }
         return dfs(deliveryCategory)
+    }
+
+    override fun findModifierGroup(
+        groupId: String,
+        itemIds: List<String>,
+    ): ModifierGroup {
+        // нужно использовать  endpoint сервера GET /modifier-groups, который возвращает все группы модификаторов.
+        // Результат кэшировать тут. и искать нужные уже исключительно по ним
+        TODO("Not yet implemented")
     }
 
     private companion object {

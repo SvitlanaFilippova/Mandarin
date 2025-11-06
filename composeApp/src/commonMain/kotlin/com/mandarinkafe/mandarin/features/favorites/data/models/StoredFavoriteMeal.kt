@@ -36,7 +36,3 @@ fun StoredFavoriteMeal.sameAs(other: StoredFavoriteMeal): Boolean {
             modifiers == other.modifiers
 }
 
-
-
-
-

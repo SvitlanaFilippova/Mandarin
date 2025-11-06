@@ -7,6 +7,8 @@ import com.mandarinkafe.mandarin.features.favorites.data.datastore.FavoritesStor
 import com.mandarinkafe.mandarin.features.favorites.data.datastore.FavoritesStorageImpl
 import com.mandarinkafe.mandarin.features.favorites.data.impl.FavoritesRepositoryImpl
 import com.mandarinkafe.mandarin.features.favorites.data.impl.FavoritesValidator
+import com.mandarinkafe.mandarin.features.favorites.data.remote.FavoritesRemoteDataSource
+import com.mandarinkafe.mandarin.features.favorites.data.remote.FavoritesRemoteDataSourceImpl
 import com.mandarinkafe.mandarin.features.favorites.domain.impl.FavoritesInteractorImpl
 import com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel.FavoritesViewModel
 import org.koin.core.module.dsl.bind
@@ -17,6 +19,9 @@ val favoritesModule = module {
 
     // DataStore storage
     singleOf(::FavoritesStorageImpl) { bind<FavoritesStorage>() }
+
+    // Remote storage
+    singleOf(::FavoritesRemoteDataSourceImpl) { bind<FavoritesRemoteDataSource>() }
 
     // Validator
     singleOf(::FavoritesValidator)
