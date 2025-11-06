@@ -524,8 +524,11 @@
     <string name="enter_valid_phone">Нужен валидный номер телефона</string>
     <string name="login">Подтвердить</string>
     <string name="verify_by_call">Подтверждение звонком</string>
-    <string name="verification_by_phone_instruction">Чтобы подтвердить номер телефона %1$s,
-        достаточно в&#160;течение 5&#160;минут набрать с&#160;него номер %2$s и дождаться гудка.
+    <string name="verification_by_phone_instruction_prefix">Чтобы подтвердить номер телефона %1$s,
+        достаточно в&#160;течение 5&#160;минут набрать с&#160;него номер
+    </string>
+    <string name="verification_by_phone_instruction_end">. После первого же гудка можно сразу
+        сбрасывать.
         \n\nЗвонок
         бесплатный.
     </string>

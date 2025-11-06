@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.auth.presentation.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,14 +14,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography.ButtonTextStyle
 import com.mandarinkafe.mandarin.features.auth.presentation.models.PhoneVerificationDataUi
-import com.mandarinkafe.mandarin.util.formatPhoneNumberForUi
-import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.DialogContainer
 import com.mandarinkafe.mandarin.util.toTimeFormat
 import dev.icerock.moko.resources.compose.painterResource
@@ -37,19 +37,18 @@ fun VerificationByCallDialog(
     DialogContainer(
         onDismissRequest = onDismissRequest
     ) {
+        Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
+
         Text(
             text = stringResource(MR.strings.verify_by_call),
             style = Typography.RegularTextStyle
         )
         Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
 
-
-        Text(
-            text = stringResource(
-                MR.strings.verification_by_phone_instruction, data.userPhone,
-                data.phoneToCall.formatPhoneNumberForUi()
-            ),
-            style = Typography.RegularLightTextStyle
+        CallInstructionWithClickableLink(
+            userPhone = data.userPhone,
+            phoneToCall = data.phoneToCall,
+            onPhoneClick = onCallClick
         )
 
         // Таймер обратного отсчёта
@@ -73,7 +72,7 @@ fun VerificationByCallDialog(
             onClick = onCallClick,
             shape = RoundedCornerShape(Dimens.CornerRadius8),
             modifier = Modifier.width(Dimens.ButtonPlaceholderSize200)
-                .padding(vertical = Dimens.MarginStandard16),
+                .padding(vertical = Dimens.MarginSmall8),
             colors = ButtonDefaults.buttonColors(
                 contentColor = Colors.White,
                 containerColor = Colors.Orange
@@ -90,11 +89,14 @@ fun VerificationByCallDialog(
             )
         }
 
-        // Кнопка "Лучше SMS"
-        ButtonWithText(
-            modifier = Modifier.width(Dimens.ButtonPlaceholderSize200),
+        // Текстовая кнопка "Лучше SMS"
+        Text(
+            modifier = Modifier.clickable(onClick = onWantSmsClick).fillMaxWidth(),
+            textAlign = TextAlign.Center,
             text = stringResource(MR.strings.want_sms),
-            onClick = onWantSmsClick
+            style = Typography.SmallTextStyle,
+            textDecoration = TextDecoration.Underline,
+            color = Colors.Orange,
         )
     }
 }
