@@ -45,9 +45,19 @@ class AuthRepositoryImpl(
     override suspend fun saveTokens(tokens: AuthTokens) {
         try {
             tokenStorage.saveTokens(tokens)
-            _authState.value = true
+            Napier.d("AuthRepository: saveTokens - Tokens saved, validating...")
+            // После сохранения токенов валидируем их и загружаем данные пользователя
+            val isValid = validateToken()
+            if (!isValid) {
+                Napier.e("AuthRepository: saveTokens - Token validation failed, clearing tokens")
+                clearTokens()
+                throw IllegalStateException("Failed to validate tokens after saving")
+            }
+            Napier.d("AuthRepository: saveTokens - ✅ Tokens saved and validated successfully")
         } catch (e: Exception) {
-            Napier.e("AuthRepository: saveTokens - Exception", e)
+            if (e !is IllegalStateException) {
+                Napier.e("AuthRepository: saveTokens - Exception", e)
+            }
             throw e
         }
     }
@@ -116,6 +126,8 @@ class AuthRepositoryImpl(
             when (response.resultCode) {
                 NO_CONNECTION -> {
                     // При отсутствии сети считаем токен валидным (оптимистичный сценарий)
+                    _authState.value = true
+                    Napier.d("AuthRepository: validateToken - No connection, assuming tokens are valid")
                     true
                 }
 
@@ -125,6 +137,7 @@ class AuthRepositoryImpl(
                     // Обновляем информацию о пользователе из ответа
                     val validateResponse = response as? ValidateTokenResponse
                     validateResponse?.data?.let { userInfoDto ->
+                        Napier.d("AuthRepository: validateToken - Updating user info from server")
                         userInfoRepository.updateFromServer(userInfoDto)
                     }
                     
