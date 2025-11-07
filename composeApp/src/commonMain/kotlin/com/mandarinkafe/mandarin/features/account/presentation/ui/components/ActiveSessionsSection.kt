@@ -87,4 +87,5 @@ fun ActiveSessionsSection(
             }
         }
     }
-}}
+    }
+}

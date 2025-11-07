@@ -29,6 +29,10 @@ class AuthRepositoryImpl(
     private val _authState = MutableStateFlow(false)
     override val authState: Flow<Boolean> = _authState
 
+    private companion object {
+        const val HTTP_UNAUTHORIZED = 401
+    }
+
     override suspend fun initializeAuth(): Boolean {
         val hasTokens = tokenStorage.getTokens() != null
         return if (hasTokens) {
@@ -83,9 +87,11 @@ class AuthRepositoryImpl(
                         HTTP_SUCCESS -> {
                             Napier.d("AuthRepository: Logout successful on server")
                         }
+
                         NO_CONNECTION -> {
                             Napier.w("AuthRepository: No internet during logout, proceeding with local logout")
                         }
+
                         else -> {
                             Napier.w("AuthRepository: Server logout failed (code ${response.resultCode}), proceeding with local logout")
                         }
@@ -94,7 +100,7 @@ class AuthRepositoryImpl(
                     Napier.e("AuthRepository: Exception during server logout", e)
                 }
             }
-            
+
             // Всегда очищаем локальные токены и данные пользователя
             clearTokens()
             userInfoRepository.clearUserInfo()
@@ -133,18 +139,16 @@ class AuthRepositoryImpl(
 
                 HTTP_SUCCESS -> {
                     _authState.value = true
-                    
                     // Обновляем информацию о пользователе из ответа
                     val validateResponse = response as? ValidateTokenResponse
                     validateResponse?.data?.let { userInfoDto ->
                         Napier.d("AuthRepository: validateToken - Updating user info from server")
                         userInfoRepository.updateFromServer(userInfoDto)
                     }
-                    
                     true
                 }
 
-                401 -> {
+                HTTP_UNAUTHORIZED -> {
                     // Токен невалиден - пытаемся обновить через refresh token
                     Napier.d("AuthRepository: Token invalid (401), attempting refresh")
                     tryRefreshToken()
@@ -200,7 +204,7 @@ class AuthRepositoryImpl(
                     }
                 }
 
-                401 -> {
+                HTTP_UNAUTHORIZED -> {
                     // Refresh token тоже невалиден - очищаем всё
                     Napier.w("TOKEN REFRESH: ❌ Refresh token is invalid (401), clearing all auth data")
                     clearTokens()
@@ -243,14 +247,17 @@ class AuthRepositoryImpl(
                         Resource.ErrorOther("Пустой ответ от сервера")
                     }
                 }
-                401 -> {
+
+                HTTP_UNAUTHORIZED -> {
                     Napier.e("AuthRepository: getActiveSessions - Unauthorized")
                     Resource.ErrorOther("Требуется авторизация")
                 }
+
                 HTTP_SERVER_ERROR -> {
                     Napier.e("AuthRepository: getActiveSessions - Server error")
                     Resource.ErrorOther("Ошибка сервера")
                 }
+
                 else -> {
                     Napier.e("AuthRepository: getActiveSessions - Unknown error code: ${response.resultCode}")
                     Resource.ErrorOther("Неизвестная ошибка")
@@ -278,14 +285,17 @@ class AuthRepositoryImpl(
                     val wrapper = response as? RevokeSessionResponse
                     Resource.Success(wrapper?.data?.isSuccess ?: false)
                 }
-                401 -> {
+
+                HTTP_UNAUTHORIZED -> {
                     Napier.e("AuthRepository: revokeSession - Unauthorized")
                     Resource.ErrorOther("Требуется авторизация")
                 }
+
                 HTTP_SERVER_ERROR -> {
                     Napier.e("AuthRepository: revokeSession - Server error")
                     Resource.ErrorOther("Ошибка сервера")
                 }
+
                 else -> {
                     Napier.e("AuthRepository: revokeSession - Unknown error code: ${response.resultCode}")
                     Resource.ErrorOther("Неизвестная ошибка")
