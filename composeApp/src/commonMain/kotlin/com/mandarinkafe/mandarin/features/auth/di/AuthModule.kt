@@ -3,9 +3,11 @@ package com.mandarinkafe.mandarin.features.auth.di
 import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorage
 import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorageImpl
 import com.mandarinkafe.mandarin.features.auth.data.impl.AuthRepositoryImpl
+import com.mandarinkafe.mandarin.features.auth.data.impl.PhoneVerificationRepositoryImpl
 import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClient
 import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClientImpl
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
+import com.mandarinkafe.mandarin.features.auth.domain.api.PhoneVerificationRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.RequestPhoneVerificationUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.RequestSmsVerificationUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.SyncUserDataUseCase
@@ -25,6 +27,7 @@ val authModule = module {
     singleOf(::TokenStorageImpl) { bind<TokenStorage>() }
     singleOf(::AuthNetworkClientImpl) { bind<AuthNetworkClient>() }
     singleOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
+    singleOf(::PhoneVerificationRepositoryImpl) { bind<PhoneVerificationRepository>() }
 
     // Domain Layer
     singleOf(::RequestPhoneVerificationUseCaseImpl) { bind<RequestPhoneVerificationUseCase>() }
@@ -36,6 +39,7 @@ val authModule = module {
     // ViewModel
     singleOf(::AuthViewModel)
 }
+
 
 
 
