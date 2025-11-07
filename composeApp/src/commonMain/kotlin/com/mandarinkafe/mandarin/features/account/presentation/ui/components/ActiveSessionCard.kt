@@ -49,28 +49,29 @@ fun ActiveSessionCard(
             Text(
                 text = session.deviceName ?: stringResource(MR.strings.unknown_device),
                 style = Typography.RegularTextStyle,
+                color = if (session.isCurrent) Colors.Orange else Colors.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-
-            session.createdAt?.let { createdAt ->
-                Spacer(modifier = Modifier.height(Dimens.MarginSuperSmall4))
-                Text(
-                    text = stringResource(MR.strings.login_date, createdAt),
-                    style = Typography.MealSmallTextStyle,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
 
             if (session.isCurrent) {
                 Spacer(modifier = Modifier.height(Dimens.MarginSuperSmall2))
                 Text(
                     text = stringResource(MR.strings.current_session),
-                    style = Typography.MealSmallTextStyle,
+                    style = Typography.SmallLightTextStyle,
                     color = Colors.Orange,
                     maxLines = 1,
                 )
+            } else {
+                session.createdAt?.let { createdAt ->
+                    Spacer(modifier = Modifier.height(Dimens.MarginSuperSmall4))
+                    Text(
+                        text = stringResource(MR.strings.login_date, createdAt),
+                        style = Typography.SmallLightTextStyle,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
 
@@ -87,7 +88,7 @@ fun ActiveSessionCard(
 
                 Text(
                     text = stringResource(MR.strings.logout),
-                    style = Typography.RegularTextStyle,
+                    style = Typography.RegularLightTextStyle,
                     color = Colors.Red
                 )
             }

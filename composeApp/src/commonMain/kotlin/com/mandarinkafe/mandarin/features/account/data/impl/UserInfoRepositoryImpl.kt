@@ -32,8 +32,6 @@ class UserInfoRepositoryImpl(
             name = name,
             phone = phone
         )
-
-        Napier.d("UserInfoRepository: Updated from server - name: $name, phone: $phone")
     }
 
     override suspend fun updateName(accessToken: String, name: String): Resource<Unit> {
@@ -47,12 +45,10 @@ class UserInfoRepositoryImpl(
                 HTTP_SUCCESS -> {
                     // Обновляем локальный кэш
                     _userInfo.value = _userInfo.value?.copy(name = name)
-                    Napier.d("UserInfoRepository: Name updated successfully")
                     Resource.Success(Unit)
                 }
 
                 NO_CONNECTION -> {
-                    Napier.w("UserInfoRepository: updateName - No connection")
                     Resource.ErrorNoInternet()
                 }
 
@@ -69,7 +65,6 @@ class UserInfoRepositoryImpl(
 
     override fun clearUserInfo() {
         _userInfo.value = null
-        Napier.d("UserInfoRepository: User info cleared")
     }
 }
 

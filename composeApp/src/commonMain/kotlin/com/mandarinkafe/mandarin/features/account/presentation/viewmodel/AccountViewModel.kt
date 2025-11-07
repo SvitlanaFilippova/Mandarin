@@ -10,6 +10,7 @@ import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.Account
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.GetActiveSessionsUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.RevokeSessionUseCase
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
@@ -53,33 +54,34 @@ class AccountViewModel(
 
     private fun observeUserInfo() {
         viewModelScope.launch {
-            // Если пользователь авторизован, ждем загрузки данных
-            if (authRepository.isAuthorized()) {
-                Napier.d("AccountViewModel: User is authorized, waiting for user info...")
-                
-                // Ждем первое не-null значение (с таймаутом 5 секунд)
-                val initialInfo = withTimeoutOrNull(5000) {
-                    userInfoRepository.userInfo.first { it != null }
-                }
-                
-                if (initialInfo != null) {
-                    Napier.d("AccountViewModel: Initial user info loaded - name: ${initialInfo.name}, phone: ${initialInfo.phone}")
-                    setState {
-                        copy(
-                            userInfo = this.userInfo.copy(
-                                name = initialInfo.name,
-                                phone = initialInfo.phone.formatPhoneNumberForDomain(),
-                            ),
-                        )
-                    }
-                } else {
-                    Napier.w("AccountViewModel: Timeout waiting for user info")
-                }
+            var isFirstLoad = true
+
+            // Ждем первое не-null значение с таймаутом
+
+            val initialInfo = withTimeoutOrNull(Constants.USER_DATA_WAIT_TIMEOUT) {
+                userInfoRepository.userInfo.first { it != null }
             }
-            
-            // Подписываемся на дальнейшие обновления
+
+            if (initialInfo != null) {
+                setState {
+                    copy(
+                        userInfo = this.userInfo.copy(
+                            name = initialInfo.name,
+                            phone = initialInfo.phone.formatPhoneNumberForDomain(),
+                        ),
+                    )
+                }
+                isFirstLoad = false
+            } else {
+                Napier.w("AccountViewModel: Timeout waiting for user info")
+            }
+
+            // Подписываемся на дальнейшие обновления (пропускаем первое, если уже загрузили)
             userInfoRepository.userInfo.collect { userInfo ->
-                Napier.d("AccountViewModel: UserInfo updated - name: ${userInfo?.name}, phone: ${userInfo?.phone}")
+                if (isFirstLoad) {
+                    isFirstLoad = false
+                    return@collect
+                }
                 userInfo?.let {
                     setState {
                         copy(
@@ -108,7 +110,7 @@ class AccountViewModel(
 
         // Запускаем новое сохранение с дебаунсом
         saveNameJob = viewModelScope.launch {
-            delay(500) // 500ms дебаунс
+            delay(SAVE_NAME_DEBOUNCE) //  дебаунс
             saveUserName(query.trim())
         }
     }
@@ -127,16 +129,17 @@ class AccountViewModel(
                         val result = userInfoRepository.updateName(accessToken, enteredName)
                         when (result) {
                             is Resource.Success -> {
-                                Napier.d("AccountViewModel: Name saved successfully")
+                                sendEffect(AccountEffect.ShowMessage(MR.strings.name_changed_successfully))
+                                setState {
+                                    copy(showNameChangeButtons = false)
+                                }
                             }
 
                             is Resource.ErrorNoInternet -> {
-                                Napier.w("AccountViewModel: No internet, name not saved")
                                 sendEffect(AccountEffect.ShowMessage(MR.strings.error_no_internet))
                             }
 
                             is Resource.ErrorOther -> {
-                                Napier.e("AccountViewModel: Failed to save name: ${result.message}")
                                 sendEffect(AccountEffect.ShowMessage(MR.strings.error_save_name))
                             }
 
@@ -230,5 +233,9 @@ class AccountViewModel(
 
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
+    }
+
+    private companion object {
+        const val SAVE_NAME_DEBOUNCE = 2000L
     }
 }

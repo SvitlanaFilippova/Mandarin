@@ -546,7 +546,7 @@
     <string name="personal_info">Персональная информация</string>
     <string name="active_devices">Активные устройства</string>
     <string name="unknown_device">Неизвестное устройство</string>
-    <string name="login_date">Дата авторизации: %1$s</string>
+    <string name="login_date">Последний вход: %1$s</string>
     <string name="current_session">Текущая сессия</string>
     <string name="logout">Выйти</string>
     <string name="logout_from_account">Выйти из аккаунта</string>
@@ -557,6 +557,6 @@
     <string name="error_load_sessions">Ошибка загрузки сессий</string>
     <string name="error_revoke_session">Не удалось завершить сессию</string>
     <string name="error_logout">Ошибка при выходе</string>
-
+    <string name="name_changed_successfully">Имя успешно обновлено</string>
 
 </resources>

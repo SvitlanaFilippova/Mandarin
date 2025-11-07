@@ -45,11 +45,12 @@ fun MyTextField(
     enabled: Boolean = true,
     minLines: Int = 1,
     autofocus: Boolean = false,
+    colors: TextFieldColors? = null,
+    onClick: (() -> Unit)? = null,
     prefix: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
-    colors: TextFieldColors? = null,
-    onClick: (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -114,7 +115,7 @@ fun MyTextField(
             isError = isError,
             keyboardOptions = keyboardOptions.copy(imeAction = ImeAction.Done),
             visualTransformation = visualTransformation,
-            trailingIcon = {
+            trailingIcon = trailingIcon ?: {
                 if (enabled && value.isNotEmpty()) {
                     IconButton(onClick = { onValueChange("") }) {
                         Icon(
@@ -126,7 +127,8 @@ fun MyTextField(
                 }
             },
             leadingIcon = leadingIcon,
-            prefix = prefix
+            prefix = prefix,
+
         )
     }
 }

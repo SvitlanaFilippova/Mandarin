@@ -93,7 +93,7 @@ fun FavoritesItemCard(
             // Описание блюда
             Text(
                 text = meal.description,
-                style = Typography.MealSmallTextStyle,
+                style = Typography.SmallLightTextStyle,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU,
             )
@@ -103,7 +103,7 @@ fun FavoritesItemCard(
             if (item.isCustomized) {
                 Text(
                     text = item.customizedText(),
-                    style = Typography.MealSmallTextStyle,
+                    style = Typography.SmallLightTextStyle,
                 )
 
                 Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
