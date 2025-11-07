@@ -16,7 +16,9 @@ import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 class AccountViewModel(
     private val getActiveSessionsUseCase: GetActiveSessionsUseCase,
@@ -40,6 +42,7 @@ class AccountViewModel(
             is AccountEvent.RevokeSession -> revokeSession(event.sessionId)
             is AccountEvent.Logout -> logout()
             is AccountEvent.SetName -> setName(event.query)
+            is AccountEvent.SaveNameNow -> saveUserName()
             is AccountEvent.OnPhoneClick -> onPhoneClick()
         }
     }
@@ -50,6 +53,31 @@ class AccountViewModel(
 
     private fun observeUserInfo() {
         viewModelScope.launch {
+            // Если пользователь авторизован, ждем загрузки данных
+            if (authRepository.isAuthorized()) {
+                Napier.d("AccountViewModel: User is authorized, waiting for user info...")
+                
+                // Ждем первое не-null значение (с таймаутом 5 секунд)
+                val initialInfo = withTimeoutOrNull(5000) {
+                    userInfoRepository.userInfo.first { it != null }
+                }
+                
+                if (initialInfo != null) {
+                    Napier.d("AccountViewModel: Initial user info loaded - name: ${initialInfo.name}, phone: ${initialInfo.phone}")
+                    setState {
+                        copy(
+                            userInfo = this.userInfo.copy(
+                                name = initialInfo.name,
+                                phone = initialInfo.phone.formatPhoneNumberForDomain(),
+                            ),
+                        )
+                    }
+                } else {
+                    Napier.w("AccountViewModel: Timeout waiting for user info")
+                }
+            }
+            
+            // Подписываемся на дальнейшие обновления
             userInfoRepository.userInfo.collect { userInfo ->
                 Napier.d("AccountViewModel: UserInfo updated - name: ${userInfo?.name}, phone: ${userInfo?.phone}")
                 userInfo?.let {
@@ -67,16 +95,17 @@ class AccountViewModel(
     }
 
     private fun setName(query: String) {
+        val oldName = state.value.userInfo.name
         val newInfo = state.value.userInfo.copy(name = query)
         setState {
             copy(
-                userInfo = newInfo
+                userInfo = newInfo,
+                showNameChangeButtons = oldName != query
             )
         }
-        
         // Отменяем предыдущее сохранение
         saveNameJob?.cancel()
-        
+
         // Запускаем новое сохранение с дебаунсом
         saveNameJob = viewModelScope.launch {
             delay(500) // 500ms дебаунс
@@ -84,10 +113,10 @@ class AccountViewModel(
         }
     }
 
-    private fun saveUserName(enteredName: String) {
+    private fun saveUserName(query: String? = null) {
         viewModelScope.launch {
             val currentUserInfo = userInfoRepository.getUserInfo()
-
+            val enteredName = query ?: state.value.userInfo.name
             // Обновляем имя на сервере, если оно было пустое или изменилось
             if (currentUserInfo != null && enteredName.trim().isNotBlank()) {
                 if (currentUserInfo.name != enteredName) {
@@ -100,14 +129,17 @@ class AccountViewModel(
                             is Resource.Success -> {
                                 Napier.d("AccountViewModel: Name saved successfully")
                             }
+
                             is Resource.ErrorNoInternet -> {
                                 Napier.w("AccountViewModel: No internet, name not saved")
                                 sendEffect(AccountEffect.ShowMessage(MR.strings.error_no_internet))
                             }
+
                             is Resource.ErrorOther -> {
                                 Napier.e("AccountViewModel: Failed to save name: ${result.message}")
                                 sendEffect(AccountEffect.ShowMessage(MR.strings.error_save_name))
                             }
+
                             else -> {}
                         }
                     } else {
@@ -186,9 +218,9 @@ class AccountViewModel(
     private fun logout() {
         viewModelScope.launch {
             try {
-                Napier.d("AccountViewModel: Logging out")
                 authRepository.logout()
                 sendEffect(AccountEffect.LoggedOut)
+                setState { AccountState() }
             } catch (e: Exception) {
                 Napier.e("AccountViewModel: Error during logout", e)
                 sendEffect(AccountEffect.ShowMessage(MR.strings.error_logout))

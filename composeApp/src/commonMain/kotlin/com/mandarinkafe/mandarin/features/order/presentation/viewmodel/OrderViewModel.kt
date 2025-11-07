@@ -34,7 +34,9 @@ import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dev.icerock.moko.resources.StringResource
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 class OrderViewModel(
     private val cartUseCases: CartContentUseCases,
@@ -128,7 +130,33 @@ class OrderViewModel(
 
     private fun getSavedUserInfo() {
         viewModelScope.launch {
-            var isFirstLoad = true
+            // Если пользователь авторизован, ждем загрузки данных
+            if (authRepository.isAuthorized()) {
+                Napier.d("OrderViewModel: User is authorized, waiting for user info...")
+                
+                // Ждем первое не-null значение (с таймаутом 5 секунд)
+                val initialInfo = withTimeoutOrNull(5000) {
+                    userInfoRepository.userInfo.first { it != null }
+                }
+                
+                if (initialInfo != null) {
+                    Napier.d("OrderViewModel: Initial user info loaded - name: ${initialInfo.name}, phone: ${initialInfo.phone}")
+                    setState {
+                        copy(
+                            userInfo = this.userInfo.copy(
+                                name = initialInfo.name,
+                                phone = initialInfo.phone.formatPhoneNumberForDomain(),
+                            ),
+                            savedNameIsEmpty = initialInfo.name.trim().isEmpty(),
+                        )
+                    }
+                    checkDiscount(initialInfo.phone)
+                } else {
+                    Napier.w("OrderViewModel: Timeout waiting for user info")
+                }
+            }
+            
+            // Подписываемся на дальнейшие обновления
             userInfoRepository.userInfo.collect { userInfo ->
                 Napier.d("OrderViewModel: UserInfo updated - name: ${userInfo?.name}, phone: ${userInfo?.phone}")
                 userInfo?.let {
@@ -140,12 +168,6 @@ class OrderViewModel(
                             ),
                             savedNameIsEmpty = userInfo.name.trim().isEmpty(),
                         )
-                    }
-                    
-                    // Проверяем дисконт только при первой загрузке
-                    if (isFirstLoad) {
-                        checkDiscount(userInfo.phone)
-                        isFirstLoad = false
                     }
                 }
             }
