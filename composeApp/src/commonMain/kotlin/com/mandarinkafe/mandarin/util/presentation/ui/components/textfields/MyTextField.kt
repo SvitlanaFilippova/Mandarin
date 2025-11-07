@@ -70,13 +70,13 @@ fun MyTextField(
         focusedTextColor = Colors.White,
         focusedContainerColor = Colors.DarkGrey,
         focusedIndicatorColor = Colors.White,
-        unfocusedTextColor = Colors.White,
+        unfocusedTextColor =  Colors.White ,
         unfocusedContainerColor = Colors.DarkGrey,
         unfocusedIndicatorColor = Colors.Transparent,
         errorIndicatorColor = Colors.Red,
         errorContainerColor = Colors.DarkGrey,
-        disabledTextColor = Colors.White,
-        disabledContainerColor = Colors.DarkGrey,
+        disabledTextColor = Colors.LightGrey,
+        disabledContainerColor = Colors.Transparent,
         disabledIndicatorColor = Colors.Transparent,
     )
 

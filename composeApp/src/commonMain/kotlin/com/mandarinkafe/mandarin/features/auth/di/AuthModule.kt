@@ -39,10 +39,3 @@ val authModule = module {
     // ViewModel
     singleOf(::AuthViewModel)
 }
-
-
-
-
-
-
-

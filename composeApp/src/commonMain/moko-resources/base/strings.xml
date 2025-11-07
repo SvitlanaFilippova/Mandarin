@@ -173,11 +173,10 @@
 
     <!-- Оформление заказа - форма -->
     <string name="your_name">Имя</string>
-    <string name="your_phone_required">Номер телефона *</string>
+    <string name="your_phone">Номер телефона</string>
     <string name="phone_prefix">+7</string>
     <string name="phone_mask">(###) ###-##-##</string>
     <string name="phone_placeholder">(XXX) XXX-XX-XX</string>
-    <string name="save_user_data">Сохранить имя и номер телефона для будущих заказов</string>
     <string name="street_and_building">Улица и дом *</string>
     <string name="address_comment">Комментарий для курьера</string>
     <string name="your_comment">Комментарий к заказу</string>
@@ -198,8 +197,8 @@
     <string name="discount_template">Скидка %1$d%%</string>
     <string name="delivery_cost">Стоимость доставки</string>
     <string name="submit_order">Оформить заказ</string>
-    <string name="save_name_and_phone">Использовать имя и телефон для будущих заказов</string>
-    <string name="update_saved_name_and_phone">Обновить имя и телефон для будущих заказов</string>
+    <string name="save_name_for_future">Сохранить имя для будущих заказов</string>
+    <string name="update_saved_name_and_phone">Обновить имя для будущих заказов</string>
 
 
     <!-- Оформление заказа - сообщения и ошибки -->
@@ -544,6 +543,7 @@
 
     <!-- Личный кабинет -->
     <string name="personal_account">Личный кабинет</string>
+    <string name="personal_info">Персональная информация</string>
     <string name="active_devices">Активные устройства</string>
     <string name="unknown_device">Неизвестное устройство</string>
     <string name="login_date">Дата авторизации: %1$s</string>

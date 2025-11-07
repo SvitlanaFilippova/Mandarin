@@ -59,19 +59,15 @@ fun OrderContent(
             )
         }
         item {
-            with(state) {
-                PersonalInfo(
-                    nameQuery = userInfo.name,
-                    phoneQuery = userInfo.phone,
-                    isError = isError,
-                    phoneIsValid = userInfo.phoneIsValid,
-                    showSaveUserInfoCheckbox = showSaveUserInfoCheckbox,
-                    saveUserInfoCheckboxText = stringResource(saveUserInfoCheckboxText),
-                    saveUserInfo = saveUserInfo,
-                    onNameEntered = { onEvent(OrderEvent.SetName(it)) },
-                    onPhoneChanged = { onEvent(OrderEvent.SetPhone(it)) },
-                    onSaveUserInfoToggled = { onEvent(OrderEvent.ToggleSaveUserInfo(it)) },
-                )
+            if (state.savedNameIsEmpty) {
+                with(state) {
+                    PersonalInfo(
+                        nameQuery = userInfo.name,
+                        saveName = shouldSaveUserName,
+                        onNameEntered = { onEvent(OrderEvent.SetName(it)) },
+                        onSaveNameToggled = { onEvent(OrderEvent.ToggleSaveUserInfo(it)) },
+                    )
+                }
             }
         }
 

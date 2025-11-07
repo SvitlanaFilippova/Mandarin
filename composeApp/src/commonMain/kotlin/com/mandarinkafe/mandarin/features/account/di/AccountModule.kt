@@ -1,5 +1,7 @@
 package com.mandarinkafe.mandarin.features.account.di
 
+import com.mandarinkafe.mandarin.features.account.data.impl.UserInfoRepositoryImpl
+import com.mandarinkafe.mandarin.features.account.domain.api.UserInfoRepository
 import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.AccountViewModel
 import com.mandarinkafe.mandarin.features.auth.domain.api.GetActiveSessionsUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.RevokeSessionUseCase
@@ -11,7 +13,7 @@ import org.koin.dsl.module
 
 val accountModule = module {
     // Data Layer
-    // (используется AuthRepository из authModule)
+    singleOf(::UserInfoRepositoryImpl) { bind<UserInfoRepository>() }
 
     // Domain Layer
     singleOf(::GetActiveSessionsUseCaseImpl) { bind<GetActiveSessionsUseCase>() }

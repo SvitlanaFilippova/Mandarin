@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.account.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
+import com.mandarinkafe.mandarin.features.account.domain.api.UserInfoRepository
 import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.AccountContract.AccountEffect
 import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.AccountContract.AccountEvent
 import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.AccountContract.AccountState
@@ -9,19 +10,26 @@ import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.GetActiveSessionsUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.RevokeSessionUseCase
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AccountViewModel(
     private val getActiveSessionsUseCase: GetActiveSessionsUseCase,
     private val revokeSessionUseCase: RevokeSessionUseCase,
     private val authRepository: AuthRepository,
+    private val userInfoRepository: UserInfoRepository,
 ) : BaseViewModel<AccountEvent, AccountEffect, AccountState>() {
+
+    private var saveNameJob: Job? = null
 
     override fun setInitialState() = AccountState()
 
     init {
+        observeUserInfo()
         loadSessions()
     }
 
@@ -30,8 +38,80 @@ class AccountViewModel(
             is AccountEvent.LoadSessions -> loadSessions()
             is AccountEvent.RevokeSession -> revokeSession(event.sessionId)
             is AccountEvent.Logout -> logout()
+            is AccountEvent.SetName -> setName(event.query)
         }
     }
+
+    private fun observeUserInfo() {
+        viewModelScope.launch {
+            userInfoRepository.userInfo.collect { userInfo ->
+                Napier.d("AccountViewModel: UserInfo updated - name: ${userInfo?.name}, phone: ${userInfo?.phone}")
+                userInfo?.let {
+                    setState {
+                        copy(
+                            userInfo = this.userInfo.copy(
+                                name = userInfo.name,
+                                phone = userInfo.phone.formatPhoneNumberForDomain(),
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setName(query: String) {
+        val newInfo = state.value.userInfo.copy(name = query)
+        setState {
+            copy(
+                userInfo = newInfo
+            )
+        }
+        
+        // Отменяем предыдущее сохранение
+        saveNameJob?.cancel()
+        
+        // Запускаем новое сохранение с дебаунсом
+        saveNameJob = viewModelScope.launch {
+            delay(500) // 500ms дебаунс
+            saveUserName(query.trim())
+        }
+    }
+
+    private fun saveUserName(enteredName: String) {
+        viewModelScope.launch {
+            val currentUserInfo = userInfoRepository.getUserInfo()
+
+            // Обновляем имя на сервере, если оно было пустое или изменилось
+            if (currentUserInfo != null && enteredName.trim().isNotBlank()) {
+                if (currentUserInfo.name != enteredName) {
+                    // Получаем access token
+                    val accessToken = authRepository.getAccessToken()
+                    if (accessToken != null) {
+                        Napier.d("AccountViewModel: Saving name to server: '$enteredName'")
+                        val result = userInfoRepository.updateName(accessToken, enteredName)
+                        when (result) {
+                            is Resource.Success -> {
+                                Napier.d("AccountViewModel: Name saved successfully")
+                            }
+                            is Resource.ErrorNoInternet -> {
+                                Napier.w("AccountViewModel: No internet, name not saved")
+                                sendEffect(AccountEffect.ShowError("Нет подключения к интернету"))
+                            }
+                            is Resource.ErrorOther -> {
+                                Napier.e("AccountViewModel: Failed to save name: ${result.message}")
+                                sendEffect(AccountEffect.ShowError("Не удалось сохранить имя"))
+                            }
+                            else -> {}
+                        }
+                    } else {
+                        Napier.w("AccountViewModel: No access token, can't update name")
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun loadSessions() {
         viewModelScope.launch {
@@ -74,19 +154,16 @@ class AccountViewModel(
             when (val result = revokeSessionUseCase(sessionId)) {
                 is Resource.Success -> {
                     if (result.data == true) {
-                        Napier.d("AccountViewModel: Session revoked successfully")
                         sendEffect(AccountEffect.SessionRevoked)
                         // Перезагружаем список сессий
                         loadSessions()
                     } else {
-                        Napier.e("AccountViewModel: Failed to revoke session")
                         sendEffect(AccountEffect.ShowError("Не удалось завершить сессию"))
                     }
                 }
 
                 is Resource.Loading, is Resource.Idle -> {}
                 is Resource.ErrorNoInternet -> {
-                    Napier.e("AccountViewModel: No internet connection")
                     sendEffect(AccountEffect.ShowError("Нет подключения к интернету"))
                 }
 

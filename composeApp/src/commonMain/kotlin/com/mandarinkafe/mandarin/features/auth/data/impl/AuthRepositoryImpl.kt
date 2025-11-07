@@ -1,12 +1,14 @@
 package com.mandarinkafe.mandarin.features.auth.data.impl
 
 import com.mandarinkafe.mandarin.core.domain.models.AuthTokens
+import com.mandarinkafe.mandarin.features.account.domain.api.UserInfoRepository
 import com.mandarinkafe.mandarin.features.auth.data.Mapper.toDomain
 import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorage
 import com.mandarinkafe.mandarin.features.auth.data.dto.ActiveSessionsResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionResponse
+import com.mandarinkafe.mandarin.features.auth.data.dto.ValidateTokenResponse
 import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClient
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.auth.domain.models.ActiveSession
@@ -21,7 +23,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class AuthRepositoryImpl(
     private val networkClient: AuthNetworkClient,
     private val tokenStorage: TokenStorage,
-    ) : AuthRepository {
+    private val userInfoRepository: UserInfoRepository,
+) : AuthRepository {
 
     private val _authState = MutableStateFlow(false)
     override val authState: Flow<Boolean> = _authState
@@ -82,8 +85,9 @@ class AuthRepositoryImpl(
                 }
             }
             
-            // Всегда очищаем локальные токены
+            // Всегда очищаем локальные токены и данные пользователя
             clearTokens()
+            userInfoRepository.clearUserInfo()
         } catch (e: Exception) {
             Napier.e("AuthRepository: Exception during logout", e)
             throw e
@@ -117,6 +121,13 @@ class AuthRepositoryImpl(
 
                 HTTP_SUCCESS -> {
                     _authState.value = true
+                    
+                    // Обновляем информацию о пользователе из ответа
+                    val validateResponse = response as? ValidateTokenResponse
+                    validateResponse?.data?.let { userInfoDto ->
+                        userInfoRepository.updateFromServer(userInfoDto)
+                    }
+                    
                     true
                 }
 

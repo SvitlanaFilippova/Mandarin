@@ -9,6 +9,8 @@ data class UserInfoDto(
     val id: String?,
     @SerialName("phone")
     val phone: String?,
+    @SerialName("name")
+    val name: String?,
     @SerialName("is_verified")
     val isVerified: Boolean?,
 )

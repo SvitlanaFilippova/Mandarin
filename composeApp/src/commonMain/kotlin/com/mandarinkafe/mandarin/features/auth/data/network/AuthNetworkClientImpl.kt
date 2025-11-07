@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusB
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusByPhoneRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationRequest
+import com.mandarinkafe.mandarin.features.auth.data.dto.UpdateNameRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeRequest
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 
@@ -92,5 +93,15 @@ class AuthNetworkClientImpl(
             return Response().apply { resultCode = NO_CONNECTION }
         }
         return api.logout(accessToken)
+    }
+
+    override suspend fun updateUserName(
+        accessToken: String,
+        request: UpdateNameRequest,
+    ): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return api.updateUserName(accessToken, request)
     }
 }

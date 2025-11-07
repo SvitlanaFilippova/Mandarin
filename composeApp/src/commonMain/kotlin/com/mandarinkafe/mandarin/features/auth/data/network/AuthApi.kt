@@ -19,6 +19,7 @@ import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationResponse
+import com.mandarinkafe.mandarin.features.auth.data.dto.UpdateNameRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.UserInfoDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.ValidateTokenResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeDataDto
@@ -33,6 +34,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
@@ -343,6 +345,39 @@ class AuthApi(
             }
         } catch (e: Throwable) {
             Napier.e("AuthApi: logout - Exception", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun updateUserName(accessToken: String, request: UpdateNameRequest): Response {
+        return try {
+            val httpResponse = client.patch("/auth/me/name") {
+                header("x-api-key", key)
+                header("Authorization", "$BEARER_TOKEN_TYPE $accessToken")
+                setBody(request)
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> {
+                    Response().apply { resultCode = HTTP_SUCCESS }
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
+                }
+
+                else -> {
+                    val errorBody = try {
+                        httpResponse.body<String>()
+                    } catch (e: Exception) {
+                        "Failed to read error body: ${e.message}"
+                    }
+                    Napier.e("AuthApi: updateUserName - HTTP error ${httpResponse.status.value}: $errorBody")
+                    Response().apply { resultCode = HTTP_SERVER_ERROR }
+                }
+            }
+        } catch (e: Throwable) {
+            Napier.e("AuthApi: updateUserName - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

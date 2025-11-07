@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusB
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusByPhoneRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationRequest
+import com.mandarinkafe.mandarin.features.auth.data.dto.UpdateNameRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeRequest
 
 interface AuthNetworkClient {
@@ -19,4 +20,5 @@ interface AuthNetworkClient {
     suspend fun getActiveSessions(accessToken: String): Response
     suspend fun revokeSession(accessToken: String, request: RevokeSessionRequest): Response
     suspend fun logout(accessToken: String): Response
+    suspend fun updateUserName(accessToken: String, request: UpdateNameRequest): Response
 }
