@@ -24,7 +24,6 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.C
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.OrderCreator
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
-import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.UserInfoUi
 import com.mandarinkafe.mandarin.features.savedadresses.domain.AddressUseCases
 import com.mandarinkafe.mandarin.features.savedadresses.domain.CartContentUseCases
 import com.mandarinkafe.mandarin.features.savedadresses.domain.OrderInfoUseCases
@@ -59,7 +58,6 @@ class OrderViewModel(
     init {
         getSavedAddresses()
         observeCartItems()
-        getSavedUserInfo()
     }
 
     override fun setInitialState() = OrderState()
@@ -92,6 +90,7 @@ class OrderViewModel(
     private fun getInitData() {
         getPaymentTypes()
         getSavedAddresses()
+        getSavedUserInfo()
     }
 
     private fun removePickupOnly() {
@@ -130,35 +129,37 @@ class OrderViewModel(
 
     private fun getSavedUserInfo() {
         viewModelScope.launch {
-            // Если пользователь авторизован, ждем загрузки данных
-            if (authRepository.isAuthorized()) {
-                Napier.d("OrderViewModel: User is authorized, waiting for user info...")
-                
-                // Ждем первое не-null значение (с таймаутом 5 секунд)
-                val initialInfo = withTimeoutOrNull(5000) {
-                    userInfoRepository.userInfo.first { it != null }
-                }
-                
-                if (initialInfo != null) {
-                    Napier.d("OrderViewModel: Initial user info loaded - name: ${initialInfo.name}, phone: ${initialInfo.phone}")
-                    setState {
-                        copy(
-                            userInfo = this.userInfo.copy(
-                                name = initialInfo.name,
-                                phone = initialInfo.phone.formatPhoneNumberForDomain(),
-                            ),
-                            savedNameIsEmpty = initialInfo.name.trim().isEmpty(),
-                        )
-                    }
-                    checkDiscount(initialInfo.phone)
-                } else {
-                    Napier.w("OrderViewModel: Timeout waiting for user info")
-                }
+            var isFirstLoad = true
+
+            // Ждем первое не-null значение с таймаутом
+
+            val initialInfo = withTimeoutOrNull(Constants.USER_DATA_WAIT_TIMEOUT) {
+                userInfoRepository.userInfo.first { it != null }
             }
-            
-            // Подписываемся на дальнейшие обновления
+
+            if (initialInfo != null) {
+                setState {
+                    copy(
+                        userInfo = this.userInfo.copy(
+                            name = initialInfo.name,
+                            phone = initialInfo.phone.formatPhoneNumberForDomain(),
+                        ),
+                        savedNameIsEmpty = initialInfo.name.trim().isEmpty(),
+                    )
+                }
+                checkDiscount(initialInfo.phone)
+                isFirstLoad = false
+            } else {
+                Napier.w("OrderViewModel: Timeout waiting for user info")
+            }
+
+            // Подписываемся на дальнейшие обновления (пропускаем первое, если уже загрузили)
             userInfoRepository.userInfo.collect { userInfo ->
-                Napier.d("OrderViewModel: UserInfo updated - name: ${userInfo?.name}, phone: ${userInfo?.phone}")
+                if (isFirstLoad) {
+                    isFirstLoad = false
+                    return@collect
+                }
+
                 userInfo?.let {
                     setState {
                         copy(
@@ -349,7 +350,7 @@ class OrderViewModel(
                 userInfo = newInfo
             )
         }
-      }
+    }
 
     private fun setNoNeedUtensils(noNeedUtensils: Boolean) {
         setState { copy(utensils = utensils.copy(noNeedUtensils = noNeedUtensils)) }

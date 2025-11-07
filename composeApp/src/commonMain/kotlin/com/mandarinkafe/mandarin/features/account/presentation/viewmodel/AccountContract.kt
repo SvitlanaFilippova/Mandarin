@@ -12,6 +12,7 @@ sealed interface AccountContract {
         data class RevokeSession(val sessionId: String) : AccountEvent
         data object Logout : AccountEvent
         data class SetName(val query: String) : AccountEvent
+        data object SaveNameNow : AccountEvent
         data object OnPhoneClick : AccountEvent
     }
 
@@ -22,6 +23,7 @@ sealed interface AccountContract {
 
     data class AccountState(
         val userInfo: UserInfoUi = UserInfoUi(),
+        val showNameChangeButtons: Boolean = false,
         val isLoading: Boolean = false,
         val sessions: List<ActiveSession> = emptyList(),
         val error: UiError? = null,

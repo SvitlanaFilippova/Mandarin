@@ -106,7 +106,7 @@ fun CartItemBaseInfo(
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = customizedMeal.customizedText(),
-                    style = Typography.MealSmallTextStyle,
+                    style = Typography.SmallLightTextStyle,
                     color = contentColor,
 
                     )
@@ -122,7 +122,7 @@ fun CartItemBaseInfo(
                         .fillMaxWidth()
                         .padding(vertical = MarginSmall8),
                     text = "Комментарий: ${item.comment}",
-                    style = Typography.MealSmallTextStyle,
+                    style = Typography.SmallLightTextStyle,
                     color = contentColor,
                 )
             }

@@ -60,7 +60,9 @@ fun AccountScreen(navController: NavHostController) {
                     phone = userInfo.phone,
                     nameQuery = userInfo.name,
                     onNameEntered = { viewModel.onEvent(AccountEvent.SetName(it)) },
-                    onPhoneClick = { viewModel.onEvent(AccountEvent.OnPhoneClick) }
+                    onPhoneClick = { viewModel.onEvent(AccountEvent.OnPhoneClick) },
+                    saveNameNow = { viewModel.onEvent(AccountEvent.SaveNameNow) },
+                    showNameChangeButtons = showNameChangeButtons
                 )
 
                 Spacer(modifier = Modifier.size(Dimens.MarginSmall8))
