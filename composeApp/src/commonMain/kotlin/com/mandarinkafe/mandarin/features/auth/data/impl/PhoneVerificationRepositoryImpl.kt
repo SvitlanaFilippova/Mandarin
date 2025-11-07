@@ -45,30 +45,25 @@ class PhoneVerificationRepositoryImpl(
                     val wrapper = response as? PhoneVerificationResponse
 
                     if (wrapper == null) {
-                        Napier.e("PhoneVerificationRepository: Failed to cast response, type: ${response::class.simpleName}")
                         Resource.ErrorOther("Ошибка преобразования ответа")
                     } else {
                         wrapper.data?.let {
                             Resource.Success(it.toDomain())
                         } ?: run {
-                            Napier.e("PhoneVerificationRepository: requestPhoneVerification - Response data is NULL")
                             Resource.ErrorOther("Пустой ответ от сервера")
                         }
                     }
                 }
 
                 HTTP_SERVER_ERROR -> {
-                    Napier.e("PhoneVerificationRepository: requestPhoneVerification - HTTP_SERVER_ERROR")
                     Resource.ErrorOther("Ошибка сервера")
                 }
 
                 else -> {
-                    Napier.e("PhoneVerificationRepository: requestPhoneVerification - Unknown error code: ${response.resultCode}")
                     Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
                 }
             }
         } catch (e: Exception) {
-            Napier.e("PhoneVerificationRepository: requestPhoneVerification - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
@@ -90,23 +85,19 @@ class PhoneVerificationRepositoryImpl(
                     wrapper.data?.let {
                         Resource.Success(it.toDomain())
                     } ?: run {
-                        Napier.e("PhoneVerificationRepository: checkVerificationStatusByCheckId - Response data is NULL")
                         Resource.ErrorOther("Пустой ответ от сервера")
                     }
                 }
 
                 HTTP_SERVER_ERROR -> {
-                    Napier.e("PhoneVerificationRepository: checkVerificationStatusByCheckId - HTTP_SERVER_ERROR")
                     Resource.ErrorOther("Ошибка сервера")
                 }
 
                 else -> {
-                    Napier.e("PhoneVerificationRepository: checkVerificationStatusByCheckId - Unknown error code: ${response.resultCode}")
                     Resource.ErrorOther("Неизвестная ошибка")
                 }
             }
         } catch (e: Exception) {
-            Napier.e("PhoneVerificationRepository: checkVerificationStatusByCheckId - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
@@ -114,7 +105,8 @@ class PhoneVerificationRepositoryImpl(
     override fun observeVerificationStatusByPhone(phone: String): Flow<Resource<PhoneVerificationStatus>> =
         flow {
             val deviceName = deviceInfoProvider.getDeviceName()
-            val request = PhoneVerificationStatusByPhoneRequest(phone = phone, deviceName = deviceName)
+            val request =
+                PhoneVerificationStatusByPhoneRequest(phone = phone, deviceName = deviceName)
 
             while (true) {
                 try {
@@ -126,7 +118,6 @@ class PhoneVerificationRepositoryImpl(
                             val status = response.data
 
                             if (status == null) {
-                                Napier.e("PhoneVerificationRepository: observeVerificationStatusByPhone - Status data is NULL")
                                 emit(Resource.ErrorOther("Пустой ответ от сервера"))
                                 delay(POLLING_INTERVAL_SLOW_MS)
                             } else {
@@ -169,7 +160,10 @@ class PhoneVerificationRepositoryImpl(
                         }
                     }
                 } catch (e: Exception) {
-                    Napier.e("PhoneVerificationRepository: observeVerificationStatusByPhone - Exception", e)
+                    Napier.e(
+                        "PhoneVerificationRepository: observeVerificationStatusByPhone - Exception",
+                        e
+                    )
                     emit(Resource.ErrorOther("Ошибка: ${e.message}"))
                     delay(POLLING_INTERVAL_SLOW_MS)
                 }
@@ -190,23 +184,19 @@ class PhoneVerificationRepositoryImpl(
                     wrapper.data?.let {
                         Resource.Success(it.toDomain())
                     } ?: run {
-                        Napier.e("PhoneVerificationRepository: checkVerificationStatusByPhone - Response data is NULL")
                         Resource.ErrorOther("Пустой ответ от сервера")
                     }
                 }
 
                 HTTP_SERVER_ERROR -> {
-                    Napier.e("PhoneVerificationRepository: checkVerificationStatusByPhone - HTTP_SERVER_ERROR")
                     Resource.ErrorOther("Ошибка сервера")
                 }
 
                 else -> {
-                    Napier.e("PhoneVerificationRepository: checkVerificationStatusByPhone - Unknown error code: ${response.resultCode}")
                     Resource.ErrorOther("Неизвестная ошибка")
                 }
             }
         } catch (e: Exception) {
-            Napier.e("PhoneVerificationRepository: checkVerificationStatusByPhone - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
@@ -222,11 +212,11 @@ class PhoneVerificationRepositoryImpl(
                         Resource.Success(dto.toDomain())
                     } ?: Resource.ErrorOther("Пустой ответ от сервера")
                 }
+
                 HTTP_SERVER_ERROR -> Resource.ErrorOther("Ошибка сервера")
                 else -> Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
             }
         } catch (e: Exception) {
-            Napier.e("PhoneVerificationRepository: requestSmsVerification - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
@@ -234,7 +224,8 @@ class PhoneVerificationRepositoryImpl(
     override suspend fun verifySmsCode(phone: String, code: String): Resource<VerifySmsCodeResult> {
         return try {
             val deviceName = deviceInfoProvider.getDeviceName()
-            val response = networkClient.verifySmsCode(VerifySmsCodeRequest(phone, code, deviceName))
+            val response =
+                networkClient.verifySmsCode(VerifySmsCodeRequest(phone, code, deviceName))
             when (response.resultCode) {
                 NO_CONNECTION -> Resource.ErrorNoInternet()
                 HTTP_SUCCESS -> {
@@ -243,11 +234,11 @@ class PhoneVerificationRepositoryImpl(
                         Resource.Success(dto.toDomain())
                     } ?: Resource.ErrorOther("Пустой ответ от сервера")
                 }
+
                 HTTP_SERVER_ERROR -> Resource.ErrorOther("Ошибка сервера")
                 else -> Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
             }
         } catch (e: Exception) {
-            Napier.e("PhoneVerificationRepository: verifySmsCode - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }

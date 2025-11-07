@@ -22,7 +22,6 @@ import com.mandarinkafe.mandarin.features.more.presentation.ui.components.MenuIt
 import com.mandarinkafe.mandarin.navigation.extensions.navigateOrdersHistory
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAboutScreen
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAccountScreen
-import com.mandarinkafe.mandarin.navigation.extensions.navigateToAuthScreen
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToContactsScreen
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToDeliveryScreen
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToLegalScreen

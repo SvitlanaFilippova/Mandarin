@@ -20,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import dev.icerock.moko.resources.StringResource
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -33,6 +32,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberAccountViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
+import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -54,7 +54,6 @@ fun AccountScreen(navController: NavHostController) {
                 .verticalScroll(rememberScrollState())
                 .padding(Dimens.MarginSmall8)
         ) {
-
             with(state) {
                 PersonalInfoSection(
                     phone = userInfo.phone,

@@ -71,7 +71,7 @@ fun MyTextField(
         focusedTextColor = Colors.White,
         focusedContainerColor = Colors.DarkGrey,
         focusedIndicatorColor = Colors.White,
-        unfocusedTextColor =  Colors.White ,
+        unfocusedTextColor = Colors.White,
         unfocusedContainerColor = Colors.DarkGrey,
         unfocusedIndicatorColor = Colors.Transparent,
         errorIndicatorColor = Colors.Red,
@@ -129,6 +129,6 @@ fun MyTextField(
             leadingIcon = leadingIcon,
             prefix = prefix,
 
-        )
+            )
     }
 }

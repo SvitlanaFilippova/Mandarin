@@ -87,13 +87,14 @@ class AuthApi(
                 }
 
                 else -> {
-                    val errorBody = try {
+                    try {
                         httpResponse.body<String>()
                     } catch (e: Exception) {
                         "Failed to read error body: ${e.message}"
                     }
-                    Napier.e("AuthApi: checkVerificationStatusByPhone - HTTP error ${httpResponse.status.value}: $errorBody")
-                    Response().apply { resultCode = HTTP_SERVER_ERROR }
+                    Response().apply {
+                        resultCode = HTTP_SERVER_ERROR
+                    }
                 }
             }
         } catch (e: Throwable) {
@@ -116,12 +117,11 @@ class AuthApi(
                 }
 
                 else -> {
-                    val errorBody = try {
+                    try {
                         httpResponse.body<String>()
                     } catch (e: Exception) {
                         "Failed to read error body: ${e.message}"
                     }
-                    Napier.e("AuthApi: checkVerificationStatusByCheckId - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }

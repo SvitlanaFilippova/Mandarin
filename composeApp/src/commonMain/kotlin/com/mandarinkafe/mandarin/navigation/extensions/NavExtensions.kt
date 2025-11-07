@@ -28,7 +28,6 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_INFO_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SAVED_ADDRESSES_ROUTE
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import net.thauvin.erik.urlencoder.UrlEncoderUtil
 

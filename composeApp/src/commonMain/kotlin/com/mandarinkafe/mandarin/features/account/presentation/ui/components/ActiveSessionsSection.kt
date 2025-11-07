@@ -37,54 +37,55 @@ fun ActiveSessionsSection(
             modifier = Modifier.fillMaxWidth()
                 .padding(Dimens.MarginStandard16)
         ) {
-        Text(
-            text = stringResource(MR.strings.active_devices),
-            style = Typography.RegularTextStyle,
-            fontWeight = FontWeight.Bold
-        )
+            Text(
+                text = stringResource(MR.strings.active_devices),
+                style = Typography.RegularTextStyle,
+                fontWeight = FontWeight.Bold
+            )
 
-        Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
+            Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
 
-        when {
-            isLoading && sessions.isEmpty() -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(Dimens.MarginStandard16),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = Colors.Orange)
+            when {
+                isLoading && sessions.isEmpty() -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(Dimens.MarginStandard16),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Colors.Orange)
+                    }
                 }
-            }
 
-            sessions.isEmpty() -> {
-                TooltipText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = Dimens.MarginStandard16),
-                    text = stringResource(MR.strings.no_active_sessions)
-                )
-            }
-
-            else -> {
-                sessions.forEachIndexed { index, session ->
-                    ActiveSessionCard(
-                        session = session,
-                        onRevokeSession = {
-                            onRevokeSession(session.tokenId)
-                        }
+                sessions.isEmpty() -> {
+                    TooltipText(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Dimens.MarginStandard16),
+                        text = stringResource(MR.strings.no_active_sessions)
                     )
+                }
 
-                    if (index < sessions.size - 1) {
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            thickness = Dimens.DividerHeight1,
-                            color = Colors.LightGrey.copy(alpha = 0.2f)
+                else -> {
+                    sessions.forEachIndexed { index, session ->
+                        ActiveSessionCard(
+                            session = session,
+                            onRevokeSession = {
+                                onRevokeSession(session.tokenId)
+                            }
                         )
+
+                        if (index < sessions.size - 1) {
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                thickness = Dimens.DividerHeight1,
+                                color = Colors.LightGrey.copy(alpha = 0.2f)
+                            )
+                        }
                     }
                 }
             }
         }
     }
-}}
+}
