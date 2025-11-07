@@ -5,19 +5,14 @@ import com.mandarinkafe.mandarin.features.auth.domain.api.RequestPhoneVerificati
 import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationData
 import com.mandarinkafe.mandarin.util.Constants.PHONE_PREFIX_RU
 import com.mandarinkafe.mandarin.util.Resource
-import io.github.aakira.napier.Napier
 
 class RequestPhoneVerificationUseCaseImpl(
     private val phoneVerificationRepository: PhoneVerificationRepository,
 ) : RequestPhoneVerificationUseCase {
 
     override suspend fun invoke(phone: String): Resource<PhoneVerificationData> {
-        Napier.d("AUTH DEBUG: RequestPhoneVerificationUseCase.invoke() called with phone: $phone")
         val phoneWithPrefix = "$PHONE_PREFIX_RU$phone"
-        Napier.d("AUTH DEBUG: Phone with prefix: $phoneWithPrefix")
-        val result = phoneVerificationRepository.requestPhoneVerification(phone = phoneWithPrefix)
-        Napier.d("AUTH DEBUG: RequestPhoneVerificationUseCase.invoke() returning result")
-        return result
+        return phoneVerificationRepository.requestPhoneVerification(phone = phoneWithPrefix)
     }
 }
 

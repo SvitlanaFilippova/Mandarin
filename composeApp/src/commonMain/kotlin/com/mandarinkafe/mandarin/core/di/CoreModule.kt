@@ -25,6 +25,7 @@ val coreModule = module {
     single<CoroutineScope> {
         CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     }
+
     //  Menu Cache
     singleOf(::MenuCacheImpl) { bind<MenuCache>() }
 
@@ -36,9 +37,3 @@ val coreModule = module {
     singleOf(::RefreshMenuIfStaleUseCaseImpl) { bind<RefreshMenuIfStaleUseCase>() }
     singleOf(::AuthInteractor)
 }
-
-
-
-
-
-

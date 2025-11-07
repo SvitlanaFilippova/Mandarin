@@ -43,20 +43,15 @@ class AuthApi(
     private val key = BuildKonfig.MANDARIN_API_KEY
 
     suspend fun requestPhoneVerification(request: PhoneVerificationRequest): Response {
-        Napier.d("Auth CALL DEBUG: AuthApi: requestPhoneVerification() START - phone: ${request.phone}")
         return try {
-            Napier.d("Auth CALL DEBUG: AuthApi: requestPhoneVerification() - Отправка POST запроса на /auth/request")
             val httpResponse = client.post("/auth/request") {
                 header("x-api-key", key)
                 setBody(request)
             }
 
-            Napier.d("Auth CALL DEBUG: AuthApi: requestPhoneVerification() - Получен ответ, status: ${httpResponse.status.value}")
-
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
                     val data: PhoneVerificationDataDto = httpResponse.body()
-                    Napier.d("Auth CALL DEBUG: AuthApi: requestPhoneVerification() - SUCCESS, данные: checkId=${data.checkId}, expiresInSeconds=${data.expiresInSeconds}")
                     PhoneVerificationResponse(data = data).apply { resultCode = HTTP_SUCCESS }
                 }
 
@@ -66,34 +61,26 @@ class AuthApi(
                     } catch (e: Exception) {
                         "Failed to read error body: ${e.message}"
                     }
-                    Napier.e("Auth CALL DEBUG: AuthApi: requestPhoneVerification() - HTTP error: ${httpResponse.status.value}, body: $errorBody")
+                    Napier.e("AuthApi: requestPhoneVerification - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e(
-                "Auth CALL DEBUG: AuthApi: requestPhoneVerification(): EXCEPTION - ${e.message}",
-                e
-            )
-            Napier.e("Auth CALL DEBUG: AuthApi: requestPhoneVerification(): Exception type: ${e::class.simpleName}")
+            Napier.e("AuthApi: requestPhoneVerification - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
     suspend fun checkVerificationStatusByPhone(request: PhoneVerificationStatusByPhoneRequest): Response {
-        Napier.d("Auth CALL DEBUG: AuthApi: checkVerificationStatusByPhone() START - phone: ${request.phone}")
         return try {
             val httpResponse = client.post("/auth/verify-status") {
                 header("x-api-key", key)
                 setBody(request)
             }
 
-            Napier.d("Auth CALL DEBUG: AuthApi: checkVerificationStatusByPhone() - Получен ответ, status: ${httpResponse.status.value}")
-
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
                     val data: PhoneVerificationStatusDto = httpResponse.body()
-                    Napier.d("Auth CALL DEBUG: AuthApi: checkVerificationStatusByPhone() - SUCCESS, status: ${data.status}")
                     PhoneVerificationStatusResponse(data = data).apply { resultCode = HTTP_SUCCESS }
                 }
 
@@ -103,33 +90,26 @@ class AuthApi(
                     } catch (e: Exception) {
                         "Failed to read error body: ${e.message}"
                     }
-                    Napier.e("Auth CALL DEBUG: AuthApi: checkVerificationStatusByPhone() - HTTP error: ${httpResponse.status.value}, body: $errorBody")
+                    Napier.e("AuthApi: checkVerificationStatusByPhone - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e(
-                "Auth CALL DEBUG: AuthApi: checkVerificationStatusByPhone(): EXCEPTION - ${e.message}",
-                e
-            )
+            Napier.e("AuthApi: checkVerificationStatusByPhone - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
     suspend fun checkVerificationStatusByCheckId(request: PhoneVerificationStatusByCheckIdRequest): Response {
-        Napier.d("Auth CALL DEBUG: AuthApi: checkVerificationStatusByCheckId() START - checkId: ${request.checkId}")
         return try {
             val httpResponse = client.post("/auth/status") {
                 header("x-api-key", key)
                 setBody(request)
             }
 
-            Napier.d("Auth CALL DEBUG: AuthApi: checkVerificationStatusByCheckId() - Получен ответ, status: ${httpResponse.status.value}")
-
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
                     val data: PhoneVerificationStatusDto = httpResponse.body()
-                    Napier.d("Auth CALL DEBUG: AuthApi: checkVerificationStatusByCheckId() - SUCCESS, status: ${data.status}")
                     PhoneVerificationStatusResponse(data = data).apply { resultCode = HTTP_SUCCESS }
                 }
 
@@ -139,15 +119,12 @@ class AuthApi(
                     } catch (e: Exception) {
                         "Failed to read error body: ${e.message}"
                     }
-                    Napier.e("Auth CALL DEBUG: AuthApi: checkVerificationStatusByCheckId() - HTTP error: ${httpResponse.status.value}, body: $errorBody")
+                    Napier.e("AuthApi: checkVerificationStatusByCheckId - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e(
-                "Auth CALL DEBUG: AuthApi: checkVerificationStatusByCheckId(): EXCEPTION - ${e.message}",
-                e
-            )
+            Napier.e("AuthApi: checkVerificationStatusByCheckId - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -171,12 +148,12 @@ class AuthApi(
                     } catch (e: Exception) {
                         "Failed to read error body: ${e.message}"
                     }
-                    Napier.e("ServerApi: requestSmsVerification() HTTP error: ${httpResponse.status.value}, body: $errorBody")
+                    Napier.e("AuthApi: requestSmsVerification - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("ServerApi: requestSmsVerification(): Exception occurred", e)
+            Napier.e("AuthApi: requestSmsVerification - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -200,12 +177,12 @@ class AuthApi(
                     } catch (e: Exception) {
                         "Failed to read error body: ${e.message}"
                     }
-                    Napier.e("ServerApi: verifySmsCode() HTTP error: ${httpResponse.status.value}, body: $errorBody")
+                    Napier.e("AuthApi: verifySmsCode - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("ServerApi: verifySmsCode(): Exception occurred", e)
+            Napier.e("AuthApi: verifySmsCode - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -224,17 +201,16 @@ class AuthApi(
                 }
 
                 HttpStatusCode.Unauthorized -> {
-                    Napier.d("AuthApi: validateToken() - Token is invalid or expired (401)")
                     Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
                 }
 
                 else -> {
-                    Napier.e("AuthApi: validateToken() HTTP error: ${httpResponse.status.value}")
+                    Napier.e("AuthApi: validateToken - HTTP error ${httpResponse.status.value}")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: validateToken(): Exception occurred", e)
+            Napier.e("AuthApi: validateToken - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -253,7 +229,6 @@ class AuthApi(
                 }
 
                 HttpStatusCode.Unauthorized -> {
-                    Napier.d("AuthApi: refreshToken() - Refresh token is invalid or expired (401)")
                     Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
                 }
 
@@ -263,35 +238,30 @@ class AuthApi(
                     } catch (e: Exception) {
                         "Failed to read error body: ${e.message}"
                     }
-                    Napier.e("AuthApi: refreshToken() HTTP error: ${httpResponse.status.value}, body: $errorBody")
+                    Napier.e("AuthApi: refreshToken - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: refreshToken(): Exception occurred", e)
+            Napier.e("AuthApi: refreshToken - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
     suspend fun getActiveSessions(accessToken: String): Response {
         return try {
-            Napier.d("AuthApi: getActiveSessions() START")
             val httpResponse = client.get("/auth/active_sessions") {
                 header("x-api-key", key)
                 header("Authorization", "$BEARER_TOKEN_TYPE $accessToken")
             }
 
-            Napier.d("AuthApi: getActiveSessions() - Response received, status: ${httpResponse.status.value}")
-
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
                     val data: ActiveSessionsDataDto = httpResponse.body()
-                    Napier.d("AuthApi: getActiveSessions() - SUCCESS, sessions count: ${data.sessions.size}")
                     ActiveSessionsResponse(data = data).apply { resultCode = HTTP_SUCCESS }
                 }
 
                 HttpStatusCode.Unauthorized -> {
-                    Napier.d("AuthApi: getActiveSessions() - Unauthorized (401)")
                     Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
                 }
 
@@ -301,36 +271,31 @@ class AuthApi(
                     } catch (e: Exception) {
                         "Failed to read error body: ${e.message}"
                     }
-                    Napier.e("AuthApi: getActiveSessions() HTTP error: ${httpResponse.status.value}, body: $errorBody")
+                    Napier.e("AuthApi: getActiveSessions - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: getActiveSessions(): Exception occurred", e)
+            Napier.e("AuthApi: getActiveSessions - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
     suspend fun revokeSession(accessToken: String, request: RevokeSessionRequest): Response {
         return try {
-            Napier.d("AuthApi: revokeSession() START - sessionId: ${request.tokenId}")
             val httpResponse = client.post("/auth/revoke_session") {
                 header("x-api-key", key)
                 header("Authorization", "$BEARER_TOKEN_TYPE $accessToken")
                 setBody(request)
             }
 
-            Napier.d("AuthApi: revokeSession() - Response received, status: ${httpResponse.status.value}")
-
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
                     val data: RevokeSessionDataDto = httpResponse.body()
-                    Napier.d("AuthApi: revokeSession() - SUCCESS")
                     RevokeSessionResponse(data = data).apply { resultCode = HTTP_SUCCESS }
                 }
 
                 HttpStatusCode.Unauthorized -> {
-                    Napier.d("AuthApi: revokeSession() - Unauthorized (401)")
                     Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
                 }
 
@@ -340,34 +305,29 @@ class AuthApi(
                     } catch (e: Exception) {
                         "Failed to read error body: ${e.message}"
                     }
-                    Napier.e("AuthApi: revokeSession() HTTP error: ${httpResponse.status.value}, body: $errorBody")
+                    Napier.e("AuthApi: revokeSession - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: revokeSession(): Exception occurred", e)
+            Napier.e("AuthApi: revokeSession - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
     suspend fun logout(accessToken: String): Response {
         return try {
-            Napier.d("AuthApi: logout() START")
             val httpResponse = client.post("/auth/logout") {
                 header("x-api-key", key)
                 header("Authorization", "$BEARER_TOKEN_TYPE $accessToken")
             }
 
-            Napier.d("AuthApi: logout() - Response received, status: ${httpResponse.status.value}")
-
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
-                    Napier.d("AuthApi: logout() - SUCCESS")
                     Response().apply { resultCode = HTTP_SUCCESS }
                 }
 
                 HttpStatusCode.Unauthorized -> {
-                    Napier.d("AuthApi: logout() - Unauthorized (401)")
                     Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
                 }
 
@@ -377,12 +337,12 @@ class AuthApi(
                     } catch (e: Exception) {
                         "Failed to read error body: ${e.message}"
                     }
-                    Napier.e("AuthApi: logout() HTTP error: ${httpResponse.status.value}, body: $errorBody")
+                    Napier.e("AuthApi: logout - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: logout(): Exception occurred", e)
+            Napier.e("AuthApi: logout - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

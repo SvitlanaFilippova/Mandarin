@@ -43,9 +43,8 @@ class AuthRepositoryImpl(
         try {
             tokenStorage.saveTokens(tokens)
             _authState.value = true
-            Napier.d("Токены успешно сохранены")
         } catch (e: Exception) {
-            Napier.e("AuthRepository.saveTokens: Exception", e)
+            Napier.e("AuthRepository: saveTokens - Exception", e)
             throw e
         }
     }
@@ -54,17 +53,14 @@ class AuthRepositoryImpl(
         try {
             tokenStorage.clearTokens()
             _authState.value = false
-            Napier.d("Токены успешно очищены")
         } catch (e: Exception) {
-            Napier.e("AuthRepository.clearTokens: Exception", e)
+            Napier.e("AuthRepository: clearTokens - Exception", e)
             throw e
         }
     }
 
     override suspend fun logout() {
         try {
-            Napier.d("AuthRepository.logout: Starting logout process")
-            
             // Пытаемся вызвать logout на сервере
             val accessToken = getAccessToken()
             if (accessToken != null) {
@@ -72,27 +68,24 @@ class AuthRepositoryImpl(
                     val response = networkClient.logout(accessToken)
                     when (response.resultCode) {
                         HTTP_SUCCESS -> {
-                            Napier.d("AuthRepository.logout: Server logout successful")
+                            Napier.d("AuthRepository: Logout successful on server")
                         }
                         NO_CONNECTION -> {
-                            Napier.w("AuthRepository.logout: No internet, proceeding with local logout")
+                            Napier.w("AuthRepository: No internet during logout, proceeding with local logout")
                         }
                         else -> {
-                            Napier.w("AuthRepository.logout: Server logout failed with code ${response.resultCode}, proceeding with local logout")
+                            Napier.w("AuthRepository: Server logout failed (code ${response.resultCode}), proceeding with local logout")
                         }
                     }
                 } catch (e: Exception) {
-                    Napier.e("AuthRepository.logout: Exception during server logout, proceeding with local logout", e)
+                    Napier.e("AuthRepository: Exception during server logout", e)
                 }
-            } else {
-                Napier.d("AuthRepository.logout: No access token found, skipping server logout")
             }
             
             // Всегда очищаем локальные токены
             clearTokens()
-            Napier.d("AuthRepository.logout: Logout complete")
         } catch (e: Exception) {
-            Napier.e("AuthRepository.logout: Exception during logout", e)
+            Napier.e("AuthRepository: Exception during logout", e)
             throw e
         }
     }
@@ -119,30 +112,28 @@ class AuthRepositoryImpl(
             when (response.resultCode) {
                 NO_CONNECTION -> {
                     // При отсутствии сети считаем токен валидным (оптимистичный сценарий)
-                    Napier.d("AuthRepository.validateToken: No internet, keeping current auth state")
                     true
                 }
 
                 HTTP_SUCCESS -> {
                     _authState.value = true
-                    Napier.d("AuthRepository.validateToken: Token is valid")
                     true
                 }
 
                 401 -> {
                     // Токен невалиден - пытаемся обновить через refresh token
-                    Napier.d("AuthRepository.validateToken: Token is invalid (401), trying to refresh")
+                    Napier.d("AuthRepository: Token invalid (401), attempting refresh")
                     tryRefreshToken()
                 }
 
                 else -> {
                     // Ошибка сервера - считаем токен валидным (оптимистичный сценарий)
-                    Napier.e("AuthRepository.validateToken: Server error, keeping current auth state")
+                    Napier.e("AuthRepository: validateToken - Server error (code ${response.resultCode}), keeping auth state")
                     true
                 }
             }
         } catch (e: Exception) {
-            Napier.e("AuthRepository.validateToken: Exception", e)
+            Napier.e("AuthRepository: validateToken - Exception", e)
             // При ошибке считаем токен валидным (оптимистичный сценарий)
             true
         }
@@ -150,31 +141,36 @@ class AuthRepositoryImpl(
 
     private suspend fun tryRefreshToken(): Boolean {
         return try {
+            Napier.d("=== TOKEN REFRESH: Started ===")
             val tokens = tokenStorage.getTokens()
             if (tokens?.refreshToken == null) {
-                Napier.d("AuthRepository.tryRefreshToken: No refresh token, clearing auth")
+                Napier.w("TOKEN REFRESH: No refresh token found, clearing auth state")
                 clearTokens()
                 return false
             }
 
+            Napier.d("TOKEN REFRESH: Sending refresh request to server")
             val response = networkClient.refreshToken(tokens.refreshToken)
+            Napier.d("TOKEN REFRESH: Received response with code: ${response.resultCode}")
 
             when (response.resultCode) {
                 NO_CONNECTION -> {
-                    Napier.d("AuthRepository.tryRefreshToken: No internet, keeping current auth state")
+                    Napier.w("TOKEN REFRESH: No internet connection, keeping current auth state (optimistic)")
                     true
                 }
 
                 HTTP_SUCCESS -> {
+                    Napier.d("TOKEN REFRESH: Server responded with success")
                     val refreshResponse = response as? RefreshTokenResponse
                     val newTokens = refreshResponse?.data?.toDomain()
 
                     if (newTokens != null) {
+                        Napier.d("TOKEN REFRESH: New tokens received, saving to storage")
                         saveTokens(newTokens)
-                        Napier.d("AuthRepository.tryRefreshToken: Tokens successfully refreshed")
+                        Napier.d("TOKEN REFRESH: ✅ Successfully refreshed and saved new tokens")
                         true
                     } else {
-                        Napier.e("AuthRepository.tryRefreshToken: Empty response data")
+                        Napier.e("TOKEN REFRESH: ❌ Response is success but data is empty")
                         clearTokens()
                         false
                     }
@@ -182,19 +178,19 @@ class AuthRepositoryImpl(
 
                 401 -> {
                     // Refresh token тоже невалиден - очищаем всё
-                    Napier.d("AuthRepository.tryRefreshToken: Refresh token is invalid (401), clearing tokens")
+                    Napier.w("TOKEN REFRESH: ❌ Refresh token is invalid (401), clearing all auth data")
                     clearTokens()
                     false
                 }
 
                 else -> {
                     // Ошибка сервера при refresh - не трогаем текущие токены
-                    Napier.e("AuthRepository.tryRefreshToken: Server error, keeping current tokens")
+                    Napier.e("TOKEN REFRESH: Server error (code ${response.resultCode}), keeping current tokens (optimistic)")
                     true
                 }
             }
         } catch (e: Exception) {
-            Napier.e("AuthRepository.tryRefreshToken: Exception", e)
+            Napier.e("TOKEN REFRESH: ❌ Exception occurred, keeping current tokens (optimistic)", e)
             // При ошибке не трогаем текущие токены
             true
         }
@@ -204,48 +200,40 @@ class AuthRepositoryImpl(
         return try {
             val accessToken = getAccessToken()
             if (accessToken == null) {
-                Napier.e("AuthRepository.getActiveSessions: No access token")
+                Napier.e("AuthRepository: getActiveSessions - No access token")
                 return Resource.ErrorOther("Нет токена авторизации")
             }
 
             val response = networkClient.getActiveSessions(accessToken)
 
             when (response.resultCode) {
-                NO_CONNECTION -> {
-                    Napier.w("AuthRepository.getActiveSessions: No internet")
-                    Resource.ErrorNoInternet()
-                }
-
+                NO_CONNECTION -> Resource.ErrorNoInternet()
                 HTTP_SUCCESS -> {
                     val wrapper = response as? ActiveSessionsResponse
                     val sessions = wrapper?.data?.sessions?.map { it.toDomain() }
 
                     if (sessions != null) {
-                        Napier.d("AuthRepository.getActiveSessions: SUCCESS, sessions count: ${sessions.size}")
                         Resource.Success(sessions)
                     } else {
-                        Napier.e("AuthRepository.getActiveSessions: Empty response data")
+                        Napier.e("AuthRepository: getActiveSessions - Empty response data")
                         Resource.ErrorOther("Пустой ответ от сервера")
                     }
                 }
-
                 401 -> {
-                    Napier.e("AuthRepository.getActiveSessions: Unauthorized")
+                    Napier.e("AuthRepository: getActiveSessions - Unauthorized")
                     Resource.ErrorOther("Требуется авторизация")
                 }
-
                 HTTP_SERVER_ERROR -> {
-                    Napier.e("AuthRepository.getActiveSessions: Server error")
+                    Napier.e("AuthRepository: getActiveSessions - Server error")
                     Resource.ErrorOther("Ошибка сервера")
                 }
-
                 else -> {
-                    Napier.e("AuthRepository.getActiveSessions: Unknown error code: ${response.resultCode}")
+                    Napier.e("AuthRepository: getActiveSessions - Unknown error code: ${response.resultCode}")
                     Resource.ErrorOther("Неизвестная ошибка")
                 }
             }
         } catch (e: Exception) {
-            Napier.e("AuthRepository.getActiveSessions: Exception", e)
+            Napier.e("AuthRepository: getActiveSessions - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
@@ -254,43 +242,33 @@ class AuthRepositoryImpl(
         return try {
             val accessToken = getAccessToken()
             if (accessToken == null) {
-                Napier.e("AuthRepository.revokeSession: No access token")
+                Napier.e("AuthRepository: revokeSession - No access token")
                 return Resource.ErrorOther("Нет токена авторизации")
             }
 
             val response = networkClient.revokeSession(accessToken, RevokeSessionRequest(sessionId))
 
             when (response.resultCode) {
-                NO_CONNECTION -> {
-                    Napier.w("AuthRepository.revokeSession: No internet")
-                    Resource.ErrorNoInternet()
-                }
-
+                NO_CONNECTION -> Resource.ErrorNoInternet()
                 HTTP_SUCCESS -> {
                     val wrapper = response as? RevokeSessionResponse
-                    val success = wrapper?.data?.isSuccess ?: false
-
-                    Napier.d("AuthRepository.revokeSession: SUCCESS, result: $success")
-                    Resource.Success(success)
+                    Resource.Success(wrapper?.data?.isSuccess ?: false)
                 }
-
                 401 -> {
-                    Napier.e("AuthRepository.revokeSession: Unauthorized")
+                    Napier.e("AuthRepository: revokeSession - Unauthorized")
                     Resource.ErrorOther("Требуется авторизация")
                 }
-
                 HTTP_SERVER_ERROR -> {
-                    Napier.e("AuthRepository.revokeSession: Server error")
+                    Napier.e("AuthRepository: revokeSession - Server error")
                     Resource.ErrorOther("Ошибка сервера")
                 }
-
                 else -> {
-                    Napier.e("AuthRepository.revokeSession: Unknown error code: ${response.resultCode}")
+                    Napier.e("AuthRepository: revokeSession - Unknown error code: ${response.resultCode}")
                     Resource.ErrorOther("Неизвестная ошибка")
                 }
             }
         } catch (e: Exception) {
-            Napier.e("AuthRepository.revokeSession: Exception", e)
+            Napier.e("AuthRepository: revokeSession - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
