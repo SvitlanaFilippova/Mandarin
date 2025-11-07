@@ -4,6 +4,7 @@ import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.auth.domain.models.ActiveSession
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.UserInfoUi
 import com.mandarinkafe.mandarin.util.presentation.BaseContract
+import dev.icerock.moko.resources.StringResource
 
 sealed interface AccountContract {
     sealed interface AccountEvent : BaseContract.BaseEvent {
@@ -11,12 +12,12 @@ sealed interface AccountContract {
         data class RevokeSession(val sessionId: String) : AccountEvent
         data object Logout : AccountEvent
         data class SetName(val query: String) : AccountEvent
+        data object OnPhoneClick : AccountEvent
     }
 
     sealed interface AccountEffect : BaseContract.BaseEffect {
-        data object SessionRevoked : AccountEffect
         data object LoggedOut : AccountEffect
-        data class ShowError(val message: String) : AccountEffect
+        data class ShowMessage(val message: StringResource) : AccountEffect
     }
 
     data class AccountState(

@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.account.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.account.domain.api.UserInfoRepository
 import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.AccountContract.AccountEffect
@@ -39,7 +40,12 @@ class AccountViewModel(
             is AccountEvent.RevokeSession -> revokeSession(event.sessionId)
             is AccountEvent.Logout -> logout()
             is AccountEvent.SetName -> setName(event.query)
+            is AccountEvent.OnPhoneClick -> onPhoneClick()
         }
+    }
+
+    private fun onPhoneClick() {
+        sendEffect(AccountEffect.ShowMessage(MR.strings.cant_change_phone))
     }
 
     private fun observeUserInfo() {
@@ -96,11 +102,11 @@ class AccountViewModel(
                             }
                             is Resource.ErrorNoInternet -> {
                                 Napier.w("AccountViewModel: No internet, name not saved")
-                                sendEffect(AccountEffect.ShowError("Нет подключения к интернету"))
+                                sendEffect(AccountEffect.ShowMessage(MR.strings.error_no_internet))
                             }
                             is Resource.ErrorOther -> {
                                 Napier.e("AccountViewModel: Failed to save name: ${result.message}")
-                                sendEffect(AccountEffect.ShowError("Не удалось сохранить имя"))
+                                sendEffect(AccountEffect.ShowMessage(MR.strings.error_save_name))
                             }
                             else -> {}
                         }
@@ -133,13 +139,13 @@ class AccountViewModel(
                 is Resource.ErrorNoInternet -> {
                     Napier.e("AccountViewModel: No internet connection")
                     setState { copy(error = UiError.NoInternet) }
-                    sendEffect(AccountEffect.ShowError("Нет подключения к интернету"))
+                    sendEffect(AccountEffect.ShowMessage(MR.strings.error_no_internet))
                 }
 
                 else -> {
                     Napier.e("AccountViewModel: Error loading sessions: ${result.message}")
                     setState { copy(error = UiError.OtherError) }
-                    sendEffect(AccountEffect.ShowError(result.message ?: "Ошибка загрузки сессий"))
+                    sendEffect(AccountEffect.ShowMessage(MR.strings.error_load_sessions))
                 }
             }
 
@@ -154,26 +160,22 @@ class AccountViewModel(
             when (val result = revokeSessionUseCase(sessionId)) {
                 is Resource.Success -> {
                     if (result.data == true) {
-                        sendEffect(AccountEffect.SessionRevoked)
+                        sendEffect(AccountEffect.ShowMessage(MR.strings.session_revoked))
                         // Перезагружаем список сессий
                         loadSessions()
                     } else {
-                        sendEffect(AccountEffect.ShowError("Не удалось завершить сессию"))
+                        sendEffect(AccountEffect.ShowMessage(MR.strings.error_revoke_session))
                     }
                 }
 
                 is Resource.Loading, is Resource.Idle -> {}
                 is Resource.ErrorNoInternet -> {
-                    sendEffect(AccountEffect.ShowError("Нет подключения к интернету"))
+                    sendEffect(AccountEffect.ShowMessage(MR.strings.error_no_internet))
                 }
 
                 else -> {
                     Napier.e("AccountViewModel: Error revoking session: ${result.message}")
-                    sendEffect(
-                        AccountEffect.ShowError(
-                            result.message ?: "Ошибка завершения сессии"
-                        )
-                    )
+                    sendEffect(AccountEffect.ShowMessage(MR.strings.error_revoke_session))
                 }
             }
 
@@ -189,7 +191,7 @@ class AccountViewModel(
                 sendEffect(AccountEffect.LoggedOut)
             } catch (e: Exception) {
                 Napier.e("AccountViewModel: Error during logout", e)
-                sendEffect(AccountEffect.ShowError("Ошибка при выходе"))
+                sendEffect(AccountEffect.ShowMessage(MR.strings.error_logout))
             }
         }
     }

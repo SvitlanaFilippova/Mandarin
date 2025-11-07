@@ -1,7 +1,9 @@
 package com.mandarinkafe.mandarin.features.account.presentation.ui.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,6 +24,7 @@ fun PersonalInfoSection(
     phone: String,
     nameQuery: String,
     onNameEntered: (String) -> Unit,
+    onPhoneClick: () -> Unit,
 ) {
     val mask = MaskVisualTransformation(stringResource(MR.strings.phone_mask))
 
@@ -38,6 +41,7 @@ fun PersonalInfoSection(
                 style = Typography.RegularTextStyle,
                 fontWeight = FontWeight.Bold
             )
+            Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
 
             MyTextField(
                 value = nameQuery,
@@ -54,7 +58,7 @@ fun PersonalInfoSection(
                 placeholder = {
                     Text(
                         text = stringResource(MR.strings.phone_placeholder),
-                        style = com.mandarinkafe.mandarin.core.presentation.theme.Typography.RegularLightTextStyle
+                        style = Typography.RegularLightTextStyle
                     )
                 },
                 prefix = {
@@ -63,7 +67,8 @@ fun PersonalInfoSection(
                         style = Typography.RegularTextStyle,
                         color = Colors.LightGrey
                     )
-                }
+                },
+                onClick = onPhoneClick
             )
         }
     }

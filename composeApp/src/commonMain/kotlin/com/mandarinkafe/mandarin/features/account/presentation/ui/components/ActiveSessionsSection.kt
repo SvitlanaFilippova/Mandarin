@@ -30,8 +30,7 @@ fun ActiveSessionsSection(
     onRevokeSession: (String) -> Unit,
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth()
-            .padding(Dimens.MarginStandard16),
+        modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)
     ) {
         Column(

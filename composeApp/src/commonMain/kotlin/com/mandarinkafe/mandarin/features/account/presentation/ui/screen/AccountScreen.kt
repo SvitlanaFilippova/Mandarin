@@ -15,8 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import dev.icerock.moko.resources.StringResource
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -37,6 +41,7 @@ fun AccountScreen(navController: NavHostController) {
     val viewModel = rememberAccountViewModel()
     val state by viewModel.state.collectAsState()
     val snackbarHostState = LocalSnackbarHostState.current
+    var pendingMessageRes: StringResource? by remember { mutableStateOf(null) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         ScreenTitleWithBackButton(
@@ -55,9 +60,10 @@ fun AccountScreen(navController: NavHostController) {
                     phone = userInfo.phone,
                     nameQuery = userInfo.name,
                     onNameEntered = { viewModel.onEvent(AccountEvent.SetName(it)) },
+                    onPhoneClick = { viewModel.onEvent(AccountEvent.OnPhoneClick) }
                 )
 
-                Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
+                Spacer(modifier = Modifier.size(Dimens.MarginSmall8))
 
                 ActiveSessionsSection(
                     isLoading = isLoading,
@@ -93,15 +99,11 @@ fun AccountScreen(navController: NavHostController) {
         }
     }
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is AccountEffect.ShowError -> {
-                    snackbarHostState.showSnackbar(effect.message)
-                }
-
-                is AccountEffect.SessionRevoked -> {
-                    snackbarHostState.showSnackbar("Сессия завершена")
+                is AccountEffect.ShowMessage -> {
+                    pendingMessageRes = effect.message
                 }
 
                 is AccountEffect.LoggedOut -> {
@@ -112,5 +114,13 @@ fun AccountScreen(navController: NavHostController) {
                 }
             }
         }
+    }
+
+    val pendingMessage: String? = pendingMessageRes?.let { stringResource(it) }
+
+    LaunchedEffect(pendingMessage) {
+        val msg = pendingMessage ?: return@LaunchedEffect
+        snackbarHostState.showSnackbar(msg)
+        pendingMessageRes = null
     }
 }
