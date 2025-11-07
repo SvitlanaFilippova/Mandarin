@@ -55,13 +55,13 @@ class AuthRepositoryImpl(
             if (!isValid) {
                 Napier.e("AuthRepository: saveTokens - Token validation failed, clearing tokens")
                 clearTokens()
-                throw IllegalStateException("Failed to validate tokens after saving")
+                error("Failed to validate tokens after saving")
             }
             Napier.d("AuthRepository: saveTokens - ✅ Tokens saved and validated successfully")
+        } catch (e: IllegalStateException) {
+            throw e
         } catch (e: Exception) {
-            if (e !is IllegalStateException) {
-                Napier.e("AuthRepository: saveTokens - Exception", e)
-            }
+            Napier.e("AuthRepository: saveTokens - Exception", e)
             throw e
         }
     }
@@ -78,38 +78,28 @@ class AuthRepositoryImpl(
 
     override suspend fun logout() {
         try {
-            // Пытаемся вызвать logout на сервере
-            val accessToken = getAccessToken()
-            if (accessToken != null) {
-                try {
-                    val response = networkClient.logout(accessToken)
-                    when (response.resultCode) {
-                        HTTP_SUCCESS -> {
-                            Napier.d("AuthRepository: Logout successful on server")
-                        }
-
-                        NO_CONNECTION -> {
-                            Napier.w("AuthRepository: No internet during logout, proceeding with local logout")
-                        }
-
-                        else -> {
-                            Napier.w(
-                                "AuthRepository: Server logout failed (code ${response.resultCode}), " +
-                                        "proceeding with local logout"
-                            )
-                        }
-                    }
-                } catch (e: Exception) {
-                    Napier.e("AuthRepository: Exception during server logout", e)
-                }
-            }
-
+            performServerLogout()
             // Всегда очищаем локальные токены и данные пользователя
             clearTokens()
             userInfoRepository.clearUserInfo()
         } catch (e: Exception) {
             Napier.e("AuthRepository: Exception during logout", e)
             throw e
+        }
+    }
+
+    private suspend fun performServerLogout() {
+        val accessToken = getAccessToken() ?: return
+
+        try {
+            val response = networkClient.logout(accessToken)
+            when (response.resultCode) {
+                HTTP_SUCCESS -> Napier.d("AuthRepository: Logout successful on server")
+                NO_CONNECTION -> Napier.w("AuthRepository: No internet during logout, proceeding with local logout")
+                else -> Napier.w("AuthRepository: Server logout failed (code ${response.resultCode}), proceeding with local logout")
+            }
+        } catch (e: Exception) {
+            Napier.e("AuthRepository: Exception during server logout", e)
         }
     }
 

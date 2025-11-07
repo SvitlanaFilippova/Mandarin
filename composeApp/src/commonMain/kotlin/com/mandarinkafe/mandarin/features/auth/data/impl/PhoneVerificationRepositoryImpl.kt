@@ -43,20 +43,17 @@ class PhoneVerificationRepositoryImpl(
 
                 HTTP_SUCCESS -> {
                     val wrapper = response as? PhoneVerificationResponse
+                    val data = wrapper?.data
 
-                    if (wrapper == null) {
-                        Resource.ErrorOther("Ошибка преобразования ответа")
-                    } else {
-                        wrapper.data?.let {
-                            Resource.Success(it.toDomain())
-                        } ?: run {
-                            Resource.ErrorOther("Пустой ответ от сервера")
-                        }
+                    when {
+                        wrapper == null -> Resource.ErrorOther(ERROR_CONVERSION)
+                        data != null -> Resource.Success(data.toDomain())
+                        else -> Resource.ErrorOther(ERROR_EMPTY_RESPONSE)
                     }
                 }
 
                 HTTP_SERVER_ERROR -> {
-                    Resource.ErrorOther("Ошибка сервера")
+                    Resource.ErrorOther(ERROR_SERVER)
                 }
 
                 else -> {
@@ -85,16 +82,16 @@ class PhoneVerificationRepositoryImpl(
                     wrapper.data?.let {
                         Resource.Success(it.toDomain())
                     } ?: run {
-                        Resource.ErrorOther("Пустой ответ от сервера")
+                        Resource.ErrorOther(ERROR_EMPTY_RESPONSE)
                     }
                 }
 
                 HTTP_SERVER_ERROR -> {
-                    Resource.ErrorOther("Ошибка сервера")
+                    Resource.ErrorOther(ERROR_SERVER)
                 }
 
                 else -> {
-                    Resource.ErrorOther("Неизвестная ошибка")
+                    Resource.ErrorOther(ERROR_UNKNOWN)
                 }
             }
         } catch (e: Exception) {
@@ -109,66 +106,49 @@ class PhoneVerificationRepositoryImpl(
                 PhoneVerificationStatusByPhoneRequest(phone = phone, deviceName = deviceName)
 
             while (true) {
-                try {
+                val delayMs = try {
                     val response = checkVerificationStatusByPhone(request)
                     emit(response)
-
-                    when (response) {
-                        is Resource.Success -> {
-                            val status = response.data
-
-                            if (status == null) {
-                                emit(Resource.ErrorOther("Пустой ответ от сервера"))
-                                delay(POLLING_INTERVAL_SLOW_MS)
-                            } else {
-                                // Останавливаем пулинг, если нужно
-                                if (status.shouldStopPolling == true) {
-                                    break
-                                }
-
-                                // Определяем интервал пулинга на основе оставшегося времени
-                                val expiresIn = status.expiresInSeconds
-                                if (expiresIn == null || expiresIn <= 0) {
-                                    break
-                                }
-
-                                val pollingInterval = when {
-                                    // Первые 60 секунд - часто
-                                    expiresIn > SECONDS_TO_CALL_DEFAULT - FAST_POLLING_START_SECONDS -> {
-                                        POLLING_INTERVAL_FAST_MS
-                                    }
-                                    // Последние 30 секунд - часто
-                                    expiresIn <= FAST_POLLING_END_SECONDS -> {
-                                        POLLING_INTERVAL_FAST_MS
-                                    }
-                                    // Средний период - реже
-                                    else -> {
-                                        POLLING_INTERVAL_MEDIUM_MS
-                                    }
-                                }
-
-                                delay(pollingInterval)
-                            }
-                        }
-
-                        is Resource.ErrorNoInternet -> {
-                            delay(POLLING_INTERVAL_MEDIUM_MS)
-                        }
-
-                        else -> {
-                            delay(POLLING_INTERVAL_SLOW_MS)
-                        }
-                    }
+                    calculateDelayAndCheckIfShouldContinue(response)
                 } catch (e: Exception) {
                     Napier.e(
                         "PhoneVerificationRepository: observeVerificationStatusByPhone - Exception",
                         e
                     )
                     emit(Resource.ErrorOther("Ошибка: ${e.message}"))
-                    delay(POLLING_INTERVAL_SLOW_MS)
+                    POLLING_INTERVAL_SLOW_MS
                 }
+
+                if (delayMs == null) break
+                delay(delayMs)
             }
         }
+
+    private fun calculateDelayAndCheckIfShouldContinue(response: Resource<PhoneVerificationStatus>): Long? {
+        return when (response) {
+            is Resource.Success -> handleSuccessResponse(response.data)
+            is Resource.ErrorNoInternet -> POLLING_INTERVAL_MEDIUM_MS
+            else -> POLLING_INTERVAL_SLOW_MS
+        }
+    }
+
+    private fun handleSuccessResponse(status: PhoneVerificationStatus?): Long? {
+        if (status == null) return POLLING_INTERVAL_SLOW_MS
+        if (status.shouldStopPolling == true) return null
+
+        val expiresIn = status.expiresInSeconds
+        if (expiresIn == null || expiresIn <= 0) return null
+
+        return calculatePollingInterval(expiresIn)
+    }
+
+    private fun calculatePollingInterval(expiresInSeconds: Int): Long {
+        return when {
+            expiresInSeconds > SECONDS_TO_CALL_DEFAULT - FAST_POLLING_START_SECONDS -> POLLING_INTERVAL_FAST_MS
+            expiresInSeconds <= FAST_POLLING_END_SECONDS -> POLLING_INTERVAL_FAST_MS
+            else -> POLLING_INTERVAL_MEDIUM_MS
+        }
+    }
 
     private suspend fun checkVerificationStatusByPhone(request: PhoneVerificationStatusByPhoneRequest): Resource<PhoneVerificationStatus> {
         return try {
@@ -184,16 +164,16 @@ class PhoneVerificationRepositoryImpl(
                     wrapper.data?.let {
                         Resource.Success(it.toDomain())
                     } ?: run {
-                        Resource.ErrorOther("Пустой ответ от сервера")
+                        Resource.ErrorOther(ERROR_EMPTY_RESPONSE)
                     }
                 }
 
                 HTTP_SERVER_ERROR -> {
-                    Resource.ErrorOther("Ошибка сервера")
+                    Resource.ErrorOther(ERROR_SERVER)
                 }
 
                 else -> {
-                    Resource.ErrorOther("Неизвестная ошибка")
+                    Resource.ErrorOther(ERROR_UNKNOWN)
                 }
             }
         } catch (e: Exception) {
@@ -244,13 +224,19 @@ class PhoneVerificationRepositoryImpl(
     }
 
     companion object {
-        private const val POLLING_INTERVAL_FAST_MS = 2000L  // 2 секунды - частое опрашивание
+        private const val POLLING_INTERVAL_FAST_MS = 2000L // 2 секунды - частое опрашивание
         private const val POLLING_INTERVAL_MEDIUM_MS = 7000L // 7 секунд - среднее опрашивание
         private const val POLLING_INTERVAL_SLOW_MS = 15000L // 15 секунд - редкое опрашивание
 
         private const val FAST_POLLING_START_SECONDS = 60 // Первые 60 секунд - часто
         private const val FAST_POLLING_END_SECONDS = 30 // Последние 30 секунд - часто
         private const val SECONDS_TO_CALL_DEFAULT = 300
+
+        // Error messages
+        private const val ERROR_EMPTY_RESPONSE = "Пустой ответ от сервера"
+        private const val ERROR_SERVER = "Ошибка сервера"
+        private const val ERROR_UNKNOWN = "Неизвестная ошибка"
+        private const val ERROR_CONVERSION = "Ошибка преобразования ответа"
     }
 }
 

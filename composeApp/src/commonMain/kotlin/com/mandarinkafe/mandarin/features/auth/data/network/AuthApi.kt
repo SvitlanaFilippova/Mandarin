@@ -44,10 +44,18 @@ class AuthApi(
 ) {
     private val key = BuildKonfig.MANDARIN_API_KEY
 
+    private companion object {
+        const val HEADER_API_KEY = "x-api-key"
+        const val HEADER_AUTHORIZATION = "Authorization"
+        const val ERROR_BODY_READ_FAILED = "Failed to read error body: "
+    }
+
+    private fun String.toAuthorizationHeader() = "$BEARER_TOKEN_TYPE $this"
+
     suspend fun requestPhoneVerification(request: PhoneVerificationRequest): Response {
         return try {
             val httpResponse = client.post("/auth/request") {
-                header("x-api-key", key)
+                header(HEADER_API_KEY, key)
                 setBody(request)
             }
 
@@ -61,7 +69,7 @@ class AuthApi(
                     val errorBody = try {
                         httpResponse.body<String>()
                     } catch (e: Exception) {
-                        "Failed to read error body: ${e.message}"
+                        "$ERROR_BODY_READ_FAILED${e.message}"
                     }
                     Napier.e("AuthApi: requestPhoneVerification - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
@@ -76,7 +84,7 @@ class AuthApi(
     suspend fun checkVerificationStatusByPhone(request: PhoneVerificationStatusByPhoneRequest): Response {
         return try {
             val httpResponse = client.post("/auth/verify-status") {
-                header("x-api-key", key)
+                header(HEADER_API_KEY, key)
                 setBody(request)
             }
 
@@ -90,7 +98,7 @@ class AuthApi(
                     try {
                         httpResponse.body<String>()
                     } catch (e: Exception) {
-                        "Failed to read error body: ${e.message}"
+                        "$ERROR_BODY_READ_FAILED${e.message}"
                     }
                     Response().apply {
                         resultCode = HTTP_SERVER_ERROR
@@ -106,7 +114,7 @@ class AuthApi(
     suspend fun checkVerificationStatusByCheckId(request: PhoneVerificationStatusByCheckIdRequest): Response {
         return try {
             val httpResponse = client.post("/auth/status") {
-                header("x-api-key", key)
+                header(HEADER_API_KEY, key)
                 setBody(request)
             }
 
@@ -120,7 +128,7 @@ class AuthApi(
                     try {
                         httpResponse.body<String>()
                     } catch (e: Exception) {
-                        "Failed to read error body: ${e.message}"
+                        "$ERROR_BODY_READ_FAILED${e.message}"
                     }
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
@@ -134,7 +142,7 @@ class AuthApi(
     suspend fun requestSmsVerification(request: SmsVerificationRequest): Response {
         return try {
             val httpResponse = client.post("/auth/request_sms") {
-                header("x-api-key", key)
+                header(HEADER_API_KEY, key)
                 setBody(request)
             }
 
@@ -148,7 +156,7 @@ class AuthApi(
                     val errorBody = try {
                         httpResponse.body<String>()
                     } catch (e: Exception) {
-                        "Failed to read error body: ${e.message}"
+                        "$ERROR_BODY_READ_FAILED${e.message}"
                     }
                     Napier.e("AuthApi: requestSmsVerification - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
@@ -163,7 +171,7 @@ class AuthApi(
     suspend fun verifySmsCode(request: VerifySmsCodeRequest): Response {
         return try {
             val httpResponse = client.post("/auth/verify_sms") {
-                header("x-api-key", key)
+                header(HEADER_API_KEY, key)
                 setBody(request)
             }
 
@@ -177,7 +185,7 @@ class AuthApi(
                     val errorBody = try {
                         httpResponse.body<String>()
                     } catch (e: Exception) {
-                        "Failed to read error body: ${e.message}"
+                        "$ERROR_BODY_READ_FAILED${e.message}"
                     }
                     Napier.e("AuthApi: verifySmsCode - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
@@ -192,8 +200,8 @@ class AuthApi(
     suspend fun validateToken(accessToken: String): Response {
         return try {
             val httpResponse = client.get("/auth/me") {
-                header("x-api-key", key)
-                header("Authorization", "$BEARER_TOKEN_TYPE $accessToken")
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, accessToken.toAuthorizationHeader())
             }
 
             when (httpResponse.status) {
@@ -220,7 +228,7 @@ class AuthApi(
     suspend fun refreshToken(request: RefreshTokenRequest): Response {
         return try {
             val httpResponse = client.post("/auth/refresh_token") {
-                header("x-api-key", key)
+                header(HEADER_API_KEY, key)
                 setBody(request)
             }
 
@@ -238,7 +246,7 @@ class AuthApi(
                     val errorBody = try {
                         httpResponse.body<String>()
                     } catch (e: Exception) {
-                        "Failed to read error body: ${e.message}"
+                        "$ERROR_BODY_READ_FAILED${e.message}"
                     }
                     Napier.e("AuthApi: refreshToken - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
@@ -253,8 +261,8 @@ class AuthApi(
     suspend fun getActiveSessions(accessToken: String): Response {
         return try {
             val httpResponse = client.get("/auth/active_sessions") {
-                header("x-api-key", key)
-                header("Authorization", "$BEARER_TOKEN_TYPE $accessToken")
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, accessToken.toAuthorizationHeader())
             }
 
             when (httpResponse.status) {
@@ -271,7 +279,7 @@ class AuthApi(
                     val errorBody = try {
                         httpResponse.body<String>()
                     } catch (e: Exception) {
-                        "Failed to read error body: ${e.message}"
+                        "$ERROR_BODY_READ_FAILED${e.message}"
                     }
                     Napier.e("AuthApi: getActiveSessions - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
@@ -286,8 +294,8 @@ class AuthApi(
     suspend fun revokeSession(accessToken: String, request: RevokeSessionRequest): Response {
         return try {
             val httpResponse = client.post("/auth/revoke_session") {
-                header("x-api-key", key)
-                header("Authorization", "$BEARER_TOKEN_TYPE $accessToken")
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, accessToken.toAuthorizationHeader())
                 setBody(request)
             }
 
@@ -305,7 +313,7 @@ class AuthApi(
                     val errorBody = try {
                         httpResponse.body<String>()
                     } catch (e: Exception) {
-                        "Failed to read error body: ${e.message}"
+                        "$ERROR_BODY_READ_FAILED${e.message}"
                     }
                     Napier.e("AuthApi: revokeSession - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
@@ -320,8 +328,8 @@ class AuthApi(
     suspend fun logout(accessToken: String): Response {
         return try {
             val httpResponse = client.post("/auth/logout") {
-                header("x-api-key", key)
-                header("Authorization", "$BEARER_TOKEN_TYPE $accessToken")
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, accessToken.toAuthorizationHeader())
             }
 
             when (httpResponse.status) {
@@ -337,7 +345,7 @@ class AuthApi(
                     val errorBody = try {
                         httpResponse.body<String>()
                     } catch (e: Exception) {
-                        "Failed to read error body: ${e.message}"
+                        "$ERROR_BODY_READ_FAILED${e.message}"
                     }
                     Napier.e("AuthApi: logout - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
@@ -352,8 +360,8 @@ class AuthApi(
     suspend fun updateUserName(accessToken: String, request: UpdateNameRequest): Response {
         return try {
             val httpResponse = client.patch("/auth/me/name") {
-                header("x-api-key", key)
-                header("Authorization", "$BEARER_TOKEN_TYPE $accessToken")
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, accessToken.toAuthorizationHeader())
                 setBody(request)
             }
 
@@ -370,7 +378,7 @@ class AuthApi(
                     val errorBody = try {
                         httpResponse.body<String>()
                     } catch (e: Exception) {
-                        "Failed to read error body: ${e.message}"
+                        "$ERROR_BODY_READ_FAILED${e.message}"
                     }
                     Napier.e("AuthApi: updateUserName - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }

@@ -35,7 +35,3 @@ actual fun getSmsRetriever(): SmsRetriever {
     return IosSmsRetriever()
 }
 
-
-
-
-
