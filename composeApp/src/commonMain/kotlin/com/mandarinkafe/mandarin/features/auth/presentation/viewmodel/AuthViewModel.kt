@@ -304,7 +304,7 @@ class AuthViewModel(
     private fun proceedSuccessAuth(tokens: AuthTokens?) {
         sendEffect(AuthEffect.SuccessAuth)
         viewModelScope.launch {
-        userSessionManager.onUserAuthorized(tokens)
+            userSessionManager.onUserAuthorized(tokens)
         }
     }
 

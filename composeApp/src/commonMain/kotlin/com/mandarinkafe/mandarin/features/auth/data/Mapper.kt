@@ -1,17 +1,20 @@
 package com.mandarinkafe.mandarin.features.auth.data
 
 import com.mandarinkafe.mandarin.core.domain.models.AuthTokens
+import com.mandarinkafe.mandarin.features.auth.data.dto.ActiveSessionDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerificationFailReason
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeDataDto
+import com.mandarinkafe.mandarin.features.auth.domain.models.ActiveSession
 import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationData
 import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationStatus
 import com.mandarinkafe.mandarin.features.auth.domain.models.SmsVerificationData
 import com.mandarinkafe.mandarin.features.auth.domain.models.VerifySmsCodeResult
 import com.mandarinkafe.mandarin.util.Constants
+import com.mandarinkafe.mandarin.util.DateTimeUtils.toHumanDateTimeOrNull
 
 object Mapper {
     fun PhoneVerificationDataDto.toDomain() = PhoneVerificationData(
@@ -54,6 +57,13 @@ object Mapper {
         accessToken = accessToken,
         refreshToken = refreshToken,
         tokenType = tokenType
+    )
+
+    fun ActiveSessionDto.toDomain() = ActiveSession(
+        tokenId = tokenId,
+        deviceName = deviceName,
+        createdAt = createdAt.toHumanDateTimeOrNull(),
+        isCurrent = isCurrent ?: false
     )
 
     private fun extractTokens(

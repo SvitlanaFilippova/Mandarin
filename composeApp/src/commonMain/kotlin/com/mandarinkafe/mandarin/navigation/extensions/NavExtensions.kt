@@ -3,8 +3,10 @@ package com.mandarinkafe.mandarin.navigation.extensions
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.navOptions
+import com.mandarinkafe.mandarin.core.di.ServiceLocator
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.features.auth.domain.impl.AuthInteractor
 import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.navigation.NavConstants.ABOUT_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
@@ -26,6 +28,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_INFO_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ORDER_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SAVED_ADDRESSES_ROUTE
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import net.thauvin.erik.urlencoder.UrlEncoderUtil
 
@@ -48,7 +51,7 @@ fun NavController.navigateToSavedAddresses() = navigate(SAVED_ADDRESSES_ROUTE)
 
 fun NavController.navigateOrdersHistory() = navigate(ORDERS_HISTORY_ROUTE)
 
-fun NavController.navigateToOrder() = navigate(ORDER_SCREEN_ROUTE)
+fun NavController.navigateToOrder() = navigateWithAuthCheck(ORDER_SCREEN_ROUTE)
 
 fun NavController.navigateToLegalScreen() = navigate(LEGAL_SCREEN_ROUTE)
 
@@ -129,6 +132,10 @@ fun NavController.navigateToOrderInfo(
     }
 }
 
+fun NavController.navigateToAccountScreen() {
+    navigateWithAuthCheck(targetRoute = NavConstants.ACCOUNT_ROUTE)
+}
+
 fun NavController.navigateToAuthScreen(targetRoute: String? = null) {
     val encodedTarget = targetRoute?.let { UrlEncoderUtil.encode(it) }
     val route = if (encodedTarget != null) {
@@ -139,11 +146,22 @@ fun NavController.navigateToAuthScreen(targetRoute: String? = null) {
     navigate(route)
 }
 
+fun NavController.navigateWithAuthCheck(targetRoute: String) {
+    val authInteractor: AuthInteractor = ServiceLocator.koin.get()
+    val isAuthorized = authInteractor.isAuthorizedFast()
+
+    if (isAuthorized) {
+        navigate(targetRoute)
+    } else {
+        navigateToAuthScreen(targetRoute = targetRoute)
+    }
+}
+
 fun NavController.tryGetBackStackEntry(route: String): NavBackStackEntry? {
     return try {
         getBackStackEntry(route)
     } catch (e: IllegalArgumentException) {
         Napier.e("error: $e")
-        null // экрана в стеке нет
+        null
     }
 }

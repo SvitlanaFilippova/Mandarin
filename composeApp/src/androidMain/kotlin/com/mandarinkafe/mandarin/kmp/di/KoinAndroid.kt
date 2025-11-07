@@ -15,4 +15,5 @@ fun initKoinAndroid(app: Application) = initKoinCommon {
         addressPlatformModule,
         morePlatformModule,
     )
+
 }

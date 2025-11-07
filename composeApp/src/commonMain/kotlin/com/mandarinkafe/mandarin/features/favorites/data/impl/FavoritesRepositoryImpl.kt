@@ -64,7 +64,7 @@ class FavoritesRepositoryImpl(
     }
 
     override suspend fun sync() {
-        TODO("Not yet implemented")
+      //  TODO("Not yet implemented")
     }
 
     private suspend fun proceedToggleFavorite(record: FavoriteRecord) {

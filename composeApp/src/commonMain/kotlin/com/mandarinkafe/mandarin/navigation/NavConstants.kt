@@ -23,6 +23,7 @@ object NavConstants {
     const val MORE_MENU_SCREEN_ROUTE = "more"
     const val ORDERS_HISTORY_ROUTE = "orders_history"
     const val SAVED_ADDRESSES_ROUTE = "saved_addresses"
+    const val ACCOUNT_ROUTE = "account"
     const val ABOUT_SCREEN_ROUTE = "about_screen"
     const val LEGAL_SCREEN_ROUTE = "legal_screen"
     const val DELIVERY_SCREEN_ROUTE = "delivery_screen"

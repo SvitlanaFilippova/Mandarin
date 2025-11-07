@@ -5,11 +5,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserInfoDto(
+    @SerialName("id")
+    val id: String?,
     @SerialName("phone")
     val phone: String?,
-    @SerialName("name")
-    val name: String?,
-    @SerialName("email")
-    val email: String?,
+    @SerialName("is_verified")
+    val isVerified: Boolean?,
 )
 

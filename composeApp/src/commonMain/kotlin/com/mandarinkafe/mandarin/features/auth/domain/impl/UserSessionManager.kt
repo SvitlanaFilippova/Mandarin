@@ -34,7 +34,7 @@ class UserSessionManager(
     }
 
     suspend fun logout() {
-        authRepository.clearTokens()
-        // TODO тут также очищать локальные данные в favoritesRepository, addressesRepository, ordersRepository.sync()
+        authRepository.logout()
+        // TODO тут также очищать локальные данные в favoritesRepository, addressesRepository, ordersRepository
     }
 }

@@ -9,7 +9,7 @@ class SyncUserDataUseCaseImpl(
     private val favoritesRepository: FavoritesWriter,
     private val addressesRepository: SavedAddressRepository,
     private val ordersRepository: OrdersHistoryRepository,
-    ) : SyncUserDataUseCase {
+) : SyncUserDataUseCase {
     override suspend fun invoke() {
         favoritesRepository.sync()
         addressesRepository.sync()

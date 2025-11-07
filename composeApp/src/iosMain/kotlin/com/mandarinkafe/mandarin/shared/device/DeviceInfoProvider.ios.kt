@@ -17,6 +17,14 @@ actual class DeviceInfoProvider {
                 "App v$appVersion ($buildNumber), " +
                 "Device: ${device.model} ${device.name}"
     }
+
+    actual fun getDeviceName(): String {
+        val device = UIDevice.currentDevice
+        // device.model returns "iPhone" or "iPad"
+        // device.name returns user's device name like "John's iPhone"
+        // We'll use model for a generic name
+        return device.model as? String ?: "iOS Device"
+    }
 }
 
 

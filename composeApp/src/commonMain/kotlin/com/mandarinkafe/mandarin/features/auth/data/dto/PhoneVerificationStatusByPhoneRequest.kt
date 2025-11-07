@@ -7,4 +7,6 @@ import kotlinx.serialization.Serializable
 data class PhoneVerificationStatusByPhoneRequest(
     @SerialName("phone")
     val phone: String,
+    @SerialName("device_name")
+    val deviceName: String,
 )

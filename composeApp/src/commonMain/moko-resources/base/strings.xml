@@ -524,13 +524,10 @@
     <string name="enter_valid_phone">Нужен валидный номер телефона</string>
     <string name="login">Подтвердить</string>
     <string name="verify_by_call">Подтверждение звонком</string>
-    <string name="verification_by_phone_instruction_prefix">Чтобы подтвердить номер телефона %1$s,
-        достаточно в&#160;течение 5&#160;минут набрать с&#160;него номер
+    <string name="verification_by_phone_instruction_prefix">Позвони с номера %1$s на
     </string>
-    <string name="verification_by_phone_instruction_end">. После первого же гудка можно сразу
-        сбрасывать.
-        \n\nЗвонок
-        бесплатный.
+    <string name="verification_by_phone_instruction_end">в&#160;течение 5&#160;минут. После
+        первого гудка трубку можно положить — звонок бесплатный.
     </string>
     <string name="want_sms">Лучше через SMS</string>
     <string name="enter_code_from_sms">Код из SMS</string>
@@ -542,11 +539,17 @@
     <string name="sms_error_code_expired">Упс, срок жизни кода уже истёк.</string>
     <string name="sms_error_code_not_found">Что-то пошло не так - код не найден на сервере</string>
     <string name="sms_error_invalid_code">Неверный код :(</string>
-    <string name="request_auth_already_active">Код уже отправлен. Повторно можно запросить через
-        %s
+    <string name="request_auth_already_active">Код уже отправлен. Повторно можно запросить через %s
     </string>
 
     <!-- Личный кабинет -->
     <string name="personal_account">Личный кабинет</string>
+    <string name="active_devices">Активные устройства</string>
+    <string name="unknown_device">Неизвестное устройство</string>
+    <string name="login_date">Дата авторизации: %1$s</string>
+    <string name="current_session">Текущая сессия</string>
+    <string name="logout">Выйти</string>
+    <string name="logout_from_account">Выйти из аккаунта</string>
+    <string name="no_active_sessions">Нет активных сессий</string>
 
 </resources>

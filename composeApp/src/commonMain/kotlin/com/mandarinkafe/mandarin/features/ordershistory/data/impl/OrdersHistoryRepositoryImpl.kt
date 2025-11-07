@@ -17,6 +17,6 @@ class OrdersHistoryRepositoryImpl(private val storage: OrdersHistoryStorage) :
     }
 
     override suspend fun sync() {
-        TODO("Not yet implemented")
+        //  TODO("Not yet implemented")
     }
 }

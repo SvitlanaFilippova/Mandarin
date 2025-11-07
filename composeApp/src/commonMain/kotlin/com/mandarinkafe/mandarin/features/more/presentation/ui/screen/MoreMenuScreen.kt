@@ -21,6 +21,7 @@ import com.mandarinkafe.mandarin.features.more.presentation.ui.components.Mandar
 import com.mandarinkafe.mandarin.features.more.presentation.ui.components.MenuItem
 import com.mandarinkafe.mandarin.navigation.extensions.navigateOrdersHistory
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAboutScreen
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToAccountScreen
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAuthScreen
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToContactsScreen
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToDeliveryScreen
@@ -45,7 +46,7 @@ fun MoreMenuScreen(navController: NavController) {
             title = stringResource(MR.strings.personal_account),
             iconRes = MR.images.ic_account_circle,
             onClick = {
-                navController.navigateToAuthScreen()
+                navController.navigateToAccountScreen()
             }
         )
 
