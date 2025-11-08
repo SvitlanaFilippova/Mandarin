@@ -6,5 +6,4 @@ interface SavedAddressRepository {
     suspend fun getSavedAddresses(): List<Address>
     suspend fun saveAddress(address: Address)
     suspend fun removeAddress(id: String)
-    suspend fun sync()
 }

@@ -44,11 +44,6 @@ class AuthApi(
 ) {
     private val key = BuildKonfig.MANDARIN_API_KEY
 
-    private companion object {
-        const val HEADER_API_KEY = "x-api-key"
-        const val HEADER_AUTHORIZATION = "Authorization"
-        const val ERROR_BODY_READ_FAILED = "Failed to read error body: "
-    }
 
     private fun String.toAuthorizationHeader() = "$BEARER_TOKEN_TYPE $this"
 
@@ -71,12 +66,12 @@ class AuthApi(
                     } catch (e: Exception) {
                         "$ERROR_BODY_READ_FAILED${e.message}"
                     }
-                    Napier.e("AuthApi: requestPhoneVerification - HTTP error ${httpResponse.status.value}: $errorBody")
+                    Napier.e("$LOG_TAG: requestPhoneVerification - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: requestPhoneVerification - Exception", e)
+            Napier.e("$LOG_TAG: requestPhoneVerification - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -106,7 +101,7 @@ class AuthApi(
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: checkVerificationStatusByPhone - Exception", e)
+            Napier.e("$LOG_TAG: checkVerificationStatusByPhone - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -134,7 +129,7 @@ class AuthApi(
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: checkVerificationStatusByCheckId - Exception", e)
+            Napier.e("$LOG_TAG: checkVerificationStatusByCheckId - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -158,12 +153,12 @@ class AuthApi(
                     } catch (e: Exception) {
                         "$ERROR_BODY_READ_FAILED${e.message}"
                     }
-                    Napier.e("AuthApi: requestSmsVerification - HTTP error ${httpResponse.status.value}: $errorBody")
+                    Napier.e("$LOG_TAG: requestSmsVerification - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: requestSmsVerification - Exception", e)
+            Napier.e("$LOG_TAG: requestSmsVerification - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -187,12 +182,12 @@ class AuthApi(
                     } catch (e: Exception) {
                         "$ERROR_BODY_READ_FAILED${e.message}"
                     }
-                    Napier.e("AuthApi: verifySmsCode - HTTP error ${httpResponse.status.value}: $errorBody")
+                    Napier.e("$LOG_TAG: verifySmsCode - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: verifySmsCode - Exception", e)
+            Napier.e("$LOG_TAG: verifySmsCode - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -215,12 +210,12 @@ class AuthApi(
                 }
 
                 else -> {
-                    Napier.e("AuthApi: validateToken - HTTP error ${httpResponse.status.value}")
+                    Napier.e("$LOG_TAG: validateToken - HTTP error ${httpResponse.status.value}")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: validateToken - Exception", e)
+            Napier.e("$LOG_TAG: validateToken - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -248,12 +243,12 @@ class AuthApi(
                     } catch (e: Exception) {
                         "$ERROR_BODY_READ_FAILED${e.message}"
                     }
-                    Napier.e("AuthApi: refreshToken - HTTP error ${httpResponse.status.value}: $errorBody")
+                    Napier.e("$LOG_TAG: refreshToken - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: refreshToken - Exception", e)
+            Napier.e("$LOG_TAG: refreshToken - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -281,12 +276,12 @@ class AuthApi(
                     } catch (e: Exception) {
                         "$ERROR_BODY_READ_FAILED${e.message}"
                     }
-                    Napier.e("AuthApi: getActiveSessions - HTTP error ${httpResponse.status.value}: $errorBody")
+                    Napier.e("$LOG_TAG: getActiveSessions - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: getActiveSessions - Exception", e)
+            Napier.e("$LOG_TAG: getActiveSessions - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -315,12 +310,12 @@ class AuthApi(
                     } catch (e: Exception) {
                         "$ERROR_BODY_READ_FAILED${e.message}"
                     }
-                    Napier.e("AuthApi: revokeSession - HTTP error ${httpResponse.status.value}: $errorBody")
+                    Napier.e("$LOG_TAG: revokeSession - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: revokeSession - Exception", e)
+            Napier.e("$LOG_TAG: revokeSession - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -347,12 +342,12 @@ class AuthApi(
                     } catch (e: Exception) {
                         "$ERROR_BODY_READ_FAILED${e.message}"
                     }
-                    Napier.e("AuthApi: logout - HTTP error ${httpResponse.status.value}: $errorBody")
+                    Napier.e("$LOG_TAG: logout - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: logout - Exception", e)
+            Napier.e("$LOG_TAG: logout - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -380,13 +375,20 @@ class AuthApi(
                     } catch (e: Exception) {
                         "$ERROR_BODY_READ_FAILED${e.message}"
                     }
-                    Napier.e("AuthApi: updateUserName - HTTP error ${httpResponse.status.value}: $errorBody")
+                    Napier.e("$LOG_TAG: updateUserName - HTTP error ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("AuthApi: updateUserName - Exception", e)
+            Napier.e("$LOG_TAG: updateUserName - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
+    }
+
+    private companion object {
+        const val LOG_TAG = "AuthApi"
+        const val HEADER_API_KEY = "x-api-key"
+        const val HEADER_AUTHORIZATION = "Authorization"
+        const val ERROR_BODY_READ_FAILED = "Failed to read error body: "
     }
 }

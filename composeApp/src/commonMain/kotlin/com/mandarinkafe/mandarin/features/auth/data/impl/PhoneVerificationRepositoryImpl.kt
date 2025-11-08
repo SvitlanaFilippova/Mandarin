@@ -61,7 +61,7 @@ class PhoneVerificationRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther("$ERROR ${e.message}")
         }
     }
 
@@ -95,7 +95,7 @@ class PhoneVerificationRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther("$ERROR ${e.message}")
         }
     }
 
@@ -115,7 +115,7 @@ class PhoneVerificationRepositoryImpl(
                         "PhoneVerificationRepository: observeVerificationStatusByPhone - Exception",
                         e
                     )
-                    emit(Resource.ErrorOther("Ошибка: ${e.message}"))
+                    emit(Resource.ErrorOther("$ERROR  ${e.message}"))
                     POLLING_INTERVAL_SLOW_MS
                 }
 
@@ -177,7 +177,7 @@ class PhoneVerificationRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther("$ERROR ${e.message}")
         }
     }
 
@@ -197,7 +197,7 @@ class PhoneVerificationRepositoryImpl(
                 else -> Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther("$ERROR ${e.message}")
         }
     }
 
@@ -219,7 +219,7 @@ class PhoneVerificationRepositoryImpl(
                 else -> Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther("$ERROR ${e.message}")
         }
     }
 
@@ -234,6 +234,7 @@ class PhoneVerificationRepositoryImpl(
 
         // Error messages
         private const val ERROR_EMPTY_RESPONSE = "Пустой ответ от сервера"
+        private const val ERROR = "Ошибка:"
         private const val ERROR_SERVER = "Ошибка сервера"
         private const val ERROR_UNKNOWN = "Неизвестная ошибка"
         private const val ERROR_CONVERSION = "Ошибка преобразования ответа"

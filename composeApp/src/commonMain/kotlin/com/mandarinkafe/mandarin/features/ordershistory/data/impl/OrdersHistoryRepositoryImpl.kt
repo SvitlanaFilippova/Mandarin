@@ -16,7 +16,4 @@ class OrdersHistoryRepositoryImpl(private val storage: OrdersHistoryStorage) :
         storage.removeOrderById(id)
     }
 
-    override suspend fun sync() {
-        //  TODO("Not yet implemented")
-    }
 }

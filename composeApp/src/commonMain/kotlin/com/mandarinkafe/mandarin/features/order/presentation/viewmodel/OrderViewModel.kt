@@ -181,27 +181,28 @@ class OrderViewModel(
             val enteredName = state.value.userInfo.name
 
             // Обновляем имя на сервере, если оно было пустое или изменилось
-            if (currentUserInfo != null && enteredName.isNotBlank()) {
-                if (currentUserInfo.name.isBlank() || currentUserInfo.name != enteredName) {
-                    // Получаем access token
-                    val accessToken = authRepository.getAccessToken()
-                    if (accessToken != null) {
-                        val result = userInfoRepository.updateName(accessToken, enteredName)
-                        when (result) {
-                            is Resource.Success -> {
-                                Napier.d("OrderViewModel: Name updated successfully")
-                            }
+            if (currentUserInfo != null && enteredName.isNotBlank() &&
+                (currentUserInfo.name.isBlank() || currentUserInfo.name != enteredName)
+            ) {
+                // Получаем access token
+                val accessToken = authRepository.getAccessToken()
+                if (accessToken != null) {
+                    val result = userInfoRepository.updateName(accessToken, enteredName)
+                    when (result) {
+                        is Resource.Success -> {
+                            Napier.d("OrderViewModel: Name updated successfully")
+                        }
 
-                            is Resource.ErrorNoInternet -> {
-                                Napier.w("OrderViewModel: No internet, name not updated")
-                            }
+                        is Resource.ErrorNoInternet -> {
+                            Napier.w("OrderViewModel: No internet, name not updated")
+                        }
 
-                            is Resource.ErrorOther -> {
-                                Napier.e("OrderViewModel: Failed to update name: ${result.message}")
-                            }
+                        is Resource.ErrorOther -> {
+                            Napier.e("OrderViewModel: Failed to update name: ${result.message}")
+                        }
 
-                            else -> {
-                                // Idle, Loading, ErrorEmptyData - не обрабатываем
+                        else -> {
+                            // Idle, Loading, ErrorEmptyData - не обрабатываем
                             }
                         }
                     } else {
