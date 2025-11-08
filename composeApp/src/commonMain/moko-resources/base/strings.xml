@@ -283,9 +283,8 @@
 
     <!-- История заказов -->
     <string name="order_history_is_empty">Здесь будут ваши заказы</string>
-    <string name="order_history_is_empty_extra">Сейчас история заказов хранится только на&#160;этом
-        устройстве.
-        После удаления приложения или перехода на&#160;другое устройство данные будут потеряны.
+    <string name="order_history_is_empty_extra">На&#160;этом аккаунте заказов пока нет.
+        Подтягиваются только заказы из&#160;приложения.
     </string>
     <string name="order_history_is_empty_by_filters">По&#160;таким фильтрам заказов нет</string>
     <string name="order_history_is_empty_by_filters_extra">Попробуй изменить или сбросить фильтры,

@@ -12,6 +12,7 @@ sealed interface AccountContract {
         data class RevokeSession(val sessionId: String) : AccountEvent
         data object Logout : AccountEvent
         data class SetName(val query: String) : AccountEvent
+        data object GetInitData : AccountEvent
         data object SaveNameNow : AccountEvent
         data object OnPhoneClick : AccountEvent
     }

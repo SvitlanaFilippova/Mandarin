@@ -32,13 +32,9 @@ class AccountViewModel(
 
     override fun setInitialState() = AccountState()
 
-    init {
-        observeUserInfo()
-        loadSessions()
-    }
-
     override fun onEvent(event: AccountEvent) {
         when (event) {
+            is AccountEvent.GetInitData -> getInitData()
             is AccountEvent.LoadSessions -> loadSessions()
             is AccountEvent.RevokeSession -> revokeSession(event.sessionId)
             is AccountEvent.Logout -> logout()
@@ -46,6 +42,11 @@ class AccountViewModel(
             is AccountEvent.SaveNameNow -> saveUserName()
             is AccountEvent.OnPhoneClick -> onPhoneClick()
         }
+    }
+
+    private fun getInitData() {
+        loadSessions()
+        observeUserInfo()
     }
 
     private fun onPhoneClick() {

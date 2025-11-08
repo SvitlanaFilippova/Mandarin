@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.features.ordershistory.data.mapper.OrdersHistor
 import com.mandarinkafe.mandarin.features.ordershistory.data.network.OrdersHistoryServerApi
 import com.mandarinkafe.mandarin.features.ordershistory.data.network.OrdersHistoryUpdateRequest
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
+import io.github.aakira.napier.Napier
 
 class OrdersHistoryRemoteDataSourceImpl(
     private val api: OrdersHistoryServerApi,
@@ -25,12 +26,26 @@ class OrdersHistoryRemoteDataSourceImpl(
     }
 
     override suspend fun saveOrder(order: SavedOrder) {
-        val token = authRepository.getAccessToken() ?: return
+        Napier.d("SAVE_ORDER DEBUG: Starting saveOrder, orderId=${order.id}")
+        val token = authRepository.getAccessToken()
+        if (token == null) {
+            Napier.e("SAVE_ORDER ERROR: No access token")
+            return
+        }
+        Napier.d("SAVE_ORDER DEBUG: Token obtained, length=${token.length}, prefix=${token.take(20)}...")
         try {
             val orderDto = order.toDto()
+            Napier.d("SAVE_ORDER DEBUG: Order converted to DTO, sending to server")
             val request = OrdersHistoryUpdateRequest(data = orderDto)
-            api.createOrUpdateOrder("Bearer $token", request)
-        } catch (_: Exception) {}
+            val response = api.createOrUpdateOrder("Bearer $token", request)
+            if (response.resultCode == com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS) {
+                Napier.d("SAVE_ORDER SUCCESS: Order saved successfully, orderId=${order.id}")
+            } else {
+                Napier.e("SAVE_ORDER ERROR: Server error, resultCode: ${response.resultCode}, orderId=${order.id}")
+            }
+        } catch (e: Exception) {
+            Napier.e("SAVE_ORDER ERROR: Exception while saving order, orderId=${order.id}", e)
+        }
     }
 
     override suspend fun removeOrderById(id: String) {

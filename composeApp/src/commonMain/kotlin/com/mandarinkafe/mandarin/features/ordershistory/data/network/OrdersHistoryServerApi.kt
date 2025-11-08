@@ -12,7 +12,9 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
+import kotlinx.serialization.json.Json
 
 class OrdersHistoryServerApi(private val client: HttpClient) {
     private val key = BuildKonfig.MANDARIN_API_KEY
@@ -47,6 +49,11 @@ class OrdersHistoryServerApi(private val client: HttpClient) {
 
     suspend fun createOrUpdateOrder(token: String, body: OrdersHistoryUpdateRequest): Response {
         return try {
+            val json = Json { ignoreUnknownKeys = true }
+            val requestBodyJson = json.encodeToString(OrdersHistoryUpdateRequest.serializer(), body)
+            Napier.d("SAVE_ORDER DEBUG: Sending POST request to /orders/history, orderId=${body.data.id}")
+            Napier.d("SAVE_ORDER DEBUG: Request body: $requestBodyJson")
+            
             val httpResponse = client.post("/orders/history") {
                 header("x-api-key", key)
                 header("Authorization", token)
@@ -55,21 +62,40 @@ class OrdersHistoryServerApi(private val client: HttpClient) {
 
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
+                    Napier.d("SAVE_ORDER SUCCESS: Server returned OK, orderId=${body.data.id}")
                     Response().apply { resultCode = HTTP_SUCCESS }
                 }
 
                 HttpStatusCode.Unauthorized -> {
+                    Napier.e("SAVE_ORDER ERROR: Unauthorized, orderId=${body.data.id}")
                     Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
                 }
 
+                HttpStatusCode.UnprocessableEntity -> {
+                    val errorBody = getErrorBody(httpResponse)
+                    Napier.e("SAVE_ORDER ERROR: HTTP 422 Unprocessable Entity, orderId=${body.data.id}")
+                    Napier.e("SAVE_ORDER ERROR: Error body: $errorBody")
+                    Response().apply { resultCode = HttpStatusCode.UnprocessableEntity.value }
+                }
+
                 else -> {
-                    Napier.e("OrdersHistoryServerApi: createOrUpdateOrder - HTTP error ${httpResponse.status.value}")
+                    val errorBody = getErrorBody(httpResponse)
+                    Napier.e("SAVE_ORDER ERROR: HTTP error ${httpResponse.status.value}, orderId=${body.data.id}")
+                    Napier.e("SAVE_ORDER ERROR: Error body: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("OrdersHistoryServerApi: createOrUpdateOrder - Exception", e)
+            Napier.e("SAVE_ORDER ERROR: Exception in HTTP request, orderId=${body.data.id}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    private suspend fun getErrorBody(httpResponse: HttpResponse): String {
+        return try {
+            httpResponse.body<String>()
+        } catch (e: Exception) {
+            "Failed to read error body: ${e.message}"
         }
     }
 

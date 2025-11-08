@@ -8,8 +8,8 @@ import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthApi
 import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthProvider
 import com.mandarinkafe.mandarin.core.data.network.impl.IikoNetworkClientImpl
 import com.mandarinkafe.mandarin.core.data.network.impl.ServerNetworkClientImpl
-import com.mandarinkafe.mandarin.features.auth.data.network.ServerAuthApi
 import com.mandarinkafe.mandarin.features.auth.data.network.PublicAuthApi
+import com.mandarinkafe.mandarin.features.auth.data.network.ServerAuthApi
 import com.mandarinkafe.mandarin.features.auth.data.network.ServerAuthProvider
 import com.mandarinkafe.mandarin.shared.BuildKonfig
 import io.github.aakira.napier.Napier
@@ -127,6 +127,7 @@ val coreNetworkModule = module {
         HttpClient {
             install(ContentNegotiation) {
                 json(Json {
+                    encodeDefaults = true
                     ignoreUnknownKeys = true
                     isLenient = true
                     coerceInputValues = true
@@ -136,16 +137,34 @@ val coreNetworkModule = module {
             install(Auth) {
                 bearer {
                     loadTokens {
-                        BearerTokens(
-                            accessToken = authProvider.getToken(),
-                            refreshToken = authProvider.getToken() // Используем access token как refresh для совместимости
-                        )
+                        try {
+                            Napier.d("AUTH_INTERCEPTOR DEBUG: loadTokens called")
+                            val accessToken = authProvider.getToken()
+                            val tokens = BearerTokens(
+                                accessToken = accessToken,
+                                refreshToken = accessToken // Используем access token как refresh для совместимости
+                            )
+                            Napier.d("AUTH_INTERCEPTOR DEBUG: Tokens loaded successfully")
+                            tokens
+                        } catch (e: Exception) {
+                            Napier.e("AUTH_INTERCEPTOR ERROR: Failed to load tokens", e)
+                            throw e
+                        }
                     }
                     refreshTokens {
-                        BearerTokens(
-                            accessToken = authProvider.refreshToken(),
-                            refreshToken = authProvider.refreshToken() // Используем новый access token
-                        )
+                        try {
+                            Napier.d("AUTH_INTERCEPTOR DEBUG: refreshTokens called (401 received)")
+                            val newAccessToken = authProvider.refreshToken()
+                            val tokens = BearerTokens(
+                                accessToken = newAccessToken,
+                                refreshToken = newAccessToken // Используем новый access token
+                            )
+                            Napier.d("AUTH_INTERCEPTOR SUCCESS: Tokens refreshed successfully")
+                            tokens
+                        } catch (e: Exception) {
+                            Napier.e("AUTH_INTERCEPTOR ERROR: Failed to refresh tokens", e)
+                            throw e
+                        }
                     }
                 }
             }
