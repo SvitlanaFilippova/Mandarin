@@ -1,0 +1,103 @@
+package com.mandarinkafe.mandarin.features.ordershistory.data.network
+
+import com.mandarinkafe.mandarin.core.data.dto.Response
+import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
+import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
+import io.github.aakira.napier.Napier
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.delete
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.HttpStatusCode
+
+class OrdersHistoryServerApi(private val client: HttpClient) {
+    private val key = BuildKonfig.MANDARIN_API_KEY
+
+    suspend fun getOrdersHistory(token: String): OrdersHistoryResponse {
+        return try {
+            val httpResponse = client.get("/orders/history") {
+                header("x-api-key", key)
+                header("Authorization", token)
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> {
+                    val responseBody: OrdersHistoryResponse = httpResponse.body()
+                    responseBody.apply { resultCode = HTTP_SUCCESS }
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    OrdersHistoryResponse().apply { resultCode = HttpStatusCode.Unauthorized.value }
+                }
+
+                else -> {
+                    Napier.e("OrdersHistoryServerApi: getOrdersHistory - HTTP error ${httpResponse.status.value}")
+                    OrdersHistoryResponse().apply { resultCode = HTTP_SERVER_ERROR }
+                }
+            }
+        } catch (e: Throwable) {
+            Napier.e("OrdersHistoryServerApi: getOrdersHistory - Exception", e)
+            OrdersHistoryResponse().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun createOrUpdateOrder(token: String, body: OrdersHistoryUpdateRequest): Response {
+        return try {
+            val httpResponse = client.post("/orders/history") {
+                header("x-api-key", key)
+                header("Authorization", token)
+                setBody(body)
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> {
+                    Response().apply { resultCode = HTTP_SUCCESS }
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
+                }
+
+                else -> {
+                    Napier.e("OrdersHistoryServerApi: createOrUpdateOrder - HTTP error ${httpResponse.status.value}")
+                    Response().apply { resultCode = HTTP_SERVER_ERROR }
+                }
+            }
+        } catch (e: Throwable) {
+            Napier.e("OrdersHistoryServerApi: createOrUpdateOrder - Exception", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun deleteOrder(token: String, orderId: String): Response {
+        return try {
+            val httpResponse = client.delete("/orders/history/$orderId") {
+                header("x-api-key", key)
+                header("Authorization", token)
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> {
+                    Response().apply { resultCode = HTTP_SUCCESS }
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
+                }
+
+                else -> {
+                    Napier.e("OrdersHistoryServerApi: deleteOrder - HTTP error ${httpResponse.status.value}")
+                    Response().apply { resultCode = HTTP_SERVER_ERROR }
+                }
+            }
+        } catch (e: Throwable) {
+            Napier.e("OrdersHistoryServerApi: deleteOrder - Exception", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+}
+
