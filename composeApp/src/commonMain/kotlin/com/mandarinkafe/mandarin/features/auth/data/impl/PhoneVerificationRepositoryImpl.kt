@@ -57,11 +57,11 @@ class PhoneVerificationRepositoryImpl(
                 }
 
                 else -> {
-                    Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
+                    Resource.ErrorOther("$ERROR_UNKNOWN_WITH_CODE ${response.resultCode})")
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther("$ERROR ${e.message}")
         }
     }
 
@@ -95,7 +95,7 @@ class PhoneVerificationRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther("$ERROR ${e.message}")
         }
     }
 
@@ -115,7 +115,7 @@ class PhoneVerificationRepositoryImpl(
                         "PhoneVerificationRepository: observeVerificationStatusByPhone - Exception",
                         e
                     )
-                    emit(Resource.ErrorOther("Ошибка: ${e.message}"))
+                    emit(Resource.ErrorOther("$ERROR  ${e.message}"))
                     POLLING_INTERVAL_SLOW_MS
                 }
 
@@ -177,7 +177,7 @@ class PhoneVerificationRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther("$ERROR ${e.message}")
         }
     }
 
@@ -190,14 +190,14 @@ class PhoneVerificationRepositoryImpl(
                     val wrapper = response as SmsVerificationResponse
                     wrapper.data?.let { dto ->
                         Resource.Success(dto.toDomain())
-                    } ?: Resource.ErrorOther("Пустой ответ от сервера")
+                    } ?: Resource.ErrorOther(ERROR_EMPTY_RESPONSE)
                 }
 
-                HTTP_SERVER_ERROR -> Resource.ErrorOther("Ошибка сервера")
+                HTTP_SERVER_ERROR -> Resource.ErrorOther(ERROR_SERVER)
                 else -> Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther("$ERROR ${e.message}")
         }
     }
 
@@ -212,14 +212,14 @@ class PhoneVerificationRepositoryImpl(
                     val wrapper = response as VerifySmsCodeResponse
                     wrapper.data?.let { dto ->
                         Resource.Success(dto.toDomain())
-                    } ?: Resource.ErrorOther("Пустой ответ от сервера")
+                    } ?: Resource.ErrorOther(ERROR_EMPTY_RESPONSE)
                 }
 
-                HTTP_SERVER_ERROR -> Resource.ErrorOther("Ошибка сервера")
+                HTTP_SERVER_ERROR -> Resource.ErrorOther(ERROR_SERVER)
                 else -> Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther("$ERROR ${e.message}")
         }
     }
 
@@ -234,8 +234,10 @@ class PhoneVerificationRepositoryImpl(
 
         // Error messages
         private const val ERROR_EMPTY_RESPONSE = "Пустой ответ от сервера"
+        private const val ERROR = "Ошибка:"
         private const val ERROR_SERVER = "Ошибка сервера"
         private const val ERROR_UNKNOWN = "Неизвестная ошибка"
+        private const val ERROR_UNKNOWN_WITH_CODE = "Неизвестная ошибка (код:"
         private const val ERROR_CONVERSION = "Ошибка преобразования ответа"
     }
 }

@@ -181,27 +181,32 @@ class OrderViewModel(
             val enteredName = state.value.userInfo.name
 
             // Обновляем имя на сервере, если оно было пустое или изменилось
-            if (currentUserInfo != null && enteredName.isNotBlank()) {
-                if (currentUserInfo.name.isBlank() || currentUserInfo.name != enteredName) {
-                    // Получаем access token
-                    val accessToken = authRepository.getAccessToken()
-                    if (accessToken != null) {
-                        val result = userInfoRepository.updateName(accessToken, enteredName)
-                        when (result) {
-                            is Resource.Success -> {
-                                Napier.d("OrderViewModel: Name updated successfully")
-                            }
+            val hasValidUserInfo = currentUserInfo != null
+            val hasValidEnteredName = enteredName.isNotBlank()
+            val isNameEmptyOrChanged = hasValidUserInfo &&
+                (currentUserInfo.name.isBlank() || currentUserInfo.name != enteredName)
+            val shouldUpdateName = hasValidUserInfo && hasValidEnteredName && isNameEmptyOrChanged
 
-                            is Resource.ErrorNoInternet -> {
-                                Napier.w("OrderViewModel: No internet, name not updated")
-                            }
+            if (shouldUpdateName) {
+                // Получаем access token
+                val accessToken = authRepository.getAccessToken()
+                if (accessToken != null) {
+                    val result = userInfoRepository.updateName(accessToken, enteredName)
+                    when (result) {
+                        is Resource.Success -> {
+                            Napier.d("OrderViewModel: Name updated successfully")
+                        }
 
-                            is Resource.ErrorOther -> {
-                                Napier.e("OrderViewModel: Failed to update name: ${result.message}")
-                            }
+                        is Resource.ErrorNoInternet -> {
+                            Napier.w("OrderViewModel: No internet, name not updated")
+                        }
 
-                            else -> {
-                                // Idle, Loading, ErrorEmptyData - не обрабатываем
+                        is Resource.ErrorOther -> {
+                            Napier.e("OrderViewModel: Failed to update name: ${result.message}")
+                        }
+
+                        else -> {
+                            // Idle, Loading, ErrorEmptyData - не обрабатываем
                             }
                         }
                     } else {
@@ -210,7 +215,7 @@ class OrderViewModel(
                 }
             }
         }
-    }
+
 
     private fun selectAddressById(id: String) {
         val address = state.value.deliveryInfo.savedAddresses.first { it.id == id }
@@ -363,7 +368,7 @@ class OrderViewModel(
     }
 
     private fun checkDiscount(phone: String) {
-        // TODO() временно закоментировано, до решения ошибки с дублированием скидки
+        // TODO временно закоментировано, до решения ошибки с дублированием скидки
 //        viewModelScope.launch {
 //            val discount = applyPhoneDiscount(phone, state.value.cartSummary.discountPercent)
 //            if (discount.shouldUpdate) {

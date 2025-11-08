@@ -173,7 +173,10 @@ fun String.formatPhoneNumberForUi(): String {
         PHONE_THIRD_PART_START + PHONE_THIRD_PART_LENGTH
     )
 
-    return "$PHONE_PREFIX_RU$PHONE_NON_BREAKING_SPACE$PHONE_AREA_CODE_BRACKET_OPEN$areaCode$PHONE_AREA_CODE_BRACKET_CLOSE$PHONE_NON_BREAKING_SPACE$firstPart$PHONE_SEPARATOR$secondPart$PHONE_SEPARATOR$thirdPart"
+    return "$PHONE_PREFIX_RU$PHONE_NON_BREAKING_SPACE" +
+            "$PHONE_AREA_CODE_BRACKET_OPEN$areaCode$PHONE_AREA_CODE_BRACKET_CLOSE" +
+            "$PHONE_NON_BREAKING_SPACE$firstPart" +
+            "$PHONE_SEPARATOR$secondPart$PHONE_SEPARATOR$thirdPart"
 }
 
 fun String.formatPhoneNumberForDomain(): String {

@@ -159,8 +159,8 @@ class AuthViewModel(
         // Запускаем новый таймер
         callTimerJob = viewModelScope.launch {
             while (true) {
-                val remaining = state.value.remainingTimeToCall ?: break
-                if (remaining <= 0) break
+                val remaining = state.value.remainingTimeToCall
+                if (remaining == null || remaining <= 0) break
 
                 delay(Constants.DELAY_1_SECOND)
                 setState { copy(remainingTimeToCall = remaining - 1) }
@@ -192,8 +192,8 @@ class AuthViewModel(
         // Запускаем новый таймер
         smsTimerJob = viewModelScope.launch {
             while (true) {
-                val remaining = state.value.remainingTimeToResendSms ?: break
-                if (remaining <= 0) break
+                val remaining = state.value.remainingTimeToResendSms
+                if (remaining == null || remaining <= 0) break
 
                 delay(Constants.DELAY_1_SECOND)
                 setState { copy(remainingTimeToResendSms = remaining - 1) }

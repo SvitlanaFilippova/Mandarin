@@ -17,9 +17,6 @@ class SavedAddressRepositoryImpl(private val storage: AddressStorage) : SavedAdd
         storage.removeAddress(id)
     }
 
-    override suspend fun sync() {
-        // TODO("Not yet implemented")
-    }
 }
 
 

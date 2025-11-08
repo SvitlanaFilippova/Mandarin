@@ -552,11 +552,11 @@
     <string name="logout_from_account">Выйти из аккаунта</string>
     <string name="no_active_sessions">Нет активных сессий</string>
     <string name="cant_change_phone">Чтобы изменить номер телефона, нужно выйти из&#160;аккаунта, а&#160;затем войти с&#160;новым номером.</string>
-    <string name="session_revoked">Сессия завершена</string>
+    <string name="session_revoked">✅ Сессия завершена</string>
     <string name="error_save_name">Не удалось сохранить имя</string>
     <string name="error_load_sessions">Ошибка загрузки сессий</string>
     <string name="error_revoke_session">Не удалось завершить сессию</string>
     <string name="error_logout">Ошибка при выходе</string>
-    <string name="name_changed_successfully">Имя успешно обновлено</string>
+    <string name="name_changed_successfully">✅ Имя успешно обновлено</string>
 
 </resources>

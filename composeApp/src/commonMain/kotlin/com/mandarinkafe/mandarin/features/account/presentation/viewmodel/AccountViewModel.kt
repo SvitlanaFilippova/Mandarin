@@ -120,34 +120,34 @@ class AccountViewModel(
             val currentUserInfo = userInfoRepository.getUserInfo()
             val enteredName = query ?: state.value.userInfo.name
             // Обновляем имя на сервере, если оно было пустое или изменилось
-            if (currentUserInfo != null && enteredName.trim().isNotBlank()) {
-                if (currentUserInfo.name != enteredName) {
-                    // Получаем access token
-                    val accessToken = authRepository.getAccessToken()
-                    if (accessToken != null) {
-                        Napier.d("AccountViewModel: Saving name to server: '$enteredName'")
-                        val result = userInfoRepository.updateName(accessToken, enteredName)
-                        when (result) {
-                            is Resource.Success -> {
-                                sendEffect(AccountEffect.ShowMessage(MR.strings.name_changed_successfully))
-                                setState {
-                                    copy(showNameChangeButtons = false)
-                                }
+            if (currentUserInfo != null && enteredName.trim()
+                    .isNotBlank() && currentUserInfo.name != enteredName
+            ) {
+                // Получаем access token
+                val accessToken = authRepository.getAccessToken()
+                if (accessToken != null) {
+                    Napier.d("AccountViewModel: Saving name to server: '$enteredName'")
+                    val result = userInfoRepository.updateName(accessToken, enteredName)
+                    when (result) {
+                        is Resource.Success -> {
+                            sendEffect(AccountEffect.ShowMessage(MR.strings.name_changed_successfully))
+                            setState {
+                                copy(showNameChangeButtons = false)
                             }
-
-                            is Resource.ErrorNoInternet -> {
-                                sendEffect(AccountEffect.ShowMessage(MR.strings.error_no_internet))
-                            }
-
-                            is Resource.ErrorOther -> {
-                                sendEffect(AccountEffect.ShowMessage(MR.strings.error_save_name))
-                            }
-
-                            else -> {}
                         }
-                    } else {
-                        Napier.w("AccountViewModel: No access token, can't update name")
+
+                        is Resource.ErrorNoInternet -> {
+                            sendEffect(AccountEffect.ShowMessage(MR.strings.error_no_internet))
+                        }
+
+                        is Resource.ErrorOther -> {
+                            sendEffect(AccountEffect.ShowMessage(MR.strings.error_save_name))
+                        }
+
+                        else -> {}
                     }
+                } else {
+                    Napier.w("AccountViewModel: No access token, can't update name")
                 }
             }
         }
