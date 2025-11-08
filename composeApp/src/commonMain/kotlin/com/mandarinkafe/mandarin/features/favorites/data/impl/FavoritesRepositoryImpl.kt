@@ -46,7 +46,6 @@ class FavoritesRepositoryImpl(
         getInitData()
     }
 
-
     override suspend fun forceRetry() {
         _favoriteItems.value = Loading()
         getInitData()
@@ -62,6 +61,11 @@ class FavoritesRepositoryImpl(
         val record = meal.toFavoriteRecord(getTimeStamp())
         proceedToggleFavorite(record)
     }
+
+    override suspend fun sync() {
+        // TODO("Not yet implemented")
+    }
+
     private suspend fun proceedToggleFavorite(record: FavoriteRecord) {
         if (currentRawRecords.contains(record)) {
             currentRawRecords.remove(record)

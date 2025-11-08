@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,10 +27,15 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToContactsScreen
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToDeliveryScreen
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToLegalScreen
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToSavedAddresses
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
-fun MoreMenuScreen(navController: NavController) {
+fun MoreMenuScreen(
+    navController: NavController,
+    sharedViewModel: SharedViewModel,
+) {
+    val isAuthorized by sharedViewModel.isAuthorized.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -42,28 +48,34 @@ fun MoreMenuScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
 
         MenuItem(
-            title = stringResource(MR.strings.personal_account),
+            title = if (isAuthorized) {
+                stringResource(MR.strings.personal_account)
+            } else {
+                stringResource(MR.strings.login)
+            },
             iconRes = MR.images.ic_account_circle,
             onClick = {
                 navController.navigateToAccountScreen()
             }
         )
 
-        MenuItem(
-            title = stringResource(MR.strings.more_orders_history),
-            iconRes = MR.images.ic_history,
-            onClick = {
-                navController.navigateOrdersHistory()
-            }
-        )
+        if (isAuthorized) {
+            MenuItem(
+                title = stringResource(MR.strings.more_orders_history),
+                iconRes = MR.images.ic_history,
+                onClick = {
+                    navController.navigateOrdersHistory()
+                }
+            )
 
-        MenuItem(
-            title = stringResource(MR.strings.more_saved_addresses),
-            iconRes = MR.images.ic_cottage,
-            onClick = {
-                navController.navigateToSavedAddresses()
-            }
-        )
+            MenuItem(
+                title = stringResource(MR.strings.more_saved_addresses),
+                iconRes = MR.images.ic_cottage,
+                onClick = {
+                    navController.navigateToSavedAddresses()
+                }
+            )
+        }
 
         MenuItem(
             title = stringResource(MR.strings.more_delivery_info),

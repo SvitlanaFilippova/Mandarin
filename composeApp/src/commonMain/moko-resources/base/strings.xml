@@ -401,6 +401,7 @@
     <string name="mandarin_info">Доставляем по&#160;Черноголовке и&#160;ближайшим населенным
         пунктам
     </string>
+    <string name="login">Авторизоваться</string>
 
 
     <!-- consent -->
@@ -521,7 +522,7 @@
         личного кабинета, нужно подтвердить свой номер телефона.
     </string>
     <string name="enter_valid_phone">Нужен валидный номер телефона</string>
-    <string name="login">Подтвердить</string>
+    <string name="confirm">Подтвердить</string>
     <string name="verify_by_call">Подтверждение звонком</string>
     <string name="verification_by_phone_instruction_prefix">Позвони с номера %1$s на
     </string>
