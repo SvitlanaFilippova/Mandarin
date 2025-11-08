@@ -25,9 +25,9 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.presentation.ui.components.CheckboxWithTextRow
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConsentTextWithLinks
-import com.mandarinkafe.mandarin.util.presentation.ui.components.MaskVisualTransformation
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
 import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.MyTextField
+import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.PhoneField
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.Flow
@@ -226,40 +226,3 @@ private fun FeedbackFields(
         )
     }
 }
-
-@Composable
-private fun PhoneField(
-    value: String,
-    isError: Boolean,
-    onValueChange: (String) -> Unit,
-    colors: TextFieldColors,
-) {
-    val mask = MaskVisualTransformation(stringResource(MR.strings.phone_mask))
-
-    MyTextField(
-        value = value,
-        labelRes = MR.strings.your_phone,
-        isError = isError,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-        onValueChange = { onValueChange(it) },
-        visualTransformation = mask,
-
-        placeholder = {
-            Text(
-                text = stringResource(MR.strings.phone_placeholder),
-                style = Typography.RegularLightTextStyle
-            )
-        },
-        prefix = {
-            Text(
-                text = stringResource(MR.strings.phone_prefix),
-                style = Typography.RegularTextStyle
-            )
-        },
-        colors = colors
-    )
-
-    Spacer(Modifier.height(Dimens.MarginSmall8))
-}
-
-

@@ -173,11 +173,10 @@
 
     <!-- Оформление заказа - форма -->
     <string name="your_name">Имя</string>
-    <string name="your_phone_required">Номер телефона *</string>
+    <string name="your_phone">Номер телефона</string>
     <string name="phone_prefix">+7</string>
     <string name="phone_mask">(###) ###-##-##</string>
     <string name="phone_placeholder">(XXX) XXX-XX-XX</string>
-    <string name="save_user_data">Сохранить имя и номер телефона для будущих заказов</string>
     <string name="street_and_building">Улица и дом *</string>
     <string name="address_comment">Комментарий для курьера</string>
     <string name="your_comment">Комментарий к заказу</string>
@@ -198,8 +197,8 @@
     <string name="discount_template">Скидка %1$d%%</string>
     <string name="delivery_cost">Стоимость доставки</string>
     <string name="submit_order">Оформить заказ</string>
-    <string name="save_name_and_phone">Использовать имя и телефон для будущих заказов</string>
-    <string name="update_saved_name_and_phone">Обновить имя и телефон для будущих заказов</string>
+    <string name="save_name_for_future">Сохранить имя для будущих заказов</string>
+    <string name="update_saved_name_and_phone">Обновить имя для будущих заказов</string>
 
 
     <!-- Оформление заказа - сообщения и ошибки -->
@@ -516,5 +515,48 @@
     <!-- Address -->
     <string name="fail_to_fetch_address">Не удалось определить адрес</string>
 
+    <!-- Авторизация -->
+    <string name="auth_screen_title">Авторизация</string>
+    <string name="why_need_auth">Чтобы оформить заказ и&#160;пользоваться всеми плюшками
+        личного кабинета, нужно подтвердить свой номер телефона.
+    </string>
+    <string name="enter_valid_phone">Нужен валидный номер телефона</string>
+    <string name="login">Подтвердить</string>
+    <string name="verify_by_call">Подтверждение звонком</string>
+    <string name="verification_by_phone_instruction_prefix">Позвони с номера %1$s на
+    </string>
+    <string name="verification_by_phone_instruction_end">в&#160;течение 5&#160;минут. После
+        первого гудка трубку можно положить — звонок бесплатный.
+    </string>
+    <string name="want_sms">Лучше через SMS</string>
+    <string name="enter_code_from_sms">Код из SMS</string>
+    <string name="code_sent_to_number">Код подтверждения отправлен на номер</string>
+    <string name="resend_sms_timer">Запросить sms повторно можно будет через: %1$s</string>
+    <string name="resend_sms_ask">Отправить код ещё раз</string>
+    <string name="phone_verified">Отлично! Номер телефона подтверждён</string>
+    <string name="sms_error_invalid_format">Некорректный формат кода</string>
+    <string name="sms_error_code_expired">Упс, срок жизни кода уже истёк.</string>
+    <string name="sms_error_code_not_found">Что-то пошло не так - код не найден на сервере</string>
+    <string name="sms_error_invalid_code">Неверный код :(</string>
+    <string name="request_auth_already_active">Код уже отправлен. Повторно можно запросить через %s
+    </string>
+
+    <!-- Личный кабинет -->
+    <string name="personal_account">Личный кабинет</string>
+    <string name="personal_info">Персональная информация</string>
+    <string name="active_devices">Активные устройства</string>
+    <string name="unknown_device">Неизвестное устройство</string>
+    <string name="login_date">Последний вход: %1$s</string>
+    <string name="current_session">Текущая сессия</string>
+    <string name="logout">Выйти</string>
+    <string name="logout_from_account">Выйти из аккаунта</string>
+    <string name="no_active_sessions">Нет активных сессий</string>
+    <string name="cant_change_phone">Чтобы изменить номер телефона, нужно выйти из&#160;аккаунта, а&#160;затем войти с&#160;новым номером.</string>
+    <string name="session_revoked">✅ Сессия завершена</string>
+    <string name="error_save_name">Не удалось сохранить имя</string>
+    <string name="error_load_sessions">Ошибка загрузки сессий</string>
+    <string name="error_revoke_session">Не удалось завершить сессию</string>
+    <string name="error_logout">Ошибка при выходе</string>
+    <string name="name_changed_successfully">✅ Имя успешно обновлено</string>
 
 </resources>

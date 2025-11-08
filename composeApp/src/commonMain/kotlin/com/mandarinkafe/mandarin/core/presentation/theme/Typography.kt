@@ -5,7 +5,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.mandarinkafe.mandarin.util.Constants.TITLE_FONT_WEIGHT
 
 object Typography {
-    val ToCartButtonStyle = TextStyle(
+    val ButtonTextStyle = TextStyle(
         fontSize = Dimens.TextSizeSmall12,
         fontWeight = FontWeight.Normal,
         color = Colors.White
@@ -43,6 +43,12 @@ object Typography {
         color = Colors.WhiteTransparent75
     )
 
+    val SmallLightTextStyle = TextStyle(
+        fontSize = Dimens.TextSizeSmall12,
+        fontWeight = FontWeight.Light,
+        color = Colors.LightGrey
+    )
+
     val ConsentSmallTextStyle = TextStyle(
         fontSize = Dimens.TextSizeSmall11,
         fontWeight = FontWeight.Light,
@@ -73,13 +79,7 @@ object Typography {
         color = Colors.White
     )
 
-    val MealSmallTextStyle = TextStyle(
-        fontSize = Dimens.TextSizeSmall12,
-        fontWeight = FontWeight.Light,
-        color = Colors.LightGrey
-    )
-
-    val CartButtonSmallTextStyle = TextStyle(
+       val CartButtonSmallTextStyle = TextStyle(
         fontSize = Dimens.TextSizeSmall11,
         fontWeight = FontWeight.Medium,
         color = Colors.White
@@ -111,5 +111,11 @@ object Typography {
         fontSize = Dimens.TextSizeSmall12,
         fontWeight = FontWeight.Light,
         color = Colors.Red
+    )
+
+    val SmsCodeInputStyle = TextStyle(
+        fontSize = Dimens.TextSizeRegular14,
+        fontWeight = FontWeight.Medium,
+        color = Colors.White
     )
 }

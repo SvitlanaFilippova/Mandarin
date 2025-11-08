@@ -34,7 +34,7 @@ fun MenuSubHeaderItem(item: MenuItem.SubHeaderItem, hasHeaderBefore: Boolean) {
         if (item.description.isNotEmpty()) {
             ExpandableText(
                 text = item.description,
-                style = Typography.MealSmallTextStyle,
+                style = Typography.SmallLightTextStyle,
                 isExpanded = isDescriptionExpanded,
                 onClick = { isDescriptionExpanded = !isDescriptionExpanded },
                 maxLinesCollapsed = MAX_LINES_FOR_COLLAPSED_EXPANDABLE_TEXT

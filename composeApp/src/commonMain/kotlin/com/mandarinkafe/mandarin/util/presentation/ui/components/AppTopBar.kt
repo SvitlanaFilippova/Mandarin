@@ -46,7 +46,7 @@ fun AppTopBar(
                     .size(Dimens.ToolbarHeadHeight40)
                     .align(Alignment.CenterEnd)
                     .padding(end = Dimens.MarginSmall8)
-                    .clickable { onEvent(SharedEvent.OnPhoneClick) }
+                    .clickable { onEvent(SharedEvent.OnPhoneClick()) }
             ) {
                 Icon(
                     painter = painterResource(MR.images.ic_call),

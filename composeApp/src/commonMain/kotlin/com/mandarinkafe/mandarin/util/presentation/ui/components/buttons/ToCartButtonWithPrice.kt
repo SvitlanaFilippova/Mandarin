@@ -48,7 +48,7 @@ fun ToCartButtonWithPrice(
             )
             Text(
                 text = stringResource(MR.strings.meal_price_template, price.toInt()),
-                style = Typography.ToCartButtonStyle
+                style = Typography.ButtonTextStyle
             )
         }
     }

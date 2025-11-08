@@ -91,7 +91,7 @@ fun SmallHorizontalMealItemCard(
 
             Text(
                 text = categoryPathText,
-                style = Typography.MealSmallTextStyle,
+                style = Typography.SmallLightTextStyle,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
             )

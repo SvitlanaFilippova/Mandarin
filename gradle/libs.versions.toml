@@ -34,6 +34,7 @@ napier = "2.7.1"
 navigation = "2.9.1"
 parcelize = "2.2.20"
 playServicesLocationVersion = "21.3.0"
+playServicesAuthVersion = "21.2.0"
 pullrefresh = "1.4.0-beta03"
 runnerVersion = "1.7.0"
 sqldelight = "2.1.0"
@@ -97,8 +98,9 @@ kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.re
 datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
-# Google Play Services Location
+# Google Play Services
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocationVersion" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuthVersion" }
 
 # MOKO Resources
 resources = { module = "dev.icerock.moko:resources", version.ref = "moko-resources" }

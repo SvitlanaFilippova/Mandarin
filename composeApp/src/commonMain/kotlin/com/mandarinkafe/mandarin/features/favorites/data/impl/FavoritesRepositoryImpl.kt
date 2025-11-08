@@ -63,6 +63,10 @@ class FavoritesRepositoryImpl(
         proceedToggleFavorite(record)
     }
 
+    override suspend fun sync() {
+        //  TODO реализовать синхнронизацию
+    }
+
     private suspend fun proceedToggleFavorite(record: FavoriteRecord) {
         if (currentRawRecords.contains(record)) {
             currentRawRecords.remove(record)

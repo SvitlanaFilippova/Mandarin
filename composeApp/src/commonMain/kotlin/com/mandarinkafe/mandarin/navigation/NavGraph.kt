@@ -6,8 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.features.account.presentation.ui.screen.AccountScreen
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.AddressDetailsScreen
 import com.mandarinkafe.mandarin.features.address.presentation.ui.screen.AddressMapScreen
+import com.mandarinkafe.mandarin.features.auth.presentation.ui.screen.AuthScreen
 import com.mandarinkafe.mandarin.features.cart.presentation.screen.CartScreen
 import com.mandarinkafe.mandarin.features.contacts.presentation.screen.ContactsScreen
 import com.mandarinkafe.mandarin.features.delivery.presentation.ui.screen.DeliveryScreen
@@ -100,6 +102,10 @@ fun NavGraph(navController: NavHostController) {
 
         composable(NavConstants.SAVED_ADDRESSES_ROUTE) {
             SavedAddressesScreen(navController = navController)
+        }
+
+        composable(NavConstants.ACCOUNT_ROUTE) {
+            AccountScreen(navController = navController)
         }
 
         composable(NavConstants.ABOUT_SCREEN_ROUTE) {
@@ -222,6 +228,20 @@ fun NavGraph(navController: NavHostController) {
                 fromOrderCreation = fromOrderCreation,
                 sharedViewModel = sharedViewModel,
                 navController = navController
+            )
+        }
+
+        composable(
+            route = "${NavConstants.AUTH_ROUTE}?" +
+                    "${NavConstants.KEY_TARGET_ROUTE}={${NavConstants.KEY_TARGET_ROUTE}}"
+        ) { backStackEntry ->
+            val targetRoute =
+                backStackEntry.getStringArgument(NavConstants.KEY_TARGET_ROUTE)?.decodeURLPart()
+
+            AuthScreen(
+                sharedViewModel = sharedViewModel,
+                navController = navController,
+                targetRoute = targetRoute
             )
         }
     }
