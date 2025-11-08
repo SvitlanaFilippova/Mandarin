@@ -66,7 +66,9 @@ class AuthApi(
                     } catch (e: Exception) {
                         "$ERROR_BODY_READ_FAILED${e.message}"
                     }
-                    Napier.e("$LOG_TAG: requestPhoneVerification - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody")
+                    Napier.e(
+                        "$LOG_TAG: requestPhoneVerification - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody"
+                    )
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
@@ -153,7 +155,9 @@ class AuthApi(
                     } catch (e: Exception) {
                         "$ERROR_BODY_READ_FAILED${e.message}"
                     }
-                    Napier.e("$LOG_TAG: requestSmsVerification - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody")
+                    Napier.e(
+                        "$LOG_TAG: requestSmsVerification - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody"
+                    )
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
