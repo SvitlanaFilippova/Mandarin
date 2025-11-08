@@ -52,7 +52,7 @@ fun AddressInfo(
                         Text(
                             text = details,
                             overflow = TextOverflow.Ellipsis,
-                            style = Typography.MealSmallTextStyle,
+                            style = Typography.SmallLightTextStyle,
                             maxLines = 3
                         )
                     }

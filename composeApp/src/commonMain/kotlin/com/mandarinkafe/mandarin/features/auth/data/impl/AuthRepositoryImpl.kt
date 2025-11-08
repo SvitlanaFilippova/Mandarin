@@ -1,257 +1,315 @@
 package com.mandarinkafe.mandarin.features.auth.data.impl
 
+import com.mandarinkafe.mandarin.core.domain.models.AuthTokens
+import com.mandarinkafe.mandarin.features.account.domain.api.UserInfoRepository
 import com.mandarinkafe.mandarin.features.auth.data.Mapper.toDomain
-import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationRequest
-import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationResponse
-import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusByCheckIdRequest
-import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusByPhoneRequest
-import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusResponse
-import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationRequest
-import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationResponse
-import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeRequest
-import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeResponse
+import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorage
+import com.mandarinkafe.mandarin.features.auth.data.dto.ActiveSessionsResponse
+import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenResponse
+import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionRequest
+import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionResponse
+import com.mandarinkafe.mandarin.features.auth.data.dto.ValidateTokenResponse
 import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClient
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
-import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationData
-import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationStatus
-import com.mandarinkafe.mandarin.features.auth.domain.models.SmsVerificationData
-import com.mandarinkafe.mandarin.features.auth.domain.models.VerifySmsCodeResult
+import com.mandarinkafe.mandarin.features.auth.domain.models.ActiveSession
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class AuthRepositoryImpl(
     private val networkClient: AuthNetworkClient,
+    private val tokenStorage: TokenStorage,
+    private val userInfoRepository: UserInfoRepository,
 ) : AuthRepository {
 
-    override suspend fun requestPhoneVerification(phone: String): Resource<PhoneVerificationData> {
-        return try {
-            val response = networkClient.requestPhoneVerification(PhoneVerificationRequest(phone))
-            when (response.resultCode) {
-                NO_CONNECTION -> {
-                    Resource.ErrorNoInternet()
-                }
+    private val _authState = MutableStateFlow(false)
+    override val authState: Flow<Boolean> = _authState
 
-                HTTP_SUCCESS -> {
-                    val wrapper = response as PhoneVerificationResponse
-                    wrapper.data?.let {
-                        val domainData = it.toDomain()
-                        Resource.Success(domainData)
-                    } ?: Resource.ErrorOther("Пустой ответ от сервера")
-                }
+    private companion object {
+        const val HTTP_UNAUTHORIZED = 401
+        private const val LOG_TAG = "AuthRepository"
+        private const val TOKEN_REFRESH_TAG = "TOKEN REFRESH"
+    }
 
-                HTTP_SERVER_ERROR -> {
-                    Resource.ErrorOther("Ошибка сервера")
-                }
-
-                else -> {
-                    Resource.ErrorOther("Неизвестная ошибка")
-                }
-            }
-        } catch (e: Exception) {
-            Napier.e("AuthRepository.requestPhoneVerification: Exception", e)
-            Resource.ErrorOther("Ошибка: ${e.message}")
+    override suspend fun initializeAuth(): Boolean {
+        val hasTokens = tokenStorage.getTokens() != null
+        return if (hasTokens) {
+            // Если есть токены, валидируем их на сервере
+            validateToken()
+        } else {
+            _authState.value = false
+            false
         }
     }
 
-    override suspend fun checkVerificationStatusByCheckId(checkId: String): Resource<PhoneVerificationStatus> {
-        return try {
-            val response = networkClient.checkVerificationStatusByCheckId(
-                PhoneVerificationStatusByCheckIdRequest(checkId)
-            )
-            when (response.resultCode) {
-                NO_CONNECTION -> {
-                    Resource.ErrorNoInternet()
-                }
+    override fun isAuthorized() = _authState.value
 
-                HTTP_SUCCESS -> {
-                    val wrapper = response as PhoneVerificationStatusResponse
-                    wrapper.data?.let {
-                        val domainStatus = it.toDomain()
-                        Resource.Success(domainStatus)
-                    } ?: Resource.ErrorOther("Пустой ответ от сервера")
-                }
-
-                HTTP_SERVER_ERROR -> {
-                    Resource.ErrorOther("Ошибка сервера")
-                }
-
-                else -> {
-                    Resource.ErrorOther("Неизвестная ошибка")
-                }
+    override suspend fun saveTokens(tokens: AuthTokens) {
+        try {
+            tokenStorage.saveTokens(tokens)
+            Napier.d("$LOG_TAG: saveTokens - Tokens saved, validating...")
+            // После сохранения токенов валидируем их и загружаем данные пользователя
+            val isValid = validateToken()
+            if (!isValid) {
+                Napier.e("$LOG_TAG: saveTokens - Token validation failed, clearing tokens")
+                clearTokens()
+                error("Failed to validate tokens after saving")
             }
+            Napier.d("$LOG_TAG: saveTokens - ✅ Tokens saved and validated successfully")
+        } catch (e: IllegalStateException) {
+            throw e
         } catch (e: Exception) {
-            Napier.e("AuthRepository.checkVerificationStatusByCheckId: Exception", e)
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Napier.e("$LOG_TAG: saveTokens - Exception", e)
+            throw e
         }
     }
 
-    override fun observeVerificationStatusByPhone(phone: String): Flow<Resource<PhoneVerificationStatus>> =
-        flow {
-            val request = PhoneVerificationStatusByPhoneRequest(phone = phone)
+    private suspend fun clearTokens() {
+        try {
+            tokenStorage.clearTokens()
+            _authState.value = false
+        } catch (e: Exception) {
+            Napier.e("$LOG_TAG: clearTokens - Exception", e)
+            throw e
+        }
+    }
 
-            while (true) {
-                try {
-                    val response = checkVerificationStatusByPhone(request)
-                    emit(response)
+    override suspend fun logout() {
+        try {
+            performServerLogout()
+            // Всегда очищаем локальные токены и данные пользователя
+            clearTokens()
+            userInfoRepository.clearUserInfo()
+        } catch (e: Exception) {
+            Napier.e("$LOG_TAG: Exception during logout", e)
+            throw e
+        }
+    }
 
-                    when (response) {
-                        is Resource.Success -> {
-                            val status = response.data
+    private suspend fun performServerLogout() {
+        val accessToken = getAccessToken() ?: return
 
-                            if (status == null) {
-                                emit(Resource.ErrorOther("Пустой ответ от сервера"))
-                                delay(POLLING_INTERVAL_SLOW_MS)
-                            } else {
-                                // Останавливаем пулинг, если нужно
-                                if (status.shouldStopPolling == true) {
-                                    break
-                                }
+        try {
+            val response = networkClient.logout(accessToken)
+            when (response.resultCode) {
+                HTTP_SUCCESS -> Napier.d("$LOG_TAG: Logout successful on server")
+                NO_CONNECTION -> Napier.w("$LOG_TAG: No internet during logout, proceeding with local logout")
+                else -> Napier.w(
+                    "$LOG_TAG: Server logout failed - code ${response.resultCode}, proceeding with local logout"
+                )
+            }
+        } catch (e: Exception) {
+            Napier.e("$LOG_TAG: Exception during server logout", e)
+        }
+    }
 
-                                // Определяем интервал пулинга на основе оставшегося времени
-                                val expiresIn = status.expiresInSeconds
-                                if (expiresIn == null || expiresIn <= 0) {
-                                    break
-                                }
+    override suspend fun getAccessToken(): String? {
+        return try {
+            tokenStorage.getTokens()?.accessToken
+        } catch (e: Exception) {
+            Napier.e("$LOG_TAG.getAccessToken: Exception", e)
+            null
+        }
+    }
 
-                                val pollingInterval = when {
-                                    // Первые 60 секунд - часто
-                                    expiresIn > SECONDS_TO_CALL_DEFAULT - FAST_POLLING_START_SECONDS -> {
-                                        POLLING_INTERVAL_FAST_MS
-                                    }
-                                    // Последние 30 секунд - часто
-                                    expiresIn <= FAST_POLLING_END_SECONDS -> {
-                                        POLLING_INTERVAL_FAST_MS
-                                    }
-                                    // Средний период - реже
-                                    else -> {
-                                        POLLING_INTERVAL_MEDIUM_MS
-                                    }
-                                }
+    override suspend fun validateToken(): Boolean {
+        return try {
+            val accessToken = getAccessToken()
+            if (accessToken == null) {
+                _authState.value = false
+                return false
+            }
 
-                                delay(pollingInterval)
-                            }
-                        }
+            val response = networkClient.validateToken(accessToken)
 
-                        is Resource.ErrorNoInternet -> {
-                            delay(POLLING_INTERVAL_MEDIUM_MS)
-                        }
+            when (response.resultCode) {
+                NO_CONNECTION -> {
+                    // При отсутствии сети считаем токен валидным (оптимистичный сценарий)
+                    _authState.value = true
+                    Napier.d("$LOG_TAG: validateToken - No connection, assuming tokens are valid")
+                    true
+                }
 
-                        else -> {
-                            delay(POLLING_INTERVAL_SLOW_MS)
-                        }
+                HTTP_SUCCESS -> {
+                    _authState.value = true
+                    // Обновляем информацию о пользователе из ответа
+                    val validateResponse = response as? ValidateTokenResponse
+                    validateResponse?.data?.let { userInfoDto ->
+                        Napier.d("$LOG_TAG: validateToken - Updating user info from server")
+                        userInfoRepository.updateFromServer(userInfoDto)
                     }
-                } catch (e: Exception) {
-                    Napier.e("AuthRepository.observeVerificationStatusByPhone: Exception", e)
-                    emit(Resource.ErrorOther("Ошибка: ${e.message}"))
-                    delay(POLLING_INTERVAL_SLOW_MS)
+                    true
+                }
+
+                HTTP_UNAUTHORIZED -> {
+                    // Токен невалиден - пытаемся обновить через refresh token
+                    Napier.d("$LOG_TAG: Token invalid (401), attempting refresh")
+                    tryRefreshToken()
+                }
+
+                else -> {
+                    // Ошибка сервера - считаем токен валидным (оптимистичный сценарий)
+                    Napier.e(
+                        "$LOG_TAG: validateToken - Server error (code ${response.resultCode}), " +
+                                "keeping auth state"
+                    )
+                    true
                 }
             }
+        } catch (e: Exception) {
+            Napier.e("$LOG_TAG: validateToken - Exception", e)
+            // При ошибке считаем токен валидным (оптимистичный сценарий)
+            true
         }
+    }
 
-    private suspend fun checkVerificationStatusByPhone(request: PhoneVerificationStatusByPhoneRequest): Resource<PhoneVerificationStatus> {
+    private suspend fun tryRefreshToken(): Boolean {
         return try {
-            val response = networkClient.checkVerificationStatusByPhone(request)
+            Napier.d("=== $TOKEN_REFRESH_TAG: Started ===")
+            val tokens = tokenStorage.getTokens()
+            if (tokens?.refreshToken == null) {
+                Napier.w("$TOKEN_REFRESH_TAG: No refresh token found, clearing auth state")
+                clearTokens()
+                return false
+            }
+            val response = networkClient.refreshToken(tokens.refreshToken)
+
             when (response.resultCode) {
                 NO_CONNECTION -> {
-                    Resource.ErrorNoInternet()
+                    Napier.w("$TOKEN_REFRESH_TAG: No internet connection, keeping current auth state (optimistic)")
+                    true
                 }
 
                 HTTP_SUCCESS -> {
-                    val wrapper = response as PhoneVerificationStatusResponse
-                    wrapper.data?.let {
-                        val domainStatus = it.toDomain()
-                        Resource.Success(domainStatus)
-                    } ?: Resource.ErrorOther("Пустой ответ от сервера")
+                    Napier.d("$TOKEN_REFRESH_TAG: Server responded with success")
+                    val refreshResponse = response as? RefreshTokenResponse
+                    val newTokens = refreshResponse?.data?.toDomain()
+
+                    if (newTokens != null) {
+                        saveTokens(newTokens)
+                        true
+                    } else {
+                        Napier.e("$TOKEN_REFRESH_TAG: ❌ Response is success but data is empty")
+                        clearTokens()
+                        false
+                    }
+                }
+
+                HTTP_UNAUTHORIZED -> {
+                    // Refresh token тоже невалиден - очищаем всё
+                    Napier.w("$TOKEN_REFRESH_TAG: ❌ Refresh token is invalid (401), clearing all auth data")
+                    clearTokens()
+                    false
+                }
+
+                else -> {
+                    // Ошибка сервера при refresh - не трогаем текущие токены
+                    Napier.e(
+                        "$TOKEN_REFRESH_TAG: Server error (code ${response.resultCode})," +
+                                " keeping current tokens (optimistic)"
+                    )
+                    true
+                }
+            }
+        } catch (e: Exception) {
+            Napier.e(
+                "$TOKEN_REFRESH_TAG: ❌ Exception occurred, keeping current tokens (optimistic)",
+                e
+            )
+            // При ошибке не трогаем текущие токены
+            true
+        }
+    }
+
+    override suspend fun getActiveSessions(): Resource<List<ActiveSession>> {
+        return try {
+            val accessToken = getAccessToken()
+            if (accessToken == null) {
+                Napier.e("$LOG_TAG: getActiveSessions - No access token")
+                return Resource.ErrorOther("Нет токена авторизации")
+            }
+
+            val response = networkClient.getActiveSessions(accessToken)
+
+            when (response.resultCode) {
+                NO_CONNECTION -> Resource.ErrorNoInternet()
+                HTTP_SUCCESS -> {
+                    val wrapper = response as? ActiveSessionsResponse
+                    val sessions = wrapper?.data?.sessions?.map { it.toDomain() }
+
+                    if (sessions != null) {
+                        Resource.Success(sessions)
+                    } else {
+                        Napier.e("$LOG_TAG: getActiveSessions - Empty response data")
+                        Resource.ErrorOther("Пустой ответ от сервера")
+                    }
+                }
+
+                HTTP_UNAUTHORIZED -> {
+                    // Интерсептор уже попытался обновить токен, если это 401 - значит refresh token тоже невалиден
+                    Napier.e("$LOG_TAG: getActiveSessions - Unauthorized (refresh token invalid)")
+                    clearTokens()
+                    Resource.ErrorOther("Требуется авторизация")
                 }
 
                 HTTP_SERVER_ERROR -> {
+                    Napier.e("$LOG_TAG: getActiveSessions - Server error")
                     Resource.ErrorOther("Ошибка сервера")
                 }
 
                 else -> {
+                    Napier.e("$LOG_TAG: getActiveSessions - Unknown error code: ${response.resultCode}")
                     Resource.ErrorOther("Неизвестная ошибка")
                 }
             }
         } catch (e: Exception) {
-            Napier.e("AuthRepository.checkVerificationStatusByPhone: Exception", e)
+            Napier.e("$LOG_TAG: getActiveSessions - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
 
-    override suspend fun requestSmsVerification(phone: String): Resource<SmsVerificationData> {
+    override suspend fun revokeSession(sessionId: String): Resource<Boolean> {
         return try {
-            val response = networkClient.requestSmsVerification(SmsVerificationRequest(phone))
+            val accessToken = getAccessToken()
+            if (accessToken == null) {
+                Napier.e("$LOG_TAG: revokeSession - No access token")
+                return Resource.ErrorOther("Нет токена авторизации")
+            }
+
+            val response = networkClient.revokeSession(accessToken, RevokeSessionRequest(sessionId))
+
             when (response.resultCode) {
-                NO_CONNECTION -> {
-                    Resource.ErrorNoInternet()
+                NO_CONNECTION -> Resource.ErrorNoInternet()
+                HTTP_SUCCESS -> {
+                    val wrapper = response as? RevokeSessionResponse
+                    Resource.Success(wrapper?.data?.isSuccess ?: false)
                 }
 
-                HTTP_SUCCESS -> {
-                    val wrapper = response as SmsVerificationResponse
-                    wrapper.data?.let { dto ->
-                        val domainData = dto.toDomain()
-                        Resource.Success(domainData)
-                    } ?: Resource.ErrorOther("Пустой ответ от сервера")
+                HTTP_UNAUTHORIZED -> {
+                    // Интерсептор уже попытался обновить токен, если это 401 - значит refresh token тоже невалиден
+                    Napier.e("$LOG_TAG: revokeSession - Unauthorized (refresh token invalid)")
+                    clearTokens()
+                    Resource.ErrorOther("Требуется авторизация")
                 }
 
                 HTTP_SERVER_ERROR -> {
+                    Napier.e("$LOG_TAG: revokeSession - Server error")
                     Resource.ErrorOther("Ошибка сервера")
                 }
 
                 else -> {
-                    Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
+                    Napier.e("$LOG_TAG: revokeSession - Unknown error code: ${response.resultCode}")
+                    Resource.ErrorOther("Неизвестная ошибка")
                 }
             }
         } catch (e: Exception) {
-            Napier.e("AuthRepository.requestSmsVerification: Exception", e)
+            Napier.e("$LOG_TAG: revokeSession - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
-    }
-
-    override suspend fun verifySmsCode(phone: String, code: String): Resource<VerifySmsCodeResult> {
-        return try {
-            val response = networkClient.verifySmsCode(VerifySmsCodeRequest(phone, code))
-            when (response.resultCode) {
-                NO_CONNECTION -> {
-                    Resource.ErrorNoInternet()
-                }
-
-                HTTP_SUCCESS -> {
-                    val wrapper = response as VerifySmsCodeResponse
-                    wrapper.data?.let { dto ->
-                        val domainResult = dto.toDomain()
-                        Resource.Success(domainResult)
-                    } ?: Resource.ErrorOther("Пустой ответ от сервера")
-                }
-
-                HTTP_SERVER_ERROR -> {
-                    Resource.ErrorOther("Ошибка сервера")
-                }
-
-                else -> {
-                    Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
-                }
-            }
-        } catch (e: Exception) {
-            Napier.e("AuthRepository.verifySmsCode: Exception", e)
-            Resource.ErrorOther("Ошибка: ${e.message}")
-        }
-    }
-
-    companion object {
-        private const val POLLING_INTERVAL_FAST_MS = 2000L      // 2 секунды - частое опрашивание
-        private const val POLLING_INTERVAL_MEDIUM_MS = 7000L    // 7 секунд - среднее опрашивание
-        private const val POLLING_INTERVAL_SLOW_MS = 15000L     // 15 секунд - редкое опрашивание
-
-        private const val FAST_POLLING_START_SECONDS = 60       // Первые 60 секунд - часто
-        private const val FAST_POLLING_END_SECONDS = 30         // Последние 30 секунд - часто
-        private const val SECONDS_TO_CALL_DEFAULT = 300
     }
 }
 

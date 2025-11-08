@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.features.auth.domain.impl
 
-import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
+import com.mandarinkafe.mandarin.features.auth.domain.api.PhoneVerificationRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.VerificationStatusInteractor
 import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationStatus
 import com.mandarinkafe.mandarin.features.auth.domain.models.VerifySmsCodeResult
@@ -9,17 +9,17 @@ import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 class VerificationStatusInteractorImpl(
-    private val authRepository: AuthRepository,
+    private val phoneVerificationRepository: PhoneVerificationRepository,
 ) : VerificationStatusInteractor {
 
     override suspend fun checkByCheckId(checkId: String): Resource<PhoneVerificationStatus> {
-        val result = authRepository.checkVerificationStatusByCheckId(checkId = checkId)
+        val result = phoneVerificationRepository.checkVerificationStatusByCheckId(checkId = checkId)
         return result
     }
 
     override fun observeStatusByPhone(phone: String): Flow<Resource<PhoneVerificationStatus>> {
         val phoneWithPrefix = "$PHONE_PREFIX_RU$phone"
-        return authRepository.observeVerificationStatusByPhone(phone = phoneWithPrefix)
+        return phoneVerificationRepository.observeVerificationStatusByPhone(phone = phoneWithPrefix)
     }
 
     override suspend fun checkSms(
@@ -27,7 +27,7 @@ class VerificationStatusInteractorImpl(
         code: String,
     ): Resource<VerifySmsCodeResult> {
         val phoneWithPrefix = "$PHONE_PREFIX_RU$phone"
-        return authRepository.verifySmsCode(phone = phoneWithPrefix, code = code)
+        return phoneVerificationRepository.verifySmsCode(phone = phoneWithPrefix, code = code)
     }
 }
 

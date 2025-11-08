@@ -5,13 +5,15 @@ import com.mandarinkafe.mandarin.core.data.network.NetworkMonitor
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusByCheckIdRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusByPhoneRequest
+import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationRequest
+import com.mandarinkafe.mandarin.features.auth.data.dto.UpdateNameRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeRequest
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
-import io.github.aakira.napier.Napier
 
 class AuthNetworkClientImpl(
-    private val api: AuthApi,
+    private val publicApi: PublicAuthApi,
+    private val authApi: AuthApi,
     private val networkMonitor: NetworkMonitor,
 ) : AuthNetworkClient {
 
@@ -20,47 +22,87 @@ class AuthNetworkClientImpl(
     }
 
     override suspend fun requestPhoneVerification(request: PhoneVerificationRequest): Response {
-        Napier.d("AUTH DEBUG: ServerNetworkClient.requestPhoneVerification() called with phone: ${request.phone}")
         if (!isConnected()) {
-            Napier.d("AUTH DEBUG: No network connection, returning NO_CONNECTION")
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.requestPhoneVerification(request)
+        return publicApi.requestPhoneVerification(request)
     }
 
     override suspend fun checkVerificationStatusByPhone(request: PhoneVerificationStatusByPhoneRequest): Response {
-        Napier.d("AUTH DEBUG: ServerNetworkClient.checkVerificationStatus() called with phone: ${request.phone}")
         if (!isConnected()) {
-            Napier.d("AUTH DEBUG: No network connection, returning NO_CONNECTION")
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.checkVerificationStatusByPhone(request)
+        return publicApi.checkVerificationStatusByPhone(request)
     }
 
     override suspend fun checkVerificationStatusByCheckId(request: PhoneVerificationStatusByCheckIdRequest): Response {
-        Napier.d("AUTH DEBUG: ServerNetworkClient.checkVerificationStatusByCheckId() called with checkId: ${request.checkId}")
         if (!isConnected()) {
-            Napier.d("AUTH DEBUG: No network connection, returning NO_CONNECTION")
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.checkVerificationStatusByCheckId(request)
+        return publicApi.checkVerificationStatusByCheckId(request)
     }
 
     override suspend fun requestSmsVerification(request: SmsVerificationRequest): Response {
-        Napier.d("SMS AUTH DEBUG: ServerNetworkClient.requestSmsVerification() called with phone: ${request.phone}")
         if (!isConnected()) {
-            Napier.d("SMS AUTH DEBUG: No network connection, returning NO_CONNECTION")
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.requestSmsVerification(request)
+        return publicApi.requestSmsVerification(request)
     }
 
     override suspend fun verifySmsCode(request: VerifySmsCodeRequest): Response {
-        Napier.d("SMS AUTH DEBUG: ServerNetworkClient.verifySmsCode() called with phone: ${request.phone}, code: ${request.code}")
         if (!isConnected()) {
-            Napier.d("SMS AUTH DEBUG: No network connection, returning NO_CONNECTION")
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.verifySmsCode(request)
+        return publicApi.verifySmsCode(request)
+    }
+
+    override suspend fun validateToken(accessToken: String): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return authApi.validateToken(accessToken)
+    }
+
+    override suspend fun refreshToken(refreshToken: String): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return publicApi.refreshToken(
+            com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenRequest(refreshToken)
+        )
+    }
+
+    override suspend fun getActiveSessions(accessToken: String): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return authApi.getActiveSessions(accessToken)
+    }
+
+    override suspend fun revokeSession(
+        accessToken: String,
+        request: RevokeSessionRequest,
+    ): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return authApi.revokeSession(accessToken, request)
+    }
+
+    override suspend fun logout(accessToken: String): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return authApi.logout(accessToken)
+    }
+
+    override suspend fun updateUserName(
+        accessToken: String,
+        request: UpdateNameRequest,
+    ): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return authApi.updateUserName(accessToken, request)
     }
 }

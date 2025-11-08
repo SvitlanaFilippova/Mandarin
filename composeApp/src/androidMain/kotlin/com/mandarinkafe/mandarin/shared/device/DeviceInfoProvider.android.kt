@@ -30,6 +30,21 @@ actual class DeviceInfoProvider(private val context: Context) {
                 "App v$versionName ($versionCode), " +
                 "Device: ${Build.MANUFACTURER} ${Build.MODEL}"
     }
+
+    actual fun getDeviceName(): String {
+        return try {
+            val manufacturer = Build.MANUFACTURER.replaceFirstChar { it.uppercase() }
+            val model = Build.MODEL
+            if (model.startsWith(manufacturer, ignoreCase = true)) {
+                model
+            } else {
+                "$manufacturer $model"
+            }
+        } catch (e: Exception) {
+            Napier.e("Error getting device name: $e")
+            "Android Device"
+        }
+    }
 }
 
 

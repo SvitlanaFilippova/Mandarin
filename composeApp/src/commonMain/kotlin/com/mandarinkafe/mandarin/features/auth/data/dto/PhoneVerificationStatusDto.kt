@@ -19,5 +19,11 @@ data class PhoneVerificationStatusDto(
     val shouldStopPolling: Boolean? = null,
     @SerialName("expires_in_seconds")
     val expiresInSeconds: Int? = null,
+    @SerialName("access_token")
+    val accessToken: String? = null,
+    @SerialName("refresh_token")
+    val refreshToken: String? = null,
+    @SerialName("token_type")
+    val tokenType: String? = null,
 )
 

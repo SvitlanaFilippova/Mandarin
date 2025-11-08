@@ -6,5 +6,6 @@ object DiConstants {
     const val IIKO_CLIENT_QUALIFIER = "IikoClient"
     const val IIKO_AUTH_CLIENT_QUALIFIER = "IikoAuthClient"
     const val SERVER_CLIENT_QUALIFIER = "ServerClient"
+    const val SERVER_AUTH_CLIENT_QUALIFIER = "ServerAuthClient"
     const val TELEGRAM_CLIENT_QUALIFIER = "TelegramClient"
 }

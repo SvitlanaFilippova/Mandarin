@@ -88,7 +88,6 @@ fun AuthScreen(
                 )
 
                 with(state) {
-
                     AskPhoneComponent(
                         phoneQuery = phoneQuery,
                         isPhoneValid = isPhoneValid,

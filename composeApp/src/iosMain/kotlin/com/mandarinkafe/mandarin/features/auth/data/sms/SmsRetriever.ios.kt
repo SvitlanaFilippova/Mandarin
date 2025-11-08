@@ -17,8 +17,7 @@ import kotlinx.coroutines.flow.flowOf
  * Compose для iOS автоматически поддерживает textContentType(.oneTimeCode),
  * что позволяет системе автоматически предлагать коды из SMS.
  */
-class IosSmsRetriever : SmsRetriever {
-
+actual fun getSmsRetriever(): SmsRetriever = object : SmsRetriever {
     override fun startListening(): Flow<String?> {
         // На iOS автозаполнение работает нативно через систему
         // Compose автоматически поддерживает это через TextField с правильным KeyboardType
@@ -30,11 +29,4 @@ class IosSmsRetriever : SmsRetriever {
         // На iOS нет необходимости явно останавливать прослушивание
     }
 }
-
-actual fun getSmsRetriever(): SmsRetriever {
-    return IosSmsRetriever()
-}
-
-
-
 

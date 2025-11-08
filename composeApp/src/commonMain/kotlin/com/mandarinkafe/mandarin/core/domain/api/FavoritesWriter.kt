@@ -7,4 +7,5 @@ interface FavoritesWriter {
     /** Добавляет или убирает запись; возвращает новое состояние (true = теперь в избранном). */
     suspend fun toggleFavorite(custom: CustomizedMeal)
     suspend fun toggleFavorite(meal: Meal)
+    suspend fun sync()
 }

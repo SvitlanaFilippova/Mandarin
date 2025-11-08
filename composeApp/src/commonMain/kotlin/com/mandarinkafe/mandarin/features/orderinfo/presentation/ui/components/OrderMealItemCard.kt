@@ -99,7 +99,7 @@ private fun MealHeader(name: String, price: Double, deletedDecoration: TextDecor
         )
         Text(
             text = stringResource(MR.strings.float_price_template, price),
-            style = Typography.MealSmallTextStyle,
+            style = Typography.SmallLightTextStyle,
             textDecoration = deletedDecoration,
         )
     }
@@ -119,13 +119,13 @@ private fun ModifiersList(
                 modifier = Modifier.weight(1f),
                 text = "${it.groupName}: ${it.name}",
                 textDecoration = deletedDecoration,
-                style = Typography.MealSmallTextStyle,
+                style = Typography.SmallLightTextStyle,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
             )
             Text(
                 text = stringResource(MR.strings.float_price_template, it.price),
-                style = Typography.MealSmallTextStyle,
+                style = Typography.SmallLightTextStyle,
                 textDecoration = deletedDecoration,
             )
         }
@@ -153,14 +153,14 @@ private fun AddItemRow(item: IncomingMealAdditional) {
         Text(
             modifier = Modifier.weight(1f),
             text = "+ ${item.name}",
-            style = Typography.MealSmallTextStyle,
+            style = Typography.SmallLightTextStyle,
             textDecoration = deletedDecoration,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
         )
         Text(
             text = stringResource(MR.strings.float_price_template, item.price),
-            style = Typography.MealSmallTextStyle,
+            style = Typography.SmallLightTextStyle,
             textDecoration = deletedDecoration,
         )
     }
@@ -170,7 +170,7 @@ private fun AddItemRow(item: IncomingMealAdditional) {
 private fun MealComment(comment: String) {
     Text(
         text = stringResource(MR.strings.comment_template, comment),
-        style = Typography.MealSmallTextStyle,
+        style = Typography.SmallLightTextStyle,
         overflow = TextOverflow.Ellipsis,
         maxLines = 3,
     )

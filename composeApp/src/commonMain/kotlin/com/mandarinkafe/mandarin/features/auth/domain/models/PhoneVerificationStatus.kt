@@ -1,8 +1,10 @@
 package com.mandarinkafe.mandarin.features.auth.domain.models
 
-import kotlinx.serialization.Serializable
+import com.mandarinkafe.mandarin.core.domain.models.AuthTokens
 
-@Serializable
+/**
+ * Domain модель для результата проверки верификации номера по звонку
+ */
 data class PhoneVerificationStatus(
     val phone: String? = null,
     val isVerified: Boolean? = null,
@@ -11,4 +13,5 @@ data class PhoneVerificationStatus(
     val verifiedAt: String? = null,
     val shouldStopPolling: Boolean? = null,
     val expiresInSeconds: Int? = null,
+    val tokens: AuthTokens?,
 )

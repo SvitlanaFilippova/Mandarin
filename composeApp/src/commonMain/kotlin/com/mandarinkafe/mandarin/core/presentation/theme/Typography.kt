@@ -43,6 +43,12 @@ object Typography {
         color = Colors.WhiteTransparent75
     )
 
+    val SmallLightTextStyle = TextStyle(
+        fontSize = Dimens.TextSizeSmall12,
+        fontWeight = FontWeight.Light,
+        color = Colors.LightGrey
+    )
+
     val ConsentSmallTextStyle = TextStyle(
         fontSize = Dimens.TextSizeSmall11,
         fontWeight = FontWeight.Light,
@@ -73,13 +79,7 @@ object Typography {
         color = Colors.White
     )
 
-    val MealSmallTextStyle = TextStyle(
-        fontSize = Dimens.TextSizeSmall12,
-        fontWeight = FontWeight.Light,
-        color = Colors.LightGrey
-    )
-
-    val CartButtonSmallTextStyle = TextStyle(
+       val CartButtonSmallTextStyle = TextStyle(
         fontSize = Dimens.TextSizeSmall11,
         fontWeight = FontWeight.Medium,
         color = Colors.White
