@@ -10,6 +10,8 @@ import com.mandarinkafe.mandarin.features.favorites.data.datastore.FavoritesStor
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteRecord
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteRecords
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toStored
+import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
+import com.mandarinkafe.mandarin.features.favorites.data.remote.FavoritesRemoteDataSource
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
@@ -26,6 +28,7 @@ import kotlinx.coroutines.launch
 class FavoritesRepositoryImpl(
     private val storage: FavoritesStorage,
     private val validator: FavoritesValidator,
+    private val remoteDataSource: FavoritesRemoteDataSource,
 ) : FavoritesReader, FavoritesWriter {
 
     private var currentRawRecords = mutableSetOf<FavoriteRecord>()
@@ -63,7 +66,69 @@ class FavoritesRepositoryImpl(
     }
 
     override suspend fun sync() {
-        // TODO("Not yet implemented")
+        try {
+            // Получаем локальные избранные
+            val localResult = storage.getFavorites()
+            val localFavorites = when (localResult) {
+                is FavoritesStorageResult.Success -> localResult.favorites
+                is FavoritesStorageResult.Corrupted -> emptySet()
+            }
+
+            // Получаем удалённые избранные с сервера
+            val remoteFavorites = remoteDataSource.getFavorites()
+
+            // Объединяем локальные и удалённые избранные
+            // Если есть дубликаты (одинаковые по equals, но разные timestamp),
+            // берём версию с более свежим timestamp
+            val mergedFavorites = mergeFavorites(localFavorites, remoteFavorites)
+
+            // Сохраняем объединённый результат локально
+            storage.saveFavorites(mergedFavorites)
+
+            // Обновляем внутреннее состояние
+            currentRawRecords = mergedFavorites.toFavoriteRecords()
+            updateFavorites(currentRawRecords)
+
+            // Отправляем объединённый результат на сервер
+            remoteDataSource.syncFavorites(currentRawRecords)
+        } catch (e: Exception) {
+            // В случае ошибки просто игнорируем синхронизацию
+            // Локальные данные остаются без изменений
+        }
+    }
+
+    /**
+     * Объединяет локальные и удалённые избранные.
+     * Если есть дубликаты (одинаковые по mealId, addsIds, modifiers),
+     * берёт версию с более свежим timestamp.
+     */
+    private fun mergeFavorites(
+        local: Set<StoredFavoriteMeal>,
+        remote: Set<StoredFavoriteMeal>
+    ): Set<StoredFavoriteMeal> {
+        // Создаём map для быстрого поиска по ключу (mealId + addsIds + modifiers)
+        val mergedMap = mutableMapOf<StoredFavoriteMeal, StoredFavoriteMeal>()
+
+        // Добавляем локальные избранные
+        local.forEach { favorite ->
+            mergedMap[favorite] = favorite
+        }
+
+        // Добавляем удалённые избранные, при конфликте берём версию с более свежим timestamp
+        remote.forEach { remoteFavorite ->
+            val existing = mergedMap[remoteFavorite]
+            if (existing == null) {
+                // Такого избранного ещё нет, добавляем
+                mergedMap[remoteFavorite] = remoteFavorite
+            } else {
+                // Есть дубликат, берём версию с более свежим timestamp
+                if (remoteFavorite.timestamp > existing.timestamp) {
+                    mergedMap[remoteFavorite] = remoteFavorite
+                }
+            }
+        }
+
+        return mergedMap.values.toSet()
     }
 
     private suspend fun proceedToggleFavorite(record: FavoriteRecord) {

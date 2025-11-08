@@ -8,7 +8,7 @@ import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthApi
 import com.mandarinkafe.mandarin.core.data.network.auth.IikoAuthProvider
 import com.mandarinkafe.mandarin.core.data.network.impl.IikoNetworkClientImpl
 import com.mandarinkafe.mandarin.core.data.network.impl.ServerNetworkClientImpl
-import com.mandarinkafe.mandarin.features.auth.data.network.AuthApi
+import com.mandarinkafe.mandarin.features.auth.data.network.ServerAuthApi
 import com.mandarinkafe.mandarin.features.auth.data.network.PublicAuthApi
 import com.mandarinkafe.mandarin.features.auth.data.network.ServerAuthProvider
 import com.mandarinkafe.mandarin.shared.BuildKonfig
@@ -194,7 +194,7 @@ val coreNetworkModule = module {
 
     // AuthApi (для авторизованных запросов, использует авторизованный клиент с автоматическим обновлением токенов)
     single {
-        AuthApi(get(named(DiConstants.SERVER_AUTH_CLIENT_QUALIFIER)))
+        ServerAuthApi(get(named(DiConstants.SERVER_AUTH_CLIENT_QUALIFIER)))
     }
 
     // IikoAuthProvider
