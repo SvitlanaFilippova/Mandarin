@@ -12,7 +12,8 @@ import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeRequest
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 
 class AuthNetworkClientImpl(
-    private val api: AuthApi,
+    private val publicApi: PublicAuthApi,
+    private val authApi: AuthApi,
     private val networkMonitor: NetworkMonitor,
 ) : AuthNetworkClient {
 
@@ -24,49 +25,49 @@ class AuthNetworkClientImpl(
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.requestPhoneVerification(request)
+        return publicApi.requestPhoneVerification(request)
     }
 
     override suspend fun checkVerificationStatusByPhone(request: PhoneVerificationStatusByPhoneRequest): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.checkVerificationStatusByPhone(request)
+        return publicApi.checkVerificationStatusByPhone(request)
     }
 
     override suspend fun checkVerificationStatusByCheckId(request: PhoneVerificationStatusByCheckIdRequest): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.checkVerificationStatusByCheckId(request)
+        return publicApi.checkVerificationStatusByCheckId(request)
     }
 
     override suspend fun requestSmsVerification(request: SmsVerificationRequest): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.requestSmsVerification(request)
+        return publicApi.requestSmsVerification(request)
     }
 
     override suspend fun verifySmsCode(request: VerifySmsCodeRequest): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.verifySmsCode(request)
+        return publicApi.verifySmsCode(request)
     }
 
     override suspend fun validateToken(accessToken: String): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.validateToken(accessToken)
+        return authApi.validateToken(accessToken)
     }
 
     override suspend fun refreshToken(refreshToken: String): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.refreshToken(
+        return publicApi.refreshToken(
             com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenRequest(refreshToken)
         )
     }
@@ -75,7 +76,7 @@ class AuthNetworkClientImpl(
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.getActiveSessions(accessToken)
+        return authApi.getActiveSessions(accessToken)
     }
 
     override suspend fun revokeSession(
@@ -85,14 +86,14 @@ class AuthNetworkClientImpl(
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.revokeSession(accessToken, request)
+        return authApi.revokeSession(accessToken, request)
     }
 
     override suspend fun logout(accessToken: String): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.logout(accessToken)
+        return authApi.logout(accessToken)
     }
 
     override suspend fun updateUserName(
@@ -102,6 +103,6 @@ class AuthNetworkClientImpl(
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        return api.updateUserName(accessToken, request)
+        return authApi.updateUserName(accessToken, request)
     }
 }

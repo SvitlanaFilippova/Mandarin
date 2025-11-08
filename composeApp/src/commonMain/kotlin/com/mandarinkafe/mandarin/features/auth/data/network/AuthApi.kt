@@ -3,28 +3,12 @@ package com.mandarinkafe.mandarin.features.auth.data.network
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.features.auth.data.dto.ActiveSessionsDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.ActiveSessionsResponse
-import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationDataDto
-import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationRequest
-import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationResponse
-import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusByCheckIdRequest
-import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusByPhoneRequest
-import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusDto
-import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationStatusResponse
-import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenDataDto
-import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenRequest
-import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionResponse
-import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationDataDto
-import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationRequest
-import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.UpdateNameRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.UserInfoDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.ValidateTokenResponse
-import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeDataDto
-import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeRequest
-import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeResponse
 import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.BEARER_TOKEN_TYPE
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
@@ -39,165 +23,21 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
 
+/**
+ * API для авторизованных запросов (требуют access token)
+ * Плагин Auth автоматически добавляет Authorization header и обновляет токен при 401
+ */
 class AuthApi(
     private val client: HttpClient,
 ) {
     private val key = BuildKonfig.MANDARIN_API_KEY
 
-
     private fun String.toAuthorizationHeader() = "$BEARER_TOKEN_TYPE $this"
-
-    suspend fun requestPhoneVerification(request: PhoneVerificationRequest): Response {
-        return try {
-            val httpResponse = client.post("/auth/request") {
-                header(HEADER_API_KEY, key)
-                setBody(request)
-            }
-
-            when (httpResponse.status) {
-                HttpStatusCode.OK -> {
-                    val data: PhoneVerificationDataDto = httpResponse.body()
-                    PhoneVerificationResponse(data = data).apply { resultCode = HTTP_SUCCESS }
-                }
-
-                else -> {
-                    val errorBody = try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
-                    Napier.e(
-                        "$LOG_TAG: requestPhoneVerification - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody"
-                    )
-                    Response().apply { resultCode = HTTP_SERVER_ERROR }
-                }
-            }
-        } catch (e: Throwable) {
-            Napier.e("$LOG_TAG: requestPhoneVerification - $LOG_EXCEPTION", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
-        }
-    }
-
-    suspend fun checkVerificationStatusByPhone(request: PhoneVerificationStatusByPhoneRequest): Response {
-        return try {
-            val httpResponse = client.post("/auth/verify-status") {
-                header(HEADER_API_KEY, key)
-                setBody(request)
-            }
-
-            when (httpResponse.status) {
-                HttpStatusCode.OK -> {
-                    val data: PhoneVerificationStatusDto = httpResponse.body()
-                    PhoneVerificationStatusResponse(data = data).apply { resultCode = HTTP_SUCCESS }
-                }
-
-                else -> {
-                    try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
-                    Response().apply {
-                        resultCode = HTTP_SERVER_ERROR
-                    }
-                }
-            }
-        } catch (e: Throwable) {
-            Napier.e("$LOG_TAG: checkVerificationStatusByPhone - $LOG_EXCEPTION", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
-        }
-    }
-
-    suspend fun checkVerificationStatusByCheckId(request: PhoneVerificationStatusByCheckIdRequest): Response {
-        return try {
-            val httpResponse = client.post("/auth/status") {
-                header(HEADER_API_KEY, key)
-                setBody(request)
-            }
-
-            when (httpResponse.status) {
-                HttpStatusCode.OK -> {
-                    val data: PhoneVerificationStatusDto = httpResponse.body()
-                    PhoneVerificationStatusResponse(data = data).apply { resultCode = HTTP_SUCCESS }
-                }
-
-                else -> {
-                    try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
-                    Response().apply { resultCode = HTTP_SERVER_ERROR }
-                }
-            }
-        } catch (e: Throwable) {
-            Napier.e("$LOG_TAG: checkVerificationStatusByCheckId - $LOG_EXCEPTION", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
-        }
-    }
-
-    suspend fun requestSmsVerification(request: SmsVerificationRequest): Response {
-        return try {
-            val httpResponse = client.post("/auth/request_sms") {
-                header(HEADER_API_KEY, key)
-                setBody(request)
-            }
-
-            when (httpResponse.status) {
-                HttpStatusCode.OK -> {
-                    val data: SmsVerificationDataDto = httpResponse.body()
-                    SmsVerificationResponse(data = data).apply { resultCode = HTTP_SUCCESS }
-                }
-
-                else -> {
-                    val errorBody = try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
-                    Napier.e(
-                        "$LOG_TAG: requestSmsVerification - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody"
-                    )
-                    Response().apply { resultCode = HTTP_SERVER_ERROR }
-                }
-            }
-        } catch (e: Throwable) {
-            Napier.e("$LOG_TAG: requestSmsVerification - $LOG_EXCEPTION", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
-        }
-    }
-
-    suspend fun verifySmsCode(request: VerifySmsCodeRequest): Response {
-        return try {
-            val httpResponse = client.post("/auth/verify_sms") {
-                header(HEADER_API_KEY, key)
-                setBody(request)
-            }
-
-            when (httpResponse.status) {
-                HttpStatusCode.OK -> {
-                    val data: VerifySmsCodeDataDto = httpResponse.body()
-                    VerifySmsCodeResponse(data = data).apply { resultCode = HTTP_SUCCESS }
-                }
-
-                else -> {
-                    val errorBody = try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
-                    Napier.e("$LOG_TAG: verifySmsCode - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody")
-                    Response().apply { resultCode = HTTP_SERVER_ERROR }
-                }
-            }
-        } catch (e: Throwable) {
-            Napier.e("$LOG_TAG: verifySmsCode - $LOG_EXCEPTION", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
-        }
-    }
 
     suspend fun validateToken(accessToken: String): Response {
         return try {
+            // Плагин Auth автоматически добавит Authorization header, но мы можем передать токен явно
+            // для обратной совместимости. В будущем можно убрать параметр accessToken.
             val httpResponse = client.get("/auth/me") {
                 header(HEADER_API_KEY, key)
                 header(HEADER_AUTHORIZATION, accessToken.toAuthorizationHeader())
@@ -220,39 +60,6 @@ class AuthApi(
             }
         } catch (e: Throwable) {
             Napier.e("$LOG_TAG: validateToken - $LOG_EXCEPTION", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
-        }
-    }
-
-    suspend fun refreshToken(request: RefreshTokenRequest): Response {
-        return try {
-            val httpResponse = client.post("/auth/refresh_token") {
-                header(HEADER_API_KEY, key)
-                setBody(request)
-            }
-
-            when (httpResponse.status) {
-                HttpStatusCode.OK -> {
-                    val data: RefreshTokenDataDto = httpResponse.body()
-                    RefreshTokenResponse(data = data).apply { resultCode = HTTP_SUCCESS }
-                }
-
-                HttpStatusCode.Unauthorized -> {
-                    Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
-                }
-
-                else -> {
-                    val errorBody = try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
-                    Napier.e("$LOG_TAG: refreshToken - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody")
-                    Response().apply { resultCode = HTTP_SERVER_ERROR }
-                }
-            }
-        } catch (e: Throwable) {
-            Napier.e("$LOG_TAG: refreshToken - $LOG_EXCEPTION", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

@@ -250,7 +250,9 @@ class AuthRepositoryImpl(
                 }
 
                 HTTP_UNAUTHORIZED -> {
-                    Napier.e("$LOG_TAG: getActiveSessions - Unauthorized")
+                    // Интерсептор уже попытался обновить токен, если это 401 - значит refresh token тоже невалиден
+                    Napier.e("$LOG_TAG: getActiveSessions - Unauthorized (refresh token invalid)")
+                    clearTokens()
                     Resource.ErrorOther("Требуется авторизация")
                 }
 
@@ -288,7 +290,9 @@ class AuthRepositoryImpl(
                 }
 
                 HTTP_UNAUTHORIZED -> {
-                    Napier.e("$LOG_TAG: revokeSession - Unauthorized")
+                    // Интерсептор уже попытался обновить токен, если это 401 - значит refresh token тоже невалиден
+                    Napier.e("$LOG_TAG: revokeSession - Unauthorized (refresh token invalid)")
+                    clearTokens()
                     Resource.ErrorOther("Требуется авторизация")
                 }
 
