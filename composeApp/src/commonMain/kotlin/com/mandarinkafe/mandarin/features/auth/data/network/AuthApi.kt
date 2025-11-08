@@ -21,6 +21,7 @@ import io.ktor.client.request.header
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 
 /**
@@ -82,11 +83,7 @@ class AuthApi(
                 }
 
                 else -> {
-                    val errorBody = try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
+                    val errorBody = getErrorBody(httpResponse)
                     Napier.e("$LOG_TAG: getActiveSessions - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
@@ -116,11 +113,7 @@ class AuthApi(
                 }
 
                 else -> {
-                    val errorBody = try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
+                    val errorBody = getErrorBody(httpResponse)
                     Napier.e("$LOG_TAG: revokeSession - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
@@ -148,11 +141,7 @@ class AuthApi(
                 }
 
                 else -> {
-                    val errorBody = try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
+                    val errorBody = getErrorBody(httpResponse)
                     Napier.e("$LOG_TAG: logout - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
@@ -181,11 +170,7 @@ class AuthApi(
                 }
 
                 else -> {
-                    val errorBody = try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
+                    val errorBody = getErrorBody(httpResponse)
                     Napier.e("$LOG_TAG: updateUserName - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
@@ -193,6 +178,14 @@ class AuthApi(
         } catch (e: Throwable) {
             Napier.e("$LOG_TAG: updateUserName - $LOG_EXCEPTION", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    private suspend fun getErrorBody(httpResponse: HttpResponse): String {
+        return try {
+            httpResponse.body<String>()
+        } catch (e: Exception) {
+            "$ERROR_BODY_READ_FAILED${e.message}"
         }
     }
 

@@ -61,7 +61,7 @@ class PhoneVerificationRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("$ERROR ${e.message}")
+            Resource.ErrorOther(formatError(e))
         }
     }
 
@@ -95,7 +95,7 @@ class PhoneVerificationRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("$ERROR ${e.message}")
+            Resource.ErrorOther(formatError(e))
         }
     }
 
@@ -115,7 +115,7 @@ class PhoneVerificationRepositoryImpl(
                         "PhoneVerificationRepository: observeVerificationStatusByPhone - Exception",
                         e
                     )
-                    emit(Resource.ErrorOther("$ERROR  ${e.message}"))
+                    emit(Resource.ErrorOther(formatError(e)))
                     POLLING_INTERVAL_SLOW_MS
                 }
 
@@ -177,7 +177,7 @@ class PhoneVerificationRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("$ERROR ${e.message}")
+            Resource.ErrorOther(formatError(e))
         }
     }
 
@@ -197,7 +197,7 @@ class PhoneVerificationRepositoryImpl(
                 else -> Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("$ERROR ${e.message}")
+            Resource.ErrorOther(formatError(e))
         }
     }
 
@@ -219,8 +219,12 @@ class PhoneVerificationRepositoryImpl(
                 else -> Resource.ErrorOther("Неизвестная ошибка (код: ${response.resultCode})")
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("$ERROR ${e.message}")
+            Resource.ErrorOther(formatError(e))
         }
+    }
+
+    private fun formatError(e: Exception): String {
+        return "$ERROR ${e.message}"
     }
 
     companion object {

@@ -26,6 +26,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 
 /**
@@ -50,11 +51,7 @@ class PublicAuthApi(
                 }
 
                 else -> {
-                    val errorBody = try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
+                    val errorBody = getErrorBody(httpResponse)
                     Napier.e(
                         "$LOG_TAG: requestPhoneVerification - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody"
                     )
@@ -81,11 +78,7 @@ class PublicAuthApi(
                 }
 
                 else -> {
-                    try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
+                    getErrorBody(httpResponse)
                     Response().apply {
                         resultCode = HTTP_SERVER_ERROR
                     }
@@ -139,11 +132,7 @@ class PublicAuthApi(
                 }
 
                 else -> {
-                    val errorBody = try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
+                    val errorBody = getErrorBody(httpResponse)
                     Napier.e(
                         "$LOG_TAG: requestSmsVerification - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody"
                     )
@@ -170,11 +159,7 @@ class PublicAuthApi(
                 }
 
                 else -> {
-                    val errorBody = try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
+                    val errorBody = getErrorBody(httpResponse)
                     Napier.e("$LOG_TAG: verifySmsCode - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
@@ -203,11 +188,7 @@ class PublicAuthApi(
                 }
 
                 else -> {
-                    val errorBody = try {
-                        httpResponse.body<String>()
-                    } catch (e: Exception) {
-                        "$ERROR_BODY_READ_FAILED${e.message}"
-                    }
+                    val errorBody = getErrorBody(httpResponse)
                     Napier.e("$LOG_TAG: refreshToken - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
@@ -215,6 +196,14 @@ class PublicAuthApi(
         } catch (e: Throwable) {
             Napier.e("$LOG_TAG: refreshToken - $LOG_EXCEPTION", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    private suspend fun getErrorBody(httpResponse: HttpResponse): String {
+        return try {
+            httpResponse.body<String>()
+        } catch (e: Exception) {
+            "$ERROR_BODY_READ_FAILED${e.message}"
         }
     }
 

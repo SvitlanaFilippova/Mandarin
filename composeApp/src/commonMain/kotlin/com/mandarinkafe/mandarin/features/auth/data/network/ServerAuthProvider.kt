@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.features.auth.data.network
 import com.mandarinkafe.mandarin.core.domain.models.AuthTokens
 import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorage
 import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenRequest
-import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenResponse
 import com.mandarinkafe.mandarin.shared.BuildKonfig
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -37,7 +36,7 @@ class ServerAuthProvider(
     suspend fun getToken(): String {
         return mutex.withLock {
             val tokens = tokenStorage.getTokens()
-            tokens?.accessToken ?: throw IllegalStateException("No access token available")
+            tokens?.accessToken ?: error("No access token available")
         }
     }
 
@@ -48,25 +47,22 @@ class ServerAuthProvider(
         return mutex.withLock {
             Napier.d("$LOG_TAG: Starting token refresh...")
             val tokens = tokenStorage.getTokens()
-            if (tokens?.refreshToken == null) {
+            val refreshToken = tokens?.refreshToken
+            if (refreshToken == null) {
                 Napier.w("$LOG_TAG: No refresh token found")
                 tokenStorage.clearTokens()
-                throw IllegalStateException("No refresh token available")
+                error("No refresh token available")
             }
 
-            val response = try {
-                refreshTokenClient.post(REFRESH_TOKEN_PATH) {
-                    header("x-api-key", apiKey)
-                    setBody(RefreshTokenRequest(tokens.refreshToken))
-                }
-            } catch (e: Exception) {
-                Napier.e("$LOG_TAG: Exception during token refresh", e)
-                throw e
+            val response = refreshTokenClient.post(REFRESH_TOKEN_PATH) {
+                header("x-api-key", apiKey)
+                setBody(RefreshTokenRequest(refreshToken))
             }
 
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    val refreshData: com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenDataDto = response.body()
+                    val refreshData: com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenDataDto =
+                        response.body()
                     val newTokens = AuthTokens(
                         accessToken = refreshData.accessToken,
                         refreshToken = refreshData.refreshToken,
@@ -81,12 +77,12 @@ class ServerAuthProvider(
                 HttpStatusCode.Unauthorized -> {
                     Napier.w("$LOG_TAG: ❌ Refresh token is invalid (401), clearing tokens")
                     tokenStorage.clearTokens()
-                    throw IllegalStateException("Refresh token is invalid")
+                    error("Token refresh failed: ${response.status.value}")
                 }
 
                 else -> {
                     Napier.e("$LOG_TAG: Server error during refresh: ${response.status.value}")
-                    throw IllegalStateException("Server error during token refresh")
+                    error("Token refresh failed: ${response.status.value}")
                 }
             }
         }
