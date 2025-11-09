@@ -8,10 +8,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CartResponse(
     val items: List<CartItemDto> = emptyList(),
-    @SerialName("updated_at")
-    val updatedAt: Long = 0L, // Время последнего изменения корзины
-    @SerialName("is_deleted")
-    val isDeleted: Boolean = false, // Флаг удаления корзины
+    @SerialName("last_updated")
+    val lastUpdated: Long = 0L, // время последнего изменения всей корзины (задаётся на сервере)
 ) : Response() {
     init {
         resultCode = HTTP_SUCCESS

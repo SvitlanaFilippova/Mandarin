@@ -7,6 +7,7 @@ CREATE TABLE cart_metadata (
 );
 
 -- Инициализируем метаданные корзины (если корзина не пустая, устанавливаем максимальный timestamp из элементов)
+-- Примечание: на момент этой миграции в cart_items еще есть колонка timestamp (она будет переименована в createdAt в миграции 6)
 INSERT INTO cart_metadata (id, updatedAt, isDeleted)
 SELECT 1, COALESCE(MAX(timestamp), 0), 0
 FROM cart_items;

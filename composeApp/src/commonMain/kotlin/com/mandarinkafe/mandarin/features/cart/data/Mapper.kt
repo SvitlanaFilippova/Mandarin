@@ -19,13 +19,13 @@ object Mapper {
 
     fun StoredCartItem.toParams() = CartItemInsertParams(
         id = id,
-        name = name,
         mealId = mealId,
         addsJson = JsonAdapters.listToJson(addsIds),
         modifiersJson = JsonAdapters.modsToJson(modifiers),
         quantity = quantity.toLong(),
         comment = comment,
-        timestamp = timestamp,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 
     fun Cart_items.toStoredCartItem(): StoredCartItem {
@@ -34,24 +34,24 @@ object Mapper {
         return StoredCartItem(
             id = id,
             mealId = mealId,
-            name = name,
             addsIds = adds,
             modifiers = modifierGroups,
             quantity = quantity.toInt(),
-            comment = comment.orEmpty(),
-            timestamp = timestamp
+            comment = comment,
+            createdAt = createdAt,
+            updatedAt = updatedAt
         )
     }
 
-    fun CartItem.toStoredCartItem(timestamp: Long = 0L) = StoredCartItem(
+    fun CartItem.toStoredCartItem(createdAt: Long = 0L, updatedAt: Long = 0L) = StoredCartItem(
         id = id,
-        name = name,
         mealId = customizedMeal.meal.id,
-        addsIds = customizedMeal.adds.map { it.id },
-        modifiers = customizedMeal.modifiers,
         quantity = quantity,
+        modifiers = customizedMeal.modifiers,
+        addsIds = customizedMeal.adds.map { it.id },
         comment = comment,
-        timestamp = timestamp
+        createdAt = createdAt,
+        updatedAt = updatedAt
     )
 
     fun StoredCartItem.toCustomizedMeal(
@@ -107,8 +107,9 @@ object Mapper {
             addsIds = addsIds,
             modifierIds = modifierIds,
             quantity = quantity,
-            comment = comment,
-            timestamp = timestamp,
+            comment = comment ?: "",
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
     }
 
@@ -132,13 +133,13 @@ object Mapper {
 
         return StoredCartItem(
             id = id,
-            name = baseMeal.name,
             mealId = mealId,
-            addsIds = addsIds,
-            modifiers = resolvedModifiers,
             quantity = quantity,
+            modifiers = resolvedModifiers,
+            addsIds = addsIds,
             comment = comment,
-            timestamp = timestamp,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
     }
 }

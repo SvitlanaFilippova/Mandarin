@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.features.cart.data.models
 
-data class CartMetadata(
-    val updatedAt: Long = 0L, // Время последнего изменения корзины
-    val isDeleted: Boolean = false, // Флаг удаления корзины
+data class Cart(
+    val items: List<StoredCartItem>,
+    val lastUpdated: Long = 0L // время последнего изменения всей корзины (задаётся на сервере, клиент только сравнивает для логики мержа)
 )
 

@@ -4,7 +4,7 @@ import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toDto
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toStored
-import com.mandarinkafe.mandarin.features.cart.data.models.CartMetadata
+import com.mandarinkafe.mandarin.features.cart.data.models.Cart
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.network.CartServerApi
 import io.github.aakira.napier.Napier
@@ -15,11 +15,11 @@ class CartRemoteDataSourceImpl(
     private val menuCache: MenuCache,
 ) : CartRemoteDataSource {
 
-    override suspend fun getCart(): RemoteCart {
+    override suspend fun getCart(): Cart {
         val token = authRepository.getAccessToken()
         if (token == null) {
             Napier.w("[CartSync] getCart: токен отсутствует")
-            return RemoteCart(emptyList(), CartMetadata())
+            return Cart(emptyList(), 0L)
         }
         return try {
             Napier.d("[CartSync] getCart: запрос корзины с сервера")
@@ -27,41 +27,57 @@ class CartRemoteDataSourceImpl(
             val items = response.items.mapNotNull { cartItemDto ->
                 val stored = cartItemDto.toStored(menuCache)
                 if (stored != null) {
-                    Napier.d("[CartSync] getCart: получен элемент id=${stored.id}, mealId=${stored.mealId}, quantity=${stored.quantity}, timestamp=${stored.timestamp}")
+                    Napier.d("[CartSync] getCart: получен элемент id=${stored.id}, mealId=${stored.mealId}, quantity=${stored.quantity}, createdAt=${stored.createdAt}, updatedAt=${stored.updatedAt}")
                 } else {
                     Napier.w("[CartSync] getCart: не удалось преобразовать DTO в StoredCartItem, mealId=${cartItemDto.mealId}")
                 }
                 stored
             }
-            val metadata = CartMetadata(
-                updatedAt = response.updatedAt,
-                isDeleted = response.isDeleted
-            )
-            Napier.d("[CartSync] getCart: получено элементов с сервера: ${items.size}, updatedAt=${metadata.updatedAt}, isDeleted=${metadata.isDeleted}")
-            RemoteCart(items, metadata)
+            Napier.d("[CartSync] getCart: получено элементов с сервера: ${items.size}, lastUpdated=${response.lastUpdated}")
+            Cart(items, response.lastUpdated)
         } catch (e: Exception) {
             Napier.e("[CartSync] getCart: ошибка при получении корзины с сервера", e)
-            RemoteCart(emptyList(), CartMetadata())
+            Cart(emptyList(), 0L)
         }
     }
 
-    override suspend fun syncCart(localCart: List<StoredCartItem>, metadata: CartMetadata) {
+    override suspend fun syncCart(localCart: List<StoredCartItem>): Cart {
         val token = authRepository.getAccessToken()
         if (token == null) {
             Napier.w("[CartSync] syncCart: токен отсутствует")
-            return
+            return Cart(emptyList(), 0L)
         }
-        try {
-            Napier.d("[CartSync] syncCart: отправка корзины на сервер, элементов=${localCart.size}, updatedAt=${metadata.updatedAt}, isDeleted=${metadata.isDeleted}")
+        return try {
+            Napier.d("[CartSync] syncCart: отправка корзины на сервер, элементов=${localCart.size}")
             localCart.forEach { item ->
-                Napier.d("[CartSync] syncCart: отправка элемента id=${item.id}, mealId=${item.mealId}, quantity=${item.quantity}, timestamp=${item.timestamp}")
+                Napier.d("[CartSync] syncCart: отправка элемента id=${item.id}, mealId=${item.mealId}, quantity=${item.quantity}, createdAt=${item.createdAt}, updatedAt=${item.updatedAt}")
+                if (item.updatedAt == 0L) {
+                    Napier.d("[CartSync] syncCart: элемент id=${item.id} помечен как измененный (updatedAt=0)")
+                } else {
+                    Napier.d("[CartSync] syncCart: элемент id=${item.id} не изменен, отправляем updatedAt=${item.updatedAt} для мержа на сервере")
+                }
             }
-            val cartItemDtos = localCart.map { it.toDto() }
+            // Отправляем корзину с реальными updatedAt:
+            // - updatedAt = 0L → маркер "эта позиция изменена/новая, обновляй"
+            // - updatedAt > 0 → реальное значение для мержа на сервере
+            val cartItemDtos = localCart.map { item ->
+                item.toDto() // Отправляем как есть, включая реальные updatedAt
+            }
             Napier.d("[CartSync] syncCart: преобразовано в DTO: ${cartItemDtos.size} элементов")
-            api.updateCart("Bearer $token", cartItemDtos)
-            Napier.d("[CartSync] syncCart: корзина успешно отправлена на сервер")
+            val response = api.updateCart("Bearer $token", cartItemDtos)
+            // Получаем обновлённую корзину с updatedAt от сервера
+            val items = response.items.mapNotNull { cartItemDto ->
+                val stored = cartItemDto.toStored(menuCache)
+                if (stored != null) {
+                    Napier.d("[CartSync] syncCart: получен обновленный элемент id=${stored.id}, updatedAt=${stored.updatedAt}")
+                }
+                stored
+            }
+            Napier.d("[CartSync] syncCart: получена обновленная корзина с сервера, элементов=${items.size}, lastUpdated=${response.lastUpdated}")
+            Cart(items, response.lastUpdated)
         } catch (e: Exception) {
             Napier.e("[CartSync] syncCart: ошибка при отправке корзины на сервер", e)
+            Cart(emptyList(), 0L)
         }
     }
 

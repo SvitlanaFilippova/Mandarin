@@ -14,6 +14,9 @@ data class CartItemDto(
     val modifierIds: Map<String, List<String>> = emptyMap(),
     val quantity: Int,
     val comment: String,
-    val timestamp: Long, // Время создания записи
+    @SerialName("created_at")
+    val createdAt: Long, // время создания позиции
+    @SerialName("updated_at")
+    val updatedAt: Long, // время последнего изменения позиции
 )
 
