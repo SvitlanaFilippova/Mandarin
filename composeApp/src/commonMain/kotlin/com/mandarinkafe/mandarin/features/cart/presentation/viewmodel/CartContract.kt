@@ -26,6 +26,7 @@ sealed interface CartContract {
         ) : CartEvent
 
         data object ForceRefresh : CartEvent
+        data object SyncWithRemote : CartEvent
 
         // Очистка корзины
         data object ClearCart : CartEvent
@@ -60,7 +61,7 @@ sealed interface CartContract {
         val mealDeletionProgress: Map<String, Float> = emptyMap(),
     ) : BaseContract.BaseState {
         val actualCartItems: List<CartItem>
-            get() = cartItems.filter { it.id !in pendingDeletionItems }
+            get() = cartItems.filter { it.id !in pendingDeletionItems && it.quantity > 0 }
 
         val totalCartPrice: Int
             get() = actualCartItems.sumOf { it.customizedMeal.totalPrice() * it.quantity }

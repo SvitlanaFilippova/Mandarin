@@ -59,6 +59,7 @@ class CartViewModel(
             is OnProceedOrderClick -> onProceedOrderClick()
             is AddCommentToItem -> setCommentToItem(event.item, event.comment)
             is ForceRefresh -> forceRefresh()
+            is CartEvent.SyncWithRemote -> syncWithRemote()
         }
     }
 
@@ -67,7 +68,13 @@ class CartViewModel(
             setLoading()
             resetError()
             cartInteractor.forceRefresh()
-            updateRecommends(state.value.cartItems.map { it.customizedMeal.meal }.toSet())
+            updateRecommends(state.value.cartItems.filter { it.quantity > 0 }.map { it.customizedMeal.meal }.toSet())
+        }
+    }
+
+    private fun syncWithRemote() {
+        viewModelScope.launch {
+            cartInteractor.syncWithRemote()
         }
     }
 
@@ -81,7 +88,8 @@ class CartViewModel(
         when (resource) {
             is Success -> {
                 setData(resource.data)
-                updateRecommends(resource.data?.map { it.customizedMeal.meal }?.toSet())
+                // Фильтруем элементы с quantity=0 для рекомендаций
+                updateRecommends(resource.data?.filter { it.quantity > 0 }?.map { it.customizedMeal.meal }?.toSet())
             }
 
             is Loading, is Idle -> {
@@ -89,7 +97,7 @@ class CartViewModel(
             }
 
             is ErrorNoInternet -> {
-                if (state.value.cartItems.isEmpty()) {
+                if (state.value.cartItems.filter { it.quantity > 0 }.isEmpty()) {
                     setError(resource)
                 } else {
                     setLoading(false)
@@ -323,7 +331,7 @@ class CartViewModel(
     private fun setError(resource: Resource<*>) {
         setLoading(false)
 
-        val hasItems = state.value.cartItems.isNotEmpty()
+        val hasItems = state.value.cartItems.filter { it.quantity > 0 }.isNotEmpty()
 
         val error = when (resource) {
             is ErrorEmptyData -> UiError.CartEmpty

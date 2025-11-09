@@ -52,9 +52,10 @@ fun CartContentScreen(
     onProceedOrderClick: () -> Unit,
     onCommentAdded: (CartItem, String) -> Unit,
 ) {
-    val cartItemsList = state.cartItems
+    // Фильтруем элементы с quantity=0 (удаленные элементы)
+    val cartItemsList = state.cartItems.filter { it.quantity > 0 }
     val ifCartIsEmpty =
-        state.cartItems.all { it.id in state.pendingDeletionItems }
+        cartItemsList.isEmpty() || cartItemsList.all { it.id in state.pendingDeletionItems }
 
     val imeInsets = WindowInsets.ime
     val imeHeight = imeInsets.getBottom(LocalDensity.current)

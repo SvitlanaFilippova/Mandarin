@@ -11,6 +11,7 @@ interface CartInteractor {
     fun observeCartItemsCount(): Flow<Int>
     fun observeCartItems(): Flow<Resource<List<CartItem>>>
     suspend fun forceRefresh()
+    suspend fun syncWithRemote()
 
     suspend fun addItem(
         cartItem: CartItem? = null,

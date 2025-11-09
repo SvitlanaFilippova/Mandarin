@@ -1,0 +1,13 @@
+-- Создаем таблицу для метаданных корзины (updatedAt и isDeleted на уровне корзины)
+
+CREATE TABLE cart_metadata (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    updatedAt INTEGER NOT NULL,
+    isDeleted INTEGER NOT NULL
+);
+
+-- Инициализируем метаданные корзины (если корзина не пустая, устанавливаем максимальный timestamp из элементов)
+INSERT INTO cart_metadata (id, updatedAt, isDeleted)
+SELECT 1, COALESCE(MAX(timestamp), 0), 0
+FROM cart_items;
+

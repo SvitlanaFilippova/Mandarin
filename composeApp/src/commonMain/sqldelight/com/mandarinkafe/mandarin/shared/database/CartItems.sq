@@ -9,6 +9,12 @@ CREATE TABLE cart_items (
     timestamp INTEGER NOT NULL
 );
 
+CREATE TABLE cart_metadata (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    updatedAt INTEGER NOT NULL,
+    isDeleted INTEGER NOT NULL
+);
+
 selectAll:
 SELECT * FROM cart_items
 ORDER BY timestamp ASC;
@@ -16,9 +22,16 @@ ORDER BY timestamp ASC;
 selectById:
 SELECT * FROM cart_items WHERE id = ?;
 
+selectMetadata:
+SELECT * FROM cart_metadata WHERE id = 1;
+
 insertOrReplace:
 INSERT OR REPLACE INTO cart_items(id, name, mealId, addsIds, modifiers, quantity, comment, timestamp)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+insertOrReplaceMetadata:
+INSERT OR REPLACE INTO cart_metadata(id, updatedAt, isDeleted)
+VALUES (1, ?, ?);
 
 deleteById:
 DELETE FROM cart_items WHERE id = ?;

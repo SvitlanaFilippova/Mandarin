@@ -35,6 +35,10 @@ class CartInteractorImpl(
         cartReader.forceRetry()
     }
 
+    override suspend fun syncWithRemote() {
+        cartWriter.sync()
+    }
+
     override suspend fun addItem(
         cartItem: CartItem?,
         customizedMeal: CustomizedMeal?,

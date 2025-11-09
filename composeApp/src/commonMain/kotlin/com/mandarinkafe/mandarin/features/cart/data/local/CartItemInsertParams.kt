@@ -8,4 +8,5 @@ data class CartItemInsertParams(
     val modifiersJson: String, // JSON-строка с List<ModifierGroup>
     val quantity: Long,
     val comment: String?,
+    val timestamp: Long, // Время создания записи
 )

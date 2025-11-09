@@ -11,6 +11,7 @@ data class StoredCartItem(
     val modifiers: List<ModifierGroup>,
     val quantity: Int,
     val comment: String,
+    val timestamp: Long = 0L, // Время создания записи (устанавливается один раз при создании)
 ) {
     companion object {
         private fun generateId(): String {
