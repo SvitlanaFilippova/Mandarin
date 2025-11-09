@@ -23,4 +23,5 @@ interface FavoritesApi {
 
     /** Принудительное обновление данных о сохранённых избранных и повторная их валидация по меню.*/
     suspend fun forceRefresh()
+    suspend fun syncWithRemote()
 }

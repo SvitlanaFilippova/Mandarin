@@ -47,6 +47,8 @@ fun FavoritesScreen(
         onRefresh = { onEvent(FavoritesContract.FavoritesEvent.ForceRefresh) }
     )
 
+    LaunchedEffect(Unit) { onEvent(FavoritesContract.FavoritesEvent.SyncWithRemote) }
+
     PullRefreshLayout(
         modifier = Modifier.fillMaxSize(),
         state = pullRefreshState,

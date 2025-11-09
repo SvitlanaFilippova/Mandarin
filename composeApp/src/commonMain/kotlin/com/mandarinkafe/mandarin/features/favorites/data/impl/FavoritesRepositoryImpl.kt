@@ -17,6 +17,7 @@ import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.getCurrentTimeMillis
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -106,29 +107,43 @@ class FavoritesRepositoryImpl(
         local: Set<StoredFavoriteMeal>,
         remote: Set<StoredFavoriteMeal>
     ): Set<StoredFavoriteMeal> {
+        Napier.d("[FavoritesSync] mergeFavorites: начало объединения")
         // Создаём map для быстрого поиска по ключу (mealId + addsIds + modifiers)
         val mergedMap = mutableMapOf<StoredFavoriteMeal, StoredFavoriteMeal>()
 
         // Добавляем локальные избранные
+        var localAdded = 0
         local.forEach { favorite ->
             mergedMap[favorite] = favorite
+            localAdded++
         }
+        Napier.d("[FavoritesSync] mergeFavorites: добавлено локальных избранных: $localAdded")
 
         // Добавляем удалённые избранные, при конфликте берём версию с более свежим timestamp
+        var remoteAdded = 0
+        var conflictsResolved = 0
         remote.forEach { remoteFavorite ->
             val existing = mergedMap[remoteFavorite]
             if (existing == null) {
                 // Такого избранного ещё нет, добавляем
                 mergedMap[remoteFavorite] = remoteFavorite
+                remoteAdded++
             } else {
                 // Есть дубликат, берём версию с более свежим timestamp
+                conflictsResolved++
                 if (remoteFavorite.timestamp > existing.timestamp) {
+                    Napier.d("[FavoritesSync] mergeFavorites: конфликт разрешён в пользу удалённой версии (timestamp: ${remoteFavorite.timestamp} > ${existing.timestamp})")
                     mergedMap[remoteFavorite] = remoteFavorite
+                } else {
+                    Napier.d("[FavoritesSync] mergeFavorites: конфликт разрешён в пользу локальной версии (timestamp: ${existing.timestamp} >= ${remoteFavorite.timestamp})")
                 }
             }
         }
+        Napier.d("[FavoritesSync] mergeFavorites: добавлено удалённых избранных: $remoteAdded, разрешено конфликтов: $conflictsResolved")
 
-        return mergedMap.values.toSet()
+        val result = mergedMap.values.toSet()
+        Napier.d("[FavoritesSync] mergeFavorites: итоговое количество записей: ${result.size}")
+        return result
     }
 
     private suspend fun proceedToggleFavorite(record: FavoriteRecord) {

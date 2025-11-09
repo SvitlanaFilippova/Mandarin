@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.util.presentation.BaseContract
 sealed interface FavoritesContract {
     sealed interface FavoritesEvent : BaseContract.BaseEvent {
         data object ForceRefresh : FavoritesEvent
+        data object SyncWithRemote : FavoritesEvent
     }
 
     sealed interface FavoritesEffect : BaseContract.BaseEffect {

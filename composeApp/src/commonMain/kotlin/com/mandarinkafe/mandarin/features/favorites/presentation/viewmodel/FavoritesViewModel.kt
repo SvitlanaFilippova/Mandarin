@@ -28,9 +28,15 @@ class FavoritesViewModel(private val favoritesApi: FavoritesApi) :
     override fun onEvent(event: FavoritesEvent) {
         when (event) {
             FavoritesEvent.ForceRefresh -> forceRefresh()
+            FavoritesEvent.SyncWithRemote -> syncWithRemote()
         }
     }
 
+    private fun syncWithRemote() {
+        viewModelScope.launch {
+            favoritesApi.syncWithRemote()
+        }
+    }
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
     }

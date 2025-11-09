@@ -5,4 +5,4 @@ import com.mandarinkafe.mandarin.features.favorites.data.network.dto.FavoriteDto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RemoteFavoritesResponse(val data: Set<FavoriteDto>? = null) : Response()
+data class RemoteFavoritesResponse(val favorites: Set<FavoriteDto>? = null) : Response()

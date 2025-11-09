@@ -19,7 +19,7 @@ class FavoritesRemoteDataSourceImpl(
         val token = authRepository.getAccessToken() ?: return emptySet()
         return try {
             val response = api.getFavorites("Bearer $token")
-            response.data?.map { favoriteDto ->
+            response.favorites?.map { favoriteDto ->
                 favoriteDto.toStored(menuCache)
             }?.toSet() ?: emptySet()
         } catch (e: Exception) {
@@ -35,8 +35,8 @@ class FavoritesRemoteDataSourceImpl(
                 val stored = record.toStored()
                 stored.toDto()
             }.toList()
-            
-            val request = RemoteFavoritesUpdateRequest(data = favoriteDtos)
+
+            val request = RemoteFavoritesUpdateRequest(favorites = favoriteDtos)
             api.updateFavorites("Bearer $token", request)
         } catch (_: Exception) {}
     }
