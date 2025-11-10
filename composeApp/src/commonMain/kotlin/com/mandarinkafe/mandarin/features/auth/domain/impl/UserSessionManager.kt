@@ -22,7 +22,6 @@ class UserSessionManager(
         // Проверяем начальное состояние при старте
         appScope.launch {
             if (authRepository.isAuthorized()) {
-                Napier.d("UserSessionManager: пользователь уже авторизован при старте, запускаем синхронизацию")
                 syncUserDataUseCase()
             }
         }
@@ -32,18 +31,21 @@ class UserSessionManager(
         appScope.launch {
             authRepository.authState.collect { isAuthorized ->
                 if (isAuthorized) {
-                    Napier.d("UserSessionManager: пользователь авторизован, запускаем синхронизацию")
                     syncUserDataUseCase()
                 }
             }
         }
     }
 
-    suspend fun onUserAuthorized(tokens: AuthTokens?) {
-        tokens?.let {
-            authRepository.saveTokens(tokens)
-            syncUserDataUseCase()
-        }
+    /**
+     * Обрабатывает успешную авторизацию пользователя.
+     * @return true, если корзина изменилась после синхронизации
+     */
+    suspend fun onUserAuthorized(tokens: AuthTokens?): Boolean {
+        if (tokens == null) return false
+        
+        authRepository.saveTokens(tokens)
+        return syncUserDataUseCase()
     }
 
     suspend fun logout() {

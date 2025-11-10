@@ -17,6 +17,7 @@ import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackVi
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryViewModel
+import com.mandarinkafe.mandarin.core.domain.impl.AppLifecycleManager
 import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.SavedAddressesViewModel
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchViewModel
 import org.koin.mp.KoinPlatform.getKoin
@@ -130,6 +131,12 @@ fun rememberAuthViewModel(): AuthViewModel {
 fun rememberAccountViewModel(): AccountViewModel {
     val koin = getKoin()
     return remember { koin.get<AccountViewModel>() }
+}
+
+@Composable
+fun rememberAppLifecycleManager(): AppLifecycleManager {
+    val koin = getKoin()
+    return remember { koin.get<AppLifecycleManager>() }
 }
 
 
