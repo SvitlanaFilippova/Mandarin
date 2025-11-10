@@ -3,8 +3,9 @@ package com.mandarinkafe.mandarin.features.auth.domain.impl
 import com.mandarinkafe.mandarin.core.domain.models.AuthTokens
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.SyncUserDataUseCase
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class UserSessionManager(
@@ -14,12 +15,20 @@ class UserSessionManager(
 ) {
     init {
         observeAuthState()
+        // Проверяем начальное состояние при старте
+        appScope.launch {
+            if (authRepository.isAuthorized()) {
+                Napier.d("UserSessionManager: пользователь уже авторизован при старте, запускаем синхронизацию")
+                syncUserDataUseCase()
+            }
+        }
     }
 
     private fun observeAuthState() {
         appScope.launch {
-            authRepository.authState.collectLatest { isAuthorized ->
+            authRepository.authState.collect { isAuthorized ->
                 if (isAuthorized) {
+                    Napier.d("UserSessionManager: пользователь авторизован, запускаем синхронизацию")
                     syncUserDataUseCase()
                 }
             }

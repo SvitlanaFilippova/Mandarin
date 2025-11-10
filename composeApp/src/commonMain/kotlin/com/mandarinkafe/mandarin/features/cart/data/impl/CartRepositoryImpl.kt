@@ -54,7 +54,7 @@ class CartRepositoryImpl(
             val storedCartItems = try {
                 storage.getCartItems()
             } catch (e: Exception) {
-                Napier.e("[CartSync] Ошибка при чтении корзины из storage", e)
+                Napier.e("Ошибка при чтении корзины из storage", e)
                 storage.clearCart()
                 _cartItems.value =
                     Resource.ErrorOther("Ошибка при чтении корзины из локального хранилища. Корзина будет очищена.")
@@ -117,7 +117,7 @@ class CartRepositoryImpl(
                     comment = item.comment
                 )
             } catch (e: Exception) {
-                        Napier.e("[CartSync] Mapping failed for item: $item", e)
+                        Napier.e("Mapping failed for item: $item", e)
             }
         }
         return valid
@@ -134,10 +134,7 @@ class CartRepositoryImpl(
     }
 
     override suspend fun addOrUpdateItem(item: CartItem): Boolean = mutex.withLock {
-        Napier.d("[CartSync] addOrUpdateItem: начало, id=${item.id}, mealId=${item.customizedMeal.meal.id}, quantity=${item.quantity}")
-        
         // Шаг 1: Синхронизация с сервером для получения актуальной версии
-        Napier.d("[CartSync] addOrUpdateItem: синхронизация с сервером перед изменением")
         sync()
         
         // Шаг 2: Применяем локальное изменение
@@ -151,7 +148,6 @@ class CartRepositoryImpl(
         }
         // updatedAt устанавливается в 0L - маркер "эта позиция изменена/новая, обновляй"
         val storedItem = item.toStoredCartItem(createdAt, updatedAt = 0L)
-        Napier.d("[CartSync] addOrUpdateItem: сохранение в storage, id=${item.id}, createdAt=$createdAt, updatedAt=0L (маркер изменения)")
         storage.addOrUpdateItem(storedItem)
         
         // Обновляем UI из storage
@@ -163,12 +159,10 @@ class CartRepositoryImpl(
         }
         
         // Шаг 3: Отправляем корзину на сервер и получаем обновленную версию с updatedAt
-        Napier.d("[CartSync] addOrUpdateItem: отправка корзины на сервер после изменения")
         val localCart = storage.getCartItems()
         val updatedCart = remoteDataSource.syncCart(localCart)
         
         // Сохраняем обновленную корзину с updatedAt от сервера
-        Napier.d("[CartSync] addOrUpdateItem: сохранение обновленной корзины с сервера, элементов=${updatedCart.items.size}, lastUpdated=${updatedCart.lastUpdated}")
         updatedCart.items.forEach { updatedItem ->
             storage.addOrUpdateItem(updatedItem)
         }
@@ -181,26 +175,20 @@ class CartRepositoryImpl(
     }
 
     override suspend fun deleteItemById(id: String) = mutex.withLock {
-        Napier.d("[CartSync] deleteItemById: начало, id=$id")
-        
         // Шаг 1: Синхронизация с сервером для получения актуальной версии
-        Napier.d("[CartSync] deleteItemById: синхронизация с сервером перед удалением")
         sync()
         
         // Шаг 2: Применяем локальное изменение - физически удаляем элемент
-            storage.deleteItemById(id)
-        Napier.d("[CartSync] deleteItemById: элемент удален из storage, id=$id")
+        storage.deleteItemById(id)
         
         // Обновляем UI из storage
         updateUIFromStorage()
         
         // Шаг 3: Отправляем корзину на сервер и получаем обновленную версию с updatedAt
-        Napier.d("[CartSync] deleteItemById: отправка корзины на сервер после удаления")
         val localCart = storage.getCartItems()
         val updatedCart = remoteDataSource.syncCart(localCart)
         
         // Сохраняем обновленную корзину с updatedAt от сервера
-        Napier.d("[CartSync] deleteItemById: сохранение обновленной корзины с сервера, элементов=${updatedCart.items.size}, lastUpdated=${updatedCart.lastUpdated}")
         updatedCart.items.forEach { updatedItem ->
             storage.addOrUpdateItem(updatedItem)
         }
@@ -211,15 +199,11 @@ class CartRepositoryImpl(
     }
 
     override suspend fun clear() = mutex.withLock {
-        Napier.d("[CartSync] clear: начало очистки корзины")
-        
         // Шаг 1: Синхронизация с сервером для получения актуальной версии
-        Napier.d("[CartSync] clear: синхронизация с сервером перед очисткой")
         sync()
         
         // Шаг 2: Применяем локальное изменение - очищаем корзину
         storage.clearCart()
-        Napier.d("[CartSync] clear: корзина очищена локально")
         
         // Обновляем UI
         cartItems = emptyList()
@@ -227,58 +211,96 @@ class CartRepositoryImpl(
         _cartCount.value = 0
 
         // Шаг 3: Отправляем DELETE /cart на сервер
-        Napier.d("[CartSync] clear: отправка DELETE /cart на сервер")
         remoteDataSource.clearCart()
         
         // Получаем обновленную корзину (должна быть пустой) и обновляем lastUpdated
         val updatedCart = remoteDataSource.getCart()
         storage.updateLastUpdated(updatedCart.lastUpdated)
-        Napier.d("[CartSync] clear: обновлен lastUpdated=${updatedCart.lastUpdated}")
     }
 
     override suspend fun sync() {
-        Napier.d("[CartSync] ========== НАЧАЛО СИНХРОНИЗАЦИИ ==========")
         try {
             // Получаем локальную корзину и lastUpdated
             val localCart = storage.getCartItems()
             val localLastUpdated = storage.getLastUpdated()
-            Napier.d("[CartSync] sync: получена локальная корзина, элементов=${localCart.size}, lastUpdated=$localLastUpdated")
-            localCart.forEach { item ->
-                Napier.d("[CartSync] sync: локальный элемент id=${item.id}, mealId=${item.mealId}, quantity=${item.quantity}, createdAt=${item.createdAt}, updatedAt=${item.updatedAt}")
-            }
 
             // Получаем удалённую корзину с сервера
             val remoteCart = remoteDataSource.getCart()
-            Napier.d("[CartSync] sync: получена удаленная корзина, элементов=${remoteCart.items.size}, lastUpdated=${remoteCart.lastUpdated}")
-            remoteCart.items.forEach { item ->
-                Napier.d("[CartSync] sync: удаленный элемент id=${item.id}, mealId=${item.mealId}, quantity=${item.quantity}, createdAt=${item.createdAt}, updatedAt=${item.updatedAt}")
-            }
 
-            // Объединяем локальную и удалённую корзину по updatedAt каждого элемента
-            val mergedCart = mergeCartItems(localCart, remoteCart.items)
-            Napier.d("[CartSync] sync: результат мержа, элементов=${mergedCart.size}")
+            // Проверяем: если сервер вернул пустую корзину и его lastUpdated новее локального,
+            // это означает, что корзина была очищена на сервере - нужно очистить локальную корзину
+            val shouldClearLocal = remoteCart.items.isEmpty() && remoteCart.lastUpdated > localLastUpdated
+            if (shouldClearLocal) {
+                storage.clearCart()
+                storage.updateLastUpdated(remoteCart.lastUpdated)
+            } else {
+                // Объединяем локальную и удалённую корзину по updatedAt каждого элемента
+                var mergedCart = mergeCartItems(localCart, remoteCart.items)
 
-            // Сохраняем объединённый результат локально
-            Napier.d("[CartSync] sync: сохранение объединенной корзины в storage")
-            mergedCart.forEach { item ->
-                Napier.d("[CartSync] sync: сохранение элемента id=${item.id}, quantity=${item.quantity}, createdAt=${item.createdAt}, updatedAt=${item.updatedAt}")
-                storage.addOrUpdateItem(item)
+                // Удаляем позиции, которые есть локально, но отсутствуют на сервере,
+                // если серверная версия корзины новее или равна локальной
+                val serverIsNewerOrEqual = remoteCart.lastUpdated >= localLastUpdated
+                if (serverIsNewerOrEqual) {
+                    val remoteItemIds = remoteCart.items.map { it.id }.toSet()
+                    val itemsToRemove = mergedCart.filter { it.id !in remoteItemIds }
+                    if (itemsToRemove.isNotEmpty()) {
+                        mergedCart = mergedCart.filter { it.id in remoteItemIds }
+                    }
+                }
+
+                // Проверяем, были ли локальные изменения ДО мержа
+                // Изменения есть, если:
+                // 1. Есть локальные элементы с updatedAt = 0 (измененные локально)
+                // 2. Есть локальные элементы, которых нет на сервере (но только если локальная версия новее)
+                // 3. Есть локальные элементы с updatedAt > серверного updatedAt
+                val hasLocalChanges = localCart.any { localItem ->
+                    val remoteItem = remoteCart.items.find { it.id == localItem.id }
+                    when {
+                        remoteItem == null -> !serverIsNewerOrEqual // элемент только локально, но только если локальная версия новее
+                        localItem.updatedAt == 0L -> true // элемент изменен локально
+                        localItem.updatedAt > remoteItem.updatedAt -> true // локальная версия новее
+                        else -> false
+                    }
+                }
+
+                // Сохраняем объединённый результат локально
+                mergedCart.forEach { item ->
+                    storage.addOrUpdateItem(item)
+                }
+                
+                // Удаляем из storage позиции, которые были удалены при мерже
+                if (serverIsNewerOrEqual) {
+                    val remoteItemIds = remoteCart.items.map { it.id }.toSet()
+                    val localItemIds = localCart.map { it.id }.toSet()
+                    val itemsToDeleteFromStorage = localItemIds - remoteItemIds
+                    itemsToDeleteFromStorage.forEach { id ->
+                        storage.deleteItemById(id)
+                    }
+                }
+                
+                // Обновляем lastUpdated (берем максимальный из локального и удаленного)
+                val finalLastUpdated = maxOf(localLastUpdated, remoteCart.lastUpdated)
+                storage.updateLastUpdated(finalLastUpdated)
+
+                // Если после мержа есть локальные изменения, отправляем корзину на сервер
+                if (hasLocalChanges) {
+                    val currentCart = storage.getCartItems()
+                    val updatedCart = remoteDataSource.syncCart(currentCart)
+                    
+                    // Сохраняем обновленную корзину с updatedAt от сервера
+                    updatedCart.items.forEach { updatedItem ->
+                        storage.addOrUpdateItem(updatedItem)
+                    }
+                    storage.updateLastUpdated(updatedCart.lastUpdated)
+                }
             }
-            
-            // Обновляем lastUpdated (берем максимальный из локального и удаленного)
-            val finalLastUpdated = maxOf(localLastUpdated, remoteCart.lastUpdated)
-            storage.updateLastUpdated(finalLastUpdated)
-            Napier.d("[CartSync] sync: обновлен lastUpdated=$finalLastUpdated")
 
             // Обновляем UI
             updateUIFromStorage()
-            
-            Napier.d("[CartSync] ========== КОНЕЦ СИНХРОНИЗАЦИИ (успешно) ==========")
         } catch (e: Exception) {
             // В случае ошибки просто игнорируем синхронизацию
             // Локальные данные остаются без изменений
-            Napier.e("[CartSync] ========== ОШИБКА СИНХРОНИЗАЦИИ ==========", e)
-            Napier.e("[CartSync] sync: Exception при синхронизации", e)
+            Napier.e("Ошибка при синхронизации корзины", e)
         }
     }
 
@@ -293,54 +315,32 @@ class CartRepositoryImpl(
         local: List<StoredCartItem>,
         remote: List<StoredCartItem>
     ): List<StoredCartItem> {
-        Napier.d("[CartSync] mergeCartItems: начало объединения, локальных=${local.size}, удаленных=${remote.size}")
         // Создаём map для быстрого поиска по id
         val mergedMap = mutableMapOf<String, StoredCartItem>()
 
         // Добавляем локальные элементы
-        var localAdded = 0
         local.forEach { item ->
-            Napier.d("[CartSync] mergeCartItems: добавление локального элемента id=${item.id}, quantity=${item.quantity}, createdAt=${item.createdAt}, updatedAt=${item.updatedAt}")
             mergedMap[item.id] = item
-            localAdded++
         }
-        Napier.d("[CartSync] mergeCartItems: добавлено локальных элементов: $localAdded")
 
         // Добавляем удалённые элементы, при конфликте берём версию с более свежим updatedAt
-        var remoteAdded = 0
-        var conflictsResolved = 0
         remote.forEach { remoteItem ->
-            Napier.d("[CartSync] mergeCartItems: обработка удаленного элемента id=${remoteItem.id}, quantity=${remoteItem.quantity}, createdAt=${remoteItem.createdAt}, updatedAt=${remoteItem.updatedAt}")
             val existing = mergedMap[remoteItem.id]
             if (existing == null) {
                 // Такого элемента ещё нет, добавляем
-                Napier.d("[CartSync] mergeCartItems: новый элемент добавлен id=${remoteItem.id}, quantity=${remoteItem.quantity}")
                 mergedMap[remoteItem.id] = remoteItem
-                remoteAdded++
             } else {
                 // Есть дубликат, проверяем updatedAt
-                conflictsResolved++
-                Napier.d("[CartSync] mergeCartItems: конфликт для id=${remoteItem.id}, локальный: quantity=${existing.quantity}, updatedAt=${existing.updatedAt}, удаленный: quantity=${remoteItem.quantity}, updatedAt=${remoteItem.updatedAt}")
-                
                 // Сравниваем по updatedAt (время последнего изменения)
                 if (remoteItem.updatedAt > existing.updatedAt) {
                     // Удаленная версия новее - используем её
-                    Napier.d("[CartSync] mergeCartItems: конфликт разрешён в пользу удалённой версии id=${remoteItem.id}, updatedAt удаленного=${remoteItem.updatedAt} > локального=${existing.updatedAt}")
                     mergedMap[remoteItem.id] = remoteItem
-                } else {
-                    // Локальная версия новее или равна - сохраняем локальную
-                    Napier.d("[CartSync] mergeCartItems: конфликт разрешён в пользу локальной версии id=${existing.id}, updatedAt локального=${existing.updatedAt} >= удаленного=${remoteItem.updatedAt}")
                 }
+                // Иначе локальная версия новее или равна - сохраняем локальную (уже в map)
             }
         }
-        Napier.d("[CartSync] mergeCartItems: статистика - добавлено удалённых=$remoteAdded, разрешено конфликтов=$conflictsResolved")
 
-        val result = mergedMap.values.toList()
-        Napier.d("[CartSync] mergeCartItems: итоговое количество элементов: ${result.size}")
-        result.forEach { item ->
-            Napier.d("[CartSync] mergeCartItems: итоговый элемент id=${item.id}, quantity=${item.quantity}, createdAt=${item.createdAt}, updatedAt=${item.updatedAt}")
-        }
-        return result
+        return mergedMap.values.toList()
     }
     
     private suspend fun updateUIFromStorage() {
@@ -364,13 +364,12 @@ class CartRepositoryImpl(
                         comment = storedItem.comment
                     )
                 } catch (e: Exception) {
-                    Napier.e("[CartSync] Mapping failed for item in updateUIFromStorage: $storedItem", e)
+                    Napier.e("Mapping failed for item in updateUIFromStorage: $storedItem", e)
                     null
                 }
             }
             _cartItems.value = Resource.Success(validItems)
             _cartCount.value = validItems.sumOf { it.quantity }
-            Napier.d("[CartSync] updateUIFromStorage: обновлено состояние UI, валидных элементов=${validItems.size}, общее количество=${_cartCount.value}")
         }
     }
 }

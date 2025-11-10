@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
+import com.mandarinkafe.mandarin.features.auth.domain.api.SyncUserDataUseCase
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CategoryDiscountRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.util.Resource
@@ -22,11 +23,18 @@ class GetInitialDataUseCaseImpl(
     private val bannersRepository: BannersRepository,
     private val categoryDiscountRepository: CategoryDiscountRepository,
     private val deliveryAreaRepository: DeliveryAreaRepository,
+    private val syncUserDataUseCase: SyncUserDataUseCase,
 ) : GetInitialDataUseCase {
     override suspend operator fun invoke(): Flow<Resource<List<MealCategory>>> = flow {
         // 1. Сначала проверяем и валидируем токены
         val isAuthorized = authRepository.initializeAuth()
         Napier.d("GetInitialDataUseCase: Auth initialized, isAuthorized = $isAuthorized")
+        
+        // 1.1. Если пользователь авторизован, синхронизируем данные (корзина, избранное)
+        if (isAuthorized) {
+            Napier.d("GetInitialDataUseCase: пользователь авторизован, запускаем синхронизацию данных")
+            syncUserDataUseCase()
+        }
 
         // 2. Загружаем меню
         menuCache.fetchMenuIfNeeded()

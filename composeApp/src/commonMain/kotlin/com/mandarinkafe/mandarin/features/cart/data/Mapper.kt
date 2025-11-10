@@ -37,7 +37,7 @@ object Mapper {
             addsIds = adds,
             modifiers = modifierGroups,
             quantity = quantity.toInt(),
-            comment = comment,
+            comment = comment ?: "",
             createdAt = createdAt,
             updatedAt = updatedAt
         )
@@ -107,14 +107,17 @@ object Mapper {
             addsIds = addsIds,
             modifierIds = modifierIds,
             quantity = quantity,
-            comment = comment ?: "",
+            comment = comment,
             createdAt = createdAt,
             updatedAt = updatedAt,
         )
     }
 
     fun CartItemDto.toStored(menuCache: MenuCache): StoredCartItem? {
-        val baseMeal = menuCache.getMealById(mealId) ?: return null
+        val baseMeal = menuCache.getMealById(mealId)
+        if (baseMeal == null) {
+            return null
+        }
 
         // Получаем добавки
         val adds = addsIds.mapNotNull { addId ->
