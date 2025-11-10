@@ -5,12 +5,13 @@ import kotlin.random.Random
 
 data class StoredCartItem(
     val id: String = generateId(),
-    val name: String,
     val mealId: String,
-    val addsIds: List<String>,
-    val modifiers: List<ModifierGroup>,
     val quantity: Int,
+    val modifiers: List<ModifierGroup>,
+    val addsIds: List<String>,
     val comment: String,
+    val createdAt: Long, // время создания позиции
+    val updatedAt: Long, // время последнего изменения позиции
 ) {
     companion object {
         private fun generateId(): String {

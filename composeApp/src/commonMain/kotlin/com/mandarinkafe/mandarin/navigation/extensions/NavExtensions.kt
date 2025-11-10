@@ -6,7 +6,7 @@ import androidx.navigation.navOptions
 import com.mandarinkafe.mandarin.core.di.ServiceLocator
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
-import com.mandarinkafe.mandarin.features.auth.domain.impl.AuthInteractor
+import com.mandarinkafe.mandarin.features.auth.domain.impl.AuthStateChecker
 import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.navigation.NavConstants.ABOUT_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
@@ -146,8 +146,8 @@ fun NavController.navigateToAuthScreen(targetRoute: String? = null) {
 }
 
 fun NavController.navigateWithAuthCheck(targetRoute: String) {
-    val authInteractor: AuthInteractor = ServiceLocator.koin.get()
-    val isAuthorized = authInteractor.isAuthorizedFast()
+    val authStateChecker: AuthStateChecker = ServiceLocator.koin.get()
+    val isAuthorized = authStateChecker.isAuthorizedFast()
 
     if (isAuthorized) {
         navigate(targetRoute)

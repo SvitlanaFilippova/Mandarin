@@ -7,4 +7,6 @@ interface CartStorage {
     suspend fun addOrUpdateItem(item: StoredCartItem)
     suspend fun deleteItemById(id: String)
     suspend fun getCartItems(): List<StoredCartItem>
+    suspend fun getLastUpdated(): Long
+    suspend fun updateLastUpdated(lastUpdated: Long)
 }

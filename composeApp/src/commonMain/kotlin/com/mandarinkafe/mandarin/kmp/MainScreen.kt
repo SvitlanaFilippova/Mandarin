@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.mandarinkafe.mandarin.core.presentation.AppLifecycleHandler
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.MandarinTheme
 import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
@@ -30,6 +31,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.bottomNavigationRoutes
 import com.mandarinkafe.mandarin.navigation.NavGraph
 import com.mandarinkafe.mandarin.navigation.bottomnav.BottomNavigation
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberAppLifecycleManager
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberSharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.AppTopBar
@@ -42,8 +44,12 @@ fun MainScreen() {
     MandarinTheme {
         val navController = rememberNavController()
         val sharedViewModel = rememberSharedViewModel()
+        val appLifecycleManager = rememberAppLifecycleManager()
         val sharedState by sharedViewModel.state.collectAsState()
         val snackbarHostState = remember { SnackbarHostState() }
+        
+        // Обработчик lifecycle для обновления меню и синхронизации данных при возврате из фона
+        AppLifecycleHandler(appLifecycleManager)
 
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route

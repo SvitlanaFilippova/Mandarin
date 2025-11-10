@@ -26,7 +26,7 @@ class ServerAuthProvider(
     private val apiKey = BuildKonfig.MANDARIN_API_KEY
 
     companion object {
-        private const val LOG_TAG = "ServerAuthProvider"
+        private const val LOG_PREFIX = "AUTH_INTERCEPTOR"
         private const val REFRESH_TOKEN_PATH = "/auth/refresh_token"
     }
 
@@ -36,7 +36,12 @@ class ServerAuthProvider(
     suspend fun getToken(): String {
         return mutex.withLock {
             val tokens = tokenStorage.getTokens()
-            tokens?.accessToken ?: error("No access token available")
+            if (tokens == null) {
+                Napier.e("$LOG_PREFIX ERROR: No tokens in storage")
+                error("No access token available")
+            }
+            val accessToken = tokens.accessToken
+            accessToken
         }
     }
 
@@ -45,11 +50,11 @@ class ServerAuthProvider(
      */
     suspend fun refreshToken(): String {
         return mutex.withLock {
-            Napier.d("$LOG_TAG: Starting token refresh...")
+            Napier.d("$LOG_PREFIX DEBUG: Starting token refresh...")
             val tokens = tokenStorage.getTokens()
             val refreshToken = tokens?.refreshToken
             if (refreshToken == null) {
-                Napier.w("$LOG_TAG: No refresh token found")
+                Napier.e("$LOG_PREFIX ERROR: No refresh token found")
                 tokenStorage.clearTokens()
                 error("No refresh token available")
             }
@@ -58,6 +63,7 @@ class ServerAuthProvider(
                 header("x-api-key", apiKey)
                 setBody(RefreshTokenRequest(refreshToken))
             }
+
 
             when (response.status) {
                 HttpStatusCode.OK -> {
@@ -70,18 +76,18 @@ class ServerAuthProvider(
                     )
 
                     tokenStorage.saveTokens(newTokens)
-                    Napier.d("$LOG_TAG: ✅ Token refreshed successfully")
+                    Napier.d("$LOG_PREFIX SUCCESS: Token refreshed successfully, new token length=${newTokens.accessToken.length}")
                     newTokens.accessToken
                 }
 
                 HttpStatusCode.Unauthorized -> {
-                    Napier.w("$LOG_TAG: ❌ Refresh token is invalid (401), clearing tokens")
+                    Napier.e("$LOG_PREFIX ERROR: Refresh token is invalid, clearing tokens")
                     tokenStorage.clearTokens()
                     error("Token refresh failed: ${response.status.value}")
                 }
 
                 else -> {
-                    Napier.e("$LOG_TAG: Server error during refresh: ${response.status.value}")
+                    Napier.e("$LOG_PREFIX ERROR: Server error during refresh: ${response.status.value}")
                     error("Token refresh failed: ${response.status.value}")
                 }
             }

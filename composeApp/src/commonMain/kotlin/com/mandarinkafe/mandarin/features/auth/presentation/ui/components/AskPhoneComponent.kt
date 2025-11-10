@@ -47,7 +47,7 @@ fun AskPhoneComponent(
     ButtonWithText(
         modifier = Modifier.width(Dimens.ButtonPlaceholderSize200)
             .padding(vertical = Dimens.MarginStandard16),
-        text = stringResource(MR.strings.login),
+        text = stringResource(MR.strings.confirm),
         onClick = onRequestAuth,
         shouldBeActive = isPhoneValid,
         onMissingRequiredInfo = { showError = true },

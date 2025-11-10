@@ -10,6 +10,7 @@ import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.Account
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.GetActiveSessionsUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.RevokeSessionUseCase
+import com.mandarinkafe.mandarin.features.auth.domain.impl.UserSessionManager
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
@@ -26,19 +27,16 @@ class AccountViewModel(
     private val revokeSessionUseCase: RevokeSessionUseCase,
     private val authRepository: AuthRepository,
     private val userInfoRepository: UserInfoRepository,
+    private val userSessionManager: UserSessionManager,
 ) : BaseViewModel<AccountEvent, AccountEffect, AccountState>() {
 
     private var saveNameJob: Job? = null
 
     override fun setInitialState() = AccountState()
 
-    init {
-        observeUserInfo()
-        loadSessions()
-    }
-
     override fun onEvent(event: AccountEvent) {
         when (event) {
+            is AccountEvent.GetInitData -> getInitData()
             is AccountEvent.LoadSessions -> loadSessions()
             is AccountEvent.RevokeSession -> revokeSession(event.sessionId)
             is AccountEvent.Logout -> logout()
@@ -46,6 +44,11 @@ class AccountViewModel(
             is AccountEvent.SaveNameNow -> saveUserName()
             is AccountEvent.OnPhoneClick -> onPhoneClick()
         }
+    }
+
+    private fun getInitData() {
+        loadSessions()
+        observeUserInfo()
     }
 
     private fun onPhoneClick() {
@@ -119,6 +122,12 @@ class AccountViewModel(
         viewModelScope.launch {
             val currentUserInfo = userInfoRepository.getUserInfo()
             val enteredName = query ?: state.value.userInfo.name
+            // Проверяем, что имя не пустое
+            if (enteredName.trim().isBlank()) {
+                sendEffect(AccountEffect.ShowMessage(MR.strings.error_name_empty))
+                return@launch
+            }
+
             // Обновляем имя на сервере, если оно было пустое или изменилось
             if (currentUserInfo != null && enteredName.trim()
                     .isNotBlank() && currentUserInfo.name != enteredName
@@ -221,7 +230,7 @@ class AccountViewModel(
     private fun logout() {
         viewModelScope.launch {
             try {
-                authRepository.logout()
+                userSessionManager.logout()
                 sendEffect(AccountEffect.LoggedOut)
                 setState { AccountState() }
             } catch (e: Exception) {

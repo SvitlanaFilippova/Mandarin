@@ -1,24 +1,36 @@
 CREATE TABLE cart_items (
     id TEXT NOT NULL PRIMARY KEY,
-    name TEXT NOT NULL,
     mealId TEXT NOT NULL,
     addsIds TEXT NOT NULL,
     modifiers TEXT NOT NULL,
     quantity INTEGER NOT NULL,
     comment TEXT,
-    timestamp INTEGER NOT NULL
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL
+);
+
+CREATE TABLE cart_metadata (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    lastUpdated INTEGER NOT NULL
 );
 
 selectAll:
 SELECT * FROM cart_items
-ORDER BY timestamp ASC;
+ORDER BY createdAt ASC;
 
 selectById:
 SELECT * FROM cart_items WHERE id = ?;
 
+selectMetadata:
+SELECT * FROM cart_metadata WHERE id = 1;
+
 insertOrReplace:
-INSERT OR REPLACE INTO cart_items(id, name, mealId, addsIds, modifiers, quantity, comment, timestamp)
+INSERT OR REPLACE INTO cart_items(id, mealId, addsIds, modifiers, quantity, comment, createdAt, updatedAt)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+insertOrReplaceMetadata:
+INSERT OR REPLACE INTO cart_metadata(id, lastUpdated)
+VALUES (1, ?);
 
 deleteById:
 DELETE FROM cart_items WHERE id = ?;

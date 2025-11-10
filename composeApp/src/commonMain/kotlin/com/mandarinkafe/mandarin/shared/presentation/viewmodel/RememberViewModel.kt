@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.shared.presentation.viewmodel
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.mandarinkafe.mandarin.core.domain.impl.AppLifecycleManager
 import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.AccountViewModel
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsViewModel
 import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressViewModel
@@ -130,6 +131,12 @@ fun rememberAuthViewModel(): AuthViewModel {
 fun rememberAccountViewModel(): AccountViewModel {
     val koin = getKoin()
     return remember { koin.get<AccountViewModel>() }
+}
+
+@Composable
+fun rememberAppLifecycleManager(): AppLifecycleManager {
+    val koin = getKoin()
+    return remember { koin.get<AppLifecycleManager>() }
 }
 
 

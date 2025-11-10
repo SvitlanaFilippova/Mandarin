@@ -31,8 +31,16 @@ class CartInteractorImpl(
     }
 
     override suspend fun forceRefresh() {
+        // Сначала синхронизируем корзину с сервером
+        cartWriter.sync()
+        // Затем обновляем меню
         forceRefreshMenu()
+        // И наконец форсируем перезагрузку корзины с обновленным меню
         cartReader.forceRetry()
+    }
+
+    override suspend fun syncWithRemote() {
+        cartWriter.sync()
     }
 
     override suspend fun addItem(

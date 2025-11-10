@@ -16,3 +16,8 @@ class RevokeSessionResponse(
     val data: RevokeSessionDataDto? = null,
 ) : Response()
 
+
+
+
+
+

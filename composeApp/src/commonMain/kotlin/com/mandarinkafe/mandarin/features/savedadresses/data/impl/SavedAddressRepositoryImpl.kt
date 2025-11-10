@@ -1,22 +1,23 @@
 package com.mandarinkafe.mandarin.features.savedadresses.data.impl
 
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.features.savedadresses.data.datastore.AddressStorage
+import com.mandarinkafe.mandarin.features.savedadresses.data.remote.AddressRemoteDataSource
 import com.mandarinkafe.mandarin.features.savedadresses.domain.api.SavedAddressRepository
 
-class SavedAddressRepositoryImpl(private val storage: AddressStorage) : SavedAddressRepository {
+class SavedAddressRepositoryImpl(
+    private val remoteDataSource: AddressRemoteDataSource,
+) : SavedAddressRepository {
     override suspend fun getSavedAddresses(): List<Address> {
-        return storage.getSavedAddresses()
+        return remoteDataSource.getAddresses()
     }
 
     override suspend fun saveAddress(address: Address) {
-        storage.saveAddress(address)
+        remoteDataSource.saveAddress(address)
     }
 
     override suspend fun removeAddress(id: String) {
-        storage.removeAddress(id)
+        remoteDataSource.removeAddress(id)
     }
-
 }
 
 

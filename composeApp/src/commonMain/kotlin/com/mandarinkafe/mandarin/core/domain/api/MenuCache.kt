@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.core.domain.api
 
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
+import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.StateFlow
@@ -37,5 +38,7 @@ interface MenuCache {
     fun getMealsBySku(sku: String): List<Meal>
     fun fetchMenuIfNeeded()
     fun isDeliveryMeal(meal: Meal): Boolean
+
+    fun findModifierGroup(groupId: String, itemIds: List<String>): ModifierGroup
     suspend fun forceRefresh(fetcher: suspend () -> Resource<List<MealCategory>>)
 }

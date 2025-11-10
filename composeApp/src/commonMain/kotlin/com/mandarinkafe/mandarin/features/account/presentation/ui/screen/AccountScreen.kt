@@ -43,6 +43,10 @@ fun AccountScreen(navController: NavHostController) {
     val snackbarHostState = LocalSnackbarHostState.current
     var pendingMessageRes: StringResource? by remember { mutableStateOf(null) }
 
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(AccountEvent.GetInitData)
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         ScreenTitleWithBackButton(
             name = stringResource(MR.strings.personal_account),

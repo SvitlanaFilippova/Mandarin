@@ -13,7 +13,7 @@ import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 
 class AuthNetworkClientImpl(
     private val publicApi: PublicAuthApi,
-    private val authApi: AuthApi,
+    private val authApi: ServerAuthApi,
     private val networkMonitor: NetworkMonitor,
 ) : AuthNetworkClient {
 

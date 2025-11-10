@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartCountUseCase
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect.FinishSplash
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect.GoBackEffect
@@ -42,6 +43,7 @@ class SharedViewModel(
     private val getInitialDataUseCase: GetInitialDataUseCase,
     private val observeCartCountUseCase: ObserveCartCountUseCase,
     private val refreshMenuIfStaleUseCase: RefreshMenuIfStaleUseCase,
+    authRepository: AuthRepository,
 ) :
     BaseViewModel<SharedEvent, SharedEffect, SharedState>() {
     override fun setInitialState() = SharedState()
@@ -66,6 +68,13 @@ class SharedViewModel(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT_MILLIS),
             initialValue = emptySet()
+        )
+
+    val isAuthorized: StateFlow<Boolean> =
+        authRepository.authState.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT_MILLIS),
+            initialValue = false
         )
 
     init {

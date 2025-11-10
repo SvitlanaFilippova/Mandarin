@@ -6,6 +6,8 @@ interface FavoritesStorage {
     suspend fun toggleFavorite(meal: StoredFavoriteMeal): Boolean
     suspend fun getFavorites(): FavoritesStorageResult
     suspend fun saveFavorites(updatedFavorites: Set<StoredFavoriteMeal>)
+    suspend fun getLastUpdated(): Long
+    suspend fun updateLastUpdated(lastUpdated: Long)
 }
 
 

@@ -2,12 +2,14 @@ package com.mandarinkafe.mandarin.core.domain.models
 
 sealed class FavoriteRecord {
     abstract val mealId: String
-    abstract val timestamp: Long
+    abstract val createdAt: Long
+    abstract val updatedAt: Long
 
     /** Простая запись — без кастомизации */
     data class Base(
         override val mealId: String,
-        override val timestamp: Long,
+        override val createdAt: Long,
+        override val updatedAt: Long,
     ) : FavoriteRecord() {
 
         override fun equals(other: Any?): Boolean {
@@ -23,7 +25,8 @@ sealed class FavoriteRecord {
     /** Кастомизированная запись */
     data class Custom(
         override val mealId: String,
-        override val timestamp: Long,
+        override val createdAt: Long,
+        override val updatedAt: Long,
         val addsIds: List<String>,
         val modifiers: List<ModifierGroup>,
     ) : FavoriteRecord() {

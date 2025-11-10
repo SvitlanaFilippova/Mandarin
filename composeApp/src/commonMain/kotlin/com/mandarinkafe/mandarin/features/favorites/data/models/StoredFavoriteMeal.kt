@@ -6,7 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class StoredFavoriteMeal(
     val mealId: String,
-    val timestamp: Long,
+    val createdAt: Long, // время создания записи
+    val updatedAt: Long, // время последнего изменения записи
     val addsIds: List<String> = emptyList(),
     val modifiers: List<ModifierGroup> = emptyList(),
 ) {
@@ -35,8 +36,4 @@ fun StoredFavoriteMeal.sameAs(other: StoredFavoriteMeal): Boolean {
             addsIds == other.addsIds &&
             modifiers == other.modifiers
 }
-
-
-
-
 

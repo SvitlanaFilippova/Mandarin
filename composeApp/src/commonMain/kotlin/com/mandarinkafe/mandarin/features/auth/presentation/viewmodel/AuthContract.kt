@@ -22,6 +22,7 @@ sealed interface AuthContract {
 
     sealed interface AuthEffect : BaseContract.BaseEffect {
         data object SuccessAuth : AuthEffect
+        data object SuccessAuthWithCartChanged : AuthEffect
     }
 
     data class AuthState(

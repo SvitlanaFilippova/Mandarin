@@ -6,4 +6,5 @@ interface CartWriter {
     suspend fun clear()
     suspend fun addOrUpdateItem(item: CartItem): Boolean
     suspend fun deleteItemById(id: String)
+    suspend fun sync()
 }

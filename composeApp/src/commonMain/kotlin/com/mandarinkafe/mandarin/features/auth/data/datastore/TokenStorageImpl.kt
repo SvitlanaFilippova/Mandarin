@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.mandarinkafe.mandarin.core.domain.models.AuthTokens
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
@@ -16,24 +17,24 @@ class TokenStorageImpl(
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    override suspend fun getTokens(): AuthTokens? =
-        dataStore.data
-            .map { prefs ->
-                val accessToken = prefs[stringPreferencesKey(ACCESS_TOKEN_KEY)]
-                val refreshToken = prefs[stringPreferencesKey(REFRESH_TOKEN_KEY)]
-                val tokenType = prefs[stringPreferencesKey(TOKEN_TYPE_KEY)]
+    override val tokensFlow: Flow<AuthTokens?> = dataStore.data
+        .map { prefs ->
+            val accessToken = prefs[stringPreferencesKey(ACCESS_TOKEN_KEY)]
+            val refreshToken = prefs[stringPreferencesKey(REFRESH_TOKEN_KEY)]
+            val tokenType = prefs[stringPreferencesKey(TOKEN_TYPE_KEY)]
 
-                if (accessToken.isNullOrEmpty() || refreshToken.isNullOrEmpty()) {
-                    null
-                } else {
-                    AuthTokens(
-                        accessToken = accessToken,
-                        refreshToken = refreshToken,
-                        tokenType = tokenType ?: "Bearer"
-                    )
-                }
+            if (accessToken.isNullOrEmpty() || refreshToken.isNullOrEmpty()) {
+                null
+            } else {
+                AuthTokens(
+                    accessToken = accessToken,
+                    refreshToken = refreshToken,
+                    tokenType = tokenType ?: "Bearer"
+                )
             }
-            .first()
+        }
+
+    override suspend fun getTokens(): AuthTokens? = tokensFlow.first()
 
     override suspend fun saveTokens(tokens: AuthTokens) {
         try {

@@ -10,15 +10,21 @@ import androidx.compose.ui.text.input.ImeAction
  * iOS реализация OTP текстового поля
  *
  * На iOS автозаполнение SMS-кодов работает автоматически через систему,
- * если TextField использует KeyboardType.Number или KeyboardType.NumberPassword.
+ * когда TextField использует KeyboardType.Number.
  *
  * iOS автоматически определяет OTP поля и предлагает коды из SMS,
- * особенно если SMS содержит правильный формат.
+ * если SMS содержит правильный формат.
  *
- * Для лучшей работы автозаполнения на iOS:
+ * Требования к SMS для автозаполнения на iOS:
  * 1. SMS должна содержать 6-значный код
- * 2. Желательно, чтобы SMS содержала домен приложения в формате: @yourdomain.com #123456
- * 3. В Info.plist можно добавить Associated Domains для webcredentials
+ * 2. РЕКОМЕНДУЕТСЯ указать домен приложения в формате:
+ *    - "Ваш код для mandarinkafe.com: 123456" или
+ *    - "@mandarinkafe.com #123456"
+ * 3. (Опционально) В Info.plist можно добавить Associated Domains:
+ *    com.apple.developer.associated-domains с webcredentials:mandarinkafe.com
+ *
+ * Compose Multiplatform автоматически обрабатывает textContentType(.oneTimeCode)
+ * через KeyboardType.Number, поэтому явная настройка не требуется.
  */
 @Composable
 actual fun OtpTextField(
@@ -41,6 +47,10 @@ actual fun OtpTextField(
         singleLine = singleLine
     )
 }
+
+
+
+
 
 
 

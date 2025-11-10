@@ -28,7 +28,7 @@ import io.ktor.http.HttpStatusCode
  * API для авторизованных запросов (требуют access token)
  * Плагин Auth автоматически добавляет Authorization header и обновляет токен при 401
  */
-class AuthApi(
+class ServerAuthApi(
     private val client: HttpClient,
 ) {
     private val key = BuildKonfig.MANDARIN_API_KEY
@@ -189,7 +189,7 @@ class AuthApi(
         }
     }
 
-    private companion object {
+    private companion object Companion {
         const val LOG_TAG = "AuthApi"
         const val HEADER_API_KEY = "x-api-key"
         const val HEADER_AUTHORIZATION = "Authorization"

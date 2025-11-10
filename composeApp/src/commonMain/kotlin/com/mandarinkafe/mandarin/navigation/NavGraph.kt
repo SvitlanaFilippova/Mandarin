@@ -73,7 +73,10 @@ fun NavGraph(navController: NavHostController) {
         }
 
         composable(NavConstants.MORE_MENU_SCREEN_ROUTE) {
-            MoreMenuScreen(navController = navController)
+            MoreMenuScreen(
+                navController = navController,
+                sharedViewModel = sharedViewModel
+            )
         }
 
 

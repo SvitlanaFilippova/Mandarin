@@ -1,8 +1,10 @@
 package com.mandarinkafe.mandarin.features.auth.di
 
+import com.mandarinkafe.mandarin.features.auth.data.api.LocalUserDataCleaner
 import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorage
 import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorageImpl
 import com.mandarinkafe.mandarin.features.auth.data.impl.AuthRepositoryImpl
+import com.mandarinkafe.mandarin.features.auth.data.impl.LocalUserDataCleanerImpl
 import com.mandarinkafe.mandarin.features.auth.data.impl.PhoneVerificationRepositoryImpl
 import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClient
 import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClientImpl
@@ -32,6 +34,7 @@ val authModule = module {
             networkMonitor = get()
         )
     }
+    singleOf(::LocalUserDataCleanerImpl) { bind<LocalUserDataCleaner>() }
     singleOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
     singleOf(::PhoneVerificationRepositoryImpl) { bind<PhoneVerificationRepository>() }
 
@@ -45,3 +48,14 @@ val authModule = module {
     // ViewModel
     singleOf(::AuthViewModel)
 }
+
+
+
+
+
+
+
+
+
+
+

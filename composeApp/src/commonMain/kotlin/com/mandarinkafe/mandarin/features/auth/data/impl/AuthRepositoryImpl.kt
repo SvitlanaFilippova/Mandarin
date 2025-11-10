@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.auth.data.impl
 import com.mandarinkafe.mandarin.core.domain.models.AuthTokens
 import com.mandarinkafe.mandarin.features.account.domain.api.UserInfoRepository
 import com.mandarinkafe.mandarin.features.auth.data.Mapper.toDomain
+import com.mandarinkafe.mandarin.features.auth.data.api.LocalUserDataCleaner
 import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorage
 import com.mandarinkafe.mandarin.features.auth.data.dto.ActiveSessionsResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenResponse
@@ -17,22 +18,52 @@ import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class AuthRepositoryImpl(
     private val networkClient: AuthNetworkClient,
     private val tokenStorage: TokenStorage,
     private val userInfoRepository: UserInfoRepository,
+    private val localUserDataCleaner: LocalUserDataCleaner,
 ) : AuthRepository {
 
     private val _authState = MutableStateFlow(false)
     override val authState: Flow<Boolean> = _authState
 
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     private companion object {
         const val HTTP_UNAUTHORIZED = 401
         private const val LOG_TAG = "AuthRepository"
         private const val TOKEN_REFRESH_TAG = "TOKEN REFRESH"
+    }
+
+    init {
+        // Подписываемся на изменения токенов для синхронизации _authState
+        scope.launch {
+            tokenStorage.tokensFlow
+                .map { it != null }
+                .collect { hasTokens ->
+                    if (!hasTokens && _authState.value) {
+                        // Токены были очищены (например, через interceptor)
+                        // Обновляем состояние авторизации
+                        _authState.value = false
+                        // Очищаем локальные данные пользователя
+                        try {
+                            localUserDataCleaner.clear()
+                            userInfoRepository.clearUserInfo()
+                        } catch (e: Exception) {
+                            Napier.e("$LOG_TAG: Error clearing local data on token removal", e)
+                        }
+                    }
+                }
+        }
     }
 
     override suspend fun initializeAuth(): Boolean {
@@ -51,7 +82,6 @@ class AuthRepositoryImpl(
     override suspend fun saveTokens(tokens: AuthTokens) {
         try {
             tokenStorage.saveTokens(tokens)
-            Napier.d("$LOG_TAG: saveTokens - Tokens saved, validating...")
             // После сохранения токенов валидируем их и загружаем данные пользователя
             val isValid = validateToken()
             if (!isValid) {
@@ -59,7 +89,6 @@ class AuthRepositoryImpl(
                 clearTokens()
                 error("Failed to validate tokens after saving")
             }
-            Napier.d("$LOG_TAG: saveTokens - ✅ Tokens saved and validated successfully")
         } catch (e: IllegalStateException) {
             throw e
         } catch (e: Exception) {
@@ -72,6 +101,10 @@ class AuthRepositoryImpl(
         try {
             tokenStorage.clearTokens()
             _authState.value = false
+            // Очищаем локальные данные пользователя при любой очистке токенов
+            // (ручной логаут, невалидные токены, вынужденный логаут и т.д.)
+            localUserDataCleaner.clear()
+            userInfoRepository.clearUserInfo()
         } catch (e: Exception) {
             Napier.e("$LOG_TAG: clearTokens - Exception", e)
             throw e
@@ -81,9 +114,8 @@ class AuthRepositoryImpl(
     override suspend fun logout() {
         try {
             performServerLogout()
-            // Всегда очищаем локальные токены и данные пользователя
+            // Очищаем токены (внутри clearTokens() также очищаются локальные данные)
             clearTokens()
-            userInfoRepository.clearUserInfo()
         } catch (e: Exception) {
             Napier.e("$LOG_TAG: Exception during logout", e)
             throw e
@@ -96,7 +128,6 @@ class AuthRepositoryImpl(
         try {
             val response = networkClient.logout(accessToken)
             when (response.resultCode) {
-                HTTP_SUCCESS -> Napier.d("$LOG_TAG: Logout successful on server")
                 NO_CONNECTION -> Napier.w("$LOG_TAG: No internet during logout, proceeding with local logout")
                 else -> Napier.w(
                     "$LOG_TAG: Server logout failed - code ${response.resultCode}, proceeding with local logout"
@@ -130,7 +161,6 @@ class AuthRepositoryImpl(
                 NO_CONNECTION -> {
                     // При отсутствии сети считаем токен валидным (оптимистичный сценарий)
                     _authState.value = true
-                    Napier.d("$LOG_TAG: validateToken - No connection, assuming tokens are valid")
                     true
                 }
 
@@ -139,7 +169,6 @@ class AuthRepositoryImpl(
                     // Обновляем информацию о пользователе из ответа
                     val validateResponse = response as? ValidateTokenResponse
                     validateResponse?.data?.let { userInfoDto ->
-                        Napier.d("$LOG_TAG: validateToken - Updating user info from server")
                         userInfoRepository.updateFromServer(userInfoDto)
                     }
                     true
@@ -147,7 +176,6 @@ class AuthRepositoryImpl(
 
                 HTTP_UNAUTHORIZED -> {
                     // Токен невалиден - пытаемся обновить через refresh token
-                    Napier.d("$LOG_TAG: Token invalid (401), attempting refresh")
                     tryRefreshToken()
                 }
 
@@ -169,7 +197,6 @@ class AuthRepositoryImpl(
 
     private suspend fun tryRefreshToken(): Boolean {
         return try {
-            Napier.d("=== $TOKEN_REFRESH_TAG: Started ===")
             val tokens = tokenStorage.getTokens()
             if (tokens?.refreshToken == null) {
                 Napier.w("$TOKEN_REFRESH_TAG: No refresh token found, clearing auth state")
@@ -180,12 +207,11 @@ class AuthRepositoryImpl(
 
             when (response.resultCode) {
                 NO_CONNECTION -> {
-                    Napier.w("$TOKEN_REFRESH_TAG: No internet connection, keeping current auth state (optimistic)")
+                    // При отсутствии сети сохраняем текущее состояние (оптимистичный сценарий)
                     true
                 }
 
                 HTTP_SUCCESS -> {
-                    Napier.d("$TOKEN_REFRESH_TAG: Server responded with success")
                     val refreshResponse = response as? RefreshTokenResponse
                     val newTokens = refreshResponse?.data?.toDomain()
 
@@ -193,7 +219,7 @@ class AuthRepositoryImpl(
                         saveTokens(newTokens)
                         true
                     } else {
-                        Napier.e("$TOKEN_REFRESH_TAG: ❌ Response is success but data is empty")
+                        Napier.e("$TOKEN_REFRESH_TAG: Response is success but data is empty")
                         clearTokens()
                         false
                     }
@@ -201,7 +227,7 @@ class AuthRepositoryImpl(
 
                 HTTP_UNAUTHORIZED -> {
                     // Refresh token тоже невалиден - очищаем всё
-                    Napier.w("$TOKEN_REFRESH_TAG: ❌ Refresh token is invalid (401), clearing all auth data")
+                    Napier.w("$TOKEN_REFRESH_TAG: Refresh token is invalid (401), clearing all auth data")
                     clearTokens()
                     false
                 }
@@ -217,7 +243,7 @@ class AuthRepositoryImpl(
             }
         } catch (e: Exception) {
             Napier.e(
-                "$TOKEN_REFRESH_TAG: ❌ Exception occurred, keeping current tokens (optimistic)",
+                "$TOKEN_REFRESH_TAG: Exception occurred, keeping current tokens (optimistic)",
                 e
             )
             // При ошибке не трогаем текущие токены

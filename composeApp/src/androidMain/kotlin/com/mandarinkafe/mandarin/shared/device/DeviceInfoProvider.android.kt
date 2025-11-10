@@ -45,6 +45,10 @@ actual class DeviceInfoProvider(private val context: Context) {
             "Android Device"
         }
     }
+
+    actual fun getPlatform(): String {
+        return "android"
+    }
 }
 
 

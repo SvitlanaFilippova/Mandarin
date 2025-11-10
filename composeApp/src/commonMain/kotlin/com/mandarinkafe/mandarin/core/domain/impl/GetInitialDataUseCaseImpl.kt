@@ -5,10 +5,10 @@ import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
+import com.mandarinkafe.mandarin.features.auth.domain.api.SyncUserDataUseCase
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CategoryDiscountRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.util.Resource
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
@@ -22,14 +22,19 @@ class GetInitialDataUseCaseImpl(
     private val bannersRepository: BannersRepository,
     private val categoryDiscountRepository: CategoryDiscountRepository,
     private val deliveryAreaRepository: DeliveryAreaRepository,
+    private val syncUserDataUseCase: SyncUserDataUseCase,
 ) : GetInitialDataUseCase {
     override suspend operator fun invoke(): Flow<Resource<List<MealCategory>>> = flow {
         // 1. Сначала проверяем и валидируем токены
         val isAuthorized = authRepository.initializeAuth()
-        Napier.d("GetInitialDataUseCase: Auth initialized, isAuthorized = $isAuthorized")
 
         // 2. Загружаем меню
         menuCache.fetchMenuIfNeeded()
+
+        // 3. Если пользователь авторизован, синхронизируем данные (корзина, избранное)
+        if (isAuthorized) {
+            syncUserDataUseCase()
+        }
 
         // 3. Параллельно грузим всё остальное
         coroutineScope {
