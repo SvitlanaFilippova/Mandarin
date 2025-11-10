@@ -38,7 +38,7 @@ class FavoritesServerApi(private val client: HttpClient) {
                         val responseBody: RemoteFavoritesResponse = json.decodeFromString(rawBody)
                         responseBody.apply { resultCode = HTTP_SUCCESS }
                     } catch (e: Throwable) {
-                        Napier.e("FavoritesServerApi.getFavorites: ошибка десериализации ответа: ${e.javaClass.simpleName}, сообщение: ${e.message}")
+                        Napier.e("FavoritesServerApi.getFavorites: ошибка десериализации ответа: ${e.message}")
                         throw e // Пробрасываем исключение дальше
                     }
                 }
@@ -58,7 +58,7 @@ class FavoritesServerApi(private val client: HttpClient) {
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("FavoritesServerApi.getFavorites: Exception: ${e.javaClass.simpleName}, сообщение: ${e.message}", e)
+            Napier.e("FavoritesServerApi.getFavorites: Exception: ${e.message}", e)
             RemoteFavoritesResponse().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -102,7 +102,7 @@ class FavoritesServerApi(private val client: HttpClient) {
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("FavoritesServerApi.updateFavorites: Exception: ${e.javaClass.simpleName}, сообщение: ${e.message}", e)
+            Napier.e("FavoritesServerApi.updateFavorites: ${e.message}", e)
             RemoteFavoritesResponse().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

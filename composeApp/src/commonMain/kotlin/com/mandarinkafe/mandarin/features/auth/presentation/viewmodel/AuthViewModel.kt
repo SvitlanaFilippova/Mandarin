@@ -302,9 +302,13 @@ class AuthViewModel(
     }
 
     private fun proceedSuccessAuth(tokens: AuthTokens?) {
-        sendEffect(AuthEffect.SuccessAuth)
         viewModelScope.launch {
-            userSessionManager.onUserAuthorized(tokens)
+            val cartChanged = userSessionManager.onUserAuthorized(tokens)
+            if (cartChanged) {
+                sendEffect(AuthEffect.SuccessAuthWithCartChanged)
+            } else {
+                sendEffect(AuthEffect.SuccessAuth)
+            }
         }
     }
 
