@@ -109,8 +109,9 @@ kotlin {
                 implementation(libs.sqldelight.android.driver)
                 // DataStore for Android
                 implementation(libs.datastore.preferences)
-                // Google Play Services Location
+                // Google Play Services
                 implementation(libs.play.services.location)
+                implementation(libs.play.services.auth)
                 // Yandex MapKit
                 implementation(libs.com.yandex.maps.mobile)
                 // Ktor Android engine

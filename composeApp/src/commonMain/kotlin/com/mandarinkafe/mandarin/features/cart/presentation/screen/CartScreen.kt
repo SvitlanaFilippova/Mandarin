@@ -67,6 +67,8 @@ fun CartScreen(
         onRefresh = { onCartEvent(CartEvent.ForceRefresh) }
     )
 
+    LaunchedEffect(Unit) { onCartEvent(CartEvent.SyncWithRemote) }
+
     PullRefreshLayout(
         modifier = Modifier.fillMaxSize(),
         state = pullRefreshState,
@@ -86,14 +88,14 @@ fun CartScreen(
             when {
                 error != null -> PlaceholderScreen(
                     error = error,
-                    onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+                    onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick()) },
                     onRetryClick = { onCartEvent(CartEvent.ForceRefresh) }
                 )
 
-                state.cartItems.isEmpty() && !state.isLoading -> {
+                state.cartItems.filter { it.quantity > 0 }.isEmpty() && !state.isLoading -> {
                     PlaceholderScreen(
                         UiError.CartEmpty,
-                        onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick) },
+                        onCallClick = { onSharedEvent(SharedEvent.OnPhoneClick()) },
                     )
                 }
 

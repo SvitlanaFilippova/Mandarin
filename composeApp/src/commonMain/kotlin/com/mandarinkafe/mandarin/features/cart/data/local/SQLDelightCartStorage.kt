@@ -4,7 +4,6 @@ import com.mandarinkafe.mandarin.features.cart.data.Mapper.toParams
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.shared.database.CartItemsQueries
-import com.mandarinkafe.mandarin.util.getCurrentTimeMillis
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -32,25 +31,40 @@ class SQLDelightCartStorage(private val queries: CartItemsQueries) :
     }
 
     override suspend fun addOrUpdateItem(item: StoredCartItem) {
-        val existingItem = queries.selectById(item.id).executeAsOneOrNull()
-        val timestamp = existingItem?.timestamp ?: getCurrentTimeMillis()
-
         val params = item.toParams()
         with(params) {
             queries.insertOrReplace(
                 id = id,
-                name = name,
                 mealId = mealId,
                 addsIds = addsJson,
                 modifiers = modifiersJson,
                 quantity = quantity,
                 comment = comment,
-                timestamp = timestamp
+                createdAt = createdAt,
+                updatedAt = updatedAt
             )
         }
     }
 
     override suspend fun deleteItemById(id: String) {
         queries.deleteById(id)
+    }
+    
+    override suspend fun getLastUpdated(): Long {
+        return try {
+            withContext(Dispatchers.Default) {
+                val metadataRow = queries.selectMetadata().executeAsOneOrNull()
+                metadataRow?.lastUpdated ?: 0L
+            }
+        } catch (e: Exception) {
+            Napier.e("Ошибка при получении lastUpdated из БД: $e")
+            0L
+        }
+    }
+    
+    override suspend fun updateLastUpdated(lastUpdated: Long) {
+        withContext(Dispatchers.Default) {
+            queries.insertOrReplaceMetadata(lastUpdated = lastUpdated)
+        }
     }
 }

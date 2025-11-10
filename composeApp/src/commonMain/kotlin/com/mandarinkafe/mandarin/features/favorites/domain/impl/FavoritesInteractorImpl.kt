@@ -9,7 +9,8 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
 
-class FavoritesInteractorImpl(
+class
+FavoritesInteractorImpl(
     private val reader: FavoritesReader,
     private val writer: FavoritesWriter,
     private val forceRefreshMenu: ForceRefreshMenuUseCase,
@@ -24,6 +25,10 @@ class FavoritesInteractorImpl(
     override suspend fun forceRefresh() {
         forceRefreshMenu()
         reader.forceRetry()
+    }
+
+    override suspend fun syncWithRemote() {
+        writer.sync()
     }
 
     override suspend fun toggleFavorite(custom: CustomizedMeal) {

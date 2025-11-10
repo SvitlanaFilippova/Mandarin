@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.favorites.data.datastore
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.data.models.isBase
@@ -73,8 +74,21 @@ class FavoritesStorageImpl(
             }
             .first()
 
+    override suspend fun getLastUpdated(): Long {
+        return dataStore.data.map { prefs ->
+            prefs[longPreferencesKey(LAST_UPDATED_KEY)] ?: 0L
+        }.first()
+    }
+
+    override suspend fun updateLastUpdated(lastUpdated: Long) {
+        dataStore.edit { prefs ->
+            prefs[longPreferencesKey(LAST_UPDATED_KEY)] = lastUpdated
+        }
+    }
+
     private companion object {
         const val FAVORITES_KEY = "FAVORITES_KEY"
+        const val LAST_UPDATED_KEY = "FAVORITES_LAST_UPDATED_KEY"
     }
 }
 

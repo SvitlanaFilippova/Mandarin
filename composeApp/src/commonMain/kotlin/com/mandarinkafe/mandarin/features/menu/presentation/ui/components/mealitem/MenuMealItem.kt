@@ -94,7 +94,7 @@ fun MenuMealItem(
                 Text(
                     modifier = Modifier.padding(vertical = Dimens.MarginSuperSmall4),
                     text = meal.description,
-                    style = Typography.MealSmallTextStyle,
+                    style = Typography.SmallLightTextStyle,
                     maxLines = MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -107,7 +107,7 @@ fun MenuMealItem(
                         meal.weight,
                         meal.measureUnitType.localizedShortText()
                     ),
-                    style = Typography.MealSmallTextStyle
+                    style = Typography.SmallLightTextStyle
                 )
             }
             // Для выравнивания кнопок

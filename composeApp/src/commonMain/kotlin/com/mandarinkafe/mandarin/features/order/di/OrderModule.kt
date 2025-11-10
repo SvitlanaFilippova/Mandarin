@@ -2,17 +2,13 @@ package com.mandarinkafe.mandarin.features.order.di
 
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.LoyaltyCustomerRepositoryImpl
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.LoyaltyCustomerRepository
-import com.mandarinkafe.mandarin.features.order.data.datastore.UserInfoStorage
-import com.mandarinkafe.mandarin.features.order.data.datastore.UserInfoStorageImpl
 import com.mandarinkafe.mandarin.features.order.data.impl.OrderRepositoryImpl
-import com.mandarinkafe.mandarin.features.order.data.impl.UserInfoRepositoryImpl
 import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CalculateCartTotalWithDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.OrderRepository
 import com.mandarinkafe.mandarin.features.order.domain.api.PickupOnlyRemoveUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.ResolvePickupPointUseCase
-import com.mandarinkafe.mandarin.features.order.domain.api.UserInfoRepository
 import com.mandarinkafe.mandarin.features.order.domain.impl.ApplyPhoneDiscountUseCaseImpl
 import com.mandarinkafe.mandarin.features.order.domain.impl.CalculateCartTotalWithDiscountUseCaseImpl
 import com.mandarinkafe.mandarin.features.order.domain.impl.CreateOrderUseCaseImpl
@@ -41,12 +37,6 @@ val orderModule = module {
     singleOf(::ResolvePickupPointUseCaseImpl) { bind<ResolvePickupPointUseCase>() }
     singleOf(::ApplyPhoneDiscountUseCaseImpl) { bind<ApplyPhoneDiscountUseCase>() }
     singleOf(::PickupOnlyRemoveUseCaseImpl) { bind<PickupOnlyRemoveUseCase>() }
-
-    // UserInfoStorage
-    singleOf(::UserInfoStorageImpl) { bind<UserInfoStorage>() }
-
-    // UserInfoRepository
-    singleOf(::UserInfoRepositoryImpl) { bind<UserInfoRepository>() }
 
     // Группы юзкейсов для OrderViewModel
     singleOf(::CartContentUseCases)

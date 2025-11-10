@@ -13,6 +13,7 @@ object NavConstants {
     const val KEY_RETURN_TO_ROUTE = "returnTo"
     const val KEY_FROM_ORDER_CREATION = "fromOrderCreation"
     const val KEY_SNACKBAR_MESSAGE = "snackbarMessage"
+    const val KEY_TARGET_ROUTE = "targetRoute"
 
     // --- Routes ---
     const val MENU_SCREEN_ROUTE = "menu"
@@ -22,6 +23,7 @@ object NavConstants {
     const val MORE_MENU_SCREEN_ROUTE = "more"
     const val ORDERS_HISTORY_ROUTE = "orders_history"
     const val SAVED_ADDRESSES_ROUTE = "saved_addresses"
+    const val ACCOUNT_ROUTE = "account"
     const val ABOUT_SCREEN_ROUTE = "about_screen"
     const val LEGAL_SCREEN_ROUTE = "legal_screen"
     const val DELIVERY_SCREEN_ROUTE = "delivery_screen"
@@ -32,6 +34,7 @@ object NavConstants {
     const val MEAL_DETAILS_ROUTE = "meal_details"
     const val SEARCH_SCREEN_ROUTE = "search"
     const val ORDER_INFO_ROUTE = "order_info"
+    const val AUTH_ROUTE = "auth_screen"
 
     val bottomNavigationRoutes = getBottomNavigationRoutesFromItems()
 

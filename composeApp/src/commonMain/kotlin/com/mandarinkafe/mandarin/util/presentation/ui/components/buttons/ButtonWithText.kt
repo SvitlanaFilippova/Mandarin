@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.core.presentation.theme.Typography.ToCartButtonStyle
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography.ButtonTextStyle
 
 @Composable
 fun ButtonWithText(
@@ -49,7 +49,7 @@ fun ButtonWithText(
     ) {
         Text(
             text = text,
-            style = ToCartButtonStyle,
+            style = ButtonTextStyle,
             color = contentColor
         )
     }

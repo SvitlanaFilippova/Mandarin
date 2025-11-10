@@ -144,7 +144,7 @@ private fun RenderMealDetailsContent(
         state.isLoading -> LoadingScreen()
         state.error != null -> PlaceholderScreen(
             error = state.error,
-            onCallClick = { onSharedEvent(SharedContract.SharedEvent.OnPhoneClick) },
+            onCallClick = { onSharedEvent(SharedContract.SharedEvent.OnPhoneClick()) },
         )
 
         else -> {

@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartCountUseCase
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect.FinishSplash
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect.GoBackEffect
@@ -22,6 +23,7 @@ import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.Sh
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEvent.ShowFavoriteDialog
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEvent.ShowTopBar
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedState
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.SPLASH_SCREEN_DURATION
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
@@ -41,6 +43,7 @@ class SharedViewModel(
     private val getInitialDataUseCase: GetInitialDataUseCase,
     private val observeCartCountUseCase: ObserveCartCountUseCase,
     private val refreshMenuIfStaleUseCase: RefreshMenuIfStaleUseCase,
+    authRepository: AuthRepository,
 ) :
     BaseViewModel<SharedEvent, SharedEffect, SharedState>() {
     override fun setInitialState() = SharedState()
@@ -67,6 +70,13 @@ class SharedViewModel(
             initialValue = emptySet()
         )
 
+    val isAuthorized: StateFlow<Boolean> =
+        authRepository.authState.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT_MILLIS),
+            initialValue = false
+        )
+
     init {
         loadInitialData()
         observeCartCount()
@@ -77,7 +87,7 @@ class SharedViewModel(
             is HideTopBar -> setState { copy(shouldShowTopBar = false) }
             is ShowTopBar -> setState { copy(shouldShowTopBar = true) }
             is ResetTopBar -> setState { copy(shouldShowTopBar = true) }
-            is OnPhoneClick -> sendEffect(SharedEffect.OnPhoneClick)
+            is OnPhoneClick -> onPhoneClick(event.phone)
             is SharedEvent.OnLogoClick -> sendEffect(ScrollToTop)
             is OnMealDetailsClick -> {
                 sendEffect(
@@ -118,6 +128,11 @@ class SharedViewModel(
 
             is SharedEvent.RefreshMenuIfStale -> viewModelScope.launch { refreshMenuIfStaleUseCase() }
         }
+    }
+
+    private fun onPhoneClick(phone: String?) {
+        sendEffect(SharedEffect.OnPhoneClick(phone ?: Constants.MANDARIN_PHONE))
+
     }
 
     private fun toggleFavorite(meal: Meal?, item: CustomizedMeal?) {

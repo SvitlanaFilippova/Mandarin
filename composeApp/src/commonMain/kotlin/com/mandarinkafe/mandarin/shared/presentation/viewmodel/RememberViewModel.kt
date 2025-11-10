@@ -2,8 +2,11 @@ package com.mandarinkafe.mandarin.shared.presentation.viewmodel
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.mandarinkafe.mandarin.core.domain.impl.AppLifecycleManager
+import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.AccountViewModel
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsViewModel
 import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressViewModel
+import com.mandarinkafe.mandarin.features.auth.presentation.viewmodel.AuthViewModel
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
 import com.mandarinkafe.mandarin.features.delivery.presentation.viewmodel.DeliveryViewModel
 import com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel.FavoritesViewModel
@@ -117,3 +120,23 @@ fun rememberSharedViewModel(): SharedViewModel {
     val koin = getKoin()
     return remember { koin.get<SharedViewModel>() }
 }
+
+@Composable
+fun rememberAuthViewModel(): AuthViewModel {
+    val koin = getKoin()
+    return remember { koin.get<AuthViewModel>() }
+}
+
+@Composable
+fun rememberAccountViewModel(): AccountViewModel {
+    val koin = getKoin()
+    return remember { koin.get<AccountViewModel>() }
+}
+
+@Composable
+fun rememberAppLifecycleManager(): AppLifecycleManager {
+    val koin = getKoin()
+    return remember { koin.get<AppLifecycleManager>() }
+}
+
+

@@ -54,7 +54,7 @@ fun UndoIndicator(
 
             Text(
                 text = stringResource(MR.strings.cancel_removing),
-                style = Typography.ToCartButtonStyle
+                style = Typography.ButtonTextStyle
             )
         }
     }

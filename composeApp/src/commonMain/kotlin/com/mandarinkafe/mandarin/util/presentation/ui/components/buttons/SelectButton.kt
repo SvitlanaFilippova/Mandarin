@@ -51,7 +51,7 @@ fun SelectButton(
             )
             Text(
                 text = text,
-                style = Typography.ToCartButtonStyle
+                style = Typography.ButtonTextStyle
             )
         }
     }

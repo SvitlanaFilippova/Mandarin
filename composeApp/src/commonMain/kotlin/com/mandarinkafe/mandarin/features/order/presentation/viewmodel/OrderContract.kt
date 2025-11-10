@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 
-import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
@@ -27,7 +26,6 @@ sealed interface OrderContract {
 
         // Ввод персональных данных
         data class SetName(val query: String) : OrderEvent
-        data class SetPhone(val query: String) : OrderEvent
         data class ToggleSaveUserInfo(val checked: Boolean) : OrderEvent
 
         // Настройки доставки
@@ -60,11 +58,11 @@ sealed interface OrderContract {
         // Обработка отправки заказа
         data class ShowSuccess(val orderId: String) : OrderEffect
         data class ShowMessage(val message: StringResource) : OrderEffect
-
     }
 
     data class OrderState(
         val userInfo: UserInfoUi = UserInfoUi(),
+        val savedNameIsEmpty: Boolean = true,
         val deliveryInfo: DeliveryInfo = DeliveryInfo(),
         val paymentInfo: PaymentInfo = PaymentInfo(),
         val cartSummary: CartSummary = CartSummary(),
@@ -77,10 +75,9 @@ sealed interface OrderContract {
         val containsAlcohol: Boolean = false,
         val pickupPoint: OrderPickupPoint = OrderPickupPoint.CAFE,
         val isLoading: Boolean = false,
-        val saveUserInfo: Boolean = false,
-        val showSaveUserInfoCheckbox: Boolean = true,
-        val saveUserInfoCheckboxText: StringResource = MR.strings.save_name_and_phone,
-    ) : BaseContract.BaseState {
+        val shouldSaveUserName: Boolean = false,
+
+        ) : BaseContract.BaseState {
         val deliveryCost: Int
             get() = when {
                 deliveryInfo.isPickup -> 0
@@ -96,7 +93,6 @@ sealed interface OrderContract {
 
         val canBeSubmitted: Boolean
             get() = !isLoading &&
-                    userInfo.phoneIsValid &&
                     deliveryInfo.addressIsValid &&
                     paymentInfo.paymentTypeIsChosen
     }

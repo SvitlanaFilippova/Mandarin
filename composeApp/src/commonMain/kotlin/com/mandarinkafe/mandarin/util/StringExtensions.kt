@@ -1,7 +1,7 @@
 package com.mandarinkafe.mandarin.util
 
-import com.mandarinkafe.mandarin.util.Constants.COMMENT_DIVIDER_1
-import com.mandarinkafe.mandarin.util.Constants.COMMENT_DIVIDER_2
+import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
+
 
 /**
  * Заменяет все нестандартные пробелы на обычные (для правильной работы поиска)
@@ -113,3 +113,98 @@ fun String?.toVisibleComment(): String {
         this.trim()
     }
 }
+
+private const val COMMENT_DIVIDER_1 = "\\\\"
+private const val COMMENT_DIVIDER_2 = "//"
+
+
+/**
+ * Форматирует номер телефона из формата 9299964288, 89991234567, 79991234567 или +79991234567
+ * в формат +7 (929) 996–42–88
+ * @return отформатированный номер телефона в формате +7 (XXX) XXX–XX–XX
+ */
+fun String.formatPhoneNumberForUi(): String {
+    // Оставляем только цифры и знак + для обработки +7
+    val normalized = this.replace("+", "").filter { it.isDigit() }
+
+    // Нормализуем номер: убираем префиксы 8, 7 если номер 11 цифр
+    val digitsOnly = when {
+        normalized.length == PHONE_LENGTH_WITH_PREFIX && normalized.startsWith(PHONE_PREFIX_8) -> {
+            // Номер начинается с 8 (например, 89991234567) -> убираем 8
+            normalized.drop(1)
+        }
+
+        normalized.length == PHONE_LENGTH_WITH_PREFIX && normalized.startsWith(PHONE_PREFIX_7) -> {
+            // Номер начинается с 7 (например, 79991234567) -> убираем 7
+            normalized.drop(1)
+        }
+
+        normalized.length == PHONE_LENGTH_DIGITS -> {
+            // Номер уже 10 цифр без префикса
+            normalized
+        }
+
+        else -> {
+            // Некорректная длина, возвращаем как есть
+            return this
+        }
+    }
+
+    // Проверяем, что после нормализации осталось 10 цифр
+    if (digitsOnly.length != PHONE_LENGTH_DIGITS) {
+        return this
+    }
+
+    // Разбиваем на группы: код города (3), основная часть (3), и две группы по 2
+    val areaCode = digitsOnly.substring(
+        PHONE_AREA_CODE_START,
+        PHONE_AREA_CODE_START + PHONE_AREA_CODE_LENGTH
+    )
+    val firstPart = digitsOnly.substring(
+        PHONE_FIRST_PART_START,
+        PHONE_FIRST_PART_START + PHONE_FIRST_PART_LENGTH
+    )
+    val secondPart = digitsOnly.substring(
+        PHONE_SECOND_PART_START,
+        PHONE_SECOND_PART_START + PHONE_SECOND_PART_LENGTH
+    )
+    val thirdPart = digitsOnly.substring(
+        PHONE_THIRD_PART_START,
+        PHONE_THIRD_PART_START + PHONE_THIRD_PART_LENGTH
+    )
+
+    return "$PHONE_PREFIX_RU$PHONE_NON_BREAKING_SPACE" +
+            "$PHONE_AREA_CODE_BRACKET_OPEN$areaCode$PHONE_AREA_CODE_BRACKET_CLOSE" +
+            "$PHONE_NON_BREAKING_SPACE$firstPart" +
+            "$PHONE_SEPARATOR$secondPart$PHONE_SEPARATOR$thirdPart"
+}
+
+fun String.formatPhoneNumberForDomain(): String {
+    val rawPhone = this
+    val digitsOnly = rawPhone.filter { it.isDigit() }
+    val normalized = when {
+        digitsOnly.startsWith(PHONE_PREFIX_7) -> digitsOnly.drop(1)
+        digitsOnly.startsWith(PHONE_PREFIX_8) -> digitsOnly.drop(1)
+        else -> digitsOnly
+    }
+    val phone = normalized.take(VALID_PHONE_LENGTH)
+    return phone
+}
+
+private const val PHONE_PREFIX_RU = "+7"
+private const val PHONE_PREFIX_7 = "7"
+private const val PHONE_PREFIX_8 = "8"
+private const val PHONE_LENGTH_DIGITS = 10
+private const val PHONE_LENGTH_WITH_PREFIX = 11
+private const val PHONE_AREA_CODE_LENGTH = 3
+private const val PHONE_FIRST_PART_LENGTH = 3
+private const val PHONE_SECOND_PART_LENGTH = 2
+private const val PHONE_THIRD_PART_LENGTH = 2
+private const val PHONE_AREA_CODE_START = 0
+private const val PHONE_FIRST_PART_START = 3
+private const val PHONE_SECOND_PART_START = 6
+private const val PHONE_THIRD_PART_START = 8
+private const val PHONE_AREA_CODE_BRACKET_OPEN = "("
+private const val PHONE_AREA_CODE_BRACKET_CLOSE = ")"
+private const val PHONE_SEPARATOR = "–"
+private const val PHONE_NON_BREAKING_SPACE = "\u00A0"

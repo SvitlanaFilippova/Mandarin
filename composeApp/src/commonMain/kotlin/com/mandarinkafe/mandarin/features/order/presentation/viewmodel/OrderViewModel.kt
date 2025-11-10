@@ -4,11 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
-import com.mandarinkafe.mandarin.core.domain.models.UserInfo
+import com.mandarinkafe.mandarin.features.account.domain.api.UserInfoRepository
+import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.PickupOnlyRemoveUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.SaveOrderToHistoryUseCase
-import com.mandarinkafe.mandarin.features.order.domain.api.UserInfoRepository
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.mapper.toDomain
@@ -24,16 +24,18 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.C
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.OrderCreator
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.DeliveryInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
-import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.UserInfoUi
 import com.mandarinkafe.mandarin.features.savedadresses.domain.AddressUseCases
 import com.mandarinkafe.mandarin.features.savedadresses.domain.CartContentUseCases
 import com.mandarinkafe.mandarin.features.savedadresses.domain.OrderInfoUseCases
 import com.mandarinkafe.mandarin.util.Constants
-import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dev.icerock.moko.resources.StringResource
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 class OrderViewModel(
     private val cartUseCases: CartContentUseCases,
@@ -44,6 +46,7 @@ class OrderViewModel(
     private val applyPhoneDiscount: ApplyPhoneDiscountUseCase,
     private val saveOrderToHistory: SaveOrderToHistoryUseCase,
     private val userInfoRepository: UserInfoRepository,
+    private val authRepository: AuthRepository,
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     private val cartObserver = CartObserver(
@@ -55,7 +58,6 @@ class OrderViewModel(
     init {
         getSavedAddresses()
         observeCartItems()
-        getSavedUserInfo()
     }
 
     override fun setInitialState() = OrderState()
@@ -65,7 +67,6 @@ class OrderViewModel(
             is OrderEvent.GetInitData -> getInitData()
             is OrderEvent.RefreshAddresses -> getSavedAddresses()
             is OrderEvent.SetName -> setName(event.query)
-            is OrderEvent.SetPhone -> setPhone(event.query)
             is OrderEvent.SetDeliveryType -> setDeliveryType(event.deliveryType)
             is OrderEvent.SetPaymentType -> setPaymentType(event.paymentType)
             is OrderEvent.SetChangeFrom -> setChangeFrom(event.query)
@@ -89,6 +90,7 @@ class OrderViewModel(
     private fun getInitData() {
         getPaymentTypes()
         getSavedAddresses()
+        getSavedUserInfo()
     }
 
     private fun removePickupOnly() {
@@ -122,65 +124,98 @@ class OrderViewModel(
     }
 
     private fun toggleSaveUserInfo(checked: Boolean) {
-        setState { copy(saveUserInfo = checked) }
+        setState { copy(shouldSaveUserName = checked) }
     }
 
     private fun getSavedUserInfo() {
         viewModelScope.launch {
-            val savedUserInfo = userInfoRepository.getUserInfo()
-            setState {
-                if (savedUserInfo != null) {
-                    // Есть сохранённые данные → не показываем чекбокс
+            var isFirstLoad = true
+
+            // Ждем первое не-null значение с таймаутом
+
+            val initialInfo = withTimeoutOrNull(Constants.USER_DATA_WAIT_TIMEOUT) {
+                userInfoRepository.userInfo.first { it != null }
+            }
+
+            if (initialInfo != null) {
+                setState {
                     copy(
-                        userInfo = userInfo.copy(
-                            name = savedUserInfo.name,
-                            phone = savedUserInfo.phone
+                        userInfo = this.userInfo.copy(
+                            name = initialInfo.name,
+                            phone = initialInfo.phone.formatPhoneNumberForDomain(),
                         ),
-                        showSaveUserInfoCheckbox = false
+                        savedNameIsEmpty = initialInfo.name.trim().isEmpty(),
                     )
-                } else {
-                    // Нет сохранённых данных → показываем чекбокс
-                    copy(showSaveUserInfoCheckbox = true)
+                }
+                checkDiscount(initialInfo.phone)
+                isFirstLoad = false
+            } else {
+                Napier.w("OrderViewModel: Timeout waiting for user info")
+            }
+
+            // Подписываемся на дальнейшие обновления (пропускаем первое, если уже загрузили)
+            userInfoRepository.userInfo.collect { userInfo ->
+                if (isFirstLoad) {
+                    isFirstLoad = false
+                    return@collect
+                }
+
+                userInfo?.let {
+                    setState {
+                        copy(
+                            userInfo = this.userInfo.copy(
+                                name = userInfo.name,
+                                phone = userInfo.phone.formatPhoneNumberForDomain(),
+                            ),
+                            savedNameIsEmpty = userInfo.name.trim().isEmpty(),
+                        )
+                    }
                 }
             }
-            savedUserInfo?.let { checkDiscount(it.phone) }
         }
     }
 
-    private fun saveUserInfo() {
+    private fun saveUserName() {
         viewModelScope.launch {
-            val userInfo = state.value.userInfo
-            userInfoRepository.saveUserInfo(
-                UserInfo(
-                    name = userInfo.name,
-                    phone = userInfo.phone
-                )
-            )
-        }
-    }
+            val currentUserInfo = userInfoRepository.getUserInfo()
+            val enteredName = state.value.userInfo.name
 
-    private fun updateUserInfo(newInfo: UserInfoUi) {
-        viewModelScope.launch {
-            val saved = userInfoRepository.getUserInfo()
-            val showCheckbox = when {
-                saved == null -> true // первый раз сохраняем
-                saved.name != newInfo.name || saved.phone != newInfo.phone -> true // данные изменились
-                else -> false
-            }
-            val text = if (saved != null) {
-                MR.strings.update_saved_name_and_phone
-            } else {
-                MR.strings.save_name_and_phone
-            }
+            // Обновляем имя на сервере, если оно было пустое или изменилось
+            val hasValidUserInfo = currentUserInfo != null
+            val hasValidEnteredName = enteredName.isNotBlank()
+            val isNameEmptyOrChanged = hasValidUserInfo &&
+                (currentUserInfo.name.isBlank() || currentUserInfo.name != enteredName)
+            val shouldUpdateName = hasValidUserInfo && hasValidEnteredName && isNameEmptyOrChanged
 
-            setState {
-                copy(
-                    showSaveUserInfoCheckbox = showCheckbox,
-                    saveUserInfoCheckboxText = text
-                )
+            if (shouldUpdateName) {
+                // Получаем access token
+                val accessToken = authRepository.getAccessToken()
+                if (accessToken != null) {
+                    val result = userInfoRepository.updateName(accessToken, enteredName)
+                    when (result) {
+                        is Resource.Success -> {
+                            Napier.d("OrderViewModel: Name updated successfully")
+                        }
+
+                        is Resource.ErrorNoInternet -> {
+                            Napier.w("OrderViewModel: No internet, name not updated")
+                        }
+
+                        is Resource.ErrorOther -> {
+                            Napier.e("OrderViewModel: Failed to update name: ${result.message}")
+                        }
+
+                        else -> {
+                            // Idle, Loading, ErrorEmptyData - не обрабатываем
+                            }
+                        }
+                    } else {
+                        Napier.w("OrderViewModel: No access token, can't update name")
+                    }
+                }
             }
         }
-    }
+
 
     private fun selectAddressById(id: String) {
         val address = state.value.deliveryInfo.savedAddresses.first { it.id == id }
@@ -315,9 +350,11 @@ class OrderViewModel(
 
     private fun setName(query: String) {
         val newInfo = state.value.userInfo.copy(name = query)
-        updateUserInfo(newInfo)
-        setState { copy(userInfo = newInfo) }
-
+        setState {
+            copy(
+                userInfo = newInfo
+            )
+        }
     }
 
     private fun setNoNeedUtensils(noNeedUtensils: Boolean) {
@@ -330,39 +367,22 @@ class OrderViewModel(
         }
     }
 
-    private fun setPhone(rawPhone: String) {
-        val digitsOnly = rawPhone.filter { it.isDigit() }
-        val normalized = when {
-            digitsOnly.startsWith("7") -> digitsOnly.drop(1)
-            digitsOnly.startsWith("8") -> digitsOnly.drop(1)
-            else -> digitsOnly
-        }
-        val phone = normalized.take(VALID_PHONE_LENGTH)
-
-        val newInfo = state.value.userInfo.copy(phone = phone)
-        setState { copy(userInfo = newInfo) }
-
-        viewModelScope.launch {
-            updateUserInfo(newInfo)
-            checkDiscount(phone)
-        }
-    }
-
     private fun checkDiscount(phone: String) {
-        viewModelScope.launch {
-            val discount = applyPhoneDiscount(phone, state.value.cartSummary.discountPercent)
-            if (discount.shouldUpdate) {
-                setState {
-                    copy(
-                        cartSummary = cartSummary.copy(
-                            discountPercent = discount.discountSize,
-                            discountId = discount.discountId
-                        )
-                    )
-                }
-                recalculateCartSummary(discount.discountSize)
-            }
-        }
+        // TODO временно закоментировано, до решения ошибки с дублированием скидки
+//        viewModelScope.launch {
+//            val discount = applyPhoneDiscount(phone, state.value.cartSummary.discountPercent)
+//            if (discount.shouldUpdate) {
+//                setState {
+//                    copy(
+//                        cartSummary = cartSummary.copy(
+//                            discountPercent = discount.discountSize,
+//                            discountId = discount.discountId
+//                        )
+//                    )
+//                }
+//                recalculateCartSummary(discount.discountSize)
+//            }
+//        }
     }
 
     private fun showMissingRequiredInfo() {
@@ -412,7 +432,7 @@ class OrderViewModel(
     }
 
     private fun submitOrder() {
-        if (state.value.saveUserInfo) saveUserInfo()
+        if (state.value.shouldSaveUserName) saveUserName()
 
         viewModelScope.launch {
             setLoading()
@@ -444,4 +464,3 @@ class OrderViewModel(
         sendEffect(ShowMessage(msg))
     }
 }
-
