@@ -178,107 +178,153 @@ class FavoritesRepositoryImpl(
         }
 
         try {
-            // Получаем локальные избранные и lastUpdated
             val localResult = storage.getFavorites()
             val localFavorites = when (localResult) {
                 is FavoritesStorageResult.Success -> localResult.favorites
                 is FavoritesStorageResult.Corrupted -> emptySet()
             }
             val localLastUpdated = storage.getLastUpdated()
-
-            // Получаем удалённые избранные с сервера
             val remoteFavorites = remoteDataSource.getFavorites()
 
-            // Проверяем: если сервер вернул пустое избранное и его lastUpdated новее локального,
-            // это означает, что избранное было очищено на сервере - нужно очистить локальное избранное
-            val shouldClearLocal =
-                remoteFavorites.items.isEmpty() && remoteFavorites.lastUpdated > localLastUpdated
-            if (shouldClearLocal) {
-                storage.saveFavorites(emptySet())
-                storage.updateLastUpdated(remoteFavorites.lastUpdated)
-                currentRawRecords = mutableSetOf()
-                updateFavorites(currentRawRecords)
+            if (shouldClearLocalFavorites(remoteFavorites, localLastUpdated)) {
+                handleServerClearedFavorites(remoteFavorites)
             } else {
-                // Определяем первую синхронизацию после авторизации:
-                // localLastUpdated = 0L означает, что данные были созданы без авторизации
-                // ВАЖНО: это работает только если есть локальные данные с updatedAt = 0L (созданные без авторизации)
-                // Если данные были созданы после логаута, они тоже будут иметь updatedAt = 0L, но это нормально -
-                // они должны быть отправлены на сервер как новые данные
-                val isFirstSyncAfterAuth = localLastUpdated == 0L && localFavorites.isNotEmpty() && 
-                    localFavorites.any { it.updatedAt == 0L }
-                
-                // Объединяем локальные и удалённые избранные по updatedAt каждого элемента
-                // При первой синхронизации локальные элементы с updatedAt = 0L имеют приоритет
-                var mergedFavorites = mergeFavorites(localFavorites, remoteFavorites.items, isFirstSyncAfterAuth)
-
-                // Удаляем записи, которые есть локально, но отсутствуют на сервере,
-                // если серверная версия избранного новее или равна локальной
-                // НО: при первой синхронизации после авторизации НЕ удаляем локальные записи
-                val serverIsNewerOrEqual = remoteFavorites.lastUpdated >= localLastUpdated
-                if (serverIsNewerOrEqual && !isFirstSyncAfterAuth) {
-                    val remoteItemKeys = remoteFavorites.items.toSet()
-                    mergedFavorites = mergedFavorites.filter { localItem ->
-                        remoteItemKeys.any { remoteItem ->
-                            localItem.mealId == remoteItem.mealId &&
-                                    localItem.addsIds.toSet() == remoteItem.addsIds.toSet() &&
-                                    localItem.modifiers.toSet() == remoteItem.modifiers.toSet()
-                        }
-                    }.toSet()
-                }
-
-                // Проверяем, были ли локальные изменения ДО мержа
-                // Изменения есть, если:
-                // 1. Это первая синхронизация после авторизации (есть локальные данные без авторизации)
-                // 2. Есть локальные записи с updatedAt = 0 (измененные локально)
-                // 3. Есть локальные записи, которых нет на сервере (но только если локальная версия новее)
-                // 4. Есть локальные записи с updatedAt > серверного updatedAt
-                val hasLocalChanges = isFirstSyncAfterAuth || localFavorites.any { localItem ->
-                    val remoteItem = remoteFavorites.items.find { remoteItem ->
-                        localItem.mealId == remoteItem.mealId &&
-                                localItem.addsIds.toSet() == remoteItem.addsIds.toSet() &&
-                                localItem.modifiers.toSet() == remoteItem.modifiers.toSet()
-                    }
-                    when {
-                        remoteItem == null -> !serverIsNewerOrEqual // запись только локально, но только если локальная версия новее
-                        localItem.updatedAt == 0L -> true // запись изменена локально
-                        localItem.updatedAt > remoteItem.updatedAt -> true // локальная версия новее
-                        else -> false
-                    }
-                }
-
-                // Сохраняем объединённый результат локально
-                storage.saveFavorites(mergedFavorites)
-
-                // Обновляем lastUpdated (берем максимальный из локального и удаленного)
-                val finalLastUpdated = maxOf(localLastUpdated, remoteFavorites.lastUpdated)
-                storage.updateLastUpdated(finalLastUpdated)
-
-                // Если после мержа есть локальные изменения, отправляем избранное на сервер
-                if (hasLocalChanges) {
-                    val currentFavorites = when (val result = storage.getFavorites()) {
-                        is FavoritesStorageResult.Success -> result.favorites
-                        is FavoritesStorageResult.Corrupted -> emptySet()
-                    }
-                    val updatedFavorites = remoteDataSource.syncFavorites(currentFavorites)
-
-                    // Сохраняем обновленное избранное с updatedAt от сервера
-                    storage.saveFavorites(updatedFavorites.items)
-                    storage.updateLastUpdated(updatedFavorites.lastUpdated)
-                }
-
-                // Обновляем внутреннее состояние
-                val finalFavorites = when (val result = storage.getFavorites()) {
-                    is FavoritesStorageResult.Success -> result.favorites
-                    is FavoritesStorageResult.Corrupted -> emptySet()
-                }
-                currentRawRecords = finalFavorites.toFavoriteRecords()
-                updateFavorites(currentRawRecords)
+                performFavoritesMerge(localFavorites, localLastUpdated, remoteFavorites)
             }
         } catch (e: Exception) {
-            // В случае ошибки просто игнорируем синхронизацию
-            // Локальные данные остаются без изменений
             Napier.e("Ошибка при синхронизации избранного", e)
         }
+    }
+
+    private fun shouldClearLocalFavorites(
+        remoteFavorites: com.mandarinkafe.mandarin.features.favorites.data.models.Favorites,
+        localLastUpdated: Long,
+    ): Boolean {
+        return remoteFavorites.items.isEmpty() && remoteFavorites.lastUpdated > localLastUpdated
+    }
+
+    private suspend fun handleServerClearedFavorites(
+        remoteFavorites: com.mandarinkafe.mandarin.features.favorites.data.models.Favorites,
+    ) {
+        storage.saveFavorites(emptySet())
+        storage.updateLastUpdated(remoteFavorites.lastUpdated)
+        currentRawRecords = mutableSetOf()
+        updateFavorites(currentRawRecords)
+    }
+
+    private suspend fun performFavoritesMerge(
+        localFavorites: Set<StoredFavoriteMeal>,
+        localLastUpdated: Long,
+        remoteFavorites: com.mandarinkafe.mandarin.features.favorites.data.models.Favorites,
+    ) {
+        val isFirstSyncAfterAuth = isFirstSyncAfterAuthorization(localLastUpdated, localFavorites)
+        var mergedFavorites =
+            mergeFavorites(localFavorites, remoteFavorites.items, isFirstSyncAfterAuth)
+
+        val serverIsNewerOrEqual = remoteFavorites.lastUpdated >= localLastUpdated
+        mergedFavorites = removeFavoritesNotOnServer(
+            mergedFavorites,
+            remoteFavorites.items,
+            serverIsNewerOrEqual,
+            isFirstSyncAfterAuth,
+        )
+
+        val hasLocalChanges = checkForLocalChanges(
+            localFavorites,
+            remoteFavorites.items,
+            serverIsNewerOrEqual,
+            isFirstSyncAfterAuth,
+        )
+
+        saveMergedFavorites(mergedFavorites)
+        updateLastUpdatedAndSyncIfNeeded(
+            localLastUpdated,
+            remoteFavorites.lastUpdated,
+            hasLocalChanges
+        )
+        updateInternalState()
+    }
+
+    private fun isFirstSyncAfterAuthorization(
+        localLastUpdated: Long,
+        localFavorites: Set<StoredFavoriteMeal>,
+    ): Boolean {
+        return localLastUpdated == 0L && localFavorites.isNotEmpty() && localFavorites.any { it.updatedAt == 0L }
+    }
+
+    private fun removeFavoritesNotOnServer(
+        mergedFavorites: Set<StoredFavoriteMeal>,
+        remoteItems: Set<StoredFavoriteMeal>,
+        serverIsNewerOrEqual: Boolean,
+        isFirstSyncAfterAuth: Boolean,
+    ): Set<StoredFavoriteMeal> {
+        if (serverIsNewerOrEqual && !isFirstSyncAfterAuth) {
+            val remoteItemKeys = remoteItems.toSet()
+            return mergedFavorites.filter { localItem ->
+                remoteItemKeys.any { remoteItem ->
+                    localItem.mealId == remoteItem.mealId &&
+                            localItem.addsIds.toSet() == remoteItem.addsIds.toSet() &&
+                            localItem.modifiers.toSet() == remoteItem.modifiers.toSet()
+                }
+            }.toSet()
+        }
+        return mergedFavorites
+    }
+
+    private fun checkForLocalChanges(
+        localFavorites: Set<StoredFavoriteMeal>,
+        remoteItems: Set<StoredFavoriteMeal>,
+        serverIsNewerOrEqual: Boolean,
+        isFirstSyncAfterAuth: Boolean,
+    ): Boolean {
+        if (isFirstSyncAfterAuth) return true
+
+        return localFavorites.any { localItem ->
+            val remoteItem = remoteItems.find { remoteItem ->
+                localItem.mealId == remoteItem.mealId &&
+                        localItem.addsIds.toSet() == remoteItem.addsIds.toSet() &&
+                        localItem.modifiers.toSet() == remoteItem.modifiers.toSet()
+            }
+            when {
+                remoteItem == null -> !serverIsNewerOrEqual
+                localItem.updatedAt == 0L -> true
+                localItem.updatedAt > remoteItem.updatedAt -> true
+                else -> false
+            }
+        }
+    }
+
+    private suspend fun saveMergedFavorites(mergedFavorites: Set<StoredFavoriteMeal>) {
+        storage.saveFavorites(mergedFavorites)
+    }
+
+    private suspend fun updateLastUpdatedAndSyncIfNeeded(
+        localLastUpdated: Long,
+        remoteLastUpdated: Long,
+        hasLocalChanges: Boolean,
+    ) {
+        val finalLastUpdated = maxOf(localLastUpdated, remoteLastUpdated)
+        storage.updateLastUpdated(finalLastUpdated)
+
+        if (hasLocalChanges) {
+            val currentFavorites = when (val result = storage.getFavorites()) {
+                is FavoritesStorageResult.Success -> result.favorites
+                is FavoritesStorageResult.Corrupted -> emptySet()
+            }
+            val updatedFavorites = remoteDataSource.syncFavorites(currentFavorites)
+
+            storage.saveFavorites(updatedFavorites.items)
+            storage.updateLastUpdated(updatedFavorites.lastUpdated)
+        }
+    }
+
+    private suspend fun updateInternalState() {
+        val finalFavorites = when (val result = storage.getFavorites()) {
+            is FavoritesStorageResult.Success -> result.favorites
+            is FavoritesStorageResult.Corrupted -> emptySet()
+        }
+        currentRawRecords = finalFavorites.toFavoriteRecords()
+        updateFavorites(currentRawRecords)
     }
 
     /**

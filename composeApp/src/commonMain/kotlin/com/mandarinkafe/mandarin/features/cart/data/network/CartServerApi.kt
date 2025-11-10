@@ -15,7 +15,6 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 
@@ -40,12 +39,12 @@ class CartServerApi(private val client: HttpClient) {
                 }
 
                 else -> {
-                    Napier.e("CartServerApi.getCart: HTTP error ${httpResponse.status.value}")
+                    Napier.e("$LOG_TAG.getCart: HTTP error ${httpResponse.status.value}")
                     CartResponse().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("CartServerApi.getCart: Exception", e)
+            Napier.e("$LOG_TAG.getCart: Exception", e)
             CartResponse().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -75,7 +74,7 @@ class CartServerApi(private val client: HttpClient) {
                     } catch (e: Exception) {
                         "не удалось прочитать тело ответа: ${e.message}"
                     }
-                    Napier.e("CartServerApi.updateCart: HTTP 422 (Unprocessable Entity), тело ответа: $errorBody")
+                    Napier.e("$LOG_TAG.updateCart: HTTP 422 (Unprocessable Entity), тело ответа: $errorBody")
                     CartResponse().apply { resultCode = HttpStatusCode.UnprocessableEntity.value }
                 }
 
@@ -85,12 +84,12 @@ class CartServerApi(private val client: HttpClient) {
                     } catch (e: Exception) {
                         "не удалось прочитать тело ответа: ${e.message}"
                     }
-                    Napier.e("CartServerApi.updateCart: HTTP error ${httpResponse.status.value}, тело ответа: $errorBody")
+                    Napier.e("$LOG_TAG.updateCart: HTTP error ${httpResponse.status.value}, тело ответа: $errorBody")
                     CartResponse().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("CartServerApi.updateCart: Exception", e)
+            Napier.e("$LOG_TAG.updateCart: Exception", e)
             CartResponse().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -112,14 +111,18 @@ class CartServerApi(private val client: HttpClient) {
                 }
 
                 else -> {
-                    Napier.e("CartServerApi: clearCart - HTTP error ${httpResponse.status.value}")
+                    Napier.e("$LOG_TAG: clearCart - HTTP error ${httpResponse.status.value}")
                     Response().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
         } catch (e: Throwable) {
-            Napier.e("CartServerApi: clearCart - Exception", e)
+            Napier.e("$LOG_TAG clearCart - Exception", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
+    }
+
+    private companion object {
+        const val LOG_TAG = "CartServerApi"
     }
 }
 

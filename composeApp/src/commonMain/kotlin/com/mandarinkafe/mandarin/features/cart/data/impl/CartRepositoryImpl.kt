@@ -9,6 +9,7 @@ import com.mandarinkafe.mandarin.features.auth.domain.impl.AuthStateChecker
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.local.CartStorage
+import com.mandarinkafe.mandarin.features.cart.data.models.CartMetadata
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.remote.CartRemoteDataSource
 import com.mandarinkafe.mandarin.features.cart.data.validateBy
@@ -229,100 +230,145 @@ class CartRepositoryImpl(
         }
 
         try {
-            // Получаем локальную корзину и lastUpdated
             val localCart = storage.getCartItems()
             val localLastUpdated = storage.getLastUpdated()
-
-            // Получаем удалённую корзину с сервера
             val remoteCart = remoteDataSource.getCart()
 
-            // Проверяем: если сервер вернул пустую корзину и его lastUpdated новее локального,
-            // это означает, что корзина была очищена на сервере - нужно очистить локальную корзину
-            val shouldClearLocal =
-                remoteCart.items.isEmpty() && remoteCart.lastUpdated > localLastUpdated
-            if (shouldClearLocal) {
-                storage.clearCart()
-                storage.updateLastUpdated(remoteCart.lastUpdated)
+            if (shouldClearLocalCart(remoteCart, localLastUpdated)) {
+                handleServerClearedCart(remoteCart)
             } else {
-                // Определяем первую синхронизацию после авторизации:
-                // localLastUpdated = 0L означает, что данные были созданы без авторизации
-                // ВАЖНО: это работает только если есть локальные данные с updatedAt = 0L (созданные без авторизации)
-                // Если данные были созданы после логаута, они тоже будут иметь updatedAt = 0L, но это нормально -
-                // они должны быть отправлены на сервер как новые данные
-                val isFirstSyncAfterAuth = localLastUpdated == 0L && localCart.isNotEmpty() && 
-                    localCart.any { it.updatedAt == 0L }
-                
-                // Объединяем локальную и удалённую корзину по updatedAt каждого элемента
-                // При первой синхронизации локальные элементы с updatedAt = 0L имеют приоритет
-                var mergedCart = mergeCartItems(localCart, remoteCart.items, isFirstSyncAfterAuth)
-
-                // Удаляем позиции, которые есть локально, но отсутствуют на сервере,
-                // если серверная версия корзины новее или равна локальной
-                // НО: при первой синхронизации после авторизации НЕ удаляем локальные элементы
-                val serverIsNewerOrEqual = remoteCart.lastUpdated >= localLastUpdated
-                if (serverIsNewerOrEqual && !isFirstSyncAfterAuth) {
-                    val remoteItemIds = remoteCart.items.map { it.id }.toSet()
-                    val itemsToRemove = mergedCart.filter { it.id !in remoteItemIds }
-                    if (itemsToRemove.isNotEmpty()) {
-                        mergedCart = mergedCart.filter { it.id in remoteItemIds }
-                    }
-                }
-
-                // Проверяем, были ли локальные изменения ДО мержа
-                // Изменения есть, если:
-                // 1. Это первая синхронизация после авторизации (есть локальные данные без авторизации)
-                // 2. Есть локальные элементы с updatedAt = 0 (измененные локально)
-                // 3. Есть локальные элементы, которых нет на сервере (но только если локальная версия новее)
-                // 4. Есть локальные элементы с updatedAt > серверного updatedAt
-                val hasLocalChanges = isFirstSyncAfterAuth || localCart.any { localItem ->
-                    val remoteItem = remoteCart.items.find { it.id == localItem.id }
-                    when {
-                        remoteItem == null -> !serverIsNewerOrEqual // элемент только локально, но только если локальная версия новее
-                        localItem.updatedAt == 0L -> true // элемент изменен локально
-                        localItem.updatedAt > remoteItem.updatedAt -> true // локальная версия новее
-                        else -> false
-                    }
-                }
-
-                // Сохраняем объединённый результат локально
-                mergedCart.forEach { item ->
-                    storage.addOrUpdateItem(item)
-                }
-
-                // Удаляем из storage позиции, которые были удалены при мерже
-                // НО: при первой синхронизации после авторизации НЕ удаляем локальные элементы
-                if (serverIsNewerOrEqual && !isFirstSyncAfterAuth) {
-                    val remoteItemIds = remoteCart.items.map { it.id }.toSet()
-                    val localItemIds = localCart.map { it.id }.toSet()
-                    val itemsToDeleteFromStorage = localItemIds - remoteItemIds
-                    itemsToDeleteFromStorage.forEach { id ->
-                        storage.deleteItemById(id)
-                    }
-                }
-
-                // Обновляем lastUpdated (берем максимальный из локального и удаленного)
-                val finalLastUpdated = maxOf(localLastUpdated, remoteCart.lastUpdated)
-                storage.updateLastUpdated(finalLastUpdated)
-
-                // Если после мержа есть локальные изменения, отправляем корзину на сервер
-                if (hasLocalChanges) {
-                    val currentCart = storage.getCartItems()
-                    val updatedCart = remoteDataSource.syncCart(currentCart)
-
-                    // Сохраняем обновленную корзину с updatedAt от сервера
-                    updatedCart.items.forEach { updatedItem ->
-                        storage.addOrUpdateItem(updatedItem)
-                    }
-                    storage.updateLastUpdated(updatedCart.lastUpdated)
-                }
+                performCartMerge(localCart, localLastUpdated, remoteCart)
             }
 
-            // Обновляем UI
             updateUIFromStorage()
         } catch (e: Exception) {
-            // В случае ошибки просто игнорируем синхронизацию
-            // Локальные данные остаются без изменений
             Napier.e("Ошибка при синхронизации корзины", e)
+        }
+    }
+
+    private fun shouldClearLocalCart(
+        remoteCart: CartMetadata,
+        localLastUpdated: Long,
+    ): Boolean {
+        return remoteCart.items.isEmpty() && remoteCart.lastUpdated > localLastUpdated
+    }
+
+    private suspend fun handleServerClearedCart(
+        remoteCart: CartMetadata,
+    ) {
+        storage.clearCart()
+        storage.updateLastUpdated(remoteCart.lastUpdated)
+    }
+
+    private suspend fun performCartMerge(
+        localCart: List<StoredCartItem>,
+        localLastUpdated: Long,
+        remoteCart: CartMetadata,
+    ) {
+        val isFirstSyncAfterAuth = isFirstSyncAfterAuthorization(localLastUpdated, localCart)
+        var mergedCart = mergeCartItems(localCart, remoteCart.items, isFirstSyncAfterAuth)
+
+        val serverIsNewerOrEqual = remoteCart.lastUpdated >= localLastUpdated
+        mergedCart = removeItemsNotOnServer(
+            mergedCart,
+            remoteCart.items,
+            serverIsNewerOrEqual,
+            isFirstSyncAfterAuth
+        )
+
+        val hasLocalChanges = checkForLocalChanges(
+            localCart,
+            remoteCart.items,
+            serverIsNewerOrEqual,
+            isFirstSyncAfterAuth
+        )
+
+        saveMergedCart(
+            mergedCart,
+            localCart,
+            remoteCart.items,
+            serverIsNewerOrEqual,
+            isFirstSyncAfterAuth
+        )
+        updateLastUpdatedAndSyncIfNeeded(localLastUpdated, remoteCart.lastUpdated, hasLocalChanges)
+    }
+
+    private fun isFirstSyncAfterAuthorization(
+        localLastUpdated: Long,
+        localCart: List<StoredCartItem>,
+    ): Boolean {
+        return localLastUpdated == 0L && localCart.isNotEmpty() && localCart.any { it.updatedAt == 0L }
+    }
+
+    private fun removeItemsNotOnServer(
+        mergedCart: List<StoredCartItem>,
+        remoteItems: List<StoredCartItem>,
+        serverIsNewerOrEqual: Boolean,
+        isFirstSyncAfterAuth: Boolean,
+    ): List<StoredCartItem> {
+        if (serverIsNewerOrEqual && !isFirstSyncAfterAuth) {
+            val remoteItemIds = remoteItems.map { it.id }.toSet()
+            return mergedCart.filter { it.id in remoteItemIds }
+        }
+        return mergedCart
+    }
+
+    private fun checkForLocalChanges(
+        localCart: List<StoredCartItem>,
+        remoteItems: List<StoredCartItem>,
+        serverIsNewerOrEqual: Boolean,
+        isFirstSyncAfterAuth: Boolean,
+    ): Boolean {
+        if (isFirstSyncAfterAuth) return true
+
+        return localCart.any { localItem ->
+            val remoteItem = remoteItems.find { it.id == localItem.id }
+            when {
+                remoteItem == null -> !serverIsNewerOrEqual
+                localItem.updatedAt == 0L -> true
+                localItem.updatedAt > remoteItem.updatedAt -> true
+                else -> false
+            }
+        }
+    }
+
+    private suspend fun saveMergedCart(
+        mergedCart: List<StoredCartItem>,
+        localCart: List<StoredCartItem>,
+        remoteItems: List<StoredCartItem>,
+        serverIsNewerOrEqual: Boolean,
+        isFirstSyncAfterAuth: Boolean,
+    ) {
+        mergedCart.forEach { item ->
+            storage.addOrUpdateItem(item)
+        }
+
+        if (serverIsNewerOrEqual && !isFirstSyncAfterAuth) {
+            val remoteItemIds = remoteItems.map { it.id }.toSet()
+            val localItemIds = localCart.map { it.id }.toSet()
+            val itemsToDeleteFromStorage = localItemIds - remoteItemIds
+            itemsToDeleteFromStorage.forEach { id ->
+                storage.deleteItemById(id)
+            }
+        }
+    }
+
+    private suspend fun updateLastUpdatedAndSyncIfNeeded(
+        localLastUpdated: Long,
+        remoteLastUpdated: Long,
+        hasLocalChanges: Boolean,
+    ) {
+        val finalLastUpdated = maxOf(localLastUpdated, remoteLastUpdated)
+        storage.updateLastUpdated(finalLastUpdated)
+
+        if (hasLocalChanges) {
+            val currentCart = storage.getCartItems()
+            val updatedCart = remoteDataSource.syncCart(currentCart)
+
+            updatedCart.items.forEach { updatedItem ->
+                storage.addOrUpdateItem(updatedItem)
+            }
+            storage.updateLastUpdated(updatedCart.lastUpdated)
         }
     }
 

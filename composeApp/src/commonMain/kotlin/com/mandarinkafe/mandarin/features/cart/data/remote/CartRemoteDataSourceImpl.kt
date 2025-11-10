@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.features.cart.data.Mapper.toStored
 import com.mandarinkafe.mandarin.features.cart.data.models.CartMetadata
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.network.CartServerApi
+import com.mandarinkafe.mandarin.util.Constants.BEARER_TOKEN_TYPE
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import io.github.aakira.napier.Napier
 
@@ -22,7 +23,7 @@ class CartRemoteDataSourceImpl(
             return CartMetadata(emptyList(), 0L)
         }
         return try {
-            val response = api.getCart("Bearer $token")
+            val response = api.getCart("$BEARER_TOKEN_TYPE $token")
             val items = response.items.mapNotNull { cartItemDto ->
                 cartItemDto.toStored(menuCache)
             }
@@ -45,7 +46,7 @@ class CartRemoteDataSourceImpl(
             val cartItemDtos = localCart.map { item ->
                 item.toDto() // Отправляем как есть, включая реальные updatedAt
             }
-            val response = api.updateCart("Bearer $token", cartItemDtos)
+            val response = api.updateCart("$BEARER_TOKEN_TYPE $token", cartItemDtos)
             
             // Проверяем, была ли ошибка на сервере
             if (response.resultCode != HTTP_SUCCESS) {
@@ -70,10 +71,12 @@ class CartRemoteDataSourceImpl(
             return
         }
         try {
-            api.clearCart("Bearer $token")
+            api.clearCart("$BEARER_TOKEN_TYPE $token")
         } catch (e: Exception) {
             Napier.e("Ошибка при очистке корзины на сервере", e)
         }
     }
+
+
 }
 
