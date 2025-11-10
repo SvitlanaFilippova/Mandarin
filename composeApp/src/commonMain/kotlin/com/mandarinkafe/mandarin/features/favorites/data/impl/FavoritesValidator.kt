@@ -27,7 +27,7 @@ class FavoritesValidator(
                     val result = processRecords(raw)
                     Resource.Success(
                         result.validPairs
-                            .sortedByDescending { it.first.timestamp }
+                            .sortedByDescending { it.first.updatedAt }
                             .map { it.second }
                             .distinctBy { it.id }
                     )

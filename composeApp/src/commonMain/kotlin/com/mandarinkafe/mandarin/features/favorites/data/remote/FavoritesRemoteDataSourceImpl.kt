@@ -1,13 +1,15 @@
 package com.mandarinkafe.mandarin.features.favorites.data.remote
 
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
-import com.mandarinkafe.mandarin.core.domain.models.FavoriteRecord
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toDto
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toStored
+import com.mandarinkafe.mandarin.features.favorites.data.models.Favorites
 import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.data.network.FavoritesServerApi
 import com.mandarinkafe.mandarin.features.favorites.data.network.RemoteFavoritesUpdateRequest
+import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
+import io.github.aakira.napier.Napier
 
 class FavoritesRemoteDataSourceImpl(
     private val api: FavoritesServerApi,
@@ -15,29 +17,59 @@ class FavoritesRemoteDataSourceImpl(
     private val menuCache: MenuCache,
 ) : FavoritesRemoteDataSource {
 
-    override suspend fun getFavorites(): Set<StoredFavoriteMeal> {
-        val token = authRepository.getAccessToken() ?: return emptySet()
+    override suspend fun getFavorites(): Favorites {
+        val token = authRepository.getAccessToken()
+        if (token == null) {
+            return Favorites(emptySet(), 0L)
+        }
         return try {
             val response = api.getFavorites("Bearer $token")
-            response.favorites?.map { favoriteDto ->
+            
+            // Проверяем resultCode ответа
+            if (response.resultCode != HTTP_SUCCESS) {
+                return Favorites(emptySet(), 0L)
+            }
+            
+            val items = response.favorites?.mapNotNull { favoriteDto ->
                 favoriteDto.toStored(menuCache)
             }?.toSet() ?: emptySet()
+            Favorites(items, response.lastUpdated)
         } catch (e: Exception) {
-            emptySet()
+            Napier.e("Ошибка при получении избранного с сервера", e)
+            Favorites(emptySet(), 0L)
         }
     }
 
-    override suspend fun syncFavorites(localFavorites: Set<FavoriteRecord>) {
-        val token = authRepository.getAccessToken() ?: return
-        try {
-            // Преобразуем FavoriteRecord -> StoredFavoriteMeal -> FavoriteDto
-            val favoriteDtos = localFavorites.map { record ->
-                val stored = record.toStored()
-                stored.toDto()
+    override suspend fun syncFavorites(localFavorites: Set<StoredFavoriteMeal>): Favorites {
+        val token = authRepository.getAccessToken()
+        if (token == null) {
+            return Favorites(emptySet(), 0L)
+        }
+        return try {
+            // Отправляем избранное с реальными updatedAt:
+            // - updatedAt = 0L → маркер "эта запись изменена/новая, обновляй"
+            // - updatedAt > 0 → реальное значение для мержа на сервере
+            val favoriteDtos = localFavorites.map { item ->
+                item.toDto() // Отправляем как есть, включая реальные updatedAt
             }.toList()
 
-            val request = RemoteFavoritesUpdateRequest(favorites = favoriteDtos)
-            api.updateFavorites("Bearer $token", request)
-        } catch (_: Exception) {}
+            val request = RemoteFavoritesUpdateRequest(favorites = favoriteDtos, lastUpdated = 0L)
+            val response = api.updateFavorites("Bearer $token", request)
+
+            // Проверяем, была ли ошибка на сервере
+            if (response.resultCode != HTTP_SUCCESS) {
+                // При ошибке возвращаем локальное избранное, чтобы не потерять данные
+                return Favorites(localFavorites, 0L)
+            }
+
+            // Получаем обновлённое избранное с updatedAt от сервера
+            val items = response.favorites?.mapNotNull { favoriteDto ->
+                favoriteDto.toStored(menuCache)
+            }?.toSet() ?: emptySet()
+            Favorites(items, response.lastUpdated)
+        } catch (e: Exception) {
+            Napier.e("Ошибка при отправке избранного на сервер", e)
+            Favorites(emptySet(), 0L)
+        }
     }
 }

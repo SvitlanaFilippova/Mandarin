@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class FavoritesRepositoryImpl(
     private val storage: FavoritesStorage,
@@ -41,6 +43,7 @@ class FavoritesRepositoryImpl(
     private val _baseIdsFlow = MutableStateFlow<Set<String>>(emptySet())
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     override fun observeBaseFavoritesIds(): Flow<Set<String>> = _baseIdsFlow.asStateFlow()
+    private val mutex = Mutex()
 
     override fun getBaseFavoritesIds(): Set<String> {
         return _baseIdsFlow.value
@@ -56,106 +59,243 @@ class FavoritesRepositoryImpl(
     }
 
 
-    override suspend fun toggleFavorite(custom: CustomizedMeal) {
-        val record = custom.toFavoriteRecord(getTimeStamp())
-        proceedToggleFavorite(record)
+    override suspend fun toggleFavorite(custom: CustomizedMeal) = mutex.withLock {
+        // Шаг 1: Синхронизация с сервером для получения актуальной версии
+        sync()
+
+        // Шаг 2: Применяем локальное изменение
+        val localResult = storage.getFavorites()
+        val localFavorites = when (localResult) {
+            is FavoritesStorageResult.Success -> localResult.favorites
+            is FavoritesStorageResult.Corrupted -> emptySet()
+        }
+
+        // Проверяем, существует ли уже такая запись
+        val existingStored = localFavorites.find { stored ->
+            stored.mealId == custom.meal.id &&
+                    stored.addsIds.toSet() == custom.adds.map { it.id }.toSet() &&
+                    stored.modifiers.toSet() == custom.modifiers.toSet()
+        }
+
+        val isNowFavorite = if (existingStored != null) {
+            // Удаляем избранное
+            val updatedFavorites = localFavorites.filter { it != existingStored }.toSet()
+            storage.saveFavorites(updatedFavorites)
+            currentRawRecords = updatedFavorites.toFavoriteRecords()
+            updateFavorites(currentRawRecords)
+            false
+        } else {
+            // Добавляем избранное
+            val createdAt = getCurrentTimeMillis()
+            val record = custom.toFavoriteRecord(createdAt, updatedAt = 0L)
+            val stored = record.toStored()
+            val updatedFavorites = localFavorites + stored
+            storage.saveFavorites(updatedFavorites)
+            currentRawRecords = updatedFavorites.toFavoriteRecords()
+            updateFavorites(currentRawRecords)
+            true
+        }
+
+        // Шаг 3: Отправляем избранное на сервер и получаем обновленную версию с updatedAt
+        val currentFavorites = when (val result = storage.getFavorites()) {
+            is FavoritesStorageResult.Success -> result.favorites
+            is FavoritesStorageResult.Corrupted -> emptySet()
+        }
+        val updatedFavorites = remoteDataSource.syncFavorites(currentFavorites)
+
+        // Сохраняем обновленное избранное с updatedAt от сервера
+        storage.saveFavorites(updatedFavorites.items)
+        storage.updateLastUpdated(updatedFavorites.lastUpdated)
+
+        // Обновляем внутреннее состояние
+        currentRawRecords = updatedFavorites.items.toFavoriteRecords()
+        updateFavorites(currentRawRecords)
     }
 
-    override suspend fun toggleFavorite(meal: Meal) {
-        val record = meal.toFavoriteRecord(getTimeStamp())
-        proceedToggleFavorite(record)
+    override suspend fun toggleFavorite(meal: Meal) = mutex.withLock {
+        // Шаг 1: Синхронизация с сервером для получения актуальной версии
+        sync()
+
+        // Шаг 2: Применяем локальное изменение
+        val localResult = storage.getFavorites()
+        val localFavorites = when (localResult) {
+            is FavoritesStorageResult.Success -> localResult.favorites
+            is FavoritesStorageResult.Corrupted -> emptySet()
+        }
+
+        // Проверяем, существует ли уже базовая запись
+        val existingStored = localFavorites.find { stored ->
+            stored.mealId == meal.id && stored.addsIds.isEmpty() && stored.modifiers.isEmpty()
+        }
+
+        val isNowFavorite = if (existingStored != null) {
+            // Удаляем избранное
+            val updatedFavorites = localFavorites.filter { it != existingStored }.toSet()
+            storage.saveFavorites(updatedFavorites)
+            currentRawRecords = updatedFavorites.toFavoriteRecords()
+            updateFavorites(currentRawRecords)
+            false
+        } else {
+            // Добавляем избранное
+            val createdAt = getCurrentTimeMillis()
+            val record = meal.toFavoriteRecord(createdAt, updatedAt = 0L)
+            val stored = record.toStored()
+            val updatedFavorites = localFavorites + stored
+            storage.saveFavorites(updatedFavorites)
+            currentRawRecords = updatedFavorites.toFavoriteRecords()
+            updateFavorites(currentRawRecords)
+            true
+        }
+
+        // Шаг 3: Отправляем избранное на сервер и получаем обновленную версию с updatedAt
+        val currentFavorites = when (val result = storage.getFavorites()) {
+            is FavoritesStorageResult.Success -> result.favorites
+            is FavoritesStorageResult.Corrupted -> emptySet()
+        }
+        val updatedFavorites = remoteDataSource.syncFavorites(currentFavorites)
+
+        // Сохраняем обновленное избранное с updatedAt от сервера
+        storage.saveFavorites(updatedFavorites.items)
+        storage.updateLastUpdated(updatedFavorites.lastUpdated)
+
+        // Обновляем внутреннее состояние
+        currentRawRecords = updatedFavorites.items.toFavoriteRecords()
+        updateFavorites(currentRawRecords)
     }
 
     override suspend fun sync() {
         try {
-            // Получаем локальные избранные
+            // Получаем локальные избранные и lastUpdated
             val localResult = storage.getFavorites()
             val localFavorites = when (localResult) {
                 is FavoritesStorageResult.Success -> localResult.favorites
                 is FavoritesStorageResult.Corrupted -> emptySet()
             }
+            val localLastUpdated = storage.getLastUpdated()
 
             // Получаем удалённые избранные с сервера
             val remoteFavorites = remoteDataSource.getFavorites()
 
-            // Объединяем локальные и удалённые избранные
-            // Если есть дубликаты (одинаковые по equals, но разные timestamp),
-            // берём версию с более свежим timestamp
-            val mergedFavorites = mergeFavorites(localFavorites, remoteFavorites)
+            // Проверяем: если сервер вернул пустое избранное и его lastUpdated новее локального,
+            // это означает, что избранное было очищено на сервере - нужно очистить локальное избранное
+            val shouldClearLocal = remoteFavorites.items.isEmpty() && remoteFavorites.lastUpdated > localLastUpdated
+            if (shouldClearLocal) {
+                storage.saveFavorites(emptySet())
+                storage.updateLastUpdated(remoteFavorites.lastUpdated)
+                currentRawRecords = mutableSetOf()
+                updateFavorites(currentRawRecords)
+            } else {
+                // Объединяем локальные и удалённые избранные по updatedAt каждого элемента
+                var mergedFavorites = mergeFavorites(localFavorites, remoteFavorites.items)
 
-            // Сохраняем объединённый результат локально
-            storage.saveFavorites(mergedFavorites)
+                // Удаляем записи, которые есть локально, но отсутствуют на сервере,
+                // если серверная версия избранного новее или равна локальной
+                val serverIsNewerOrEqual = remoteFavorites.lastUpdated >= localLastUpdated
+                if (serverIsNewerOrEqual) {
+                    val remoteItemKeys = remoteFavorites.items.toSet()
+                    mergedFavorites = mergedFavorites.filter { localItem ->
+                        remoteItemKeys.any { remoteItem ->
+                            localItem.mealId == remoteItem.mealId &&
+                                    localItem.addsIds.toSet() == remoteItem.addsIds.toSet() &&
+                                    localItem.modifiers.toSet() == remoteItem.modifiers.toSet()
+                        }
+                    }.toSet()
+                }
 
-            // Обновляем внутреннее состояние
-            currentRawRecords = mergedFavorites.toFavoriteRecords()
-            updateFavorites(currentRawRecords)
+                // Проверяем, были ли локальные изменения ДО мержа
+                // Изменения есть, если:
+                // 1. Есть локальные записи с updatedAt = 0 (измененные локально)
+                // 2. Есть локальные записи, которых нет на сервере (но только если локальная версия новее)
+                // 3. Есть локальные записи с updatedAt > серверного updatedAt
+                val hasLocalChanges = localFavorites.any { localItem ->
+                    val remoteItem = remoteFavorites.items.find { remoteItem ->
+                        localItem.mealId == remoteItem.mealId &&
+                                localItem.addsIds.toSet() == remoteItem.addsIds.toSet() &&
+                                localItem.modifiers.toSet() == remoteItem.modifiers.toSet()
+                    }
+                    when {
+                        remoteItem == null -> !serverIsNewerOrEqual // запись только локально, но только если локальная версия новее
+                        localItem.updatedAt == 0L -> true // запись изменена локально
+                        localItem.updatedAt > remoteItem.updatedAt -> true // локальная версия новее
+                        else -> false
+                    }
+                }
 
-            // Отправляем объединённый результат на сервер
-            remoteDataSource.syncFavorites(currentRawRecords)
+                // Сохраняем объединённый результат локально
+                storage.saveFavorites(mergedFavorites)
+
+                // Обновляем lastUpdated (берем максимальный из локального и удаленного)
+                val finalLastUpdated = maxOf(localLastUpdated, remoteFavorites.lastUpdated)
+                storage.updateLastUpdated(finalLastUpdated)
+
+                // Если после мержа есть локальные изменения, отправляем избранное на сервер
+                if (hasLocalChanges) {
+                    val currentFavorites = when (val result = storage.getFavorites()) {
+                        is FavoritesStorageResult.Success -> result.favorites
+                        is FavoritesStorageResult.Corrupted -> emptySet()
+                    }
+                    val updatedFavorites = remoteDataSource.syncFavorites(currentFavorites)
+
+                    // Сохраняем обновленное избранное с updatedAt от сервера
+                    storage.saveFavorites(updatedFavorites.items)
+                    storage.updateLastUpdated(updatedFavorites.lastUpdated)
+                }
+
+                // Обновляем внутреннее состояние
+                val finalFavorites = when (val result = storage.getFavorites()) {
+                    is FavoritesStorageResult.Success -> result.favorites
+                    is FavoritesStorageResult.Corrupted -> emptySet()
+                }
+                currentRawRecords = finalFavorites.toFavoriteRecords()
+                updateFavorites(currentRawRecords)
+            }
         } catch (e: Exception) {
             // В случае ошибки просто игнорируем синхронизацию
             // Локальные данные остаются без изменений
+            Napier.e("Ошибка при синхронизации избранного", e)
         }
     }
 
     /**
      * Объединяет локальные и удалённые избранные.
      * Если есть дубликаты (одинаковые по mealId, addsIds, modifiers),
-     * берёт версию с более свежим timestamp.
+     * берёт версию с более свежим updatedAt.
+     *
+     * createdAt - время создания записи (не изменяется)
+     * updatedAt - время последнего изменения записи (используется для разрешения конфликтов)
      */
     private fun mergeFavorites(
         local: Set<StoredFavoriteMeal>,
         remote: Set<StoredFavoriteMeal>
     ): Set<StoredFavoriteMeal> {
-        Napier.d("[FavoritesSync] mergeFavorites: начало объединения")
         // Создаём map для быстрого поиска по ключу (mealId + addsIds + modifiers)
         val mergedMap = mutableMapOf<StoredFavoriteMeal, StoredFavoriteMeal>()
 
         // Добавляем локальные избранные
-        var localAdded = 0
         local.forEach { favorite ->
             mergedMap[favorite] = favorite
-            localAdded++
         }
-        Napier.d("[FavoritesSync] mergeFavorites: добавлено локальных избранных: $localAdded")
 
-        // Добавляем удалённые избранные, при конфликте берём версию с более свежим timestamp
-        var remoteAdded = 0
-        var conflictsResolved = 0
+        // Добавляем удалённые избранные, при конфликте берём версию с более свежим updatedAt
         remote.forEach { remoteFavorite ->
             val existing = mergedMap[remoteFavorite]
             if (existing == null) {
                 // Такого избранного ещё нет, добавляем
                 mergedMap[remoteFavorite] = remoteFavorite
-                remoteAdded++
             } else {
-                // Есть дубликат, берём версию с более свежим timestamp
-                conflictsResolved++
-                if (remoteFavorite.timestamp > existing.timestamp) {
-                    Napier.d("[FavoritesSync] mergeFavorites: конфликт разрешён в пользу удалённой версии (timestamp: ${remoteFavorite.timestamp} > ${existing.timestamp})")
+                // Есть дубликат, проверяем updatedAt
+                // Сравниваем по updatedAt (время последнего изменения)
+                if (remoteFavorite.updatedAt > existing.updatedAt) {
+                    // Удаленная версия новее - используем её
                     mergedMap[remoteFavorite] = remoteFavorite
-                } else {
-                    Napier.d("[FavoritesSync] mergeFavorites: конфликт разрешён в пользу локальной версии (timestamp: ${existing.timestamp} >= ${remoteFavorite.timestamp})")
                 }
+                // Иначе локальная версия новее или равна - сохраняем локальную (уже в map)
             }
         }
-        Napier.d("[FavoritesSync] mergeFavorites: добавлено удалённых избранных: $remoteAdded, разрешено конфликтов: $conflictsResolved")
 
-        val result = mergedMap.values.toSet()
-        Napier.d("[FavoritesSync] mergeFavorites: итоговое количество записей: ${result.size}")
-        return result
+        return mergedMap.values.toSet()
     }
 
-    private suspend fun proceedToggleFavorite(record: FavoriteRecord) {
-        if (currentRawRecords.contains(record)) {
-            currentRawRecords.remove(record)
-        } else {
-            currentRawRecords.add(record)
-        }
-
-        // Сохраняем изменения
-        updateFavorites(currentRawRecords)
-    }
 
     private suspend fun updateFavorites(records: Set<FavoriteRecord>) {
         // Обновляем данные по базовым айди
@@ -173,9 +313,6 @@ class FavoritesRepositoryImpl(
         storage.saveFavorites(dtos)
     }
 
-    private fun getTimeStamp(): Long {
-        return getCurrentTimeMillis()
-    }
 
 
     private fun getInitData() {
