@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.mandarinkafe.mandarin.core.presentation.AppLifecycleHandler
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.MandarinTheme
 import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
@@ -36,7 +37,6 @@ import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.AppTopBar
 import com.mandarinkafe.mandarin.util.presentation.ui.components.CustomSnackbarHost
 import com.mandarinkafe.mandarin.util.presentation.ui.components.HandleEffects
-import com.mandarinkafe.mandarin.core.presentation.AppLifecycleHandler
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

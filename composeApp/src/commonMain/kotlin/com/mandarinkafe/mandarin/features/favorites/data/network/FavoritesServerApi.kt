@@ -1,6 +1,9 @@
 package com.mandarinkafe.mandarin.features.favorites.data.network
 
 import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.util.Constants.ERROR_BODY_READ_FAILED
+import com.mandarinkafe.mandarin.util.Constants.HEADER_API_KEY
+import com.mandarinkafe.mandarin.util.Constants.HEADER_AUTHORIZATION
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import io.github.aakira.napier.Napier
@@ -21,44 +24,49 @@ class FavoritesServerApi(private val client: HttpClient) {
     suspend fun getFavorites(token: String): RemoteFavoritesResponse {
         return try {
             val httpResponse = client.get("/favorites") {
-                header("x-api-key", key)
-                header("Authorization", token)
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
             }
 
             when (httpResponse.status) {
-                HttpStatusCode.OK -> {
-                    // Читаем тело как строку для десериализации
-                    val rawBody = httpResponse.bodyAsText()
-
-                    try {
-                        // Десериализуем из строки
-                        val responseBody: RemoteFavoritesResponse = json.decodeFromString(rawBody)
-                        responseBody.apply { resultCode = HTTP_SUCCESS }
-                    } catch (e: Throwable) {
-                        Napier.e("$LOG_TAG.getFavorites: ошибка десериализации ответа: ${e.message}")
-                        throw e // Пробрасываем исключение дальше
-                    }
-                }
-
-                HttpStatusCode.Unauthorized -> {
-                    RemoteFavoritesResponse().apply {
-                        resultCode = HttpStatusCode.Unauthorized.value
-                    }
-                }
-
-                else -> {
-                    val errorBody = try {
-                        httpResponse.bodyAsText()
-                    } catch (e: Exception) {
-                        "не удалось прочитать тело ответа: ${e.message}"
-                    }
-                    Napier.e("$LOG_TAG.getFavorites: HTTP error ${httpResponse.status.value}, тело ответа: $errorBody")
-                    RemoteFavoritesResponse().apply { resultCode = HTTP_SERVER_ERROR }
-                }
+                HttpStatusCode.OK -> handleSuccessResponse(httpResponse)
+                HttpStatusCode.Unauthorized -> handleUnauthorizedResponse()
+                else -> handleErrorResponse(httpResponse)
             }
         } catch (e: Throwable) {
             Napier.e("$LOG_TAG.getFavorites: Exception: ${e.message}", e)
             RemoteFavoritesResponse().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    private suspend fun handleSuccessResponse(httpResponse: io.ktor.client.statement.HttpResponse): RemoteFavoritesResponse {
+        val rawBody = httpResponse.bodyAsText()
+        return try {
+            val responseBody: RemoteFavoritesResponse = json.decodeFromString(rawBody)
+            responseBody.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Napier.e("$LOG_TAG.getFavorites: ошибка десериализации ответа: ${e.message}")
+            throw e
+        }
+    }
+
+    private fun handleUnauthorizedResponse(): RemoteFavoritesResponse {
+        return RemoteFavoritesResponse().apply {
+            resultCode = HttpStatusCode.Unauthorized.value
+        }
+    }
+
+    private suspend fun handleErrorResponse(httpResponse: io.ktor.client.statement.HttpResponse): RemoteFavoritesResponse {
+        val errorBody = getErrorBody(httpResponse)
+        Napier.e("$LOG_TAG.getFavorites: HTTP error ${httpResponse.status.value}, тело ответа: $errorBody")
+        return RemoteFavoritesResponse().apply { resultCode = HTTP_SERVER_ERROR }
+    }
+
+    private suspend fun getErrorBody(httpResponse: io.ktor.client.statement.HttpResponse): String {
+        return try {
+            httpResponse.bodyAsText()
+        } catch (e: Exception) {
+            "$ERROR_BODY_READ_FAILED${e.message}"
         }
     }
 
@@ -68,8 +76,8 @@ class FavoritesServerApi(private val client: HttpClient) {
     ): RemoteFavoritesResponse {
         return try {
             val httpResponse = client.post("/favorites") {
-                header("x-api-key", key)
-                header("Authorization", token)
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
                 setBody(body)
             }
 
@@ -86,11 +94,7 @@ class FavoritesServerApi(private val client: HttpClient) {
                 }
 
                 HttpStatusCode.UnprocessableEntity -> {
-                    val errorBody = try {
-                        httpResponse.bodyAsText()
-                    } catch (e: Exception) {
-                        "не удалось прочитать тело ответа: ${e.message}"
-                    }
+                    val errorBody = getErrorBody(httpResponse)
                     Napier.e("$LOG_TAG.updateFavorites: HTTP 422 (Unprocessable Entity), тело ответа: $errorBody")
                     RemoteFavoritesResponse().apply {
                         resultCode = HttpStatusCode.UnprocessableEntity.value
@@ -98,11 +102,7 @@ class FavoritesServerApi(private val client: HttpClient) {
                 }
 
                 else -> {
-                    val errorBody = try {
-                        httpResponse.bodyAsText()
-                    } catch (e: Exception) {
-                        "не удалось прочитать тело ответа: ${e.message}"
-                    }
+                    val errorBody = getErrorBody(httpResponse)
                     Napier.e("$LOG_TAG.updateFavorites: HTTP error ${httpResponse.status.value}, тело ответа: $errorBody")
                     RemoteFavoritesResponse().apply { resultCode = HTTP_SERVER_ERROR }
                 }

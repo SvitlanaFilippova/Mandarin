@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.shared.presentation.viewmodel
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.mandarinkafe.mandarin.core.domain.impl.AppLifecycleManager
 import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.AccountViewModel
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsViewModel
 import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressViewModel
@@ -17,7 +18,6 @@ import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackVi
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryViewModel
-import com.mandarinkafe.mandarin.core.domain.impl.AppLifecycleManager
 import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.SavedAddressesViewModel
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchViewModel
 import org.koin.mp.KoinPlatform.getKoin

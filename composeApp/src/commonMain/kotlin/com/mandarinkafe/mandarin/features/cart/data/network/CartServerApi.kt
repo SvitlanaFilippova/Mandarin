@@ -5,6 +5,9 @@ import com.mandarinkafe.mandarin.features.cart.data.dto.CartItemDto
 import com.mandarinkafe.mandarin.features.cart.data.dto.CartRequest
 import com.mandarinkafe.mandarin.features.cart.data.dto.CartResponse
 import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.util.Constants.ERROR_BODY_READ_FAILED
+import com.mandarinkafe.mandarin.util.Constants.HEADER_API_KEY
+import com.mandarinkafe.mandarin.util.Constants.HEADER_AUTHORIZATION
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import io.github.aakira.napier.Napier
@@ -24,8 +27,8 @@ class CartServerApi(private val client: HttpClient) {
     suspend fun getCart(token: String): CartResponse {
         return try {
             val httpResponse = client.get("/cart") {
-                header("x-api-key", key)
-                header("Authorization", token)
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
             }
 
             when (httpResponse.status) {
@@ -53,8 +56,8 @@ class CartServerApi(private val client: HttpClient) {
         return try {
             val request = CartRequest(items, lastUpdated = 0L)
             val httpResponse = client.post("/cart") {
-                header("x-api-key", key)
-                header("Authorization", token)
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
                 setBody(request)
             }
 
@@ -72,7 +75,7 @@ class CartServerApi(private val client: HttpClient) {
                     val errorBody = try {
                         httpResponse.bodyAsText()
                     } catch (e: Exception) {
-                        "не удалось прочитать тело ответа: ${e.message}"
+                        "$ERROR_BODY_READ_FAILED${e.message}"
                     }
                     Napier.e("$LOG_TAG.updateCart: HTTP 422 (Unprocessable Entity), тело ответа: $errorBody")
                     CartResponse().apply { resultCode = HttpStatusCode.UnprocessableEntity.value }
@@ -82,7 +85,7 @@ class CartServerApi(private val client: HttpClient) {
                     val errorBody = try {
                         httpResponse.bodyAsText()
                     } catch (e: Exception) {
-                        "не удалось прочитать тело ответа: ${e.message}"
+                        "$ERROR_BODY_READ_FAILED${e.message}"
                     }
                     Napier.e("$LOG_TAG.updateCart: HTTP error ${httpResponse.status.value}, тело ответа: $errorBody")
                     CartResponse().apply { resultCode = HTTP_SERVER_ERROR }
@@ -97,8 +100,8 @@ class CartServerApi(private val client: HttpClient) {
     suspend fun clearCart(token: String): Response {
         return try {
             val httpResponse = client.delete("/cart") {
-                header("x-api-key", key)
-                header("Authorization", token)
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
             }
 
             when (httpResponse.status) {

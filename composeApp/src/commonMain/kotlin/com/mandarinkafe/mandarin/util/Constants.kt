@@ -9,6 +9,9 @@ object Constants {
     const val MENU_WAIT_TIMEOUT = 10000L
     const val USER_DATA_WAIT_TIMEOUT = 5000L
     const val BEARER_TOKEN_TYPE = "Bearer"
+    const val HEADER_API_KEY = "x-api-key"
+    const val HEADER_AUTHORIZATION = "Authorization"
+    const val ERROR_BODY_READ_FAILED = "не удалось прочитать тело ответа: "
 
     // Menu UI
     const val BANNERS_AUTO_SCROLL_INTERVAL: Long = 5000L

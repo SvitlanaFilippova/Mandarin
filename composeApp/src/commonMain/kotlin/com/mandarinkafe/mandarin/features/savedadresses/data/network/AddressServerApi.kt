@@ -2,6 +2,8 @@ package com.mandarinkafe.mandarin.features.savedadresses.data.network
 
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.util.Constants.HEADER_API_KEY
+import com.mandarinkafe.mandarin.util.Constants.HEADER_AUTHORIZATION
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import io.github.aakira.napier.Napier
@@ -20,8 +22,8 @@ class AddressServerApi(private val client: HttpClient) {
     suspend fun getAddresses(token: String): AddressResponse {
         return try {
             val httpResponse = client.get("/addresses") {
-                header("x-api-key", key)
-                header("Authorization", token)
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
             }
 
             when (httpResponse.status) {
@@ -48,8 +50,8 @@ class AddressServerApi(private val client: HttpClient) {
     suspend fun createOrUpdateAddress(token: String, body: AddressUpdateRequest): Response {
         return try {
             val httpResponse = client.post("/addresses") {
-                header("x-api-key", key)
-                header("Authorization", token)
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
                 setBody(body)
             }
 
@@ -76,8 +78,8 @@ class AddressServerApi(private val client: HttpClient) {
     suspend fun deleteAddress(token: String, addressId: String): Response {
         return try {
             val httpResponse = client.delete("/addresses/$addressId") {
-                header("x-api-key", key)
-                header("Authorization", token)
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
             }
 
             when (httpResponse.status) {

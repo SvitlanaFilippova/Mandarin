@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.address.di
 
+import com.mandarinkafe.mandarin.core.di.DiConstants
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.viewmodel.AddressDetailsViewModel
 import com.mandarinkafe.mandarin.features.address.data.impl.DeliveryAreaRepositoryImpl
 import com.mandarinkafe.mandarin.features.address.domain.api.AddressSearchInteractor
@@ -9,7 +10,6 @@ import com.mandarinkafe.mandarin.features.address.domain.api.GetDeliveryZoneUseC
 import com.mandarinkafe.mandarin.features.address.domain.impl.AddressSearchInteractorImpl
 import com.mandarinkafe.mandarin.features.address.domain.impl.GetCurrentLocationUseCaseImpl
 import com.mandarinkafe.mandarin.features.address.domain.impl.GetDeliveryZoneUseCaseImpl
-import com.mandarinkafe.mandarin.core.di.DiConstants
 import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressViewModel
 import com.mandarinkafe.mandarin.features.savedadresses.data.impl.SavedAddressRepositoryImpl
 import com.mandarinkafe.mandarin.features.savedadresses.data.network.AddressServerApi

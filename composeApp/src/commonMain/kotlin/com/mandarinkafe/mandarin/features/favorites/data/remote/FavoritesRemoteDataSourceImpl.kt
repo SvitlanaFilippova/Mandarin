@@ -8,6 +8,7 @@ import com.mandarinkafe.mandarin.features.favorites.data.models.Favorites
 import com.mandarinkafe.mandarin.features.favorites.data.models.StoredFavoriteMeal
 import com.mandarinkafe.mandarin.features.favorites.data.network.FavoritesServerApi
 import com.mandarinkafe.mandarin.features.favorites.data.network.RemoteFavoritesUpdateRequest
+import com.mandarinkafe.mandarin.util.Constants.BEARER_TOKEN_TYPE
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import io.github.aakira.napier.Napier
 
@@ -23,7 +24,7 @@ class FavoritesRemoteDataSourceImpl(
             return Favorites(emptySet(), 0L)
         }
         return try {
-            val response = api.getFavorites("Bearer $token")
+            val response = api.getFavorites("$BEARER_TOKEN_TYPE $token")
             
             // Проверяем resultCode ответа
             if (response.resultCode != HTTP_SUCCESS) {
@@ -54,7 +55,7 @@ class FavoritesRemoteDataSourceImpl(
             }.toList()
 
             val request = RemoteFavoritesUpdateRequest(favorites = favoriteDtos, lastUpdated = 0L)
-            val response = api.updateFavorites("Bearer $token", request)
+            val response = api.updateFavorites("$BEARER_TOKEN_TYPE $token", request)
 
             // Проверяем, была ли ошибка на сервере
             if (response.resultCode != HTTP_SUCCESS) {

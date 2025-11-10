@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.features.ordershistory.data.mapper.OrdersHistor
 import com.mandarinkafe.mandarin.features.ordershistory.data.network.OrdersHistoryServerApi
 import com.mandarinkafe.mandarin.features.ordershistory.data.network.OrdersHistoryUpdateRequest
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
+import com.mandarinkafe.mandarin.util.Constants.BEARER_TOKEN_TYPE
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import io.github.aakira.napier.Napier
 
@@ -17,7 +18,7 @@ class OrdersHistoryRemoteDataSourceImpl(
     override suspend fun getOrders(): List<SavedOrder> {
         val token = authRepository.getAccessToken() ?: return emptyList()
         return try {
-            val response = api.getOrdersHistory("Bearer $token")
+            val response = api.getOrdersHistory("$BEARER_TOKEN_TYPE $token")
             response.data?.map { orderDto ->
                 orderDto.toDomain()
             } ?: emptyList()
@@ -36,7 +37,7 @@ class OrdersHistoryRemoteDataSourceImpl(
         try {
             val orderDto = order.toDto()
             val request = OrdersHistoryUpdateRequest(data = orderDto)
-            val response = api.createOrUpdateOrder("Bearer $token", request)
+            val response = api.createOrUpdateOrder("$BEARER_TOKEN_TYPE $token", request)
             if (response.resultCode != HTTP_SUCCESS) {
                 Napier.e("SAVE_ORDER ERROR: Server error, resultCode: ${response.resultCode}, orderId=${order.id}")
             }
@@ -48,7 +49,7 @@ class OrdersHistoryRemoteDataSourceImpl(
     override suspend fun removeOrderById(id: String) {
         val token = authRepository.getAccessToken() ?: return
         try {
-            api.deleteOrder("Bearer $token", id)
+            api.deleteOrder("$BEARER_TOKEN_TYPE $token", id)
         } catch (e: Exception) {
             Napier.e("OrdersHistoryRemoteDataSource, removeOrderById error: $e")
         }

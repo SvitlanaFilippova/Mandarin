@@ -2,6 +2,8 @@ package com.mandarinkafe.mandarin.features.ordershistory.data.network
 
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.util.Constants.HEADER_API_KEY
+import com.mandarinkafe.mandarin.util.Constants.HEADER_AUTHORIZATION
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import io.github.aakira.napier.Napier
@@ -22,8 +24,8 @@ class OrdersHistoryServerApi(private val client: HttpClient) {
     suspend fun getOrdersHistory(token: String): OrdersHistoryResponse {
         return try {
             val httpResponse = client.get("/orders/history") {
-                header("x-api-key", key)
-                header("Authorization", token)
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
             }
 
             when (httpResponse.status) {
@@ -55,8 +57,8 @@ class OrdersHistoryServerApi(private val client: HttpClient) {
             Napier.d("SAVE_ORDER DEBUG: Request body: $requestBodyJson")
             
             val httpResponse = client.post("/orders/history") {
-                header("x-api-key", key)
-                header("Authorization", token)
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
                 setBody(body)
             }
 
@@ -102,8 +104,8 @@ class OrdersHistoryServerApi(private val client: HttpClient) {
     suspend fun deleteOrder(token: String, orderId: String): Response {
         return try {
             val httpResponse = client.delete("/orders/history/$orderId") {
-                header("x-api-key", key)
-                header("Authorization", token)
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
             }
 
             when (httpResponse.status) {
