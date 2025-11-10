@@ -10,6 +10,7 @@ import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.Account
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.GetActiveSessionsUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.RevokeSessionUseCase
+import com.mandarinkafe.mandarin.features.auth.domain.impl.UserSessionManager
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
@@ -26,6 +27,7 @@ class AccountViewModel(
     private val revokeSessionUseCase: RevokeSessionUseCase,
     private val authRepository: AuthRepository,
     private val userInfoRepository: UserInfoRepository,
+    private val userSessionManager: UserSessionManager,
 ) : BaseViewModel<AccountEvent, AccountEffect, AccountState>() {
 
     private var saveNameJob: Job? = null
@@ -222,7 +224,7 @@ class AccountViewModel(
     private fun logout() {
         viewModelScope.launch {
             try {
-                authRepository.logout()
+                userSessionManager.logout()
                 sendEffect(AccountEffect.LoggedOut)
                 setState { AccountState() }
             } catch (e: Exception) {

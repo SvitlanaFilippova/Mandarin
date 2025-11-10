@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.core.domain.api.FavoritesWriter
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.FavoriteRecord
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.features.auth.domain.impl.AuthStateChecker
 import com.mandarinkafe.mandarin.features.favorites.data.datastore.FavoritesStorage
 import com.mandarinkafe.mandarin.features.favorites.data.datastore.FavoritesStorageResult
 import com.mandarinkafe.mandarin.features.favorites.data.mapper.FavoriteMapper.toFavoriteRecord
@@ -32,6 +33,7 @@ class FavoritesRepositoryImpl(
     private val storage: FavoritesStorage,
     private val validator: FavoritesValidator,
     private val remoteDataSource: FavoritesRemoteDataSource,
+    private val authStateChecker: AuthStateChecker,
 ) : FavoritesReader, FavoritesWriter {
 
     private var currentRawRecords = mutableSetOf<FavoriteRecord>()
@@ -96,20 +98,23 @@ class FavoritesRepositoryImpl(
             true
         }
 
-        // Шаг 3: Отправляем избранное на сервер и получаем обновленную версию с updatedAt
-        val currentFavorites = when (val result = storage.getFavorites()) {
-            is FavoritesStorageResult.Success -> result.favorites
-            is FavoritesStorageResult.Corrupted -> emptySet()
+        // Шаг 3: Отправляем избранное на сервер и получаем обновленную версию с updatedAt (только если авторизован)
+        if (authStateChecker.isAuthorizedFast()) {
+            val currentFavorites = when (val result = storage.getFavorites()) {
+                is FavoritesStorageResult.Success -> result.favorites
+                is FavoritesStorageResult.Corrupted -> emptySet()
+            }
+            val updatedFavorites = remoteDataSource.syncFavorites(currentFavorites)
+
+            // Сохраняем обновленное избранное с updatedAt от сервера
+            storage.saveFavorites(updatedFavorites.items)
+            storage.updateLastUpdated(updatedFavorites.lastUpdated)
+
+            // Обновляем внутреннее состояние
+            currentRawRecords = updatedFavorites.items.toFavoriteRecords()
+            updateFavorites(currentRawRecords)
         }
-        val updatedFavorites = remoteDataSource.syncFavorites(currentFavorites)
-
-        // Сохраняем обновленное избранное с updatedAt от сервера
-        storage.saveFavorites(updatedFavorites.items)
-        storage.updateLastUpdated(updatedFavorites.lastUpdated)
-
-        // Обновляем внутреннее состояние
-        currentRawRecords = updatedFavorites.items.toFavoriteRecords()
-        updateFavorites(currentRawRecords)
+        // Если не авторизован, UI уже обновлен на шаге 2, ничего не делаем
     }
 
     override suspend fun toggleFavorite(meal: Meal) = mutex.withLock {
@@ -147,23 +152,31 @@ class FavoritesRepositoryImpl(
             true
         }
 
-        // Шаг 3: Отправляем избранное на сервер и получаем обновленную версию с updatedAt
-        val currentFavorites = when (val result = storage.getFavorites()) {
-            is FavoritesStorageResult.Success -> result.favorites
-            is FavoritesStorageResult.Corrupted -> emptySet()
+        // Шаг 3: Отправляем избранное на сервер и получаем обновленную версию с updatedAt (только если авторизован)
+        if (authStateChecker.isAuthorizedFast()) {
+            val currentFavorites = when (val result = storage.getFavorites()) {
+                is FavoritesStorageResult.Success -> result.favorites
+                is FavoritesStorageResult.Corrupted -> emptySet()
+            }
+            val updatedFavorites = remoteDataSource.syncFavorites(currentFavorites)
+
+            // Сохраняем обновленное избранное с updatedAt от сервера
+            storage.saveFavorites(updatedFavorites.items)
+            storage.updateLastUpdated(updatedFavorites.lastUpdated)
+
+            // Обновляем внутреннее состояние
+            currentRawRecords = updatedFavorites.items.toFavoriteRecords()
+            updateFavorites(currentRawRecords)
         }
-        val updatedFavorites = remoteDataSource.syncFavorites(currentFavorites)
-
-        // Сохраняем обновленное избранное с updatedAt от сервера
-        storage.saveFavorites(updatedFavorites.items)
-        storage.updateLastUpdated(updatedFavorites.lastUpdated)
-
-        // Обновляем внутреннее состояние
-        currentRawRecords = updatedFavorites.items.toFavoriteRecords()
-        updateFavorites(currentRawRecords)
+        // Если не авторизован, UI уже обновлен на шаге 2, ничего не делаем
     }
 
     override suspend fun sync() {
+        // Синхронизируем только если пользователь авторизован
+        if (!authStateChecker.isAuthorizedFast()) {
+            return
+        }
+
         try {
             // Получаем локальные избранные и lastUpdated
             val localResult = storage.getFavorites()
@@ -178,7 +191,8 @@ class FavoritesRepositoryImpl(
 
             // Проверяем: если сервер вернул пустое избранное и его lastUpdated новее локального,
             // это означает, что избранное было очищено на сервере - нужно очистить локальное избранное
-            val shouldClearLocal = remoteFavorites.items.isEmpty() && remoteFavorites.lastUpdated > localLastUpdated
+            val shouldClearLocal =
+                remoteFavorites.items.isEmpty() && remoteFavorites.lastUpdated > localLastUpdated
             if (shouldClearLocal) {
                 storage.saveFavorites(emptySet())
                 storage.updateLastUpdated(remoteFavorites.lastUpdated)
@@ -256,6 +270,17 @@ class FavoritesRepositoryImpl(
         }
     }
 
+    override suspend fun clear() = mutex.withLock {
+//        storage.clear()
+//
+//        // Обновляем UI
+//        _favoriteItems.value = Resource.Success(emptyList())
+//        _baseIdsFlow.value = emptySet()
+//
+//        // Получаем обновленную корзину (должна быть пустой) и обновляем lastUpdated
+
+    }
+
     /**
      * Объединяет локальные и удалённые избранные.
      * Если есть дубликаты (одинаковые по mealId, addsIds, modifiers),
@@ -266,7 +291,7 @@ class FavoritesRepositoryImpl(
      */
     private fun mergeFavorites(
         local: Set<StoredFavoriteMeal>,
-        remote: Set<StoredFavoriteMeal>
+        remote: Set<StoredFavoriteMeal>,
     ): Set<StoredFavoriteMeal> {
         // Создаём map для быстрого поиска по ключу (mealId + addsIds + modifiers)
         val mergedMap = mutableMapOf<StoredFavoriteMeal, StoredFavoriteMeal>()
@@ -312,7 +337,6 @@ class FavoritesRepositoryImpl(
         val dtos = records.map { it.toStored() }.toSet()
         storage.saveFavorites(dtos)
     }
-
 
 
     private fun getInitData() {

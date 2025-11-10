@@ -11,6 +11,7 @@ import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.ValidateTokenResponse
 import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClient
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
+import com.mandarinkafe.mandarin.features.auth.domain.api.ClearLocalUserDataUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.models.ActiveSession
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
@@ -24,6 +25,7 @@ class AuthRepositoryImpl(
     private val networkClient: AuthNetworkClient,
     private val tokenStorage: TokenStorage,
     private val userInfoRepository: UserInfoRepository,
+    private val clearLocalData: ClearLocalUserDataUseCase,
 ) : AuthRepository {
 
     private val _authState = MutableStateFlow(false)
@@ -83,6 +85,7 @@ class AuthRepositoryImpl(
             performServerLogout()
             // Всегда очищаем локальные токены и данные пользователя
             clearTokens()
+            clearLocalData()
             userInfoRepository.clearUserInfo()
         } catch (e: Exception) {
             Napier.e("$LOG_TAG: Exception during logout", e)

@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
+import com.mandarinkafe.mandarin.features.auth.domain.impl.AuthStateChecker
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.local.CartStorage
@@ -33,6 +34,7 @@ class CartRepositoryImpl(
     private val storage: CartStorage,
     private val menuCache: MenuCache,
     private val remoteDataSource: CartRemoteDataSource,
+    private val authStateChecker: AuthStateChecker,
 ) : CartWriter, CartReader {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -117,7 +119,7 @@ class CartRepositoryImpl(
                     comment = item.comment
                 )
             } catch (e: Exception) {
-                        Napier.e("Mapping failed for item: $item", e)
+                Napier.e("Mapping failed for item: $item", e)
             }
         }
         return valid
@@ -136,64 +138,64 @@ class CartRepositoryImpl(
     override suspend fun addOrUpdateItem(item: CartItem): Boolean = mutex.withLock {
         // Шаг 1: Синхронизация с сервером для получения актуальной версии
         sync()
-        
+
         // Шаг 2: Применяем локальное изменение
         val existingStored = storage.getCartItems().find { it.id == item.id }
         val createdAt = if (existingStored == null) {
             // Новый элемент - устанавливаем createdAt
             getCurrentTimeMillis()
-            } else {
+        } else {
             // Существующий элемент - сохраняем старый createdAt
             existingStored.createdAt
         }
         // updatedAt устанавливается в 0L - маркер "эта позиция изменена/новая, обновляй"
         val storedItem = item.toStoredCartItem(createdAt, updatedAt = 0L)
         storage.addOrUpdateItem(storedItem)
-        
+
         // Обновляем UI из storage
         updateUIFromStorage()
-        
+
         var wasUpdated = cartItems.any { it.id == item.id && it != item }
         if (!wasUpdated && existingStored == null) {
             wasUpdated = true // Новый элемент добавлен
         }
-        
+
         // Шаг 3: Отправляем корзину на сервер и получаем обновленную версию с updatedAt
         val localCart = storage.getCartItems()
         val updatedCart = remoteDataSource.syncCart(localCart)
-        
+
         // Сохраняем обновленную корзину с updatedAt от сервера
         updatedCart.items.forEach { updatedItem ->
             storage.addOrUpdateItem(updatedItem)
         }
         storage.updateLastUpdated(updatedCart.lastUpdated)
-        
+
         // Обновляем UI
         updateUIFromStorage()
-        
+
         return wasUpdated
     }
 
     override suspend fun deleteItemById(id: String) = mutex.withLock {
         // Шаг 1: Синхронизация с сервером для получения актуальной версии
         sync()
-        
+
         // Шаг 2: Применяем локальное изменение - физически удаляем элемент
         storage.deleteItemById(id)
-        
+
         // Обновляем UI из storage
         updateUIFromStorage()
-        
+
         // Шаг 3: Отправляем корзину на сервер и получаем обновленную версию с updatedAt
         val localCart = storage.getCartItems()
         val updatedCart = remoteDataSource.syncCart(localCart)
-        
+
         // Сохраняем обновленную корзину с updatedAt от сервера
         updatedCart.items.forEach { updatedItem ->
             storage.addOrUpdateItem(updatedItem)
         }
         storage.updateLastUpdated(updatedCart.lastUpdated)
-        
+
         // Обновляем UI
         updateUIFromStorage()
     }
@@ -201,24 +203,31 @@ class CartRepositoryImpl(
     override suspend fun clear() = mutex.withLock {
         // Шаг 1: Синхронизация с сервером для получения актуальной версии
         sync()
-        
+
         // Шаг 2: Применяем локальное изменение - очищаем корзину
         storage.clearCart()
-        
+
         // Обновляем UI
         cartItems = emptyList()
         _cartItems.value = Resource.Success(emptyList())
         _cartCount.value = 0
 
         // Шаг 3: Отправляем DELETE /cart на сервер
-        remoteDataSource.clearCart()
-        
+        if (authStateChecker.isAuthorizedFast()) {
+            remoteDataSource.clearCart()
+        }
+
         // Получаем обновленную корзину (должна быть пустой) и обновляем lastUpdated
         val updatedCart = remoteDataSource.getCart()
         storage.updateLastUpdated(updatedCart.lastUpdated)
     }
 
     override suspend fun sync() {
+        // Синхронизируем только если пользователь авторизован
+        if (!authStateChecker.isAuthorizedFast()) {
+            return
+        }
+
         try {
             // Получаем локальную корзину и lastUpdated
             val localCart = storage.getCartItems()
@@ -229,7 +238,8 @@ class CartRepositoryImpl(
 
             // Проверяем: если сервер вернул пустую корзину и его lastUpdated новее локального,
             // это означает, что корзина была очищена на сервере - нужно очистить локальную корзину
-            val shouldClearLocal = remoteCart.items.isEmpty() && remoteCart.lastUpdated > localLastUpdated
+            val shouldClearLocal =
+                remoteCart.items.isEmpty() && remoteCart.lastUpdated > localLastUpdated
             if (shouldClearLocal) {
                 storage.clearCart()
                 storage.updateLastUpdated(remoteCart.lastUpdated)
@@ -267,7 +277,7 @@ class CartRepositoryImpl(
                 mergedCart.forEach { item ->
                     storage.addOrUpdateItem(item)
                 }
-                
+
                 // Удаляем из storage позиции, которые были удалены при мерже
                 if (serverIsNewerOrEqual) {
                     val remoteItemIds = remoteCart.items.map { it.id }.toSet()
@@ -277,7 +287,7 @@ class CartRepositoryImpl(
                         storage.deleteItemById(id)
                     }
                 }
-                
+
                 // Обновляем lastUpdated (берем максимальный из локального и удаленного)
                 val finalLastUpdated = maxOf(localLastUpdated, remoteCart.lastUpdated)
                 storage.updateLastUpdated(finalLastUpdated)
@@ -286,7 +296,7 @@ class CartRepositoryImpl(
                 if (hasLocalChanges) {
                     val currentCart = storage.getCartItems()
                     val updatedCart = remoteDataSource.syncCart(currentCart)
-                    
+
                     // Сохраняем обновленную корзину с updatedAt от сервера
                     updatedCart.items.forEach { updatedItem ->
                         storage.addOrUpdateItem(updatedItem)
@@ -307,13 +317,13 @@ class CartRepositoryImpl(
     /**
      * Объединяет локальную и удалённую корзину.
      * Если есть дубликаты (одинаковые по id), берёт версию с более свежим updatedAt.
-     * 
+     *
      * createdAt - время создания записи (не изменяется)
      * updatedAt - время последнего изменения позиции (используется для разрешения конфликтов)
      */
     private fun mergeCartItems(
         local: List<StoredCartItem>,
-        remote: List<StoredCartItem>
+        remote: List<StoredCartItem>,
     ): List<StoredCartItem> {
         // Создаём map для быстрого поиска по id
         val mergedMap = mutableMapOf<String, StoredCartItem>()
@@ -342,7 +352,7 @@ class CartRepositoryImpl(
 
         return mergedMap.values.toList()
     }
-    
+
     private suspend fun updateUIFromStorage() {
         val currentCart = storage.getCartItems()
         val menuResource = menuCache.allVisibleMenu.value
@@ -350,7 +360,8 @@ class CartRepositoryImpl(
             val fullMenu = menuResource.data.orEmpty()
             val validItems = mapAndValidate(currentCart, fullMenu)
             cartItems = currentCart.mapNotNull { storedItem ->
-                val baseMeal = flattenMeals(fullMenu).find { it.id == storedItem.mealId } ?: return@mapNotNull null
+                val baseMeal = flattenMeals(fullMenu).find { it.id == storedItem.mealId }
+                    ?: return@mapNotNull null
                 try {
                     val adds = storedItem.addsIds.mapNotNull { addId ->
                         flattenMeals(fullMenu).find { it.id == addId }?.toMealAdditional()
