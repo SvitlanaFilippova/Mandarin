@@ -7,7 +7,6 @@ import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.SyncUserDataUseCase
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class UserSessionManager(
@@ -43,21 +42,21 @@ class UserSessionManager(
      */
     suspend fun onUserAuthorized(tokens: AuthTokens?): Boolean {
         if (tokens == null) return false
-        
+
         authRepository.saveTokens(tokens)
         return syncUserDataUseCase()
     }
 
     suspend fun logout() {
         authRepository.logout()
-        
+
         // Принудительно обновляем UI после очистки данных
         try {
             cartReader.forceRetry()
         } catch (e: Exception) {
             Napier.e("Ошибка при обновлении UI корзины после логаута", e)
         }
-        
+
         try {
             favoritesReader.forceRetry()
         } catch (e: Exception) {

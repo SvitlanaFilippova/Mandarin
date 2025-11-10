@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.core.domain.models.AddressType
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.savedadresses.data.network.dto.AddressDto
 import com.mandarinkafe.mandarin.features.savedadresses.data.network.dto.GeoPointDto
+import io.github.aakira.napier.Napier
 
 object AddressMapper {
 
@@ -54,6 +55,7 @@ object AddressMapper {
         return try {
             AddressType.valueOf(type)
         } catch (e: IllegalArgumentException) {
+            Napier.e("AddressMapper, parseAddressType error: $e")
             null
         }
     }

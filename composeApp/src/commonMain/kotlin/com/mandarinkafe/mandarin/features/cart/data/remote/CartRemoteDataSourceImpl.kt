@@ -4,7 +4,7 @@ import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toDto
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toStored
-import com.mandarinkafe.mandarin.features.cart.data.models.Cart
+import com.mandarinkafe.mandarin.features.cart.data.models.CartMetadata
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.network.CartServerApi
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
@@ -16,27 +16,27 @@ class CartRemoteDataSourceImpl(
     private val menuCache: MenuCache,
 ) : CartRemoteDataSource {
 
-    override suspend fun getCart(): Cart {
+    override suspend fun getCart(): CartMetadata {
         val token = authRepository.getAccessToken()
         if (token == null) {
-            return Cart(emptyList(), 0L)
+            return CartMetadata(emptyList(), 0L)
         }
         return try {
             val response = api.getCart("Bearer $token")
             val items = response.items.mapNotNull { cartItemDto ->
                 cartItemDto.toStored(menuCache)
             }
-            Cart(items, response.lastUpdated)
+            CartMetadata(items, response.lastUpdated)
         } catch (e: Exception) {
             Napier.e("Ошибка при получении корзины с сервера", e)
-            Cart(emptyList(), 0L)
+            CartMetadata(emptyList(), 0L)
         }
     }
 
-    override suspend fun syncCart(localCart: List<StoredCartItem>): Cart {
+    override suspend fun syncCart(localCart: List<StoredCartItem>): CartMetadata {
         val token = authRepository.getAccessToken()
         if (token == null) {
-            return Cart(emptyList(), 0L)
+            return CartMetadata(emptyList(), 0L)
         }
         return try {
             // Отправляем корзину с реальными updatedAt:
@@ -50,17 +50,17 @@ class CartRemoteDataSourceImpl(
             // Проверяем, была ли ошибка на сервере
             if (response.resultCode != HTTP_SUCCESS) {
                 // При ошибке возвращаем локальную корзину, чтобы не потерять данные
-                return Cart(localCart, 0L)
+                return CartMetadata(localCart, 0L)
             }
             
             // Получаем обновлённую корзину с updatedAt от сервера
             val items = response.items.mapNotNull { cartItemDto ->
                 cartItemDto.toStored(menuCache)
             }
-            Cart(items, response.lastUpdated)
+            CartMetadata(items, response.lastUpdated)
         } catch (e: Exception) {
             Napier.e("Ошибка при отправке корзины на сервер", e)
-            Cart(emptyList(), 0L)
+            CartMetadata(emptyList(), 0L)
         }
     }
 

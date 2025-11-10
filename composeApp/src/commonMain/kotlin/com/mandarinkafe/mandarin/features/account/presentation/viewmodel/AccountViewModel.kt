@@ -122,6 +122,12 @@ class AccountViewModel(
         viewModelScope.launch {
             val currentUserInfo = userInfoRepository.getUserInfo()
             val enteredName = query ?: state.value.userInfo.name
+            // Проверяем, что имя не пустое
+            if (enteredName.trim().isBlank()) {
+                sendEffect(AccountEffect.ShowMessage(MR.strings.error_name_empty))
+                return@launch
+            }
+
             // Обновляем имя на сервере, если оно было пустое или изменилось
             if (currentUserInfo != null && enteredName.trim()
                     .isNotBlank() && currentUserInfo.name != enteredName

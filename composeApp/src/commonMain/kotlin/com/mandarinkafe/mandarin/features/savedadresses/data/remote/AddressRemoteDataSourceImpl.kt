@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.features.savedadresses.data.mapper.AddressMappe
 import com.mandarinkafe.mandarin.features.savedadresses.data.mapper.AddressMapper.toDto
 import com.mandarinkafe.mandarin.features.savedadresses.data.network.AddressServerApi
 import com.mandarinkafe.mandarin.features.savedadresses.data.network.AddressUpdateRequest
+import io.github.aakira.napier.Napier
 
 class AddressRemoteDataSourceImpl(
     private val api: AddressServerApi,
@@ -20,6 +21,7 @@ class AddressRemoteDataSourceImpl(
                 addressDto.toDomain()
             } ?: emptyList()
         } catch (e: Exception) {
+            Napier.e("AddressRemoteDataSource, getAddresses error: $e")
             emptyList()
         }
     }
@@ -30,14 +32,18 @@ class AddressRemoteDataSourceImpl(
             val addressDto = address.toDto()
             val request = AddressUpdateRequest(data = addressDto)
             api.createOrUpdateAddress("Bearer $token", request)
-        } catch (_: Exception) {}
+        } catch (e: Exception) {
+            Napier.e("AddressRemoteDataSource, saveAddress error: $e")
+        }
     }
 
     override suspend fun removeAddress(id: String) {
         val token = authRepository.getAccessToken() ?: return
         try {
             api.deleteAddress("Bearer $token", id)
-        } catch (_: Exception) {}
+        } catch (e: Exception) {
+            Napier.e("AddressRemoteDataSource, removeAddress error: $e")
+        }
     }
 }
 

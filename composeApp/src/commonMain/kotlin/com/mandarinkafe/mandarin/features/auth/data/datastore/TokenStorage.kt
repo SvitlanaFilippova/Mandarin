@@ -7,6 +7,7 @@ interface TokenStorage {
     suspend fun saveTokens(tokens: AuthTokens)
     suspend fun getTokens(): AuthTokens?
     suspend fun clearTokens()
+
     /**
      * Flow для наблюдения за изменениями токенов.
      * Эмитит null, если токены отсутствуют или были очищены.

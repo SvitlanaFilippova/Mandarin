@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.features.auth.di
 
+import com.mandarinkafe.mandarin.features.auth.data.api.LocalUserDataCleaner
 import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorage
 import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorageImpl
-import com.mandarinkafe.mandarin.features.auth.data.api.LocalUserDataCleaner
 import com.mandarinkafe.mandarin.features.auth.data.impl.AuthRepositoryImpl
 import com.mandarinkafe.mandarin.features.auth.data.impl.LocalUserDataCleanerImpl
 import com.mandarinkafe.mandarin.features.auth.data.impl.PhoneVerificationRepositoryImpl

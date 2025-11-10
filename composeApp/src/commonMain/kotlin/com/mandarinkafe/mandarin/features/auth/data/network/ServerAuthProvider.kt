@@ -41,17 +41,6 @@ class ServerAuthProvider(
                 error("No access token available")
             }
             val accessToken = tokens.accessToken
-            if (accessToken == null) {
-                Napier.e("$LOG_PREFIX ERROR: Access token is null in storage")
-                error("No access token available")
-            }
-            Napier.d(
-                "$LOG_PREFIX DEBUG: Token loaded, length=${accessToken.length}, prefix=${
-                    accessToken.take(
-                        20
-                    )
-                }..."
-            )
             accessToken
         }
     }
@@ -70,13 +59,11 @@ class ServerAuthProvider(
                 error("No refresh token available")
             }
 
-            Napier.d("$LOG_PREFIX DEBUG: Sending refresh request to $REFRESH_TOKEN_PATH")
             val response = refreshTokenClient.post(REFRESH_TOKEN_PATH) {
                 header("x-api-key", apiKey)
                 setBody(RefreshTokenRequest(refreshToken))
             }
 
-            Napier.d("$LOG_PREFIX DEBUG: Refresh response status: ${response.status.value}")
 
             when (response.status) {
                 HttpStatusCode.OK -> {
@@ -94,7 +81,7 @@ class ServerAuthProvider(
                 }
 
                 HttpStatusCode.Unauthorized -> {
-                    Napier.e("$LOG_PREFIX ERROR: Refresh token is invalid (401), clearing tokens")
+                    Napier.e("$LOG_PREFIX ERROR: Refresh token is invalid, clearing tokens")
                     tokenStorage.clearTokens()
                     error("Token refresh failed: ${response.status.value}")
                 }

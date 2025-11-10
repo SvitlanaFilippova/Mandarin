@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.ordershistory.data.mapper
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.ordershistory.data.network.dto.SavedOrderDto
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
+import io.github.aakira.napier.Napier
 
 object OrdersHistoryMapper {
 
@@ -37,6 +38,7 @@ object OrdersHistoryMapper {
         return try {
             DeliveryType.valueOf(type)
         } catch (e: IllegalArgumentException) {
+            Napier.e("OrdersHistoryMapper, parseDeliveryType error: $e")
             null
         }
     }
