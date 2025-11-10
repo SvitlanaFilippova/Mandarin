@@ -199,13 +199,23 @@ class FavoritesRepositoryImpl(
                 currentRawRecords = mutableSetOf()
                 updateFavorites(currentRawRecords)
             } else {
+                // Определяем первую синхронизацию после авторизации:
+                // localLastUpdated = 0L означает, что данные были созданы без авторизации
+                // ВАЖНО: это работает только если есть локальные данные с updatedAt = 0L (созданные без авторизации)
+                // Если данные были созданы после логаута, они тоже будут иметь updatedAt = 0L, но это нормально -
+                // они должны быть отправлены на сервер как новые данные
+                val isFirstSyncAfterAuth = localLastUpdated == 0L && localFavorites.isNotEmpty() && 
+                    localFavorites.any { it.updatedAt == 0L }
+                
                 // Объединяем локальные и удалённые избранные по updatedAt каждого элемента
-                var mergedFavorites = mergeFavorites(localFavorites, remoteFavorites.items)
+                // При первой синхронизации локальные элементы с updatedAt = 0L имеют приоритет
+                var mergedFavorites = mergeFavorites(localFavorites, remoteFavorites.items, isFirstSyncAfterAuth)
 
                 // Удаляем записи, которые есть локально, но отсутствуют на сервере,
                 // если серверная версия избранного новее или равна локальной
+                // НО: при первой синхронизации после авторизации НЕ удаляем локальные записи
                 val serverIsNewerOrEqual = remoteFavorites.lastUpdated >= localLastUpdated
-                if (serverIsNewerOrEqual) {
+                if (serverIsNewerOrEqual && !isFirstSyncAfterAuth) {
                     val remoteItemKeys = remoteFavorites.items.toSet()
                     mergedFavorites = mergedFavorites.filter { localItem ->
                         remoteItemKeys.any { remoteItem ->
@@ -218,10 +228,11 @@ class FavoritesRepositoryImpl(
 
                 // Проверяем, были ли локальные изменения ДО мержа
                 // Изменения есть, если:
-                // 1. Есть локальные записи с updatedAt = 0 (измененные локально)
-                // 2. Есть локальные записи, которых нет на сервере (но только если локальная версия новее)
-                // 3. Есть локальные записи с updatedAt > серверного updatedAt
-                val hasLocalChanges = localFavorites.any { localItem ->
+                // 1. Это первая синхронизация после авторизации (есть локальные данные без авторизации)
+                // 2. Есть локальные записи с updatedAt = 0 (измененные локально)
+                // 3. Есть локальные записи, которых нет на сервере (но только если локальная версия новее)
+                // 4. Есть локальные записи с updatedAt > серверного updatedAt
+                val hasLocalChanges = isFirstSyncAfterAuth || localFavorites.any { localItem ->
                     val remoteItem = remoteFavorites.items.find { remoteItem ->
                         localItem.mealId == remoteItem.mealId &&
                                 localItem.addsIds.toSet() == remoteItem.addsIds.toSet() &&
@@ -285,6 +296,7 @@ class FavoritesRepositoryImpl(
      * Объединяет локальные и удалённые избранные.
      * Если есть дубликаты (одинаковые по mealId, addsIds, modifiers),
      * берёт версию с более свежим updatedAt.
+     * При первой синхронизации после авторизации локальные элементы с updatedAt = 0L имеют приоритет.
      *
      * createdAt - время создания записи (не изменяется)
      * updatedAt - время последнего изменения записи (используется для разрешения конфликтов)
@@ -292,6 +304,7 @@ class FavoritesRepositoryImpl(
     private fun mergeFavorites(
         local: Set<StoredFavoriteMeal>,
         remote: Set<StoredFavoriteMeal>,
+        isFirstSyncAfterAuth: Boolean = false,
     ): Set<StoredFavoriteMeal> {
         // Создаём map для быстрого поиска по ключу (mealId + addsIds + modifiers)
         val mergedMap = mutableMapOf<StoredFavoriteMeal, StoredFavoriteMeal>()
@@ -309,8 +322,11 @@ class FavoritesRepositoryImpl(
                 mergedMap[remoteFavorite] = remoteFavorite
             } else {
                 // Есть дубликат, проверяем updatedAt
-                // Сравниваем по updatedAt (время последнего изменения)
-                if (remoteFavorite.updatedAt > existing.updatedAt) {
+                // При первой синхронизации локальные элементы с updatedAt = 0L имеют приоритет
+                if (isFirstSyncAfterAuth && existing.updatedAt == 0L) {
+                    // Локальный элемент создан без авторизации - сохраняем его для отправки на сервер
+                    // Не заменяем серверной версией
+                } else if (remoteFavorite.updatedAt > existing.updatedAt) {
                     // Удаленная версия новее - используем её
                     mergedMap[remoteFavorite] = remoteFavorite
                 }

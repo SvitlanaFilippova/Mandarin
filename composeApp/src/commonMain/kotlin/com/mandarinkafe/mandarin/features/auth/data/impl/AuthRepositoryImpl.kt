@@ -74,6 +74,10 @@ class AuthRepositoryImpl(
         try {
             tokenStorage.clearTokens()
             _authState.value = false
+            // Очищаем локальные данные пользователя при любой очистке токенов
+            // (ручной логаут, невалидные токены, вынужденный логаут и т.д.)
+            clearLocalData()
+            userInfoRepository.clearUserInfo()
         } catch (e: Exception) {
             Napier.e("$LOG_TAG: clearTokens - Exception", e)
             throw e
@@ -83,10 +87,8 @@ class AuthRepositoryImpl(
     override suspend fun logout() {
         try {
             performServerLogout()
-            // Всегда очищаем локальные токены и данные пользователя
+            // Очищаем токены (внутри clearTokens() также очищаются локальные данные)
             clearTokens()
-            clearLocalData()
-            userInfoRepository.clearUserInfo()
         } catch (e: Exception) {
             Napier.e("$LOG_TAG: Exception during logout", e)
             throw e

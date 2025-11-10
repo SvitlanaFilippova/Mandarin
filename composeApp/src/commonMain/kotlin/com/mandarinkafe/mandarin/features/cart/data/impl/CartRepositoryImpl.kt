@@ -244,13 +244,23 @@ class CartRepositoryImpl(
                 storage.clearCart()
                 storage.updateLastUpdated(remoteCart.lastUpdated)
             } else {
+                // Определяем первую синхронизацию после авторизации:
+                // localLastUpdated = 0L означает, что данные были созданы без авторизации
+                // ВАЖНО: это работает только если есть локальные данные с updatedAt = 0L (созданные без авторизации)
+                // Если данные были созданы после логаута, они тоже будут иметь updatedAt = 0L, но это нормально -
+                // они должны быть отправлены на сервер как новые данные
+                val isFirstSyncAfterAuth = localLastUpdated == 0L && localCart.isNotEmpty() && 
+                    localCart.any { it.updatedAt == 0L }
+                
                 // Объединяем локальную и удалённую корзину по updatedAt каждого элемента
-                var mergedCart = mergeCartItems(localCart, remoteCart.items)
+                // При первой синхронизации локальные элементы с updatedAt = 0L имеют приоритет
+                var mergedCart = mergeCartItems(localCart, remoteCart.items, isFirstSyncAfterAuth)
 
                 // Удаляем позиции, которые есть локально, но отсутствуют на сервере,
                 // если серверная версия корзины новее или равна локальной
+                // НО: при первой синхронизации после авторизации НЕ удаляем локальные элементы
                 val serverIsNewerOrEqual = remoteCart.lastUpdated >= localLastUpdated
-                if (serverIsNewerOrEqual) {
+                if (serverIsNewerOrEqual && !isFirstSyncAfterAuth) {
                     val remoteItemIds = remoteCart.items.map { it.id }.toSet()
                     val itemsToRemove = mergedCart.filter { it.id !in remoteItemIds }
                     if (itemsToRemove.isNotEmpty()) {
@@ -260,10 +270,11 @@ class CartRepositoryImpl(
 
                 // Проверяем, были ли локальные изменения ДО мержа
                 // Изменения есть, если:
-                // 1. Есть локальные элементы с updatedAt = 0 (измененные локально)
-                // 2. Есть локальные элементы, которых нет на сервере (но только если локальная версия новее)
-                // 3. Есть локальные элементы с updatedAt > серверного updatedAt
-                val hasLocalChanges = localCart.any { localItem ->
+                // 1. Это первая синхронизация после авторизации (есть локальные данные без авторизации)
+                // 2. Есть локальные элементы с updatedAt = 0 (измененные локально)
+                // 3. Есть локальные элементы, которых нет на сервере (но только если локальная версия новее)
+                // 4. Есть локальные элементы с updatedAt > серверного updatedAt
+                val hasLocalChanges = isFirstSyncAfterAuth || localCart.any { localItem ->
                     val remoteItem = remoteCart.items.find { it.id == localItem.id }
                     when {
                         remoteItem == null -> !serverIsNewerOrEqual // элемент только локально, но только если локальная версия новее
@@ -279,7 +290,8 @@ class CartRepositoryImpl(
                 }
 
                 // Удаляем из storage позиции, которые были удалены при мерже
-                if (serverIsNewerOrEqual) {
+                // НО: при первой синхронизации после авторизации НЕ удаляем локальные элементы
+                if (serverIsNewerOrEqual && !isFirstSyncAfterAuth) {
                     val remoteItemIds = remoteCart.items.map { it.id }.toSet()
                     val localItemIds = localCart.map { it.id }.toSet()
                     val itemsToDeleteFromStorage = localItemIds - remoteItemIds
@@ -317,6 +329,7 @@ class CartRepositoryImpl(
     /**
      * Объединяет локальную и удалённую корзину.
      * Если есть дубликаты (одинаковые по id), берёт версию с более свежим updatedAt.
+     * При первой синхронизации после авторизации локальные элементы с updatedAt = 0L имеют приоритет.
      *
      * createdAt - время создания записи (не изменяется)
      * updatedAt - время последнего изменения позиции (используется для разрешения конфликтов)
@@ -324,6 +337,7 @@ class CartRepositoryImpl(
     private fun mergeCartItems(
         local: List<StoredCartItem>,
         remote: List<StoredCartItem>,
+        isFirstSyncAfterAuth: Boolean = false,
     ): List<StoredCartItem> {
         // Создаём map для быстрого поиска по id
         val mergedMap = mutableMapOf<String, StoredCartItem>()
@@ -341,8 +355,11 @@ class CartRepositoryImpl(
                 mergedMap[remoteItem.id] = remoteItem
             } else {
                 // Есть дубликат, проверяем updatedAt
-                // Сравниваем по updatedAt (время последнего изменения)
-                if (remoteItem.updatedAt > existing.updatedAt) {
+                // При первой синхронизации локальные элементы с updatedAt = 0L имеют приоритет
+                if (isFirstSyncAfterAuth && existing.updatedAt == 0L) {
+                    // Локальный элемент создан без авторизации - сохраняем его для отправки на сервер
+                    // Не заменяем серверной версией
+                } else if (remoteItem.updatedAt > existing.updatedAt) {
                     // Удаленная версия новее - используем её
                     mergedMap[remoteItem.id] = remoteItem
                 }
