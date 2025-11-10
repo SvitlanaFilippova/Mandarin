@@ -2,18 +2,18 @@ package com.mandarinkafe.mandarin.features.auth.di
 
 import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorage
 import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorageImpl
+import com.mandarinkafe.mandarin.features.auth.data.api.LocalUserDataCleaner
 import com.mandarinkafe.mandarin.features.auth.data.impl.AuthRepositoryImpl
+import com.mandarinkafe.mandarin.features.auth.data.impl.LocalUserDataCleanerImpl
 import com.mandarinkafe.mandarin.features.auth.data.impl.PhoneVerificationRepositoryImpl
 import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClient
 import com.mandarinkafe.mandarin.features.auth.data.network.AuthNetworkClientImpl
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
-import com.mandarinkafe.mandarin.features.auth.domain.api.ClearLocalUserDataUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.PhoneVerificationRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.RequestPhoneVerificationUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.RequestSmsVerificationUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.SyncUserDataUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.VerificationStatusInteractor
-import com.mandarinkafe.mandarin.features.auth.domain.impl.ClearLocalUserDataUseCaseImpl
 import com.mandarinkafe.mandarin.features.auth.domain.impl.RequestPhoneVerificationUseCaseImpl
 import com.mandarinkafe.mandarin.features.auth.domain.impl.RequestSmsVerificationUseCaseImpl
 import com.mandarinkafe.mandarin.features.auth.domain.impl.SyncUserDataUseCaseImpl
@@ -34,6 +34,7 @@ val authModule = module {
             networkMonitor = get()
         )
     }
+    singleOf(::LocalUserDataCleanerImpl) { bind<LocalUserDataCleaner>() }
     singleOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
     singleOf(::PhoneVerificationRepositoryImpl) { bind<PhoneVerificationRepository>() }
 
@@ -42,12 +43,12 @@ val authModule = module {
     singleOf(::VerificationStatusInteractorImpl) { bind<VerificationStatusInteractor>() }
     singleOf(::RequestSmsVerificationUseCaseImpl) { bind<RequestSmsVerificationUseCase>() }
     singleOf(::SyncUserDataUseCaseImpl) { bind<SyncUserDataUseCase>() }
-    singleOf(::ClearLocalUserDataUseCaseImpl) { bind<ClearLocalUserDataUseCase>() }
     singleOf(::UserSessionManager)
 
     // ViewModel
     singleOf(::AuthViewModel)
 }
+
 
 
 

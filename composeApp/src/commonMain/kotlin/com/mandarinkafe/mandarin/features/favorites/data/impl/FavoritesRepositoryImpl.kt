@@ -79,7 +79,7 @@ class FavoritesRepositoryImpl(
                     stored.modifiers.toSet() == custom.modifiers.toSet()
         }
 
-        val isNowFavorite = if (existingStored != null) {
+        if (existingStored != null) {
             // Удаляем избранное
             val updatedFavorites = localFavorites.filter { it != existingStored }.toSet()
             storage.saveFavorites(updatedFavorites)
@@ -133,7 +133,7 @@ class FavoritesRepositoryImpl(
             stored.mealId == meal.id && stored.addsIds.isEmpty() && stored.modifiers.isEmpty()
         }
 
-        val isNowFavorite = if (existingStored != null) {
+        if (existingStored != null) {
             // Удаляем избранное
             val updatedFavorites = localFavorites.filter { it != existingStored }.toSet()
             storage.saveFavorites(updatedFavorites)
@@ -279,17 +279,6 @@ class FavoritesRepositoryImpl(
             // Локальные данные остаются без изменений
             Napier.e("Ошибка при синхронизации избранного", e)
         }
-    }
-
-    override suspend fun clear() = mutex.withLock {
-//        storage.clear()
-//
-//        // Обновляем UI
-//        _favoriteItems.value = Resource.Success(emptyList())
-//        _baseIdsFlow.value = emptySet()
-//
-//        // Получаем обновленную корзину (должна быть пустой) и обновляем lastUpdated
-
     }
 
     /**

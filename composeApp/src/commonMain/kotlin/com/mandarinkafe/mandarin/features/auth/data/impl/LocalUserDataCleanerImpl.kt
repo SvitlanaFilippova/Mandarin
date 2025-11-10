@@ -1,15 +1,15 @@
-package com.mandarinkafe.mandarin.features.auth.domain.impl
+package com.mandarinkafe.mandarin.features.auth.data.impl
 
-import com.mandarinkafe.mandarin.features.auth.domain.api.ClearLocalUserDataUseCase
+import com.mandarinkafe.mandarin.features.auth.data.api.LocalUserDataCleaner
 import com.mandarinkafe.mandarin.features.cart.data.local.CartStorage
 import com.mandarinkafe.mandarin.features.favorites.data.datastore.FavoritesStorage
 import io.github.aakira.napier.Napier
 
-class ClearLocalUserDataUseCaseImpl(
+class LocalUserDataCleanerImpl(
     private val cartStorage: CartStorage,
     private val favoritesStorage: FavoritesStorage,
-) : ClearLocalUserDataUseCase {
-    override suspend fun invoke() {
+) : LocalUserDataCleaner {
+    override suspend fun clear() {
         // Очищаем локальные данные корзины (без отправки на сервер)
         try {
             cartStorage.clearCart()
