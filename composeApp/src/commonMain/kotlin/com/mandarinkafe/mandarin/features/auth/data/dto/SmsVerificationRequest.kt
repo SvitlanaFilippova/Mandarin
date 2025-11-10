@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SmsVerificationRequest(
     val phone: String,
+    val platform: String,
 )
 
 

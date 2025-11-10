@@ -24,5 +24,9 @@ actual class DeviceInfoProvider {
         // device.name returns user's device name like "John's iPhone"
         return device.name
     }
+
+    actual fun getPlatform(): String {
+        return "ios"
+    }
 }
 
