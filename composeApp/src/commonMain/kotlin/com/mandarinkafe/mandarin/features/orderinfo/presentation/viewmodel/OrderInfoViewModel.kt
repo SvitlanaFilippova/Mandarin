@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.CancelOrderUseCase
+import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ForceRefreshOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.RepeatOrderInteractor
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect
@@ -22,6 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class OrderInfoViewModel(
     private val getOrderStatus: GetOrderStatusUseCase,
+    private val forceRefreshOrderStatus: ForceRefreshOrderStatusUseCase,
     private val cancelOrderUseCase: CancelOrderUseCase,
     private val repeatOrderInteractor: RepeatOrderInteractor,
     private val cartInteractor: CartInteractor,
@@ -52,7 +54,7 @@ class OrderInfoViewModel(
                 return@launch
             }
             setLoading()
-            val result = getOrderStatus(orderId)
+            val result = forceRefreshOrderStatus(orderId)
             proceedOrderStatusResult(result)
         }
     }
@@ -108,6 +110,12 @@ class OrderInfoViewModel(
             }
 
             is Resource.ErrorNoInternet -> showError("Нет подключения к интернету")
+
+            is Resource.Idle -> {
+                // Запрос был проигнорирован из-за TTL (слишком частый запрос)
+                // Просто убираем loading, не показываем ошибку
+                setLoading(false)
+            }
 
             else -> showError(result.message ?: "Что-то пошло не так")
         }
