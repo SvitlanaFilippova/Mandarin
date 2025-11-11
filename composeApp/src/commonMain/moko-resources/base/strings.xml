@@ -493,7 +493,7 @@
     <string name="save_meal">Сохранить (%1$d ₽)</string>
     <string name="cart_total_cost_template">%d ₽</string>
     <string name="float_price_template">%.2f ₽</string>
-    <string name="quantity_x_template">x%.0f</string>
+    <string name="quantity_x_template">%.0f шт</string>
 
     <string name="snackbar_to_cart_button">В корзину</string>
 

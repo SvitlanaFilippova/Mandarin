@@ -20,6 +20,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingMealAd
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingModifier
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.OrderStatus
+import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.DateTimeUtils.toHumanDateTimeOrNull
 import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.toVisibleComment
@@ -79,6 +80,10 @@ fun OrderTypeDto.toDomain() = OrderType(
 )
 
 fun IncomingOrderItemDto.toDomain(): IncomingOrderItem {
+    val baseUrl = BuildKonfig.SERVER_BASE_URL.removeSuffix("/")
+    val imageUrl = "$baseUrl/images_previews/${product.id}.jpg"
+    val blurredPreviewUrl = "$baseUrl/images_previews/${product.id}_placeholder.jpg"
+
     val safeAmount = amount ?: 1.0
     return IncomingOrderItem(
         id = product.id,
@@ -90,7 +95,9 @@ fun IncomingOrderItemDto.toDomain(): IncomingOrderItem {
         isDeleted = deleted?.deletionMethod != null,
         comment = comment ?: "",
         discountedPrice = resultSum?.takeIf { it > 0 }
-            ?.div(safeAmount) // делим на количество, чтобы узнать цену за единицу
+            ?.div(safeAmount), // делим на количество, чтобы узнать цену за единицу
+        imageUrl = imageUrl,
+        blurredPreviewUrl = blurredPreviewUrl,
     )
 }
 
@@ -190,6 +197,8 @@ private class IncomingOrderItemBuilder private constructor(
     private val positionId: String?,
     private val isDeleted: Boolean,
     private val comment: String,
+    private val imageUrl: String?,
+    private val blurredPreviewUrl: String?,
     var chosenModifiers: List<IncomingModifier> = emptyList(),
     val chosenAdds: MutableList<IncomingMealAdditional> = mutableListOf(),
 ) {
@@ -203,12 +212,18 @@ private class IncomingOrderItemBuilder private constructor(
         positionId = positionId,
         isDeleted = isDeleted,
         comment = comment,
-        discountedPrice = discountedPrice
+        discountedPrice = discountedPrice,
+        imageUrl = imageUrl,
+        blurredPreviewUrl = blurredPreviewUrl,
     )
 
     companion object {
         fun fromDto(dto: IncomingOrderItemDto): IncomingOrderItemBuilder {
             val safeAmount = dto.amount ?: 0.0
+            val baseUrl = BuildKonfig.SERVER_BASE_URL.removeSuffix("/")
+            val imageUrl = "$baseUrl/images_previews/${dto.product.id}.jpg"
+            val blurredPreviewUrl = "$baseUrl/images_previews/${dto.product.id}_placeholder.jpg"
+
             return IncomingOrderItemBuilder(
                 id = dto.product.id,
                 name = dto.product.name.applyTypography(),
@@ -218,7 +233,9 @@ private class IncomingOrderItemBuilder private constructor(
                 isDeleted = dto.deleted?.deletionMethod != null,
                 comment = dto.comment.toVisibleComment(),
                 chosenModifiers = dto.modifiers.map { it.toDomain(safeAmount) },
-                discountedPrice = dto.resultSum?.takeIf { it > 0 }?.div(safeAmount)
+                discountedPrice = dto.resultSum?.takeIf { it > 0 }?.div(safeAmount),
+                imageUrl = imageUrl,
+                blurredPreviewUrl = blurredPreviewUrl,
             )
         }
 
@@ -232,6 +249,8 @@ private class IncomingOrderItemBuilder private constructor(
                 isDeleted = false,
                 comment = "",
                 discountedPrice = null,
+                imageUrl = null,
+                blurredPreviewUrl = null
             ).apply { chosenAdds += addon }
         }
     }
