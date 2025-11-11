@@ -42,6 +42,8 @@ fun AuthScreen(
     sharedViewModel: SharedViewModel,
     navController: NavController,
     targetRoute: String?,
+    initialPhone: String? = null,
+    forDeleteAccount: Boolean = false,
 ) {
     val viewModel = rememberAuthViewModel()
     val state by viewModel.state.collectAsState()
@@ -53,6 +55,15 @@ fun AuthScreen(
     var showSMSVerificationDialog by remember { mutableStateOf(false) }
     var showSuccessDialog by remember { mutableStateOf(false) }
     var requestAlreadyActiveSeconds: Int? by remember { mutableStateOf(null) }
+
+    // Устанавливаем начальный номер телефона, если он передан
+    LaunchedEffect(initialPhone) {
+        initialPhone?.let { phone ->
+            if (state.phoneQuery.isEmpty()) {
+                onEvent(AuthContract.AuthEvent.SetPhone(phone))
+            }
+        }
+    }
 
 
     val pullRefreshState = rememberPullRefreshState(
@@ -172,6 +183,7 @@ fun AuthScreen(
         effectFlow = viewModel.effect,
         navController = navController,
         targetRoute = targetRoute,
+        forDeleteAccount = forDeleteAccount,
         showSuccessDialog = {
             showSuccessDialog = it
             showSMSVerificationDialog = false

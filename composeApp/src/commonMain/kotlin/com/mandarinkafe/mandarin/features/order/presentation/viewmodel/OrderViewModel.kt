@@ -216,10 +216,30 @@ class OrderViewModel(
             }
         }
 
-
     private fun selectAddressById(id: String) {
-        val address = state.value.deliveryInfo.savedAddresses.first { it.id == id }
-        setAddress(address)
+        viewModelScope.launch {
+            // Пытаемся найти адрес в текущем списке
+            var address = state.value.deliveryInfo.savedAddresses.firstOrNull { it.id == id }
+
+            // Если адрес не найден, обновляем список адресов и повторяем попытку
+            if (address == null) {
+                // Обновляем адреса и ждем завершения
+                val addressList = addressUseCases.getSavedAddressesUseCase().reversed()
+                setState {
+                    val newDeliveryInfo = deliveryInfo.copy(
+                        savedAddresses = addressList
+                    )
+                    copy(deliveryInfo = newDeliveryInfo)
+                }
+                // Пытаемся найти адрес в только что полученном списке
+                address = addressList.firstOrNull { it.id == id }
+            }
+
+            // Если адрес найден - выбираем его, иначе просто игнорируем (безопасная обёртка)
+            if (address != null) {
+                setAddress(address)
+            }
+        }
     }
 
     private fun removeSavedAddress(id: String) {

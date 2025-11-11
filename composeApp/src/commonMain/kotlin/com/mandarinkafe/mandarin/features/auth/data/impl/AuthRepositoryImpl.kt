@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.features.auth.data.Mapper.toDomain
 import com.mandarinkafe.mandarin.features.auth.data.api.LocalUserDataCleaner
 import com.mandarinkafe.mandarin.features.auth.data.datastore.TokenStorage
 import com.mandarinkafe.mandarin.features.auth.data.dto.ActiveSessionsResponse
+import com.mandarinkafe.mandarin.features.auth.data.dto.DeleteAccountResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.RefreshTokenResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionResponse
@@ -334,6 +335,51 @@ class AuthRepositoryImpl(
             }
         } catch (e: Exception) {
             Napier.e("$LOG_TAG: revokeSession - Exception", e)
+            Resource.ErrorOther("Ошибка: ${e.message}")
+        }
+    }
+
+    override suspend fun deleteAccount(): Resource<Boolean> {
+        return try {
+            val accessToken = getAccessToken()
+            if (accessToken == null) {
+                Napier.e("$LOG_TAG: deleteAccount - No access token")
+                return Resource.ErrorOther("Нет токена авторизации")
+            }
+
+            val response = networkClient.deleteAccount(accessToken)
+
+            when (response.resultCode) {
+                NO_CONNECTION -> Resource.ErrorNoInternet()
+                HTTP_SUCCESS -> {
+                    val wrapper = response as? DeleteAccountResponse
+                    val isSuccess = wrapper?.data?.isSuccess ?: false
+                    if (isSuccess) {
+                        // Очищаем токены и локальные данные после успешного удаления
+                        clearTokens()
+                    }
+                    Resource.Success(isSuccess)
+                }
+
+                HTTP_UNAUTHORIZED -> {
+                    // Интерсептор уже попытался обновить токен, если это 401 - значит refresh token тоже невалиден
+                    Napier.e("$LOG_TAG: deleteAccount - Unauthorized (refresh token invalid)")
+                    clearTokens()
+                    Resource.ErrorOther("Требуется авторизация")
+                }
+
+                HTTP_SERVER_ERROR -> {
+                    Napier.e("$LOG_TAG: deleteAccount - Server error")
+                    Resource.ErrorOther("Ошибка сервера")
+                }
+
+                else -> {
+                    Napier.e("$LOG_TAG: deleteAccount - Unknown error code: ${response.resultCode}")
+                    Resource.ErrorOther("Неизвестная ошибка")
+                }
+            }
+        } catch (e: Exception) {
+            Napier.e("$LOG_TAG: deleteAccount - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }

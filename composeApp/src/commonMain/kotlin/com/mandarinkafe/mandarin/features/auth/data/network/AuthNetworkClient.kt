@@ -21,4 +21,5 @@ interface AuthNetworkClient {
     suspend fun revokeSession(accessToken: String, request: RevokeSessionRequest): Response
     suspend fun logout(accessToken: String): Response
     suspend fun updateUserName(accessToken: String, request: UpdateNameRequest): Response
+    suspend fun deleteAccount(accessToken: String): Response
 }
