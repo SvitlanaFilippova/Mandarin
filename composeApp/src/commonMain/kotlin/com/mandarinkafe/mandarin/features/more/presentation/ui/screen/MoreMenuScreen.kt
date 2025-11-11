@@ -53,7 +53,11 @@ fun MoreMenuScreen(
             } else {
                 stringResource(MR.strings.login)
             },
-            iconRes = MR.images.ic_account_circle,
+            iconRes = if (isAuthorized) {
+                MR.images.ic_account_circle
+            } else {
+                MR.images.ic_login
+            },
             onClick = {
                 navController.navigateToAccountScreen()
             }
