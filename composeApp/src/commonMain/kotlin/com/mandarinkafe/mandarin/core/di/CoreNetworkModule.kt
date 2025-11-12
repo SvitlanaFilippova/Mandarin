@@ -138,13 +138,11 @@ val coreNetworkModule = module {
                 bearer {
                     loadTokens {
                         try {
-                            Napier.d("AUTH_INTERCEPTOR DEBUG: loadTokens called")
                             val accessToken = authProvider.getToken()
                             val tokens = BearerTokens(
                                 accessToken = accessToken,
                                 refreshToken = accessToken // Используем access token как refresh для совместимости
                             )
-                            Napier.d("AUTH_INTERCEPTOR DEBUG: Tokens loaded successfully")
                             tokens
                         } catch (e: Exception) {
                             Napier.e("AUTH_INTERCEPTOR ERROR: Failed to load tokens", e)
@@ -153,13 +151,11 @@ val coreNetworkModule = module {
                     }
                     refreshTokens {
                         try {
-                            Napier.d("AUTH_INTERCEPTOR DEBUG: refreshTokens called (401 received)")
                             val newAccessToken = authProvider.refreshToken()
                             val tokens = BearerTokens(
                                 accessToken = newAccessToken,
                                 refreshToken = newAccessToken // Используем новый access token
                             )
-                            Napier.d("AUTH_INTERCEPTOR SUCCESS: Tokens refreshed successfully")
                             tokens
                         } catch (e: Exception) {
                             Napier.e("AUTH_INTERCEPTOR ERROR: Failed to refresh tokens", e)

@@ -18,13 +18,13 @@ class AppLifecycleManager(
     private val authRepository: AuthRepository,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    
+
     fun onAppForegrounded() {
         scope.launch {
             try {
                 // Обновляем меню, если оно устарело
                 refreshMenuIfStaleUseCase()
-                
+
                 // Синхронизируем данные пользователя, если он авторизован
                 if (authRepository.isAuthorized()) {
                     syncUserDataUseCase()

@@ -57,7 +57,6 @@ fun OrderMealItemCard(
             .height(IntrinsicSize.Min)
             .clickable { onMealDetailsClick() }
     ) {
-
         // Изображение блюда
         KamelSubcomposeAsyncImage(
             modifier = Modifier

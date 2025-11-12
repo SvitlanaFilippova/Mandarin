@@ -47,13 +47,13 @@ class CartRemoteDataSourceImpl(
                 item.toDto() // Отправляем как есть, включая реальные updatedAt
             }
             val response = api.updateCart("$BEARER_TOKEN_TYPE $token", cartItemDtos)
-            
+
             // Проверяем, была ли ошибка на сервере
             if (response.resultCode != HTTP_SUCCESS) {
                 // При ошибке возвращаем локальную корзину, чтобы не потерять данные
                 return CartMetadata(localCart, 0L)
             }
-            
+
             // Получаем обновлённую корзину с updatedAt от сервера
             val items = response.items.mapNotNull { cartItemDto ->
                 cartItemDto.toStored(menuCache)

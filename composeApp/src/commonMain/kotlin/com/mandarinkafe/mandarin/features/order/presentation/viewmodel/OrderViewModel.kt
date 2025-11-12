@@ -156,7 +156,7 @@ class OrderViewModel(
 
             // Подписываемся на дальнейшие обновления (пропускаем первое, если уже загрузили)
             var previousPhone: String? = initialInfo?.phone?.formatPhoneNumberForDomain()
-            
+
             userInfoRepository.userInfo.collect { userInfo ->
                 if (isFirstLoad) {
                     isFirstLoad = false
@@ -166,7 +166,7 @@ class OrderViewModel(
                 userInfo?.let {
                     val newPhone = userInfo.phone.formatPhoneNumberForDomain()
                     val phoneChanged = previousPhone != newPhone
-                    
+
                     setState {
                         copy(
                             userInfo = this.userInfo.copy(
@@ -204,24 +204,7 @@ class OrderViewModel(
                 // Получаем access token
                 val accessToken = authRepository.getAccessToken()
                 if (accessToken != null) {
-                    val result = userInfoRepository.updateName(accessToken, enteredName)
-                    when (result) {
-                        is Resource.Success -> {
-                            Napier.d("OrderViewModel: Name updated successfully")
-                        }
-
-                        is Resource.ErrorNoInternet -> {
-                            Napier.w("OrderViewModel: No internet, name not updated")
-                        }
-
-                        is Resource.ErrorOther -> {
-                            Napier.e("OrderViewModel: Failed to update name: ${result.message}")
-                        }
-
-                        else -> {
-                            // Idle, Loading, ErrorEmptyData - не обрабатываем
-                        }
-                    }
+                    userInfoRepository.updateName(accessToken, enteredName)
                 } else {
                     Napier.w("OrderViewModel: No access token, can't update name")
                 }

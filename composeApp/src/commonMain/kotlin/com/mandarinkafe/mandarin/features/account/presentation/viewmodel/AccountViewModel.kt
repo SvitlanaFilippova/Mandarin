@@ -138,7 +138,6 @@ class AccountViewModel(
                 // Получаем access token
                 val accessToken = authRepository.getAccessToken()
                 if (accessToken != null) {
-                    Napier.d("AccountViewModel: Saving name to server: '$enteredName'")
                     val result = userInfoRepository.updateName(accessToken, enteredName)
                     when (result) {
                         is Resource.Success -> {
@@ -173,7 +172,6 @@ class AccountViewModel(
             val result = getActiveSessionsUseCase()
             when (result) {
                 is Resource.Success -> {
-                    Napier.d("AccountViewModel: Sessions loaded successfully: ${result.data?.size}")
                     setState {
                         copy(
                             sessions = result.data ?: emptyList(),

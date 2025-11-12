@@ -47,7 +47,7 @@ fun MainScreen() {
         val appLifecycleManager = rememberAppLifecycleManager()
         val sharedState by sharedViewModel.state.collectAsState()
         val snackbarHostState = remember { SnackbarHostState() }
-        
+
         // Обработчик lifecycle для обновления меню и синхронизации данных при возврате из фона
         AppLifecycleHandler(appLifecycleManager)
 
