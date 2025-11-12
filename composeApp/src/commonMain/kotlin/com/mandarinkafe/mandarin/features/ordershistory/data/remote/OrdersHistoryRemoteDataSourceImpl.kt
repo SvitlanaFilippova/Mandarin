@@ -15,10 +15,14 @@ class OrdersHistoryRemoteDataSourceImpl(
     private val authRepository: AuthRepository,
 ) : OrdersHistoryRemoteDataSource {
 
+    private companion object {
+        fun buildAuthToken(token: String) = "$BEARER_TOKEN_TYPE $token"
+    }
+
     override suspend fun getOrders(): List<SavedOrder> {
         val token = authRepository.getAccessToken() ?: return emptyList()
         return try {
-            val response = api.getOrdersHistory("$BEARER_TOKEN_TYPE $token")
+            val response = api.getOrdersHistory(buildAuthToken(token))
             response.data?.map { orderDto ->
                 orderDto.toDomain()
             } ?: emptyList()
@@ -37,7 +41,7 @@ class OrdersHistoryRemoteDataSourceImpl(
         try {
             val orderDto = order.toDto()
             val request = OrdersHistoryUpdateRequest(data = orderDto)
-            val response = api.createOrUpdateOrder("$BEARER_TOKEN_TYPE $token", request)
+            val response = api.createOrUpdateOrder(buildAuthToken(token), request)
             if (response.resultCode != HTTP_SUCCESS) {
                 Napier.e("SAVE_ORDER ERROR: Server error, resultCode: ${response.resultCode}, orderId=${order.id}")
             }
@@ -49,7 +53,7 @@ class OrdersHistoryRemoteDataSourceImpl(
     override suspend fun removeOrderById(id: String) {
         val token = authRepository.getAccessToken() ?: return
         try {
-            api.deleteOrder("$BEARER_TOKEN_TYPE $token", id)
+            api.deleteOrder(buildAuthToken(token), id)
         } catch (e: Exception) {
             Napier.e("OrdersHistoryRemoteDataSource, removeOrderById error: $e")
         }

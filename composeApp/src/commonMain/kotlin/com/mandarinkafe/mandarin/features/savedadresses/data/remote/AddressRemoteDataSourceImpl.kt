@@ -14,10 +14,14 @@ class AddressRemoteDataSourceImpl(
     private val authRepository: AuthRepository,
 ) : AddressRemoteDataSource {
 
+    private companion object {
+        fun buildAuthToken(token: String) = "$BEARER_TOKEN_TYPE $token"
+    }
+
     override suspend fun getAddresses(): List<Address> {
         val token = authRepository.getAccessToken() ?: return emptyList()
         return try {
-            val response = api.getAddresses("$BEARER_TOKEN_TYPE $token")
+            val response = api.getAddresses(buildAuthToken(token))
             response.data?.map { addressDto ->
                 addressDto.toDomain()
             } ?: emptyList()
@@ -32,7 +36,7 @@ class AddressRemoteDataSourceImpl(
         try {
             val addressDto = address.toDto()
             val request = AddressUpdateRequest(data = addressDto)
-            api.createOrUpdateAddress("$BEARER_TOKEN_TYPE $token", request)
+            api.createOrUpdateAddress(buildAuthToken(token), request)
         } catch (e: Exception) {
             Napier.e("AddressRemoteDataSource, saveAddress error: $e")
         }
@@ -41,7 +45,7 @@ class AddressRemoteDataSourceImpl(
     override suspend fun removeAddress(id: String) {
         val token = authRepository.getAccessToken() ?: return
         try {
-            api.deleteAddress("$BEARER_TOKEN_TYPE $token", id)
+            api.deleteAddress(buildAuthToken(token), id)
         } catch (e: Exception) {
             Napier.e("AddressRemoteDataSource, removeAddress error: $e")
         }

@@ -24,9 +24,10 @@ import io.ktor.http.HttpStatusCode
 class CartServerApi(private val client: HttpClient) {
     private val key = BuildKonfig.MANDARIN_API_KEY
 
+
     suspend fun getCart(token: String): CartResponse {
         return try {
-            val httpResponse = client.get("/cart") {
+            val httpResponse = client.get(CART_ENDPOINT) {
                 header(HEADER_API_KEY, key)
                 header(HEADER_AUTHORIZATION, token)
             }
@@ -42,7 +43,6 @@ class CartServerApi(private val client: HttpClient) {
                 }
 
                 else -> {
-                    Napier.e("$LOG_TAG.getCart: HTTP error ${httpResponse.status.value}")
                     CartResponse().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
@@ -55,7 +55,7 @@ class CartServerApi(private val client: HttpClient) {
     suspend fun updateCart(token: String, items: List<CartItemDto>): CartResponse {
         return try {
             val request = CartRequest(items, lastUpdated = 0L)
-            val httpResponse = client.post("/cart") {
+            val httpResponse = client.post(CART_ENDPOINT) {
                 header(HEADER_API_KEY, key)
                 header(HEADER_AUTHORIZATION, token)
                 setBody(request)
@@ -72,22 +72,20 @@ class CartServerApi(private val client: HttpClient) {
                 }
 
                 HttpStatusCode.UnprocessableEntity -> {
-                    val errorBody = try {
+                    try {
                         httpResponse.bodyAsText()
                     } catch (e: Exception) {
                         "$ERROR_BODY_READ_FAILED${e.message}"
                     }
-                    Napier.e("$LOG_TAG.updateCart: HTTP 422 (Unprocessable Entity), тело ответа: $errorBody")
                     CartResponse().apply { resultCode = HttpStatusCode.UnprocessableEntity.value }
                 }
 
                 else -> {
-                    val errorBody = try {
+                    try {
                         httpResponse.bodyAsText()
                     } catch (e: Exception) {
                         "$ERROR_BODY_READ_FAILED${e.message}"
                     }
-                    Napier.e("$LOG_TAG.updateCart: HTTP error ${httpResponse.status.value}, тело ответа: $errorBody")
                     CartResponse().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }
@@ -99,7 +97,7 @@ class CartServerApi(private val client: HttpClient) {
 
     suspend fun clearCart(token: String): Response {
         return try {
-            val httpResponse = client.delete("/cart") {
+            val httpResponse = client.delete(CART_ENDPOINT) {
                 header(HEADER_API_KEY, key)
                 header(HEADER_AUTHORIZATION, token)
             }
@@ -125,6 +123,7 @@ class CartServerApi(private val client: HttpClient) {
     }
 
     private companion object {
+        const val CART_ENDPOINT = "/cart"
         const val LOG_TAG = "CartServerApi"
     }
 }

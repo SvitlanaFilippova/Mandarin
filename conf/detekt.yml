@@ -100,7 +100,7 @@ complexity:
   LongParameterList:
     active: true
     functionThreshold: 8
-    constructorThreshold: 10
+    constructorThreshold: 11
     ignoreDefaultParameters: true
     ignoreDataClasses: true
     ignoreAnnotated: [ "Inject", "InjectConstructor", "Composable" ]

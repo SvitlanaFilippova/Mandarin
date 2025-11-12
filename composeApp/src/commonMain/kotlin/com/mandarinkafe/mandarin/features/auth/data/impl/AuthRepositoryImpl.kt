@@ -43,6 +43,11 @@ class AuthRepositoryImpl(
         const val HTTP_UNAUTHORIZED = 401
         private const val LOG_TAG = "AuthRepository"
         private const val TOKEN_REFRESH_TAG = "TOKEN REFRESH"
+        private const val ERROR_NO_AUTH_TOKEN = "Нет токена авторизации"
+        private const val ERROR_SERVER = "Ошибка сервера"
+        private const val ERROR_UNKNOWN = "Неизвестная ошибка"
+        private const val ERROR_AUTH_REQUIRED = "Требуется авторизация"
+        private fun buildErrorMessage(exception: Exception) = "Ошибка: ${exception.message}"
     }
 
     init {
@@ -257,7 +262,7 @@ class AuthRepositoryImpl(
             val accessToken = getAccessToken()
             if (accessToken == null) {
                 Napier.e("$LOG_TAG: getActiveSessions - No access token")
-                return Resource.ErrorOther("Нет токена авторизации")
+                return Resource.ErrorOther(ERROR_NO_AUTH_TOKEN)
             }
 
             val response = networkClient.getActiveSessions(accessToken)
@@ -280,22 +285,22 @@ class AuthRepositoryImpl(
                     // Интерсептор уже попытался обновить токен, если это 401 - значит refresh token тоже невалиден
                     Napier.e("$LOG_TAG: getActiveSessions - Unauthorized (refresh token invalid)")
                     clearTokens()
-                    Resource.ErrorOther("Требуется авторизация")
+                    Resource.ErrorOther(ERROR_AUTH_REQUIRED)
                 }
 
                 HTTP_SERVER_ERROR -> {
                     Napier.e("$LOG_TAG: getActiveSessions - Server error")
-                    Resource.ErrorOther("Ошибка сервера")
+                    Resource.ErrorOther(ERROR_SERVER)
                 }
 
                 else -> {
                     Napier.e("$LOG_TAG: getActiveSessions - Unknown error code: ${response.resultCode}")
-                    Resource.ErrorOther("Неизвестная ошибка")
+                    Resource.ErrorOther(ERROR_UNKNOWN)
                 }
             }
         } catch (e: Exception) {
             Napier.e("$LOG_TAG: getActiveSessions - Exception", e)
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther(buildErrorMessage(e))
         }
     }
 
@@ -304,7 +309,7 @@ class AuthRepositoryImpl(
             val accessToken = getAccessToken()
             if (accessToken == null) {
                 Napier.e("$LOG_TAG: revokeSession - No access token")
-                return Resource.ErrorOther("Нет токена авторизации")
+                return Resource.ErrorOther(ERROR_NO_AUTH_TOKEN)
             }
 
             val response = networkClient.revokeSession(accessToken, RevokeSessionRequest(sessionId))
@@ -320,22 +325,22 @@ class AuthRepositoryImpl(
                     // Интерсептор уже попытался обновить токен, если это 401 - значит refresh token тоже невалиден
                     Napier.e("$LOG_TAG: revokeSession - Unauthorized (refresh token invalid)")
                     clearTokens()
-                    Resource.ErrorOther("Требуется авторизация")
+                    Resource.ErrorOther(ERROR_AUTH_REQUIRED)
                 }
 
                 HTTP_SERVER_ERROR -> {
                     Napier.e("$LOG_TAG: revokeSession - Server error")
-                    Resource.ErrorOther("Ошибка сервера")
+                    Resource.ErrorOther(ERROR_SERVER)
                 }
 
                 else -> {
                     Napier.e("$LOG_TAG: revokeSession - Unknown error code: ${response.resultCode}")
-                    Resource.ErrorOther("Неизвестная ошибка")
+                    Resource.ErrorOther(ERROR_UNKNOWN)
                 }
             }
         } catch (e: Exception) {
             Napier.e("$LOG_TAG: revokeSession - Exception", e)
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther(buildErrorMessage(e))
         }
     }
 
@@ -344,7 +349,7 @@ class AuthRepositoryImpl(
             val accessToken = getAccessToken()
             if (accessToken == null) {
                 Napier.e("$LOG_TAG: deleteAccount - No access token")
-                return Resource.ErrorOther("Нет токена авторизации")
+                return Resource.ErrorOther(ERROR_NO_AUTH_TOKEN)
             }
 
             val response = networkClient.deleteAccount(accessToken)
@@ -365,22 +370,22 @@ class AuthRepositoryImpl(
                     // Интерсептор уже попытался обновить токен, если это 401 - значит refresh token тоже невалиден
                     Napier.e("$LOG_TAG: deleteAccount - Unauthorized (refresh token invalid)")
                     clearTokens()
-                    Resource.ErrorOther("Требуется авторизация")
+                    Resource.ErrorOther(ERROR_AUTH_REQUIRED)
                 }
 
                 HTTP_SERVER_ERROR -> {
                     Napier.e("$LOG_TAG: deleteAccount - Server error")
-                    Resource.ErrorOther("Ошибка сервера")
+                    Resource.ErrorOther(ERROR_SERVER)
                 }
 
                 else -> {
                     Napier.e("$LOG_TAG: deleteAccount - Unknown error code: ${response.resultCode}")
-                    Resource.ErrorOther("Неизвестная ошибка")
+                    Resource.ErrorOther(ERROR_UNKNOWN)
                 }
             }
         } catch (e: Exception) {
             Napier.e("$LOG_TAG: deleteAccount - Exception", e)
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther(buildErrorMessage(e))
         }
     }
 }

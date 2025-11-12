@@ -17,13 +17,17 @@ class CartRemoteDataSourceImpl(
     private val menuCache: MenuCache,
 ) : CartRemoteDataSource {
 
+    private companion object {
+        fun buildAuthToken(token: String) = "$BEARER_TOKEN_TYPE $token"
+    }
+
     override suspend fun getCart(): CartMetadata {
         val token = authRepository.getAccessToken()
         if (token == null) {
             return CartMetadata(emptyList(), 0L)
         }
         return try {
-            val response = api.getCart("$BEARER_TOKEN_TYPE $token")
+            val response = api.getCart(buildAuthToken(token))
             val items = response.items.mapNotNull { cartItemDto ->
                 cartItemDto.toStored(menuCache)
             }
@@ -46,7 +50,7 @@ class CartRemoteDataSourceImpl(
             val cartItemDtos = localCart.map { item ->
                 item.toDto() // Отправляем как есть, включая реальные updatedAt
             }
-            val response = api.updateCart("$BEARER_TOKEN_TYPE $token", cartItemDtos)
+            val response = api.updateCart(buildAuthToken(token), cartItemDtos)
 
             // Проверяем, была ли ошибка на сервере
             if (response.resultCode != HTTP_SUCCESS) {
@@ -71,7 +75,7 @@ class CartRemoteDataSourceImpl(
             return
         }
         try {
-            api.clearCart("$BEARER_TOKEN_TYPE $token")
+            api.clearCart(buildAuthToken(token))
         } catch (e: Exception) {
             Napier.e("Ошибка при очистке корзины на сервере", e)
         }
