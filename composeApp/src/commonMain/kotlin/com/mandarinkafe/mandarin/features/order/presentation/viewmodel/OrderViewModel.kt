@@ -147,13 +147,16 @@ class OrderViewModel(
                         savedNameIsEmpty = initialInfo.name.trim().isEmpty(),
                     )
                 }
-                checkDiscount(initialInfo.phone)
+
+                checkDiscount(initialInfo.phone.formatPhoneNumberForDomain())
                 isFirstLoad = false
             } else {
                 Napier.w("OrderViewModel: Timeout waiting for user info")
             }
 
             // Подписываемся на дальнейшие обновления (пропускаем первое, если уже загрузили)
+            var previousPhone: String? = initialInfo?.phone?.formatPhoneNumberForDomain()
+            
             userInfoRepository.userInfo.collect { userInfo ->
                 if (isFirstLoad) {
                     isFirstLoad = false
@@ -161,15 +164,25 @@ class OrderViewModel(
                 }
 
                 userInfo?.let {
+                    val newPhone = userInfo.phone.formatPhoneNumberForDomain()
+                    val phoneChanged = previousPhone != newPhone
+                    
                     setState {
                         copy(
                             userInfo = this.userInfo.copy(
                                 name = userInfo.name,
-                                phone = userInfo.phone.formatPhoneNumberForDomain(),
+                                phone = newPhone,
                             ),
                             savedNameIsEmpty = userInfo.name.trim().isEmpty(),
                         )
                     }
+
+                    // Пересчитываем скидку при изменении телефона
+                    if (phoneChanged) {
+                        checkDiscount(newPhone)
+                    }
+
+                    previousPhone = newPhone
                 }
             }
         }
@@ -184,7 +197,7 @@ class OrderViewModel(
             val hasValidUserInfo = currentUserInfo != null
             val hasValidEnteredName = enteredName.isNotBlank()
             val isNameEmptyOrChanged = hasValidUserInfo &&
-                (currentUserInfo.name.isBlank() || currentUserInfo.name != enteredName)
+                    (currentUserInfo.name.isBlank() || currentUserInfo.name != enteredName)
             val shouldUpdateName = hasValidUserInfo && hasValidEnteredName && isNameEmptyOrChanged
 
             if (shouldUpdateName) {
@@ -207,14 +220,14 @@ class OrderViewModel(
 
                         else -> {
                             // Idle, Loading, ErrorEmptyData - не обрабатываем
-                            }
                         }
-                    } else {
-                        Napier.w("OrderViewModel: No access token, can't update name")
                     }
+                } else {
+                    Napier.w("OrderViewModel: No access token, can't update name")
                 }
             }
         }
+    }
 
     private fun selectAddressById(id: String) {
         viewModelScope.launch {
@@ -388,21 +401,20 @@ class OrderViewModel(
     }
 
     private fun checkDiscount(phone: String) {
-        // TODO временно закоментировано, до решения ошибки с дублированием скидки
-//        viewModelScope.launch {
-//            val discount = applyPhoneDiscount(phone, state.value.cartSummary.discountPercent)
-//            if (discount.shouldUpdate) {
-//                setState {
-//                    copy(
-//                        cartSummary = cartSummary.copy(
-//                            discountPercent = discount.discountSize,
-//                            discountId = discount.discountId
-//                        )
-//                    )
-//                }
-//                recalculateCartSummary(discount.discountSize)
-//            }
-//        }
+        viewModelScope.launch {
+            val discount = applyPhoneDiscount(phone, state.value.cartSummary.discountPercent)
+            if (discount.shouldUpdate) {
+                setState {
+                    copy(
+                        cartSummary = cartSummary.copy(
+                            discountPercent = discount.discountSize,
+                            discountId = discount.discountId
+                        )
+                    )
+                }
+                recalculateCartSummary(discount.discountSize)
+            }
+        }
     }
 
     private fun showMissingRequiredInfo() {
