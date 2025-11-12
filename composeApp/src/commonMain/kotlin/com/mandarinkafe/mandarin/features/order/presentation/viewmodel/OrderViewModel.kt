@@ -237,7 +237,7 @@ class OrderViewModel(
             // Если адрес не найден, обновляем список адресов и повторяем попытку
             if (address == null) {
                 // Обновляем адреса и ждем завершения
-                val addressList = addressUseCases.getSavedAddressesUseCase().reversed()
+                val addressList = addressUseCases.getSavedAddressesUseCase()
                 setState {
                     val newDeliveryInfo = deliveryInfo.copy(
                         savedAddresses = addressList
@@ -303,7 +303,7 @@ class OrderViewModel(
 
     private fun getSavedAddresses() {
         viewModelScope.launch {
-            val addressList = addressUseCases.getSavedAddressesUseCase().reversed()
+            val addressList = addressUseCases.getSavedAddressesUseCase()
             setState {
                 val newDeliveryInfo = deliveryInfo.copy(
                     savedAddresses = addressList

@@ -14,6 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -51,6 +53,7 @@ fun OrderItemsSection(
                 Spacer(Modifier.height(Dimens.MarginSmall8))
             }
 
+
             discountName?.let {
                 Row(
                     Modifier.fillMaxWidth(),
@@ -60,8 +63,12 @@ fun OrderItemsSection(
                     Label(
                         text = stringResource(MR.strings.discount_applied),
                     )
-                    Label(
+
+                    Text(
+                        modifier = Modifier.padding(start = Dimens.MarginSmall8),
+                        textAlign = TextAlign.Center,
                         text = discountName,
+                        style = Typography.RegularLightTextStyle.copy(color = Color.Gray)
                     )
                 }
             }

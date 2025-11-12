@@ -32,7 +32,7 @@ class SavedAddressesViewModel(
 
     private fun getSavedAddresses() {
         viewModelScope.launch {
-            val addressList = getSavedAddressesUseCase().reversed()
+            val addressList = getSavedAddressesUseCase()
             setState {
                 copy(data = addressList)
             }
