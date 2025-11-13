@@ -8,25 +8,32 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.MR
-import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
+import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
-fun OrderInfoSection(order: IncomingOrder) {
+fun PaymentInfoSection(paymentStatus: PaymentStatus?, isPaymentPaid: Boolean?) {
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Column(
             Modifier.padding(Dimens.MarginStandard16),
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
         ) {
-            order.errorInfo?.let {
-                LabelValue(stringResource(MR.strings.label_error), it.message.toString())
-            }
-            order.orderType?.let {
-                LabelValue(stringResource(MR.strings.label_order_type), it.name)
+            LabelValue(
+                stringResource(MR.strings.label_payment_status),
+                paymentStatus?.name ?: "Неизвестен"
+            )
+
+
+            if (isPaymentPaid != true) {
+                ButtonWithText(
+                    text = stringResource(MR.strings.submit_order_online),
+                    onClick = {} // TODO кидать снова на оплату
+                )
             }
         }
+
     }
 }
-

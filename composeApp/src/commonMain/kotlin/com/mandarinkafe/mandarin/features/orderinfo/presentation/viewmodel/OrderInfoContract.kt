@@ -3,6 +3,9 @@ package com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.toUi
+import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
+import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.BaseContract
 
 sealed interface OrderInfoContract {
@@ -24,8 +27,9 @@ sealed interface OrderInfoContract {
         val orderId: String? = null,
         val isLoading: Boolean = true,
         val incomingOrder: IncomingOrder? = null,
+        val savedOrder: SavedOrder? = null,
         val orderRepeatingInProgress: Boolean = false,
-        val paymentStatus: com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus? = null,
+        val paymentStatus: PaymentStatus? = null,
         val isPaymentPaid: Boolean? = null,
     ) : BaseContract.BaseState {
 
@@ -33,10 +37,16 @@ sealed interface OrderInfoContract {
             get() = incomingOrder?.status?.toUi() ?: UiDeliveryStatus.UNCONFIRMED
         
         val isOnlinePayment: Boolean
-            get() = incomingOrder?.paymentName?.equals(
-                com.mandarinkafe.mandarin.util.Constants.PAYMENT_ONLINE_CODE,
-                ignoreCase = true
-            ) == true
+            get() {
+                // Сначала проверяем paymentMethodCode из SavedOrder (если есть)
+                val paymentCode = savedOrder?.paymentMethodCode
+                    ?: incomingOrder?.paymentName // Fallback на paymentName из iiko
+                
+                return paymentCode?.equals(
+                    Constants.PAYMENT_ONLINE_CODE,
+                    ignoreCase = true
+                ) == true
+            }
     }
 }
 

@@ -7,3 +7,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OrdersHistoryResponse(val data: List<SavedOrderDto>? = null) : Response()
 
+@Serializable
+data class OrderHistoryItemResponse(val data: SavedOrderDto? = null) : Response()
+

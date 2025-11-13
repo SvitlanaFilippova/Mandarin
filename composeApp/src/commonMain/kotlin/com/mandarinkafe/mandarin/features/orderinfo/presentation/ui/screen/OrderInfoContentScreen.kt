@@ -26,12 +26,14 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.O
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderItemsSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderStatusSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderTimesSection
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.PaymentInfoSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickToCopyText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
 import dev.icerock.moko.resources.compose.stringResource
+import io.github.aakira.napier.Napier
 
 @Composable
 fun OrderInfoContentScreen(
@@ -46,6 +48,9 @@ fun OrderInfoContentScreen(
 ) {
     if (order == null) return
     var showCancelDialog by remember { mutableStateOf(false) }
+
+    Napier.d("PaymentFlow: [OrderInfoContentScreen]: orderPaymentType: ${order.paymentName}")
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -66,6 +71,15 @@ fun OrderInfoContentScreen(
                     discountName = order.discountReason,
                     onOpenMealDetails = onOpenMealDetails,
                     showNoLongerInMenuMessage = showNoLongerInMenuMessage,
+                )
+            }
+        }
+
+        if (state.isOnlinePayment) {
+            item {
+                PaymentInfoSection(
+                    paymentStatus = state.paymentStatus,
+                    isPaymentPaid = state.isPaymentPaid
                 )
             }
         }

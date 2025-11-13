@@ -32,6 +32,22 @@ class OrdersHistoryRemoteDataSourceImpl(
         }
     }
 
+    override suspend fun getOrderById(id: String): SavedOrder? {
+        val token = authRepository.getAccessToken() ?: return null
+        return try {
+            val response = api.getOrderById(buildAuthToken(token), id)
+            if (response.resultCode == HTTP_SUCCESS) {
+                response.data?.toDomain()
+            } else {
+                Napier.e("OrdersHistoryRemoteDataSource, getOrderById error: resultCode=${response.resultCode}, orderId=$id")
+                null
+            }
+        } catch (e: Exception) {
+            Napier.e("OrdersHistoryRemoteDataSource, getOrderById error: $e")
+            null
+        }
+    }
+
     override suspend fun saveOrder(order: SavedOrder) {
         val token = authRepository.getAccessToken()
         if (token == null) {

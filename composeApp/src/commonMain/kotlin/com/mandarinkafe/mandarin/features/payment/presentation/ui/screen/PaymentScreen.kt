@@ -90,7 +90,7 @@ fun PaymentScreen(
                 }
 
                 is PaymentEffect.PaymentCanceled -> {
-                    navController.popBackStack()
+                    // TODO
                 }
             }
         }

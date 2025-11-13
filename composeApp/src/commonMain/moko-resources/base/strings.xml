@@ -312,6 +312,7 @@
     </string>
     <string name="label_error">Ошибка</string>
     <string name="label_order_type">Способ получения</string>
+    <string name="label_payment_status">Статус оплаты</string>
     <string name="label_order_items">Позиции заказа: %1$d</string>
     <string name="discount_applied">Применена скидка</string>
     <string name="label_total">Итого</string>

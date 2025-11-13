@@ -10,6 +10,10 @@ class OrdersHistoryInteractorImpl(private val repository: OrdersHistoryRepositor
         return repository.getOrders()
     }
 
+    override suspend fun getOrderById(id: String): SavedOrder? {
+        return repository.getOrderById(id)
+    }
+
     override suspend fun removeOrderById(id: String) {
         repository.removeOrderById(id)
     }

@@ -13,6 +13,7 @@ data class SavedOrder(
     val addressDetails: String = "",
     val mealNames: String = "",
     val status: DeliveryStatus? = null,
+    val paymentMethodCode: String? = null, // Код способа оплаты ("CARD", "CASH", "BANK")
 ) {
     val isActive: Boolean
         get() = status != DeliveryStatus.CANCELLED && status != DeliveryStatus.CLOSED
