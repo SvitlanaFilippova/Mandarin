@@ -7,6 +7,12 @@ import dev.icerock.moko.resources.StringResource
 sealed interface PaymentContract {
 
     sealed interface PaymentEvent : BaseContract.BaseEvent {
+        data class SetInitData(
+            val orderId: String,
+            val amount: Double,
+            val userPhone: String,
+        ) : PaymentEvent
+
         data object InitPayment : PaymentEvent
         data object RetryPayment : PaymentEvent
         data object CancelPayment : PaymentEvent
@@ -21,8 +27,9 @@ sealed interface PaymentContract {
     }
 
     data class PaymentState(
-        val orderId: String,
-        val amount: Double,
+        val orderId: String = "",
+        val amount: Double = 0.0,
+        val userPhone: String = "",
         val isLoading: Boolean = false,
         val paymentStatus: PaymentStatus? = null,
         val error: StringResource? = null,

@@ -6,15 +6,15 @@ import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 
 fun PaymentStatusResponse.toDomain(): PaymentInfo {
     return PaymentInfo(
-        paymentId = payment_id,
-        orderId = order_id ?: "",
+        paymentId = paymentId,
+        orderId = orderId ?: "",
         status = PaymentStatus.fromString(status),
         paid = paid ?: false,
-        amountValue = amount_value,
-        amountCurrency = amount_currency,
+        amountValue = amountValue,
+        amountCurrency = amountCurrency,
         description = description,
-        createdAt = created_at,
-        updatedAt = updated_at
+        createdAt = createdAt,
+        updatedAt = updatedAt
     )
 }
 

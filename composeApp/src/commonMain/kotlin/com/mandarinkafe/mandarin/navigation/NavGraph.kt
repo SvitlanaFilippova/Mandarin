@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,9 +27,9 @@ import com.mandarinkafe.mandarin.features.payment.presentation.ui.screen.Payment
 import com.mandarinkafe.mandarin.features.savedadresses.presentation.ui.screen.SavedAddressesScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberCartViewModel
-import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberPaymentViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberSharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
+import io.github.aakira.napier.Napier
 import io.ktor.http.decodeURLPart
 import kotlinx.serialization.json.Json
 
@@ -263,7 +264,8 @@ fun NavGraph(navController: NavHostController) {
         composable(
             route = "${NavConstants.PAYMENT_SCREEN_ROUTE}?" +
                     "${NavConstants.KEY_ORDER_ID}={${NavConstants.KEY_ORDER_ID}}&" +
-                    "${NavConstants.KEY_AMOUNT}={${NavConstants.KEY_AMOUNT}}"
+                    "${NavConstants.KEY_AMOUNT}={${NavConstants.KEY_AMOUNT}}&" +
+                    "${NavConstants.KEY_USER_PHONE}={${NavConstants.KEY_USER_PHONE}}"
         ) { backStackEntry ->
             val orderId =
                 backStackEntry.getStringArgument(NavConstants.KEY_ORDER_ID)?.decodeURLPart() ?: ""
@@ -271,13 +273,25 @@ fun NavGraph(navController: NavHostController) {
                 NavConstants.KEY_AMOUNT,
                 defaultValue = 0.0
             )
+            val userPhone =
+                backStackEntry.getStringArgument(NavConstants.KEY_USER_PHONE)?.decodeURLPart() ?: ""
+            Napier.d("PaymentFlow: [NavGraph] PaymentScreen route - orderId=$orderId, amount=$amount, userPhone=$userPhone")
 
-            if (orderId.isNotEmpty()) {
-                val paymentViewModel = rememberPaymentViewModel(orderId, amount)
+            if (orderId.isNotEmpty() && userPhone.isNotEmpty()) {
+
                 PaymentScreen(
                     navController = navController,
-                    viewModel = paymentViewModel
+                    orderId = orderId,
+                    amount = amount,
+                    userPhone = userPhone
                 )
+
+            } else {
+                Napier.e("PaymentFlow: [NavGraph] PaymentScreen - missing parameters! orderId.isEmpty=${orderId.isEmpty()}, userPhone.isEmpty=${userPhone.isEmpty()}")
+                // Показываем ошибку или возвращаемся назад
+                LaunchedEffect(Unit) {
+                    navController.popBackStack()
+                }
             }
         }
     }

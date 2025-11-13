@@ -9,10 +9,11 @@ expect class YooKassaPaymentService {
      * Инициализация платежа и получение payment_token
      */
     suspend fun initializePayment(
-        amount: Float,
-        orderId: String
+        amount: Double,
+        orderId: String,
+        userPhone: String,
     ): PaymentResult
-    
+
     /**
      * Открытие confirmation_url для оплаты через SDK
      * @param confirmationUrl URL для подтверждения платежа
@@ -25,6 +26,6 @@ data class PaymentResult(
     val success: Boolean,
     val paymentToken: String? = null,  // Одноразовый токен от SDK (действителен 1 час)
     val paymentId: String? = null,
-    val error: String? = null
+    val error: String? = null,
 )
 

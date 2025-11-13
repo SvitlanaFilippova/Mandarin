@@ -179,6 +179,18 @@ fun String.formatPhoneNumberForUi(): String {
             "$PHONE_SEPARATOR$secondPart$PHONE_SEPARATOR$thirdPart"
 }
 
+/**
+ * Форматирует номер телефона для использования в доменных API (без префикса +7).
+ * 
+ * Принимает номер в различных форматах:
+ * - 10 цифр: "9299964288" → "9299964288"
+ * - 11 цифр с префиксом 8: "89991234567" → "9991234567"
+ * - 11 цифр с префиксом 7: "79991234567" → "9991234567"
+ * - С префиксом +7: "+79991234567" → "9991234567"
+ * 
+ * @return Номер телефона в формате "XXXXXXXXXX" (10 цифр без префикса +7)
+ *         Если номер не может быть нормализован до 10 цифр, возвращает исходную строку
+ */
 fun String.formatPhoneNumberForDomain(): String {
     val rawPhone = this
     val digitsOnly = rawPhone.filter { it.isDigit() }
@@ -189,6 +201,52 @@ fun String.formatPhoneNumberForDomain(): String {
     }
     val phone = normalized.take(VALID_PHONE_LENGTH)
     return phone
+}
+
+/**
+ * Форматирует номер телефона для использования в внешних SDK (например, YooKassa SDK).
+ * 
+ * Принимает номер в различных форматах:
+ * - 10 цифр: "9299964288" → "+79299964288"
+ * - 11 цифр с префиксом 8: "89991234567" → "+79991234567"
+ * - 11 цифр с префиксом 7: "79991234567" → "+79991234567"
+ * - С префиксом +7: "+79991234567" → "+79991234567"
+ * 
+ * @return Номер телефона в международном формате "+7XXXXXXXXXX" (12 символов: +7 + 10 цифр)
+ *         Если номер не может быть нормализован до 10 цифр, возвращает исходную строку
+ */
+fun String.formatPhoneNumberForSdk(): String {
+    val rawPhone = this
+    // Оставляем только цифры (убираем все символы кроме цифр, включая +, пробелы, скобки и т.д.)
+    val digitsOnly = rawPhone.filter { it.isDigit() }
+    
+    // Нормализуем: убираем префиксы 7 или 8, если номер 11 цифр
+    val normalized = when {
+        digitsOnly.length == PHONE_LENGTH_WITH_PREFIX && digitsOnly.startsWith(PHONE_PREFIX_7) -> {
+            // Номер начинается с 7 (например, 79991234567) -> убираем 7
+            digitsOnly.drop(1)
+        }
+        digitsOnly.length == PHONE_LENGTH_WITH_PREFIX && digitsOnly.startsWith(PHONE_PREFIX_8) -> {
+            // Номер начинается с 8 (например, 89991234567) -> убираем 8
+            digitsOnly.drop(1)
+        }
+        digitsOnly.length == VALID_PHONE_LENGTH -> {
+            // Номер уже 10 цифр без префикса
+            digitsOnly
+        }
+        else -> {
+            // Некорректная длина, возвращаем как есть
+            return this
+        }
+    }
+    
+    // Проверяем, что после нормализации осталось 10 цифр
+    if (normalized.length != VALID_PHONE_LENGTH) {
+        return this
+    }
+    
+    // Возвращаем в формате +7XXXXXXXXXX
+    return "$PHONE_PREFIX_RU$normalized"
 }
 
 private const val PHONE_PREFIX_RU = "+7"

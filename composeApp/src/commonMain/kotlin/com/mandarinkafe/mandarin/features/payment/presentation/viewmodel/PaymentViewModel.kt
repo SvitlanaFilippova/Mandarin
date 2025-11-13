@@ -26,18 +26,12 @@ class PaymentViewModel(
     private val createPaymentUseCase: CreatePaymentUseCase,
     private val getPaymentStatusUseCase: GetPaymentStatusUseCase,
     private val cancelPaymentUseCase: CancelPaymentUseCase,
-    private val orderId: String,
-    private val amount: Double,
 ) : BaseViewModel<PaymentEvent, PaymentEffect, PaymentState>() {
 
     private var pollingJob: Job? = null
     private val maxPollingDuration = 60.seconds
 
-    override fun setInitialState() =
-        PaymentState(
-            orderId = orderId,
-            amount = amount
-        )
+    override fun setInitialState() = PaymentState()
 
 
     override fun onEvent(event: PaymentEvent) {
@@ -46,7 +40,12 @@ class PaymentViewModel(
             is PaymentEvent.RetryPayment -> retryPayment()
             is PaymentEvent.CancelPayment -> cancelPayment()
             is PaymentEvent.DismissError -> dismissError()
+            is PaymentEvent.SetInitData -> setInitData(event.orderId, event.amount, event.userPhone)
         }
+    }
+
+    private fun setInitData(orderId: String, amount: Double, userPhone: String) {
+        setState { copy(orderId = orderId, amount = amount, userPhone = userPhone) }
     }
 
     override fun setLoading(isLoading: Boolean) {
@@ -55,16 +54,28 @@ class PaymentViewModel(
 
     private fun initPayment() {
         viewModelScope.launch {
+            Napier.d("PaymentFlow: [ViewModel] initPayment started - orderId=${state.value.orderId}, amount=${state.value.amount}")
             setLoading(true)
             setState { copy(error = null) }
 
             // 1. Инициализация SDK и получение payment_token
+            Napier.d("PaymentFlow: [ViewModel] Calling yooKassaService.initializePayment...")
             val sdkResult = yooKassaService.initializePayment(
-                amount = state.value.amount.toFloat(),
-                orderId = state.value.orderId
+                amount = state.value.amount,
+                orderId = state.value.orderId,
+                userPhone = state.value.userPhone
+            )
+
+            Napier.d(
+                "PaymentFlow: [ViewModel] SDK result - success=${sdkResult.success}, paymentToken=${
+                    sdkResult.paymentToken?.take(
+                        20
+                    )
+                }..., error=${sdkResult.error}"
             )
 
             if (!sdkResult.success || sdkResult.paymentToken == null) {
+                Napier.e("PaymentFlow: [ViewModel] SDK initialization failed - success=${sdkResult.success}, error=${sdkResult.error}")
                 setLoading(false)
                 setState {
                     copy(
@@ -79,6 +90,7 @@ class PaymentViewModel(
             val paymentToken = sdkResult.paymentToken
 
             // 2. Создание платежа на сервере
+            Napier.d("PaymentFlow: [ViewModel] Creating payment on server - orderId=${state.value.orderId}, amount=${state.value.amount}")
             val description = "Заказ №${state.value.orderId}"
             val createResult = createPaymentUseCase(
                 paymentToken = paymentToken,
@@ -88,10 +100,13 @@ class PaymentViewModel(
                 description = description
             )
 
+            Napier.d("PaymentFlow: [ViewModel] Payment creation result - success=${createResult is Resource.Success}, paymentId=${(createResult as? Resource.Success)?.data?.paymentId}")
+
             when (createResult) {
                 is Resource.Success -> {
                     val paymentInfo = createResult.data
                     if (paymentInfo == null) {
+                        Napier.e("PaymentFlow: [ViewModel] Payment creation returned null data")
                         setLoading(false)
                         setState { copy(error = MR.strings.error_payment_creation_failed) }
                         sendErrorEffect(MR.strings.error_payment_creation_failed)
@@ -99,9 +114,17 @@ class PaymentViewModel(
                     }
 
                     val confirmationUrl = paymentInfo.confirmationUrl
+                    Napier.d(
+                        "PaymentFlow: [ViewModel] Payment created - paymentId=${paymentInfo.paymentId}, confirmationUrl=${
+                            confirmationUrl?.take(
+                                50
+                            )
+                        }..., status=${paymentInfo.status}"
+                    )
 
                     // 3. Если есть confirmation_url, открываем форму оплаты
                     if (confirmationUrl != null) {
+                        Napier.d("PaymentFlow: [ViewModel] Opening payment form with confirmationUrl...")
                         setState {
                             copy(
                                 isLoading = false,
@@ -115,6 +138,7 @@ class PaymentViewModel(
                         openPaymentForm(confirmationUrl)
                     } else {
                         // Если нет URL, сразу начинаем polling
+                        Napier.d("PaymentFlow: [ViewModel] No confirmationUrl, starting polling...")
                         setState {
                             copy(
                                 isLoading = false,
@@ -142,14 +166,24 @@ class PaymentViewModel(
     }
 
     private suspend fun openPaymentForm(confirmationUrl: String) {
+        Napier.d(
+            "PaymentFlow: [ViewModel] openPaymentForm - confirmationUrl=${
+                confirmationUrl.take(
+                    50
+                )
+            }..."
+        )
         val result = yooKassaService.openPaymentUrl(confirmationUrl)
+        Napier.d("PaymentFlow: [ViewModel] openPaymentForm result - success=${result.success}, error=${result.error}")
 
         // После закрытия формы начинаем polling
         setState { copy(isPaymentProcessing = false) }
 
         if (result.success) {
+            Napier.d("PaymentFlow: [ViewModel] Payment form closed successfully, starting polling...")
             startPolling()
         } else {
+            Napier.e("PaymentFlow: [ViewModel] Payment form failed - ${result.error}")
             setState {
                 copy(
                     error = MR.strings.error_payment_canceled,
@@ -163,27 +197,32 @@ class PaymentViewModel(
     private fun startPolling() {
         stopPolling()
 
+        Napier.d("PaymentFlow: [ViewModel] startPolling - orderId=${state.value.orderId}")
         setState { copy(isPolling = true) }
 
         pollingJob = viewModelScope.launch {
             val isCompleted = withTimeoutOrNull(maxPollingDuration) {
                 tickerFlow(period = 3.seconds)
                     .collect { _ ->
+                        Napier.d("PaymentFlow: [ViewModel] Polling payment status - orderId=${state.value.orderId}")
                         val statusResult = getPaymentStatusUseCase(state.value.orderId)
 
                         when (statusResult) {
                             is Resource.Success -> {
                                 val paymentInfo = statusResult.data
-                                setState { copy(paymentStatus = paymentInfo?.status) }
                                 val status = paymentInfo?.status
+                                Napier.d("PaymentFlow: [ViewModel] Payment status - status=$status, paid=${paymentInfo?.paid}")
+                                setState { copy(paymentStatus = status) }
 
                                 when (status) {
                                     PaymentStatus.SUCCEEDED -> {
+                                        Napier.d("PaymentFlow: [ViewModel] Payment SUCCEEDED!")
                                         stopPolling()
                                         sendEffect(PaymentSuccess(state.value.orderId))
                                     }
 
                                     PaymentStatus.CANCELED -> {
+                                        Napier.d("PaymentFlow: [ViewModel] Payment CANCELED")
                                         stopPolling()
                                         setState { copy(error = MR.strings.error_payment_canceled) }
                                         sendEffect(PaymentEffect.PaymentCanceled)
@@ -191,6 +230,7 @@ class PaymentViewModel(
 
                                     PaymentStatus.PENDING, PaymentStatus.UNKNOWN, null -> {
                                         // Продолжаем polling
+                                        Napier.d("PaymentFlow: [ViewModel] Payment status: $status - continuing polling...")
                                     }
 
                                 }
@@ -209,7 +249,7 @@ class PaymentViewModel(
 
                             else -> {
                                 // Продолжаем polling при других ошибках
-                                Napier.w("PaymentViewModel: Error getting payment status: ${statusResult.message}")
+                                Napier.w("PaymentFlow: [ViewModel] Error getting payment status: ${statusResult.message}")
                             }
                         }
                     }

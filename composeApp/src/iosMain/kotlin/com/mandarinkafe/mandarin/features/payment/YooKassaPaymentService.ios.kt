@@ -11,8 +11,9 @@ import kotlin.coroutines.resume
  */
 actual class YooKassaPaymentService {
     actual suspend fun initializePayment(
-        amount: Float,
-        orderId: String
+        amount: Double,
+        orderId: String,
+        userPhone: String
     ): PaymentResult = suspendCancellableCoroutine { continuation ->
         // Вызов Swift обертки через Objective-C bridge
         // YooKassaWrapper будет создан в Swift коде в iOS проекте

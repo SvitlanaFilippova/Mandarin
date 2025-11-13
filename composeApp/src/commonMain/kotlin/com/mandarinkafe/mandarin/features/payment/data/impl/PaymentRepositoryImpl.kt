@@ -24,8 +24,8 @@ class PaymentRepositoryImpl(
     ): Resource<PaymentInfo> {
         return try {
             val request = CreatePaymentRequest(
-                payment_token = paymentToken,
-                order_id = orderId,
+                paymentToken = paymentToken,
+                orderId = orderId,
                 amount = amount,
                 currency = currency,
                 description = description
@@ -46,20 +46,20 @@ class PaymentRepositoryImpl(
                         amountValue = response.amount?.value,
                         amountCurrency = response.amount?.currency,
                         description = response.description,
-                        createdAt = response.created_at,
+                        createdAt = response.createdAt,
                         updatedAt = null,
-                        confirmationUrl = response.confirmation?.confirmation_url
+                        confirmationUrl = response.confirmation?.confirmationUrl
                     )
                     Resource.Success(data = paymentInfo)
                 }
 
                 else -> {
-                    Napier.e("PaymentRepositoryImpl.createPayment: Server error ${response.resultCode}")
+                    Napier.e("PaymentFlow: [Repository] createPayment - Server error ${response.resultCode}")
                     Resource.ErrorOther("Ошибка создания платежа")
                 }
             }
         } catch (e: Exception) {
-            Napier.e("PaymentRepositoryImpl.createPayment: Exception", e)
+            Napier.e("PaymentFlow: [Repository] createPayment - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
@@ -81,19 +81,19 @@ class PaymentRepositoryImpl(
                 }
 
                 else -> {
-                    Napier.e("PaymentRepositoryImpl.getPaymentStatus: Server error ${response.resultCode}")
+                    Napier.e("PaymentFlow: [Repository] getPaymentStatus - Server error ${response.resultCode}")
                     Resource.ErrorOther("Ошибка получения статуса платежа")
                 }
             }
         } catch (e: Exception) {
-            Napier.e("PaymentRepositoryImpl.getPaymentStatus: Exception", e)
+            Napier.e("PaymentFlow: [Repository] getPaymentStatus - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
 
     override suspend fun cancelPayment(orderId: String): Resource<Boolean> {
         return try {
-            val request = CancelPaymentRequest(order_id = orderId)
+            val request = CancelPaymentRequest(orderId = orderId)
             val response = networkClient.cancelPayment(request)
 
             when (response.resultCode) {
@@ -104,12 +104,12 @@ class PaymentRepositoryImpl(
                 }
 
                 else -> {
-                    Napier.e("PaymentRepositoryImpl.cancelPayment: Server error ${response.resultCode}")
+                    Napier.e("PaymentFlow: [Repository] cancelPayment - Server error ${response.resultCode}")
                     Resource.ErrorOther(response.message ?: "Ошибка отмены платежа")
                 }
             }
         } catch (e: Exception) {
-            Napier.e("PaymentRepositoryImpl.cancelPayment: Exception", e)
+            Napier.e("PaymentFlow: [Repository] cancelPayment - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }

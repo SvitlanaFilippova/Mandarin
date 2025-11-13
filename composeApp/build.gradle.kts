@@ -210,7 +210,9 @@ val keys = listOf(
     "TG_CHANNEL_ID",
     "DEV_TG_CHAT_ID",
     "SERVER_BASE_URL",
-    "MANDARIN_API_KEY"
+    "MANDARIN_API_KEY",
+    "YOOKASSA_CLIENT_APPLICATION_KEY",
+    "YOOKASSA_SHOP_ID"
 )
 
 // --- Генерация BuildKonfig для KMP ---

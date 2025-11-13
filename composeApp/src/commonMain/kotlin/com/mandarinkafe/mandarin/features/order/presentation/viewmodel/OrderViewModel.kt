@@ -30,6 +30,7 @@ import com.mandarinkafe.mandarin.features.savedadresses.domain.OrderInfoUseCases
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
+import com.mandarinkafe.mandarin.util.formatPhoneNumberForSdk
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dev.icerock.moko.resources.StringResource
 import io.github.aakira.napier.Napier
@@ -378,9 +379,14 @@ class OrderViewModel(
     }
 
     private fun setPaymentType(paymentType: UiPaymentType) {
+        Napier.d("PaymentFlow: [OrderViewModel] setPaymentType - paymentType=${paymentType.name}, code=${paymentType.code}")
         setState {
             copy(paymentInfo = paymentInfo.copy(chosenPaymentType = paymentType))
         }
+        // Логируем доступные типы для отладки
+        val availableCodes = state.value.paymentInfo.availablePaymentTypes.map { it.code }
+        Napier.d("PaymentFlow: [OrderViewModel] setPaymentType - Available payment types codes: $availableCodes")
+        Napier.d("PaymentFlow: [OrderViewModel] setPaymentType - Selected payment type code: ${paymentType.code}")
     }
 
     private fun checkDiscount(phone: String) {
@@ -447,13 +453,16 @@ class OrderViewModel(
     }
 
     private fun submitOrder() {
+        val chosenPaymentType = state.value.paymentInfo.chosenPaymentType
+        Napier.d("PaymentFlow: [OrderViewModel] submitOrder - chosenPaymentType=${chosenPaymentType?.name}, code=${chosenPaymentType?.code}")
+        
         if (state.value.shouldSaveUserName) saveUserName()
-
         viewModelScope.launch {
             setLoading()
             val order = state.value.toDomain(
                 paymentType = state.value.paymentInfo.chosenPaymentTypeDomain
             )
+            Napier.d("PaymentFlow: [OrderViewModel] submitOrder - creating order with paymentType.code=${order.paymentType.code}, paymentType.id=${order.paymentType.id}")
             orderCreator.submit(
                 scope = viewModelScope,
                 order = order,
@@ -465,19 +474,30 @@ class OrderViewModel(
     }
 
     private fun onSuccessOrderCreation(order: IncomingOrder) {
-        clearState()
+        Napier.d("PaymentFlow: [OrderViewModel] onSuccessOrderCreation - orderId=${order.id}, sum=${order.sum}")
         
-        // Очищаем корзину сразу после создания заказа (независимо от способа оплаты)
+        // Сохраняем выбранный тип оплаты ДО clearState, так как clearState сбрасывает состояние
+        val savedChosenPaymentType = state.value.paymentInfo.chosenPaymentType
+        val savedUserPhone = state.value.userInfo.phone
+        
+        Napier.d("PaymentFlow: [OrderViewModel] onSuccessOrderCreation - savedChosenPaymentType=${savedChosenPaymentType?.name}, savedUserPhone=$savedUserPhone")
+        
+        clearState()
+
+        // Очищаем корзину сразу после создания заказа
         viewModelScope.launch {
             cartUseCases.clearCart()
             saveOrderToHistory(order)
         }
-        
+
         // Если выбрана онлайн-оплата, запускаем процесс оплаты
-        if (state.value.paymentInfo.chosenPaymentType == UiPaymentType.ONLINE) {
-            sendEffect(OrderEffect.StartOnlinePayment(order.id, order.sum ?: 0.0))
+        if (savedChosenPaymentType == UiPaymentType.ONLINE) {
+            val userPhone = savedUserPhone.formatPhoneNumberForSdk()
+            Napier.d("PaymentFlow: [OrderViewModel] onSuccessOrderCreation - ONLINE payment selected, sending StartOnlinePayment effect - orderId=${order.id}, amount=${order.sum ?: 0.0}, userPhone=$userPhone")
+            sendEffect(OrderEffect.StartOnlinePayment(order.id, order.sum ?: 0.0, userPhone))
         } else {
             // Для других способов оплаты - обычный флоу
+            Napier.d("PaymentFlow: [OrderViewModel] onSuccessOrderCreation - Non-ONLINE payment (${savedChosenPaymentType?.name}), sending ShowSuccess effect")
             sendEffect(ShowSuccess(order.id))
         }
         getSavedUserInfo()

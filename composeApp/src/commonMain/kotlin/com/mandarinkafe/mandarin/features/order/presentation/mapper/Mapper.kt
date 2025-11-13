@@ -8,14 +8,17 @@ import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
 import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Utensils
+import com.mandarinkafe.mandarin.util.Constants.PAYMENT_BANK_CODE
+import com.mandarinkafe.mandarin.util.Constants.PAYMENT_CASH_CODE
+import com.mandarinkafe.mandarin.util.Constants.PAYMENT_ONLINE_CODE
 
 
 fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
-    val cash = paymentType.code == OrderConstants.PAYMENT_CASH_CODE
+    val cash = paymentType.code == PAYMENT_CASH_CODE
     val fullComment = buildFullComment(
         userComment = comment.trim(),
         utensils = utensils,
-        rawPaymentType = paymentInfo.chosenPaymentTypeDomain.paymentTypeKind,
+        paymentTypeCode = paymentType.code,
         noChange = if (cash) paymentInfo.noChange else null,
         changeFrom = if (cash) paymentInfo.changeFrom else "",
     )
@@ -42,7 +45,7 @@ private fun buildFullComment(
     utensils: Utensils,
     noChange: Boolean?,
     changeFrom: String,
-    rawPaymentType: String,
+    paymentTypeCode: String,
 ): String {
     val utensilsPart = when {
         utensils.noNeedUtensils -> OrderConstants.NO_UTENSILS_COMMENT
@@ -52,10 +55,16 @@ private fun buildFullComment(
         else -> null
     }
 
-    val paymentType = when (rawPaymentType.lowercase()) {
-        OrderConstants.PAYMENT_CASH_NAME -> "Наличными"
-        OrderConstants.PAYMENT_CARD_NAME -> "Картой при получении"
-        else -> rawPaymentType
+    // Определяем тип оплаты для комментария по коду
+    // paymentTypeCode может быть: "CASH", "CARD" (для ONLINE), "BANK"
+    val paymentType = when (paymentTypeCode.uppercase()) {
+        PAYMENT_CASH_CODE -> "Наличными"
+        PAYMENT_BANK_CODE -> "Картой при получении"
+        PAYMENT_ONLINE_CODE -> "Онлайн-оплата"
+        else -> {
+            // Если не распознали, используем код как есть
+            paymentTypeCode
+        }
     }
 
     val paymentTypePart = OrderConstants.PAYMENT_TYPE_COMMENT_PREFIX + paymentType

@@ -1,18 +1,25 @@
 package com.mandarinkafe.mandarin.features.payment.data.dto
 
 import com.mandarinkafe.mandarin.core.data.dto.Response
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class PaymentStatusResponse(
-    val payment_id: String? = null,
-    val order_id: String? = null,
+    @SerialName("payment_id")
+    val paymentId: String? = null,
+    @SerialName("order_id")
+    val orderId: String? = null,
     val status: String? = null,
     val paid: Boolean? = null,
-    val amount_value: String? = null,
-    val amount_currency: String? = null,
+    @SerialName("amount_value")
+    val amountValue: String? = null,
+    @SerialName("amount_currency")
+    val amountCurrency: String? = null,
     val description: String? = null,
-    val created_at: String? = null,
-    val updated_at: String? = null,
+    @SerialName("created_at")
+    val createdAt: String? = null,
+    @SerialName("updated_at")
+    val updatedAt: String? = null,
 ) : Response()
 

@@ -27,21 +27,26 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEffect
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEvent
-import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentViewModel
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrderInfo
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberPaymentViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun PaymentScreen(
     navController: NavController,
-    viewModel: PaymentViewModel,
+    orderId: String,
+    amount: Double,
+    userPhone: String,
 ) {
+    val viewModel = rememberPaymentViewModel()
     val state by viewModel.state.collectAsState()
     val effectFlow = viewModel.effect
     val onEvent = viewModel::onEvent
@@ -51,7 +56,18 @@ fun PaymentScreen(
 
     // Инициализация платежа при первом запуске
     LaunchedEffect(Unit) {
-        onEvent(PaymentEvent.InitPayment)
+        Napier.d("PaymentFlow: [Screen] LaunchedEffect - calling SetInitData with orderId $orderId")
+        onEvent(
+            PaymentEvent.SetInitData(
+                orderId = orderId,
+                amount = amount,
+                userPhone = userPhone
+            )
+        )
+        Napier.d("PaymentFlow: [Screen] LaunchedEffect - calling InitPayment")
+        onEvent(
+            PaymentEvent.InitPayment
+        )
     }
 
     // Обработка эффектов
@@ -114,7 +130,7 @@ fun PaymentScreen(
 
 @Composable
 private fun PaymentScreenContent(
-    state: com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentState,
+    state: PaymentContract.PaymentState,
     onEvent: (PaymentEvent) -> Unit,
     showCancelDialog: Boolean,
     onDismissCancelDialog: () -> Unit,

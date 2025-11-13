@@ -133,12 +133,15 @@ fun NavController.navigateToOrderInfo(
 
 fun NavController.navigateToPayment(
     orderId: String,
-    amount: Double
+    amount: Double,
+    userPhone: String
 ) {
     val encodedOrderId = UrlEncoderUtil.encode(orderId)
+    val encodedUserPhone = UrlEncoderUtil.encode(userPhone)
     val route = "${NavConstants.PAYMENT_SCREEN_ROUTE}?" +
             "${NavConstants.KEY_ORDER_ID}=$encodedOrderId&" +
-            "${NavConstants.KEY_AMOUNT}=$amount"
+            "${NavConstants.KEY_AMOUNT}=$amount&" +
+            "${NavConstants.KEY_USER_PHONE}=$encodedUserPhone"
     navigate(route)
 }
 

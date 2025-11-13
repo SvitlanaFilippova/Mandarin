@@ -135,24 +135,17 @@ fun rememberAccountViewModel(): AccountViewModel {
 }
 
 @Composable
+fun rememberPaymentViewModel(): PaymentViewModel {
+    val koin = getKoin()
+    return remember { koin.get<PaymentViewModel>() }
+}
+
+@Composable
 fun rememberAppLifecycleManager(): AppLifecycleManager {
     val koin = getKoin()
     return remember { koin.get<AppLifecycleManager>() }
 }
 
-@Composable
-fun rememberPaymentViewModel(orderId: String, amount: Double): PaymentViewModel {
-    val koin = getKoin()
-    return remember(orderId, amount) {
-        PaymentViewModel(
-            yooKassaService = koin.get(),
-            createPaymentUseCase = koin.get(),
-            getPaymentStatusUseCase = koin.get(),
-            cancelPaymentUseCase = koin.get(),
-            orderId = orderId,
-            amount = amount
-        )
-    }
-}
+
 
 

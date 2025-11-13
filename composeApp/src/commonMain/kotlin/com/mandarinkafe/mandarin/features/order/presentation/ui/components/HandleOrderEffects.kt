@@ -52,11 +52,14 @@ fun HandleOrderEffects(
                         fromOrderCreation = true
                     )
 
-                is OrderEffect.StartOnlinePayment ->
+                is OrderEffect.StartOnlinePayment -> {
+                    io.github.aakira.napier.Napier.d("PaymentFlow: [OrderEffects] StartOnlinePayment - orderId=${effect.orderId}, amount=${effect.amount}, userPhone=${effect.userPhone}")
                     navController.navigateToPayment(
                         orderId = effect.orderId,
-                        amount = effect.amount
+                        amount = effect.amount,
+                        userPhone = effect.userPhone
                     )
+                }
             }
         }
     }
