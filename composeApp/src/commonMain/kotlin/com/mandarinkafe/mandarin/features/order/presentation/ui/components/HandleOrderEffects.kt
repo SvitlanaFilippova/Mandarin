@@ -13,6 +13,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrderInfo
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToPayment
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.Flow
@@ -49,6 +50,12 @@ fun HandleOrderEffects(
                     navController.navigateToOrderInfo(
                         orderId = effect.orderId,
                         fromOrderCreation = true
+                    )
+
+                is OrderEffect.StartOnlinePayment ->
+                    navController.navigateToPayment(
+                        orderId = effect.orderId,
+                        amount = effect.amount
                     )
             }
         }

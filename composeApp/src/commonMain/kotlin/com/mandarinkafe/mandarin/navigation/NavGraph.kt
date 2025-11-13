@@ -22,9 +22,11 @@ import com.mandarinkafe.mandarin.features.more.presentation.ui.screen.MoreMenuSc
 import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScreen
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen.OrderInfoScreen
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.screen.OrdersHistoryScreen
+import com.mandarinkafe.mandarin.features.payment.presentation.ui.screen.PaymentScreen
 import com.mandarinkafe.mandarin.features.savedadresses.presentation.ui.screen.SavedAddressesScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberCartViewModel
+import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberPaymentViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberSharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
 import io.ktor.http.decodeURLPart
@@ -256,6 +258,27 @@ fun NavGraph(navController: NavHostController) {
                 initialPhone = phone,
                 forDeleteAccount = forDeleteAccount
             )
+        }
+
+        composable(
+            route = "${NavConstants.PAYMENT_SCREEN_ROUTE}?" +
+                    "${NavConstants.KEY_ORDER_ID}={${NavConstants.KEY_ORDER_ID}}&" +
+                    "${NavConstants.KEY_AMOUNT}={${NavConstants.KEY_AMOUNT}}"
+        ) { backStackEntry ->
+            val orderId =
+                backStackEntry.getStringArgument(NavConstants.KEY_ORDER_ID)?.decodeURLPart() ?: ""
+            val amount = backStackEntry.getDoubleArgument(
+                NavConstants.KEY_AMOUNT,
+                defaultValue = 0.0
+            )
+
+            if (orderId.isNotEmpty()) {
+                val paymentViewModel = rememberPaymentViewModel(orderId, amount)
+                PaymentScreen(
+                    navController = navController,
+                    viewModel = paymentViewModel
+                )
+            }
         }
     }
 }

@@ -60,7 +60,7 @@ object Constants {
     const val DEFAULT_SAVED_ADDRESSES_NUMBER = 3
     const val SHOULD_REFRESH_ADDRESSES_KEY = "shouldRefreshAddresses"
     const val SHOULD_SELECT_ADDRESS_ID = "should_select_last_added"
-    const val PAYMENT_ONLINE_CODE = "ONLINE"
+    const val PAYMENT_ONLINE_CODE = "CARD"
     const val PAYMENT_BANK_CODE = "BANK"
     const val PAYMENT_CASH_CODE = "CASH"
 

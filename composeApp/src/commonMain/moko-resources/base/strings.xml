@@ -182,7 +182,7 @@
     <string name="your_comment">Комментарий к заказу</string>
     <string name="shipping">Доставка</string>
     <string name="shipping_self_pickup">Cамовывоз</string>
-    <string name="choose_address">Выберите адрес *</string>
+    <string name="choose_address">Нужно выбрать адрес доставки</string>
     <string name="delivery_type">Способ получения: *</string>
     <string name="payment_type">Способ оплаты: *</string>
     <string name="payment_online">картой онлайн</string>
@@ -197,6 +197,7 @@
     <string name="discount_template">Скидка %1$d%%</string>
     <string name="delivery_cost">Стоимость доставки</string>
     <string name="submit_order">Оформить заказ</string>
+    <string name="submit_order_online">Оплатить заказ</string>
     <string name="save_name_for_future">Сохранить имя для будущих заказов</string>
     <string name="update_saved_name_and_phone">Обновить имя для будущих заказов</string>
 
@@ -507,11 +508,6 @@
     <string name="delivery_type_name">Доставка</string>
     <string name="selfpickup_type_name">Самовывоз</string>
 
-    <!-- для UiPaymentType -->
-    <string name="payment_type_online">Онлайн</string>
-    <string name="payment_type_cash">Наличные</string>
-    <string name="payment_type_card">Банковская карта</string>
-
     <!-- Address -->
     <string name="fail_to_fetch_address">Не удалось определить адрес</string>
 
@@ -570,4 +566,20 @@
     <string name="account_deleted_successfully">✅ Аккаунт успешно удалён</string>
     <string name="error_delete_account">Не удалось удалить аккаунт</string>
 
+    <!-- Оплата -->
+    <string name="error_payment_init_failed">Не удалось инициализировать платеж</string>
+    <string name="error_payment_creation_failed">Не удалось создать платеж</string>
+    <string name="error_payment_canceled">Оплата отменена</string>
+    <string name="error_payment_timeout">Превышено время ожидания оплаты</string>
+    <string name="error_payment_cancel_failed">Не удалось отменить платеж</string>
+    <string name="payment_screen_title">Оплата заказа</string>
+    <string name="payment_processing">Обработка платежа...</string>
+    <string name="payment_polling">Проверка статуса оплаты...</string>
+    <string name="payment_success">Оплата успешно завершена</string>
+    <string name="payment_retry">Повторить оплату</string>
+    <string name="payment_cancel">Отменить платеж</string>
+    <string name="payment_cancel_dialog_title">Отменить платеж?</string>
+    <string name="payment_cancel_dialog_message">Оплата не завершена. Отменить заказ?</string>
+    <string name="payment_cancel_dialog_confirm">Отменить</string>
+    <string name="payment_cancel_dialog_cancel">Нет</string>
 </resources>

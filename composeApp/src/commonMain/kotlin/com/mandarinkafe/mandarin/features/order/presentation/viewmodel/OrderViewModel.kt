@@ -466,10 +466,19 @@ class OrderViewModel(
 
     private fun onSuccessOrderCreation(order: IncomingOrder) {
         clearState()
-        sendEffect(ShowSuccess(order.id))
+        
+        // Очищаем корзину сразу после создания заказа (независимо от способа оплаты)
         viewModelScope.launch {
             cartUseCases.clearCart()
             saveOrderToHistory(order)
+        }
+        
+        // Если выбрана онлайн-оплата, запускаем процесс оплаты
+        if (state.value.paymentInfo.chosenPaymentType == UiPaymentType.ONLINE) {
+            sendEffect(OrderEffect.StartOnlinePayment(order.id, order.sum ?: 0.0))
+        } else {
+            // Для других способов оплаты - обычный флоу
+            sendEffect(ShowSuccess(order.id))
         }
         getSavedUserInfo()
     }

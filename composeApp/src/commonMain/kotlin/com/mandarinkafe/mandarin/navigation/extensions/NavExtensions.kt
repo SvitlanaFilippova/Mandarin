@@ -131,6 +131,17 @@ fun NavController.navigateToOrderInfo(
     }
 }
 
+fun NavController.navigateToPayment(
+    orderId: String,
+    amount: Double
+) {
+    val encodedOrderId = UrlEncoderUtil.encode(orderId)
+    val route = "${NavConstants.PAYMENT_SCREEN_ROUTE}?" +
+            "${NavConstants.KEY_ORDER_ID}=$encodedOrderId&" +
+            "${NavConstants.KEY_AMOUNT}=$amount"
+    navigate(route)
+}
+
 fun NavController.navigateToAccountScreen() {
     navigateWithAuthCheck(targetRoute = NavConstants.ACCOUNT_ROUTE)
 }

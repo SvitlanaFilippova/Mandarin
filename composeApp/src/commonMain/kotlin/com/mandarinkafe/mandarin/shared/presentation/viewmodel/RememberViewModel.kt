@@ -18,6 +18,7 @@ import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackVi
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.OrdersHistoryViewModel
+import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentViewModel
 import com.mandarinkafe.mandarin.features.savedadresses.presentation.viewmodel.SavedAddressesViewModel
 import com.mandarinkafe.mandarin.features.search.presentation.viewmodel.SearchViewModel
 import org.koin.mp.KoinPlatform.getKoin
@@ -137,6 +138,21 @@ fun rememberAccountViewModel(): AccountViewModel {
 fun rememberAppLifecycleManager(): AppLifecycleManager {
     val koin = getKoin()
     return remember { koin.get<AppLifecycleManager>() }
+}
+
+@Composable
+fun rememberPaymentViewModel(orderId: String, amount: Double): PaymentViewModel {
+    val koin = getKoin()
+    return remember(orderId, amount) {
+        PaymentViewModel(
+            yooKassaService = koin.get(),
+            createPaymentUseCase = koin.get(),
+            getPaymentStatusUseCase = koin.get(),
+            cancelPaymentUseCase = koin.get(),
+            orderId = orderId,
+            amount = amount
+        )
+    }
 }
 
 

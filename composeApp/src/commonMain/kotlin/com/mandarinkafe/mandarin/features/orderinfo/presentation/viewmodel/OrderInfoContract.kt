@@ -25,10 +25,18 @@ sealed interface OrderInfoContract {
         val isLoading: Boolean = true,
         val incomingOrder: IncomingOrder? = null,
         val orderRepeatingInProgress: Boolean = false,
+        val paymentStatus: com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus? = null,
+        val isPaymentPaid: Boolean? = null,
     ) : BaseContract.BaseState {
 
         val deliveryStatus: UiDeliveryStatus
             get() = incomingOrder?.status?.toUi() ?: UiDeliveryStatus.UNCONFIRMED
+        
+        val isOnlinePayment: Boolean
+            get() = incomingOrder?.paymentName?.equals(
+                com.mandarinkafe.mandarin.util.Constants.PAYMENT_ONLINE_CODE,
+                ignoreCase = true
+            ) == true
     }
 }
 

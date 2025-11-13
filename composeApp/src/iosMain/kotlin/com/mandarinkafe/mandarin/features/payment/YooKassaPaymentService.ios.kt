@@ -11,9 +11,8 @@ import kotlin.coroutines.resume
  */
 actual class YooKassaPaymentService {
     actual suspend fun initializePayment(
-        amount: Double,
-        currency: String,
-        description: String
+        amount: Float,
+        orderId: String
     ): PaymentResult = suspendCancellableCoroutine { continuation ->
         // Вызов Swift обертки через Objective-C bridge
         // YooKassaWrapper будет создан в Swift коде в iOS проекте
@@ -26,14 +25,15 @@ actual class YooKassaPaymentService {
         )
     }
 
-    actual suspend fun confirmPayment(paymentId: String): PaymentResult = 
+    actual suspend fun openPaymentUrl(confirmationUrl: String): PaymentResult =
         suspendCancellableCoroutine { continuation ->
+            // Вызов Swift обертки для открытия confirmation_url
+            // YooKassaWrapper будет создан в Swift коде в iOS проекте
             continuation.resume(
                 PaymentResult(
                     success = false,
-                    error = "YooKassaWrapper not implemented yet. Create Swift wrapper in iOS project."
+                    error = "YooKassaWrapper.openPaymentUrl not implemented yet. Create Swift wrapper in iOS project."
                 )
             )
         }
 }
-

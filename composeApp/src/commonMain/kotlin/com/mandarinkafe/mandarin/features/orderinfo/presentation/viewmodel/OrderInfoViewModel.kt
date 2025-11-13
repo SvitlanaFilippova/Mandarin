@@ -11,6 +11,8 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect.ShowError
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
+import com.mandarinkafe.mandarin.features.payment.domain.api.GetPaymentStatusUseCase
+import com.mandarinkafe.mandarin.util.Constants.PAYMENT_ONLINE_CODE
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.mandarinkafe.mandarin.util.tickerFlow
@@ -27,6 +29,7 @@ class OrderInfoViewModel(
     private val cancelOrderUseCase: CancelOrderUseCase,
     private val repeatOrderInteractor: RepeatOrderInteractor,
     private val cartInteractor: CartInteractor,
+    private val getPaymentStatus: GetPaymentStatusUseCase,
 ) : BaseViewModel<OrderInfoEvent, OrderInfoEffect, OrderInfoState>() {
     override fun setInitialState() = OrderInfoState()
 
@@ -129,7 +132,15 @@ class OrderInfoViewModel(
                 .map {
                     getOrderStatus(orderId)
                 }
-                .collect { proceedOrderStatusResult(it) }
+                .collect { result ->
+                    proceedOrderStatusResult(result)
+                    // Параллельно проверяем статус оплаты, если заказ с онлайн-оплатой
+                    result.data?.let { order ->
+                        if (order.paymentName?.equals(PAYMENT_ONLINE_CODE, ignoreCase = true) == true && !order.isClosed) {
+                            checkPaymentStatus(orderId)
+                        }
+                    }
+                }
         }
     }
 
@@ -147,6 +158,34 @@ class OrderInfoViewModel(
 
     private fun setStatus(status: IncomingOrder?) {
         setState { copy(isLoading = false, incomingOrder = status) }
+        
+        // Если заказ с онлайн-оплатой, проверяем статус платежа
+        status?.let { order ->
+            if (order.paymentName?.equals(PAYMENT_ONLINE_CODE, ignoreCase = true) == true && !order.isClosed) {
+                checkPaymentStatus(order.id)
+            }
+        }
+    }
+    
+    private fun checkPaymentStatus(orderId: String) {
+        viewModelScope.launch {
+            val result = getPaymentStatus(orderId)
+            when (result) {
+                is Resource.Success -> {
+                    val paymentInfo = result.data
+                    setState {
+                        copy(
+                            paymentStatus = paymentInfo?.status,
+                            isPaymentPaid = paymentInfo?.paid
+                        )
+                    }
+                }
+                else -> {
+                    // Игнорируем ошибки получения статуса платежа (платеж может не существовать)
+                    // Не обновляем состояние
+                }
+            }
+        }
     }
 
     override fun setLoading(isLoading: Boolean) {
