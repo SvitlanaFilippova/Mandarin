@@ -121,6 +121,11 @@ kotlin {
                 implementation(libs.androidx.appcompat)
                 // Activity Compose для permission requests
                 implementation(libs.androidx.activity.compose)
+                // ЮKassa
+                implementation(libs.yookassa.android.sdk)
+                // Явно указываем версии work-runtime для разрешения конфликтов
+                implementation(libs.androidx.work.runtime)
+                implementation(libs.androidx.work.runtime.ktx)
             }
         }
 
@@ -161,6 +166,15 @@ android {
 
     testOptions {
         unitTests.isIncludeAndroidResources = true
+    }
+}
+
+// Разрешение конфликтов зависимостей для androidx.work
+configurations.all {
+    resolutionStrategy {
+        val workVersion = libs.versions.work.get()
+        force("androidx.work:work-runtime:$workVersion")
+        force("androidx.work:work-runtime-ktx:$workVersion")
     }
 }
 

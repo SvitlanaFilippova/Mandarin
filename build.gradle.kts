@@ -33,6 +33,14 @@ plugins {
 }
 
 
+configurations.all {
+    resolutionStrategy {
+        val workVersion = libs.versions.work.get()
+        force("androidx.work:work-runtime:$workVersion")
+        force("androidx.work:work-runtime-ktx:$workVersion")
+    }
+}
+
 tasks.withType<Detekt>().configureEach {
     parallel = true
     autoCorrect = false
