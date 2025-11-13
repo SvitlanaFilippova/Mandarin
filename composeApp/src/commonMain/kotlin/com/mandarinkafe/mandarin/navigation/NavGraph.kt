@@ -236,15 +236,25 @@ fun NavGraph(navController: NavHostController) {
 
         composable(
             route = "${NavConstants.AUTH_ROUTE}?" +
-                    "${NavConstants.KEY_TARGET_ROUTE}={${NavConstants.KEY_TARGET_ROUTE}}"
+                    "${NavConstants.KEY_TARGET_ROUTE}={${NavConstants.KEY_TARGET_ROUTE}}&" +
+                    "${NavConstants.KEY_PHONE}={${NavConstants.KEY_PHONE}}&" +
+                    "${NavConstants.KEY_FOR_DELETE_ACCOUNT}={${NavConstants.KEY_FOR_DELETE_ACCOUNT}}"
         ) { backStackEntry ->
             val targetRoute =
                 backStackEntry.getStringArgument(NavConstants.KEY_TARGET_ROUTE)?.decodeURLPart()
+            val phone =
+                backStackEntry.getStringArgument(NavConstants.KEY_PHONE)?.decodeURLPart()
+            val forDeleteAccount = backStackEntry.getBooleanArgument(
+                NavConstants.KEY_FOR_DELETE_ACCOUNT,
+                defaultValue = false
+            )
 
             AuthScreen(
                 sharedViewModel = sharedViewModel,
                 navController = navController,
-                targetRoute = targetRoute
+                targetRoute = targetRoute,
+                initialPhone = phone,
+                forDeleteAccount = forDeleteAccount
             )
         }
     }

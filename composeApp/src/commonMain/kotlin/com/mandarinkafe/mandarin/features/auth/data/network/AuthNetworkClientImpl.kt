@@ -105,4 +105,11 @@ class AuthNetworkClientImpl(
         }
         return authApi.updateUserName(accessToken, request)
     }
+
+    override suspend fun deleteAccount(accessToken: String): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return authApi.deleteAccount(accessToken)
+    }
 }

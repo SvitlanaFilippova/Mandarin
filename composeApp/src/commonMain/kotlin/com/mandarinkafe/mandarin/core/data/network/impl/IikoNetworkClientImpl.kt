@@ -82,9 +82,9 @@ class IikoNetworkClientImpl(
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
             val orgId = ensureOrganizationId()
-            val response = iikoApi.createDelivery(
-                body = CreateDeliveryRequest(order, orgId)
-            )
+            val request = CreateDeliveryRequest(order, orgId)
+
+            val response = iikoApi.createDelivery(body = request)
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("Ошибка createDelivery: ${e.message}", e)

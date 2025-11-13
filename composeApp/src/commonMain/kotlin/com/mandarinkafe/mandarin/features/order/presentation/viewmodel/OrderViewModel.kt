@@ -147,13 +147,16 @@ class OrderViewModel(
                         savedNameIsEmpty = initialInfo.name.trim().isEmpty(),
                     )
                 }
-                checkDiscount(initialInfo.phone)
+
+                checkDiscount(initialInfo.phone.formatPhoneNumberForDomain())
                 isFirstLoad = false
             } else {
                 Napier.w("OrderViewModel: Timeout waiting for user info")
             }
 
             // Подписываемся на дальнейшие обновления (пропускаем первое, если уже загрузили)
+            var previousPhone: String? = initialInfo?.phone?.formatPhoneNumberForDomain()
+
             userInfoRepository.userInfo.collect { userInfo ->
                 if (isFirstLoad) {
                     isFirstLoad = false
@@ -161,15 +164,25 @@ class OrderViewModel(
                 }
 
                 userInfo?.let {
+                    val newPhone = userInfo.phone.formatPhoneNumberForDomain()
+                    val phoneChanged = previousPhone != newPhone
+
                     setState {
                         copy(
                             userInfo = this.userInfo.copy(
                                 name = userInfo.name,
-                                phone = userInfo.phone.formatPhoneNumberForDomain(),
+                                phone = newPhone,
                             ),
                             savedNameIsEmpty = userInfo.name.trim().isEmpty(),
                         )
                     }
+
+                    // Пересчитываем скидку при изменении телефона
+                    if (phoneChanged) {
+                        checkDiscount(newPhone)
+                    }
+
+                    previousPhone = newPhone
                 }
             }
         }
@@ -184,42 +197,45 @@ class OrderViewModel(
             val hasValidUserInfo = currentUserInfo != null
             val hasValidEnteredName = enteredName.isNotBlank()
             val isNameEmptyOrChanged = hasValidUserInfo &&
-                (currentUserInfo.name.isBlank() || currentUserInfo.name != enteredName)
+                    (currentUserInfo.name.isBlank() || currentUserInfo.name != enteredName)
             val shouldUpdateName = hasValidUserInfo && hasValidEnteredName && isNameEmptyOrChanged
 
             if (shouldUpdateName) {
                 // Получаем access token
                 val accessToken = authRepository.getAccessToken()
                 if (accessToken != null) {
-                    val result = userInfoRepository.updateName(accessToken, enteredName)
-                    when (result) {
-                        is Resource.Success -> {
-                            Napier.d("OrderViewModel: Name updated successfully")
-                        }
-
-                        is Resource.ErrorNoInternet -> {
-                            Napier.w("OrderViewModel: No internet, name not updated")
-                        }
-
-                        is Resource.ErrorOther -> {
-                            Napier.e("OrderViewModel: Failed to update name: ${result.message}")
-                        }
-
-                        else -> {
-                            // Idle, Loading, ErrorEmptyData - не обрабатываем
-                            }
-                        }
-                    } else {
-                        Napier.w("OrderViewModel: No access token, can't update name")
-                    }
+                    userInfoRepository.updateName(accessToken, enteredName)
+                } else {
+                    Napier.w("OrderViewModel: No access token, can't update name")
                 }
             }
         }
-
+    }
 
     private fun selectAddressById(id: String) {
-        val address = state.value.deliveryInfo.savedAddresses.first { it.id == id }
-        setAddress(address)
+        viewModelScope.launch {
+            // Пытаемся найти адрес в текущем списке
+            var address = state.value.deliveryInfo.savedAddresses.firstOrNull { it.id == id }
+
+            // Если адрес не найден, обновляем список адресов и повторяем попытку
+            if (address == null) {
+                // Обновляем адреса и ждем завершения
+                val addressList = addressUseCases.getSavedAddressesUseCase()
+                setState {
+                    val newDeliveryInfo = deliveryInfo.copy(
+                        savedAddresses = addressList
+                    )
+                    copy(deliveryInfo = newDeliveryInfo)
+                }
+                // Пытаемся найти адрес в только что полученном списке
+                address = addressList.firstOrNull { it.id == id }
+            }
+
+            // Если адрес найден - выбираем его, иначе просто игнорируем (безопасная обёртка)
+            if (address != null) {
+                setAddress(address)
+            }
+        }
     }
 
     private fun removeSavedAddress(id: String) {
@@ -270,7 +286,7 @@ class OrderViewModel(
 
     private fun getSavedAddresses() {
         viewModelScope.launch {
-            val addressList = addressUseCases.getSavedAddressesUseCase().reversed()
+            val addressList = addressUseCases.getSavedAddressesUseCase()
             setState {
                 val newDeliveryInfo = deliveryInfo.copy(
                     savedAddresses = addressList
@@ -368,21 +384,20 @@ class OrderViewModel(
     }
 
     private fun checkDiscount(phone: String) {
-        // TODO временно закоментировано, до решения ошибки с дублированием скидки
-//        viewModelScope.launch {
-//            val discount = applyPhoneDiscount(phone, state.value.cartSummary.discountPercent)
-//            if (discount.shouldUpdate) {
-//                setState {
-//                    copy(
-//                        cartSummary = cartSummary.copy(
-//                            discountPercent = discount.discountSize,
-//                            discountId = discount.discountId
-//                        )
-//                    )
-//                }
-//                recalculateCartSummary(discount.discountSize)
-//            }
-//        }
+        viewModelScope.launch {
+            val discount = applyPhoneDiscount(phone, state.value.cartSummary.discountPercent)
+            if (discount.shouldUpdate) {
+                setState {
+                    copy(
+                        cartSummary = cartSummary.copy(
+                            discountPercent = discount.discountSize,
+                            discountId = discount.discountId
+                        )
+                    )
+                }
+                recalculateCartSummary(discount.discountSize)
+            }
+        }
     }
 
     private fun showMissingRequiredInfo() {

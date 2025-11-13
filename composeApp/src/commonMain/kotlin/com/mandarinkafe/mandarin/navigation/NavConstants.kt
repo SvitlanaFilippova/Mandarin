@@ -14,6 +14,9 @@ object NavConstants {
     const val KEY_FROM_ORDER_CREATION = "fromOrderCreation"
     const val KEY_SNACKBAR_MESSAGE = "snackbarMessage"
     const val KEY_TARGET_ROUTE = "targetRoute"
+    const val KEY_PHONE = "phone"
+    const val KEY_FOR_DELETE_ACCOUNT = "forDeleteAccount"
+    const val KEY_PHONE_VERIFIED = "phoneVerified"
 
     // --- Routes ---
     const val MENU_SCREEN_ROUTE = "menu"

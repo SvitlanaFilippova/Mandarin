@@ -40,6 +40,7 @@ object Dimens {
     val RadiusImageCorner2 = 2.dp
     val MealItemInSearchResults96 = 96.dp
     val MealSmallImage80 = 80.dp
+    val MealSuperSmallImage = 48.dp
     val PlaceholderImageSize200 = 200.dp
     val ProgressBarSmallSize = 16.dp
     val ProgressBarBigSize124 = 124.dp
@@ -59,5 +60,6 @@ object Dimens {
     val BannerIndicatorInactiveWidth8 = 8.dp
     val BannerIndicatorSize4 = 4.dp
     val PriceMinWidthForCustomizeItem = 64.dp
-    val CodeBoxSize = 36.dp
+    val CodeBoxWidth = 36.dp
+    val CodeBoxHeight = 48.dp
 }

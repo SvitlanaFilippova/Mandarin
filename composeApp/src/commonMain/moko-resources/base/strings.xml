@@ -493,7 +493,7 @@
     <string name="save_meal">Сохранить (%1$d ₽)</string>
     <string name="cart_total_cost_template">%d ₽</string>
     <string name="float_price_template">%.2f ₽</string>
-    <string name="quantity_x_template">x%.0f</string>
+    <string name="quantity_x_template">%.0f шт</string>
 
     <string name="snackbar_to_cart_button">В корзину</string>
 
@@ -552,7 +552,9 @@
     <string name="logout">Выйти</string>
     <string name="logout_from_account">Выйти из аккаунта</string>
     <string name="no_active_sessions">Нет активных сессий</string>
-    <string name="cant_change_phone">Чтобы изменить номер телефона, нужно выйти из&#160;аккаунта, а&#160;затем войти с&#160;новым номером.</string>
+    <string name="cant_change_phone">Чтобы изменить номер телефона, нужно выйти из&#160;аккаунта, а&#160;затем
+        войти с&#160;новым номером.
+    </string>
     <string name="session_revoked">✅ Сессия завершена</string>
     <string name="error_save_name">Не удалось сохранить имя</string>
     <string name="error_name_empty">Имя не может быть пустым</string>
@@ -560,5 +562,12 @@
     <string name="error_revoke_session">Не удалось завершить сессию</string>
     <string name="error_logout">Ошибка при выходе</string>
     <string name="name_changed_successfully">✅ Имя успешно обновлено</string>
+    <string name="delete_account">Удалить аккаунт</string>
+    <string name="delete_account_confirmation_title">Удалить аккаунт?</string>
+    <string name="delete_account_confirmation_message">Будут удалены все данные: личная информация,
+        история заказов, адреса, корзина и&#160;избранное.
+    </string>
+    <string name="account_deleted_successfully">✅ Аккаунт успешно удалён</string>
+    <string name="error_delete_account">Не удалось удалить аккаунт</string>
 
 </resources>

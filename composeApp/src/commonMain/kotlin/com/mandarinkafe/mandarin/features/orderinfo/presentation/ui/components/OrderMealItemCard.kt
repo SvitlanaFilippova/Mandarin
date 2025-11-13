@@ -5,15 +5,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import com.mandarinkafe.mandarin.MR
@@ -22,6 +26,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingMealAdditional
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingModifier
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
+import com.mandarinkafe.mandarin.util.presentation.ui.components.images.KamelSubcomposeAsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -45,7 +50,6 @@ fun OrderMealItemCard(
             showNoLongerInMenuMessage()
         }
     }
-
     Row(
         verticalAlignment = Alignment.Top,
         modifier = modifier
@@ -53,7 +57,21 @@ fun OrderMealItemCard(
             .height(IntrinsicSize.Min)
             .clickable { onMealDetailsClick() }
     ) {
-        Column {
+        // Изображение блюда
+        KamelSubcomposeAsyncImage(
+            modifier = Modifier
+                .size(Dimens.MealSuperSmallImage)
+                .aspectRatio(1f)
+                .clip(RoundedCornerShape(Dimens.CornerRadius4)),
+            model = item.imageUrl,
+            previewModel = item.blurredPreviewUrl,
+            contentDescription = "Изображение ${item.name}",
+            placeholder = MR.images.placeholder_meal_no_photo,
+            error = MR.images.placeholder_meal_no_photo,
+            crossfade = true
+        )
+
+        Column(modifier = Modifier.padding(start = Dimens.MarginSmall8)) {
             MealHeader(
                 name = item.name,
                 price = item.price,
@@ -71,6 +89,7 @@ fun OrderMealItemCard(
                 MealComment(comment = item.comment)
             }
 
+
             MealPriceRow(
                 item = item,
                 isDeleted = item.isDeleted,
@@ -80,6 +99,7 @@ fun OrderMealItemCard(
         }
     }
 }
+
 
 @Composable
 private fun MealHeader(name: String, price: Double, deletedDecoration: TextDecoration?) {
@@ -190,7 +210,7 @@ private fun MealPriceRow(
     ) {
         Text(
             text = stringResource(MR.strings.quantity_x_template, item.amount),
-            style = Typography.MealPriceStyle,
+            style = Typography.MealPriceStyle.copy(fontSize = Dimens.TextSizeRegular14),
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(

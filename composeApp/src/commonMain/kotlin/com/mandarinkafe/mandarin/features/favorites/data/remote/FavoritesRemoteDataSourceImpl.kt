@@ -25,13 +25,13 @@ class FavoritesRemoteDataSourceImpl(
         }
         return try {
             val response = api.getFavorites("$BEARER_TOKEN_TYPE $token")
-            
+
             // Проверяем resultCode ответа
             if (response.resultCode != HTTP_SUCCESS) {
                 return Favorites(emptySet(), 0L)
             }
-            
-            val items = response.favorites?.mapNotNull { favoriteDto ->
+
+            val items = response.favorites?.map { favoriteDto ->
                 favoriteDto.toStored(menuCache)
             }?.toSet() ?: emptySet()
             Favorites(items, response.lastUpdated)
@@ -64,7 +64,7 @@ class FavoritesRemoteDataSourceImpl(
             }
 
             // Получаем обновлённое избранное с updatedAt от сервера
-            val items = response.favorites?.mapNotNull { favoriteDto ->
+            val items = response.favorites?.map { favoriteDto ->
                 favoriteDto.toStored(menuCache)
             }?.toSet() ?: emptySet()
             Favorites(items, response.lastUpdated)

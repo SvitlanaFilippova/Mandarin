@@ -50,7 +50,6 @@ class ServerAuthProvider(
      */
     suspend fun refreshToken(): String {
         return mutex.withLock {
-            Napier.d("$LOG_PREFIX DEBUG: Starting token refresh...")
             val tokens = tokenStorage.getTokens()
             val refreshToken = tokens?.refreshToken
             if (refreshToken == null) {
@@ -76,7 +75,6 @@ class ServerAuthProvider(
                     )
 
                     tokenStorage.saveTokens(newTokens)
-                    Napier.d("$LOG_PREFIX SUCCESS: Token refreshed successfully, new token length=${newTokens.accessToken.length}")
                     newTokens.accessToken
                 }
 

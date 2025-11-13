@@ -103,7 +103,9 @@ class FavoritesServerApi(private val client: HttpClient) {
 
                 else -> {
                     val errorBody = getErrorBody(httpResponse)
-                    Napier.e("$LOG_TAG.updateFavorites: HTTP error ${httpResponse.status.value}, тело ответа: $errorBody")
+                    Napier.e(
+                        "$LOG_TAG.updateFavorites: HTTP error ${httpResponse.status.value}, тело ответа: $errorBody"
+                    )
                     RemoteFavoritesResponse().apply { resultCode = HTTP_SERVER_ERROR }
                 }
             }

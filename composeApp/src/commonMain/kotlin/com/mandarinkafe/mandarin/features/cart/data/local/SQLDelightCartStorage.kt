@@ -49,7 +49,7 @@ class SQLDelightCartStorage(private val queries: CartItemsQueries) :
     override suspend fun deleteItemById(id: String) {
         queries.deleteById(id)
     }
-    
+
     override suspend fun getLastUpdated(): Long {
         return try {
             withContext(Dispatchers.Default) {
@@ -61,7 +61,7 @@ class SQLDelightCartStorage(private val queries: CartItemsQueries) :
             0L
         }
     }
-    
+
     override suspend fun updateLastUpdated(lastUpdated: Long) {
         withContext(Dispatchers.Default) {
             queries.insertOrReplaceMetadata(lastUpdated = lastUpdated)

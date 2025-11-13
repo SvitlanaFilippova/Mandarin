@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -38,7 +37,8 @@ fun SmsCodeInput(
     val length = SMS_CODE_LENGTH
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-    val boxSize = Dimens.CodeBoxSize
+    val boxWidth = Dimens.CodeBoxWidth
+    val boxHeight = Dimens.CodeBoxHeight
     val boxSpacing = Dimens.MarginSuperSmall4
 
     LaunchedEffect(code) {
@@ -60,8 +60,8 @@ fun SmsCodeInput(
             },
             modifier = Modifier
                 .focusRequester(focusRequester)
-                .width((boxSize + boxSpacing) * length - boxSpacing)
-                .height(boxSize)
+                .width((boxWidth + boxSpacing) * length - boxSpacing)
+                .height(boxHeight)
                 .alpha(0f), // полностью скрыт
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number
@@ -86,7 +86,8 @@ fun SmsCodeInput(
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .size(boxSize)
+                        .height(boxHeight)
+                        .width(boxWidth)
                         .border(
                             width = 1.dp,
                             color = boxBorderColor,

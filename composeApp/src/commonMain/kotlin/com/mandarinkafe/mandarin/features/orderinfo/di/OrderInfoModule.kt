@@ -4,10 +4,12 @@ import com.mandarinkafe.mandarin.features.orderinfo.data.impl.ChangeOrderReposit
 import com.mandarinkafe.mandarin.features.orderinfo.data.impl.OrderInfoRepositoryImpl
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.CancelOrderUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ChangeOrderRepository
+import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ForceRefreshOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.OrderInfoRepository
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.RepeatOrderInteractor
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.CancelOrderUseCaseImpl
+import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.ForceRefreshOrderStatusUseCaseImpl
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.GetOrderStatusUseCaseImpl
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.RepeatOrderInteractorImpl
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
@@ -24,6 +26,7 @@ val orderInfoModule = module {
 
     // --- UseCases / Interactors ---
     singleOf(::GetOrderStatusUseCaseImpl) { bind<GetOrderStatusUseCase>() }
+    singleOf(::ForceRefreshOrderStatusUseCaseImpl) { bind<ForceRefreshOrderStatusUseCase>() }
     singleOf(::CancelOrderUseCaseImpl) { bind<CancelOrderUseCase>() }
     singleOf(::RepeatOrderInteractorImpl) { bind<RepeatOrderInteractor>() }
 

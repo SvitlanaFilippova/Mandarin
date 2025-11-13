@@ -20,4 +20,7 @@ interface AuthRepository {
     // --- Сессии ---
     suspend fun getActiveSessions(): Resource<List<ActiveSession>>
     suspend fun revokeSession(sessionId: String): Resource<Boolean>
+
+    // --- Удаление аккаунта ---
+    suspend fun deleteAccount(): Resource<Boolean>
 }

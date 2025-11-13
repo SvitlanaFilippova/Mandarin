@@ -3,6 +3,8 @@ package com.mandarinkafe.mandarin.features.auth.data.network
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.features.auth.data.dto.ActiveSessionsDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.ActiveSessionsResponse
+import com.mandarinkafe.mandarin.features.auth.data.dto.DeleteAccountDataDto
+import com.mandarinkafe.mandarin.features.auth.data.dto.DeleteAccountResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionResponse
@@ -16,6 +18,7 @@ import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.patch
@@ -177,6 +180,35 @@ class ServerAuthApi(
             }
         } catch (e: Throwable) {
             Napier.e("$LOG_TAG: updateUserName - $LOG_EXCEPTION", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun deleteAccount(accessToken: String): Response {
+        return try {
+            val httpResponse = client.delete("/auth/me") {
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, accessToken.toAuthorizationHeader())
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> {
+                    val data: DeleteAccountDataDto = httpResponse.body()
+                    DeleteAccountResponse(data = data).apply { resultCode = HTTP_SUCCESS }
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
+                }
+
+                else -> {
+                    val errorBody = getErrorBody(httpResponse)
+                    Napier.e("$LOG_TAG: deleteAccount - $LOG_HTTP_ERROR ${httpResponse.status.value}: $errorBody")
+                    Response().apply { resultCode = HTTP_SERVER_ERROR }
+                }
+            }
+        } catch (e: Throwable) {
+            Napier.e("$LOG_TAG: deleteAccount - $LOG_EXCEPTION", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

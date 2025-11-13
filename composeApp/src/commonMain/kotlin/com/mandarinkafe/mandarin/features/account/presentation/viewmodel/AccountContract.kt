@@ -15,11 +15,13 @@ sealed interface AccountContract {
         data object GetInitData : AccountEvent
         data object SaveNameNow : AccountEvent
         data object OnPhoneClick : AccountEvent
+        data object ConfirmDeleteAccount : AccountEvent
     }
 
     sealed interface AccountEffect : BaseContract.BaseEffect {
         data object LoggedOut : AccountEffect
         data class ShowMessage(val message: StringResource) : AccountEffect
+        data object AccountDeleted : AccountEffect
     }
 
     data class AccountState(

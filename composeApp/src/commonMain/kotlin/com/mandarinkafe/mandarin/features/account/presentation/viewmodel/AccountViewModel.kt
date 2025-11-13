@@ -8,6 +8,7 @@ import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.Account
 import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.AccountContract.AccountEvent
 import com.mandarinkafe.mandarin.features.account.presentation.viewmodel.AccountContract.AccountState
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
+import com.mandarinkafe.mandarin.features.auth.domain.api.DeleteAccountUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.GetActiveSessionsUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.api.RevokeSessionUseCase
 import com.mandarinkafe.mandarin.features.auth.domain.impl.UserSessionManager
@@ -25,6 +26,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 class AccountViewModel(
     private val getActiveSessionsUseCase: GetActiveSessionsUseCase,
     private val revokeSessionUseCase: RevokeSessionUseCase,
+    private val deleteAccountUseCase: DeleteAccountUseCase,
     private val authRepository: AuthRepository,
     private val userInfoRepository: UserInfoRepository,
     private val userSessionManager: UserSessionManager,
@@ -43,6 +45,7 @@ class AccountViewModel(
             is AccountEvent.SetName -> setName(event.query)
             is AccountEvent.SaveNameNow -> saveUserName()
             is AccountEvent.OnPhoneClick -> onPhoneClick()
+            is AccountEvent.ConfirmDeleteAccount -> confirmDeleteAccount()
         }
     }
 
@@ -135,7 +138,6 @@ class AccountViewModel(
                 // Получаем access token
                 val accessToken = authRepository.getAccessToken()
                 if (accessToken != null) {
-                    Napier.d("AccountViewModel: Saving name to server: '$enteredName'")
                     val result = userInfoRepository.updateName(accessToken, enteredName)
                     when (result) {
                         is Resource.Success -> {
@@ -170,7 +172,6 @@ class AccountViewModel(
             val result = getActiveSessionsUseCase()
             when (result) {
                 is Resource.Success -> {
-                    Napier.d("AccountViewModel: Sessions loaded successfully: ${result.data?.size}")
                     setState {
                         copy(
                             sessions = result.data ?: emptyList(),
@@ -236,6 +237,66 @@ class AccountViewModel(
             } catch (e: Exception) {
                 Napier.e("AccountViewModel: Error during logout", e)
                 sendEffect(AccountEffect.ShowMessage(MR.strings.error_logout))
+            }
+        }
+    }
+
+
+    private fun confirmDeleteAccount() {
+        // Сразу удаляем аккаунт после подтверждения
+        deleteAccount()
+    }
+
+    private fun deleteAccount() {
+        viewModelScope.launch {
+            setLoading(true)
+
+            try {
+                when (val result = deleteAccountUseCase()) {
+                    is Resource.Success -> {
+                        if (result.data == true) {
+                            try {
+                                // Выполняем логаут для очистки всех данных на устройстве
+                                userSessionManager.logout()
+                            } catch (e: Exception) {
+                                Napier.e(
+                                    "AccountViewModel: Error during logout after account deletion",
+                                    e
+                                )
+                                // Продолжаем выполнение даже если логаут не удался
+                            }
+
+                            sendEffect(AccountEffect.ShowMessage(MR.strings.account_deleted_successfully))
+                            sendEffect(AccountEffect.AccountDeleted)
+                            setState { AccountState() }
+                        } else {
+                            Napier.w("AccountViewModel: Server returned success but data is false")
+                            sendEffect(AccountEffect.ShowMessage(MR.strings.error_delete_account))
+                        }
+                    }
+
+                    is Resource.Loading, is Resource.Idle -> {}
+
+                    is Resource.ErrorNoInternet -> {
+                        Napier.e("AccountViewModel: No internet connection during account deletion")
+                        sendEffect(AccountEffect.ShowMessage(MR.strings.error_no_internet))
+                    }
+
+                    is Resource.ErrorOther -> {
+                        Napier.e("AccountViewModel: Error deleting account: ${result.message}")
+                        sendEffect(AccountEffect.ShowMessage(MR.strings.error_delete_account))
+                    }
+
+                    is Resource.ErrorEmptyData -> {
+                        Napier.e("AccountViewModel: Empty data error during account deletion")
+                        sendEffect(AccountEffect.ShowMessage(MR.strings.error_delete_account))
+                    }
+                }
+            } catch (e: Exception) {
+                Napier.e("AccountViewModel: Exception during account deletion", e)
+                sendEffect(AccountEffect.ShowMessage(MR.strings.error_delete_account))
+            } finally {
+                setLoading(false)
             }
         }
     }

@@ -37,7 +37,7 @@ val coreModule = module {
     singleOf(::ObserveCartItemsUseCaseImpl) { bind<ObserveCartItemsUseCase>() }
     singleOf(::RefreshMenuIfStaleUseCaseImpl) { bind<RefreshMenuIfStaleUseCase>() }
     singleOf(::AuthStateChecker)
-    
+
     // App Lifecycle Manager (no dependencies on platform-specific observers)
     singleOf(::AppLifecycleManager)
 }
