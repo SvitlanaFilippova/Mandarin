@@ -40,7 +40,9 @@ kotlin {
         }
     }
 
-
+    // Настройка для доступа к SPM пакетам (YooKassaPayments)
+    // Фреймворк будет доступен автоматически после добавления через SPM в Xcode
+    // Для использования из Kotlin создайте expect/actual интерфейсы
 
     sourceSets {
         commonMain {

@@ -8,7 +8,7 @@ DEPENDENCIES:
   - YandexMapsMobile (= 4.25.0-full)
 
 SPEC REPOS:
-  trunk:
+  https://github.com/CocoaPods/Specs.git:
     - YandexMapsMobile
 
 EXTERNAL SOURCES:
