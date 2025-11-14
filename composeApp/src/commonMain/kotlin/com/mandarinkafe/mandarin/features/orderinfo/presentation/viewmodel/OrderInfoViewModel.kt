@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.CancelOrderUseCase
@@ -13,12 +14,17 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryInteractor
 import com.mandarinkafe.mandarin.features.payment.domain.api.GetPaymentStatusUseCase
+import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEffect
+import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEvent
+import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentViewModel
 import com.mandarinkafe.mandarin.util.Constants.PAYMENT_ONLINE_CODE
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.formatPhoneNumberForSdk
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.mandarinkafe.mandarin.util.tickerFlow
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -32,10 +38,18 @@ class OrderInfoViewModel(
     private val cartInteractor: CartInteractor,
     private val getPaymentStatus: GetPaymentStatusUseCase,
     private val ordersHistoryInteractor: OrdersHistoryInteractor,
+    private val paymentViewModel: PaymentViewModel,
 ) : BaseViewModel<OrderInfoEvent, OrderInfoEffect, OrderInfoState>() {
     override fun setInitialState() = OrderInfoState()
 
     private var observeJob: Job? = null
+    private var paymentStateObserverJob: Job? = null
+    private var paymentEffectObserverJob: Job? = null
+
+    init {
+        observePaymentState()
+        observePaymentEffects()
+    }
 
     override fun onEvent(event: OrderInfoEvent) {
         when (event) {
@@ -44,6 +58,92 @@ class OrderInfoViewModel(
             is OrderInfoEvent.CancelOrder -> cancel()
             is OrderInfoEvent.RefreshNow -> forceRefresh()
             is OrderInfoEvent.RepeatOrder -> repeatOrder()
+            is OrderInfoEvent.StartPayment -> startPayment()
+            is OrderInfoEvent.RetryPayment -> retryPayment()
+        }
+    }
+
+    private fun observePaymentState() {
+        paymentStateObserverJob = viewModelScope.launch {
+            paymentViewModel.state.collectLatest { paymentState ->
+                setState {
+                    copy(
+                        isPaymentLoading = paymentState.isLoading,
+                        isPaymentProcessing = paymentState.isPaymentProcessing,
+                        isPaymentPolling = paymentState.isPolling,
+                        paymentStatus = paymentState.paymentStatus,
+                        paymentError = paymentState.error
+                    )
+                }
+            }
+        }
+    }
+
+    private fun observePaymentEffects() {
+        paymentEffectObserverJob = viewModelScope.launch {
+            paymentViewModel.effect.collectLatest { effect ->
+                when (effect) {
+                    is PaymentEffect.PaymentSuccess -> {
+                        // Обновляем статус заказа после успешной оплаты
+                        val orderId = state.value.orderId
+                        if (orderId != null) {
+                            delay(1000) // Небольшая задержка для обновления на сервере
+                            forceRefresh(orderId)
+                        }
+                    }
+                    is PaymentEffect.PaymentError -> {
+                        // Сохраняем StringResource в state, конвертация будет в UI
+                        setState { copy(paymentError = effect.message) }
+                    }
+                    is PaymentEffect.PaymentCanceled -> {
+                        // Пользователь отменил оплату - просто обновляем состояние
+                        setState { copy(paymentError = null) }
+                    }
+                    is PaymentEffect.ShowCancelDialog -> {
+                        // Можно показать диалог отмены, если нужно
+                    }
+                }
+            }
+        }
+    }
+
+    private fun startPayment() {
+        val order = state.value.incomingOrder
+        val savedOrder = state.value.savedOrder
+        val orderId = state.value.orderId
+        
+        if (orderId == null || order == null) {
+            return
+        }
+
+        val amount = order.sum ?: 0.0
+        val userPhone = order.phone?.formatPhoneNumberForSdk() 
+            ?: savedOrder?.let { 
+                // Если телефона нет в заказе, можно попробовать получить из сохраненных данных
+                // Но обычно телефон должен быть в заказе
+                ""
+            } ?: ""
+
+        if (userPhone.isEmpty()) {
+            setState { copy(paymentError = MR.strings.error_payment_init_failed) }
+            return
+        }
+
+        viewModelScope.launch {
+            paymentViewModel.onEvent(
+                PaymentEvent.SetInitData(
+                    orderId = orderId,
+                    amount = amount,
+                    userPhone = userPhone
+                )
+            )
+            paymentViewModel.onEvent(PaymentEvent.InitPayment)
+        }
+    }
+
+    private fun retryPayment() {
+        viewModelScope.launch {
+            paymentViewModel.onEvent(PaymentEvent.RetryPayment)
         }
     }
 
@@ -212,6 +312,12 @@ class OrderInfoViewModel(
 
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        paymentStateObserverJob?.cancel()
+        paymentEffectObserverJob?.cancel()
     }
 
     private companion object {

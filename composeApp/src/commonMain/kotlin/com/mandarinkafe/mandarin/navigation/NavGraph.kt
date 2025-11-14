@@ -23,7 +23,6 @@ import com.mandarinkafe.mandarin.features.more.presentation.ui.screen.MoreMenuSc
 import com.mandarinkafe.mandarin.features.order.presentation.ui.screen.OrderScreen
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen.OrderInfoScreen
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.ui.screen.OrdersHistoryScreen
-import com.mandarinkafe.mandarin.features.payment.presentation.ui.screen.PaymentScreen
 import com.mandarinkafe.mandarin.features.savedadresses.presentation.ui.screen.SavedAddressesScreen
 import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchScreen
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberCartViewModel
@@ -261,38 +260,5 @@ fun NavGraph(navController: NavHostController) {
             )
         }
 
-        composable(
-            route = "${NavConstants.PAYMENT_SCREEN_ROUTE}?" +
-                    "${NavConstants.KEY_ORDER_ID}={${NavConstants.KEY_ORDER_ID}}&" +
-                    "${NavConstants.KEY_AMOUNT}={${NavConstants.KEY_AMOUNT}}&" +
-                    "${NavConstants.KEY_USER_PHONE}={${NavConstants.KEY_USER_PHONE}}"
-        ) { backStackEntry ->
-            val orderId =
-                backStackEntry.getStringArgument(NavConstants.KEY_ORDER_ID)?.decodeURLPart() ?: ""
-            val amount = backStackEntry.getDoubleArgument(
-                NavConstants.KEY_AMOUNT,
-                defaultValue = 0.0
-            )
-            val userPhone =
-                backStackEntry.getStringArgument(NavConstants.KEY_USER_PHONE)?.decodeURLPart() ?: ""
-            Napier.d("PaymentFlow: [NavGraph] PaymentScreen route - orderId=$orderId, amount=$amount, userPhone=$userPhone")
-
-            if (orderId.isNotEmpty() && userPhone.isNotEmpty()) {
-
-                PaymentScreen(
-                    navController = navController,
-                    orderId = orderId,
-                    amount = amount,
-                    userPhone = userPhone
-                )
-
-            } else {
-                Napier.e("PaymentFlow: [NavGraph] PaymentScreen - missing parameters! orderId.isEmpty=${orderId.isEmpty()}, userPhone.isEmpty=${userPhone.isEmpty()}")
-                // Показываем ошибку или возвращаемся назад
-                LaunchedEffect(Unit) {
-                    navController.popBackStack()
-                }
-            }
-        }
     }
 }

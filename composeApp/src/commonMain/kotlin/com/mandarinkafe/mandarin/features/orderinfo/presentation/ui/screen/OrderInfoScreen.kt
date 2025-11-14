@@ -50,6 +50,18 @@ fun OrderInfoScreen(
     LaunchedEffect(orderID) {
         onEvent(OrderInfoEvent.SetInitId(orderID))
     }
+
+    // Автоматически запускаем оплату, если заказ только что создан и это онлайн-оплата
+    LaunchedEffect(fromOrderCreation, state.isOnlinePayment, state.incomingOrder) {
+        if (fromOrderCreation && state.isOnlinePayment && state.incomingOrder != null && !state.incomingOrder.isClosed) {
+            // Небольшая задержка, чтобы экран успел загрузиться
+            kotlinx.coroutines.delay(500)
+            // Запускаем оплату только если она еще не запущена
+            if (!state.isPaymentLoading && !state.isPaymentProcessing && !state.isPaymentPolling && state.isPaymentPaid != true) {
+                onEvent(OrderInfoEvent.StartPayment)
+            }
+        }
+    }
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isLoading,
         onRefresh = { onEvent(OrderInfoEvent.RefreshNow) }
@@ -126,6 +138,7 @@ fun OrderInfoScreen(
                             withDismissAction = true,
                         )
                     }
+
 
                     is OrderInfoEffect.RepeatOrder -> {
                         val message = if (effect.hasInvalidItems) {

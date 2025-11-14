@@ -13,7 +13,6 @@ import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddress
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToAddressDetails
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrderInfo
-import com.mandarinkafe.mandarin.navigation.extensions.navigateToPayment
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.Flow
@@ -54,10 +53,10 @@ fun HandleOrderEffects(
 
                 is OrderEffect.StartOnlinePayment -> {
                     io.github.aakira.napier.Napier.d("PaymentFlow: [OrderEffects] StartOnlinePayment - orderId=${effect.orderId}, amount=${effect.amount}, userPhone=${effect.userPhone}")
-                    navController.navigateToPayment(
+                    // Переходим на экран информации о заказе, где будет запущена оплата
+                    navController.navigateToOrderInfo(
                         orderId = effect.orderId,
-                        amount = effect.amount,
-                        userPhone = effect.userPhone
+                        fromOrderCreation = true
                     )
                 }
             }

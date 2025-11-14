@@ -79,7 +79,13 @@ fun OrderInfoContentScreen(
             item {
                 PaymentInfoSection(
                     paymentStatus = state.paymentStatus,
-                    isPaymentPaid = state.isPaymentPaid
+                    isPaymentPaid = state.isPaymentPaid,
+                    isPaymentLoading = state.isPaymentLoading,
+                    isPaymentProcessing = state.isPaymentProcessing,
+                    isPaymentPolling = state.isPaymentPolling,
+                    paymentError = state.paymentError,
+                    onStartPayment = { onEvent(OrderInfoEvent.StartPayment) },
+                    onRetryPayment = { onEvent(OrderInfoEvent.RetryPayment) }
                 )
             }
         }

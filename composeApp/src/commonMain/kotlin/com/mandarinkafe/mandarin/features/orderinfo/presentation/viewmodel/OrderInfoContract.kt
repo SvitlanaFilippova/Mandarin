@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.BaseContract
+import dev.icerock.moko.resources.StringResource
 
 sealed interface OrderInfoContract {
 
@@ -16,6 +17,8 @@ sealed interface OrderInfoContract {
         data object CancelOrder : OrderInfoEvent
         data object RepeatOrder : OrderInfoEvent
         data object RefreshNow : OrderInfoEvent
+        data object StartPayment : OrderInfoEvent
+        data object RetryPayment : OrderInfoEvent
     }
 
     sealed interface OrderInfoEffect : BaseContract.BaseEffect {
@@ -31,6 +34,10 @@ sealed interface OrderInfoContract {
         val orderRepeatingInProgress: Boolean = false,
         val paymentStatus: PaymentStatus? = null,
         val isPaymentPaid: Boolean? = null,
+        val isPaymentLoading: Boolean = false,
+        val isPaymentProcessing: Boolean = false,
+        val isPaymentPolling: Boolean = false,
+        val paymentError: StringResource? = null,
     ) : BaseContract.BaseState {
 
         val deliveryStatus: UiDeliveryStatus

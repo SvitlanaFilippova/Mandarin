@@ -39,7 +39,7 @@ val paymentModule = module {
     singleOf(::CancelPaymentUseCaseImpl) { bind<CancelPaymentUseCase>() }
 
     // ViewModel
-    singleOf(::PaymentViewModel)
+    factoryOf(::PaymentViewModel)
 
     // YooKassa Service регистрируется в platform-specific модулях
     // см. PaymentPlatformModule.kt в androidMain и iosMain
