@@ -6,7 +6,6 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ChangeOrderReposi
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
-import io.github.aakira.napier.Napier
 
 class ChangeOrderRepositoryImpl(private val networkClient: IikoNetworkClient) :
     ChangeOrderRepository {
@@ -29,7 +28,7 @@ class ChangeOrderRepositoryImpl(private val networkClient: IikoNetworkClient) :
             paymentTypeKind = "card",
             sum = amount,
             paymentTypeId = paymentTypeId,
-            isPrepay = true,
+            isPrepay = false,
             isProcessedExternally = true,
             isFiscalizedExternally = false
         )
