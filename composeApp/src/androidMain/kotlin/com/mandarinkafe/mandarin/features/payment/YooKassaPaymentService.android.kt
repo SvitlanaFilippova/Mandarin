@@ -2,25 +2,17 @@ package com.mandarinkafe.mandarin.features.payment
 
 import android.content.Intent
 import androidx.core.net.toUri
-import io.github.aakira.napier.Napier
 import com.mandarinkafe.mandarin.shared.BuildKonfig
 
 actual class YooKassaPaymentService {
-    
+
     actual suspend fun initializePayment(
         amount: Double,
         subtitle: String,
-        userPhone: String
+        userPhone: String,
     ): PaymentResult {
         val clientApplicationKey = BuildKonfig.YOOKASSA_CLIENT_APPLICATION_KEY
         val shopId = BuildKonfig.YOOKASSA_SHOP_ID
-
-        if (clientApplicationKey.isBlank() || shopId.isBlank()) {
-            return PaymentResult(
-                success = false,
-                error = "Не настроены ключи ЮKassa (clientApplicationKey, shopId). Добавьте YOOKASSA_CLIENT_APPLICATION_KEY и YOOKASSA_SHOP_ID в apikeys.properties"
-            )
-        }
 
         return try {
             YooKassaActivityHelper.initializePayment(
@@ -42,7 +34,7 @@ actual class YooKassaPaymentService {
         // Для Android SDK ЮKassa открытие confirmation_url происходит автоматически
         // после создания платежа на сервере через PaymentActivity.
         // Если нужно открыть URL вручную (например, для 3DS), можно использовать Intent
-        
+
         return try {
             val activity = YooKassaActivityHelper.currentActivity
             if (activity != null) {
