@@ -9,6 +9,7 @@ sealed interface PaymentContract {
     sealed interface PaymentEvent : BaseContract.BaseEvent {
         data class SetInitData(
             val orderId: String,
+            val orderNumber: String?,
             val amount: Double,
             val userPhone: String,
         ) : PaymentEvent
@@ -20,7 +21,7 @@ sealed interface PaymentContract {
     }
 
     sealed interface PaymentEffect : BaseContract.BaseEffect {
-        data class PaymentSuccess(val orderId: String) : PaymentEffect
+        data class PaymentSuccess(val orderId: String, val amount: Double) : PaymentEffect
         data class PaymentError(val message: StringResource) : PaymentEffect
         data class ShowCancelDialog(val orderId: String) : PaymentEffect
         data object PaymentCanceled : PaymentEffect
@@ -28,6 +29,7 @@ sealed interface PaymentContract {
 
     data class PaymentState(
         val orderId: String = "",
+        val orderNumber: String? = null,
         val amount: Double = 0.0,
         val userPhone: String = "",
         val isLoading: Boolean = false,

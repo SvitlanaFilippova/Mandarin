@@ -4,8 +4,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CancelPaymentRequest(
-    @SerialName("order_id")
-    val orderId: String,
-    val reason: String = "canceled_by_client",
+data class PaymentConfirmationDto(
+    val type: String? = null,
+    @SerialName("confirmation_url")
+    val confirmationUrl: String? = null,
 )

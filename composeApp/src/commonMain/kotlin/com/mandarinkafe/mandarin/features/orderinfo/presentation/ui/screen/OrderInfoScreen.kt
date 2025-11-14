@@ -20,6 +20,7 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberOrderInfoViewModel
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
@@ -27,6 +28,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshIndicator
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -55,7 +57,7 @@ fun OrderInfoScreen(
     LaunchedEffect(fromOrderCreation, state.isOnlinePayment, state.incomingOrder) {
         if (fromOrderCreation && state.isOnlinePayment && state.incomingOrder != null && state.incomingOrder?.isClosed!=true) {
             // Небольшая задержка, чтобы экран успел загрузиться
-            kotlinx.coroutines.delay(500)
+            delay(Constants.DELAY_FOR_UI_RENDERING)
             // Запускаем оплату только если она еще не запущена
             if (!state.isPaymentLoading && !state.isPaymentProcessing && !state.isPaymentPolling && state.isPaymentPaid != true) {
                 onEvent(OrderInfoEvent.StartPayment)

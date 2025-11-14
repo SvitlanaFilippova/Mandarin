@@ -54,12 +54,10 @@ class PaymentRepositoryImpl(
                 }
 
                 else -> {
-                    Napier.e("PaymentFlow: [Repository] createPayment - Server error ${response.resultCode}")
                     Resource.ErrorOther("Ошибка создания платежа")
                 }
             }
         } catch (e: Exception) {
-            Napier.e("PaymentFlow: [Repository] createPayment - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
@@ -81,12 +79,10 @@ class PaymentRepositoryImpl(
                 }
 
                 else -> {
-                    Napier.e("PaymentFlow: [Repository] getPaymentStatus - Server error ${response.resultCode}")
                     Resource.ErrorOther("Ошибка получения статуса платежа")
                 }
             }
         } catch (e: Exception) {
-            Napier.e("PaymentFlow: [Repository] getPaymentStatus - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }
@@ -97,19 +93,20 @@ class PaymentRepositoryImpl(
             val response = networkClient.cancelPayment(request)
 
             when (response.resultCode) {
-                NO_CONNECTION -> Resource.ErrorNoInternet()
+                NO_CONNECTION -> {
+                    Resource.ErrorNoInternet()
+                }
 
                 HTTP_SUCCESS -> {
-                    Resource.Success(data = response.success ?: false)
+                    val success = response.success ?: false
+                    Resource.Success(data = success)
                 }
 
                 else -> {
-                    Napier.e("PaymentFlow: [Repository] cancelPayment - Server error ${response.resultCode}")
                     Resource.ErrorOther(response.message ?: "Ошибка отмены платежа")
                 }
             }
         } catch (e: Exception) {
-            Napier.e("PaymentFlow: [Repository] cancelPayment - Exception", e)
             Resource.ErrorOther("Ошибка: ${e.message}")
         }
     }

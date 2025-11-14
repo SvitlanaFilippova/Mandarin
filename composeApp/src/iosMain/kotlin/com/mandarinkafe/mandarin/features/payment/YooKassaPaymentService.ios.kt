@@ -12,7 +12,7 @@ import kotlin.coroutines.resume
 actual class YooKassaPaymentService {
     actual suspend fun initializePayment(
         amount: Double,
-        orderId: String,
+        subtitle: String,
         userPhone: String
     ): PaymentResult = suspendCancellableCoroutine { continuation ->
         // Вызов Swift обертки через Objective-C bridge

@@ -379,14 +379,9 @@ class OrderViewModel(
     }
 
     private fun setPaymentType(paymentType: UiPaymentType) {
-        Napier.d("PaymentFlow: [OrderViewModel] setPaymentType - paymentType=${paymentType.name}, code=${paymentType.code}")
         setState {
             copy(paymentInfo = paymentInfo.copy(chosenPaymentType = paymentType))
         }
-        // Логируем доступные типы для отладки
-        val availableCodes = state.value.paymentInfo.availablePaymentTypes.map { it.code }
-        Napier.d("PaymentFlow: [OrderViewModel] setPaymentType - Available payment types codes: $availableCodes")
-        Napier.d("PaymentFlow: [OrderViewModel] setPaymentType - Selected payment type code: ${paymentType.code}")
     }
 
     private fun checkDiscount(phone: String) {
@@ -453,16 +448,12 @@ class OrderViewModel(
     }
 
     private fun submitOrder() {
-        val chosenPaymentType = state.value.paymentInfo.chosenPaymentType
-        Napier.d("PaymentFlow: [OrderViewModel] submitOrder - chosenPaymentType=${chosenPaymentType?.name}, code=${chosenPaymentType?.code}")
-        
         if (state.value.shouldSaveUserName) saveUserName()
         viewModelScope.launch {
             setLoading()
             val order = state.value.toDomain(
                 paymentType = state.value.paymentInfo.chosenPaymentTypeDomain
             )
-            Napier.d("PaymentFlow: [OrderViewModel] submitOrder - creating order with paymentType.code=${order.paymentType.code}, paymentType.id=${order.paymentType.id}")
             orderCreator.submit(
                 scope = viewModelScope,
                 order = order,
@@ -474,13 +465,9 @@ class OrderViewModel(
     }
 
     private fun onSuccessOrderCreation(order: IncomingOrder) {
-        Napier.d("PaymentFlow: [OrderViewModel] onSuccessOrderCreation - orderId=${order.id}, sum=${order.sum}")
-        
         // Сохраняем выбранный тип оплаты ДО clearState, так как clearState сбрасывает состояние
         val savedChosenPaymentType = state.value.paymentInfo.chosenPaymentType
         val savedUserPhone = state.value.userInfo.phone
-        
-        Napier.d("PaymentFlow: [OrderViewModel] onSuccessOrderCreation - savedChosenPaymentType=${savedChosenPaymentType?.name}, savedUserPhone=$savedUserPhone")
         
         clearState()
 
@@ -493,19 +480,15 @@ class OrderViewModel(
             } else {
                 null
             }
-            Napier.d("PaymentFlow: [OrderViewModel] onSuccessOrderCreation - saving order to history with paymentMethodCode=$paymentMethodCode")
             saveOrderToHistory(order, paymentMethodCode)
-            Napier.d("PaymentFlow: [OrderViewModel] onSuccessOrderCreation - order saved to history")
         }
 
         // Если выбрана онлайн-оплата, запускаем процесс оплаты
         if (savedChosenPaymentType == UiPaymentType.ONLINE) {
             val userPhone = savedUserPhone.formatPhoneNumberForSdk()
-            Napier.d("PaymentFlow: [OrderViewModel] onSuccessOrderCreation - ONLINE payment selected, sending StartOnlinePayment effect - orderId=${order.id}, amount=${order.sum ?: 0.0}, userPhone=$userPhone")
             sendEffect(OrderEffect.StartOnlinePayment(order.id, order.sum ?: 0.0, userPhone))
         } else {
             // Для других способов оплаты - обычный флоу
-            Napier.d("PaymentFlow: [OrderViewModel] onSuccessOrderCreation - Non-ONLINE payment (${savedChosenPaymentType?.name}), sending ShowSuccess effect")
             sendEffect(ShowSuccess(order.id))
         }
         getSavedUserInfo()

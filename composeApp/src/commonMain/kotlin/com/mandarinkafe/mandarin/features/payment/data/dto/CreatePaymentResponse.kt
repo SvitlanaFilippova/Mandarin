@@ -16,16 +16,4 @@ data class CreatePaymentResponse(
     val confirmation: PaymentConfirmationDto? = null,
 ) : Response()
 
-@Serializable
-data class PaymentAmountDto(
-    val value: String,
-    val currency: String,
-)
-
-@Serializable
-data class PaymentConfirmationDto(
-    val type: String? = null,
-    @SerialName("confirmation_url")
-    val confirmationUrl: String? = null,
-)
 

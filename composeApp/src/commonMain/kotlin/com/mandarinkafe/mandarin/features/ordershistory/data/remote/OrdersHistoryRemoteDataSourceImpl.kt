@@ -51,27 +51,13 @@ class OrdersHistoryRemoteDataSourceImpl(
     override suspend fun saveOrder(order: SavedOrder) {
         val token = authRepository.getAccessToken()
         if (token == null) {
-            Napier.e("PaymentFlow: [OrdersHistoryRemoteDataSource] saveOrder - ERROR: No access token, orderId=${order.id}")
             return
         }
         try {
             val orderDto = order.toDto()
-            Napier.d("PaymentFlow: [OrdersHistoryRemoteDataSource] saveOrder - orderId=${order.id}")
-            Napier.d("PaymentFlow: [OrdersHistoryRemoteDataSource] saveOrder - orderDto: id=${orderDto.id}, number=${orderDto.number}, timestamp=${orderDto.timestamp}")
-            Napier.d("PaymentFlow: [OrdersHistoryRemoteDataSource] saveOrder - orderDto: paymentMethodCode=${orderDto.paymentMethodCode}, orderType=${orderDto.orderType}")
-            Napier.d("PaymentFlow: [OrdersHistoryRemoteDataSource] saveOrder - orderDto: addressLine1=${orderDto.addressLine1}, addressDetails=${orderDto.addressDetails}")
-            Napier.d("PaymentFlow: [OrdersHistoryRemoteDataSource] saveOrder - orderDto: mealNames=${orderDto.mealNames.take(100)}...")
-            
             val request = OrdersHistoryUpdateRequest(data = orderDto)
-            val response = api.createOrUpdateOrder(buildAuthToken(token), request)
-            
-            if (response.resultCode != HTTP_SUCCESS) {
-                Napier.e("PaymentFlow: [OrdersHistoryRemoteDataSource] saveOrder - ERROR: Server error, resultCode: ${response.resultCode}, orderId=${order.id}")
-            } else {
-                Napier.d("PaymentFlow: [OrdersHistoryRemoteDataSource] saveOrder - SUCCESS: orderId=${order.id}")
-            }
+            api.createOrUpdateOrder(buildAuthToken(token), request)
         } catch (e: Exception) {
-            Napier.e("PaymentFlow: [OrdersHistoryRemoteDataSource] saveOrder - EXCEPTION: orderId=${order.id}, error=${e.message}", e)
         }
     }
 

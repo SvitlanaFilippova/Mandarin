@@ -16,6 +16,8 @@ import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymen
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesResponse
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.AddPaymentsRequest
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.AddPaymentsResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
@@ -25,6 +27,10 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpStatusCode
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 
 class IikoApi(
     private val client: HttpClient,
@@ -101,6 +107,41 @@ class IikoApi(
             response.body()
         } catch (e: Exception) {
             logError("cancelOrderById", e)
+            throw e
+        }
+    }
+
+    suspend fun addPayments(body: AddPaymentsRequest): AddPaymentsResponse {
+        return try {
+            val json = Json { ignoreUnknownKeys = true; isLenient = true }
+            
+            val response = client.post("/api/1/deliveries/add_payments") {
+                setBody(body)
+            }
+            
+            val responseStatus = response.status
+            val responseBodyText = try {
+                response.bodyAsText()
+            } catch (e: Exception) {
+                "Failed to read response body: ${e.message}"
+            }
+            
+            // Десериализуем ответ
+            val responseBody = try {
+                json.decodeFromString(AddPaymentsResponse.serializer(), responseBodyText)
+            } catch (e: Exception) {
+                AddPaymentsResponse()
+            }
+            
+            // Проверяем статус и ошибку
+            if (responseStatus.value >= 400 || responseBody.error != null) {
+                val errorMsg = responseBody.error ?: "HTTP ${responseStatus.value}"
+                throw Exception("iiko error: $errorMsg")
+            }
+            
+            responseBody
+        } catch (e: Exception) {
+            logError("addPayments", e)
             throw e
         }
     }

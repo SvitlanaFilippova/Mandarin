@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.core.data.network
 
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingPaymentDto
 
 interface IikoNetworkClient {
     suspend fun getLoyaltyCustomerInfo(phone: String): Response
@@ -14,4 +15,5 @@ interface IikoNetworkClient {
     suspend fun cancelOrder(id: String): Response
     suspend fun getTerminalGroupsIds(): Response
     suspend fun getAliveTerminalGroups(terminalGroupIds: List<String>): Response
+    suspend fun addPayments(orderId: String, payment: OutgoingPaymentDto): Response
 }

@@ -121,7 +121,7 @@ class PaymentServerApi(
     }
 
     private companion object {
-        const val LOG_TAG = "PaymentFlow: [ServerApi]"
+        const val LOG_TAG = "[ServerApi]"
     }
 }
 

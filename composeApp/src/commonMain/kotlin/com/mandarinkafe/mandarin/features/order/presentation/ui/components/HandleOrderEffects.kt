@@ -52,7 +52,6 @@ fun HandleOrderEffects(
                     )
 
                 is OrderEffect.StartOnlinePayment -> {
-                    io.github.aakira.napier.Napier.d("PaymentFlow: [OrderEffects] StartOnlinePayment - orderId=${effect.orderId}, amount=${effect.amount}, userPhone=${effect.userPhone}")
                     // Переходим на экран информации о заказе, где будет запущена оплата
                     navController.navigateToOrderInfo(
                         orderId = effect.orderId,

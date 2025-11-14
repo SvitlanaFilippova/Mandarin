@@ -9,7 +9,7 @@ actual class YooKassaPaymentService {
     
     actual suspend fun initializePayment(
         amount: Double,
-        orderId: String,
+        subtitle: String,
         userPhone: String
     ): PaymentResult {
         val clientApplicationKey = BuildKonfig.YOOKASSA_CLIENT_APPLICATION_KEY
@@ -25,13 +25,12 @@ actual class YooKassaPaymentService {
         return try {
             YooKassaActivityHelper.initializePayment(
                 amount = amount,
-                orderId = orderId,
+                subtitle = subtitle,
                 clientApplicationKey = clientApplicationKey,
                 shopId = shopId,
                 userPhone = userPhone
             )
         } catch (e: Exception) {
-            Napier.e("PaymentFlow: [AndroidSDK] initializePayment - Exception", e)
             PaymentResult(
                 success = false,
                 error = "Ошибка инициализации платежа: ${e.message}"
@@ -57,7 +56,6 @@ actual class YooKassaPaymentService {
                 )
             }
         } catch (e: Exception) {
-            Napier.e("PaymentFlow: [AndroidSDK] openPaymentUrl - Exception", e)
             PaymentResult(
                 success = false,
                 error = "Ошибка открытия URL: ${e.message}"

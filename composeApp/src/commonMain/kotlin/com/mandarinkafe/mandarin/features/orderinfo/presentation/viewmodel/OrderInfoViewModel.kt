@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
+import com.mandarinkafe.mandarin.features.orderinfo.domain.api.AddPaymentToOrderUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.CancelOrderUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ForceRefreshOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
@@ -41,6 +42,7 @@ class OrderInfoViewModel(
     private val getPaymentStatus: GetPaymentStatusUseCase,
     private val ordersHistoryInteractor: OrdersHistoryInteractor,
     private val paymentViewModel: PaymentViewModel,
+    private val addPaymentToOrderUseCase: AddPaymentToOrderUseCase,
 ) : BaseViewModel<OrderInfoEvent, OrderInfoEffect, OrderInfoState>() {
     override fun setInitialState() = OrderInfoState()
 
@@ -87,9 +89,11 @@ class OrderInfoViewModel(
             paymentViewModel.effect.collectLatest { effect ->
                 when (effect) {
                     is PaymentEffect.PaymentSuccess -> {
-                        // Обновляем статус заказа после успешной оплаты
+                        // Отправляем информацию об оплате в iiko с повторными попытками
                         val orderId = state.value.orderId
                         if (orderId != null) {
+                            sendPaymentToIiko(orderId, effect.amount)
+                            // Обновляем статус заказа после успешной оплаты
                             delay(1000) // Небольшая задержка для обновления на сервере
                             forceRefresh(orderId)
                         }
@@ -104,6 +108,36 @@ class OrderInfoViewModel(
                     }
                     is PaymentEffect.ShowCancelDialog -> {
                         // Можно показать диалог отмены, если нужно
+                    }
+                }
+            }
+        }
+    }
+
+    private fun sendPaymentToIiko(orderId: String, amount: Double) {
+        viewModelScope.launch {
+            var attempt = 0
+            val maxAttempts = 3
+            var delayMs = 1000L // Начинаем с 1 секунды
+
+            while (attempt < maxAttempts) {
+                attempt++
+                val result = addPaymentToOrderUseCase(orderId, amount)
+                when (result) {
+                    is Resource.Success -> {
+                        return@launch
+                    }
+                    is Resource.ErrorNoInternet -> {
+                        if (attempt < maxAttempts) {
+                            delay(delayMs)
+                            delayMs *= 2 // Экспоненциальная задержка: 1s, 2s, 4s
+                        }
+                    }
+                    else -> {
+                        if (attempt < maxAttempts) {
+                            delay(delayMs)
+                            delayMs *= 2
+                        }
                     }
                 }
             }
@@ -136,6 +170,7 @@ class OrderInfoViewModel(
             paymentViewModel.onEvent(
                 PaymentEvent.SetInitData(
                     orderId = orderId,
+                    orderNumber = order.number,
                     amount = amount,
                     userPhone = userPhone
                 )

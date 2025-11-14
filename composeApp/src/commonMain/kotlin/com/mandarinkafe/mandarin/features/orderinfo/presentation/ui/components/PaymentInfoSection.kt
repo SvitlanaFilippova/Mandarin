@@ -34,7 +34,8 @@ fun PaymentInfoSection(
 ) {
     val isPaymentInProgress = isPaymentLoading || isPaymentProcessing || isPaymentPolling
     val canShowError = paymentError != null && !isPaymentInProgress
-    val canShowButton = isPaymentPaid != true && !isPaymentInProgress
+    val canShowButton =
+        isPaymentPaid != true && !isPaymentInProgress && paymentStatus != PaymentStatus.SUCCEEDED
 
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Column(

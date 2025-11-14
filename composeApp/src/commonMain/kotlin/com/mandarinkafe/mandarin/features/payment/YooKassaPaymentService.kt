@@ -10,7 +10,7 @@ expect class YooKassaPaymentService {
      */
     suspend fun initializePayment(
         amount: Double,
-        orderId: String,
+        subtitle: String,
         userPhone: String,
     ): PaymentResult
 
