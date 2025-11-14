@@ -19,11 +19,13 @@ sealed interface OrderInfoContract {
         data object RefreshNow : OrderInfoEvent
         data object StartPayment : OrderInfoEvent
         data object RetryPayment : OrderInfoEvent
+        data object DeleteOrderFromHistory : OrderInfoEvent
     }
 
     sealed interface OrderInfoEffect : BaseContract.BaseEffect {
         data class RepeatOrder(val hasInvalidItems: Boolean) : OrderInfoEffect
         data class ShowError(val message: String) : OrderInfoEffect
+        data object NavigateBack : OrderInfoEffect
     }
 
     data class OrderInfoState(
@@ -42,17 +44,19 @@ sealed interface OrderInfoContract {
 
         val deliveryStatus: UiDeliveryStatus
             get() = incomingOrder?.status?.toUi() ?: UiDeliveryStatus.UNCONFIRMED
-        
+
         val isOnlinePayment: Boolean
             get() {
-                // Сначала проверяем paymentMethodCode из SavedOrder (если есть)
+                // Сначала проверяем paymentMethodCode из SavedOrder
                 val paymentCode = savedOrder?.paymentMethodCode
                     ?: incomingOrder?.paymentName // Fallback на paymentName из iiko
-                
-                return paymentCode?.equals(
+
+                val result = paymentCode?.equals(
                     Constants.PAYMENT_ONLINE_CODE,
                     ignoreCase = true
                 ) == true
+
+                return result
             }
     }
 }

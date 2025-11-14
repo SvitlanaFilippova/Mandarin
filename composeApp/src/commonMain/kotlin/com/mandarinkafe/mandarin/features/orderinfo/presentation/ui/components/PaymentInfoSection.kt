@@ -2,10 +2,12 @@ package com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,6 +15,8 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
+import com.mandarinkafe.mandarin.features.payment.domain.models.toDisplayString
+import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
@@ -28,49 +32,59 @@ fun PaymentInfoSection(
     onStartPayment: () -> Unit = {},
     onRetryPayment: () -> Unit = {},
 ) {
+    val isPaymentInProgress = isPaymentLoading || isPaymentProcessing || isPaymentPolling
+    val canShowError = paymentError != null && !isPaymentInProgress
+    val canShowButton = isPaymentPaid != true && !isPaymentInProgress
+
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Column(
             Modifier.padding(Dimens.MarginStandard16),
-            verticalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
+            verticalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LabelValue(
                 stringResource(MR.strings.label_payment_status),
-                paymentStatus?.name ?: "Неизвестен"
+                paymentStatus?.let { stringResource(it.toDisplayString()) }
+                    ?: stringResource(MR.strings.payment_status_unknown)
             )
 
             // Показываем индикатор загрузки во время обработки платежа
-            if (isPaymentLoading || isPaymentProcessing || isPaymentPolling) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
+            if (isPaymentInProgress) {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    CircularProgressIndicator(
-                        color = Colors.Orange,
-                        modifier = Modifier.padding(vertical = Dimens.MarginSmall8)
+                    MyCircularProgressIndicator(
+                        strokeWidth = Dimens.ProgressBarStroke6,
+                        modifier = Modifier.size(Dimens.ProgressBarSmallSize)
                     )
                     val loadingText = when {
                         isPaymentProcessing -> stringResource(MR.strings.payment_processing)
                         isPaymentPolling -> stringResource(MR.strings.payment_polling)
                         else -> stringResource(MR.strings.payment_processing)
                     }
-                    LabelValue(
-                        label = "",
-                        value = loadingText
+
+                    Value(text = loadingText)
+                }
+
+            }
+
+            // Показываем ошибку, если есть
+            if (canShowError) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+                    Label(
+                        text = stringResource(MR.strings.label_error) + ": " + stringResource(
+                            paymentError
+                        )
                     )
                 }
             }
 
-            // Показываем ошибку, если есть
-            if (paymentError != null && !isPaymentLoading && !isPaymentProcessing && !isPaymentPolling) {
-                LabelValue(
-                    label = stringResource(MR.strings.label_error),
-                    value = stringResource(paymentError)
-                )
-            }
-
             // Кнопка оплаты/повтора
-            if (isPaymentPaid != true && !isPaymentLoading && !isPaymentProcessing && !isPaymentPolling) {
+            if (canShowButton) {
                 ButtonWithText(
+                    modifier = Modifier.fillMaxWidth(),
                     text = if (paymentError != null) {
                         stringResource(MR.strings.payment_retry)
                     } else {

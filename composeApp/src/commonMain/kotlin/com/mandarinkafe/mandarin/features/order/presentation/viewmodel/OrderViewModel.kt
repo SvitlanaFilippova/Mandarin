@@ -487,7 +487,15 @@ class OrderViewModel(
         // Очищаем корзину сразу после создания заказа
         viewModelScope.launch {
             cartUseCases.clearCart()
-            saveOrderToHistory(order)
+            // Сохраняем paymentMethodCode для онлайн-оплаты
+            val paymentMethodCode = if (savedChosenPaymentType == UiPaymentType.ONLINE) {
+                savedChosenPaymentType.code
+            } else {
+                null
+            }
+            Napier.d("PaymentFlow: [OrderViewModel] onSuccessOrderCreation - saving order to history with paymentMethodCode=$paymentMethodCode")
+            saveOrderToHistory(order, paymentMethodCode)
+            Napier.d("PaymentFlow: [OrderViewModel] onSuccessOrderCreation - order saved to history")
         }
 
         // Если выбрана онлайн-оплата, запускаем процесс оплаты

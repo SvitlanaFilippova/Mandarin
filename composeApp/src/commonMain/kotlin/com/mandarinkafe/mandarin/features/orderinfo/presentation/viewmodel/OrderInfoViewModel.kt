@@ -13,6 +13,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryInteractor
+import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 import com.mandarinkafe.mandarin.features.payment.domain.api.GetPaymentStatusUseCase
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEffect
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEvent
@@ -22,6 +23,7 @@ import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForSdk
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.mandarinkafe.mandarin.util.tickerFlow
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -60,6 +62,7 @@ class OrderInfoViewModel(
             is OrderInfoEvent.RepeatOrder -> repeatOrder()
             is OrderInfoEvent.StartPayment -> startPayment()
             is OrderInfoEvent.RetryPayment -> retryPayment()
+            is OrderInfoEvent.DeleteOrderFromHistory -> deleteOrderFromHistory()
         }
     }
 
@@ -155,7 +158,17 @@ class OrderInfoViewModel(
 
     private fun loadSavedOrder(orderId: String) {
         viewModelScope.launch {
-            val savedOrder = ordersHistoryInteractor.getOrderById(orderId)
+            // Делаем несколько попыток загрузки с задержкой, так как заказ может еще сохраняться на сервере
+            var savedOrder: SavedOrder? = null
+            repeat(3) { attempt ->
+                savedOrder = ordersHistoryInteractor.getOrderById(orderId)
+                if (savedOrder != null) {
+                    return@repeat
+                }
+                if (attempt < 2) {
+                    delay(500) // Задержка перед следующей попыткой
+                }
+            }
             setState { copy(savedOrder = savedOrder) }
             
             // Если заказ с онлайн-оплатой и не закрыт, проверяем статус платежа
@@ -306,6 +319,27 @@ class OrderInfoViewModel(
                     // Игнорируем ошибки получения статуса платежа (платеж может не существовать)
                     // Не обновляем состояние
                 }
+            }
+        }
+    }
+
+    private fun deleteOrderFromHistory() {
+        val orderId = state.value.orderId
+        if (orderId == null) {
+            showError("Не указан ID заказа")
+            return
+        }
+
+        viewModelScope.launch {
+            setLoading(true)
+            try {
+                ordersHistoryInteractor.removeOrderById(orderId)
+                setLoading(false)
+                sendEffect(OrderInfoEffect.NavigateBack)
+            } catch (e: Exception) {
+                Napier.e("OrderInfoViewModel, deleteOrderFromHistory error: $e")
+                setLoading(false)
+                showError("Не удалось удалить заказ из истории")
             }
         }
     }

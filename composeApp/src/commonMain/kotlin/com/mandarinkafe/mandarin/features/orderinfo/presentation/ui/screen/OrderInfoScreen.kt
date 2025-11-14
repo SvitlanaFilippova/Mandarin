@@ -53,7 +53,7 @@ fun OrderInfoScreen(
 
     // Автоматически запускаем оплату, если заказ только что создан и это онлайн-оплата
     LaunchedEffect(fromOrderCreation, state.isOnlinePayment, state.incomingOrder) {
-        if (fromOrderCreation && state.isOnlinePayment && state.incomingOrder != null && !state.incomingOrder.isClosed) {
+        if (fromOrderCreation && state.isOnlinePayment && state.incomingOrder != null && state.incomingOrder?.isClosed!=true) {
             // Небольшая задержка, чтобы экран успел загрузиться
             kotlinx.coroutines.delay(500)
             // Запускаем оплату только если она еще не запущена
@@ -147,6 +147,10 @@ fun OrderInfoScreen(
                             allItemsAddedText
                         }
                         navController.navigateToCart(message)
+                    }
+
+                    is OrderInfoEffect.NavigateBack -> {
+                        navController.popBackStack()
                     }
                 }
             }
