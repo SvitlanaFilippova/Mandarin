@@ -10,6 +10,7 @@ interface PaymentRepository {
         amount: Double,
         currency: String,
         description: String,
+        returnUrl: String? = null, // URL для возврата после оплаты (для iOS "умного платежа")
     ): Resource<PaymentInfo>
 
     suspend fun getPaymentStatus(orderId: String): Resource<PaymentInfo>

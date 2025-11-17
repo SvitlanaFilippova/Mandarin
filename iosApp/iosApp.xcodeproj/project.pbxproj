@@ -7,14 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		030AC88B2EC5C5C500DD5F46 /* YooKassaPayments in Frameworks */ = {isa = PBXBuildFile; productRef = 030AC88A2EC5C5C500DD5F46 /* YooKassaPayments */; };
 		60E99821D6533273E96FF333 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6FCA8E65709F1036352387C /* Pods_iosApp.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		03F819CA2ECB463E0059BB0A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		035EA40E2EA2329800C1DEA6 /* composeAppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = composeAppKit.framework; sourceTree = "<group>"; };
 		035EA40F2EA2329800C1DEA6 /* composeAppKit.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = composeAppKit.framework.dSYM; sourceTree = "<group>"; };
-		03F817082EC76D130059BB0A /* PaymentWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PaymentWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C8F8AB03D2FFC595FCAA789 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 		81F36E8B1A96CFEB18C1C974 /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
 		8402C1B0CCCF2A0709D7DD61 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -22,34 +33,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		03F817122EC76DC70059BB0A /* Exceptions for "iosApp" folder in "PaymentWrapper" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				YooKassaWrapper.swift,
-			);
-			target = 03F817072EC76D130059BB0A /* PaymentWrapper */;
-		};
 		EB3F3840B6BFB7E8FD146EC1 /* Exceptions for "iosApp" folder in "iosApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				YooKassaWrapper.swift,
 			);
 			target = 708B91B52BE4B7D29017E633 /* iosApp */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		03F817092EC76D130059BB0A /* PaymentWrapper */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = PaymentWrapper;
-			sourceTree = "<group>";
-		};
 		19ED9C2B1AE5DB2450AC659D /* iosApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				EB3F3840B6BFB7E8FD146EC1 /* Exceptions for "iosApp" folder in "iosApp" target */,
-				03F817122EC76DC70059BB0A /* Exceptions for "iosApp" folder in "PaymentWrapper" target */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -62,19 +59,11 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		03F817052EC76D130059BB0A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		A31567BE1075B2A843519674 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				60E99821D6533273E96FF333 /* Pods_iosApp.framework in Frameworks */,
-				030AC88B2EC5C5C500DD5F46 /* YooKassaPayments in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,7 +102,6 @@
 			children = (
 				F0F83B406E57FF95B2F7762A /* Configuration */,
 				19ED9C2B1AE5DB2450AC659D /* iosApp */,
-				03F817092EC76D130059BB0A /* PaymentWrapper */,
 				035EA40D2EA2329800C1DEA6 /* Frameworks */,
 				55AFEE646A66DFC37EF71D37 /* Products */,
 				6F33D491B69A4820FD3D20EB /* Pods */,
@@ -124,7 +112,6 @@
 			isa = PBXGroup;
 			children = (
 				8402C1B0CCCF2A0709D7DD61 /* iosApp.app */,
-				03F817082EC76D130059BB0A /* PaymentWrapper.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -140,40 +127,7 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		03F817032EC76D130059BB0A /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
-		03F817072EC76D130059BB0A /* PaymentWrapper */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 03F817102EC76D130059BB0A /* Build configuration list for PBXNativeTarget "PaymentWrapper" */;
-			buildPhases = (
-				03F817032EC76D130059BB0A /* Headers */,
-				03F817042EC76D130059BB0A /* Sources */,
-				03F817052EC76D130059BB0A /* Frameworks */,
-				03F817062EC76D130059BB0A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				03F817092EC76D130059BB0A /* PaymentWrapper */,
-			);
-			name = PaymentWrapper;
-			packageProductDependencies = (
-			);
-			productName = PaymentWrapper;
-			productReference = 03F817082EC76D130059BB0A /* PaymentWrapper.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		708B91B52BE4B7D29017E633 /* iosApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 299852936B0918E9967EACC2 /* Build configuration list for PBXNativeTarget "iosApp" */;
@@ -184,6 +138,7 @@
 				F48D4320FD61DFE3A3FF9489 /* Resources */,
 				035EA40C2EA2325300C1DEA6 /* copyFrameworkResourcesToApp */,
 				9CD1267AE69700FEC00E0251 /* [CP] Copy Pods Resources */,
+				03F819CA2ECB463E0059BB0A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -207,9 +162,6 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
-					03F817072EC76D130059BB0A = {
-						CreatedOnToolsVersion = 16.4;
-					};
 					708B91B52BE4B7D29017E633 = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -225,7 +177,6 @@
 			mainGroup = 30097092C2963D1CF4A53797;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				030AC8892EC5C5C500DD5F46 /* XCRemoteSwiftPackageReference "yookassa-payments-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 55AFEE646A66DFC37EF71D37 /* Products */;
@@ -233,19 +184,11 @@
 			projectRoot = "";
 			targets = (
 				708B91B52BE4B7D29017E633 /* iosApp */,
-				03F817072EC76D130059BB0A /* PaymentWrapper */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		03F817062EC76D130059BB0A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		F48D4320FD61DFE3A3FF9489 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -320,13 +263,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		03F817042EC76D130059BB0A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		088397FB9BC19A36E9A51BD2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -337,80 +273,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		03F8170E2EC76D130059BB0A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 53RM6FNW4Q;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mandarin.PaymentWrapper;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		03F8170F2EC76D130059BB0A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 53RM6FNW4Q;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mandarin.PaymentWrapper;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
 		2E5BF11911D484458EE004C1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = F0F83B406E57FF95B2F7762A /* Configuration */;
@@ -627,15 +489,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		03F817102EC76D130059BB0A /* Build configuration list for PBXNativeTarget "PaymentWrapper" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				03F8170E2EC76D130059BB0A /* Debug */,
-				03F8170F2EC76D130059BB0A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		299852936B0918E9967EACC2 /* Build configuration list for PBXNativeTarget "iosApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -655,25 +508,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		030AC8892EC5C5C500DD5F46 /* XCRemoteSwiftPackageReference "yookassa-payments-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://git.yoomoney.ru/scm/sdk/yookassa-payments-swift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 8.1.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		030AC88A2EC5C5C500DD5F46 /* YooKassaPayments */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 030AC8892EC5C5C500DD5F46 /* XCRemoteSwiftPackageReference "yookassa-payments-swift" */;
-			productName = YooKassaPayments;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 785D455D26C46554677BDCFE /* Project object */;
 }

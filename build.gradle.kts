@@ -133,3 +133,5 @@ dependencies {
     add("detektPlugins", libs.staticAnalysis.detektFormatting)
     add("detektPlugins", libs.staticAnalysis.detektLibraries)
 }
+
+

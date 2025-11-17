@@ -15,13 +15,15 @@ class CreatePaymentUseCaseImpl(
         amount: Double,
         currency: String,
         description: String,
+        returnUrl: String?,
     ): Resource<PaymentInfo> {
         return repository.createPayment(
             paymentToken = paymentToken,
             orderId = orderId,
             amount = amount,
             currency = currency,
-            description = description
+            description = description,
+            returnUrl = returnUrl
         )
     }
 }

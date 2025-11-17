@@ -21,6 +21,7 @@ class PaymentRepositoryImpl(
         amount: Double,
         currency: String,
         description: String,
+        returnUrl: String?,
     ): Resource<PaymentInfo> {
         return try {
             val request = CreatePaymentRequest(
@@ -28,7 +29,8 @@ class PaymentRepositoryImpl(
                 orderId = orderId,
                 amount = amount,
                 currency = currency,
-                description = description
+                description = description,
+                returnUrl = returnUrl
             )
             val response = networkClient.createPayment(request)
 

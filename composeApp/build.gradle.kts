@@ -10,7 +10,6 @@ plugins {
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.kotlinCocoapods)
-    alias(libs.plugins.swiftklib)
     id("com.android.application")
     id("dev.icerock.mobile.multiplatform-resources")
     id("com.codingfeline.buildkonfig") version "0.17.1"
@@ -24,12 +23,7 @@ kotlin {
         iosX64(),
         iosArm64(),
         iosSimulatorArm64(),
-    ).forEach {
-        it.compilations {
-            val main by getting { cinterops { create("yookassa") } }
-        }
-    }
-
+    )
 
     cocoapods {
         version = "1.0"
@@ -264,9 +258,3 @@ tasks.named("packForXcode") {
     dependsOn("updateIOSVersion")
 }
 
-swiftklib {
-    create("yookassa") {
-        path = file("../iosApp/iosApp/yookassa")
-        packageName("com.mandarinkafe.mandarin.yookassa")
-    }
-}

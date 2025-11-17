@@ -15,7 +15,6 @@ import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.mandarinkafe.mandarin.util.tickerFlow
 import dev.icerock.moko.resources.StringResource
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -29,7 +28,7 @@ class PaymentViewModel(
 ) : BaseViewModel<PaymentEvent, PaymentEffect, PaymentState>() {
 
     private var pollingJob: Job? = null
-    private val maxPollingDuration = 60.seconds
+    private val maxPollingDuration = 300.seconds // 5 минут - увеличиваем для "умного платежа" на iOS
 
     override fun setInitialState() = PaymentState()
 
@@ -87,8 +86,7 @@ class PaymentViewModel(
                 userPhone = state.value.userPhone
             )
 
-
-            if (!sdkResult.success || sdkResult.paymentToken == null) {
+            if (!sdkResult.success) {
                 setLoading(false)
                 setState {
                     copy(
@@ -100,6 +98,8 @@ class PaymentViewModel(
                 return@launch
             }
 
+            // Для iOS "умного платежа" paymentToken может быть null
+            // Сервер создаст платеж напрямую через API YooKassa
             val paymentToken = sdkResult.paymentToken
 
             // 2. Создание платежа на сервере
@@ -108,13 +108,36 @@ class PaymentViewModel(
             } else {
                 "Заказ ID ${state.value.orderId}"
             }
-            val createResult = createPaymentUseCase(
-                paymentToken = paymentToken,
-                orderId = state.value.orderId,
-                amount = state.value.amount,
-                currency = "RUB",
-                description = description
-            )
+            
+            // Для iOS paymentToken может быть null - сервер создаст платеж без токена
+            // Для iOS также передаем return_url для возврата в приложение после оплаты
+            val returnUrl = if (paymentToken == null) {
+                // Для iOS "умного платежа" используем URL scheme для возврата в приложение
+                "mandarin://payment/return?order_id=${state.value.orderId}"
+            } else {
+                null // Для Android return_url не нужен (SDK обрабатывает возврат)
+            }
+            
+            val createResult = if (paymentToken != null) {
+                createPaymentUseCase(
+                    paymentToken = paymentToken,
+                    orderId = state.value.orderId,
+                    amount = state.value.amount,
+                    currency = "RUB",
+                    description = description,
+                    returnUrl = returnUrl
+                )
+            } else {
+                // Для iOS "умного платежа" - создаем платеж без payment_token
+                createPaymentUseCase(
+                    paymentToken = "", // Для iOS сервер создаст платеж без токена
+                    orderId = state.value.orderId,
+                    amount = state.value.amount,
+                    currency = "RUB",
+                    description = description,
+                    returnUrl = returnUrl
+                )
+            }
 
             when (createResult) {
                 is Resource.Success -> {
@@ -195,7 +218,7 @@ class PaymentViewModel(
 
         pollingJob = viewModelScope.launch {
             val isCompleted = withTimeoutOrNull(maxPollingDuration) {
-                tickerFlow(period = 3.seconds)
+                        tickerFlow(period = 3.seconds)
                     .collect { _ ->
                         val statusResult = getPaymentStatusUseCase(state.value.orderId)
 

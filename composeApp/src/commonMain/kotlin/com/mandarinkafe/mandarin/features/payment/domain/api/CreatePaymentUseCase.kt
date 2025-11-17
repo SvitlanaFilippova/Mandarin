@@ -10,6 +10,7 @@ interface CreatePaymentUseCase {
         amount: Double,
         currency: String = "RUB",
         description: String,
+        returnUrl: String? = null, // URL для возврата после оплаты (для iOS "умного платежа")
     ): Resource<PaymentInfo>
 }
 

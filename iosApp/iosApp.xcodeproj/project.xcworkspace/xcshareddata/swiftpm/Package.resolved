@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sdkpay/sdkpay-static.git",
       "state" : {
-        "revision" : "a362c3ab1b498d4a4c78a3a04ecc1ce66e8df22e",
-        "version" : "3.0.1"
+        "revision" : "52acba78860f7f1176d84949f010e583a12934d4",
+        "version" : "3.0.2"
       }
     },
     {

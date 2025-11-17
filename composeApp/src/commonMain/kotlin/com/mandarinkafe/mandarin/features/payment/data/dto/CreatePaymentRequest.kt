@@ -12,5 +12,7 @@ data class CreatePaymentRequest(
     val amount: Double,
     val currency: String = "RUB",
     val description: String,
+    @SerialName("return_url")
+    val returnUrl: String? = null, // URL для возврата после оплаты (для iOS "умного платежа")
 )
 
