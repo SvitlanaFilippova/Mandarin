@@ -5,14 +5,18 @@ import composeApp
 @main
 struct iOSApp: App {
     init() {
-        // Initialize Yandex MapKit with API key
+        // Инициализируем Yandex MapKit
         YMKMapKit.setApiKey(ApiKeys.shared.mapKitApiKey)
         YMKMapKit.sharedInstance()
+        
+        // Устанавливаем реализацию для YooKassaWrapper
+        YooKassaWrapper.shared.setImplementation(YooKassaWrapperImpl())
     }
-
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
+        
+        var body: some Scene {
+            WindowGroup {
+                ContentView()
+            }
         }
-    }
+   
 }

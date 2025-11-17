@@ -1,53 +1,48 @@
 package com.mandarinkafe.mandarin.features.payment
 
-import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.yookassa.YooKassaWrapper
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
+
+@OptIn(ExperimentalForeignApi::class)
 actual class YooKassaPaymentService {
-
     actual suspend fun initializePayment(
         amount: Double,
         subtitle: String,
-        userPhone: String,
-    ): PaymentResult {
-
-        BuildKonfig.YOOKASSA_CLIENT_APPLICATION_KEY
-        BuildKonfig.YOOKASSA_SHOP_ID
-
-        return suspendCancellableCoroutine { continuation ->
-
-//            YooKassaWrapper.initializePaymentSync(
-//                amount = amount,
-//                subtitle = subtitle,
-//                userPhone = userPhone,
-//                clientApplicationKey = clientKey,
-//                shopId = shopId
-//            ) { success, token, error ->
-//
-//                continuation.resume(
-//                    PaymentResult(
-//                        success = success,
-//                        paymentToken = token,
-//                        error = error
-//                    )
-//                )
-//            }
+        userPhone: String
+    ): PaymentResult = suspendCancellableCoroutine { continuation ->
+        YooKassaWrapper.shared().initializePaymentWithAmount(
+            amount = amount,
+            subtitle = subtitle,
+            userPhone = userPhone,
+            clientApplicationKey = "твой_clientApplicationKey",
+            shopId = "твой_shopId"
+        ) { success, paymentToken, error ->
+            continuation.resume(
+                PaymentResult(
+                    success = success,
+                    paymentToken = paymentToken,
+                    error = error
+                )
+            )
         }
     }
 
+
     actual suspend fun openPaymentUrl(confirmationUrl: String): PaymentResult =
         suspendCancellableCoroutine { continuation ->
-
-//            YooKassaWrapper.openPaymentUrlSync(
-//                confirmationUrl = confirmationUrl
-//            ) { success, _, error ->
-//
-//                continuation.resume(
-//                    PaymentResult(
-//                        success = success,
-//                        error = error
-//                    )
-//                )
-//            }
+            YooKassaWrapper.shared().openPaymentUrlWithConfirmationUrl(
+                confirmationUrl = confirmationUrl
+            ) { success, _, error ->
+                continuation.resume(
+                    PaymentResult(
+                        success = success,
+                        paymentToken = null,
+                        error = error
+                    )
+                )
+            }
         }
 }
