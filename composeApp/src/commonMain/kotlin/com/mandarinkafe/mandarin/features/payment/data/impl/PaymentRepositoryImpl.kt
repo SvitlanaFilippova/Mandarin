@@ -15,13 +15,6 @@ class PaymentRepositoryImpl(
     private val networkClient: PaymentNetworkClient,
 ) : PaymentRepository {
 
-    private companion object {
-        private const val ERROR_PREFIX = "Ошибка: "
-        private const val ERROR_CREATE_PAYMENT = "Ошибка создания платежа"
-        private const val ERROR_GET_PAYMENT_STATUS = "Ошибка получения статуса платежа"
-        private const val ERROR_CANCEL_PAYMENT = "Ошибка отмены платежа"
-    }
-
     override suspend fun createPayment(
         paymentToken: String,
         orderId: String,
@@ -67,7 +60,7 @@ class PaymentRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("$ERROR_PREFIX${e.message}")
+            Resource.ErrorOther(ERROR_PREFIX + { e.message })
         }
     }
 
@@ -92,7 +85,7 @@ class PaymentRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("$ERROR_PREFIX${e.message}")
+            Resource.ErrorOther(ERROR_PREFIX + { e.message })
         }
     }
 
@@ -116,8 +109,15 @@ class PaymentRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("$ERROR_PREFIX${e.message}")
+            Resource.ErrorOther(ERROR_PREFIX + { e.message })
         }
+    }
+
+    private companion object {
+        private const val ERROR_PREFIX = "Ошибка: "
+        private const val ERROR_CREATE_PAYMENT = "Ошибка создания платежа"
+        private const val ERROR_GET_PAYMENT_STATUS = "Ошибка получения статуса платежа"
+        private const val ERROR_CANCEL_PAYMENT = "Ошибка отмены платежа"
     }
 }
 
