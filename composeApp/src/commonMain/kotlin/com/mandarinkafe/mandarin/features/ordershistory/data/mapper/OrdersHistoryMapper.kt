@@ -1,7 +1,10 @@
 package com.mandarinkafe.mandarin.features.ordershistory.data.mapper
 
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
+import com.mandarinkafe.mandarin.features.ordershistory.data.network.OrderStatusDto
 import com.mandarinkafe.mandarin.features.ordershistory.data.network.dto.SavedOrderDto
+import com.mandarinkafe.mandarin.features.ordershistory.domain.models.OrderStatus
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 import io.github.aakira.napier.Napier
 
@@ -43,6 +46,17 @@ object OrdersHistoryMapper {
             Napier.e("OrdersHistoryMapper, parseDeliveryType error: $e")
             null
         }
+    }
+
+    fun OrderStatusDto.toDomain(): OrderStatus {
+        return OrderStatus(
+            orderId = id,
+            status = status?.toDeliveryStatus()
+        )
+    }
+
+    private fun String.toDeliveryStatus(): DeliveryStatus? {
+        return DeliveryStatus.entries.find { it.apiName.equals(this, ignoreCase = true) }
     }
 }
 

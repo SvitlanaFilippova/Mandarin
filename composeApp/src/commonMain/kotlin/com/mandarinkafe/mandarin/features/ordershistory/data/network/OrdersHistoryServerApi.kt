@@ -133,5 +133,42 @@ class OrdersHistoryServerApi(private val client: HttpClient) {
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
+
+    suspend fun getOrdersStatuses(
+        token: String,
+        body: OrdersStatusesRequest,
+    ): OrdersStatusesResponse {
+        return try {
+            val httpResponse = client.post("/orders/history/statuses") {
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
+                setBody(body)
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> {
+                    val responseBody: OrdersStatusesResponse = httpResponse.body()
+                    responseBody.apply { resultCode = HTTP_SUCCESS }
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    OrdersStatusesResponse().apply {
+                        resultCode = HttpStatusCode.Unauthorized.value
+                    }
+                }
+
+                HttpStatusCode.BadRequest -> {
+                    OrdersStatusesResponse().apply { resultCode = HttpStatusCode.BadRequest.value }
+                }
+
+                else -> {
+                    OrdersStatusesResponse().apply { resultCode = HTTP_SERVER_ERROR }
+                }
+            }
+        } catch (e: Throwable) {
+            Napier.e("getOrdersStatuses error: $e")
+            OrdersStatusesResponse().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
 }
 

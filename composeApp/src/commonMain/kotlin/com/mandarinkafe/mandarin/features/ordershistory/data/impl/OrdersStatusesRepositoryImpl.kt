@@ -1,35 +1,49 @@
 package com.mandarinkafe.mandarin.features.ordershistory.data.impl
 
-import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
-import com.mandarinkafe.mandarin.features.orderinfo.data.network.OrdersInfoResponse
-import com.mandarinkafe.mandarin.features.orderinfo.data.toOrderStatus
+import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
+import com.mandarinkafe.mandarin.features.ordershistory.data.mapper.OrdersHistoryMapper.toDomain
+import com.mandarinkafe.mandarin.features.ordershistory.data.network.OrdersHistoryServerApi
+import com.mandarinkafe.mandarin.features.ordershistory.data.network.OrdersStatusesRequest
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersStatusesRepository
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.OrderStatus
+import com.mandarinkafe.mandarin.util.Constants.BEARER_TOKEN_TYPE
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
-import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
+import io.github.aakira.napier.Napier
 
-class OrdersStatusesRepositoryImpl(private val networkClient: IikoNetworkClient) :
-    OrdersStatusesRepository {
+class OrdersStatusesRepositoryImpl(
+    private val api: OrdersHistoryServerApi,
+    private val authRepository: AuthRepository,
+) : OrdersStatusesRepository {
+
+    private companion object {
+        fun buildAuthToken(token: String) = "$BEARER_TOKEN_TYPE $token"
+    }
 
     override suspend fun getStatuses(ids: List<String>): Resource<List<OrderStatus>> {
-        val response = networkClient.getOrdersStatusesByIds(ids)
+        val token = authRepository.getAccessToken()
+        if (token == null) {
+            return Resource.ErrorOther("Токен авторизации не найден")
+        }
 
-        return when (response.resultCode) {
-            NO_CONNECTION -> {
-                Resource.ErrorNoInternet()
+        return try {
+            val request = OrdersStatusesRequest(orderIds = ids)
+            val response = api.getOrdersStatuses(buildAuthToken(token), request)
+
+            when (response.resultCode) {
+                HTTP_SUCCESS -> {
+                    val orders = response.orders?.map { it.toDomain() } ?: emptyList()
+                    Resource.Success(data = orders)
+                }
+
+                else -> {
+                    Napier.e("OrdersStatusesRepositoryImpl, getStatuses error: resultCode=${response.resultCode}")
+                    Resource.ErrorOther("Ошибка сервера или пустой ответ")
+                }
             }
-
-            HTTP_SUCCESS -> {
-                val orders = (response as OrdersInfoResponse)
-                    .orders.map { it.toOrderStatus() }
-
-                Resource.Success(data = orders)
-            }
-
-            else -> {
-                Resource.ErrorOther("Ошибка сервера или пустой ответ")
-            }
+        } catch (e: Exception) {
+            Napier.e("OrdersStatusesRepositoryImpl, getStatuses error: $e", e)
+            Resource.ErrorOther("Ошибка при получении статусов: ${e.message}")
         }
     }
 }
