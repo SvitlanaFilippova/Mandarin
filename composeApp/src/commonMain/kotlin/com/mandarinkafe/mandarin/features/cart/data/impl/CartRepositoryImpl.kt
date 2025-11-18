@@ -235,7 +235,7 @@ class CartRepositoryImpl(
             val remoteCart = remoteDataSource.getCart()
 
             val isFirstSyncAfterAuth = isFirstSyncAfterAuthorization(localLastUpdated, localCart)
-            
+
             // При первой синхронизации после авторизации всегда выполняем мерж,
             // даже если удаленная корзина пустая, чтобы сохранить локальные товары
             if (!isFirstSyncAfterAuth && shouldClearLocalCart(remoteCart, localLastUpdated)) {
