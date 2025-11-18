@@ -16,6 +16,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent.StopObservingStatus
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
@@ -55,11 +56,11 @@ fun OrderInfoScreen(
 
     // Автоматически запускаем оплату, если заказ только что создан и это онлайн-оплата
     LaunchedEffect(fromOrderCreation, state.isOnlinePayment, state.incomingOrder) {
-        if (fromOrderCreation && state.isOnlinePayment && state.incomingOrder != null && state.incomingOrder?.isClosed!=true) {
+        if (shouldAutoStartPayment(fromOrderCreation, state)) {
             // Небольшая задержка, чтобы экран успел загрузиться
             delay(Constants.DELAY_FOR_UI_RENDERING)
             // Запускаем оплату только если она еще не запущена
-            if (!state.isPaymentLoading && !state.isPaymentProcessing && !state.isPaymentPolling && state.isPaymentPaid != true) {
+            if (canStartPayment(state)) {
                 onEvent(OrderInfoEvent.StartPayment)
             }
         }
@@ -158,4 +159,20 @@ fun OrderInfoScreen(
             }
         }
     }
+}
+
+private fun shouldAutoStartPayment(
+    fromOrderCreation: Boolean,
+    state: OrderInfoState,
+): Boolean {
+    return fromOrderCreation &&
+            state.isOnlinePayment &&
+            state.incomingOrder != null && !state.incomingOrder.isClosed
+}
+
+private fun canStartPayment(state: OrderInfoState): Boolean {
+    return !state.isPaymentLoading &&
+            !state.isPaymentProcessing &&
+            !state.isPaymentPolling &&
+            state.isPaymentPaid != true
 }

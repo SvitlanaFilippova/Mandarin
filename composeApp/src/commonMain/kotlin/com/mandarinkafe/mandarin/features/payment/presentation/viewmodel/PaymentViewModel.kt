@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.features.payment.YooKassaPaymentService
 import com.mandarinkafe.mandarin.features.payment.domain.api.CancelPaymentUseCase
 import com.mandarinkafe.mandarin.features.payment.domain.api.CreatePaymentUseCase
 import com.mandarinkafe.mandarin.features.payment.domain.api.GetPaymentStatusUseCase
+import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentInfo
 import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEffect
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEffect.PaymentSuccess
@@ -74,121 +75,133 @@ class PaymentViewModel(
             setLoading(true)
             setState { copy(error = null) }
 
-            // 1. Инициализация SDK и получение payment_token
-            val subtitle = if (state.value.orderNumber != null) {
-                "Заказ №${state.value.orderNumber}, ID ${state.value.orderId}"
-            } else {
-                "Заказ ID ${state.value.orderId}"
-            }
-
-            val sdkResult = yooKassaService.initializePayment(
-                amount = state.value.amount,
-                subtitle = subtitle,
-                userPhone = state.value.userPhone
-            )
-
-            if (!sdkResult.success) {
-                setLoading(false)
-                setState {
-                    copy(
-                        error = MR.strings.error_payment_init_failed,
-                        isLoading = false
-                    )
-                }
-                sendErrorEffect(MR.strings.error_payment_init_failed)
+            val sdkResult = initializeSdkPayment()
+            if (sdkResult == null) {
                 return@launch
             }
 
-            // Для iOS "умного платежа" paymentToken может быть null
-            // Сервер создаст платеж напрямую через API YooKassa
-            val paymentToken = sdkResult.paymentToken
+            val createResult = createPaymentOnServer(sdkResult)
+            handlePaymentCreationResult(createResult)
+        }
+    }
 
-            // 2. Создание платежа на сервере
-            val description = if (state.value.orderNumber != null) {
-                "Заказ №${state.value.orderNumber}, ID ${state.value.orderId}"
-            } else {
-                "Заказ ID ${state.value.orderId}"
-            }
+    private suspend fun initializeSdkPayment(): String? {
+        val subtitle = if (state.value.orderNumber != null) {
+            "Заказ №${state.value.orderNumber}, ID ${state.value.orderId}"
+        } else {
+            "Заказ ID ${state.value.orderId}"
+        }
 
-            // Для iOS paymentToken может быть null - сервер создаст платеж без токена
-            // Для iOS также передаем return_url для возврата в приложение после оплаты
-            val returnUrl = if (paymentToken == null) {
-                // Для iOS "умного платежа" используем URL scheme для возврата в приложение
-                "mandarin://payment/return?order_id=${state.value.orderId}"
-            } else {
-                null // Для Android return_url не нужен (SDK обрабатывает возврат)
-            }
+        val sdkResult = yooKassaService.initializePayment(
+            amount = state.value.amount,
+            subtitle = subtitle,
+            userPhone = state.value.userPhone
+        )
 
-            val createResult = if (paymentToken != null) {
-                createPaymentUseCase(
-                    paymentToken = paymentToken,
-                    orderId = state.value.orderId,
-                    amount = state.value.amount,
-                    currency = "RUB",
-                    description = description,
-                    returnUrl = returnUrl
-                )
-            } else {
-                // Для iOS "умного платежа" - создаем платеж без payment_token
-                createPaymentUseCase(
-                    paymentToken = "", // Для iOS сервер создаст платеж без токена
-                    orderId = state.value.orderId,
-                    amount = state.value.amount,
-                    currency = "RUB",
-                    description = description,
-                    returnUrl = returnUrl
+        if (!sdkResult.success) {
+            setLoading(false)
+            setState {
+                copy(
+                    error = MR.strings.error_payment_init_failed,
+                    isLoading = false
                 )
             }
+            sendErrorEffect(MR.strings.error_payment_init_failed)
+            return null
+        }
 
-            when (createResult) {
-                is Resource.Success -> {
-                    val paymentInfo = createResult.data
-                    if (paymentInfo == null) {
-                        setLoading(false)
-                        setState { copy(error = MR.strings.error_payment_creation_failed) }
-                        sendErrorEffect(MR.strings.error_payment_creation_failed)
-                        return@launch
-                    }
+        // Для iOS "умного платежа" paymentToken может быть null
+        // Сервер создаст платеж напрямую через API YooKassa
+        return sdkResult.paymentToken
+    }
 
-                    val confirmationUrl = paymentInfo.confirmationUrl
+    private suspend fun createPaymentOnServer(paymentToken: String?): Resource<PaymentInfo> {
+        val description = if (state.value.orderNumber != null) {
+            "Заказ №${state.value.orderNumber}, ID ${state.value.orderId}"
+        } else {
+            "Заказ ID ${state.value.orderId}"
+        }
 
-                    // 3. Если есть confirmation_url, открываем форму оплаты
-                    if (confirmationUrl != null) {
-                        setState {
-                            copy(
-                                isLoading = false,
-                                isPaymentProcessing = true,
-                                confirmationUrl = confirmationUrl,
-                                paymentStatus = paymentInfo.status
-                            )
-                        }
+        // Для iOS paymentToken может быть null - сервер создаст платеж без токена
+        // Для iOS также передаем return_url для возврата в приложение после оплаты
+        val returnUrl = if (paymentToken == null) {
+            // Для iOS "умного платежа" используем URL scheme для возврата в приложение
+            "mandarin://payment/return?order_id=${state.value.orderId}"
+        } else {
+            null // Для Android return_url не нужен (SDK обрабатывает возврат)
+        }
 
-                        // Открываем форму оплаты через SDK
-                        openPaymentForm(confirmationUrl)
-                    } else {
-                        // Если нет URL, сразу начинаем polling
-                        setState {
-                            copy(
-                                isLoading = false,
-                                paymentStatus = paymentInfo.status
-                            )
-                        }
-                        startPolling()
-                    }
-                }
+        return if (paymentToken != null) {
+            createPaymentUseCase(
+                paymentToken = paymentToken,
+                orderId = state.value.orderId,
+                amount = state.value.amount,
+                currency = "RUB",
+                description = description,
+                returnUrl = returnUrl
+            )
+        } else {
+            // Для iOS "умного платежа" - создаем платеж без payment_token
+            createPaymentUseCase(
+                paymentToken = "", // Для iOS сервер создаст платеж без токена
+                orderId = state.value.orderId,
+                amount = state.value.amount,
+                currency = "RUB",
+                description = description,
+                returnUrl = returnUrl
+            )
+        }
+    }
 
-                is Resource.ErrorNoInternet -> {
+    private suspend fun handlePaymentCreationResult(createResult: Resource<PaymentInfo>) {
+        when (createResult) {
+            is Resource.Success -> {
+                val paymentInfo = createResult.data
+                if (paymentInfo == null) {
                     setLoading(false)
-                    setState { copy(error = MR.strings.error_no_internet) }
-                    sendErrorEffect(MR.strings.error_no_internet)
-                }
-
-                else -> {
-                    setLoading(false)
-                    createResult.message ?: "Ошибка создания платежа"
                     setState { copy(error = MR.strings.error_payment_creation_failed) }
                     sendErrorEffect(MR.strings.error_payment_creation_failed)
+                    return
                 }
+
+                val confirmationUrl = paymentInfo.confirmationUrl
+
+                // 3. Если есть confirmation_url, открываем форму оплаты
+                if (confirmationUrl != null) {
+                    setState {
+                        copy(
+                            isLoading = false,
+                            isPaymentProcessing = true,
+                            confirmationUrl = confirmationUrl,
+                            paymentStatus = paymentInfo.status
+                        )
+                    }
+
+                    // Открываем форму оплаты через SDK
+                    openPaymentForm(confirmationUrl)
+                } else {
+                    // Если нет URL, сразу начинаем polling
+                    setState {
+                        copy(
+                            isLoading = false,
+                            paymentStatus = paymentInfo.status
+                        )
+                    }
+                    startPolling()
+                }
+            }
+
+            is Resource.ErrorNoInternet -> {
+                setLoading(false)
+                setState { copy(error = MR.strings.error_no_internet) }
+                sendErrorEffect(MR.strings.error_no_internet)
+            }
+
+            else -> {
+                setLoading(false)
+                createResult.message ?: "Ошибка создания платежа"
+                setState { copy(error = MR.strings.error_payment_creation_failed) }
+                sendErrorEffect(MR.strings.error_payment_creation_failed)
             }
         }
     }
@@ -222,68 +235,73 @@ class PaymentViewModel(
                 tickerFlow(period = 3.seconds)
                     .collect { _ ->
                         val statusResult = getPaymentStatusUseCase(state.value.orderId)
-
-                        when (statusResult) {
-                            is Resource.Success -> {
-                                val paymentInfo = statusResult.data
-                                val status = paymentInfo?.status
-                                setState { copy(paymentStatus = status) }
-
-                                when (status) {
-                                    PaymentStatus.SUCCEEDED -> {
-                                        stopPolling()
-                                        sendEffect(
-                                            PaymentSuccess(
-                                                state.value.orderId,
-                                                state.value.amount
-                                            )
-                                        )
-                                    }
-
-                                    PaymentStatus.CANCELED -> {
-                                        stopPolling()
-                                        setState { copy(error = MR.strings.error_payment_canceled) }
-                                        sendEffect(PaymentEffect.PaymentCanceled)
-                                    }
-
-                                    PaymentStatus.PENDING, PaymentStatus.UNKNOWN, null -> {
-                                        // Продолжаем polling
-                                    }
-
-                                }
-                            }
-
-                            is Resource.ErrorNoInternet -> {
-                                stopPolling()
-                                setState {
-                                    copy(
-                                        error = MR.strings.error_no_internet,
-                                        isPolling = false
-                                    )
-                                }
-                                sendErrorEffect(MR.strings.error_no_internet)
-                            }
-
-                            else -> {
-                                // Продолжаем polling при других ошибках
-                            }
-                        }
+                        processPaymentStatus(statusResult)
                     }
                 true
             }
 
             if (isCompleted == null) {
-                // Таймаут
+                handlePollingTimeout()
+            }
+        }
+    }
+
+    private fun processPaymentStatus(statusResult: Resource<PaymentInfo>) {
+        when (statusResult) {
+            is Resource.Success -> {
+                val paymentInfo = statusResult.data
+                val status = paymentInfo?.status
+                setState { copy(paymentStatus = status) }
+
+                when (status) {
+                    PaymentStatus.SUCCEEDED -> {
+                        stopPolling()
+                        sendEffect(
+                            PaymentSuccess(
+                                state.value.orderId,
+                                state.value.amount
+                            )
+                        )
+                    }
+
+                    PaymentStatus.CANCELED -> {
+                        stopPolling()
+                        setState { copy(error = MR.strings.error_payment_canceled) }
+                        sendEffect(PaymentEffect.PaymentCanceled)
+                    }
+
+                    PaymentStatus.PENDING, PaymentStatus.UNKNOWN, null -> {
+                        // Продолжаем polling
+                    }
+                }
+            }
+
+            is Resource.ErrorNoInternet -> {
                 stopPolling()
                 setState {
                     copy(
-                        error = MR.strings.error_payment_timeout,
+                        error = MR.strings.error_no_internet,
                         isPolling = false
                     )
                 }
-                sendErrorEffect(MR.strings.error_payment_timeout)
+                sendErrorEffect(MR.strings.error_no_internet)
+            }
+
+            else -> {
+                // Продолжаем polling при других ошибках
             }
         }
+    }
+
+    private fun handlePollingTimeout() {
+        stopPolling()
+        setState {
+            copy(
+                error = MR.strings.error_payment_timeout,
+                isPolling = false
+            )
+        }
+        sendErrorEffect(MR.strings.error_payment_timeout)
     }
 
     private fun stopPolling() {
@@ -337,6 +355,5 @@ class PaymentViewModel(
         stopPolling()
     }
 
-    private companion object
 }
 

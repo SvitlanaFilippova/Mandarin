@@ -10,6 +10,6 @@ data class PaymentInfo(
     val description: String?,
     val createdAt: String?,
     val updatedAt: String?,
-    val confirmationUrl: String? = null,  // URL для подтверждения платежа
+    val confirmationUrl: String? = null, // URL для подтверждения платежа
 )
 

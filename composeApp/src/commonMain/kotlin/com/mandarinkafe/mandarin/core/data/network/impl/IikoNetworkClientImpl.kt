@@ -193,7 +193,7 @@ class IikoNetworkClientImpl(
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
-        
+
         return try {
             val orgId = ensureOrganizationId()
             val request = AddPaymentsRequest(
@@ -201,15 +201,15 @@ class IikoNetworkClientImpl(
                 orderId = orderId,
                 payments = listOf(payment)
             )
-            
+
             try {
                 val response = iikoApi.addPayments(body = request)
-                
+
                 // Если есть ошибка в ответе, выбрасываем исключение
                 if (response.error != null) {
                     throw Exception("iiko error: ${response.error}")
                 }
-                
+
                 response.apply { resultCode = HTTP_SUCCESS }
             } catch (e: Exception) {
                 // Если это уже наша ошибка, пробрасываем дальше
@@ -220,6 +220,7 @@ class IikoNetworkClientImpl(
                 throw e
             }
         } catch (e: Throwable) {
+            Napier.e("Ошибка addPayments: ${e.message}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

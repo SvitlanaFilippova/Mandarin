@@ -36,8 +36,8 @@ sealed interface PaymentContract {
         val paymentStatus: PaymentStatus? = null,
         val error: StringResource? = null,
         val confirmationUrl: String? = null,
-        val isPaymentProcessing: Boolean = false,  // Форма оплаты открыта
-        val isPolling: Boolean = false,  // Опрашиваем статус
+        val isPaymentProcessing: Boolean = false, // Форма оплаты открыта
+        val isPolling: Boolean = false, // Опрашиваем статус
         val showCancelDialog: Boolean = false,
     ) : BaseContract.BaseState
 }

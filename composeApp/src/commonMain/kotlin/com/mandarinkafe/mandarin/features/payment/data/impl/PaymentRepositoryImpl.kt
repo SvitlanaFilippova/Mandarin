@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.features.payment.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.payment.data.network.PaymentNetworkClient
 import com.mandarinkafe.mandarin.features.payment.domain.api.PaymentRepository
 import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentInfo
+import com.mandarinkafe.mandarin.util.Constants.HTTP_NOT_FOUND
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
@@ -75,7 +76,7 @@ class PaymentRepositoryImpl(
                     Resource.Success(data = paymentInfo)
                 }
 
-                404 -> {
+                HTTP_NOT_FOUND -> {
                     Resource.ErrorOther("Платеж не найден")
                 }
 

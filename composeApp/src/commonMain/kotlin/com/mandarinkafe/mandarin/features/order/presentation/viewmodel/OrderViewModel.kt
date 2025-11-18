@@ -468,7 +468,7 @@ class OrderViewModel(
         // Сохраняем выбранный тип оплаты ДО clearState, так как clearState сбрасывает состояние
         val savedChosenPaymentType = state.value.paymentInfo.chosenPaymentType
         val savedUserPhone = state.value.userInfo.phone
-        
+
         clearState()
 
         // Очищаем корзину сразу после создания заказа

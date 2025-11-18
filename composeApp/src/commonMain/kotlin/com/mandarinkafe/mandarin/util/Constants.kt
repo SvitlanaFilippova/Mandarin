@@ -5,6 +5,7 @@ object Constants {
     const val NO_CONNECTION = -1
     const val HTTP_SUCCESS = 200
     const val HTTP_400 = 400
+    const val HTTP_NOT_FOUND = 404
     const val HTTP_SERVER_ERROR = 500
     const val IMAGE_VALIDATOR_TIMEOUT = 1000
     const val MENU_WAIT_TIMEOUT = 10000L

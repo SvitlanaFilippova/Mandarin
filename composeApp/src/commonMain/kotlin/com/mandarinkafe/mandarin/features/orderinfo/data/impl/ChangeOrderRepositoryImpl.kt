@@ -32,13 +32,13 @@ class ChangeOrderRepositoryImpl(private val networkClient: IikoNetworkClient) :
             isProcessedExternally = true,
             isFiscalizedExternally = false
         )
-        
+
         val response = try {
             networkClient.addPayments(orderId, payment)
         } catch (e: Exception) {
             return Resource.ErrorOther("Ошибка сети: ${e.message}")
         }
-        
+
         return when (response.resultCode) {
             HTTP_SUCCESS -> {
                 Resource.Success(Unit)

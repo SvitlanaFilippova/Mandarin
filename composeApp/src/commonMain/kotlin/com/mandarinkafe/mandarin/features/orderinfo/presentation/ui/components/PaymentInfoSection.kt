@@ -32,10 +32,13 @@ fun PaymentInfoSection(
     onStartPayment: () -> Unit = {},
     onRetryPayment: () -> Unit = {},
 ) {
-    val isPaymentInProgress = isPaymentLoading || isPaymentProcessing || isPaymentPolling
-    val canShowError = paymentError != null && !isPaymentInProgress
-    val canShowButton =
-        isPaymentPaid != true && !isPaymentInProgress && paymentStatus != PaymentStatus.SUCCEEDED
+    val paymentState = calculatePaymentState(
+        isPaymentLoading,
+        isPaymentProcessing,
+        isPaymentPolling,
+        isPaymentPaid,
+        paymentStatus
+    )
 
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Column(
@@ -43,63 +46,119 @@ fun PaymentInfoSection(
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LabelValue(
-                stringResource(MR.strings.label_payment_status),
-                paymentStatus?.let { stringResource(it.toDisplayString()) }
-                    ?: stringResource(MR.strings.payment_status_unknown)
+            PaymentStatusLabel(paymentStatus)
+            PaymentProgressIndicator(
+                isPaymentInProgress = paymentState.isPaymentInProgress,
+                isPaymentProcessing = isPaymentProcessing,
+                isPaymentPolling = isPaymentPolling
             )
-
-            // Показываем индикатор загрузки во время обработки платежа
-            if (isPaymentInProgress) {
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    MyCircularProgressIndicator(
-                        strokeWidth = Dimens.ProgressBarStroke6,
-                        modifier = Modifier.size(Dimens.ProgressBarSmallSize)
-                    )
-                    val loadingText = when {
-                        isPaymentProcessing -> stringResource(MR.strings.payment_processing)
-                        isPaymentPolling -> stringResource(MR.strings.payment_polling)
-                        else -> stringResource(MR.strings.payment_processing)
-                    }
-
-                    Value(text = loadingText)
-                }
-
-            }
-
-            // Показываем ошибку, если есть
-            if (canShowError) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
-                    Label(
-                        text = stringResource(MR.strings.label_error) + ": " + stringResource(
-                            paymentError
-                        )
-                    )
-                }
-            }
-
-            // Кнопка оплаты/повтора
-            if (canShowButton) {
-                ButtonWithText(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = if (paymentError != null) {
-                        stringResource(MR.strings.payment_retry)
-                    } else {
-                        stringResource(MR.strings.submit_order_online)
-                    },
-                    onClick = {
-                        if (paymentError != null) {
-                            onRetryPayment()
-                        } else {
-                            onStartPayment()
-                        }
-                    }
-                )
-            }
+            PaymentErrorLabel(
+                canShowError = paymentState.canShowError,
+                paymentError = paymentError
+            )
+            PaymentButton(
+                canShowButton = paymentState.canShowButton,
+                paymentError = paymentError,
+                onStartPayment = onStartPayment,
+                onRetryPayment = onRetryPayment
+            )
         }
+    }
+}
+
+private data class PaymentState(
+    val isPaymentInProgress: Boolean,
+    val canShowError: Boolean,
+    val canShowButton: Boolean,
+)
+
+private fun calculatePaymentState(
+    isPaymentLoading: Boolean,
+    isPaymentProcessing: Boolean,
+    isPaymentPolling: Boolean,
+    isPaymentPaid: Boolean?,
+    paymentStatus: PaymentStatus?,
+): PaymentState {
+    val isPaymentInProgress = isPaymentLoading || isPaymentProcessing || isPaymentPolling
+    val canShowError = !isPaymentInProgress
+    val canShowButton =
+        isPaymentPaid != true && !isPaymentInProgress && paymentStatus != PaymentStatus.SUCCEEDED
+    return PaymentState(isPaymentInProgress, canShowError, canShowButton)
+}
+
+@Composable
+private fun PaymentStatusLabel(paymentStatus: PaymentStatus?) {
+    LabelValue(
+        stringResource(MR.strings.label_payment_status),
+        paymentStatus?.let { stringResource(it.toDisplayString()) }
+            ?: stringResource(MR.strings.payment_status_unknown)
+    )
+}
+
+@Composable
+private fun PaymentProgressIndicator(
+    isPaymentInProgress: Boolean,
+    isPaymentProcessing: Boolean,
+    isPaymentPolling: Boolean,
+) {
+    if (isPaymentInProgress) {
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            MyCircularProgressIndicator(
+                strokeWidth = Dimens.ProgressBarStroke6,
+                modifier = Modifier.size(Dimens.ProgressBarSmallSize)
+            )
+            val loadingText = when {
+                isPaymentProcessing -> stringResource(MR.strings.payment_processing)
+                isPaymentPolling -> stringResource(MR.strings.payment_polling)
+                else -> stringResource(MR.strings.payment_processing)
+            }
+            Value(text = loadingText)
+        }
+    }
+}
+
+@Composable
+private fun PaymentErrorLabel(
+    canShowError: Boolean,
+    paymentError: StringResource?,
+) {
+    if (canShowError && paymentError != null) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+            Label(
+                text = stringResource(MR.strings.label_error) + ": " + stringResource(
+                    paymentError
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun PaymentButton(
+    canShowButton: Boolean,
+    paymentError: StringResource?,
+    onStartPayment: () -> Unit,
+    onRetryPayment: () -> Unit,
+) {
+    if (canShowButton) {
+        ButtonWithText(
+            modifier = Modifier.fillMaxWidth(),
+            text = if (paymentError != null) {
+                stringResource(MR.strings.payment_retry)
+            } else {
+                stringResource(MR.strings.submit_order_online)
+            },
+            onClick = {
+                if (paymentError != null) {
+                    onRetryPayment()
+                } else {
+                    onStartPayment()
+                }
+            }
+        )
     }
 }

@@ -27,10 +27,10 @@ import java.io.File
 class ComposeMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         // Регистрируем Activity для работы с YooKassa платежами
         YooKassaActivityHelper.registerActivity(this)
-        
+
         val kamelConfig = initKamel()
 
         setContent {

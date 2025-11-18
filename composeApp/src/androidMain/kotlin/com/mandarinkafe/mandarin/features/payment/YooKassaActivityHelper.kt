@@ -92,29 +92,14 @@ object YooKassaActivityHelper {
 
         try {
             paymentContinuation = continuation
-
-            val paymentParameters = PaymentParameters(
-                amount = Amount(
-                    value = amount.toBigDecimal(),
-                    currency = Currency.getInstance("RUB")
-                ),
-                title = "Оплата заказа",
+            val paymentParameters = createPaymentParameters(
+                amount = amount,
                 subtitle = subtitle,
                 clientApplicationKey = clientApplicationKey,
                 shopId = shopId,
-                savePaymentMethod = SavePaymentMethod.OFF,
-                paymentMethodTypes = setOf(
-                    PaymentMethodType.BANK_CARD,
-                    PaymentMethodType.SBERBANK,
-                    PaymentMethodType.SBP
-                ),
-                userPhoneNumber = userPhone,
-                customerId = userPhone, // для возможности сохранения и привязки карты к ЛК
-                authCenterClientId = null
+                userPhone = userPhone
             )
-
-            val intent = Checkout.createTokenizeIntent(activity, paymentParameters)
-            launcher.launch(intent)
+            launchPaymentIntent(activity, launcher, paymentParameters)
         } catch (e: Exception) {
             paymentContinuation = null
             continuation.resume(
@@ -126,6 +111,43 @@ object YooKassaActivityHelper {
         }
     }
 
+    private fun createPaymentParameters(
+        amount: Double,
+        subtitle: String,
+        clientApplicationKey: String,
+        shopId: String,
+        userPhone: String,
+    ): PaymentParameters {
+        return PaymentParameters(
+            amount = Amount(
+                value = amount.toBigDecimal(),
+                currency = Currency.getInstance("RUB")
+            ),
+            title = "Оплата заказа",
+            subtitle = subtitle,
+            clientApplicationKey = clientApplicationKey,
+            shopId = shopId,
+            savePaymentMethod = SavePaymentMethod.OFF,
+            paymentMethodTypes = setOf(
+                PaymentMethodType.BANK_CARD,
+                PaymentMethodType.SBERBANK,
+                PaymentMethodType.SBP
+            ),
+            userPhoneNumber = userPhone,
+            customerId = userPhone, // для возможности сохранения и привязки карты к ЛК
+            authCenterClientId = null
+        )
+    }
+
+    private fun launchPaymentIntent(
+        activity: AppCompatActivity,
+        launcher: ActivityResultLauncher<Intent>,
+        paymentParameters: PaymentParameters,
+    ) {
+        val intent = Checkout.createTokenizeIntent(activity, paymentParameters)
+        launcher.launch(intent)
+    }
+
     private fun handlePaymentResult(result: ActivityResult) {
         val continuation = paymentContinuation ?: return
         paymentContinuation = null
@@ -133,10 +155,10 @@ object YooKassaActivityHelper {
         when (result.resultCode) {
             Activity.RESULT_OK -> {
                 // successful tokenization
-                val tokenizationResult = result.data?.let { 
-                    Checkout.createTokenizationResult(it) 
+                val tokenizationResult = result.data?.let {
+                    Checkout.createTokenizationResult(it)
                 }
-                
+
                 if (tokenizationResult != null) {
                     continuation.resume(
                         PaymentResult(
@@ -153,7 +175,7 @@ object YooKassaActivityHelper {
                     )
                 }
             }
-            
+
             Activity.RESULT_CANCELED -> {
                 // user canceled tokenization
                 continuation.resume(
@@ -163,7 +185,7 @@ object YooKassaActivityHelper {
                     )
                 )
             }
-            
+
             else -> {
                 continuation.resume(
                     PaymentResult(

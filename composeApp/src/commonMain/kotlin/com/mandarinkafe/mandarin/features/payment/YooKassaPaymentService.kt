@@ -24,7 +24,7 @@ expect class YooKassaPaymentService {
 
 data class PaymentResult(
     val success: Boolean,
-    val paymentToken: String? = null,  // Одноразовый токен от SDK (действителен 1 час)
+    val paymentToken: String? = null, // Одноразовый токен от SDK (действителен 1 час)
     val paymentId: String? = null,
     val error: String? = null,
 )

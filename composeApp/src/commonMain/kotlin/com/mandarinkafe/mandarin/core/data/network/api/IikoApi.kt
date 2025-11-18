@@ -113,18 +113,18 @@ class IikoApi(
     suspend fun addPayments(body: AddPaymentsRequest): AddPaymentsResponse {
         return try {
             val json = Json { ignoreUnknownKeys = true; isLenient = true }
-            
+
             val response = client.post("/api/1/deliveries/add_payments") {
                 setBody(body)
             }
-            
+
             val responseStatus = response.status
             val responseBodyText = try {
                 response.bodyAsText()
             } catch (e: Exception) {
                 "Failed to read response body: ${e.message}"
             }
-            
+
             // Десериализуем ответ
             val responseBody = try {
                 json.decodeFromString(AddPaymentsResponse.serializer(), responseBodyText)
@@ -132,13 +132,13 @@ class IikoApi(
                 logError("addPayments - deserialization", e)
                 AddPaymentsResponse()
             }
-            
+
             // Проверяем статус и ошибку
             if (responseStatus.value >= Constants.HTTP_400 || responseBody.error != null) {
                 val errorMsg = responseBody.error ?: "HTTP ${responseStatus.value}"
                 throw Exception("iiko error: $errorMsg")
             }
-            
+
             responseBody
         } catch (e: Exception) {
             logError("addPayments", e)

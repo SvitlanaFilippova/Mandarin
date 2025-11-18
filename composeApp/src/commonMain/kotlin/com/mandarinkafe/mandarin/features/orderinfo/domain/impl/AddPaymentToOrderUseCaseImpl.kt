@@ -21,8 +21,8 @@ class AddPaymentToOrderUseCaseImpl(
         }
 
         val paymentTypes = paymentTypesResult.data ?: emptyList()
-        val onlinePaymentType = paymentTypes.firstOrNull { 
-            it.code.equals(PAYMENT_ONLINE_CODE, ignoreCase = true) 
+        val onlinePaymentType = paymentTypes.firstOrNull {
+            it.code.equals(PAYMENT_ONLINE_CODE, ignoreCase = true)
         }
 
         if (onlinePaymentType == null) {

@@ -16,12 +16,12 @@ class CancelOrderUseCaseImpl(
         // Проверяем, был ли заказ с онлайн-оплатой
         val savedOrder = ordersHistoryInteractor.getOrderById(id)
         val isOnlinePayment = savedOrder?.paymentMethodCode?.equals(PAYMENT_ONLINE_CODE, ignoreCase = true) == true
-        
+
         if (isOnlinePayment) {
             // Отменяем платеж на сервере (сервер сам разберется, нужно ли что-то делать)
             cancelPaymentUseCase(id)
         }
-        
+
         // Отменяем заказ
         return repository.cancel(id)
     }
