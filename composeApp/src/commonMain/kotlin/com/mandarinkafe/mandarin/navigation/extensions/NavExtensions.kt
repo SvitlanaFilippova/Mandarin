@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.core.di.ServiceLocator
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.auth.domain.impl.AuthStateChecker
+import com.mandarinkafe.mandarin.navigation.MealDetailsNavParams
 import com.mandarinkafe.mandarin.navigation.NavConstants
 import com.mandarinkafe.mandarin.navigation.NavConstants.ABOUT_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.ADDRESS_DETAILS_ROUTE
@@ -17,7 +18,6 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_FROM_ORDER_CREATION
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_ID
-import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_JSON
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_ORDER_ID
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_SNACKBAR_MESSAGE
 import com.mandarinkafe.mandarin.navigation.NavConstants.LEGAL_SCREEN_ROUTE
@@ -95,17 +95,31 @@ fun NavController.navigateToMealDetails(
     mealId: String? = null,
     isEditMode: Boolean = false,
 ) {
-    val json = item?.let { Json.encodeToString(it) }
+    // Передаем только идентификаторы вместо полного объекта
+    val params = if (item != null) {
+        val meal = item.customizedMeal.meal
+        val addsIds = item.customizedMeal.adds.map { it.id }
+        val modifierIds = item.customizedMeal.modifiers.associate { group ->
+            group.id to group.items.map { it.id }
+        }
+        MealDetailsNavParams(
+            mealId = meal.id,
+            addsIds = addsIds,
+            modifierIds = modifierIds,
+            comment = item.comment,
+            cartItemId = if (isEditMode) item.id else null
+        )
+    } else if (mealId != null) {
+        MealDetailsNavParams(mealId = mealId)
+    } else {
+        return
+    }
 
-    val itemParam = json ?: "null"
-    val mealIdParam = mealId ?: "null"
-    val encodedItem = UrlEncoderUtil.encode(itemParam)
-    val encodedMealId = UrlEncoderUtil.encode(mealIdParam)
-    val route = "$MEAL_DETAILS_ROUTE?" +
-            "$KEY_MEAL_JSON=$encodedItem&" +
-            "$KEY_MEAL_ID=$encodedMealId&" +
-            "$KEY_IS_EDIT_MODE=$isEditMode"
+    // Сериализуем в JSON и URL-encode
+    val jsonString = Json.encodeToString(params)
+    val encodedParams = UrlEncoderUtil.encode(jsonString)
 
+    val route = "$MEAL_DETAILS_ROUTE?$KEY_MEAL_ID=$encodedParams&$KEY_IS_EDIT_MODE=$isEditMode"
     navigate(route)
 }
 

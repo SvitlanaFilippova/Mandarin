@@ -133,6 +133,7 @@
 			buildConfigurationList = 299852936B0918E9967EACC2 /* Build configuration list for PBXNativeTarget "iosApp" */;
 			buildPhases = (
 				3DA5CF705520C64F7E3B1BA3 /* [CP] Check Pods Manifest.lock */,
+				0320FF1E2ECC69FE009D7E19 /* update version */,
 				088397FB9BC19A36E9A51BD2 /* Sources */,
 				A31567BE1075B2A843519674 /* Frameworks */,
 				F48D4320FD61DFE3A3FF9489 /* Resources */,
@@ -199,6 +200,26 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0320FF1E2ECC69FE009D7E19 /* update version */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../gradle/libs.versions.toml",
+			);
+			name = "update version";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${SRCROOT}/update_version.sh\n";
+		};
 		035EA40C2EA2325300C1DEA6 /* copyFrameworkResourcesToApp */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

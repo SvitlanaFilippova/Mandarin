@@ -61,6 +61,7 @@ fun OrderHistoryCard(modifier: Modifier = Modifier, order: SavedOrder, onClick: 
                     text = order.addressDetails,
                     style = Typography.SmallTextStyle,
                     fontWeight = FontWeight.Light,
+                    maxLines = 2
                 )
             }
             Spacer(modifier = Modifier.height(Dimens.MarginSmall8))

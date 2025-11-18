@@ -234,7 +234,11 @@ class CartRepositoryImpl(
             val localLastUpdated = storage.getLastUpdated()
             val remoteCart = remoteDataSource.getCart()
 
-            if (shouldClearLocalCart(remoteCart, localLastUpdated)) {
+            val isFirstSyncAfterAuth = isFirstSyncAfterAuthorization(localLastUpdated, localCart)
+
+            // При первой синхронизации после авторизации всегда выполняем мерж,
+            // даже если удаленная корзина пустая, чтобы сохранить локальные товары
+            if (!isFirstSyncAfterAuth && shouldClearLocalCart(remoteCart, localLastUpdated)) {
                 handleServerClearedCart(remoteCart)
             } else {
                 performCartMerge(localCart, localLastUpdated, remoteCart)

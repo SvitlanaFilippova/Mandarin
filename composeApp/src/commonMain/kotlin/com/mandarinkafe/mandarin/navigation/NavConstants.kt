@@ -4,8 +4,12 @@ import com.mandarinkafe.mandarin.navigation.bottomnav.BottomNavigationItem
 
 object NavConstants {
     // --- Keys ---
-    const val KEY_MEAL_JSON = "mealJson"
+    const val KEY_MEAL_JSON = "mealJson" // Deprecated, используем KEY_MEAL_ID и другие
     const val KEY_MEAL_ID = "mealId"
+    const val KEY_ADDS_IDS = "addsIds"
+    const val KEY_MODIFIER_IDS = "modifierIds"
+    const val KEY_COMMENT = "comment"
+    const val KEY_CART_ITEM_ID = "cartItemId"
     const val KEY_IS_EDIT_MODE = "isEditMode"
     const val KEY_ADDRESS_JSON = "addressJson"
     const val KEY_FOCUS_INPUT = "focusInput"
