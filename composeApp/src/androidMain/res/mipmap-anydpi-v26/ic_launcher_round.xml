@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@color/ic_launcher_background" />
-    <foreground android:drawable="@drawable/ic_launcher_foreground" />
-    <monochrome android:drawable="@drawable/ic_launcher_foreground_mc" />
+    <foreground android:drawable="@drawable/mandarin_ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/mandarin_ic_launcher_foreground_mc" />
 </adaptive-icon>

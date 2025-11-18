@@ -44,7 +44,7 @@ Multiplatform
 | Форма обратной связи                          | ✔️ Реализовано |
 | Авторизация через звонок или sms              | ✔️ Реализовано |
 | Личный кабинет                                | ✔️ Реализовано |
-| Онлайн-оплата заказа                          | ⏳ Планируется  |
+| Онлайн-оплата заказа                          | ✔️ Реализовано |
 
 ## Используемые инструменты и технологии 📚
 
@@ -57,7 +57,7 @@ Multiplatform
 | Работа с данными | <del>Retrofit</del> -> Ktor (OkHttp / Darwin), kotlinx.serialization |
 | Изображения      | <del>Coil</del> -> Kamel                                             |
 | Карты            | Yandex MapKit                                                        |
-| Интеграции       | iikoCloud API, Telegram Bot API                                      |
+| Интеграции       | iikoCloud API, Telegram Bot API, YooKassa SDK                        |
 | Качество кода    | Detekt, Lint                                                         |
 | Логирование      | Napier                                                               |
 | Pull-to-refresh  | Materii PullRefresh                                                  |
