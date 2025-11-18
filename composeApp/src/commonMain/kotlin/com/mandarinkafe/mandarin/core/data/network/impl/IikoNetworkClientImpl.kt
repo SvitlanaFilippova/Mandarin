@@ -13,6 +13,8 @@ import com.mandarinkafe.mandarin.features.infrastructure.data.network.TerminalGr
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingPaymentDto
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.AddPaymentsRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
@@ -183,6 +185,42 @@ class IikoNetworkClientImpl(
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("Ошибка getAliveTerminalGroups: ${e.message}", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    override suspend fun addPayments(orderId: String, payment: OutgoingPaymentDto): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+
+        return try {
+            val orgId = ensureOrganizationId()
+            val request = AddPaymentsRequest(
+                organizationId = orgId,
+                orderId = orderId,
+                payments = listOf(payment)
+            )
+
+            try {
+                val response = iikoApi.addPayments(body = request)
+
+                // Если есть ошибка в ответе, выбрасываем исключение
+                if (response.error != null) {
+                    error("iiko error: ${response.error}")
+                }
+
+                response.apply { resultCode = HTTP_SUCCESS }
+            } catch (e: Exception) {
+                // Если это уже наша ошибка, пробрасываем дальше
+                if (e.message?.startsWith("iiko error:") == true) {
+                    throw e
+                }
+                // Иначе пробрасываем как есть
+                throw e
+            }
+        } catch (e: Throwable) {
+            Napier.e("Ошибка addPayments: ${e.message}", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

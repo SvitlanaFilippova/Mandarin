@@ -31,6 +31,12 @@ post_install do |installer|
             # Ensure compatible JDK (Gradle/Kotlin tooling fails on Java 25)
             export JAVA_HOME="${JAVA_HOME:-/Applications/Android Studio.app/Contents/jbr/Contents/Home}"
             export PATH="$JAVA_HOME/bin:$PATH"
+            
+            # Сбрасываем SDKROOT, если он указывает на macOS (для корректной сборки swiftklib)
+            if [ -n "$SDKROOT" ] && [[ "$SDKROOT" == *"MacOSX"* ]]; then
+              echo "Сбрасываем SDKROOT (был установлен в macOS SDK: $SDKROOT)"
+              unset SDKROOT
+            fi
 
             "$REPO_ROOT/../gradlew" -p "$REPO_ROOT" $KOTLIN_PROJECT_PATH:syncFramework \
               -Pkotlin.native.cocoapods.platform=$PLATFORM_NAME \

@@ -10,7 +10,3 @@ data class OrdersInfoResponse(
     val orders: List<OrderInfoResponseDto> = emptyList(),
 ) : Response()
 
-
-
-
-

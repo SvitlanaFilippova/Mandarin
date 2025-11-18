@@ -32,30 +32,55 @@ class OrdersHistoryRemoteDataSourceImpl(
         }
     }
 
+    override suspend fun getOrderById(id: String): SavedOrder? {
+        val token = authRepository.getAccessToken() ?: return null
+        return try {
+            val response = api.getOrderById(buildAuthToken(token), id)
+            if (response.resultCode == HTTP_SUCCESS) {
+                response.data?.toDomain()
+            } else {
+                Napier.e(
+                    "OrdersHistoryRemoteDataSource, getOrderById error: resultCode=${response.resultCode}, orderId=$id"
+                )
+                null
+            }
+        } catch (e: Exception) {
+            Napier.e("OrdersHistoryRemoteDataSource, getOrderById error: $e")
+            null
+        }
+    }
+
     override suspend fun saveOrder(order: SavedOrder) {
         val token = authRepository.getAccessToken()
         if (token == null) {
-            Napier.e("SAVE_ORDER ERROR: No access token")
             return
         }
         try {
             val orderDto = order.toDto()
             val request = OrdersHistoryUpdateRequest(data = orderDto)
-            val response = api.createOrUpdateOrder(buildAuthToken(token), request)
-            if (response.resultCode != HTTP_SUCCESS) {
-                Napier.e("SAVE_ORDER ERROR: Server error, resultCode: ${response.resultCode}, orderId=${order.id}")
-            }
+            api.createOrUpdateOrder(buildAuthToken(token), request)
         } catch (e: Exception) {
-            Napier.e("SAVE_ORDER ERROR: Exception while saving order, orderId=${order.id}", e)
+            Napier.e("OrdersHistoryRemoteDataSource, saveOrder error: $e", e)
         }
     }
 
     override suspend fun removeOrderById(id: String) {
-        val token = authRepository.getAccessToken() ?: return
+        val token = authRepository.getAccessToken()
+        if (token == null) {
+            Napier.e("OrdersHistoryRemoteDataSource, removeOrderById - No access token, orderId=$id")
+            error("No access token")
+        }
         try {
-            api.deleteOrder(buildAuthToken(token), id)
+            val response = api.deleteOrder(buildAuthToken(token), id)
+            if (response.resultCode != HTTP_SUCCESS) {
+                Napier.e(
+                    "OrdersHistoryRemoteDataSource, removeOrderById - Server error, resultCode=${response.resultCode}, orderId=$id"
+                )
+                error("Failed to delete order: ${response.resultCode}")
+            }
         } catch (e: Exception) {
-            Napier.e("OrdersHistoryRemoteDataSource, removeOrderById error: $e")
+            Napier.e("OrdersHistoryRemoteDataSource, removeOrderById error: $e", e)
+            throw e
         }
     }
 }

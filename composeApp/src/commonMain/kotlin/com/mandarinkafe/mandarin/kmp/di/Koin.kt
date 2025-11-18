@@ -15,6 +15,7 @@ import com.mandarinkafe.mandarin.features.more.di.moreModule
 import com.mandarinkafe.mandarin.features.order.di.orderModule
 import com.mandarinkafe.mandarin.features.orderinfo.di.orderInfoModule
 import com.mandarinkafe.mandarin.features.ordershistory.di.ordersHistoryModule
+import com.mandarinkafe.mandarin.features.payment.di.paymentModule
 import com.mandarinkafe.mandarin.features.savedadresses.di.savedAddressesModule
 import com.mandarinkafe.mandarin.features.search.di.searchModule
 import com.mandarinkafe.mandarin.shared.di.sharedModule
@@ -41,6 +42,7 @@ fun initKoinCommon(appDeclaration: KoinAppDeclaration = {}): KoinApplication {
             orderModule,
             orderInfoModule,
             ordersHistoryModule,
+            paymentModule,
             savedAddressesModule,
             searchModule,
             sharedModule,

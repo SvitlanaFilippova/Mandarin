@@ -7,7 +7,8 @@ import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistory
 
 class SaveOrderToHistoryUseCaseImpl(private val repository: OrdersHistoryRepository) :
     SaveOrderToHistoryUseCase {
-    override suspend fun invoke(order: IncomingOrder) {
-        repository.saveOrder(order.toSavedOrder())
+    override suspend fun invoke(order: IncomingOrder, paymentMethodCode: String?) {
+        val savedOrder = order.toSavedOrder(paymentMethodCode)
+        repository.saveOrder(savedOrder)
     }
 }

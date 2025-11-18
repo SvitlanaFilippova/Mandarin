@@ -15,6 +15,7 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.AlertAboutPickupOnly
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.DeliveryTypeChooser
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.DeliveryTypeTitle
@@ -205,6 +206,7 @@ fun OrderContent(
 
         item {
             SubmitOrderButton(
+                isOnlinePayment = state.paymentInfo.chosenPaymentType == UiPaymentType.ONLINE,
                 shouldBeActive = state.canBeSubmitted,
                 isLoading = state.isLoading,
                 modifier = Modifier.padding(bottom = Dimens.MarginStandard16),

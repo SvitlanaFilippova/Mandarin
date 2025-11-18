@@ -38,6 +38,9 @@ object NavConstants {
     const val SEARCH_SCREEN_ROUTE = "search"
     const val ORDER_INFO_ROUTE = "order_info"
     const val AUTH_ROUTE = "auth_screen"
+    const val PAYMENT_SCREEN_ROUTE = "payment"
+    const val KEY_AMOUNT = "amount"
+    const val KEY_USER_PHONE = "userPhone"
 
     val bottomNavigationRoutes = getBottomNavigationRoutesFromItems()
 

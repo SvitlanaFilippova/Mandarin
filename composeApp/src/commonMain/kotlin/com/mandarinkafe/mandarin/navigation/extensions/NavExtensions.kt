@@ -131,6 +131,7 @@ fun NavController.navigateToOrderInfo(
     }
 }
 
+
 fun NavController.navigateToAccountScreen() {
     navigateWithAuthCheck(targetRoute = NavConstants.ACCOUNT_ROUTE)
 }

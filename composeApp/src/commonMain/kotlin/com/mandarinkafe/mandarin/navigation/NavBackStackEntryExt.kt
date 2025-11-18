@@ -23,3 +23,10 @@ fun NavBackStackEntry.getBooleanArgument(key: String, defaultValue: Boolean = fa
     return savedStateHandle.get<String>(key)?.toBoolean() ?: defaultValue
 }
 
+/**
+ * Кроссплатформенная функция для получения double параметра из navigation arguments
+ */
+fun NavBackStackEntry.getDoubleArgument(key: String, defaultValue: Double = 0.0): Double {
+    return savedStateHandle.get<String>(key)?.toDoubleOrNull() ?: defaultValue
+}
+

@@ -28,6 +28,7 @@ fun SubmitOrderButton(
     onMissingRequiredInfo: () -> Unit,
     onSubmitOrder: () -> Unit,
     isLoading: Boolean,
+    isOnlinePayment: Boolean = false,
 ) {
     val onClickAction = when {
         !shouldBeActive -> onMissingRequiredInfo
@@ -52,7 +53,11 @@ fun SubmitOrderButton(
             horizontalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16)
         ) {
             Text(
-                text = stringResource(MR.strings.submit_order),
+                text = if (isOnlinePayment) {
+                    stringResource(MR.strings.submit_order_online)
+                } else {
+                    stringResource(MR.strings.submit_order)
+                },
                 style = Typography.ToCartButtonBigStyle,
                 color = Color.White
             )

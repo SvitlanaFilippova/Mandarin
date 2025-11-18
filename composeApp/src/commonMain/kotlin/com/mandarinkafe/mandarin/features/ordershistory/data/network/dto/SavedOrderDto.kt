@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.ordershistory.data.network.dto
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -12,5 +13,7 @@ data class SavedOrderDto(
     val addressLine1: String = "",
     val addressDetails: String = "",
     val mealNames: String = "",
+    @SerialName("payment_method_code")
+    val paymentMethodCode: String? = null,
 )
 

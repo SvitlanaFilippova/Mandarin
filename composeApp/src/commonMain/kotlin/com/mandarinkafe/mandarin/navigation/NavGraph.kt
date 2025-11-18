@@ -257,5 +257,6 @@ fun NavGraph(navController: NavHostController) {
                 forDeleteAccount = forDeleteAccount
             )
         }
+
     }
 }

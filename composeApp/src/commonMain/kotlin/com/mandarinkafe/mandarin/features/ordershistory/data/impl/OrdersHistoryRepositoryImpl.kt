@@ -9,6 +9,8 @@ class OrdersHistoryRepositoryImpl(
 ) : OrdersHistoryRepository {
     override suspend fun getOrders() = remoteDataSource.getOrders()
 
+    override suspend fun getOrderById(id: String) = remoteDataSource.getOrderById(id)
+
     override suspend fun saveOrder(order: SavedOrder) {
         remoteDataSource.saveOrder(order)
     }

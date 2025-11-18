@@ -8,7 +8,7 @@ DEPENDENCIES:
   - YandexMapsMobile (= 4.25.0-full)
 
 SPEC REPOS:
-  trunk:
+  https://github.com/CocoaPods/Specs.git:
     - YandexMapsMobile
 
 EXTERNAL SOURCES:
@@ -19,6 +19,6 @@ SPEC CHECKSUMS:
   composeApp: 3a07c6abb75e101bca9b2440c3be787e9b1bb077
   YandexMapsMobile: cce1234188709e580cf7f27612ec3267699ab046
 
-PODFILE CHECKSUM: e4bfa3accd1787aedc65a623d2c03f7862a2e94c
+PODFILE CHECKSUM: b1e5101c818d8d7a1c0b98e5007cc86dd1d66614
 
 COCOAPODS: 1.16.2

@@ -77,6 +77,37 @@ class OrdersHistoryServerApi(private val client: HttpClient) {
         }
     }
 
+    suspend fun getOrderById(token: String, orderId: String): OrderHistoryItemResponse {
+        return try {
+            val httpResponse = client.get("/orders/history/$orderId") {
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> {
+                    val responseBody: OrderHistoryItemResponse = httpResponse.body()
+                    responseBody.apply { resultCode = HTTP_SUCCESS }
+                }
+
+                HttpStatusCode.NotFound -> {
+                    OrderHistoryItemResponse().apply { resultCode = HttpStatusCode.NotFound.value }
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    OrderHistoryItemResponse().apply { resultCode = HttpStatusCode.Unauthorized.value }
+                }
+
+                else -> {
+                    OrderHistoryItemResponse().apply { resultCode = HTTP_SERVER_ERROR }
+                }
+            }
+        } catch (e: Throwable) {
+            Napier.e("getOrderById error: $e")
+            OrderHistoryItemResponse().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
     suspend fun deleteOrder(token: String, orderId: String): Response {
         return try {
             val httpResponse = client.delete("/orders/history/$orderId") {

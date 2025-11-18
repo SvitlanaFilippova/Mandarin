@@ -13,15 +13,15 @@ enum class UiPaymentType(
 ) {
     ONLINE(
         code = PAYMENT_ONLINE_CODE,
-        nameRes = MR.strings.payment_type_online
+        nameRes = MR.strings.payment_online
     ),
     CASH(
         code = PAYMENT_CASH_CODE,
-        nameRes = MR.strings.payment_type_cash
+        nameRes = MR.strings.payment_cash
     ),
     BANK(
         code = PAYMENT_BANK_CODE,
-        nameRes = MR.strings.payment_type_card
+        nameRes = MR.strings.payment_self_card
     );
 
     companion object {

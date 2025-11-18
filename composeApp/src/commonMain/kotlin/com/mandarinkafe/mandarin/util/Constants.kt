@@ -4,6 +4,8 @@ object Constants {
     // Network constants
     const val NO_CONNECTION = -1
     const val HTTP_SUCCESS = 200
+    const val HTTP_400 = 400
+    const val HTTP_NOT_FOUND = 404
     const val HTTP_SERVER_ERROR = 500
     const val IMAGE_VALIDATOR_TIMEOUT = 1000
     const val MENU_WAIT_TIMEOUT = 10000L
@@ -60,7 +62,7 @@ object Constants {
     const val DEFAULT_SAVED_ADDRESSES_NUMBER = 3
     const val SHOULD_REFRESH_ADDRESSES_KEY = "shouldRefreshAddresses"
     const val SHOULD_SELECT_ADDRESS_ID = "should_select_last_added"
-    const val PAYMENT_ONLINE_CODE = "ONLINE"
+    const val PAYMENT_ONLINE_CODE = "CARD"
     const val PAYMENT_BANK_CODE = "BANK"
     const val PAYMENT_CASH_CODE = "CASH"
 

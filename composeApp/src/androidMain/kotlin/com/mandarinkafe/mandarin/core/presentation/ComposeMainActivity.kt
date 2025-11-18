@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.CompositionLocalProvider
+import com.mandarinkafe.mandarin.features.payment.YooKassaActivityHelper
 import com.mandarinkafe.mandarin.kmp.MainScreen
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.httpUrlFetcher
@@ -26,6 +27,10 @@ import java.io.File
 class ComposeMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Регистрируем Activity для работы с YooKassa платежами
+        YooKassaActivityHelper.registerActivity(this)
+
         val kamelConfig = initKamel()
 
         setContent {

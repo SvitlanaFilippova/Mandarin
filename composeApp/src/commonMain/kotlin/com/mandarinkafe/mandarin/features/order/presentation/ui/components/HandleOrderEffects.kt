@@ -50,6 +50,14 @@ fun HandleOrderEffects(
                         orderId = effect.orderId,
                         fromOrderCreation = true
                     )
+
+                is OrderEffect.StartOnlinePayment -> {
+                    // Переходим на экран информации о заказе, где будет запущена оплата
+                    navController.navigateToOrderInfo(
+                        orderId = effect.orderId,
+                        fromOrderCreation = true
+                    )
+                }
             }
         }
     }

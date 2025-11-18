@@ -19,9 +19,11 @@ kotlin {
     compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
 
     androidTarget()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+    )
 
     cocoapods {
         version = "1.0"
@@ -39,8 +41,6 @@ kotlin {
             packageName = "YandexMapKit"
         }
     }
-
-
 
     sourceSets {
         commonMain {
@@ -121,6 +121,11 @@ kotlin {
                 implementation(libs.androidx.appcompat)
                 // Activity Compose для permission requests
                 implementation(libs.androidx.activity.compose)
+                // ЮKassa
+                implementation(libs.yookassa.android.sdk)
+                // Явно указываем версии work-runtime для разрешения конфликтов
+                implementation(libs.androidx.work.runtime)
+                implementation(libs.androidx.work.runtime.ktx)
             }
         }
 
@@ -164,6 +169,15 @@ android {
     }
 }
 
+// Разрешение конфликтов зависимостей для androidx.work
+configurations.all {
+    resolutionStrategy {
+        val workVersion = libs.versions.work.get()
+        force("androidx.work:work-runtime:$workVersion")
+        force("androidx.work:work-runtime-ktx:$workVersion")
+    }
+}
+
 sqldelight {
     databases {
         create("AppDatabase") {
@@ -194,7 +208,9 @@ val keys = listOf(
     "TG_CHANNEL_ID",
     "DEV_TG_CHAT_ID",
     "SERVER_BASE_URL",
-    "MANDARIN_API_KEY"
+    "MANDARIN_API_KEY",
+    "YOOKASSA_CLIENT_APPLICATION_KEY",
+    "YOOKASSA_SHOP_ID"
 )
 
 // --- Генерация BuildKonfig для KMP ---
@@ -241,3 +257,4 @@ tasks.register("updateIOSVersion") {
 tasks.named("packForXcode") {
     dependsOn("updateIOSVersion")
 }
+

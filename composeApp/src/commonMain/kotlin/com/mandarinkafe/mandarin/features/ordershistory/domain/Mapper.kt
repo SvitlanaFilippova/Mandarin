@@ -8,7 +8,7 @@ import com.mandarinkafe.mandarin.util.Constants.NON_BRAKING_SPACE
 import com.mandarinkafe.mandarin.util.applyTypography
 
 object Mapper {
-    fun IncomingOrder.toSavedOrder(): SavedOrder {
+    fun IncomingOrder.toSavedOrder(paymentMethodCode: String? = null): SavedOrder {
         val names = items
             .groupBy { it.name }
             .mapValues { entry -> entry.value.sumOf { it.amount } }
@@ -23,7 +23,8 @@ object Mapper {
             orderType = orderType?.name.toDeliveryTypeOrNull(),
             addressLine1 = deliveryAddress?.streetAndBuilding ?: "",
             addressDetails = deliveryAddress?.getDetailsString() ?: "",
-            mealNames = names
+            mealNames = names,
+            paymentMethodCode = paymentMethodCode
         )
     }
 

@@ -30,6 +30,7 @@ import com.mandarinkafe.mandarin.features.savedadresses.domain.OrderInfoUseCases
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
+import com.mandarinkafe.mandarin.util.formatPhoneNumberForSdk
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dev.icerock.moko.resources.StringResource
 import io.github.aakira.napier.Napier
@@ -448,7 +449,6 @@ class OrderViewModel(
 
     private fun submitOrder() {
         if (state.value.shouldSaveUserName) saveUserName()
-
         viewModelScope.launch {
             setLoading()
             val order = state.value.toDomain(
@@ -465,11 +465,31 @@ class OrderViewModel(
     }
 
     private fun onSuccessOrderCreation(order: IncomingOrder) {
+        // Сохраняем выбранный тип оплаты ДО clearState, так как clearState сбрасывает состояние
+        val savedChosenPaymentType = state.value.paymentInfo.chosenPaymentType
+        val savedUserPhone = state.value.userInfo.phone
+
         clearState()
-        sendEffect(ShowSuccess(order.id))
+
+        // Очищаем корзину сразу после создания заказа
         viewModelScope.launch {
             cartUseCases.clearCart()
-            saveOrderToHistory(order)
+            // Сохраняем paymentMethodCode для онлайн-оплаты
+            val paymentMethodCode = if (savedChosenPaymentType == UiPaymentType.ONLINE) {
+                savedChosenPaymentType.code
+            } else {
+                null
+            }
+            saveOrderToHistory(order, paymentMethodCode)
+        }
+
+        // Если выбрана онлайн-оплата, запускаем процесс оплаты
+        if (savedChosenPaymentType == UiPaymentType.ONLINE) {
+            val userPhone = savedUserPhone.formatPhoneNumberForSdk()
+            sendEffect(OrderEffect.StartOnlinePayment(order.id, order.sum ?: 0.0, userPhone))
+        } else {
+            // Для других способов оплаты - обычный флоу
+            sendEffect(ShowSuccess(order.id))
         }
         getSavedUserInfo()
     }
