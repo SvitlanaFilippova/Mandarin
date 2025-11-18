@@ -23,6 +23,7 @@ object OrdersHistoryMapper {
             addressDetails = addressDetails,
             mealNames = mealNames,
             paymentMethodCode = paymentMethodCode,
+            mealIds = mealIds,
         )
     }
 
@@ -38,6 +39,7 @@ object OrdersHistoryMapper {
             mealNames = mealNames,
             status = null, // status не хранится в истории, проверяется отдельно
             paymentMethodCode = paymentMethodCode,
+            mealIds = mealIds,
         )
     }
 

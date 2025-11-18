@@ -14,6 +14,7 @@ data class SavedOrder(
     val mealNames: String = "",
     val status: DeliveryStatus? = null,
     val paymentMethodCode: String? = null, // Код способа оплаты ("CARD", "CASH", "BANK")
+    val mealIds: List<String> = emptyList(), // Список id базовых блюд (без добавок и модификаторов)
 ) {
     val isActive: Boolean
         get() = status != DeliveryStatus.CANCELLED && status != DeliveryStatus.CLOSED

@@ -15,6 +15,12 @@ object Mapper {
             .map { (name, totalAmount) -> "${name.applyTypography()}${NON_BRAKING_SPACE}x${totalAmount.toInt()}" }
             .joinToString(", ")
 
+        // Извлекаем id только базовых блюд (без добавок и модификаторов)
+        // Исключаем блюда с isDelivery == true (определяем по имени)
+        val mealIds = items
+            .filterNot { it.name.contains("Доставка", ignoreCase = true) }
+            .map { it.id }
+
         return SavedOrder(
             id = id,
             number = number ?: "",
@@ -24,7 +30,8 @@ object Mapper {
             addressLine1 = deliveryAddress?.streetAndBuilding ?: "",
             addressDetails = deliveryAddress?.getDetailsString() ?: "",
             mealNames = names,
-            paymentMethodCode = paymentMethodCode
+            paymentMethodCode = paymentMethodCode,
+            mealIds = mealIds
         )
     }
 
