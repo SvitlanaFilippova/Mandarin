@@ -4,20 +4,85 @@ import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OrdersInfoResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.toDomain
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.OrderInfoRepository
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingModifier
+import com.mandarinkafe.mandarin.features.ordershistory.data.mapper.OrdersHistoryMapper.toOrderInfoResponseDto
+import com.mandarinkafe.mandarin.features.ordershistory.data.network.OrdersHistoryServerApi
+import com.mandarinkafe.mandarin.util.Constants.BEARER_TOKEN_TYPE
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
+import io.github.aakira.napier.Napier
+import io.ktor.http.HttpStatusCode
 
 class OrderInfoRepositoryImpl(
+    private val serverApi: OrdersHistoryServerApi,
     private val networkClient: IikoNetworkClient,
     private val menuCache: MenuCache,
+    private val authRepository: AuthRepository,
 ) : OrderInfoRepository {
 
+    private companion object {
+        fun buildAuthToken(token: String) = "$BEARER_TOKEN_TYPE $token"
+    }
+
     override suspend fun getOrderFromApi(id: String): Resource<IncomingOrder> {
+        // Сначала пытаемся получить с сервера
+        val serverResult = tryGetOrderFromServer(id)
+        if (serverResult != null) {
+            return serverResult
+        }
+
+        // Если сервер вернул ошибку (404 для новых заказов, или другая ошибка), fallback на iiko
+        Napier.d("OrderInfoRepositoryImpl: Server request failed or order not found, falling back to iiko API for orderId=$id")
+        return getOrderFromIikoDirectly(id)
+    }
+
+    private suspend fun tryGetOrderFromServer(id: String): Resource<IncomingOrder>? {
+        val token = authRepository.getAccessToken() ?: return null
+
+        return try {
+            val response = serverApi.getOrderDetails(buildAuthToken(token), id)
+
+            when (response.resultCode) {
+                HTTP_SUCCESS -> {
+                    val addons = menuCache.addonsCategories.value
+                    val orderInfoDto = response.toOrderInfoResponseDto()
+                    val orderInfo = orderInfoDto.toDomain(addons)
+
+                    if (orderInfo != null) {
+                        val validatedOrder = validateOrderItemsWithMenu(order = orderInfo)
+                        Resource.Success(data = validatedOrder)
+                    } else {
+                        null // Вернём null, чтобы сделать fallback на iiko
+                    }
+                }
+
+                HttpStatusCode.NotFound.value -> {
+                    // Заказ не найден на сервере (404) - это нормально для только что созданных заказов
+                    // Делаем fallback на iiko
+                    null
+                }
+
+                else -> {
+                    // Сервер вернул другую ошибку (500, и т.д.) - делаем fallback на iiko
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            Napier.e("OrderInfoRepositoryImpl, tryGetOrderFromServer error: $e", e)
+            null // Ошибка при запросе к серверу - делаем fallback на iiko
+        }
+    }
+
+    override suspend fun getOrderFromIiko(id: String): Resource<IncomingOrder> {
+        return getOrderFromIikoDirectly(id)
+    }
+
+    private suspend fun getOrderFromIikoDirectly(id: String): Resource<IncomingOrder> {
         val response = networkClient.getSingleOrderInfoById(id)
         return when (response.resultCode) {
             NO_CONNECTION -> Resource.ErrorNoInternet()

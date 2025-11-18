@@ -1,7 +1,9 @@
 package com.mandarinkafe.mandarin.features.ordershistory.data.mapper
 
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.OrderInfoResponseDto
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
+import com.mandarinkafe.mandarin.features.ordershistory.data.network.OrderDetailsResponse
 import com.mandarinkafe.mandarin.features.ordershistory.data.network.OrderStatusDto
 import com.mandarinkafe.mandarin.features.ordershistory.data.network.dto.SavedOrderDto
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.OrderStatus
@@ -57,6 +59,16 @@ object OrdersHistoryMapper {
 
     private fun String.toDeliveryStatus(): DeliveryStatus? {
         return DeliveryStatus.entries.find { it.apiName.equals(this, ignoreCase = true) }
+    }
+
+    fun OrderDetailsResponse.toOrderInfoResponseDto(): OrderInfoResponseDto {
+        return OrderInfoResponseDto(
+            id = id,
+            timestamp = timestamp,
+            creationStatus = creationStatus,
+            errorInfo = errorInfo,
+            order = order,
+        )
     }
 }
 
