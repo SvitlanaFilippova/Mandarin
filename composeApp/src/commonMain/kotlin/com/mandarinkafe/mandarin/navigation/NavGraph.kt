@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.account.presentation.ui.screen.AccountScreen
+import com.mandarinkafe.mandarin.navigation.MealDetailsNavParams
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.AddressDetailsScreen
 import com.mandarinkafe.mandarin.features.address.presentation.ui.screen.AddressMapScreen
 import com.mandarinkafe.mandarin.features.auth.presentation.ui.screen.AuthScreen
@@ -136,20 +137,24 @@ fun NavGraph(navController: NavHostController) {
                 NavConstants.KEY_IS_EDIT_MODE,
                 defaultValue = false
             )
-            val mealJson =
-                backStackEntry.getStringArgument(NavConstants.KEY_MEAL_JSON)?.decodeURLPart()
-            val mealId = backStackEntry.getStringArgument(NavConstants.KEY_MEAL_ID)?.decodeURLPart()
-
-            val initItem = mealJson?.let {
-                runCatching { Json.decodeFromString<CartItem>(it) }.getOrNull()
+            val encodedParams = backStackEntry.getStringArgument(NavConstants.KEY_MEAL_ID)
+            val params = encodedParams?.let {
+                runCatching {
+                    val decodedString = it.decodeURLPart()
+                    Json.decodeFromString<MealDetailsNavParams>(decodedString)
+                }.getOrNull()
             }
 
             MealDetailsBottomSheet(
                 sharedViewModel = sharedViewModel,
                 navController = navController,
-                mealId = if (mealId != "null") mealId else null,
-                initItem = initItem,
+                mealId = params?.mealId,
+                initItem = null, // Больше не передаем полный объект
                 isEditMode = isEditMode,
+                addsIds = params?.addsIds ?: emptyList(),
+                modifierIds = params?.modifierIds ?: emptyMap(),
+                comment = params?.comment ?: "",
+                cartItemId = params?.cartItemId,
             )
         }
 

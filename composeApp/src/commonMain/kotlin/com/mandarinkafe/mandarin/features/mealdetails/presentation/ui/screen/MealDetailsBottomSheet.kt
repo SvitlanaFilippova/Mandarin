@@ -39,6 +39,10 @@ fun MealDetailsBottomSheet(
     mealId: String?,
     initItem: CartItem?,
     isEditMode: Boolean,
+    addsIds: List<String> = emptyList(),
+    modifierIds: Map<String, List<String>> = emptyMap(),
+    comment: String = "",
+    cartItemId: String? = null,
 ) {
     val viewModel = rememberMealDetailsViewModel()
     if (initItem == null && mealId == null) return
@@ -59,12 +63,16 @@ fun MealDetailsBottomSheet(
 
     val handleClose: () -> Unit = { navController.popBackStack() }
 
-    LaunchedEffect(initItem, mealId) {
+    LaunchedEffect(initItem, mealId, addsIds, modifierIds, comment, cartItemId) {
         viewModel.onEvent(
             MealDetailsEvent.SetInitData(
                 item = initItem,
                 mealId = mealId,
-                isEditMode = isEditMode
+                isEditMode = isEditMode,
+                addsIds = addsIds,
+                modifierIds = modifierIds,
+                comment = comment,
+                cartItemId = cartItemId,
             )
         )
     }

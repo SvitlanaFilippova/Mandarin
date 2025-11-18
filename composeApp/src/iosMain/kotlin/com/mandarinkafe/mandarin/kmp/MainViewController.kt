@@ -24,10 +24,10 @@ fun MainViewController() = ComposeUIViewController {
         // Проверяем, инициализирован ли уже Koin
         val isKoinInitialized = runCatching { getKoin() }.isSuccess
         if (!isKoinInitialized) {
-            initKoinIOS()
+    initKoinIOS()
         }
-        // Инициализируем Napier
-        Napier.base(DebugAntilog())
+    // Инициализируем Napier
+    Napier.base(DebugAntilog())
     }
 
     androidx.compose.foundation.layout.Box(

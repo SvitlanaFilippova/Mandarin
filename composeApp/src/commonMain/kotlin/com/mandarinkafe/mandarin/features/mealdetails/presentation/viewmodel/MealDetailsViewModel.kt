@@ -13,6 +13,7 @@ import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
 import com.mandarinkafe.mandarin.features.cart.domain.models.MealAddResult
 import com.mandarinkafe.mandarin.features.mealdetails.domain.api.GetAddonsUseCase
 import com.mandarinkafe.mandarin.features.mealdetails.domain.api.GetMealByIdUseCase
+import com.mandarinkafe.mandarin.features.mealdetails.domain.api.ReconstructCustomizedMealUseCase
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.CloseAndShowMessage
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowMaxModifiersQuantity
@@ -33,6 +34,7 @@ import kotlinx.coroutines.launch
 class MealDetailsViewModel(
     private val getAddonsUseCase: GetAddonsUseCase,
     private val getMealById: GetMealByIdUseCase,
+    private val reconstructCustomizedMealUseCase: ReconstructCustomizedMealUseCase,
     private val cartInteractor: CartInteractor,
 ) : BaseViewModel<MealDetailsEvent, MealDetailsEffect, MealDetailsState>() {
     override fun setInitialState() = MealDetailsState()
@@ -42,7 +44,11 @@ class MealDetailsViewModel(
             is MealDetailsEvent.SetInitData -> setInitData(
                 item = event.item,
                 mealId = event.mealId,
-                isEditMode = event.isEditMode
+                isEditMode = event.isEditMode,
+                addsIds = event.addsIds,
+                modifierIds = event.modifierIds,
+                comment = event.comment,
+                cartItemId = event.cartItemId,
             )
 
             is MealDetailsEvent.ChangeAdds -> changeAdds(
@@ -169,10 +175,63 @@ class MealDetailsViewModel(
         }
     }
 
-    private fun setInitData(item: CartItem?, mealId: String?, isEditMode: Boolean) {
+    private fun setInitData(
+        item: CartItem?,
+        mealId: String?,
+        isEditMode: Boolean,
+        addsIds: List<String>,
+        modifierIds: Map<String, List<String>>,
+        comment: String,
+        cartItemId: String?,
+    ) {
         when {
             item != null -> viewModelScope.launch { applyMealData(item, isEditMode) }
-            mealId != null -> loadMealById(mealId, isEditMode)
+            mealId != null -> {
+                if (addsIds.isNotEmpty() || modifierIds.isNotEmpty() || comment.isNotEmpty() || cartItemId != null) {
+                    // Реконструируем CustomizedMeal из параметров навигации
+                    reconstructCustomizedMeal(
+                        mealId,
+                        addsIds,
+                        modifierIds,
+                        comment,
+                        cartItemId,
+                        isEditMode
+                    )
+                } else {
+                    // Просто загружаем блюдо по ID
+                    loadMealById(mealId, isEditMode)
+                }
+            }
+        }
+    }
+
+    private fun reconstructCustomizedMeal(
+        mealId: String,
+        addsIds: List<String>,
+        modifierIds: Map<String, List<String>>,
+        comment: String,
+        cartItemId: String?,
+        isEditMode: Boolean,
+    ) {
+        viewModelScope.launch {
+            setLoading()
+            val result = reconstructCustomizedMealUseCase(
+                mealId = mealId,
+                addsIds = addsIds,
+                modifierIds = modifierIds,
+                comment = comment,
+                cartItemId = cartItemId,
+            )
+            when (result) {
+                is Success -> {
+                    val cartItem = result.data
+                    cartItem?.let {
+                        applyMealData(it, isEditMode)
+                    }
+                }
+
+                else -> setError(result)
+            }
         }
     }
 

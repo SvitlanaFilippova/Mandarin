@@ -19,6 +19,10 @@ sealed interface MealDetailsContract {
             val item: CartItem?,
             val mealId: String?,
             val isEditMode: Boolean,
+            val addsIds: List<String> = emptyList(),
+            val modifierIds: Map<String, List<String>> = emptyMap(),
+            val comment: String = "",
+            val cartItemId: String? = null,
         ) : MealDetailsEvent
 
         // Управление добавками
