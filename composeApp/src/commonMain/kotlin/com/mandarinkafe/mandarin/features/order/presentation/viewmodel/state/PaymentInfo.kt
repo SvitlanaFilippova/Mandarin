@@ -27,7 +27,7 @@ data class PaymentInfo(
                 // Если тип не выбран, возвращаем первый доступный (fallback)
                 // Это не должно происходить, так как paymentTypeIsChosen проверяет null
                 availablePaymentTypes.firstOrNull()
-                    ?: throw IllegalStateException("No payment types available")
+                    ?: error("No payment types available")
             }
         }
 }

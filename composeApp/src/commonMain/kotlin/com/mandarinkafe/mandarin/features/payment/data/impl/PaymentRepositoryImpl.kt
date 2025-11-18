@@ -15,6 +15,10 @@ class PaymentRepositoryImpl(
     private val networkClient: PaymentNetworkClient,
 ) : PaymentRepository {
 
+    private companion object {
+        private const val ERROR_PREFIX = "Ошибка: "
+    }
+
     override suspend fun createPayment(
         paymentToken: String,
         orderId: String,
@@ -60,7 +64,7 @@ class PaymentRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther("$ERROR_PREFIX${e.message}")
         }
     }
 
@@ -85,7 +89,7 @@ class PaymentRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther("$ERROR_PREFIX${e.message}")
         }
     }
 
@@ -109,7 +113,7 @@ class PaymentRepositoryImpl(
                 }
             }
         } catch (e: Exception) {
-            Resource.ErrorOther("Ошибка: ${e.message}")
+            Resource.ErrorOther("$ERROR_PREFIX${e.message}")
         }
     }
 }

@@ -46,11 +46,9 @@ object YooKassaActivityHelper {
         // Отслеживаем lifecycle для очистки при уничтожении Activity
         activity.lifecycle.addObserver(object : LifecycleEventObserver {
             override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                if (event == Lifecycle.Event.ON_DESTROY) {
-                    if (source == activity) {
-                        currentActivity = null
-                        paymentLauncher = null
-                    }
+                if (event == Lifecycle.Event.ON_DESTROY && source == activity) {
+                    currentActivity = null
+                    paymentLauncher = null
                 }
             }
         })

@@ -136,7 +136,7 @@ class IikoApi(
             // Проверяем статус и ошибку
             if (responseStatus.value >= Constants.HTTP_400 || responseBody.error != null) {
                 val errorMsg = responseBody.error ?: "HTTP ${responseStatus.value}"
-                throw Exception("iiko error: $errorMsg")
+                throw IllegalStateException("iiko error: $errorMsg")
             }
 
             responseBody

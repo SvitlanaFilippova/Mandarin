@@ -207,7 +207,7 @@ class IikoNetworkClientImpl(
 
                 // Если есть ошибка в ответе, выбрасываем исключение
                 if (response.error != null) {
-                    throw Exception("iiko error: ${response.error}")
+                    throw IllegalStateException("iiko error: ${response.error}")
                 }
 
                 response.apply { resultCode = HTTP_SUCCESS }
