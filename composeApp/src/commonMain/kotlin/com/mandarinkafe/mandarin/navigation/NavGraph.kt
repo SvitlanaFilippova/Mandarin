@@ -5,9 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.account.presentation.ui.screen.AccountScreen
-import com.mandarinkafe.mandarin.navigation.MealDetailsNavParams
 import com.mandarinkafe.mandarin.features.address.addressdetails.presentation.ui.AddressDetailsScreen
 import com.mandarinkafe.mandarin.features.address.presentation.ui.screen.AddressMapScreen
 import com.mandarinkafe.mandarin.features.auth.presentation.ui.screen.AuthScreen

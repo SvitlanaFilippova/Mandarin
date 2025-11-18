@@ -18,7 +18,6 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_FROM_ORDER_CREATION
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_ID
-import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_JSON
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_ORDER_ID
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_SNACKBAR_MESSAGE
 import com.mandarinkafe.mandarin.navigation.NavConstants.LEGAL_SCREEN_ROUTE
@@ -115,11 +114,11 @@ fun NavController.navigateToMealDetails(
     } else {
         return
     }
-    
+
     // Сериализуем в JSON и URL-encode
     val jsonString = Json.encodeToString(params)
     val encodedParams = UrlEncoderUtil.encode(jsonString)
-    
+
     val route = "$MEAL_DETAILS_ROUTE?$KEY_MEAL_ID=$encodedParams&$KEY_IS_EDIT_MODE=$isEditMode"
     navigate(route)
 }

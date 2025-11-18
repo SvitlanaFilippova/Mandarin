@@ -187,7 +187,7 @@ class MealDetailsViewModel(
         when {
             item != null -> viewModelScope.launch { applyMealData(item, isEditMode) }
             mealId != null -> {
-                if (addsIds.isNotEmpty() || modifierIds.isNotEmpty() || comment.isNotEmpty() || cartItemId != null) {
+                if (hasCustomizationParams(addsIds, modifierIds, comment, cartItemId)) {
                     // Реконструируем CustomizedMeal из параметров навигации
                     reconstructCustomizedMeal(
                         mealId,
@@ -203,6 +203,18 @@ class MealDetailsViewModel(
                 }
             }
         }
+    }
+
+    private fun hasCustomizationParams(
+        addsIds: List<String>,
+        modifierIds: Map<String, List<String>>,
+        comment: String,
+        cartItemId: String?,
+    ): Boolean {
+        return addsIds.isNotEmpty() ||
+                modifierIds.isNotEmpty() ||
+                comment.isNotEmpty() ||
+                cartItemId != null
     }
 
     private fun reconstructCustomizedMeal(
