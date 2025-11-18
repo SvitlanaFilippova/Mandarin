@@ -4,6 +4,7 @@ object Constants {
     // Network constants
     const val NO_CONNECTION = -1
     const val HTTP_SUCCESS = 200
+    const val HTTP_400 = 400
     const val HTTP_SERVER_ERROR = 500
     const val IMAGE_VALIDATOR_TIMEOUT = 1000
     const val MENU_WAIT_TIMEOUT = 10000L
@@ -63,7 +64,6 @@ object Constants {
     const val PAYMENT_ONLINE_CODE = "CARD"
     const val PAYMENT_BANK_CODE = "BANK"
     const val PAYMENT_CASH_CODE = "CASH"
-    const val PAYMENT_TYPE_KIND_EXTERNAL = "External"
 
 
     // Теги для особой логики в меню

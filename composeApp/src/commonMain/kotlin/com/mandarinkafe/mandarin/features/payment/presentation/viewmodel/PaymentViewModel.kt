@@ -28,7 +28,8 @@ class PaymentViewModel(
 ) : BaseViewModel<PaymentEvent, PaymentEffect, PaymentState>() {
 
     private var pollingJob: Job? = null
-    private val maxPollingDuration = 300.seconds // 5 минут - увеличиваем для "умного платежа" на iOS
+    private val maxPollingDuration =
+        300.seconds // 5 минут - увеличиваем для "умного платежа" на iOS
 
     override fun setInitialState() = PaymentState()
 
@@ -108,7 +109,7 @@ class PaymentViewModel(
             } else {
                 "Заказ ID ${state.value.orderId}"
             }
-            
+
             // Для iOS paymentToken может быть null - сервер создаст платеж без токена
             // Для iOS также передаем return_url для возврата в приложение после оплаты
             val returnUrl = if (paymentToken == null) {
@@ -117,7 +118,7 @@ class PaymentViewModel(
             } else {
                 null // Для Android return_url не нужен (SDK обрабатывает возврат)
             }
-            
+
             val createResult = if (paymentToken != null) {
                 createPaymentUseCase(
                     paymentToken = paymentToken,
@@ -218,7 +219,7 @@ class PaymentViewModel(
 
         pollingJob = viewModelScope.launch {
             val isCompleted = withTimeoutOrNull(maxPollingDuration) {
-                        tickerFlow(period = 3.seconds)
+                tickerFlow(period = 3.seconds)
                     .collect { _ ->
                         val statusResult = getPaymentStatusUseCase(state.value.orderId)
 
@@ -335,5 +336,7 @@ class PaymentViewModel(
         super.onCleared()
         stopPolling()
     }
+
+    private companion object
 }
 

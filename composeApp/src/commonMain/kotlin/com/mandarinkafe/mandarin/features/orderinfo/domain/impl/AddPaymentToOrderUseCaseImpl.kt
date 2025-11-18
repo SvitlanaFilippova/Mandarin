@@ -5,7 +5,6 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.api.AddPaymentToOrder
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ChangeOrderRepository
 import com.mandarinkafe.mandarin.util.Constants.PAYMENT_ONLINE_CODE
 import com.mandarinkafe.mandarin.util.Resource
-import io.github.aakira.napier.Napier
 
 class AddPaymentToOrderUseCaseImpl(
     private val changeOrderRepository: ChangeOrderRepository,

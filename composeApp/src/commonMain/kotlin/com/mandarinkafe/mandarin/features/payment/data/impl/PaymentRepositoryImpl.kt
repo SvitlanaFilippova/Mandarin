@@ -9,7 +9,6 @@ import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentInfo
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
-import io.github.aakira.napier.Napier
 
 class PaymentRepositoryImpl(
     private val networkClient: PaymentNetworkClient,

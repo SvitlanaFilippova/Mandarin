@@ -6,7 +6,6 @@ import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistory
 import com.mandarinkafe.mandarin.features.payment.domain.api.CancelPaymentUseCase
 import com.mandarinkafe.mandarin.util.Constants.PAYMENT_ONLINE_CODE
 import com.mandarinkafe.mandarin.util.Resource
-import io.github.aakira.napier.Napier
 
 class CancelOrderUseCaseImpl(
     private val repository: ChangeOrderRepository,

@@ -22,15 +22,14 @@ import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequ
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.OrdersInfoResponse
+import com.mandarinkafe.mandarin.util.Constants
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
-import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
 
 class IikoApi(
     private val client: HttpClient,
@@ -130,11 +129,12 @@ class IikoApi(
             val responseBody = try {
                 json.decodeFromString(AddPaymentsResponse.serializer(), responseBodyText)
             } catch (e: Exception) {
+                logError("addPayments - deserialization", e)
                 AddPaymentsResponse()
             }
             
             // Проверяем статус и ошибку
-            if (responseStatus.value >= 400 || responseBody.error != null) {
+            if (responseStatus.value >= Constants.HTTP_400 || responseBody.error != null) {
                 val errorMsg = responseBody.error ?: "HTTP ${responseStatus.value}"
                 throw Exception("iiko error: $errorMsg")
             }

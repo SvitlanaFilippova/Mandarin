@@ -94,18 +94,21 @@ class OrderInfoViewModel(
                         if (orderId != null) {
                             sendPaymentToIiko(orderId, effect.amount)
                             // Обновляем статус заказа после успешной оплаты
-                            delay(1000) // Небольшая задержка для обновления на сервере
+                            delay(PAYMENT_STATUS_UPDATE_DELAY_MS) // Небольшая задержка для обновления на сервере
                             forceRefresh(orderId)
                         }
                     }
+
                     is PaymentEffect.PaymentError -> {
                         // Сохраняем StringResource в state, конвертация будет в UI
                         setState { copy(paymentError = effect.message) }
                     }
+
                     is PaymentEffect.PaymentCanceled -> {
                         // Пользователь отменил оплату - просто обновляем состояние
                         setState { copy(paymentError = null) }
                     }
+
                     is PaymentEffect.ShowCancelDialog -> {
                         // Можно показать диалог отмены, если нужно
                     }
@@ -117,8 +120,8 @@ class OrderInfoViewModel(
     private fun sendPaymentToIiko(orderId: String, amount: Double) {
         viewModelScope.launch {
             var attempt = 0
-            val maxAttempts = 3
-            var delayMs = 1000L // Начинаем с 1 секунды
+            val maxAttempts = PAYMENT_SEND_RETRY_MAX_ATTEMPTS
+            var delayMs = PAYMENT_STATUS_UPDATE_DELAY_MS // Начинаем с 1 секунды
 
             while (attempt < maxAttempts) {
                 attempt++
@@ -127,12 +130,14 @@ class OrderInfoViewModel(
                     is Resource.Success -> {
                         return@launch
                     }
+
                     is Resource.ErrorNoInternet -> {
                         if (attempt < maxAttempts) {
                             delay(delayMs)
                             delayMs *= 2 // Экспоненциальная задержка: 1s, 2s, 4s
                         }
                     }
+
                     else -> {
                         if (attempt < maxAttempts) {
                             delay(delayMs)
@@ -148,14 +153,14 @@ class OrderInfoViewModel(
         val order = state.value.incomingOrder
         val savedOrder = state.value.savedOrder
         val orderId = state.value.orderId
-        
+
         if (orderId == null || order == null) {
             return
         }
 
         val amount = order.sum ?: 0.0
-        val userPhone = order.phone?.formatPhoneNumberForSdk() 
-            ?: savedOrder?.let { 
+        val userPhone = order.phone?.formatPhoneNumberForSdk()
+            ?: savedOrder?.let {
                 // Если телефона нет в заказе, можно попробовать получить из сохраненных данных
                 // Но обычно телефон должен быть в заказе
                 ""
@@ -195,20 +200,24 @@ class OrderInfoViewModel(
         viewModelScope.launch {
             // Делаем несколько попыток загрузки с задержкой, так как заказ может еще сохраняться на сервере
             var savedOrder: SavedOrder? = null
-            repeat(3) { attempt ->
+            repeat(ORDER_LOAD_RETRY_MAX_ATTEMPTS) { attempt ->
                 savedOrder = ordersHistoryInteractor.getOrderById(orderId)
                 if (savedOrder != null) {
                     return@repeat
                 }
-                if (attempt < 2) {
-                    delay(500) // Задержка перед следующей попыткой
+                if (attempt < ORDER_LOAD_RETRY_MAX_ATTEMPTS - 1) {
+                    delay(ORDER_LOAD_RETRY_DELAY_MS) // Задержка перед следующей попыткой
                 }
             }
             setState { copy(savedOrder = savedOrder) }
-            
+
             // Если заказ с онлайн-оплатой и не закрыт, проверяем статус платежа
             savedOrder?.let { order ->
-                if (order.paymentMethodCode?.equals(PAYMENT_ONLINE_CODE, ignoreCase = true) == true) {
+                if (order.paymentMethodCode?.equals(
+                        PAYMENT_ONLINE_CODE,
+                        ignoreCase = true
+                    ) == true
+                ) {
                     val incomingOrder = state.value.incomingOrder
                     if (incomingOrder != null && !incomingOrder.isClosed) {
                         checkPaymentStatus(orderId)
@@ -327,7 +336,7 @@ class OrderInfoViewModel(
 
     private fun setStatus(status: IncomingOrder?) {
         setState { copy(isLoading = false, incomingOrder = status) }
-        
+
         // Если заказ с онлайн-оплатой, проверяем статус платежа
         status?.let { order ->
             val isOnlinePayment = state.value.isOnlinePayment
@@ -336,7 +345,7 @@ class OrderInfoViewModel(
             }
         }
     }
-    
+
     private fun checkPaymentStatus(orderId: String) {
         viewModelScope.launch {
             val result = getPaymentStatus(orderId)
@@ -350,6 +359,7 @@ class OrderInfoViewModel(
                         )
                     }
                 }
+
                 else -> {
                     // Игнорируем ошибки получения статуса платежа (платеж может не существовать)
                     // Не обновляем состояние
@@ -392,6 +402,10 @@ class OrderInfoViewModel(
     private companion object {
         const val ORDER_STATUS_UPD_DELAY = 60
         const val ORDER_STATUS_UPD_DELAY_AFTER_CANCEL = 500L
+        const val PAYMENT_SEND_RETRY_MAX_ATTEMPTS = 3
+        const val ORDER_LOAD_RETRY_MAX_ATTEMPTS = 3
+        const val PAYMENT_STATUS_UPDATE_DELAY_MS = 1000L
+        const val ORDER_LOAD_RETRY_DELAY_MS = 500L
     }
 }
 

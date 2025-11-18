@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,7 +27,6 @@ import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchSc
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberCartViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberSharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
-import io.github.aakira.napier.Napier
 import io.ktor.http.decodeURLPart
 import kotlinx.serialization.json.Json
 
