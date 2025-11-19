@@ -26,6 +26,7 @@ fun OrdersHistoryList(
     anyFiltersAreApplied: Boolean,
     navController: NavController,
     listState: LazyListState,
+    onItemClick: (id: String) -> Unit,
 ) {
     val isInitialEmpty = fullData.isEmpty()
     val listToShow = if (anyFiltersAreApplied) filteredData else fullData
@@ -67,7 +68,8 @@ fun OrdersHistoryList(
                         navController.navigateToOrderInfo(
                             orderId = order.id,
                         )
-                    }
+                    },
+                    onItemClick = onItemClick
                 )
             }
         }

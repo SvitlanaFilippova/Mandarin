@@ -26,8 +26,8 @@
         меню. Там точно найдутся нужные вкусности!
     </string>
     <string name="error_order_data_empty">Увы, детали заказа не удалось получить.</string>
-    <string name="error_order_data_empty_extra">Сервер гарантирует их хранение в течение 7 дней.
-        Сейчас, скорее всего, он их уже удалил 😔
+    <string name="error_order_data_empty_extra">Возможно, заказ старше 6&#160;месяцев, или что-то
+        пошло не&#160;так 😔
     </string>
 
 

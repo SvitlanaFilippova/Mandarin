@@ -31,7 +31,12 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.images.KamelSub
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
-fun OrderHistoryCard(modifier: Modifier = Modifier, order: SavedOrder, onClick: () -> Unit) {
+fun OrderHistoryCard(
+    modifier: Modifier = Modifier,
+    order: SavedOrder,
+    onClick: () -> Unit,
+    onItemClick: (id: String) -> Unit,
+) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -94,7 +99,8 @@ fun OrderHistoryCard(modifier: Modifier = Modifier, order: SavedOrder, onClick: 
                                 modifier = Modifier
                                     .size(Dimens.MealSuperSmallImage)
                                     .aspectRatio(1f)
-                                    .clip(RoundedCornerShape(Dimens.CornerRadius4)),
+                                    .clip(RoundedCornerShape(Dimens.CornerRadius4))
+                                    .clickable(onClick = { onItemClick(mealId) }),
                                 model = imageUrl,
                                 previewModel = blurredPreviewUrl,
                                 contentDescription = "Изображение блюда",

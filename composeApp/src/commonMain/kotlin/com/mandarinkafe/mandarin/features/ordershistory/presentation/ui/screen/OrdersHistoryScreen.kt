@@ -76,7 +76,14 @@ fun OrdersHistoryScreen(
                 navController = navController,
                 fullData = state.fullData,
                 filteredData = state.filteredData,
-                anyFiltersAreApplied = state.anyFiltersAreApplied
+                anyFiltersAreApplied = state.anyFiltersAreApplied,
+                onItemClick = { mealId ->
+                    sharedViewModel.onEvent(
+                        SharedContract.SharedEvent.OnMealDetailsClick(
+                            mealId = mealId
+                        )
+                    )
+                },
             )
         }
 
