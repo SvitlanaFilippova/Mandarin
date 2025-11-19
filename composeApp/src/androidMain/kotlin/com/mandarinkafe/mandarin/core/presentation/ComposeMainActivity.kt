@@ -7,10 +7,9 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import com.mandarinkafe.mandarin.features.payment.YooKassaActivityHelper
-import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentEvent
+import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEvent
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentViewModel
 import com.mandarinkafe.mandarin.kmp.MainScreen
-import org.koin.mp.KoinPlatform.getKoin
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.httpUrlFetcher
 import io.kamel.core.config.takeFrom
@@ -27,6 +26,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.http.HttpHeaders
+import org.koin.mp.KoinPlatform.getKoin
 import java.io.File
 
 class ComposeMainActivity : AppCompatActivity() {
@@ -48,12 +48,12 @@ class ComposeMainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         // Устанавливаем новый intent для правильной обработки deep link
         setIntent(intent)
         // Обрабатываем deep link, когда приложение уже запущено
-        intent?.let { handleDeepLink(it) }
+        handleDeepLink(intent)
     }
 
     private fun handleDeepLink(intent: Intent) {
