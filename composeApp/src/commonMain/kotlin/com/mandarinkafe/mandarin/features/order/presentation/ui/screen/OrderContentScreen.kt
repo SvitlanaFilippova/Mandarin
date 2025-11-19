@@ -146,7 +146,7 @@ fun OrderContent(
         item {
             with(state.paymentInfo) {
                 PaymentChooser(
-                    paymentTypes = availablePaymentTypes,
+                    paymentTypes = state.filteredPaymentTypes,
                     chosen = chosenPaymentType,
                     changeAmount = changeFrom,
                     isError = state.isError,

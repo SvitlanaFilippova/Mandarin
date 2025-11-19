@@ -4,6 +4,7 @@ import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.OrderPickupPoint
+import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.CartSummary
@@ -11,6 +12,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Del
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.PaymentInfo
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.UserInfoUi
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.state.Utensils
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.BaseContract
 import dev.icerock.moko.resources.StringResource
 
@@ -91,6 +93,23 @@ sealed interface OrderContract {
 
         val totalOrderSum: Double
             get() = cartSummary.cartSumWithDiscount + deliveryCost.toDouble()
+
+        /**
+         * Отфильтрованный список типов оплаты.
+         * Исключает онлайн-оплату для заказов на сумму меньше 1 рубля.
+         */
+        val filteredPaymentTypes: List<PaymentType>
+            get() {
+                val minAmountForOnlinePayment = 1.0
+                return if (totalOrderSum < minAmountForOnlinePayment) {
+                    // Исключаем онлайн-оплату для заказов меньше 1 рубля
+                    paymentInfo.availablePaymentTypes.filter {
+                        !it.code.equals(Constants.PAYMENT_ONLINE_CODE, ignoreCase = true)
+                    }
+                } else {
+                    paymentInfo.availablePaymentTypes
+                }
+            }
 
         val canBeSubmitted: Boolean
             get() = !isLoading &&

@@ -237,6 +237,7 @@
     <string name="error_payment_types_unavailable">Не удалось получить от сервера доступные способы
         оплаты
     </string>
+    <string name="error_online_payment_minimum_amount">Онлайн-оплата доступна только для заказов на сумму от 1&#160;рубля</string>
     <string name="error_missing_required_fields">Нужно заполнить все обязательные поля</string>
     <string name="error_terminal_unavailable">Упс, кажется, сейчас мы не&#160;работаем — заказ
         оформить не&#160;получится 🤷
