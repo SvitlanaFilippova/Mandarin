@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Мандарин</string>
+    <!-- Схема deep link для ЮKassa СБП -->
+    <string name="ym_app_scheme" translatable="false">mandarin</string>
 </resources>
