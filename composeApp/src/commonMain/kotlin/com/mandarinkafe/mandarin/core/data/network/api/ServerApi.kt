@@ -4,6 +4,7 @@ import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.features.address.data.dto.DeliveryZonesResponse
 import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendationsResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannersResponse
+import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupsResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.ServerMenuResponse
 import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
@@ -61,6 +62,19 @@ class ServerApi(
         } catch (e: Throwable) {
             Napier.e("ServerApi: getDeliveryZones(): ошибка получения зон доставки", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun getModifierGroups(): Response {
+        return try {
+            val response: ModifierGroupsResponse =
+                client.get("/modifier-groups") {
+                    header("x-api-key", key)
+                }.body<ModifierGroupsResponse>()
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Napier.e("ServerApi: getModifierGroups(): ошибка получения групп модификаторов", e)
+            ModifierGroupsResponse().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 }
