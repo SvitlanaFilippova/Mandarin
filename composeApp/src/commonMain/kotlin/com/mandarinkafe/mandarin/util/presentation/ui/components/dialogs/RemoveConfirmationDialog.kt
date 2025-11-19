@@ -4,7 +4,9 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun RemoveConfirmationDialog(
@@ -20,12 +22,12 @@ fun RemoveConfirmationDialog(
         containerColor = Colors.DarkGrey,
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Да")
+                Text(stringResource(MR.strings.remove_yes))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Отмена")
+                Text(stringResource(MR.strings.remove_no))
             }
         }
     )
