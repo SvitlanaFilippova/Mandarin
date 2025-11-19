@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun OrderInfoScreen(
     orderID: String?,
     fromOrderCreation: Boolean,
+    isOnlinePayment: Boolean,
     sharedViewModel: SharedViewModel,
     navController: NavController,
 ) {
@@ -50,8 +51,8 @@ fun OrderInfoScreen(
     val someItemsUnavailableText = stringResource(MR.strings.some_items_unavailable)
     val allItemsAddedText = stringResource(MR.strings.all_items_added_to_cart)
 
-    LaunchedEffect(orderID) {
-        onEvent(OrderInfoEvent.SetInitId(orderID))
+    LaunchedEffect(orderID, isOnlinePayment) {
+        onEvent(OrderInfoEvent.SetInitData(orderID, isOnlinePayment))
     }
 
     // Автоматически запускаем оплату, если заказ только что создан и это онлайн-оплата

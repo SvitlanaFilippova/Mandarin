@@ -76,10 +76,17 @@ class PaymentViewModel(
             setState { copy(error = null) }
 
             val sdkResult = initializeSdkPayment()
-            if (sdkResult == null) {
+            
+            // Проверяем, была ли ошибка при инициализации SDK
+            // Если была ошибка, initializeSdkPayment() уже установил error в state и вернул null
+            // Если это iOS "умный платеж", paymentToken будет null, но это нормально
+            if (sdkResult == null && state.value.error != null) {
+                // Это была ошибка инициализации SDK, уже обработана в initializeSdkPayment()
                 return@launch
             }
 
+            // Для iOS paymentToken будет null (это нормально для "умного платежа")
+            // Для Android paymentToken будет строкой
             val createResult = createPaymentOnServer(sdkResult)
             handlePaymentCreationResult(createResult)
         }
@@ -107,11 +114,12 @@ class PaymentViewModel(
                 )
             }
             sendErrorEffect(MR.strings.error_payment_init_failed)
-            return null
+            return null // Это ошибка - возвращаем null
         }
 
-        // Для iOS "умного платежа" paymentToken может быть null
+        // Для iOS "умного платежа" paymentToken может быть null - это нормально
         // Сервер создаст платеж напрямую через API YooKassa
+        // Для Android paymentToken будет строкой
         return sdkResult.paymentToken
     }
 

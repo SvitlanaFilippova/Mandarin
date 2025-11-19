@@ -220,7 +220,8 @@ fun NavGraph(navController: NavHostController) {
         composable(
             route = "${NavConstants.ORDER_INFO_ROUTE}?" +
                     "${NavConstants.KEY_ORDER_ID}={${NavConstants.KEY_ORDER_ID}}&" +
-                    "${NavConstants.KEY_FROM_ORDER_CREATION}={${NavConstants.KEY_FROM_ORDER_CREATION}}"
+                    "${NavConstants.KEY_FROM_ORDER_CREATION}={${NavConstants.KEY_FROM_ORDER_CREATION}}&" +
+                    "${NavConstants.KEY_IS_ONLINE_PAYMENT}={${NavConstants.KEY_IS_ONLINE_PAYMENT}}"
         ) { backStackEntry ->
             val orderId =
                 backStackEntry.getStringArgument(NavConstants.KEY_ORDER_ID)?.decodeURLPart() ?: ""
@@ -228,10 +229,15 @@ fun NavGraph(navController: NavHostController) {
                 NavConstants.KEY_FROM_ORDER_CREATION,
                 defaultValue = false
             )
+            val isOnlinePayment = backStackEntry.getBooleanArgument(
+                NavConstants.KEY_IS_ONLINE_PAYMENT,
+                defaultValue = false
+            )
 
             OrderInfoScreen(
                 orderID = orderId,
                 fromOrderCreation = fromOrderCreation,
+                isOnlinePayment = isOnlinePayment,
                 sharedViewModel = sharedViewModel,
                 navController = navController
             )

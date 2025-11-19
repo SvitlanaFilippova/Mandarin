@@ -16,6 +16,7 @@ object NavConstants {
     const val KEY_ORDER_ID = "orderId"
     const val KEY_RETURN_TO_ROUTE = "returnTo"
     const val KEY_FROM_ORDER_CREATION = "fromOrderCreation"
+    const val KEY_IS_ONLINE_PAYMENT = "isOnlinePayment"
     const val KEY_SNACKBAR_MESSAGE = "snackbarMessage"
     const val KEY_TARGET_ROUTE = "targetRoute"
     const val KEY_PHONE = "phone"

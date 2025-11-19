@@ -11,3 +11,4 @@ class GetOrderStatusFromIikoUseCaseImpl(private val repository: OrderInfoReposit
         return repository.getOrderFromIiko(id)
     }
 }
+
