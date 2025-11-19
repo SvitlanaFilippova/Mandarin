@@ -342,7 +342,7 @@ class OrderViewModel(
             resetOnlinePaymentIfNeeded()
         }
     }
-    
+
     /**
      * Сбрасывает выбор онлайн-оплаты, если сумма заказа меньше 1 рубля.
      * Используется как вспомогательный метод для предотвращения дублирования кода.
@@ -422,7 +422,7 @@ class OrderViewModel(
     private fun setPaymentType(paymentType: UiPaymentType) {
         val minAmountForOnlinePayment = 1.0
         val currentTotalSum = state.value.totalOrderSum
-        
+
         // Проверяем, не пытаются ли выбрать онлайн-оплату для заказа меньше 1 рубля
         if (paymentType == UiPaymentType.ONLINE && currentTotalSum < minAmountForOnlinePayment) {
             // Сбрасываем выбор оплаты и показываем сообщение
@@ -432,7 +432,7 @@ class OrderViewModel(
             sendErrorEffect(MR.strings.error_online_payment_minimum_amount)
             return
         }
-        
+
         setState {
             copy(paymentInfo = paymentInfo.copy(chosenPaymentType = paymentType))
         }
@@ -468,7 +468,7 @@ class OrderViewModel(
             val newCartSummary = cartSummary.copy(
                 cartSumWithDiscount = cartSumWithDiscount,
             )
-            
+
             // Вычисляем новую общую сумму заказа (корзина + доставка)
             val newDeliveryCost = when {
                 deliveryInfo.isPickup -> 0
@@ -478,7 +478,7 @@ class OrderViewModel(
                 else -> 0
             }
             val newTotalOrderSum = cartSumWithDiscount + newDeliveryCost.toDouble()
-            
+
             // Автоматически сбрасываем онлайн-оплату, если сумма стала меньше 1 рубля
             val minAmountForOnlinePayment = 1.0
             val newPaymentInfo = if (paymentInfo.chosenPaymentType == UiPaymentType.ONLINE &&
@@ -488,7 +488,7 @@ class OrderViewModel(
             } else {
                 paymentInfo
             }
-            
+
             copy(
                 cartSummary = newCartSummary,
                 paymentInfo = newPaymentInfo
@@ -533,7 +533,7 @@ class OrderViewModel(
             showMissingRequiredInfo()
             return
         }
-        
+
         // Финальная проверка: запрещаем онлайн-оплату для заказов меньше 1 рубля
         if (currentState.paymentInfo.chosenPaymentType == UiPaymentType.ONLINE &&
             currentState.totalOrderSum < minAmountForOnlinePayment
@@ -545,7 +545,7 @@ class OrderViewModel(
             }
             return
         }
-        
+
         if (currentState.shouldSaveUserName) saveUserName()
         viewModelScope.launch {
             setLoading()

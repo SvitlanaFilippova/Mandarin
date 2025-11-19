@@ -12,6 +12,7 @@ import com.mandarinkafe.mandarin.features.payment.YooKassaActivityHelper
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEvent
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentViewModel
 import com.mandarinkafe.mandarin.kmp.MainScreen
+import io.github.aakira.napier.Napier
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.httpUrlFetcher
 import io.kamel.core.config.takeFrom
@@ -66,19 +67,27 @@ class ComposeMainActivity : AppCompatActivity() {
 
     private fun handleDeepLink(intent: Intent) {
         val data: Uri? = intent.data
-        if (data != null && data.scheme == "mandarin" && data.host == "payment" && data.path == "/return") {
+        if (isPaymentReturnDeepLink(data)) {
             // Извлекаем order_id из query параметров
-            val orderId = data.getQueryParameter("order_id")
+            val orderId = data?.getQueryParameter("order_id")
             if (orderId != null) {
                 // Получаем PaymentViewModel через Koin и отправляем событие для обработки возврата
                 try {
                     val paymentViewModel: PaymentViewModel = getKoin().get()
                     paymentViewModel.onEvent(PaymentEvent.HandleReturnFromBrowser)
                 } catch (e: Exception) {
+                    Napier.w("handleDeepLink", e)
                     // Если ViewModel еще не создан, это нормально - polling запустится позже
                 }
             }
         }
+    }
+
+    private fun isPaymentReturnDeepLink(uri: Uri?): Boolean {
+        if (uri == null) return false
+        return uri.scheme == "mandarin" &&
+                uri.host == "payment" &&
+                uri.path == "/return"
     }
 
     // настраиваем Kamel, чтобы работало кэширование изображений
