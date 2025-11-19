@@ -76,7 +76,7 @@ class PaymentViewModel(
             setState { copy(error = null) }
 
             val sdkResult = initializeSdkPayment()
-            
+
             // Проверяем, была ли ошибка при инициализации SDK
             // Если была ошибка, initializeSdkPayment() уже установил error в state и вернул null
             // Если это iOS "умный платеж", paymentToken будет null, но это нормально

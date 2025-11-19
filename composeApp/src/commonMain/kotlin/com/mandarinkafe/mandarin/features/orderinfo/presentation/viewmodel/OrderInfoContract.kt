@@ -52,7 +52,7 @@ sealed interface OrderInfoContract {
                 if (isOnlinePaymentFromNav) {
                     return true
                 }
-                
+
                 // Затем проверяем paymentMethodCode из SavedOrder
                 val paymentCode = savedOrder?.paymentMethodCode
                     ?: incomingOrder?.paymentName // Fallback на paymentName из iiko
