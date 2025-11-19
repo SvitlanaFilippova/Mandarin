@@ -32,7 +32,7 @@ object Typography {
     val RegularExtraLightTextStyle = RegularLightTextStyle.copy(fontWeight = FontWeight.ExtraLight)
 
     val TitleStyle = TextStyle(
-        fontSize = Dimens.TextSizeBig20,
+        fontSize = Dimens.TextSizeBig18,
         fontWeight = FontWeight(TITLE_FONT_WEIGHT),
         color = Colors.White
     )
@@ -90,7 +90,7 @@ object Typography {
         color = Colors.White
     )
     val MenuCategoryStyle = TextStyle(
-        fontSize = Dimens.TextSizeBig24,
+        fontSize = Dimens.TextSizeBig22,
         color = Colors.White,
         fontWeight = FontWeight(TITLE_FONT_WEIGHT)
     )
@@ -102,7 +102,7 @@ object Typography {
     )
 
     val PlaceholderTitleStyle = TextStyle(
-        fontSize = Dimens.TextSizeBig20,
+        fontSize = Dimens.TextSizeBig18,
         fontWeight = FontWeight.Medium,
         color = Colors.White
     )

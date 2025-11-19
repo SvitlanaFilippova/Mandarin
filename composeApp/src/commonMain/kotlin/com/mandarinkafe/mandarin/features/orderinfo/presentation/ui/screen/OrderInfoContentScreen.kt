@@ -1,17 +1,11 @@
 package com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +32,6 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickToCopyText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
-import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -119,36 +112,9 @@ fun OrderInfoContentScreen(
                 onCancelClick = { showCancelDialog = true },
                 orderRepeatingInProgress = orderRepeatingInProgress,
                 onRepeatOrderCLick = { onEvent(OrderInfoEvent.RepeatOrder) },
-                onBackToMenuCLick = { navController.navigateToMenu() }
+                onBackToMenuCLick = { navController.navigateToMenu() },
+                onDeleteOrderCLick = { showDeleteDialog = true }
             )
-        }
-
-
-        // Кнопка удаления заказа из истории (только для закрытых заказов)
-        if (order.isClosed) {
-            item {
-                TextButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = Dimens.MarginSmall8),
-                    border = BorderStroke(width = Dimens.Border1, color = Colors.Red),
-                    shape = RoundedCornerShape(Dimens.CornerRadius8),
-                    onClick = { showDeleteDialog = true },
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            painter = painterResource(MR.images.ic_delete),
-                            tint = Colors.Red,
-                            contentDescription = null
-                        )
-                        Text(
-                            text = stringResource(MR.strings.delete_order_from_history_button),
-                            style = Typography.SmallTextStyle,
-                            color = Colors.Red,
-                        )
-                    }
-                }
-            }
         }
 
 

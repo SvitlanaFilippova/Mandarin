@@ -5,10 +5,11 @@ import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
-import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
+import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusFromIikoUseCase
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.tickerFlow
 import dev.icerock.moko.resources.StringResource
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.map
@@ -19,7 +20,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class OrderCreator(
     private val createOrder: CreateOrderUseCase,
-    private val getOrderStatus: GetOrderStatusUseCase,
+    private val getOrderStatus: GetOrderStatusFromIikoUseCase,
 ) {
     private var observeJob: Job? = null
 
@@ -72,6 +73,7 @@ class OrderCreator(
         onError: (StringResource) -> Unit,
         onLoading: () -> Unit,
     ) {
+        Napier.d("HISTORY DEBUG - observeOrderUntilSuccess started")
         stopObserving()
 
         if (!validateOrderId(orderId, onError)) return

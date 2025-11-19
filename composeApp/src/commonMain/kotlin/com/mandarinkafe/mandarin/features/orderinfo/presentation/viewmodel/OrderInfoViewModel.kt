@@ -57,7 +57,7 @@ class OrderInfoViewModel(
 
     override fun onEvent(event: OrderInfoEvent) {
         when (event) {
-            is OrderInfoEvent.SetInitId -> setInitData(event.id)
+            is OrderInfoEvent.SetInitData -> setInitData(event.id, event.isOnlinePayment)
             is OrderInfoEvent.StopObservingStatus -> stopObservingOrderInfo()
             is OrderInfoEvent.CancelOrder -> cancel()
             is OrderInfoEvent.RefreshNow -> forceRefresh()
@@ -190,8 +190,8 @@ class OrderInfoViewModel(
         }
     }
 
-    private fun setInitData(id: String) {
-        setState { copy(orderId = id) }
+    private fun setInitData(id: String, isOnlinePayment: Boolean = false) {
+        setState { copy(orderId = id, isOnlinePaymentFromNav = isOnlinePayment) }
         loadSavedOrder(id)
         observeOrderStatus(id)
     }

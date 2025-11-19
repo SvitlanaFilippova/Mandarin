@@ -50,10 +50,11 @@ object Dimens {
     val ZeroDp0 = 0.dp
     val TextSizeRegular16 = 16.sp
     val TextSizeSuperSmall10 = 10.sp
+    val TextSizeSuperSmall9 = 9.sp
     val TextSizeSmall11 = 11.sp
     val TextSizeSmall12 = 12.sp
-    val TextSizeBig24 = 24.sp
-    val TextSizeBig20 = 20.sp
+    val TextSizeBig22 = 22.sp
+    val TextSizeBig18 = 18.sp
     val TextSizeRegular14 = 14.sp
     val TooltipMaxWidth = 200.dp
     val BannerIndicatorActiveWidth32 = 32.dp

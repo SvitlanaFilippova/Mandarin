@@ -8,6 +8,8 @@ import com.mandarinkafe.mandarin.features.ordershistory.data.network.OrdersHisto
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 import com.mandarinkafe.mandarin.util.Constants.BEARER_TOKEN_TYPE
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
+import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
+import com.mandarinkafe.mandarin.util.Resource
 import io.github.aakira.napier.Napier
 
 class OrdersHistoryRemoteDataSourceImpl(
@@ -19,16 +21,36 @@ class OrdersHistoryRemoteDataSourceImpl(
         fun buildAuthToken(token: String) = "$BEARER_TOKEN_TYPE $token"
     }
 
-    override suspend fun getOrders(): List<SavedOrder> {
-        val token = authRepository.getAccessToken() ?: return emptyList()
+    override suspend fun getOrders(): Resource<List<SavedOrder>> {
+        val token = authRepository.getAccessToken()
+        if (token == null) {
+            Napier.e("OrdersHistoryRemoteDataSource, getOrders - No access token")
+            return Resource.ErrorOther("Токен авторизации не найден")
+        }
+
         return try {
             val response = api.getOrdersHistory(buildAuthToken(token))
-            response.data?.map { orderDto ->
-                orderDto.toDomain()
-            } ?: emptyList()
+
+            when (response.resultCode) {
+                NO_CONNECTION -> {
+                    Resource.ErrorNoInternet()
+                }
+
+                HTTP_SUCCESS -> {
+                    val orders = response.data?.map { orderDto ->
+                        orderDto.toDomain()
+                    } ?: emptyList()
+                    Resource.Success(orders)
+                }
+
+                else -> {
+                    Napier.e("OrdersHistoryRemoteDataSource, getOrders error: resultCode=${response.resultCode}")
+                    Resource.ErrorOther("Ошибка сервера или пустой ответ")
+                }
+            }
         } catch (e: Exception) {
-            Napier.e("OrdersHistoryRemoteDataSource, getOrders error: $e")
-            emptyList()
+            Napier.e("OrdersHistoryRemoteDataSource, getOrders error: $e", e)
+            Resource.ErrorOther("Ошибка при получении истории заказов: ${e.message}")
         }
     }
 

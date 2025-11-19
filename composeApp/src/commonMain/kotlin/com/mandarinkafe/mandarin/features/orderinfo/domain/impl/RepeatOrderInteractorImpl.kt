@@ -41,7 +41,10 @@ class RepeatOrderInteractorImpl(
                         items = incomingMods.mapNotNull { m -> referenceGroup.items.find { it.id == m.id } }
                     )?.takeIf { it.items.isNotEmpty() }
                 }
-            if (validMods.size < item.chosenModifiers.distinctBy { it.id }.size) invalidFound = true
+            // Проверяем, что все модификаторы были найдены
+            val foundModifiersCount = validMods.sumOf { it.items.size }
+            val chosenModifiersCount = item.chosenModifiers.size
+            if (foundModifiersCount < chosenModifiersCount) invalidFound = true
 
             validItems += item.toCartItem(
                 baseMeal = baseMeal,

@@ -1,13 +1,17 @@
 package com.mandarinkafe.mandarin.core.data.impl
 
 import com.mandarinkafe.mandarin.core.data.api.MenuFetcher
+import com.mandarinkafe.mandarin.core.data.network.api.ServerApi
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupsResponse
+import com.mandarinkafe.mandarin.features.menu.data.mapper.toDomain
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.features.menu.domain.toMealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Constants.CATEGORY_ADDS
+import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.getCurrentTimeMillis
 import io.github.aakira.napier.Napier
@@ -18,9 +22,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class MenuCacheImpl(
     private val fetcher: MenuFetcher,
+    private val serverApi: ServerApi,
 ) : MenuCache {
     override var lastRefreshTime: Long = 0
         private set
@@ -29,6 +37,11 @@ class MenuCacheImpl(
     private val _mainMenu = MutableStateFlow<Resource<List<MealCategory>>>(Resource.Idle())
     private val _addonsCategories = MutableStateFlow<List<MealAdditionalCategory>>(emptyList())
     private val _deliveryItems = MutableStateFlow<MealCategory?>(null)
+
+    // Кэш для групп модификаторов
+    private var modifierGroupsCache: Map<String, ModifierGroup> = emptyMap()
+    private val modifierGroupsMutex = Mutex()
+    private var modifierGroupsLastFetchTime: Long = 0
 
     override val allVisibleMenu: StateFlow<Resource<List<MealCategory>>> =
         _allVisibleMenu.asStateFlow()
@@ -245,9 +258,65 @@ class MenuCacheImpl(
         groupId: String,
         itemIds: List<String>,
     ): ModifierGroup {
-        // нужно использовать  endpoint сервера GET /modifier-groups, который возвращает все группы модификаторов.
-        // Результат кэшировать тут. и искать нужные уже исключительно по ним
-        TODO("Not yet implemented")
+        // Используем runBlocking для синхронного доступа к кэшу и загрузки
+        return runBlocking {
+            modifierGroupsMutex.withLock {
+                val cached = modifierGroupsCache[groupId]
+                if (cached != null) {
+                    // Фильтруем items по itemIds, если они указаны
+                    if (itemIds.isNotEmpty()) {
+                        val filteredItems = cached.items.filter { it.id in itemIds }
+                        cached.copy(items = filteredItems)
+                    } else {
+                        cached
+                    }
+                } else {
+                    // Если кэш пуст, загружаем
+                    loadModifierGroupsUnsafe()
+                    val group = modifierGroupsCache[groupId]
+                    if (group != null) {
+                        if (itemIds.isNotEmpty()) {
+                            val filteredItems = group.items.filter { it.id in itemIds }
+                            group.copy(items = filteredItems)
+                        } else {
+                            group
+                        }
+                    } else {
+                        // Если группа не найдена, возвращаем пустую группу
+                        ModifierGroup(
+                            id = groupId,
+                            name = "",
+                            items = emptyList(),
+                            isSingleChoice = false,
+                            isRequired = false,
+                            maxQuantity = 0
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun loadModifierGroupsUnsafe() {
+        // Проверяем, не загружали ли мы недавно (кэш на 1 час)
+        val now = getCurrentTimeMillis()
+        val cacheAge = now - modifierGroupsLastFetchTime
+        if (modifierGroupsCache.isNotEmpty() && cacheAge < MODIFIER_GROUPS_CACHE_TTL_MS) {
+            return
+        }
+
+        try {
+            val response = serverApi.getModifierGroups()
+            if (response.resultCode == HTTP_SUCCESS && response is ModifierGroupsResponse) {
+                val groups = response.data?.map { it.toDomain() } ?: emptyList()
+                modifierGroupsCache = groups.associateBy { it.id }
+                modifierGroupsLastFetchTime = now
+            } else {
+                Napier.e("MenuCacheImpl: Ошибка загрузки групп модификаторов, resultCode=${response.resultCode}")
+            }
+        } catch (e: Exception) {
+            Napier.e("MenuCacheImpl: Исключение при загрузке групп модификаторов: ${e.message}", e)
+        }
     }
 
     private companion object {
@@ -256,5 +325,7 @@ class MenuCacheImpl(
 
         const val RECOMMENDS_CATEGORY_NAME = "Рекомендованные"
         const val DELIVERY_CATEGORY_NAME = "Доставка"
+
+        const val MODIFIER_GROUPS_CACHE_TTL_MS = 3_600_000L // 1 час
     }
 }

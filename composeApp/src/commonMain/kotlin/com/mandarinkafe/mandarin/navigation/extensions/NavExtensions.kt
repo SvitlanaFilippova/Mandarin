@@ -17,6 +17,7 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.CONTACTS_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_FROM_ORDER_CREATION
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_ONLINE_PAYMENT
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_ID
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_ORDER_ID
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_SNACKBAR_MESSAGE
@@ -126,10 +127,11 @@ fun NavController.navigateToMealDetails(
 fun NavController.navigateToOrderInfo(
     orderId: String,
     fromOrderCreation: Boolean = false,
+    isOnlinePayment: Boolean = false,
 ) {
     val encodedOrderId = UrlEncoderUtil.encode(orderId)
     val route =
-        "$ORDER_INFO_ROUTE?$KEY_ORDER_ID=$encodedOrderId&$KEY_FROM_ORDER_CREATION=$fromOrderCreation"
+        "$ORDER_INFO_ROUTE?$KEY_ORDER_ID=$encodedOrderId&$KEY_FROM_ORDER_CREATION=$fromOrderCreation&$KEY_IS_ONLINE_PAYMENT=$isOnlinePayment"
 
     if (fromOrderCreation) {
         navigate(

@@ -19,16 +19,10 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingMealAdditional
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingModifier
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
-import com.mandarinkafe.mandarin.features.ordershistory.domain.models.OrderStatus
 import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.DateTimeUtils.toHumanDateTimeOrNull
 import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.toVisibleComment
-
-fun OrderInfoResponseDto.toOrderStatus() = OrderStatus(
-    orderId = id,
-    status = order?.status?.toDeliveryStatus(),
-)
 
 fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): IncomingOrder {
     val cancelInfo = buildString {
@@ -129,13 +123,20 @@ private fun DeliveryPointDto.toAddress(): Address {
 
 private fun IncomingModifierDto.toDomain(mealAmount: Double): IncomingModifier {
     val safeAmount = amount ?: 1.0
+    // Если product или productGroup отсутствуют, используем пустые значения
+    // Они будут обновлены позже через updateNamesFrom в OrderInfoRepositoryImpl
+    val modifierId = product?.id ?: ""
+    val modifierName = product?.name?.applyTypography() ?: ""
+    val modifierGroupId = productGroup?.id ?: ""
+    val modifierGroupName = productGroup?.name ?: ""
+
     return IncomingModifier(
-        id = product.id,
-        name = product.name.applyTypography(),
+        id = modifierId,
+        name = modifierName,
         amount = safeAmount,
         price = price,
-        groupId = productGroup.id,
-        groupName = productGroup.name,
+        groupId = modifierGroupId,
+        groupName = modifierGroupName,
         discountedPrice = resultSum?.takeIf { it > 0 }?.div(mealAmount * safeAmount)
     )
 }

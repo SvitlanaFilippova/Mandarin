@@ -12,7 +12,7 @@ import dev.icerock.moko.resources.StringResource
 sealed interface OrderInfoContract {
 
     sealed interface OrderInfoEvent : BaseContract.BaseEvent {
-        data class SetInitId(val id: String) : OrderInfoEvent
+        data class SetInitData(val id: String, val isOnlinePayment: Boolean = false) : OrderInfoEvent
         data object StopObservingStatus : OrderInfoEvent
         data object CancelOrder : OrderInfoEvent
         data object RepeatOrder : OrderInfoEvent
@@ -40,6 +40,7 @@ sealed interface OrderInfoContract {
         val isPaymentProcessing: Boolean = false,
         val isPaymentPolling: Boolean = false,
         val paymentError: StringResource? = null,
+        val isOnlinePaymentFromNav: Boolean = false, // Флаг из навигации, приоритетный
     ) : BaseContract.BaseState {
 
         val deliveryStatus: UiDeliveryStatus
@@ -47,7 +48,12 @@ sealed interface OrderInfoContract {
 
         val isOnlinePayment: Boolean
             get() {
-                // Сначала проверяем paymentMethodCode из SavedOrder
+                // Приоритет: сначала проверяем флаг из навигации (для только что созданных заказов)
+                if (isOnlinePaymentFromNav) {
+                    return true
+                }
+
+                // Затем проверяем paymentMethodCode из SavedOrder
                 val paymentCode = savedOrder?.paymentMethodCode
                     ?: incomingOrder?.paymentName // Fallback на paymentName из iiko
 

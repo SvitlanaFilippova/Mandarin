@@ -70,7 +70,8 @@ fun BottomNavigation(
                     label = {
                         Text(
                             text = stringResource(item.title),
-                            fontSize = Dimens.TextSizeSuperSmall10
+                            fontSize = Dimens.TextSizeSuperSmall9,
+                            maxLines = 1
                         )
                     },
                     colors = NavigationBarItemDefaults.colors(
