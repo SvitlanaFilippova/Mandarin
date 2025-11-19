@@ -23,6 +23,7 @@
         <activity
             android:name="com.mandarinkafe.mandarin.core.presentation.ComposeMainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity">

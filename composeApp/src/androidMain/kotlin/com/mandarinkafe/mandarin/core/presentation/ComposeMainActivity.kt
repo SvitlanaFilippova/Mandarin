@@ -3,6 +3,8 @@ package com.mandarinkafe.mandarin.core.presentation
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.CompositionLocalProvider
@@ -36,15 +38,18 @@ class ComposeMainActivity : AppCompatActivity() {
         // Регистрируем Activity для работы с YooKassa платежами
         YooKassaActivityHelper.registerActivity(this)
 
-        // Обрабатываем deep link при запуске приложения
-        handleDeepLink(intent)
-
         val kamelConfig = initKamel()
 
         setContent {
             CompositionLocalProvider(LocalKamelConfig provides kamelConfig) {
                 MainScreen()
             }
+        }
+
+        // Обрабатываем deep link после инициализации UI, чтобы не блокировать запуск
+        // Используем Handler для отложенной обработки, чтобы приложение успело инициализироваться
+        Handler(Looper.getMainLooper()).post {
+            handleDeepLink(intent)
         }
     }
 
@@ -53,7 +58,10 @@ class ComposeMainActivity : AppCompatActivity() {
         // Устанавливаем новый intent для правильной обработки deep link
         setIntent(intent)
         // Обрабатываем deep link, когда приложение уже запущено
-        handleDeepLink(intent)
+        // Используем Handler для отложенной обработки, чтобы не блокировать UI
+        Handler(Looper.getMainLooper()).post {
+            handleDeepLink(intent)
+        }
     }
 
     private fun handleDeepLink(intent: Intent) {
