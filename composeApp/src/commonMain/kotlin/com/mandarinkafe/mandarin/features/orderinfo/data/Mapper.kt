@@ -19,16 +19,11 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingMealAdditional
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingModifier
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
-import com.mandarinkafe.mandarin.features.ordershistory.domain.models.OrderStatus
 import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.DateTimeUtils.toHumanDateTimeOrNull
 import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.toVisibleComment
 
-fun OrderInfoResponseDto.toOrderStatus() = OrderStatus(
-    orderId = id,
-    status = order?.status?.toDeliveryStatus(),
-)
 
 fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): IncomingOrder {
     val cancelInfo = buildString {

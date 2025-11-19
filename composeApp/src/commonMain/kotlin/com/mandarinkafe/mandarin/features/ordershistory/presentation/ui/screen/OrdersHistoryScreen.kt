@@ -70,9 +70,9 @@ fun OrdersHistoryScreen(
                 onDateFilterChange = { onEvent(OrdersHistoryEvent.SetChosenDateFilter(it)) },
                 onCustomRangeChange = { onEvent(OrdersHistoryEvent.SetChosenDateRange(it)) },
             )
-
             OrdersHistoryList(
                 listState = listState,
+                isLoading = state.isLoading,
                 navController = navController,
                 fullData = state.fullData,
                 filteredData = state.filteredData,

@@ -1,7 +1,6 @@
 package com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.mandarinkafe.mandarin.features.ordershistory.domain.api.GetOrdersStatusesUseCase
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryInteractor
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.models.DateFilterType
@@ -13,22 +12,15 @@ import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.O
 import com.mandarinkafe.mandarin.features.ordershistory.presentation.viewmodel.helpers.OrdersFilter
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
-import com.mandarinkafe.mandarin.util.tickerFlow
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Duration.Companion.seconds
 
 class OrdersHistoryViewModel(
     private val historyInteractor: OrdersHistoryInteractor,
-    private val getOrdersStatuses: GetOrdersStatusesUseCase,
 ) : BaseViewModel<OrdersHistoryEvent, OrdersHistoryEffect, OrdersHistoryState>() {
     override fun setInitialState() = OrdersHistoryState()
-
-    private var observeJob: Job? = null
 
     override fun onEvent(event: OrdersHistoryEvent) {
         when (event) {
@@ -59,80 +51,31 @@ class OrdersHistoryViewModel(
     private fun refreshData() {
         viewModelScope.launch {
             setLoading()
-            val history = historyInteractor.getHistory()
-            setData(history)
-            val statusesResponse = getOrdersStatuses(history)
-            val data = statusesResponse.data
-            if (data != null) {
-                setData(data)
-                if (data.any { it.isActive }) {
-                    observeOrdersStatus(data)
+            val historyResult = historyInteractor.getHistory()
+            when (historyResult) {
+                is Resource.Success -> {
+                    val history = historyResult.data ?: emptyList()
+                    setData(history)
+                }
+
+                is Resource.ErrorNoInternet -> {
+                    showError("Нет подключения к интернету")
+                    setLoading(false)
+                }
+
+                else -> {
+                    showError(
+                        historyResult.message
+                            ?: "Что-то пошло не так при попытке загрузить историю заказов"
+                    )
+                    setLoading(false)
                 }
             }
-        }
-    }
-
-    private fun observeOrdersStatus(data: List<SavedOrder>) {
-        stopObservingOrderInfo()
-        observeJob = viewModelScope.launch {
-            tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds)
-                .map {
-                    val activeOrders = data.filter { it.isActive }
-                    if (activeOrders.isNotEmpty()) {
-                        getOrdersStatuses(activeOrders)
-                    } else {
-                        stopObservingOrderInfo()
-                        null
-                    }
-                }
-                .collect { result ->
-                    result?.let { proceedOrderStatusResult(it) }
-                }
-        }
-    }
-
-    private fun proceedOrderStatusResult(result: Resource<List<SavedOrder>>) {
-        when (result) {
-            is Resource.Loading -> setLoading()
-
-            is Resource.Success -> {
-                val updatedOrders = result.data ?: run {
-                    showError("Что-то пошло не так при попытке обновить статусы заказов")
-                    return
-                }
-
-                // Обновляем только активные заказы
-                val mergedOrders = state.value.fullData.map { oldOrder ->
-                    val newOrder = updatedOrders.find { it.id == oldOrder.id }
-                    if (newOrder != null) {
-                        oldOrder.copy(status = newOrder.status)
-                    } else {
-                        oldOrder
-                    }
-                }
-
-                setData(mergedOrders)
-
-                // Если активных не осталось — останавливаем наблюдение
-                if (mergedOrders.none { it.isActive }) {
-                    stopObservingOrderInfo()
-                }
-            }
-
-            is Resource.ErrorNoInternet -> showError("Нет подключения к интернету")
-            else -> showError(
-                result.message ?: "Что-то пошло не так при попытке обновить статусы заказов"
-            )
         }
     }
 
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
-    }
-
-    private fun stopObservingOrderInfo() {
-        observeJob?.cancel()
-        observeJob = null
     }
 
     private fun setData(data: List<SavedOrder>) {
@@ -208,6 +151,5 @@ class OrdersHistoryViewModel(
 
     private companion object {
         const val SEVEN_DAYS_TIME_FILTER = 7
-        const val ORDER_STATUS_UPD_DELAY = 10
     }
 }

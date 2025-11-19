@@ -27,6 +27,7 @@ fun OrdersHistoryList(
     navController: NavController,
     listState: LazyListState,
     onItemClick: (id: String) -> Unit,
+    isLoading: Boolean?,
 ) {
     val isInitialEmpty = fullData.isEmpty()
     val listToShow = if (anyFiltersAreApplied) filteredData else fullData
@@ -38,7 +39,7 @@ fun OrdersHistoryList(
             .padding(Dimens.MarginSmall8),
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
-        if (listToShow.isEmpty()) {
+        if (listToShow.isEmpty() && isLoading != true) {
             item {
                 TooltipText(
                     modifier = Modifier

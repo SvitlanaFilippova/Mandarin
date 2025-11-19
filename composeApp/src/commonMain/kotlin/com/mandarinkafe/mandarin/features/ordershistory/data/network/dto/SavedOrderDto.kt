@@ -16,5 +16,6 @@ data class SavedOrderDto(
     @SerialName("payment_method_code")
     val paymentMethodCode: String? = null,
     val mealIds: List<String> = emptyList(),
+    val status: String? = null,
 )
 

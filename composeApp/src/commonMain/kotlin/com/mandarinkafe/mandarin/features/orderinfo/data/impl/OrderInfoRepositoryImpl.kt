@@ -53,11 +53,9 @@ class OrderInfoRepositoryImpl(
                     val orderInfoDto = response.toOrderInfoResponseDto()
                     val orderInfo = orderInfoDto.toDomain(addons)
 
-                    if (orderInfo != null) {
+                    run {
                         val validatedOrder = validateOrderItemsWithMenu(order = orderInfo)
                         Resource.Success(data = validatedOrder)
-                    } else {
-                        null // Вернём null, чтобы сделать fallback на iiko
                     }
                 }
 

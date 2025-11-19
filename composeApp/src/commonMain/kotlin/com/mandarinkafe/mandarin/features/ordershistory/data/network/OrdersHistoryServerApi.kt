@@ -1,11 +1,13 @@
 package com.mandarinkafe.mandarin.features.ordershistory.data.network
 
 import com.mandarinkafe.mandarin.core.data.dto.Response
+import com.mandarinkafe.mandarin.core.data.network.NetworkMonitor
 import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.HEADER_API_KEY
 import com.mandarinkafe.mandarin.util.Constants.HEADER_AUTHORIZATION
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
+import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -18,11 +20,22 @@ import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.json.Json
 
-class OrdersHistoryServerApi(private val client: HttpClient) {
+class OrdersHistoryServerApi(
+    private val client: HttpClient,
+    private val networkMonitor: NetworkMonitor,
+) {
     private val key = BuildKonfig.MANDARIN_API_KEY
     private val json = Json { ignoreUnknownKeys = true; isLenient = true }
 
+    private fun isConnected(): Boolean {
+        return networkMonitor.isNetworkAvailable()
+    }
+
     suspend fun getOrdersHistory(token: String): OrdersHistoryResponse {
+        if (!isConnected()) {
+            return OrdersHistoryResponse().apply { resultCode = NO_CONNECTION }
+        }
+
         return try {
             val httpResponse = client.get("/orders/history") {
                 header(HEADER_API_KEY, key)
@@ -136,43 +149,6 @@ class OrdersHistoryServerApi(private val client: HttpClient) {
         } catch (e: Throwable) {
             Napier.e("deleteOrder error: $e")
             Response().apply { resultCode = HTTP_SERVER_ERROR }
-        }
-    }
-
-    suspend fun getOrdersStatuses(
-        token: String,
-        body: OrdersStatusesRequest,
-    ): OrdersStatusesResponse {
-        return try {
-            val httpResponse = client.post("/orders/history/statuses") {
-                header(HEADER_API_KEY, key)
-                header(HEADER_AUTHORIZATION, token)
-                setBody(body)
-            }
-
-            when (httpResponse.status) {
-                HttpStatusCode.OK -> {
-                    val responseBody: OrdersStatusesResponse = httpResponse.body()
-                    responseBody.apply { resultCode = HTTP_SUCCESS }
-                }
-
-                HttpStatusCode.Unauthorized -> {
-                    OrdersStatusesResponse().apply {
-                        resultCode = HttpStatusCode.Unauthorized.value
-                    }
-                }
-
-                HttpStatusCode.BadRequest -> {
-                    OrdersStatusesResponse().apply { resultCode = HttpStatusCode.BadRequest.value }
-                }
-
-                else -> {
-                    OrdersStatusesResponse().apply { resultCode = HTTP_SERVER_ERROR }
-                }
-            }
-        } catch (e: Throwable) {
-            Napier.e("getOrdersStatuses error: $e")
-            OrdersStatusesResponse().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 
