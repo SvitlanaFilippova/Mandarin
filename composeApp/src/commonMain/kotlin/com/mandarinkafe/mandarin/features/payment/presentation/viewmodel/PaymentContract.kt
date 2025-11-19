@@ -18,6 +18,7 @@ sealed interface PaymentContract {
         data object RetryPayment : PaymentEvent
         data object CancelPayment : PaymentEvent
         data object DismissError : PaymentEvent
+        data object HandleReturnFromBrowser : PaymentEvent // Обработка возврата из браузера после 3DS
     }
 
     sealed interface PaymentEffect : BaseContract.BaseEffect {

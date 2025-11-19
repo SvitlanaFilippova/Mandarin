@@ -41,6 +41,7 @@ class PaymentViewModel(
             is PaymentEvent.RetryPayment -> retryPayment()
             is PaymentEvent.CancelPayment -> cancelPayment()
             is PaymentEvent.DismissError -> dismissError()
+            is PaymentEvent.HandleReturnFromBrowser -> handleReturnFromBrowser()
             is PaymentEvent.SetInitData -> setInitData(
                 event.orderId,
                 event.orderNumber,
@@ -102,7 +103,8 @@ class PaymentViewModel(
         val sdkResult = yooKassaService.initializePayment(
             amount = state.value.amount,
             subtitle = subtitle,
-            userPhone = state.value.userPhone
+            userPhone = state.value.userPhone,
+            orderId = state.value.orderId
         )
 
         if (!sdkResult.success) {
@@ -352,6 +354,15 @@ class PaymentViewModel(
 
     private fun dismissError() {
         setState { copy(error = null) }
+    }
+
+    private fun handleReturnFromBrowser() {
+        // При возврате из браузера после 3DS проверки запускаем polling,
+        // если он еще не запущен и есть orderId
+        if (state.value.orderId.isNotEmpty() && !state.value.isPolling) {
+            setState { copy(isPaymentProcessing = false) }
+            startPolling()
+        }
     }
 
     private fun sendErrorEffect(message: StringResource) {

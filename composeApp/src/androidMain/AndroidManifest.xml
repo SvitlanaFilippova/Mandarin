@@ -31,6 +31,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            
+            <!-- Deep link для возврата из браузера после оплаты YooKassa -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="mandarin" android:host="payment" android:pathPrefix="/return" />
+            </intent-filter>
         </activity>
         
         <!-- Activity для обработки платежей ЮKassa -->

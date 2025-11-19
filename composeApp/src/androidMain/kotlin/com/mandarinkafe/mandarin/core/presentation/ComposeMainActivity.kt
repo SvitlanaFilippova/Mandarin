@@ -1,11 +1,16 @@
 package com.mandarinkafe.mandarin.core.presentation
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import com.mandarinkafe.mandarin.features.payment.YooKassaActivityHelper
+import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentEvent
+import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentViewModel
 import com.mandarinkafe.mandarin.kmp.MainScreen
+import org.koin.mp.KoinPlatform.getKoin
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.httpUrlFetcher
 import io.kamel.core.config.takeFrom
@@ -31,11 +36,39 @@ class ComposeMainActivity : AppCompatActivity() {
         // Регистрируем Activity для работы с YooKassa платежами
         YooKassaActivityHelper.registerActivity(this)
 
+        // Обрабатываем deep link при запуске приложения
+        handleDeepLink(intent)
+
         val kamelConfig = initKamel()
 
         setContent {
             CompositionLocalProvider(LocalKamelConfig provides kamelConfig) {
                 MainScreen()
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        // Устанавливаем новый intent для правильной обработки deep link
+        setIntent(intent)
+        // Обрабатываем deep link, когда приложение уже запущено
+        intent?.let { handleDeepLink(it) }
+    }
+
+    private fun handleDeepLink(intent: Intent) {
+        val data: Uri? = intent.data
+        if (data != null && data.scheme == "mandarin" && data.host == "payment" && data.path == "/return") {
+            // Извлекаем order_id из query параметров
+            val orderId = data.getQueryParameter("order_id")
+            if (orderId != null) {
+                // Получаем PaymentViewModel через Koin и отправляем событие для обработки возврата
+                try {
+                    val paymentViewModel: PaymentViewModel = getKoin().get()
+                    paymentViewModel.onEvent(PaymentEvent.HandleReturnFromBrowser)
+                } catch (e: Exception) {
+                    // Если ViewModel еще не создан, это нормально - polling запустится позже
+                }
             }
         }
     }

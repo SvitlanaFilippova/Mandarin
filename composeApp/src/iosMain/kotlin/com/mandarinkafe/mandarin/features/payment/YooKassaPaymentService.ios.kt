@@ -19,7 +19,8 @@ actual class YooKassaPaymentService {
     actual suspend fun initializePayment(
         amount: Double,
         subtitle: String,
-        userPhone: String
+        userPhone: String,
+        orderId: String,
     ): PaymentResult {
         // Для iOS "умного платежа" не нужен payment_token от SDK
         // Сервер создаст платеж напрямую через API YooKassa
