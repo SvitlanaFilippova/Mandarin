@@ -111,8 +111,15 @@ sealed interface OrderContract {
                 }
             }
 
+        /**
+         * Проверяет, что имя пользователя заполнено (не пустое после trim).
+         */
+        val isNameValid: Boolean
+            get() = userInfo.name.trim().isNotBlank()
+
         val canBeSubmitted: Boolean
             get() = !isLoading &&
+                    isNameValid &&
                     deliveryInfo.addressIsValid &&
                     paymentInfo.paymentTypeIsChosen
     }

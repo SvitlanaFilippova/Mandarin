@@ -192,20 +192,43 @@ class OrderViewModel(
     private fun saveUserName() {
         viewModelScope.launch {
             val currentUserInfo = userInfoRepository.getUserInfo()
-            val enteredName = state.value.userInfo.name
+            val enteredName = state.value.userInfo.name.trim()
+
+            // Проверяем, что имя не пустое после trim
+            if (enteredName.isBlank()) {
+                Napier.w("OrderViewModel: Cannot save empty name")
+                return@launch
+            }
 
             // Обновляем имя на сервере, если оно было пустое или изменилось
             val hasValidUserInfo = currentUserInfo != null
-            val hasValidEnteredName = enteredName.isNotBlank()
             val isNameEmptyOrChanged = hasValidUserInfo &&
-                    (currentUserInfo.name.isBlank() || currentUserInfo.name != enteredName)
-            val shouldUpdateName = hasValidUserInfo && hasValidEnteredName && isNameEmptyOrChanged
+                    (currentUserInfo.name.trim()
+                        .isBlank() || currentUserInfo.name.trim() != enteredName)
+            val shouldUpdateName = hasValidUserInfo && isNameEmptyOrChanged
 
             if (shouldUpdateName) {
                 // Получаем access token
                 val accessToken = authRepository.getAccessToken()
                 if (accessToken != null) {
-                    userInfoRepository.updateName(accessToken, enteredName)
+                    val result = userInfoRepository.updateName(accessToken, enteredName)
+                    when (result) {
+                        is Resource.Success -> {
+                            Napier.d("OrderViewModel: Name saved successfully")
+                        }
+
+                        is Resource.ErrorNoInternet -> {
+                            Napier.w("OrderViewModel: No internet connection, name not saved")
+                            // Не показываем ошибку пользователю, так как заказ уже создан
+                        }
+
+                        is Resource.ErrorOther -> {
+                            Napier.e("OrderViewModel: Failed to save name: ${result.message}")
+                            // Не показываем ошибку пользователю, так как заказ уже создан
+                        }
+
+                        else -> {}
+                    }
                 } else {
                     Napier.w("OrderViewModel: No access token, can't update name")
                 }
@@ -504,6 +527,12 @@ class OrderViewModel(
     private fun submitOrder() {
         val minAmountForOnlinePayment = 1.0
         val currentState = state.value
+
+        // Проверка обязательных полей: имя должно быть заполнено
+        if (!currentState.isNameValid) {
+            showMissingRequiredInfo()
+            return
+        }
         
         // Финальная проверка: запрещаем онлайн-оплату для заказов меньше 1 рубля
         if (currentState.paymentInfo.chosenPaymentType == UiPaymentType.ONLINE &&
