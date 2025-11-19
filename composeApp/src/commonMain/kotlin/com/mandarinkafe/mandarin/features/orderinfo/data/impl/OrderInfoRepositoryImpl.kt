@@ -37,7 +37,6 @@ class OrderInfoRepositoryImpl(
         }
 
         // Если сервер вернул ошибку (404 для новых заказов, или другая ошибка), fallback на iiko
-        Napier.d("OrderInfoRepositoryImpl: Server request failed or order not found, falling back to iiko API for orderId=$id")
         return getOrderFromIikoDirectly(id)
     }
 

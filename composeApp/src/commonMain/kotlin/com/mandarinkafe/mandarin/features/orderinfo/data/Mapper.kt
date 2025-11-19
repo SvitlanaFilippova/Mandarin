@@ -24,7 +24,6 @@ import com.mandarinkafe.mandarin.util.DateTimeUtils.toHumanDateTimeOrNull
 import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.toVisibleComment
 
-
 fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): IncomingOrder {
     val cancelInfo = buildString {
         val cause = order?.cancelInfo?.cause?.name.orEmpty().applyTypography()
@@ -130,7 +129,7 @@ private fun IncomingModifierDto.toDomain(mealAmount: Double): IncomingModifier {
     val modifierName = product?.name?.applyTypography() ?: ""
     val modifierGroupId = productGroup?.id ?: ""
     val modifierGroupName = productGroup?.name ?: ""
-    
+
     return IncomingModifier(
         id = modifierId,
         name = modifierName,

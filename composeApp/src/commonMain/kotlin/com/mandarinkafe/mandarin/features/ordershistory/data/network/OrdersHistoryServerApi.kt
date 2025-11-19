@@ -11,12 +11,12 @@ import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.statement.bodyAsText
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.json.Json
 
@@ -160,10 +160,10 @@ class OrdersHistoryServerApi(
             }
 
             when (httpResponse.status) {
-                    HttpStatusCode.OK -> {
-                        val rawBody = httpResponse.bodyAsText()
-                        val responseBody: OrderDetailsResponse = json.decodeFromString(rawBody)
-                        responseBody.apply { resultCode = HTTP_SUCCESS }
+                HttpStatusCode.OK -> {
+                    val rawBody = httpResponse.bodyAsText()
+                    val responseBody: OrderDetailsResponse = json.decodeFromString(rawBody)
+                    responseBody.apply { resultCode = HTTP_SUCCESS }
                 }
 
                 HttpStatusCode.NotFound -> {

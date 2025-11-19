@@ -297,12 +297,6 @@ class MenuCacheImpl(
         }
     }
 
-    private suspend fun loadModifierGroups() {
-        modifierGroupsMutex.withLock {
-            loadModifierGroupsUnsafe()
-        }
-    }
-
     private suspend fun loadModifierGroupsUnsafe() {
         // Проверяем, не загружали ли мы недавно (кэш на 1 час)
         val now = getCurrentTimeMillis()
