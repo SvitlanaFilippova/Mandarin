@@ -29,6 +29,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.O
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.PaymentInfoSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
+import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickToCopyText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
@@ -49,6 +50,9 @@ fun OrderInfoContentScreen(
     var showCancelDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+    // Простая проверка: если статус оплаты REFUNDED - показываем сообщение о возврате
+    val shouldShowRefundText = state.paymentStatus == PaymentStatus.REFUNDED
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -56,7 +60,10 @@ fun OrderInfoContentScreen(
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
         item {
-            OrderStatusSection(deliveryStatus = state.deliveryStatus)
+            OrderStatusSection(
+                deliveryStatus = state.deliveryStatus,
+                shouldShowRefundText = shouldShowRefundText
+            )
         }
 
         item { OrderInfoSection(order) }

@@ -176,7 +176,7 @@ class PaymentViewModel(
 
                 val confirmationUrl = paymentInfo.confirmationUrl
 
-                // 3. Если есть confirmation_url, открываем форму оплаты
+                // Если есть confirmation_url, открываем форму оплаты
                 if (confirmationUrl != null) {
                     setState {
                         copy(
@@ -278,6 +278,12 @@ class PaymentViewModel(
                         stopPolling()
                         setState { copy(error = MR.strings.error_payment_canceled) }
                         sendEffect(PaymentEffect.PaymentCanceled)
+                    }
+
+                    PaymentStatus.REFUNDED -> {
+                        stopPolling()
+                        // REFUNDED означает, что платеж был возвращен (обычно при отмене заказа)
+                        // Не показываем ошибку, просто останавливаем polling
                     }
 
                     PaymentStatus.PENDING, PaymentStatus.UNKNOWN, null -> {

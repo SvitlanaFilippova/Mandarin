@@ -79,6 +79,9 @@
     <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка — пожалуйста,
         позвоните.
     </string>
+    <string name="order_cancelled_but_paid_online">Средства будут автоматически возвращены на&#160;карту.
+        Обычно это происходит быстро, редко&#160;&#8212; в&#160;течение нескольких рабочих дней.
+    </string>
 
 
     <!-- Основное -->
@@ -237,7 +240,9 @@
     <string name="error_payment_types_unavailable">Не удалось получить от сервера доступные способы
         оплаты
     </string>
-    <string name="error_online_payment_minimum_amount">Онлайн-оплата доступна только для заказов на сумму от 1&#160;рубля</string>
+    <string name="error_online_payment_minimum_amount">Онлайн-оплата доступна только для заказов на
+        сумму от 1&#160;рубля
+    </string>
     <string name="error_missing_required_fields">Нужно заполнить все обязательные поля</string>
     <string name="error_terminal_unavailable">Упс, кажется, сейчас мы не&#160;работаем — заказ
         оформить не&#160;получится 🤷
@@ -335,7 +340,9 @@
     <string name="cancel_order_confirmation">Действительно отменить оформленный заказ?</string>
     <string name="delete_order_from_history_button">Удалить заказ из истории</string>
     <string name="delete_order_from_history_question">Удалить заказ?</string>
-    <string name="delete_order_from_history_confirmation">Заказ будет безвозвратно удалён из&#160;истории заказов. Это действие нельзя отменить.</string>
+    <string name="delete_order_from_history_confirmation">Заказ будет безвозвратно удалён из&#160;истории
+        заказов. Это действие нельзя отменить.
+    </string>
     <string name="repeat_order_button">Повторить заказ</string>
     <string name="item_is_no_longer_available">На данный момент в&#160;меню отсутствует эта
         позиция
@@ -590,5 +597,6 @@
     <string name="payment_status_pending">Ожидает оплаты</string>
     <string name="payment_status_succeeded">Оплачено</string>
     <string name="payment_status_canceled">Отменено</string>
+    <string name="payment_status_refunded">Возвращено</string>
     <string name="payment_status_unknown">Неизвестен</string>
 </resources>

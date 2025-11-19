@@ -11,13 +11,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
-fun OrderStatusSection(deliveryStatus: UiDeliveryStatus) {
+fun OrderStatusSection(deliveryStatus: UiDeliveryStatus, shouldShowRefundText: Boolean) {
     Column(
         Modifier
             .fillMaxWidth()
@@ -44,5 +45,15 @@ fun OrderStatusSection(deliveryStatus: UiDeliveryStatus) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) { Label(stringResource(deliveryStatus.extraTextResId)) }
+
+
+        // Сообщение об отменённом заказе с успешной онлайн-оплатой
+        if (shouldShowRefundText) {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) { Label(stringResource(MR.strings.order_cancelled_but_paid_online)) }
+        }
     }
 }

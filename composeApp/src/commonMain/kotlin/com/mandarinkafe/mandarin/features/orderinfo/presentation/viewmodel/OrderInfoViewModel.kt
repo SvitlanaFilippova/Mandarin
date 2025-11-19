@@ -211,7 +211,8 @@ class OrderInfoViewModel(
             }
             setState { copy(savedOrder = savedOrder) }
 
-            // Если заказ с онлайн-оплатой и не закрыт, проверяем статус платежа
+            // Если заказ с онлайн-оплатой, проверяем статус платежа
+            // Проверяем даже для отменённых заказов, чтобы знать, была ли оплата успешной
             savedOrder?.let { order ->
                 if (order.paymentMethodCode?.equals(
                         PAYMENT_ONLINE_CODE,
@@ -219,7 +220,7 @@ class OrderInfoViewModel(
                     ) == true
                 ) {
                     val incomingOrder = state.value.incomingOrder
-                    if (incomingOrder != null && !incomingOrder.isClosed) {
+                    if (incomingOrder != null) {
                         checkPaymentStatus(orderId)
                     }
                 }
@@ -314,7 +315,8 @@ class OrderInfoViewModel(
                     // Параллельно проверяем статус оплаты, если заказ с онлайн-оплатой
                     result.data?.let { order ->
                         val isOnlinePayment = state.value.isOnlinePayment
-                        if (isOnlinePayment && !order.isClosed) {
+                        // Проверяем статус оплаты даже для отменённых заказов
+                        if (isOnlinePayment) {
                             checkPaymentStatus(orderId)
                         }
                     }
@@ -338,9 +340,10 @@ class OrderInfoViewModel(
         setState { copy(isLoading = false, incomingOrder = status) }
 
         // Если заказ с онлайн-оплатой, проверяем статус платежа
+        // Проверяем даже для отменённых заказов, чтобы знать, была ли оплата успешной
         status?.let { order ->
             val isOnlinePayment = state.value.isOnlinePayment
-            if (isOnlinePayment && !order.isClosed) {
+            if (isOnlinePayment) {
                 checkPaymentStatus(order.id)
             }
         }
