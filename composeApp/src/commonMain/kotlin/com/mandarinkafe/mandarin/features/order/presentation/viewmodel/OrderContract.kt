@@ -58,8 +58,8 @@ sealed interface OrderContract {
         data class EditAddress(val address: Address) : OrderEffect
 
         // Обработка отправки заказа
-        data class ShowSuccess(val orderId: String) : OrderEffect
-        data class StartOnlinePayment(val orderId: String, val amount: Double, val userPhone: String) : OrderEffect
+        data class ShowSuccess(val orderId: String, val paymentMethodCode: String? = null) : OrderEffect
+        data class StartOnlinePayment(val orderId: String, val amount: Double, val userPhone: String, val paymentMethodCode: String? = null) : OrderEffect
         data class ShowMessage(val message: StringResource) : OrderEffect
     }
 

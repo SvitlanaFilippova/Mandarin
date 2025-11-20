@@ -15,6 +15,7 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.util.filterPaymentInfoForUser
+import com.mandarinkafe.mandarin.util.formatPhoneNumberForUi
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -42,7 +43,7 @@ fun CustomerInfo(
                 verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
             ) {
                 phone?.let {
-                    LabelValue(stringResource(MR.strings.label_phone), it)
+                    LabelValue(stringResource(MR.strings.label_phone), it.formatPhoneNumberForUi())
                 }
                 customerName?.let {
                     LabelValue(stringResource(MR.strings.label_customer), it)

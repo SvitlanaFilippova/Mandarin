@@ -22,10 +22,11 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.AddressInfo
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.CustomerInfo
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderActionsButtons
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderInfoSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderItemsSection
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderProblemSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderStatusSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderTimesSection
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderTypeSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.PaymentInfoSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
@@ -66,7 +67,7 @@ fun OrderInfoContentScreen(
             )
         }
 
-        item { OrderInfoSection(order) }
+        item { OrderProblemSection(order.errorInfo) }
 
         if (order.items.isNotEmpty()) {
             item {
@@ -80,9 +81,12 @@ fun OrderInfoContentScreen(
             }
         }
 
+        item { OrderTypeSection(order.orderType) }
+
         // Показываем PaymentInfoSection для всех заказов с информацией о способе оплаты
         // Для онлайн-оплат также показываем статус и кнопки оплаты
-        val paymentMethodCode = order.paymentMethodCode
+        // Используем paymentMethodCode из заказа, если он есть, иначе из навигации
+        val paymentMethodCode = state.displayPaymentMethodCode
         val isOnlinePaymentActive = state.isOnlinePayment && !order.isClosed
         if (paymentMethodCode != null) {
             item {

@@ -56,7 +56,7 @@ class OrderInfoViewModel(
 
     override fun onEvent(event: OrderInfoEvent) {
         when (event) {
-            is OrderInfoEvent.SetInitData -> setInitData(event.id, event.isOnlinePayment)
+            is OrderInfoEvent.SetInitData -> setInitData(event.id, event.paymentMethodCode)
             is OrderInfoEvent.StopObservingStatus -> stopObservingOrderInfo()
             is OrderInfoEvent.CancelOrder -> cancel()
             is OrderInfoEvent.RefreshNow -> forceRefresh()
@@ -183,8 +183,8 @@ class OrderInfoViewModel(
         }
     }
 
-    private fun setInitData(id: String, isOnlinePayment: Boolean = false) {
-        setState { copy(orderId = id, isOnlinePaymentFromNav = isOnlinePayment) }
+    private fun setInitData(id: String, paymentMethodCode: String? = null) {
+        setState { copy(orderId = id, paymentMethodCodeFromNav = paymentMethodCode) }
         observeOrderStatus(id)
     }
 
@@ -274,11 +274,13 @@ class OrderInfoViewModel(
                     proceedOrderStatusResult(result)
                     // Параллельно проверяем статус оплаты, если заказ с онлайн-оплатой
                     result.data?.let { order ->
-                        // Проверяем paymentMethodCode из заказа для определения онлайн-оплаты
-                        val isOnlinePayment = order.paymentMethodCode?.equals(
+                        // Проверяем paymentMethodCode из заказа или из навигации для определения онлайн-оплаты
+                        val paymentCode = order.paymentMethodCode ?: state.value.paymentMethodCodeFromNav
+                        val isOnlinePayment = paymentCode?.equals(
                             PAYMENT_ONLINE_CODE,
                             ignoreCase = true
-                        ) == true || state.value.isOnlinePaymentFromNav
+                        ) == true
+                        
                         // Проверяем статус оплаты даже для отменённых заказов
                         if (isOnlinePayment) {
                             checkPaymentStatus(orderId)
@@ -306,11 +308,12 @@ class OrderInfoViewModel(
         // Если заказ с онлайн-оплатой, проверяем статус платежа
         // Проверяем даже для отменённых заказов, чтобы знать, была ли оплата успешной
         status?.let { order ->
-            // Проверяем paymentMethodCode из заказа для определения онлайн-оплаты
-            val isOnlinePayment = order.paymentMethodCode?.equals(
+            // Проверяем paymentMethodCode из заказа или из навигации для определения онлайн-оплаты
+            val paymentCode = order.paymentMethodCode ?: state.value.paymentMethodCodeFromNav
+            val isOnlinePayment = paymentCode?.equals(
                 PAYMENT_ONLINE_CODE,
                 ignoreCase = true
-            ) == true || state.value.isOnlinePaymentFromNav
+            ) == true
             
             if (isOnlinePayment) {
                 checkPaymentStatus(order.id)

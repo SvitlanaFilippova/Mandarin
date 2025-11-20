@@ -73,7 +73,7 @@ private fun PaymentMethodLabel(paymentMethodCode: String?) {
         val paymentMethodDisplay = getPaymentMethodDisplayString(code)
         if (paymentMethodDisplay != null) {
             LabelValue(
-                stringResource(MR.strings.payment_type).replace(" *", ""),
+                stringResource(MR.strings.payment_type).replace(": *", ""),
                 paymentMethodDisplay
             )
         }

@@ -221,7 +221,7 @@ fun NavGraph(navController: NavHostController) {
             route = "${NavConstants.ORDER_INFO_ROUTE}?" +
                     "${NavConstants.KEY_ORDER_ID}={${NavConstants.KEY_ORDER_ID}}&" +
                     "${NavConstants.KEY_FROM_ORDER_CREATION}={${NavConstants.KEY_FROM_ORDER_CREATION}}&" +
-                    "${NavConstants.KEY_IS_ONLINE_PAYMENT}={${NavConstants.KEY_IS_ONLINE_PAYMENT}}"
+                    "${NavConstants.KEY_PAYMENT_METHOD_CODE}={${NavConstants.KEY_PAYMENT_METHOD_CODE}}"
         ) { backStackEntry ->
             val orderId =
                 backStackEntry.getStringArgument(NavConstants.KEY_ORDER_ID)?.decodeURLPart() ?: ""
@@ -229,15 +229,14 @@ fun NavGraph(navController: NavHostController) {
                 NavConstants.KEY_FROM_ORDER_CREATION,
                 defaultValue = false
             )
-            val isOnlinePayment = backStackEntry.getBooleanArgument(
-                NavConstants.KEY_IS_ONLINE_PAYMENT,
-                defaultValue = false
-            )
+            val paymentMethodCode = backStackEntry.getStringArgument(
+                NavConstants.KEY_PAYMENT_METHOD_CODE
+            )?.decodeURLPart()?.takeIf { it.isNotEmpty() }
 
             OrderInfoScreen(
                 orderID = orderId,
                 fromOrderCreation = fromOrderCreation,
-                isOnlinePayment = isOnlinePayment,
+                paymentMethodCode = paymentMethodCode,
                 sharedViewModel = sharedViewModel,
                 navController = navController
             )

@@ -12,7 +12,7 @@ import dev.icerock.moko.resources.StringResource
 sealed interface OrderInfoContract {
 
     sealed interface OrderInfoEvent : BaseContract.BaseEvent {
-        data class SetInitData(val id: String, val isOnlinePayment: Boolean = false) :
+        data class SetInitData(val id: String, val paymentMethodCode: String? = null) :
             OrderInfoEvent
 
         data object StopObservingStatus : OrderInfoEvent
@@ -41,7 +41,7 @@ sealed interface OrderInfoContract {
         val isPaymentProcessing: Boolean = false,
         val isPaymentPolling: Boolean = false,
         val paymentError: StringResource? = null,
-        val isOnlinePaymentFromNav: Boolean = false, // Флаг из навигации, приоритетный
+        val paymentMethodCodeFromNav: String? = null, // Код способа оплаты из навигации, используется если order.paymentMethodCode == null
     ) : BaseContract.BaseState {
 
         val deliveryStatus: UiDeliveryStatus
@@ -49,19 +49,17 @@ sealed interface OrderInfoContract {
 
         val isOnlinePayment: Boolean
             get() {
-                // Приоритет: сначала проверяем флаг из навигации (для только что созданных заказов)
-                if (isOnlinePaymentFromNav) {
-                    return true
-                }
-
-                // Затем проверяем paymentMethodCode из IncomingOrder
-                val paymentCode = incomingOrder?.paymentMethodCode
+                // Проверяем paymentMethodCode из IncomingOrder или из навигации
+                val paymentCode = incomingOrder?.paymentMethodCode ?: paymentMethodCodeFromNav
 
                 return paymentCode?.equals(
                     Constants.PAYMENT_ONLINE_CODE,
                     ignoreCase = true
                 ) == true
             }
+        
+        val displayPaymentMethodCode: String?
+            get() = incomingOrder?.paymentMethodCode ?: paymentMethodCodeFromNav
 
         val isPaymentInProgress: Boolean
             get() = isPaymentLoading || isPaymentProcessing || isPaymentPolling

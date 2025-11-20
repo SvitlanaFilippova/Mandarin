@@ -23,9 +23,6 @@ fun OrderInfoSection(order: IncomingOrder) {
             order.errorInfo?.let {
                 LabelValue(stringResource(MR.strings.label_error), it.message.toString())
             }
-            order.orderType?.let {
-                LabelValue(stringResource(MR.strings.label_order_type), it.name)
-            }
         }
     }
 }

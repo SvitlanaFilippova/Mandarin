@@ -48,7 +48,8 @@ fun HandleOrderEffects(
                 is OrderEffect.ShowSuccess ->
                     navController.navigateToOrderInfo(
                         orderId = effect.orderId,
-                        fromOrderCreation = true
+                        fromOrderCreation = true,
+                        paymentMethodCode = effect.paymentMethodCode
                     )
 
                 is OrderEffect.StartOnlinePayment -> {
@@ -56,7 +57,7 @@ fun HandleOrderEffects(
                     navController.navigateToOrderInfo(
                         orderId = effect.orderId,
                         fromOrderCreation = true,
-                        isOnlinePayment = true
+                        paymentMethodCode = effect.paymentMethodCode
                     )
                 }
             }

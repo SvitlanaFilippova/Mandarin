@@ -580,12 +580,13 @@ class OrderViewModel(
         }
 
         // Если выбрана онлайн-оплата, запускаем процесс оплаты
+        val paymentMethodCode = savedChosenPaymentType?.code
         if (savedChosenPaymentType == UiPaymentType.ONLINE) {
             val userPhone = savedUserPhone.formatPhoneNumberForSdk()
-            sendEffect(OrderEffect.StartOnlinePayment(order.id, order.sum ?: 0.0, userPhone))
+            sendEffect(OrderEffect.StartOnlinePayment(order.id, order.sum ?: 0.0, userPhone, paymentMethodCode))
         } else {
             // Для других способов оплаты - обычный флоу
-            sendEffect(ShowSuccess(order.id))
+            sendEffect(ShowSuccess(order.id, paymentMethodCode))
         }
         getSavedUserInfo()
     }

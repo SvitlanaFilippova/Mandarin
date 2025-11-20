@@ -12,12 +12,11 @@ object OrderConstants {
     // Комментарии
     const val NO_UTENSILS_COMMENT = "БЕЗ приборов и салфеток"
     const val UTENSILS_NEED_PREFIX = "Нужны: "
-    const val PAYMENT_TYPE_COMMENT_PREFIX = "Способ оплаты: "
     const val PAYMENT_TYPE_TECH_FORMAT = "[оплата: %s]"
     const val NO_CHANGE_COMMENT = "Без сдачи"
     const val CHANGE_FROM_COMMENT_PREFIX = "Нужна сдача с "
     const val DIVIDER_FOR_USER_COMMENT = " || "
-    const val DIVIDER_FOR_TECH_PART = ". "
+        const val DIVIDER_FOR_TECH_PART = ". "
 }
 
 
