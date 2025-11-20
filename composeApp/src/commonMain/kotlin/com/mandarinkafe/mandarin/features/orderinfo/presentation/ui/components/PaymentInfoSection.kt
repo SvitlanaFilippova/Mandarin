@@ -16,6 +16,9 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 import com.mandarinkafe.mandarin.features.payment.domain.models.toDisplayString
+import com.mandarinkafe.mandarin.util.Constants.PAYMENT_BANK_CODE
+import com.mandarinkafe.mandarin.util.Constants.PAYMENT_CASH_CODE
+import com.mandarinkafe.mandarin.util.Constants.PAYMENT_ONLINE_CODE
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import dev.icerock.moko.resources.StringResource
@@ -24,66 +27,57 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun PaymentInfoSection(
     paymentStatus: PaymentStatus?,
-    isPaymentPaid: Boolean?,
-    isPaymentLoading: Boolean = false,
-    isPaymentProcessing: Boolean = false,
-    isPaymentPolling: Boolean = false,
+    isPaymentInProgress: Boolean,
+    isPaymentProcessing: Boolean,
+    isPaymentPolling: Boolean,
+    canShowPaymentError: Boolean,
+    canShowPaymentButton: Boolean,
     paymentError: StringResource? = null,
+    paymentMethodCode: String? = null,
     onStartPayment: () -> Unit = {},
     onRetryPayment: () -> Unit = {},
 ) {
-    val paymentState = calculatePaymentState(
-        isPaymentLoading,
-        isPaymentProcessing,
-        isPaymentPolling,
-        isPaymentPaid,
-        paymentStatus
-    )
-
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Column(
             Modifier.padding(Dimens.MarginStandard16),
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PaymentStatusLabel(paymentStatus)
-            PaymentProgressIndicator(
-                isPaymentInProgress = paymentState.isPaymentInProgress,
-                isPaymentProcessing = isPaymentProcessing,
-                isPaymentPolling = isPaymentPolling
-            )
-            PaymentErrorLabel(
-                canShowError = paymentState.canShowError,
-                paymentError = paymentError
-            )
-            PaymentButton(
-                canShowButton = paymentState.canShowButton,
-                paymentError = paymentError,
-                onStartPayment = onStartPayment,
-                onRetryPayment = onRetryPayment
-            )
+            PaymentMethodLabel(paymentMethodCode)
+            // Показываем статус и элементы оплаты только для онлайн-оплат
+            if (paymentStatus != null || isPaymentInProgress || paymentError != null) {
+                PaymentStatusLabel(paymentStatus)
+                PaymentProgressIndicator(
+                    isPaymentInProgress = isPaymentInProgress,
+                    isPaymentProcessing = isPaymentProcessing,
+                    isPaymentPolling = isPaymentPolling
+                )
+                PaymentErrorLabel(
+                    canShowError = canShowPaymentError,
+                    paymentError = paymentError
+                )
+                PaymentButton(
+                    canShowButton = canShowPaymentButton,
+                    paymentError = paymentError,
+                    onStartPayment = onStartPayment,
+                    onRetryPayment = onRetryPayment
+                )
+            }
         }
     }
 }
 
-private data class PaymentState(
-    val isPaymentInProgress: Boolean,
-    val canShowError: Boolean,
-    val canShowButton: Boolean,
-)
-
-private fun calculatePaymentState(
-    isPaymentLoading: Boolean,
-    isPaymentProcessing: Boolean,
-    isPaymentPolling: Boolean,
-    isPaymentPaid: Boolean?,
-    paymentStatus: PaymentStatus?,
-): PaymentState {
-    val isPaymentInProgress = isPaymentLoading || isPaymentProcessing || isPaymentPolling
-    val canShowError = !isPaymentInProgress
-    val canShowButton =
-        isPaymentPaid != true && !isPaymentInProgress && paymentStatus != PaymentStatus.SUCCEEDED
-    return PaymentState(isPaymentInProgress, canShowError, canShowButton)
+@Composable
+private fun PaymentMethodLabel(paymentMethodCode: String?) {
+    paymentMethodCode?.let { code ->
+        val paymentMethodDisplay = getPaymentMethodDisplayString(code)
+        if (paymentMethodDisplay != null) {
+            LabelValue(
+                stringResource(MR.strings.payment_type).replace(" *", ""),
+                paymentMethodDisplay
+            )
+        }
+    }
 }
 
 @Composable
@@ -93,6 +87,16 @@ private fun PaymentStatusLabel(paymentStatus: PaymentStatus?) {
         paymentStatus?.let { stringResource(it.toDisplayString()) }
             ?: stringResource(MR.strings.payment_status_unknown)
     )
+}
+
+private fun getPaymentMethodDisplayString(code: String?): String? {
+    if (code == null) return null
+    return when (code.uppercase()) {
+        PAYMENT_CASH_CODE -> "Наличными"
+        PAYMENT_BANK_CODE -> "Картой при получении"
+        PAYMENT_ONLINE_CODE -> "Онлайн-оплата"
+        else -> null
+    }
 }
 
 @Composable

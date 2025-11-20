@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel
 
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.toUi
-import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.BaseContract
@@ -12,7 +12,9 @@ import dev.icerock.moko.resources.StringResource
 sealed interface OrderInfoContract {
 
     sealed interface OrderInfoEvent : BaseContract.BaseEvent {
-        data class SetInitData(val id: String, val isOnlinePayment: Boolean = false) : OrderInfoEvent
+        data class SetInitData(val id: String, val isOnlinePayment: Boolean = false) :
+            OrderInfoEvent
+
         data object StopObservingStatus : OrderInfoEvent
         data object CancelOrder : OrderInfoEvent
         data object RepeatOrder : OrderInfoEvent
@@ -32,7 +34,6 @@ sealed interface OrderInfoContract {
         val orderId: String? = null,
         val isLoading: Boolean = true,
         val incomingOrder: IncomingOrder? = null,
-        val savedOrder: SavedOrder? = null,
         val orderRepeatingInProgress: Boolean = false,
         val paymentStatus: PaymentStatus? = null,
         val isPaymentPaid: Boolean? = null,
@@ -53,17 +54,29 @@ sealed interface OrderInfoContract {
                     return true
                 }
 
-                // Затем проверяем paymentMethodCode из SavedOrder
-                val paymentCode = savedOrder?.paymentMethodCode
-                    ?: incomingOrder?.paymentName // Fallback на paymentName из iiko
+                // Затем проверяем paymentMethodCode из IncomingOrder
+                val paymentCode = incomingOrder?.paymentMethodCode
 
-                val result = paymentCode?.equals(
+                return paymentCode?.equals(
                     Constants.PAYMENT_ONLINE_CODE,
                     ignoreCase = true
                 ) == true
-
-                return result
             }
+
+        val isPaymentInProgress: Boolean
+            get() = isPaymentLoading || isPaymentProcessing || isPaymentPolling
+
+        val canShowPaymentError: Boolean
+            get() = !isPaymentInProgress
+
+        val canShowPaymentButton: Boolean
+            get() = isPaymentPaid != true && !isPaymentInProgress && paymentStatus != PaymentStatus.SUCCEEDED
+
+        val paymentCanBeChanged: Boolean
+            get() = incomingOrder?.status == DeliveryStatus.UNCONFIRMED
+                    || incomingOrder?.status == DeliveryStatus.WAIT_COOKING
+                    || incomingOrder?.status == DeliveryStatus.READY_FOR_COOKING
+                    || incomingOrder?.status == DeliveryStatus.COOKING_STARTED
     }
 }
 

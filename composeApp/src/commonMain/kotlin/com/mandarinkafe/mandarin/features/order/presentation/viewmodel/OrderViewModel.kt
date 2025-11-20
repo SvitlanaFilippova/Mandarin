@@ -572,12 +572,10 @@ class OrderViewModel(
         // Очищаем корзину сразу после создания заказа
         viewModelScope.launch {
             cartUseCases.clearCart()
-            // Сохраняем paymentMethodCode для онлайн-оплаты
-            val paymentMethodCode = if (savedChosenPaymentType == UiPaymentType.ONLINE) {
-                savedChosenPaymentType.code
-            } else {
-                null
-            }
+            // В момент создания заказа iiko не возвращает paymentMethodCode
+            // Используем код из выбранного типа оплаты для сохранения в историю
+            // Сервер потом сам добавит paymentMethodCode при получении заказа
+            val paymentMethodCode = savedChosenPaymentType?.code
             saveOrderToHistory(order, paymentMethodCode)
         }
 

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.util.filterPaymentInfoForUser
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -47,9 +48,11 @@ fun CustomerInfo(
                     LabelValue(stringResource(MR.strings.label_customer), it)
                 }
                 comment?.let {
+                    val visibleComment = it.filterPaymentInfoForUser()
+                    if (visibleComment.isNotEmpty()) {
                     Label(stringResource(MR.strings.label_comment))
-                    Value(it)
-                }
+                    Value(it.filterPaymentInfoForUser())
+                }}
             }
         }
     }

@@ -80,15 +80,21 @@ fun OrderInfoContentScreen(
             }
         }
 
-        if (state.isOnlinePayment && !order.isClosed) {
+        // Показываем PaymentInfoSection для всех заказов с информацией о способе оплаты
+        // Для онлайн-оплат также показываем статус и кнопки оплаты
+        val paymentMethodCode = order.paymentMethodCode
+        val isOnlinePaymentActive = state.isOnlinePayment && !order.isClosed
+        if (paymentMethodCode != null) {
             item {
                 PaymentInfoSection(
-                    paymentStatus = state.paymentStatus,
-                    isPaymentPaid = state.isPaymentPaid,
-                    isPaymentLoading = state.isPaymentLoading,
-                    isPaymentProcessing = state.isPaymentProcessing,
-                    isPaymentPolling = state.isPaymentPolling,
-                    paymentError = state.paymentError,
+                    paymentStatus = if (isOnlinePaymentActive) state.paymentStatus else null,
+                    isPaymentInProgress = if (isOnlinePaymentActive) state.isPaymentInProgress else false,
+                    isPaymentProcessing = if (isOnlinePaymentActive) state.isPaymentProcessing else false,
+                    isPaymentPolling = if (isOnlinePaymentActive) state.isPaymentPolling else false,
+                    canShowPaymentError = if (isOnlinePaymentActive) state.canShowPaymentError else false,
+                    canShowPaymentButton = if (isOnlinePaymentActive) state.canShowPaymentButton else false,
+                    paymentError = if (isOnlinePaymentActive) state.paymentError else null,
+                    paymentMethodCode = paymentMethodCode,
                     onStartPayment = { onEvent(OrderInfoEvent.StartPayment) },
                     onRetryPayment = { onEvent(OrderInfoEvent.RetryPayment) }
                 )

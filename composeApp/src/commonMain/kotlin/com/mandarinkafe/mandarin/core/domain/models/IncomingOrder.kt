@@ -22,6 +22,7 @@ data class IncomingOrder(
     val cancelInfo: String? = null,
     val orderType: OrderType? = null,
     val paymentName: String? = null,
+    val paymentMethodCode: String? = null,
     val processedPaymentsSum: Double? = null,
     val sum: Double? = null,
     val discountReason: String? = null,

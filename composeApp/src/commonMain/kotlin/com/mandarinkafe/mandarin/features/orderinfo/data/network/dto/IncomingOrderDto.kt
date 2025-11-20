@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 data class IncomingOrderDto(
     val phone: String? = null,
     val orderServiceType: String? = null,
+    val paymentMethodCode: String? = null,
     val deliveryPoint: DeliveryPointDto? = null,
     val comment: String? = null,
     val customer: CustomerDto? = null,

@@ -50,6 +50,7 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         customerName = order?.customer?.name,
         items = order?.items?.toDomainWithAdds(addons) ?: emptyList(),
         paymentName = order?.payments?.firstOrNull()?.paymentType?.name,
+        paymentMethodCode = order?.paymentMethodCode,
         status = order?.status?.toDeliveryStatus() ?: DeliveryStatus.UNCONFIRMED,
         cancelInfo = cancelInfo,
         orderType = orderType,

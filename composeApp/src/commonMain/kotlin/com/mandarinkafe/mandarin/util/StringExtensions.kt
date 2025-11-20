@@ -114,6 +114,22 @@ fun String?.toVisibleComment(): String {
     }
 }
 
+/**
+ * Удаляет техническую информацию об оплате из комментария для отображения пользователю.
+ * Удаляет части вида [оплата: ...] из комментария.
+ */
+fun String?.filterPaymentInfoForUser(): String {
+    if (this == null) return ""
+    // Удаляем [оплата: ...] из комментария
+    // Регулярное выражение для поиска [оплата: ...] (включая возможные пробелы)
+    val paymentInfoPattern = Regex("\\[оплата:\\s*[^\\]]+\\]")
+    return paymentInfoPattern.replace(this, "").trim()
+        // Убираем лишние пробелы и разделители, которые могли остаться
+        .replace(Regex("\\s*\\.\\s*\\.\\s*"), ". ")
+        .replace(Regex("\\s*\\|\\|\\s*"), " || ")
+        .trim()
+}
+
 private const val COMMENT_DIVIDER_1 = "\\\\"
 private const val COMMENT_DIVIDER_2 = "//"
 

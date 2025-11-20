@@ -14,7 +14,6 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryInteractor
-import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 import com.mandarinkafe.mandarin.features.payment.domain.api.GetPaymentStatusUseCase
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEffect
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEvent
@@ -151,7 +150,6 @@ class OrderInfoViewModel(
 
     private fun startPayment() {
         val order = state.value.incomingOrder
-        val savedOrder = state.value.savedOrder
         val orderId = state.value.orderId
 
         if (orderId == null || order == null) {
@@ -159,12 +157,7 @@ class OrderInfoViewModel(
         }
 
         val amount = order.sum ?: 0.0
-        val userPhone = order.phone?.formatPhoneNumberForSdk()
-            ?: savedOrder?.let {
-                // Если телефона нет в заказе, можно попробовать получить из сохраненных данных
-                // Но обычно телефон должен быть в заказе
-                ""
-            } ?: ""
+        val userPhone = order.phone?.formatPhoneNumberForSdk() ?: ""
 
         if (userPhone.isEmpty()) {
             setState { copy(paymentError = MR.strings.error_payment_init_failed) }
@@ -192,40 +185,7 @@ class OrderInfoViewModel(
 
     private fun setInitData(id: String, isOnlinePayment: Boolean = false) {
         setState { copy(orderId = id, isOnlinePaymentFromNav = isOnlinePayment) }
-        loadSavedOrder(id)
         observeOrderStatus(id)
-    }
-
-    private fun loadSavedOrder(orderId: String) {
-        viewModelScope.launch {
-            // Делаем несколько попыток загрузки с задержкой, так как заказ может еще сохраняться на сервере
-            var savedOrder: SavedOrder? = null
-            repeat(ORDER_LOAD_RETRY_MAX_ATTEMPTS) { attempt ->
-                savedOrder = ordersHistoryInteractor.getOrderById(orderId)
-                if (savedOrder != null) {
-                    return@repeat
-                }
-                if (attempt < ORDER_LOAD_RETRY_MAX_ATTEMPTS - 1) {
-                    delay(ORDER_LOAD_RETRY_DELAY_MS) // Задержка перед следующей попыткой
-                }
-            }
-            setState { copy(savedOrder = savedOrder) }
-
-            // Если заказ с онлайн-оплатой, проверяем статус платежа
-            // Проверяем даже для отменённых заказов, чтобы знать, была ли оплата успешной
-            savedOrder?.let { order ->
-                if (order.paymentMethodCode?.equals(
-                        PAYMENT_ONLINE_CODE,
-                        ignoreCase = true
-                    ) == true
-                ) {
-                    val incomingOrder = state.value.incomingOrder
-                    if (incomingOrder != null) {
-                        checkPaymentStatus(orderId)
-                    }
-                }
-            }
-        }
     }
 
     private fun forceRefresh(id: String? = null) {
@@ -314,7 +274,11 @@ class OrderInfoViewModel(
                     proceedOrderStatusResult(result)
                     // Параллельно проверяем статус оплаты, если заказ с онлайн-оплатой
                     result.data?.let { order ->
-                        val isOnlinePayment = state.value.isOnlinePayment
+                        // Проверяем paymentMethodCode из заказа для определения онлайн-оплаты
+                        val isOnlinePayment = order.paymentMethodCode?.equals(
+                            PAYMENT_ONLINE_CODE,
+                            ignoreCase = true
+                        ) == true || state.value.isOnlinePaymentFromNav
                         // Проверяем статус оплаты даже для отменённых заказов
                         if (isOnlinePayment) {
                             checkPaymentStatus(orderId)
@@ -342,7 +306,12 @@ class OrderInfoViewModel(
         // Если заказ с онлайн-оплатой, проверяем статус платежа
         // Проверяем даже для отменённых заказов, чтобы знать, была ли оплата успешной
         status?.let { order ->
-            val isOnlinePayment = state.value.isOnlinePayment
+            // Проверяем paymentMethodCode из заказа для определения онлайн-оплаты
+            val isOnlinePayment = order.paymentMethodCode?.equals(
+                PAYMENT_ONLINE_CODE,
+                ignoreCase = true
+            ) == true || state.value.isOnlinePaymentFromNav
+            
             if (isOnlinePayment) {
                 checkPaymentStatus(order.id)
             }
@@ -406,9 +375,7 @@ class OrderInfoViewModel(
         const val ORDER_STATUS_UPD_DELAY = 60
         const val ORDER_STATUS_UPD_DELAY_AFTER_CANCEL = 500L
         const val PAYMENT_SEND_RETRY_MAX_ATTEMPTS = 3
-        const val ORDER_LOAD_RETRY_MAX_ATTEMPTS = 3
         const val PAYMENT_STATUS_UPDATE_DELAY_MS = 1000L
-        const val ORDER_LOAD_RETRY_DELAY_MS = 500L
     }
 }
 
