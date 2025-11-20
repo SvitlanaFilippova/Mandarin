@@ -6,7 +6,6 @@ import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingPayment
 
 interface IikoNetworkClient {
     suspend fun getLoyaltyCustomerInfo(phone: String): Response
-    suspend fun getPaymentTypes(): Response
     suspend fun createDelivery(order: OutgoingOrderDto): Response
     suspend fun getSingleOrderInfoById(id: String): Response
     suspend fun getOrdersStatusesByIds(ids: List<String>): Response

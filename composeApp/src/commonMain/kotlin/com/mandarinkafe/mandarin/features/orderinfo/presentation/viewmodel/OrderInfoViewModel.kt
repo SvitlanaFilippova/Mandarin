@@ -4,11 +4,14 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
+import com.mandarinkafe.mandarin.features.infrastructure.domain.api.GetPaymentTypesUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.AddPaymentToOrderUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.CancelOrderUseCase
+import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ChangePaymentMethodUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ForceRefreshOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.RepeatOrderInteractor
+import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect.ShowError
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
@@ -42,6 +45,8 @@ class OrderInfoViewModel(
     private val ordersHistoryInteractor: OrdersHistoryInteractor,
     private val paymentViewModel: PaymentViewModel,
     private val addPaymentToOrderUseCase: AddPaymentToOrderUseCase,
+    private val changePaymentMethodUseCase: ChangePaymentMethodUseCase,
+    private val getPaymentTypesUseCase: GetPaymentTypesUseCase,
 ) : BaseViewModel<OrderInfoEvent, OrderInfoEffect, OrderInfoState>() {
     override fun setInitialState() = OrderInfoState()
 
@@ -64,6 +69,8 @@ class OrderInfoViewModel(
             is OrderInfoEvent.StartPayment -> startPayment()
             is OrderInfoEvent.RetryPayment -> retryPayment()
             is OrderInfoEvent.DeleteOrderFromHistory -> deleteOrderFromHistory()
+            is OrderInfoEvent.LoadPaymentTypesForChange -> loadPaymentTypesForChange()
+            is OrderInfoEvent.ChangePaymentMethod -> changePaymentMethod(event.paymentMethodCode)
         }
     }
 
@@ -153,6 +160,7 @@ class OrderInfoViewModel(
         val orderId = state.value.orderId
 
         if (orderId == null || order == null) {
+            showError("Не удалось запустить оплату: отсутствует информация о заказе")
             return
         }
 
@@ -161,6 +169,7 @@ class OrderInfoViewModel(
 
         if (userPhone.isEmpty()) {
             setState { copy(paymentError = MR.strings.error_payment_init_failed) }
+            showError("Не удалось запустить оплату: не указан телефон")
             return
         }
 
@@ -360,6 +369,117 @@ class OrderInfoViewModel(
                 Napier.e("OrderInfoViewModel, deleteOrderFromHistory error: $e")
                 setLoading(false)
                 showError("Не удалось удалить заказ из истории")
+            }
+        }
+    }
+
+    private fun loadPaymentTypesForChange() {
+        viewModelScope.launch {
+            // Загружаем доступные способы оплаты
+            val paymentTypesResult = getPaymentTypesUseCase()
+            when (paymentTypesResult) {
+                is Resource.Success -> {
+                    val paymentTypes = paymentTypesResult.data ?: emptyList()
+                    // Фильтруем только CASH, BANK, ONLINE (как в OrderViewModel)
+                    val filteredTypes = paymentTypes.filter { 
+                        it.code.equals(com.mandarinkafe.mandarin.util.Constants.PAYMENT_CASH_CODE, ignoreCase = true) ||
+                        it.code.equals(com.mandarinkafe.mandarin.util.Constants.PAYMENT_BANK_CODE, ignoreCase = true) ||
+                        it.code.equals(com.mandarinkafe.mandarin.util.Constants.PAYMENT_ONLINE_CODE, ignoreCase = true)
+                    }
+                    setState { 
+                        copy(availablePaymentTypes = filteredTypes)
+                    }
+                }
+                else -> {
+                    showError("Не удалось загрузить способы оплаты")
+                }
+            }
+        }
+    }
+
+    private fun changePaymentMethod(paymentMethodCode: String) {
+        val orderId = state.value.orderId
+        if (orderId == null) {
+            showError("Не указан ID заказа")
+            return
+        }
+
+        viewModelScope.launch {
+            setState { copy(isChangingPaymentMethod = true) }
+            
+            val result = changePaymentMethodUseCase(orderId, paymentMethodCode)
+            
+            when (result) {
+                is Resource.Success -> {
+                    // Обновляем заказ с сервера
+                    val orderResult = getOrderStatus(orderId)
+                    // Обрабатываем результат обновления заказа и запускаем оплату, если нужно
+                    proceedOrderStatusResultAfterPaymentChange(orderResult, paymentMethodCode)
+                }
+                
+                is Resource.ErrorNoInternet -> {
+                    setState { copy(isChangingPaymentMethod = false) }
+                    showError("Нет подключения к интернету")
+                }
+                
+                else -> {
+                    setState { copy(isChangingPaymentMethod = false) }
+                    // Сервер вернул ошибку - не удалось изменить способ оплаты (в т.ч. из-за ошибки обновления комментария в iiko)
+                    showError("Не удалось изменить способ оплаты")
+                }
+            }
+        }
+    }
+
+    private fun proceedOrderStatusResultAfterPaymentChange(
+        result: Resource<IncomingOrder>,
+        newPaymentMethodCode: String
+    ) {
+        when (result) {
+            is Resource.Success -> {
+                val order = result.data
+                if (order == null) {
+                    setState { copy(isChangingPaymentMethod = false) }
+                    showError("Не удалось получить обновленную информацию о заказе")
+                    return
+                }
+                
+                // Обновляем состояние заказа
+                setStatus(order)
+                // Обновляем paymentMethodCodeFromNav для немедленного отображения
+                setState { 
+                    copy(
+                        isChangingPaymentMethod = false,
+                        paymentMethodCodeFromNav = newPaymentMethodCode
+                    ) 
+                }
+                
+                // Если выбран способ оплаты ONLINE, запускаем процесс оплаты
+                if (newPaymentMethodCode.equals(PAYMENT_ONLINE_CODE, ignoreCase = true)) {
+                    // Запускаем оплату (startPayment сам проверит наличие телефона и покажет ошибку при необходимости)
+                    startPayment()
+                }
+            }
+
+            is Resource.ErrorNoInternet -> {
+                setState { copy(isChangingPaymentMethod = false) }
+                showError("Нет подключения к интернету")
+            }
+
+            is Resource.Idle -> {
+                // Запрос был проигнорирован из-за TTL (слишком частый запрос)
+                // Обновляем paymentMethodCodeFromNav, но не запускаем оплату
+                setState { 
+                    copy(
+                        isChangingPaymentMethod = false,
+                        paymentMethodCodeFromNav = newPaymentMethodCode
+                    ) 
+                }
+            }
+
+            else -> {
+                setState { copy(isChangingPaymentMethod = false) }
+                showError(result.message ?: "Не удалось получить обновленную информацию о заказе")
             }
         }
     }

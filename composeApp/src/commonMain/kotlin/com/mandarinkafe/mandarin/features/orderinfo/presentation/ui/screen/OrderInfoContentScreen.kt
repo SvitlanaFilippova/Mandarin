@@ -69,6 +69,39 @@ fun OrderInfoContentScreen(
 
         item { OrderProblemSection(order.errorInfo) }
 
+
+
+        item { OrderTypeSection(order.orderType) }
+
+        // Показываем PaymentInfoSection для всех заказов с информацией о способе оплаты
+        // Для онлайн-оплат показываем статус оплаты (включая отменённые заказы)
+        // Кнопки и индикаторы загрузки показываем только для активных заказов
+        // Используем paymentMethodCode из заказа, если он есть, иначе из навигации
+        val paymentMethodCode = state.displayPaymentMethodCode
+        val isOnlinePayment = state.isOnlinePayment
+        val isOnlinePaymentActive = isOnlinePayment && !order.isClosed
+        if (paymentMethodCode != null) {
+            item {
+                PaymentInfoSection(
+                    paymentStatus = if (isOnlinePayment) state.paymentStatus else null, // Статус показываем для всех онлайн-оплат, включая отменённые
+                    isPaymentInProgress = if (isOnlinePaymentActive) state.isPaymentInProgress else false,
+                    isPaymentProcessing = if (isOnlinePaymentActive) state.isPaymentProcessing else false,
+                    isPaymentPolling = if (isOnlinePaymentActive) state.isPaymentPolling else false,
+                    canShowPaymentError = if (isOnlinePaymentActive) state.canShowPaymentError else false,
+                    canShowPaymentButton = if (isOnlinePaymentActive) state.canShowPaymentButton else false,
+                    paymentError = if (isOnlinePaymentActive) state.paymentError else null,
+                    paymentMethodCode = paymentMethodCode,
+                    isChangingPaymentMethod = state.isChangingPaymentMethod,
+                    paymentCanBeChanged = state.paymentCanBeChanged,
+                    availablePaymentTypes = state.availablePaymentTypes,
+                    onStartPayment = { onEvent(OrderInfoEvent.StartPayment) },
+                    onRetryPayment = { onEvent(OrderInfoEvent.RetryPayment) },
+                    onLoadPaymentTypes = { onEvent(OrderInfoEvent.LoadPaymentTypesForChange) },
+                    onChangePaymentMethod = { code -> onEvent(OrderInfoEvent.ChangePaymentMethod(code)) }
+                )
+            }
+        }
+
         if (order.items.isNotEmpty()) {
             item {
                 OrderItemsSection(
@@ -80,31 +113,7 @@ fun OrderInfoContentScreen(
                 )
             }
         }
-
-        item { OrderTypeSection(order.orderType) }
-
-        // Показываем PaymentInfoSection для всех заказов с информацией о способе оплаты
-        // Для онлайн-оплат также показываем статус и кнопки оплаты
-        // Используем paymentMethodCode из заказа, если он есть, иначе из навигации
-        val paymentMethodCode = state.displayPaymentMethodCode
-        val isOnlinePaymentActive = state.isOnlinePayment && !order.isClosed
-        if (paymentMethodCode != null) {
-            item {
-                PaymentInfoSection(
-                    paymentStatus = if (isOnlinePaymentActive) state.paymentStatus else null,
-                    isPaymentInProgress = if (isOnlinePaymentActive) state.isPaymentInProgress else false,
-                    isPaymentProcessing = if (isOnlinePaymentActive) state.isPaymentProcessing else false,
-                    isPaymentPolling = if (isOnlinePaymentActive) state.isPaymentPolling else false,
-                    canShowPaymentError = if (isOnlinePaymentActive) state.canShowPaymentError else false,
-                    canShowPaymentButton = if (isOnlinePaymentActive) state.canShowPaymentButton else false,
-                    paymentError = if (isOnlinePaymentActive) state.paymentError else null,
-                    paymentMethodCode = paymentMethodCode,
-                    onStartPayment = { onEvent(OrderInfoEvent.StartPayment) },
-                    onRetryPayment = { onEvent(OrderInfoEvent.RetryPayment) }
-                )
-            }
-        }
-
+        
         if (order.isDelivery) {
             item { AddressInfo(address = order.deliveryAddress) }
         }

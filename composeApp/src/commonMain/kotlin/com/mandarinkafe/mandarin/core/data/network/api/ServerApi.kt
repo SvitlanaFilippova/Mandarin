@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.core.data.network.api
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.features.address.data.dto.DeliveryZonesResponse
 import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendationsResponse
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesServerResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannersResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupsResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.ServerMenuResponse
@@ -75,6 +76,21 @@ class ServerApi(
         } catch (e: Throwable) {
             Napier.e("ServerApi: getModifierGroups(): ошибка получения групп модификаторов", e)
             ModifierGroupsResponse().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun getPaymentTypes(): Response {
+        return try {
+            val response: PaymentTypesServerResponse =
+                client.get("/payment-types") {
+                    header("x-api-key", key)
+                }.body()
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Napier.e("ServerApi: getPaymentTypes(): ошибка получения способов оплаты", e)
+            PaymentTypesServerResponse(
+                paymentTypes = emptyList()
+            ).apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 }

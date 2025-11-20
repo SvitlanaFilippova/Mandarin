@@ -9,16 +9,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
+import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
 import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 import com.mandarinkafe.mandarin.features.payment.domain.models.toDisplayString
-import com.mandarinkafe.mandarin.util.Constants.PAYMENT_BANK_CODE
-import com.mandarinkafe.mandarin.util.Constants.PAYMENT_CASH_CODE
-import com.mandarinkafe.mandarin.util.Constants.PAYMENT_ONLINE_CODE
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import dev.icerock.moko.resources.StringResource
@@ -34,19 +37,46 @@ fun PaymentInfoSection(
     canShowPaymentButton: Boolean,
     paymentError: StringResource? = null,
     paymentMethodCode: String? = null,
+    isChangingPaymentMethod: Boolean = false,
+    paymentCanBeChanged: Boolean = false,
+    availablePaymentTypes: List<PaymentType> = emptyList(),
     onStartPayment: () -> Unit = {},
     onRetryPayment: () -> Unit = {},
+    onLoadPaymentTypes: () -> Unit = {}, // Загрузить доступные способы оплаты
+    onChangePaymentMethod: (String) -> Unit = {},
 ) {
+    var showDialog by remember { mutableStateOf(false) }
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Column(
             Modifier.padding(Dimens.MarginStandard16),
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginStandard16),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PaymentMethodLabel(paymentMethodCode)
-            // Показываем статус и элементы оплаты только для онлайн-оплат
-            if (paymentStatus != null || isPaymentInProgress || paymentError != null) {
+            if (isChangingPaymentMethod) {
+                // Показываем индикатор загрузки вместо способа оплаты
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Label(stringResource(MR.strings.payment_type))
+
+                    MyCircularProgressIndicator(
+                        strokeWidth = Dimens.ProgressBarStroke6,
+                        modifier = Modifier.size(Dimens.ProgressBarSmallSize)
+                    )
+                }
+            } else {
+                PaymentMethodLabel(paymentMethodCode)
+            }
+
+            // Показываем статус оплаты для онлайн-оплат (включая отменённые заказы), если не идет изменение способа оплаты
+            if (!isChangingPaymentMethod && paymentStatus != null) {
                 PaymentStatusLabel(paymentStatus)
+            }
+
+            // Показываем активные элементы оплаты (индикаторы, кнопки) только если не идет изменение способа оплаты
+            if (!isChangingPaymentMethod && (isPaymentInProgress || paymentError != null)) {
                 PaymentProgressIndicator(
                     isPaymentInProgress = isPaymentInProgress,
                     isPaymentProcessing = isPaymentProcessing,
@@ -63,40 +93,67 @@ fun PaymentInfoSection(
                     onRetryPayment = onRetryPayment
                 )
             }
+
+            // Кнопка "Изменить способ оплаты"
+            if (paymentCanBeChanged && !isChangingPaymentMethod) {
+                ButtonWithText(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(MR.strings.change_payment_method),
+                    onClick = {
+                        onLoadPaymentTypes()
+                        showDialog = true
+                    }
+                )
+            }
         }
+    }
+
+    // Диалог выбора способа оплаты
+    if (showDialog && availablePaymentTypes.isNotEmpty()) {
+        ChangePaymentMethodDialog(
+            availablePaymentTypes = availablePaymentTypes,
+            currentPaymentMethodCode = paymentMethodCode,
+            onPaymentMethodSelected = { code ->
+                showDialog = false
+                onChangePaymentMethod(code)
+            },
+            onDismiss = { showDialog = false }
+        )
     }
 }
 
 @Composable
 private fun PaymentMethodLabel(paymentMethodCode: String?) {
-    paymentMethodCode?.let { code ->
-        val paymentMethodDisplay = getPaymentMethodDisplayString(code)
-        if (paymentMethodDisplay != null) {
-            LabelValue(
-                stringResource(MR.strings.payment_type).replace(": *", ""),
-                paymentMethodDisplay
-            )
-        }
+    val uiPaymentType = paymentMethodCode?.let { UiPaymentType.fromCode(it) }
+    uiPaymentType?.let {
+        LabelValue(
+            stringResource(MR.strings.payment_type).replace(": *", ""),
+            stringResource(it.nameRes)
+        )
     }
 }
 
 @Composable
 private fun PaymentStatusLabel(paymentStatus: PaymentStatus?) {
-    LabelValue(
-        stringResource(MR.strings.label_payment_status),
-        paymentStatus?.let { stringResource(it.toDisplayString()) }
-            ?: stringResource(MR.strings.payment_status_unknown)
-    )
-}
+    val statusColor = when (paymentStatus) {
+        PaymentStatus.SUCCEEDED -> Colors.Green
+        PaymentStatus.PENDING -> Colors.Orange
+        PaymentStatus.UNKNOWN,
+        null,
+            -> Colors.Red
 
-private fun getPaymentMethodDisplayString(code: String?): String? {
-    if (code == null) return null
-    return when (code.uppercase()) {
-        PAYMENT_CASH_CODE -> "Наличными"
-        PAYMENT_BANK_CODE -> "Картой при получении"
-        PAYMENT_ONLINE_CODE -> "Онлайн-оплата"
-        else -> null
+        PaymentStatus.CANCELED,
+        PaymentStatus.REFUNDED,
+            -> null
+
     }
+
+    LabelValue(
+        label = stringResource(MR.strings.label_payment_status),
+        value = paymentStatus?.let { stringResource(it.toDisplayString()) }
+            ?: stringResource(MR.strings.payment_status_unknown),
+        valueColor = statusColor
+    )
 }
 
 @Composable

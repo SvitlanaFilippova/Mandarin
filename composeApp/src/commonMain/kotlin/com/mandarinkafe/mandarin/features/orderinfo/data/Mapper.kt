@@ -46,7 +46,7 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         errorInfo = errorInfo?.toDomain(),
         phone = order?.phone,
         deliveryAddress = order?.deliveryPoint?.toAddress(),
-        comment = order?.comment?.toVisibleComment(),
+        comment = order?.comment, // Храним полный комментарий, фильтрация будет в UI
         customerName = order?.customer?.name,
         items = order?.items?.toDomainWithAdds(addons) ?: emptyList(),
         paymentName = order?.payments?.firstOrNull()?.paymentType?.name,

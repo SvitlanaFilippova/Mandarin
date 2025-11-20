@@ -107,11 +107,14 @@ fun String?.toVisibleComment(): String {
         .mapNotNull { divider -> indexOf(divider).takeIf { it >= 0 } }
         .minOrNull()
 
-    return if (firstDividerIndex != null) {
+    val commentWithoutTechPart = if (firstDividerIndex != null) {
         substring(0, firstDividerIndex).trim()
     } else {
         this.trim()
     }
+    
+    // Фильтруем информацию об оплате из комментария
+    return commentWithoutTechPart.filterPaymentInfoForUser()
 }
 
 /**

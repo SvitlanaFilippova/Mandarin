@@ -8,19 +8,20 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.MR
-import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.features.order.domain.models.ErrorInfo
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
-fun OrderInfoSection(order: IncomingOrder) {
-    Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
-        Column(
-            Modifier.padding(Dimens.MarginStandard16),
-            verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
-        ) {
-            order.errorInfo?.let {
+fun OrderProblemSection(errorInfo: ErrorInfo?) {
+    errorInfo?.let {
+        Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
+            Column(
+                Modifier.padding(Dimens.MarginStandard16),
+                verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
+            ) {
+
                 LabelValue(stringResource(MR.strings.label_error), it.message.toString())
             }
         }

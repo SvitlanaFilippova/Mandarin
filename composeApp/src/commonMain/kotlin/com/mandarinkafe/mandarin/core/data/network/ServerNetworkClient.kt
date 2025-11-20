@@ -7,4 +7,5 @@ interface ServerNetworkClient {
     suspend fun getRecommendations(): Response
     suspend fun getDeliveryZones(): Response
     suspend fun getMenu(): Response
+    suspend fun getPaymentTypes(): Response
 }

@@ -65,20 +65,6 @@ class IikoNetworkClientImpl(
         }
     }
 
-    override suspend fun getPaymentTypes(): Response {
-        if (!isConnected()) {
-            return Response().apply { resultCode = NO_CONNECTION }
-        }
-        return try {
-            val orgId = ensureOrganizationId()
-            val response = iikoApi.getPaymentTypes(body = PaymentTypesRequest(listOf(orgId)))
-            response.apply { resultCode = HTTP_SUCCESS }
-        } catch (e: Throwable) {
-            Napier.e("Ошибка getPaymentTypes", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
-        }
-    }
-
 
     override suspend fun createDelivery(order: OutgoingOrderDto): Response {
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }

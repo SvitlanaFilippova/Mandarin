@@ -22,6 +22,8 @@ sealed interface OrderInfoContract {
         data object StartPayment : OrderInfoEvent
         data object RetryPayment : OrderInfoEvent
         data object DeleteOrderFromHistory : OrderInfoEvent
+        data object LoadPaymentTypesForChange : OrderInfoEvent // Загрузить доступные способы оплаты для диалога
+        data class ChangePaymentMethod(val paymentMethodCode: String) : OrderInfoEvent
     }
 
     sealed interface OrderInfoEffect : BaseContract.BaseEffect {
@@ -42,6 +44,8 @@ sealed interface OrderInfoContract {
         val isPaymentPolling: Boolean = false,
         val paymentError: StringResource? = null,
         val paymentMethodCodeFromNav: String? = null, // Код способа оплаты из навигации, используется если order.paymentMethodCode == null
+        val isChangingPaymentMethod: Boolean = false, // Индикатор загрузки при изменении способа оплаты
+        val availablePaymentTypes: List<com.mandarinkafe.mandarin.features.order.domain.models.PaymentType> = emptyList(), // Доступные способы оплаты для диалога (только CASH, BANK, ONLINE)
     ) : BaseContract.BaseState {
 
         val deliveryStatus: UiDeliveryStatus
@@ -71,10 +75,24 @@ sealed interface OrderInfoContract {
             get() = isPaymentPaid != true && !isPaymentInProgress && paymentStatus != PaymentStatus.SUCCEEDED
 
         val paymentCanBeChanged: Boolean
-            get() = incomingOrder?.status == DeliveryStatus.UNCONFIRMED
-                    || incomingOrder?.status == DeliveryStatus.WAIT_COOKING
-                    || incomingOrder?.status == DeliveryStatus.READY_FOR_COOKING
-                    || incomingOrder?.status == DeliveryStatus.COOKING_STARTED
+            get() {
+                val canChangeByStatus = incomingOrder?.status == DeliveryStatus.UNCONFIRMED
+                        || incomingOrder?.status == DeliveryStatus.WAIT_COOKING
+                        || incomingOrder?.status == DeliveryStatus.READY_FOR_COOKING
+                        || incomingOrder?.status == DeliveryStatus.COOKING_STARTED
+                
+                if (!canChangeByStatus) return false
+                
+                // Для онлайн-оплаты можно менять только если заказ еще не оплачен
+                val paymentCode = incomingOrder?.paymentMethodCode ?: paymentMethodCodeFromNav
+                val isOnline = paymentCode?.equals(Constants.PAYMENT_ONLINE_CODE, ignoreCase = true) == true
+                
+                return if (isOnline) {
+                    isPaymentPaid != true && paymentStatus != PaymentStatus.SUCCEEDED
+                } else {
+                    true
+                }
+            }
     }
 }
 

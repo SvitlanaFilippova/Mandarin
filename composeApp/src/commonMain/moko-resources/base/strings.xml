@@ -175,7 +175,7 @@
 
 
     <!-- Оформление заказа - форма -->
-    <string name="your_name">Имя</string>
+    <string name="your_name">Имя *</string>
     <string name="your_phone">Номер телефона</string>
     <string name="phone_prefix">+7</string>
     <string name="phone_mask">(###) ###-##-##</string>
@@ -188,9 +188,9 @@
     <string name="choose_address">Нужно выбрать адрес доставки</string>
     <string name="delivery_type">Способ получения: *</string>
     <string name="payment_type">Способ оплаты: *</string>
-    <string name="payment_online">картой онлайн</string>
-    <string name="payment_self_card">картой при получении</string>
-    <string name="payment_cash">наличными</string>
+    <string name="payment_online">Картой онлайн</string>
+    <string name="payment_self_card">Картой при получении</string>
+    <string name="payment_cash">Наличными</string>
     <string name="no_change_needed">Без сдачи</string>
     <string name="payment_change">Сдача с</string>
     <string name="payment_default_value">0</string>
@@ -319,6 +319,7 @@
     <string name="label_error">Ошибка</string>
     <string name="label_order_type">Способ получения</string>
     <string name="label_payment_status">Статус оплаты</string>
+    <string name="change_payment_method">Изменить способ оплаты</string>
     <string name="label_order_items">Позиции заказа: %1$d</string>
     <string name="discount_applied">Применена скидка</string>
     <string name="label_total">Итого</string>

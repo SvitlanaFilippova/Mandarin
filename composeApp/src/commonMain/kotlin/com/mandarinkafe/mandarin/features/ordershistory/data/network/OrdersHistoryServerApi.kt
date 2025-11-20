@@ -14,6 +14,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -193,6 +194,38 @@ class OrdersHistoryServerApi(
                 id = orderId,
                 timestamp = 0L
             ).apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun changePaymentMethod(token: String, orderId: String, paymentMethodCode: String): Response {
+        return try {
+            val request = ChangePaymentMethodRequest(payment_method_code = paymentMethodCode)
+            val httpResponse = client.patch("/orders/history/$orderId/payment-method") {
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
+                setBody(request)
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> {
+                    Response().apply { resultCode = HTTP_SUCCESS }
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    Response().apply { resultCode = HttpStatusCode.Unauthorized.value }
+                }
+
+                HttpStatusCode.NotFound -> {
+                    Response().apply { resultCode = HttpStatusCode.NotFound.value }
+                }
+
+                else -> {
+                    Response().apply { resultCode = HTTP_SERVER_ERROR }
+                }
+            }
+        } catch (e: Throwable) {
+            Napier.e("changePaymentMethod error: $e")
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 }

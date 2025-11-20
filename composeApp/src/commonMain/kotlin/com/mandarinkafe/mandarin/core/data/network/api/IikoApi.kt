@@ -146,19 +146,6 @@ class IikoApi(
         }
     }
 
-    // Типы оплаты
-    suspend fun getPaymentTypes(body: PaymentTypesRequest): PaymentTypesResponse {
-        return try {
-            val response = client.post("/api/1/payment_types") {
-                setBody(body)
-            }
-            response.body()
-        } catch (e: Exception) {
-            logError("getPaymentTypes", e)
-            throw e
-        }
-    }
-
     // Скидки и лояльность
     suspend fun getDiscounts(body: DiscountsRequest): DiscountsResponse {
         return try {

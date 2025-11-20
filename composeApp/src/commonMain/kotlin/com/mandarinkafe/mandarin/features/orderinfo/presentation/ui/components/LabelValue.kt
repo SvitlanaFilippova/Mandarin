@@ -14,14 +14,14 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 
 @Composable
-fun LabelValue(label: String, value: String) {
+fun LabelValue(label: String, value: String, valueColor: Color? = null) {
     Row(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Label(label)
-        Value(value)
+        Value(value, color = valueColor)
     }
 }
 
@@ -36,9 +36,9 @@ fun Label(text: String) {
 }
 
 @Composable
-fun Value(text: String) {
+fun Value(text: String, color: Color? = null) {
     Text(
         text = text,
-        style = Typography.RegularTextStyle,
+        style = Typography.RegularTextStyle.copy(color = color ?: Color.Unspecified),
     )
 }
