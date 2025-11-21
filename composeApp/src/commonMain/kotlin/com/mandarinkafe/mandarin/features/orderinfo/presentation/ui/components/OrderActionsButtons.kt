@@ -42,8 +42,7 @@ fun OrderActionsButtons(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Dimens.MarginSmall8),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
             when {
@@ -101,10 +100,7 @@ fun OrderActionsButtons(
         if (isClosed) {
             TextButton(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = Dimens.MarginSmall8,
-                    ),
+                    .fillMaxWidth(),
                 border = BorderStroke(width = Dimens.Border1, color = Colors.Red),
                 shape = RoundedCornerShape(Dimens.CornerRadius8),
                 onClick = onDeleteOrderCLick,

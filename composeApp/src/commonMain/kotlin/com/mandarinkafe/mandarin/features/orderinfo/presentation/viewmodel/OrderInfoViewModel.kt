@@ -564,6 +564,14 @@ class OrderInfoViewModel(
                     break
                 }
 
+                // Проверяем, что способ оплаты все еще ONLINE
+                val paymentCode = currentState.incomingOrder?.paymentMethodCode ?: currentState.paymentMethodCodeFromNav
+                val isOnlinePayment = paymentCode?.equals(PAYMENT_ONLINE_CODE, ignoreCase = true) == true
+                if (!isOnlinePayment) {
+                    // Способ оплаты изменен, останавливаем таймер
+                    break
+                }
+
                 delay(Constants.DELAY_1_SECOND)
             }
         }
@@ -591,6 +599,14 @@ class OrderInfoViewModel(
                 return@launch
             }
 
+            // Проверяем, что способ оплаты все еще ONLINE
+            val paymentCode = currentState.incomingOrder?.paymentMethodCode ?: currentState.paymentMethodCodeFromNav
+            val isOnlinePayment = paymentCode?.equals(PAYMENT_ONLINE_CODE, ignoreCase = true) == true
+            if (!isOnlinePayment) {
+                // Способ оплаты изменен, не отменяем заказ
+                return@launch
+            }
+
             // Устанавливаем флаг, чтобы не повторять отмену
             setState { copy(isAutoCanceling = true) }
 
@@ -603,6 +619,15 @@ class OrderInfoViewModel(
                 stateBeforeCancel.isPaymentPaid == true ||
                 stateBeforeCancel.incomingOrder?.isClosed == true
             ) {
+                setState { copy(isAutoCanceling = false) }
+                return@launch
+            }
+
+            // Проверяем, что способ оплаты все еще ONLINE
+            val paymentCodeBeforeCancel = stateBeforeCancel.incomingOrder?.paymentMethodCode ?: stateBeforeCancel.paymentMethodCodeFromNav
+            val isOnlinePaymentBeforeCancel = paymentCodeBeforeCancel?.equals(PAYMENT_ONLINE_CODE, ignoreCase = true) == true
+            if (!isOnlinePaymentBeforeCancel) {
+                // Способ оплаты изменен, не отменяем заказ
                 setState { copy(isAutoCanceling = false) }
                 return@launch
             }
@@ -629,6 +654,15 @@ class OrderInfoViewModel(
                     stateBeforeRetry.isPaymentPaid == true ||
                     stateBeforeRetry.incomingOrder?.isClosed == true
                 ) {
+                    setState { copy(isAutoCanceling = false) }
+                    return@launch
+                }
+
+                // Проверяем, что способ оплаты все еще ONLINE
+                val paymentCodeBeforeRetry = stateBeforeRetry.incomingOrder?.paymentMethodCode ?: stateBeforeRetry.paymentMethodCodeFromNav
+                val isOnlinePaymentBeforeRetry = paymentCodeBeforeRetry?.equals(PAYMENT_ONLINE_CODE, ignoreCase = true) == true
+                if (!isOnlinePaymentBeforeRetry) {
+                    // Способ оплаты изменен, не отменяем заказ
                     setState { copy(isAutoCanceling = false) }
                     return@launch
                 }

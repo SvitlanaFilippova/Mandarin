@@ -67,7 +67,7 @@ private fun buildFullComment(
         }
     }
 
-    val paymentTypePart = String.format(OrderConstants.PAYMENT_TYPE_TECH_FORMAT, paymentType)
+    val paymentTypePart = OrderConstants.PAYMENT_TYPE_TECH_FORMAT.replace("%s", paymentType)
     val changePart = when {
         noChange == null -> null
         noChange -> OrderConstants.NO_CHANGE_COMMENT
