@@ -16,3 +16,4 @@ fun PaymentTypeServer.toDomain() = PaymentType(
     paymentTypeKind = paymentTypeKind
 )
 
+

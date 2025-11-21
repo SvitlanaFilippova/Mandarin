@@ -64,7 +64,8 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         whenCreated = order?.whenCreated?.toHumanDateTimeOrNull(),
         whenDelivered = order?.whenDelivered?.toHumanDateTimeOrNull(),
         whenSent = order?.whenSended?.toHumanDateTimeOrNull(),
-        isDelivery = orderType?.orderServiceType == OrderConstants.DELIVERY_TYPE_DELIVERY
+        isDelivery = orderType?.orderServiceType == OrderConstants.DELIVERY_TYPE_DELIVERY,
+        paymentDeadline = paymentDeadline
     )
 }
 

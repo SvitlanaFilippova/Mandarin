@@ -318,8 +318,12 @@
     </string>
     <string name="label_error">Ошибка</string>
     <string name="label_order_type">Способ получения</string>
-    <string name="label_payment_status">Статус оплаты</string>
+    <string name="label_payment_status">Статус</string>
     <string name="change_payment_method">Изменить способ оплаты</string>
+    <string name="change_payment_method_dialog_title">Изменить способ оплаты?</string>
+    <string name="change_payment_method_dialog_message">Меняем способ оплаты на \"%1$s\"? Изменить
+        обратно будет нельзя.
+    </string>
     <string name="label_order_items">Позиции заказа: %1$d</string>
     <string name="discount_applied">Применена скидка</string>
     <string name="label_total">Итого</string>
@@ -587,6 +591,7 @@
     <string name="error_payment_cancel_failed">Не удалось отменить платеж</string>
     <string name="payment_screen_title">Оплата заказа</string>
     <string name="payment_processing">Обработка платежа...</string>
+    <string name="payment_time_left">Осталось на оплату</string>
     <string name="payment_polling">Проверка статуса оплаты...</string>
     <string name="payment_success">Оплата успешно завершена</string>
     <string name="payment_retry">Повторить оплату</string>

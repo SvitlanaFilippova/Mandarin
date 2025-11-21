@@ -138,8 +138,9 @@ fun NavController.navigateToOrderInfo(
         navigate(
             route,
             navOptions {
-                popUpTo(CART_SCREEN_ROUTE) {
-                    inclusive = true
+                // Очищаем весь стек до меню, чтобы при нажатии "назад" пользователь попадал на меню
+                popUpTo(MENU_SCREEN_ROUTE) {
+                    inclusive = false
                 }
             }
         )

@@ -97,7 +97,8 @@ fun OrderInfoContentScreen(
                     onStartPayment = { onEvent(OrderInfoEvent.StartPayment) },
                     onRetryPayment = { onEvent(OrderInfoEvent.RetryPayment) },
                     onLoadPaymentTypes = { onEvent(OrderInfoEvent.LoadPaymentTypesForChange) },
-                    onChangePaymentMethod = { code -> onEvent(OrderInfoEvent.ChangePaymentMethod(code)) }
+                    onChangePaymentMethod = { code -> onEvent(OrderInfoEvent.ChangePaymentMethod(code)) },
+                    paymentTimeRemainingSeconds = if (isOnlinePaymentActive) state.paymentTimeRemainingSeconds else null
                 )
             }
         }

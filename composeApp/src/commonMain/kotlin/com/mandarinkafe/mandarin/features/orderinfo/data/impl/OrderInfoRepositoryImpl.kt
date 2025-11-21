@@ -17,6 +17,7 @@ import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 import io.github.aakira.napier.Napier
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.delay
 
 class OrderInfoRepositoryImpl(
     private val serverApi: OrdersHistoryServerApi,
@@ -36,7 +37,22 @@ class OrderInfoRepositoryImpl(
             return serverResult
         }
 
-        // Если сервер вернул ошибку (404 для новых заказов, или другая ошибка), fallback на iiko
+        // Если сервер вернул 404, делаем повторную попытку через 1 секунду
+        // Это нужно, потому что при создании заказа сервер может еще не успеть обработать заказ
+        delay(1000L)
+        val retryServerResult = tryGetOrderFromServer(id)
+        if (retryServerResult != null) {
+            return retryServerResult
+        }
+
+        // Если и вторая попытка не удалась, делаем третью попытку через еще 2 секунды
+        delay(2000L)
+        val thirdRetryServerResult = tryGetOrderFromServer(id)
+        if (thirdRetryServerResult != null) {
+            return thirdRetryServerResult
+        }
+
+        // Если все три попытки не удались, fallback на iiko
         return getOrderFromIikoDirectly(id)
     }
 

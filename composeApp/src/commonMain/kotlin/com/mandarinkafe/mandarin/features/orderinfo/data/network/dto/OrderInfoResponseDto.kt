@@ -10,6 +10,7 @@ data class OrderInfoResponseDto(
     val creationStatus: String?,
     val errorInfo: ErrorInfoDto?,
     val order: IncomingOrderDto?,
+    val paymentDeadline: Long? = null,
 )
 
 

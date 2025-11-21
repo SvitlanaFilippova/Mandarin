@@ -12,5 +12,6 @@ data class OrderDetailsResponse(
     val creationStatus: String? = null,
     val errorInfo: ErrorInfoDto? = null,
     val order: IncomingOrderDto? = null,
+    val paymentDeadline: Long? = null,
 ) : Response()
 

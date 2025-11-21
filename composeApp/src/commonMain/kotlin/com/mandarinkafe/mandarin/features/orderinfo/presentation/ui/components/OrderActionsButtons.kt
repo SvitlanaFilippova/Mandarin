@@ -41,21 +41,20 @@ fun OrderActionsButtons(
         modifier = Modifier.fillMaxWidth().padding(vertical = Dimens.MarginSmall8),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimens.MarginSmall8),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
         ) {
             when {
                 isClosed && hasItems -> {
                     if (orderRepeatingInProgress) {
                         ButtonWithCircularProgressIndicator(
-                            modifier = Modifier
-                                .padding(horizontal = Dimens.MarginSmall8)
+                            modifier = Modifier.weight(1f)
                         )
                     } else {
                         TextButton(
-                            modifier = Modifier
-                                .padding(horizontal = Dimens.MarginSmall8)
-                                .weight(1f),
+                            modifier = Modifier.weight(1f),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Colors.Green,
                             ),
@@ -81,9 +80,7 @@ fun OrderActionsButtons(
 
                 canBeCanceled -> {
                     ButtonWithText(
-                        modifier = Modifier
-                            .padding(horizontal = Dimens.MarginSmall8)
-                            .weight(1f),
+                        modifier = Modifier.weight(1f),
                         text = stringResource(MR.strings.cancel_order_button),
                         containerColor = Colors.Red,
                         onClick = onCancelClick
@@ -93,9 +90,7 @@ fun OrderActionsButtons(
             }
             if (fromOrderCreation) {
                 ButtonWithText(
-                    modifier = Modifier
-                        .padding(horizontal = Dimens.MarginSmall8)
-                        .weight(1f),
+                    modifier = Modifier.weight(1f),
                     text = stringResource(MR.strings.back_to_menu),
                     onClick = onBackToMenuCLick
                 )
@@ -107,7 +102,9 @@ fun OrderActionsButtons(
             TextButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = Dimens.MarginSmall8),
+                    .padding(
+                        horizontal = Dimens.MarginSmall8,
+                    ),
                 border = BorderStroke(width = Dimens.Border1, color = Colors.Red),
                 shape = RoundedCornerShape(Dimens.CornerRadius8),
                 onClick = onDeleteOrderCLick,

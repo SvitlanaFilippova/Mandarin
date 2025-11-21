@@ -17,9 +17,11 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryInteractor
 import com.mandarinkafe.mandarin.features.payment.domain.api.GetPaymentStatusUseCase
+import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEffect
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEvent
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentViewModel
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.PAYMENT_ONLINE_CODE
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForSdk
@@ -33,6 +35,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class OrderInfoViewModel(
     private val getOrderStatus: GetOrderStatusUseCase,
@@ -52,6 +56,7 @@ class OrderInfoViewModel(
     private var observeJob: Job? = null
     private var paymentStateObserverJob: Job? = null
     private var paymentEffectObserverJob: Job? = null
+    private var paymentTimerJob: Job? = null
 
     init {
         observePaymentState()
@@ -94,6 +99,9 @@ class OrderInfoViewModel(
             paymentViewModel.effect.collectLatest { effect ->
                 when (effect) {
                     is PaymentEffect.PaymentSuccess -> {
+                        // Останавливаем таймер при успешной оплате и сбрасываем флаг автоматической отмены
+                        stopPaymentTimer()
+                        setState { copy(isAutoCanceling = false) }
                         // Отправляем информацию об оплате в iiko с повторными попытками
                         val orderId = state.value.orderId
                         if (orderId != null) {
@@ -255,6 +263,7 @@ class OrderInfoViewModel(
                 setStatus(order)
                 if (order.isClosed) {
                     stopObservingOrderInfo()
+                    stopPaymentTimer()
                 }
             }
 
@@ -301,6 +310,9 @@ class OrderInfoViewModel(
     private fun stopObservingOrderInfo() {
         observeJob?.cancel()
         observeJob = null
+        // Останавливаем таймер, когда прекращаем наблюдение за заказом
+        stopPaymentTimer()
+        setState { copy(isAutoCanceling = false) }
     }
 
     private fun showError(msg: String? = "Что-то пошло не так") {
@@ -311,6 +323,9 @@ class OrderInfoViewModel(
     }
 
     private fun setStatus(status: IncomingOrder?) {
+        val previousOrder = state.value.incomingOrder
+        val previousPaymentDeadline = previousOrder?.paymentDeadline
+        
         setState { copy(isLoading = false, incomingOrder = status) }
 
         // Если заказ с онлайн-оплатой, проверяем статус платежа
@@ -324,8 +339,34 @@ class OrderInfoViewModel(
             ) == true
             
             if (isOnlinePayment) {
+                // Останавливаем таймер, если заказ закрыт или оплачен
+                if (order.isClosed || state.value.paymentStatus == PaymentStatus.SUCCEEDED || state.value.isPaymentPaid == true) {
+                    stopPaymentTimer()
+                    setState { copy(isAutoCanceling = false) }
+                    checkPaymentStatus(order.id)
+                    return@let
+                }
+                
                 checkPaymentStatus(order.id)
+                // Запускаем таймер оплаты, если есть дедлайн
+                // Также запускаем, если paymentDeadline появился (был null, стал не null) или изменился
+                val shouldStartTimer = order.paymentDeadline != null && 
+                    (previousPaymentDeadline == null || 
+                     previousPaymentDeadline != order.paymentDeadline || 
+                     paymentTimerJob == null)
+                
+                if (shouldStartTimer) {
+                    startPaymentTimer(order.paymentDeadline)
+                }
+                // Если paymentDeadline null, не запускаем таймер, но и не останавливаем существующий
+                // Таймер запустится автоматически при следующем обновлении, когда paymentDeadline появится
+            } else {
+                // Если не онлайн-оплата, останавливаем таймер
+                stopPaymentTimer()
             }
+        } ?: run {
+            // Если заказ null, останавливаем таймер
+            stopPaymentTimer()
         }
     }
 
@@ -487,10 +528,136 @@ class OrderInfoViewModel(
         setState { copy(isLoading = isLoading) }
     }
 
+    @OptIn(ExperimentalTime::class)
+    private fun startPaymentTimer(paymentDeadline: Long?) {
+        // Отменяем предыдущий таймер, если он был
+        paymentTimerJob?.cancel()
+        
+        if (paymentDeadline == null) {
+            setState { copy(paymentTimeRemainingSeconds = null) }
+            return
+        }
+
+        // Запускаем новый таймер
+        paymentTimerJob = viewModelScope.launch {
+            while (true) {
+                val currentTime = Clock.System.now().toEpochMilliseconds()
+                val remainingMillis = paymentDeadline - currentTime
+                val remainingSeconds = (remainingMillis / 1000).toInt().coerceAtLeast(0)
+
+                setState { copy(paymentTimeRemainingSeconds = remainingSeconds) }
+
+                if (remainingSeconds <= 0) {
+                    // Время истекло
+                    setState { copy(paymentTimeRemainingSeconds = 0) }
+                    // Запускаем автоматическую отмену заказа
+                    autoCancelOrderOnTimeout()
+                    break
+                }
+
+                // Проверяем, не оплачен ли уже заказ или не отменен ли он
+                val currentState = state.value
+                if (currentState.paymentStatus == PaymentStatus.SUCCEEDED ||
+                    currentState.isPaymentPaid == true ||
+                    currentState.incomingOrder?.isClosed == true
+                ) {
+                    break
+                }
+
+                delay(Constants.DELAY_1_SECOND)
+            }
+        }
+    }
+
+    private fun stopPaymentTimer() {
+        paymentTimerJob?.cancel()
+        paymentTimerJob = null
+        setState { copy(paymentTimeRemainingSeconds = null, isAutoCanceling = false) }
+    }
+
+    private fun autoCancelOrderOnTimeout() {
+        val orderId = state.value.orderId
+        if (orderId == null || state.value.isAutoCanceling) {
+            return // Уже идет отмена или нет ID заказа
+        }
+
+        viewModelScope.launch {
+            // Проверяем, что заказ еще не оплачен и не закрыт
+            val currentState = state.value
+            if (currentState.paymentStatus == PaymentStatus.SUCCEEDED ||
+                currentState.isPaymentPaid == true ||
+                currentState.incomingOrder?.isClosed == true
+            ) {
+                return@launch
+            }
+
+            // Устанавливаем флаг, чтобы не повторять отмену
+            setState { copy(isAutoCanceling = true) }
+
+            // Ждем 2 секунды на случай, если оплата пришла в последний момент
+            delay(2000L)
+
+            // Повторно проверяем статус перед отменой
+            val stateBeforeCancel = state.value
+            if (stateBeforeCancel.paymentStatus == PaymentStatus.SUCCEEDED ||
+                stateBeforeCancel.isPaymentPaid == true ||
+                stateBeforeCancel.incomingOrder?.isClosed == true
+            ) {
+                setState { copy(isAutoCanceling = false) }
+                return@launch
+            }
+
+            // Выполняем отмену с указанными параметрами
+            val cancelResult = cancelOrderUseCase.invoke(
+                id = orderId,
+                cancelCauseId = AUTO_CANCEL_CAUSE_ID,
+                cancelComment = AUTO_CANCEL_COMMENT
+            )
+
+            if (cancelResult is Resource.Success) {
+                // Обновляем статус заказа после успешной отмены
+                delay(ORDER_STATUS_UPD_DELAY_AFTER_CANCEL)
+                val result = getOrderStatus(orderId)
+                proceedOrderStatusResult(result)
+            } else {
+                // При ошибке повторяем попытку через 2 секунды (один раз)
+                delay(2000L)
+                
+                // Повторно проверяем статус
+                val stateBeforeRetry = state.value
+                if (stateBeforeRetry.paymentStatus == PaymentStatus.SUCCEEDED ||
+                    stateBeforeRetry.isPaymentPaid == true ||
+                    stateBeforeRetry.incomingOrder?.isClosed == true
+                ) {
+                    setState { copy(isAutoCanceling = false) }
+                    return@launch
+                }
+
+                // Повторная попытка отмены
+                val retryResult = cancelOrderUseCase.invoke(
+                    id = orderId,
+                    cancelCauseId = AUTO_CANCEL_CAUSE_ID,
+                    cancelComment = AUTO_CANCEL_COMMENT
+                )
+
+                if (retryResult is Resource.Success) {
+                    delay(ORDER_STATUS_UPD_DELAY_AFTER_CANCEL)
+                    val result = getOrderStatus(orderId)
+                    proceedOrderStatusResult(result)
+                } else {
+                    // Если и повторная попытка не удалась, сбрасываем флаг
+                    // Сервер сам отменит заказ
+                    setState { copy(isAutoCanceling = false) }
+                }
+            }
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         paymentStateObserverJob?.cancel()
         paymentEffectObserverJob?.cancel()
+        paymentTimerJob?.cancel()
     }
 
     private companion object {
@@ -498,6 +665,8 @@ class OrderInfoViewModel(
         const val ORDER_STATUS_UPD_DELAY_AFTER_CANCEL = 500L
         const val PAYMENT_SEND_RETRY_MAX_ATTEMPTS = 3
         const val PAYMENT_STATUS_UPDATE_DELAY_MS = 1000L
+        const val AUTO_CANCEL_CAUSE_ID = "15c16410-972a-402c-96f2-402ee4c05d21"
+        const val AUTO_CANCEL_COMMENT = "Онлайн-оплата не была вовремя произведена. Заказ отменён автоматически."
     }
 }
 

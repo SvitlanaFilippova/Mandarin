@@ -9,9 +9,9 @@ import com.mandarinkafe.mandarin.util.Resource
 
 class ChangeOrderRepositoryImpl(private val networkClient: IikoNetworkClient) :
     ChangeOrderRepository {
-    override suspend fun cancel(id: String): Resource<Unit> {
+    override suspend fun cancel(id: String, cancelCauseId: String?, cancelComment: String?): Resource<Unit> {
         val response = try {
-            networkClient.cancelOrder(id)
+            networkClient.cancelOrder(id, cancelCauseId, cancelComment)
         } catch (e: Exception) {
             return Resource.ErrorOther("Ошибка сети: ${e.message}")
         }
