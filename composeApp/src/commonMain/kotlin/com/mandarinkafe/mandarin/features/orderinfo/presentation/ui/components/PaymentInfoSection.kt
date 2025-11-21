@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +27,7 @@ import com.mandarinkafe.mandarin.features.payment.domain.models.toDisplayString
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import dev.icerock.moko.resources.StringResource
+import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -45,7 +48,6 @@ fun PaymentInfoSection(
     onLoadPaymentTypes: () -> Unit = {}, // Загрузить доступные способы оплаты
     onChangePaymentMethod: (String) -> Unit = {},
 ) {
-    var showDialog by remember { mutableStateOf(false) }
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Column(
             Modifier.padding(Dimens.MarginStandard16),
@@ -59,7 +61,7 @@ fun PaymentInfoSection(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Label(stringResource(MR.strings.payment_type))
+                    Label(text = stringResource(MR.strings.payment_type).replace(": *", ""))
 
                     MyCircularProgressIndicator(
                         strokeWidth = Dimens.ProgressBarStroke6,
@@ -67,7 +69,14 @@ fun PaymentInfoSection(
                     )
                 }
             } else {
-                PaymentMethodLabel(paymentMethodCode)
+                PaymentMethodSelector(
+                    paymentMethodCode = paymentMethodCode,
+                    paymentCanBeChanged = paymentCanBeChanged,
+                    isChangingPaymentMethod = isChangingPaymentMethod,
+                    availablePaymentTypes = availablePaymentTypes,
+                    onLoadPaymentTypes = onLoadPaymentTypes,
+                    onChangePaymentMethod = onChangePaymentMethod
+                )
             }
 
             // Показываем статус оплаты для онлайн-оплат (включая отменённые заказы), если не идет изменение способа оплаты
@@ -93,45 +102,66 @@ fun PaymentInfoSection(
                     onRetryPayment = onRetryPayment
                 )
             }
-
-            // Кнопка "Изменить способ оплаты"
-            if (paymentCanBeChanged && !isChangingPaymentMethod) {
-                ButtonWithText(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(MR.strings.change_payment_method),
-                    onClick = {
-                        onLoadPaymentTypes()
-                        showDialog = true
-                    }
-                )
-            }
         }
-    }
-
-    // Диалог выбора способа оплаты
-    if (showDialog && availablePaymentTypes.isNotEmpty()) {
-        ChangePaymentMethodDialog(
-            availablePaymentTypes = availablePaymentTypes,
-            currentPaymentMethodCode = paymentMethodCode,
-            onPaymentMethodSelected = { code ->
-                showDialog = false
-                onChangePaymentMethod(code)
-            },
-            onDismiss = { showDialog = false }
-        )
     }
 }
 
 @Composable
-private fun PaymentMethodLabel(paymentMethodCode: String?) {
-    val uiPaymentType = paymentMethodCode?.let { UiPaymentType.fromCode(it) }
-    uiPaymentType?.let {
-        LabelValue(
-            stringResource(MR.strings.payment_type).replace(": *", ""),
-            stringResource(it.nameRes)
-        )
-    }
+private fun PaymentMethodSelector(
+    paymentMethodCode: String?,
+    paymentCanBeChanged: Boolean,
+    isChangingPaymentMethod: Boolean,
+    availablePaymentTypes: List<PaymentType>,
+    onLoadPaymentTypes: () -> Unit,
+    onChangePaymentMethod: (String) -> Unit,
+) {
+    var showMenu by remember { mutableStateOf(false) }
+
+    paymentMethodCode
+        ?.let { UiPaymentType.fromCode(it) }
+        ?.let { uiPaymentType ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Label(text = stringResource(MR.strings.payment_type).replace(": *", ""))
+                Column {
+                    if (paymentCanBeChanged && !isChangingPaymentMethod) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable(onClick = {
+                                onLoadPaymentTypes()
+                                showMenu = true
+                            }),
+                        ) {
+                            Value(stringResource(uiPaymentType.nameRes))
+                            Icon(
+                                painterResource(MR.images.ic_arrow_drop_down),
+                                contentDescription = null,
+                                modifier = Modifier.size(Dimens.IconSize24),
+                                tint = Colors.WhiteTransparent75
+                            )
+                        }
+                        // Всплывающее меню для выбора способа оплаты
+                        ChangePaymentMethodMenu(
+                            availablePaymentTypes = availablePaymentTypes,
+                            currentPaymentMethodCode = paymentMethodCode,
+                            onPaymentMethodSelected = { code ->
+                                showMenu = false
+                                onChangePaymentMethod(code)
+                            },
+                            onDismiss = { showMenu = false },
+                            expanded = showMenu && availablePaymentTypes.isNotEmpty()
+                        )
+                    } else {
+                        Value(stringResource(uiPaymentType.nameRes))
+                    }
+                }
+            }
+        }
 }
+
 
 @Composable
 private fun PaymentStatusLabel(paymentStatus: PaymentStatus?) {

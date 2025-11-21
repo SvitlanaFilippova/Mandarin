@@ -10,7 +10,6 @@ import com.mandarinkafe.mandarin.features.infrastructure.data.network.AliveTermi
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.DiscountsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCustomerByPhoneRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.TerminalGroupsIdsRequest
-import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingPaymentDto

@@ -40,12 +40,13 @@ fun OrderStatusSection(deliveryStatus: UiDeliveryStatus, shouldShowRefundText: B
             verticalAlignment = Alignment.CenterVertically
         ) { Value(stringResource(deliveryStatus.nameRes)) }
 
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) { Label(stringResource(deliveryStatus.extraTextResId)) }
-
+        deliveryStatus.extraTextResId?.let {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) { Label(stringResource(deliveryStatus.extraTextResId)) }
+        }
 
         // Сообщение об отменённом заказе с успешной онлайн-оплатой
         if (shouldShowRefundText) {

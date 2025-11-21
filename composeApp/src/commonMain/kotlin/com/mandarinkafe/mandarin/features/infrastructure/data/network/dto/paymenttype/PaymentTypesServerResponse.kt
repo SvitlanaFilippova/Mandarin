@@ -8,3 +8,4 @@ data class PaymentTypesServerResponse(
     val paymentTypes: List<PaymentTypeServer>,
 ) : Response()
 
+

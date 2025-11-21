@@ -8,7 +8,7 @@ import dev.icerock.moko.resources.StringResource
 enum class UiDeliveryStatus(
     val apiName: String,
     val nameRes: StringResource,
-    val extraTextResId: StringResource,
+    val extraTextResId: StringResource?,
     val iconRes: ImageResource,
 ) {
     UNCONFIRMED(
@@ -68,7 +68,7 @@ enum class UiDeliveryStatus(
     CANCELLED(
         "Cancelled",
         MR.strings.delivery_status_cancelled,
-        MR.strings.delivery_status_extra_cancelled,
+        null,
         MR.images.ic_no_food
     )
 }

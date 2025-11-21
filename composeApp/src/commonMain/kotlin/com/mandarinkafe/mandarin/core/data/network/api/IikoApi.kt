@@ -12,8 +12,6 @@ import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCus
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.TerminalGroupsIdsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.AliveTerminalGroupsResponse
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.TerminalGroupsIdsResponse
-import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesRequest
-import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesResponse
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.AddPaymentsRequest

@@ -17,6 +17,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.Order
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
+import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
@@ -55,8 +56,10 @@ fun OrderInfoScreen(
         onEvent(OrderInfoEvent.SetInitData(orderID, paymentMethodCode))
     }
 
-    // Автоматически запускаем оплату, если заказ только что создан и это онлайн-оплата
-    LaunchedEffect(fromOrderCreation, state.isOnlinePayment, state.incomingOrder) {
+    // Автоматически запускаем оплату, если:
+    // 1. Заказ только что создан и это онлайн-оплата
+    // 2. ИЛИ заказ не оплачен, это онлайн-оплата, и заказ не закрыт
+    LaunchedEffect(fromOrderCreation, state.isOnlinePayment, state.incomingOrder, state.isPaymentPaid) {
         if (shouldAutoStartPayment(fromOrderCreation, state)) {
             // Небольшая задержка, чтобы экран успел загрузиться
             delay(Constants.DELAY_FOR_UI_RENDERING)
@@ -166,9 +169,16 @@ private fun shouldAutoStartPayment(
     fromOrderCreation: Boolean,
     state: OrderInfoState,
 ): Boolean {
-    return fromOrderCreation &&
-            state.isOnlinePayment &&
-            state.incomingOrder != null && !state.incomingOrder.isClosed
+    // Проверяем базовые условия: онлайн-оплата и заказ не закрыт
+    if (!state.isOnlinePayment || state.incomingOrder == null || state.incomingOrder.isClosed) {
+        return false
+    }
+    
+    // Запускаем оплату если:
+    // 1. Заказ только что создан
+    // 2. ИЛИ заказ не оплачен (isPaymentPaid != true и paymentStatus != SUCCEEDED)
+    return fromOrderCreation || 
+            (state.isPaymentPaid != true && state.paymentStatus != PaymentStatus.SUCCEEDED)
 }
 
 private fun canStartPayment(state: OrderInfoState): Boolean {
