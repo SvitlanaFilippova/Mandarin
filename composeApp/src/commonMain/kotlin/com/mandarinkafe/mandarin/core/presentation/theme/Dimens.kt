@@ -63,4 +63,9 @@ object Dimens {
     val PriceMinWidthForCustomizeItem = 64.dp
     val CodeBoxWidth = 36.dp
     val CodeBoxHeight = 48.dp
+
+    // Screen width breakpoints for adaptive bottom navigation
+    val BottomNavBreakpointSmall = 360.dp
+    val BottomNavBreakpointMedium = 400.dp
+    val BottomNavBreakpointLarge = 450.dp
 }
