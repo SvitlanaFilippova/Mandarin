@@ -278,7 +278,7 @@ class OrderInfoViewModel(
                 }
             }
 
-            is Resource.ErrorNoInternet -> showError("Нет подключения к интернету")
+            is Resource.ErrorNoInternet -> showError(NO_INTERNET_ERROR_MESSAGE)
 
             is Resource.Idle -> {
                 // Запрос был проигнорирован из-за TTL (слишком частый запрос)
@@ -449,7 +449,7 @@ class OrderInfoViewModel(
 
                 is Resource.ErrorNoInternet -> {
                     setState { copy(isChangingPaymentMethod = false) }
-                    showError("Нет подключения к интернету")
+                    showError(NO_INTERNET_ERROR_MESSAGE)
                 }
 
                 else -> {
@@ -493,7 +493,7 @@ class OrderInfoViewModel(
 
             is Resource.ErrorNoInternet -> {
                 setState { copy(isChangingPaymentMethod = false) }
-                showError("Нет подключения к интернету")
+                showError(NO_INTERNET_ERROR_MESSAGE)
             }
 
             is Resource.Idle -> {
@@ -591,6 +591,7 @@ class OrderInfoViewModel(
         const val PAYMENT_SEND_RETRY_MAX_ATTEMPTS = 3
         const val PAYMENT_STATUS_UPDATE_DELAY_MS = 1000L
         private const val DEFAULT_ERROR_MESSAGE = "Что-то пошло не так"
+        private const val NO_INTERNET_ERROR_MESSAGE = "Нет подключения к интернету"
     }
 }
 
