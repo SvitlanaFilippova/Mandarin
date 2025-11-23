@@ -188,7 +188,7 @@
     <string name="choose_address">Нужно выбрать адрес доставки</string>
     <string name="delivery_type">Способ получения: *</string>
     <string name="payment_type">Способ оплаты: *</string>
-    <string name="payment_online">Картой онлайн</string>
+    <string name="payment_online">Онлайн</string>
     <string name="payment_self_card">Картой при получении</string>
     <string name="payment_cash">Наличными</string>
     <string name="no_change_needed">Без сдачи</string>
