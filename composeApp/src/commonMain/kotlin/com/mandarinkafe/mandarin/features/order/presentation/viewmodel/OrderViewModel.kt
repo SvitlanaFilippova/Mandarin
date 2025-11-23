@@ -475,6 +475,7 @@ class OrderViewModel(
                 deliveryInfo.deliveryZone == null -> 0
                 cartSumWithDiscount < deliveryInfo.deliveryZone.freeDeliveryThreshold ->
                     deliveryInfo.deliveryZone.deliveryPrice
+
                 else -> 0
             }
             val newTotalOrderSum = cartSumWithDiscount + newDeliveryCost.toDouble()
@@ -583,7 +584,14 @@ class OrderViewModel(
         val paymentMethodCode = savedChosenPaymentType?.code
         if (savedChosenPaymentType == UiPaymentType.ONLINE) {
             val userPhone = savedUserPhone.formatPhoneNumberForSdk()
-            sendEffect(OrderEffect.StartOnlinePayment(order.id, order.sum ?: 0.0, userPhone, paymentMethodCode))
+            sendEffect(
+                OrderEffect.StartOnlinePayment(
+                    order.id,
+                    order.sum ?: 0.0,
+                    userPhone,
+                    paymentMethodCode
+                )
+            )
         } else {
             // Для других способов оплаты - обычный флоу
             sendEffect(ShowSuccess(order.id, paymentMethodCode))

@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class AuthTokens(
     val accessToken: String,
     val refreshToken: String,
-    val tokenType: String
+    val tokenType: String,
 )

@@ -21,7 +21,6 @@ fun OrderProblemSection(errorInfo: ErrorInfo?) {
                 Modifier.padding(Dimens.MarginStandard16),
                 verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
             ) {
-
                 LabelValue(stringResource(MR.strings.label_error), it.message.toString())
             }
         }

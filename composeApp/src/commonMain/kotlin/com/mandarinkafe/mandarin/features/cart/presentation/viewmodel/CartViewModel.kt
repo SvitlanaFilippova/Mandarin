@@ -68,7 +68,8 @@ class CartViewModel(
             setLoading()
             resetError()
             cartInteractor.forceRefresh()
-            updateRecommends(state.value.cartItems.filter { it.quantity > 0 }.map { it.customizedMeal.meal }.toSet())
+            updateRecommends(state.value.cartItems.filter { it.quantity > 0 }
+                .map { it.customizedMeal.meal }.toSet())
         }
     }
 
@@ -89,7 +90,8 @@ class CartViewModel(
             is Success -> {
                 setData(resource.data)
                 // Фильтруем элементы с quantity=0 для рекомендаций
-                updateRecommends(resource.data?.filter { it.quantity > 0 }?.map { it.customizedMeal.meal }?.toSet())
+                updateRecommends(resource.data?.filter { it.quantity > 0 }
+                    ?.map { it.customizedMeal.meal }?.toSet())
             }
 
             is Loading, is Idle -> {
@@ -97,7 +99,7 @@ class CartViewModel(
             }
 
             is ErrorNoInternet -> {
-                if (state.value.cartItems.filter { it.quantity > 0 }.isEmpty()) {
+                if (state.value.cartItems.none { it.quantity > 0 }) {
                     setError(resource)
                 } else {
                     setLoading(false)
@@ -331,7 +333,7 @@ class CartViewModel(
     private fun setError(resource: Resource<*>) {
         setLoading(false)
 
-        val hasItems = state.value.cartItems.filter { it.quantity > 0 }.isNotEmpty()
+        val hasItems = state.value.cartItems.any { it.quantity > 0 }
 
         val error = when (resource) {
             is ErrorEmptyData -> UiError.CartEmpty

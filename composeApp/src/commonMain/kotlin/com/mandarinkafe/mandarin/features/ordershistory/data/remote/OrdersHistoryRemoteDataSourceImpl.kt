@@ -107,7 +107,10 @@ class OrdersHistoryRemoteDataSourceImpl(
         }
     }
 
-    override suspend fun changePaymentMethod(orderId: String, paymentMethodCode: String): Resource<Unit> {
+    override suspend fun changePaymentMethod(
+        orderId: String,
+        paymentMethodCode: String,
+    ): Resource<Unit> {
         val token = authRepository.getAccessToken()
         if (token == null) {
             Napier.e("OrdersHistoryRemoteDataSource, changePaymentMethod - No access token, orderId=$orderId")
@@ -115,7 +118,8 @@ class OrdersHistoryRemoteDataSourceImpl(
         }
 
         return try {
-            val response = api.changePaymentMethod(buildAuthToken(token), orderId, paymentMethodCode)
+            val response =
+                api.changePaymentMethod(buildAuthToken(token), orderId, paymentMethodCode)
 
             when (response.resultCode) {
                 NO_CONNECTION -> {

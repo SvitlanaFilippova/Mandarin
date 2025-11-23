@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.orderinfo.domain.impl
 
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
 import com.mandarinkafe.mandarin.features.menu.domain.toMealAdditional
 import com.mandarinkafe.mandarin.features.orderinfo.domain.Mapper.toCartItem
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.RepeatOrderInteractor
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.first
 
 class RepeatOrderInteractorImpl(
     private val menuCache: MenuCache,
+    private val cartInteractor: CartInteractor,
 ) : RepeatOrderInteractor {
 
     override suspend fun mapToCartItems(incoming: List<IncomingOrderItem>): RepeatOrderResult {
@@ -57,5 +59,11 @@ class RepeatOrderInteractorImpl(
             cartItems = validItems,
             hasInvalidItems = invalidFound
         )
+    }
+
+    override suspend fun repeatOrder(incoming: List<IncomingOrderItem>): RepeatOrderResult {
+        val result = mapToCartItems(incoming)
+        result.cartItems.forEach { cartInteractor.addItem(it) }
+        return result
     }
 }

@@ -120,7 +120,7 @@ object Mapper {
         }
 
         // Получаем добавки
-        val adds = addsIds.mapNotNull { addId ->
+        addsIds.mapNotNull { addId ->
             menuCache.getMealById(addId)?.toMealAdditional()
         }
 

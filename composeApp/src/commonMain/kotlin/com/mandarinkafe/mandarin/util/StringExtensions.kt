@@ -112,7 +112,7 @@ fun String?.toVisibleComment(): String {
     } else {
         this.trim()
     }
-    
+
     // Фильтруем информацию об оплате из комментария
     return commentWithoutTechPart.filterPaymentInfoForUser()
 }
@@ -127,7 +127,7 @@ fun String?.filterPaymentInfoForUser(): String {
     // Регулярное выражение для поиска [оплата: ...] (включая возможные пробелы)
     val paymentInfoPattern = Regex("\\[оплата:\\s*[^\\]]+\\]")
     var result = paymentInfoPattern.replace(this, "")
-    
+
     // Убираем разделители, которые остались после удаления оплаты
     // Удаляем ". " сразу после || (если оплата была первой технической частью)
     result = result.replace(Regex("\\|\\|\\s*\\.\\s+"), " || ")
@@ -143,7 +143,7 @@ fun String?.filterPaymentInfoForUser(): String {
     result = result.replace(Regex("^\\.\\s+"), "")
     // Убираем лишние пробелы вокруг ||
     result = result.replace(Regex("\\s*\\|\\|\\s*"), " || ")
-    
+
     return result.trim()
 }
 

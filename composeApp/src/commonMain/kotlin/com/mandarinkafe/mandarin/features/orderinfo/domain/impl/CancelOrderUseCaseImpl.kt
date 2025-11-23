@@ -12,10 +12,15 @@ class CancelOrderUseCaseImpl(
     private val ordersHistoryInteractor: OrdersHistoryInteractor,
     private val cancelPaymentUseCase: CancelPaymentUseCase,
 ) : CancelOrderUseCase {
-    override suspend fun invoke(id: String, cancelCauseId: String?, cancelComment: String?): Resource<Unit> {
+    override suspend fun invoke(
+        id: String,
+        cancelCauseId: String?,
+        cancelComment: String?,
+    ): Resource<Unit> {
         // Проверяем, был ли заказ с онлайн-оплатой
         val savedOrder = ordersHistoryInteractor.getOrderById(id)
-        val isOnlinePayment = savedOrder?.paymentMethodCode?.equals(PAYMENT_ONLINE_CODE, ignoreCase = true) == true
+        val isOnlinePayment =
+            savedOrder?.paymentMethodCode?.equals(PAYMENT_ONLINE_CODE, ignoreCase = true) == true
 
         if (isOnlinePayment) {
             // Отменяем платеж на сервере (сервер сам разберется, нужно ли что-то делать)

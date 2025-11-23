@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.payment.presentation.viewmodel
 
+import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentInfo
 import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 import com.mandarinkafe.mandarin.util.presentation.BaseContract
 import dev.icerock.moko.resources.StringResource
@@ -18,7 +19,10 @@ sealed interface PaymentContract {
         data object RetryPayment : PaymentEvent
         data object CancelPayment : PaymentEvent
         data object DismissError : PaymentEvent
-        data object HandleReturnFromBrowser : PaymentEvent // Обработка возврата из браузера после 3DS
+        data object HandleReturnFromBrowser :
+            PaymentEvent // Обработка возврата из браузера после 3DS
+
+        data class CheckPaymentStatus(val orderId: String) : PaymentEvent
     }
 
     sealed interface PaymentEffect : BaseContract.BaseEffect {
@@ -26,6 +30,8 @@ sealed interface PaymentContract {
         data class PaymentError(val message: StringResource) : PaymentEffect
         data class ShowCancelDialog(val orderId: String) : PaymentEffect
         data object PaymentCanceled : PaymentEffect
+        data class PaymentStatusChecked(val orderId: String, val paymentInfo: PaymentInfo?) :
+            PaymentEffect
     }
 
     data class PaymentState(

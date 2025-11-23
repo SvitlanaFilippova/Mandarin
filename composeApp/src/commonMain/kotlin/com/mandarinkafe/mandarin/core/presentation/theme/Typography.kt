@@ -79,7 +79,7 @@ object Typography {
         color = Colors.White
     )
 
-       val CartButtonSmallTextStyle = TextStyle(
+    val CartButtonSmallTextStyle = TextStyle(
         fontSize = Dimens.TextSizeSmall11,
         fontWeight = FontWeight.Medium,
         color = Colors.White

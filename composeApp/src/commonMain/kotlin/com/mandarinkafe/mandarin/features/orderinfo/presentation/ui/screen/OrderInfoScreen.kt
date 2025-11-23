@@ -59,7 +59,12 @@ fun OrderInfoScreen(
     // Автоматически запускаем оплату, если:
     // 1. Заказ только что создан и это онлайн-оплата
     // 2. ИЛИ заказ не оплачен, это онлайн-оплата, и заказ не закрыт
-    LaunchedEffect(fromOrderCreation, state.isOnlinePayment, state.incomingOrder, state.isPaymentPaid) {
+    LaunchedEffect(
+        fromOrderCreation,
+        state.isOnlinePayment,
+        state.incomingOrder,
+        state.isPaymentPaid
+    ) {
         if (shouldAutoStartPayment(fromOrderCreation, state)) {
             // Небольшая задержка, чтобы экран успел загрузиться
             delay(Constants.DELAY_FOR_UI_RENDERING)
@@ -173,12 +178,12 @@ private fun shouldAutoStartPayment(
     if (!state.isOnlinePayment || state.incomingOrder == null || state.incomingOrder.isClosed) {
         return false
     }
-    
+
     // Запускаем оплату если:
     // 1. Заказ только что создан
     // 2. ИЛИ заказ не оплачен (isPaymentPaid != true и paymentStatus != SUCCEEDED)
-    return fromOrderCreation || 
-            (state.isPaymentPaid != true && state.paymentStatus != PaymentStatus.SUCCEEDED)
+    return fromOrderCreation ||
+            state.isPaymentPaid != true && state.paymentStatus != PaymentStatus.SUCCEEDED
 }
 
 private fun canStartPayment(state: OrderInfoState): Boolean {

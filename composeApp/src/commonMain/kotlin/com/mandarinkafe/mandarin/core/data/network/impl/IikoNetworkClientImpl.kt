@@ -128,7 +128,11 @@ class IikoNetworkClientImpl(
         }
     }
 
-    override suspend fun cancelOrder(id: String, cancelCauseId: String?, cancelComment: String?): Response {
+    override suspend fun cancelOrder(
+        id: String,
+        cancelCauseId: String?,
+        cancelComment: String?,
+    ): Response {
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
             val orgId = ensureOrganizationId()

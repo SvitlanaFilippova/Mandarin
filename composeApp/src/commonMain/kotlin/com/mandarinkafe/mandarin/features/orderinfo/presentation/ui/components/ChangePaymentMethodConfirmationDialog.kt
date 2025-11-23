@@ -17,7 +17,7 @@ fun ChangePaymentMethodConfirmationDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(MR.strings.change_payment_method_dialog_title)) },
-        text = { 
+        text = {
             Text(stringResource(MR.strings.change_payment_method_dialog_message, paymentMethodName))
         },
         containerColor = Colors.DarkGrey,

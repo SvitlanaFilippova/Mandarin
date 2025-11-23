@@ -52,8 +52,8 @@
         d="M799.82 309.87C792.696 310.878 786.108 305.906 785.124 298.78C784.139 291.651 789.132 285.079 796.262 284.118C803.36 283.16 809.895 288.127 810.876 295.219C811.856 302.314 806.912 308.867 799.82 309.87Z"
         fill="#434A54" />
     <defs>
-        <linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_8_76" x1="385.317" x2="323.887" y1="423.749"
-            y2="394.457">
+        <linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_8_76" x1="385.317"
+            x2="323.887" y1="423.749" y2="394.457">
             <stop stop-color="#32364F" />
             <stop offset="1" stop-color="#484B59" />
         </linearGradient>

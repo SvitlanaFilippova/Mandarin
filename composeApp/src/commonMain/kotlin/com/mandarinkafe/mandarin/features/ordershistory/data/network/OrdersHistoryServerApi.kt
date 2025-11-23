@@ -197,9 +197,13 @@ class OrdersHistoryServerApi(
         }
     }
 
-    suspend fun changePaymentMethod(token: String, orderId: String, paymentMethodCode: String): Response {
+    suspend fun changePaymentMethod(
+        token: String,
+        orderId: String,
+        paymentMethodCode: String,
+    ): Response {
         return try {
-            val request = ChangePaymentMethodRequest(payment_method_code = paymentMethodCode)
+            val request = ChangePaymentMethodRequest(paymentMethodCode = paymentMethodCode)
             val httpResponse = client.patch("/orders/history/$orderId/payment-method") {
                 header(HEADER_API_KEY, key)
                 header(HEADER_AUTHORIZATION, token)

@@ -48,6 +48,7 @@ class PaymentViewModel(
                 event.amount,
                 event.userPhone
             )
+            is PaymentEvent.CheckPaymentStatus -> checkPaymentStatus(event.orderId)
         }
     }
 
@@ -373,6 +374,32 @@ class PaymentViewModel(
 
     private fun sendErrorEffect(message: StringResource) {
         sendEffect(PaymentEffect.PaymentError(message))
+    }
+
+    private fun checkPaymentStatus(orderId: String) {
+        viewModelScope.launch {
+            val result = getPaymentStatusUseCase(orderId)
+            when (result) {
+                is Resource.Success -> {
+                    sendEffect(
+                        PaymentEffect.PaymentStatusChecked(
+                            orderId = orderId,
+                            paymentInfo = result.data
+                        )
+                    )
+                }
+
+                else -> {
+                    // Игнорируем ошибки получения статуса платежа (платеж может не существовать)
+                    sendEffect(
+                        PaymentEffect.PaymentStatusChecked(
+                            orderId = orderId,
+                            paymentInfo = null
+                        )
+                    )
+                }
+            }
+        }
     }
 
     override fun onCleared() {

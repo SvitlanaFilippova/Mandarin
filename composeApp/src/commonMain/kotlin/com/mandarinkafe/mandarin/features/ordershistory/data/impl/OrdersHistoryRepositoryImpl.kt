@@ -20,7 +20,10 @@ class OrdersHistoryRepositoryImpl(
         remoteDataSource.removeOrderById(id)
     }
 
-    override suspend fun changePaymentMethod(orderId: String, paymentMethodCode: String): Resource<Unit> {
+    override suspend fun changePaymentMethod(
+        orderId: String,
+        paymentMethodCode: String,
+    ): Resource<Unit> {
         return remoteDataSource.changePaymentMethod(orderId, paymentMethodCode)
     }
 }

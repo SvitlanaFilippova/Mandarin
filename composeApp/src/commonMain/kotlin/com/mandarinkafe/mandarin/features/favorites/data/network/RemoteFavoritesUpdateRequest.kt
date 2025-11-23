@@ -8,5 +8,5 @@ import kotlinx.serialization.Serializable
 data class RemoteFavoritesUpdateRequest(
     val favorites: List<FavoriteDto>,
     @SerialName("last_updated")
-    val lastUpdated: Long = 0L
+    val lastUpdated: Long = 0L,
 )

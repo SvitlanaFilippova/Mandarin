@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
 data class CartRequest(
     val items: List<CartItemDto>,
     @SerialName("last_updated")
-    val lastUpdated: Long = 0L
+    val lastUpdated: Long = 0L,
 )
 
