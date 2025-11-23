@@ -46,10 +46,11 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         errorInfo = errorInfo?.toDomain(),
         phone = order?.phone,
         deliveryAddress = order?.deliveryPoint?.toAddress(),
-        comment = order?.comment?.toVisibleComment(),
+        comment = order?.comment, // Храним полный комментарий, фильтрация будет в UI
         customerName = order?.customer?.name,
         items = order?.items?.toDomainWithAdds(addons) ?: emptyList(),
         paymentName = order?.payments?.firstOrNull()?.paymentType?.name,
+        paymentMethodCode = order?.paymentMethodCode,
         status = order?.status?.toDeliveryStatus() ?: DeliveryStatus.UNCONFIRMED,
         cancelInfo = cancelInfo,
         orderType = orderType,
@@ -63,7 +64,8 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         whenCreated = order?.whenCreated?.toHumanDateTimeOrNull(),
         whenDelivered = order?.whenDelivered?.toHumanDateTimeOrNull(),
         whenSent = order?.whenSended?.toHumanDateTimeOrNull(),
-        isDelivery = orderType?.orderServiceType == OrderConstants.DELIVERY_TYPE_DELIVERY
+        isDelivery = orderType?.orderServiceType == OrderConstants.DELIVERY_TYPE_DELIVERY,
+        paymentDeadline = paymentDeadline
     )
 }
 

@@ -58,16 +58,16 @@ private fun buildFullComment(
     // Определяем тип оплаты для комментария по коду
     // paymentTypeCode может быть: "CASH", "CARD" (для ONLINE), "BANK"
     val paymentType = when (paymentTypeCode.uppercase()) {
-        PAYMENT_CASH_CODE -> "Наличными"
-        PAYMENT_BANK_CODE -> "Картой при получении"
-        PAYMENT_ONLINE_CODE -> "Онлайн-оплата"
+        PAYMENT_CASH_CODE -> "наличные"
+        PAYMENT_BANK_CODE -> "картой при получении"
+        PAYMENT_ONLINE_CODE -> "онлайн-оплата"
         else -> {
             // Если не распознали, используем код как есть
-            paymentTypeCode
+            paymentTypeCode.lowercase()
         }
     }
 
-    val paymentTypePart = OrderConstants.PAYMENT_TYPE_COMMENT_PREFIX + paymentType
+    val paymentTypePart = OrderConstants.PAYMENT_TYPE_TECH_FORMAT.replace("%s", paymentType)
     val changePart = when {
         noChange == null -> null
         noChange -> OrderConstants.NO_CHANGE_COMMENT

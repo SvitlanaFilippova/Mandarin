@@ -12,6 +12,7 @@ expect class YooKassaPaymentService {
         amount: Double,
         subtitle: String,
         userPhone: String,
+        orderId: String,
     ): PaymentResult
 
     /**

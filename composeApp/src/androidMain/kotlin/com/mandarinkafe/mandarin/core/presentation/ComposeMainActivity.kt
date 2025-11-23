@@ -1,11 +1,18 @@
 package com.mandarinkafe.mandarin.core.presentation
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import com.mandarinkafe.mandarin.features.payment.YooKassaActivityHelper
+import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEvent
+import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentViewModel
 import com.mandarinkafe.mandarin.kmp.MainScreen
+import io.github.aakira.napier.Napier
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.httpUrlFetcher
 import io.kamel.core.config.takeFrom
@@ -22,6 +29,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.http.HttpHeaders
+import org.koin.mp.KoinPlatform.getKoin
 import java.io.File
 
 class ComposeMainActivity : AppCompatActivity() {
@@ -38,6 +46,48 @@ class ComposeMainActivity : AppCompatActivity() {
                 MainScreen()
             }
         }
+
+        // Обрабатываем deep link после инициализации UI, чтобы не блокировать запуск
+        // Используем Handler для отложенной обработки, чтобы приложение успело инициализироваться
+        Handler(Looper.getMainLooper()).post {
+            handleDeepLink(intent)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // Устанавливаем новый intent для правильной обработки deep link
+        setIntent(intent)
+        // Обрабатываем deep link, когда приложение уже запущено
+        // Используем Handler для отложенной обработки, чтобы не блокировать UI
+        Handler(Looper.getMainLooper()).post {
+            handleDeepLink(intent)
+        }
+    }
+
+    private fun handleDeepLink(intent: Intent) {
+        val data: Uri? = intent.data
+        if (isPaymentReturnDeepLink(data)) {
+            // Извлекаем order_id из query параметров
+            val orderId = data?.getQueryParameter("order_id")
+            if (orderId != null) {
+                // Получаем PaymentViewModel через Koin и отправляем событие для обработки возврата
+                try {
+                    val paymentViewModel: PaymentViewModel = getKoin().get()
+                    paymentViewModel.onEvent(PaymentEvent.HandleReturnFromBrowser)
+                } catch (e: Exception) {
+                    Napier.w("handleDeepLink", e)
+                    // Если ViewModel еще не создан, это нормально - polling запустится позже
+                }
+            }
+        }
+    }
+
+    private fun isPaymentReturnDeepLink(uri: Uri?): Boolean {
+        if (uri == null) return false
+        return uri.scheme == "mandarin" &&
+                uri.host == "payment" &&
+                uri.path == "/return"
     }
 
     // настраиваем Kamel, чтобы работало кэширование изображений

@@ -10,7 +10,6 @@ import com.mandarinkafe.mandarin.features.infrastructure.data.network.AliveTermi
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.DiscountsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCustomerByPhoneRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.TerminalGroupsIdsRequest
-import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesRequest
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingPaymentDto
@@ -61,20 +60,6 @@ class IikoNetworkClientImpl(
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("Ошибка getLoyaltyCustomerInfo", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
-        }
-    }
-
-    override suspend fun getPaymentTypes(): Response {
-        if (!isConnected()) {
-            return Response().apply { resultCode = NO_CONNECTION }
-        }
-        return try {
-            val orgId = ensureOrganizationId()
-            val response = iikoApi.getPaymentTypes(body = PaymentTypesRequest(listOf(orgId)))
-            response.apply { resultCode = HTTP_SUCCESS }
-        } catch (e: Throwable) {
-            Napier.e("Ошибка getPaymentTypes", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
@@ -143,12 +128,16 @@ class IikoNetworkClientImpl(
         }
     }
 
-    override suspend fun cancelOrder(id: String): Response {
+    override suspend fun cancelOrder(
+        id: String,
+        cancelCauseId: String?,
+        cancelComment: String?,
+    ): Response {
         if (!isConnected()) return Response().apply { resultCode = NO_CONNECTION }
         return try {
             val orgId = ensureOrganizationId()
             val response = iikoApi.cancelOrderById(
-                body = CancelOrderRequest(orgId, id)
+                body = CancelOrderRequest(orgId, id, cancelCauseId, cancelComment)
             )
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {

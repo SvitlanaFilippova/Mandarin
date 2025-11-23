@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import com.mandarinkafe.mandarin.shared.BuildKonfig
 import kotlinx.coroutines.suspendCancellableCoroutine
 import ru.yoomoney.sdk.kassa.payments.Checkout
 import ru.yoomoney.sdk.kassa.payments.checkoutParameters.Amount
@@ -65,6 +66,7 @@ object YooKassaActivityHelper {
         clientApplicationKey: String,
         shopId: String,
         userPhone: String,
+        orderId: String,
     ): PaymentResult = suspendCancellableCoroutine { continuation ->
         val activity = currentActivity
         if (activity == null) {
@@ -95,7 +97,8 @@ object YooKassaActivityHelper {
                 subtitle = subtitle,
                 clientApplicationKey = clientApplicationKey,
                 shopId = shopId,
-                userPhone = userPhone
+                userPhone = userPhone,
+                orderId = orderId
             )
             launchPaymentIntent(activity, launcher, paymentParameters)
         } catch (e: Exception) {
@@ -115,7 +118,13 @@ object YooKassaActivityHelper {
         clientApplicationKey: String,
         shopId: String,
         userPhone: String,
+        orderId: String,
     ): PaymentParameters {
+        // Формируем customReturnUrl для возврата после 3DS проверки
+        // Сервер должен редиректить на mandarin://payment/return?order_id=...
+        val baseUrl = BuildKonfig.SERVER_BASE_URL.removeSuffix("/")
+        val customReturnUrl = "$baseUrl/payment/return?order_id=$orderId"
+
         return PaymentParameters(
             amount = Amount(
                 value = amount.toBigDecimal(),
@@ -133,7 +142,8 @@ object YooKassaActivityHelper {
             ),
             userPhoneNumber = userPhone,
             customerId = userPhone, // для возможности сохранения и привязки карты к ЛК
-            authCenterClientId = null
+            authCenterClientId = null,
+            customReturnUrl = customReturnUrl // URL для возврата после 3DS проверки
         )
     }
 

@@ -42,5 +42,12 @@ class ServerNetworkClientImpl(
         }
         return serverApi.getDeliveryZones()
     }
+
+    override suspend fun getPaymentTypes(): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return serverApi.getPaymentTypes()
+    }
 }
 

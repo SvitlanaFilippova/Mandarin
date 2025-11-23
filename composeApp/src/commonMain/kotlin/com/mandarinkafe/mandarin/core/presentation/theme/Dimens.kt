@@ -60,7 +60,14 @@ object Dimens {
     val BannerIndicatorActiveWidth32 = 32.dp
     val BannerIndicatorInactiveWidth8 = 8.dp
     val BannerIndicatorSize4 = 4.dp
+    val DeliveryChooserHeight = 56.dp
+    val PaymentChooserHeight = 72.dp
     val PriceMinWidthForCustomizeItem = 64.dp
     val CodeBoxWidth = 36.dp
     val CodeBoxHeight = 48.dp
+
+    // Screen width breakpoints for adaptive bottom navigation
+    val BottomNavBreakpointSmall = 360.dp
+    val BottomNavBreakpointMedium = 400.dp
+    val BottomNavBreakpointLarge = 450.dp
 }

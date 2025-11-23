@@ -7,6 +7,7 @@ enum class PaymentStatus {
     PENDING,
     SUCCEEDED,
     CANCELED,
+    REFUNDED,
     UNKNOWN;
 
     companion object {
@@ -15,6 +16,7 @@ enum class PaymentStatus {
                 "pending" -> PENDING
                 "succeeded" -> SUCCEEDED
                 "canceled" -> CANCELED
+                "refunded" -> REFUNDED
                 else -> UNKNOWN
             }
         }
@@ -26,6 +28,7 @@ fun PaymentStatus.toDisplayString(): StringResource {
         PaymentStatus.PENDING -> MR.strings.payment_status_pending
         PaymentStatus.SUCCEEDED -> MR.strings.payment_status_succeeded
         PaymentStatus.CANCELED -> MR.strings.payment_status_canceled
+        PaymentStatus.REFUNDED -> MR.strings.payment_status_refunded
         PaymentStatus.UNKNOWN -> MR.strings.payment_status_unknown
     }
 }

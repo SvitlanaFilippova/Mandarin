@@ -6,6 +6,8 @@ import kotlinx.serialization.Serializable
 data class CancelOrderRequest(
     val organizationId: String,
     val orderId: String,
+    val cancelCauseId: String? = null,
+    val cancelComment: String? = null,
 )
 
 

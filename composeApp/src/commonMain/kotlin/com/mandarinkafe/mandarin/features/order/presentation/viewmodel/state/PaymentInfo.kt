@@ -21,7 +21,7 @@ data class PaymentInfo(
             return if (chosenCode != null) {
                 // Ищем тип оплаты в доступных типах по коду
                 availablePaymentTypes.firstOrNull { it.code.equals(chosenCode, ignoreCase = true) }
-                    // Если не найден в списке доступных, создаем из UiPaymentType
+                // Если не найден в списке доступных, создаем из UiPaymentType
                     ?: chosenPaymentType.toDomain()
             } else {
                 // Если тип не выбран, возвращаем первый доступный (fallback)

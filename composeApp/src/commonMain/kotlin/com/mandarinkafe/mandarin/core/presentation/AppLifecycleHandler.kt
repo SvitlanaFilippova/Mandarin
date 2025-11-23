@@ -9,7 +9,7 @@ import com.mandarinkafe.mandarin.core.domain.impl.AppLifecycleManager
  */
 @Composable
 expect fun AppLifecycleHandler(
-    appLifecycleManager: AppLifecycleManager
+    appLifecycleManager: AppLifecycleManager,
 )
 
 

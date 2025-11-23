@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.util.formatPhoneNumberForUi
+import com.mandarinkafe.mandarin.util.toVisibleComment
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -41,14 +43,17 @@ fun CustomerInfo(
                 verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
             ) {
                 phone?.let {
-                    LabelValue(stringResource(MR.strings.label_phone), it)
+                    LabelValue(stringResource(MR.strings.label_phone), it.formatPhoneNumberForUi())
                 }
                 customerName?.let {
                     LabelValue(stringResource(MR.strings.label_customer), it)
                 }
                 comment?.let {
-                    Label(stringResource(MR.strings.label_comment))
-                    Value(it)
+                    val visibleComment = it.toVisibleComment()
+                    if (visibleComment.isNotEmpty()) {
+                        Label(stringResource(MR.strings.label_comment))
+                        Value(visibleComment)
+                    }
                 }
             }
         }

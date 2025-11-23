@@ -9,9 +9,13 @@ import com.mandarinkafe.mandarin.util.Resource
 
 class ChangeOrderRepositoryImpl(private val networkClient: IikoNetworkClient) :
     ChangeOrderRepository {
-    override suspend fun cancel(id: String): Resource<Unit> {
+    override suspend fun cancel(
+        id: String,
+        cancelCauseId: String?,
+        cancelComment: String?,
+    ): Resource<Unit> {
         val response = try {
-            networkClient.cancelOrder(id)
+            networkClient.cancelOrder(id, cancelCauseId, cancelComment)
         } catch (e: Exception) {
             return Resource.ErrorOther("Ошибка сети: ${e.message}")
         }
@@ -22,7 +26,11 @@ class ChangeOrderRepositoryImpl(private val networkClient: IikoNetworkClient) :
         }
     }
 
-    override suspend fun addPayment(orderId: String, paymentTypeId: String, amount: Double): Resource<Unit> {
+    override suspend fun addPayment(
+        orderId: String,
+        paymentTypeId: String,
+        amount: Double,
+    ): Resource<Unit> {
         // Создаем платеж для онлайн-оплаты
         val payment = OutgoingPaymentDto(
             paymentTypeKind = "card",
@@ -43,9 +51,11 @@ class ChangeOrderRepositoryImpl(private val networkClient: IikoNetworkClient) :
             HTTP_SUCCESS -> {
                 Resource.Success(Unit)
             }
+
             NO_CONNECTION -> {
                 Resource.ErrorNoInternet()
             }
+
             else -> {
                 Resource.ErrorOther("Не удалось добавить платеж в iiko")
             }

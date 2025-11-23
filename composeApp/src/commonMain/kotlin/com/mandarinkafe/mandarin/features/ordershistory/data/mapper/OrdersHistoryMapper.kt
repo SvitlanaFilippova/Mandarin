@@ -72,6 +72,7 @@ object OrdersHistoryMapper {
             creationStatus = creationStatus,
             errorInfo = errorInfo,
             order = order,
+            paymentDeadline = paymentDeadline,
         )
     }
 }

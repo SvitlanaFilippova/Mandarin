@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.core.data.network.api
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.features.address.data.dto.DeliveryZonesResponse
 import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendationsResponse
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesServerResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannersResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupsResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.ServerMenuResponse
@@ -20,10 +21,14 @@ class ServerApi(
 ) {
     private val key = BuildKonfig.MANDARIN_API_KEY
 
+    companion object {
+        private const val API_KEY_HEADER = "x-api-key"
+    }
+
     suspend fun getMenu(): Response {
         return try {
             val response: ServerMenuResponse = client.get("/menu") {
-                header("x-api-key", key)
+                header(API_KEY_HEADER, key)
             }.body()
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
@@ -69,12 +74,27 @@ class ServerApi(
         return try {
             val response: ModifierGroupsResponse =
                 client.get("/modifier-groups") {
-                    header("x-api-key", key)
+                    header(API_KEY_HEADER, key)
                 }.body<ModifierGroupsResponse>()
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("ServerApi: getModifierGroups(): ошибка получения групп модификаторов", e)
             ModifierGroupsResponse().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun getPaymentTypes(): Response {
+        return try {
+            val response: PaymentTypesServerResponse =
+                client.get("/payment-types") {
+                    header(API_KEY_HEADER, key)
+                }.body()
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Napier.e("ServerApi: getPaymentTypes(): ошибка получения способов оплаты", e)
+            PaymentTypesServerResponse(
+                paymentTypes = emptyList()
+            ).apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 }

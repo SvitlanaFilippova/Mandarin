@@ -5,23 +5,28 @@ import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.util.Constants.PAYMENT_BANK_CODE
 import com.mandarinkafe.mandarin.util.Constants.PAYMENT_CASH_CODE
 import com.mandarinkafe.mandarin.util.Constants.PAYMENT_ONLINE_CODE
+import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.StringResource
 
 enum class UiPaymentType(
     val code: String,
     val nameRes: StringResource,
+    val iconRes: ImageResource,
 ) {
     ONLINE(
         code = PAYMENT_ONLINE_CODE,
-        nameRes = MR.strings.payment_online
+        nameRes = MR.strings.payment_online,
+        iconRes = MR.images.ic_payment_online
     ),
     CASH(
         code = PAYMENT_CASH_CODE,
-        nameRes = MR.strings.payment_cash
+        nameRes = MR.strings.payment_cash,
+        iconRes = MR.images.ic_payment_cash
     ),
     BANK(
         code = PAYMENT_BANK_CODE,
-        nameRes = MR.strings.payment_self_card
+        nameRes = MR.strings.payment_self_card,
+        iconRes = MR.images.ic_payment_card
     );
 
     companion object {

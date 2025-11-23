@@ -22,6 +22,7 @@ data class IncomingOrder(
     val cancelInfo: String? = null,
     val orderType: OrderType? = null,
     val paymentName: String? = null,
+    val paymentMethodCode: String? = null,
     val processedPaymentsSum: Double? = null,
     val sum: Double? = null,
     val discountReason: String? = null,
@@ -33,6 +34,7 @@ data class IncomingOrder(
     val whenDelivered: String? = null,
     val whenSent: String? = null,
     val isDelivery: Boolean,
+    val paymentDeadline: Long? = null,
 ) {
     val isClosed: Boolean
         get() = status == DeliveryStatus.CANCELLED || status == DeliveryStatus.CLOSED

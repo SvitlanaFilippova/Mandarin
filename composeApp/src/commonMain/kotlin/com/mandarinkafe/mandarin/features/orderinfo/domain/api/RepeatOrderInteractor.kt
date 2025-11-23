@@ -5,4 +5,5 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.models.RepeatOrderRes
 
 interface RepeatOrderInteractor {
     suspend fun mapToCartItems(incoming: List<IncomingOrderItem>): RepeatOrderResult
+    suspend fun repeatOrder(incoming: List<IncomingOrderItem>): RepeatOrderResult
 }

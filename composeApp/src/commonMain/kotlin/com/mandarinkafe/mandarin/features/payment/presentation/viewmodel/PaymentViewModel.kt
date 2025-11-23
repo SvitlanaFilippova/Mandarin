@@ -41,12 +41,14 @@ class PaymentViewModel(
             is PaymentEvent.RetryPayment -> retryPayment()
             is PaymentEvent.CancelPayment -> cancelPayment()
             is PaymentEvent.DismissError -> dismissError()
+            is PaymentEvent.HandleReturnFromBrowser -> handleReturnFromBrowser()
             is PaymentEvent.SetInitData -> setInitData(
                 event.orderId,
                 event.orderNumber,
                 event.amount,
                 event.userPhone
             )
+            is PaymentEvent.CheckPaymentStatus -> checkPaymentStatus(event.orderId)
         }
     }
 
@@ -102,7 +104,8 @@ class PaymentViewModel(
         val sdkResult = yooKassaService.initializePayment(
             amount = state.value.amount,
             subtitle = subtitle,
-            userPhone = state.value.userPhone
+            userPhone = state.value.userPhone,
+            orderId = state.value.orderId
         )
 
         if (!sdkResult.success) {
@@ -174,7 +177,7 @@ class PaymentViewModel(
 
                 val confirmationUrl = paymentInfo.confirmationUrl
 
-                // 3. Если есть confirmation_url, открываем форму оплаты
+                // Если есть confirmation_url, открываем форму оплаты
                 if (confirmationUrl != null) {
                     setState {
                         copy(
@@ -278,6 +281,12 @@ class PaymentViewModel(
                         sendEffect(PaymentEffect.PaymentCanceled)
                     }
 
+                    PaymentStatus.REFUNDED -> {
+                        stopPolling()
+                        // REFUNDED означает, что платеж был возвращен (обычно при отмене заказа)
+                        // Не показываем ошибку, просто останавливаем polling
+                    }
+
                     PaymentStatus.PENDING, PaymentStatus.UNKNOWN, null -> {
                         // Продолжаем polling
                     }
@@ -354,8 +363,43 @@ class PaymentViewModel(
         setState { copy(error = null) }
     }
 
+    private fun handleReturnFromBrowser() {
+        // При возврате из браузера после 3DS проверки запускаем polling,
+        // если он еще не запущен и есть orderId
+        if (state.value.orderId.isNotEmpty() && !state.value.isPolling) {
+            setState { copy(isPaymentProcessing = false) }
+            startPolling()
+        }
+    }
+
     private fun sendErrorEffect(message: StringResource) {
         sendEffect(PaymentEffect.PaymentError(message))
+    }
+
+    private fun checkPaymentStatus(orderId: String) {
+        viewModelScope.launch {
+            val result = getPaymentStatusUseCase(orderId)
+            when (result) {
+                is Resource.Success -> {
+                    sendEffect(
+                        PaymentEffect.PaymentStatusChecked(
+                            orderId = orderId,
+                            paymentInfo = result.data
+                        )
+                    )
+                }
+
+                else -> {
+                    // Игнорируем ошибки получения статуса платежа (платеж может не существовать)
+                    sendEffect(
+                        PaymentEffect.PaymentStatusChecked(
+                            orderId = orderId,
+                            paymentInfo = null
+                        )
+                    )
+                }
+            }
+        }
     }
 
     override fun onCleared() {

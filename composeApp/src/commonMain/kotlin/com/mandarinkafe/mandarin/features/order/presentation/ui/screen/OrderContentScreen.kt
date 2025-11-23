@@ -67,10 +67,14 @@ fun OrderContent(
                         saveName = shouldSaveUserName,
                         onNameEntered = { onEvent(OrderEvent.SetName(it)) },
                         onSaveNameToggled = { onEvent(OrderEvent.ToggleSaveUserInfo(it)) },
+                        isError = isError && !isNameValid,
+                        savedNameIsEmpty = state.savedNameIsEmpty,
+                        isNameValid = state.isNameValid
                     )
                 }
             }
         }
+
 
         item { Spacer(Modifier.height(Dimens.MarginStandard16)) }
 
@@ -146,7 +150,7 @@ fun OrderContent(
         item {
             with(state.paymentInfo) {
                 PaymentChooser(
-                    paymentTypes = availablePaymentTypes,
+                    paymentTypes = state.filteredPaymentTypes,
                     chosen = chosenPaymentType,
                     changeAmount = changeFrom,
                     isError = state.isError,

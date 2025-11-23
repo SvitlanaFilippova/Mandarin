@@ -12,8 +12,6 @@ import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCus
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.TerminalGroupsIdsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.AliveTerminalGroupsResponse
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.TerminalGroupsIdsResponse
-import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesRequest
-import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesResponse
 import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.AddPaymentsRequest
@@ -142,19 +140,6 @@ class IikoApi(
             responseBody
         } catch (e: Exception) {
             logError("addPayments", e)
-            throw e
-        }
-    }
-
-    // Типы оплаты
-    suspend fun getPaymentTypes(body: PaymentTypesRequest): PaymentTypesResponse {
-        return try {
-            val response = client.post("/api/1/payment_types") {
-                setBody(body)
-            }
-            response.body()
-        } catch (e: Exception) {
-            logError("getPaymentTypes", e)
             throw e
         }
     }

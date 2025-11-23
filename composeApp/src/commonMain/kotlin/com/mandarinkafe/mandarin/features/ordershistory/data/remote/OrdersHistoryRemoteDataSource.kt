@@ -8,5 +8,6 @@ interface OrdersHistoryRemoteDataSource {
     suspend fun getOrderById(id: String): SavedOrder?
     suspend fun saveOrder(order: SavedOrder)
     suspend fun removeOrderById(id: String)
+    suspend fun changePaymentMethod(orderId: String, paymentMethodCode: String): Resource<Unit>
 }
 

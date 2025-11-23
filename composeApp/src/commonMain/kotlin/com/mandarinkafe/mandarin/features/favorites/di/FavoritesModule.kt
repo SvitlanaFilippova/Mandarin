@@ -42,6 +42,6 @@ val favoritesModule = module {
 
     // ViewModel
     singleOf(::FavoritesViewModel)
-  }
+}
 
 

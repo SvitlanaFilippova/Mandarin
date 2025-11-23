@@ -22,13 +22,15 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.AddressInfo
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.CustomerInfo
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderActionsButtons
-import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderInfoSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderItemsSection
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderProblemSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderStatusSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderTimesSection
+import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderTypeSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.PaymentInfoSection
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
+import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMenu
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ClickToCopyText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
@@ -49,6 +51,8 @@ fun OrderInfoContentScreen(
     var showCancelDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+    val shouldShowRefundText = state.paymentStatus == PaymentStatus.REFUNDED
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -56,10 +60,23 @@ fun OrderInfoContentScreen(
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
     ) {
         item {
-            OrderStatusSection(deliveryStatus = state.deliveryStatus)
+            OrderStatusSection(
+                deliveryStatus = state.deliveryStatus,
+                shouldShowRefundText = shouldShowRefundText
+            )
         }
 
-        item { OrderInfoSection(order) }
+        item { OrderProblemSection(order.errorInfo) }
+
+        item { OrderTypeSection(order.orderType) }
+
+        item {
+            PaymentInfoSectionItem(
+                order = order,
+                state = state,
+                onEvent = onEvent
+            )
+        }
 
         if (order.items.isNotEmpty()) {
             item {
@@ -69,21 +86,6 @@ fun OrderInfoContentScreen(
                     discountName = order.discountReason,
                     onOpenMealDetails = onOpenMealDetails,
                     showNoLongerInMenuMessage = showNoLongerInMenuMessage,
-                )
-            }
-        }
-
-        if (state.isOnlinePayment && !order.isClosed) {
-            item {
-                PaymentInfoSection(
-                    paymentStatus = state.paymentStatus,
-                    isPaymentPaid = state.isPaymentPaid,
-                    isPaymentLoading = state.isPaymentLoading,
-                    isPaymentProcessing = state.isPaymentProcessing,
-                    isPaymentPolling = state.isPaymentPolling,
-                    paymentError = state.paymentError,
-                    onStartPayment = { onEvent(OrderInfoEvent.StartPayment) },
-                    onRetryPayment = { onEvent(OrderInfoEvent.RetryPayment) }
                 )
             }
         }
@@ -102,7 +104,6 @@ fun OrderInfoContentScreen(
 
         item { OrderTimesSection(order) }
 
-        // Кнопки
         item {
             OrderActionsButtons(
                 isClosed = order.isClosed,
@@ -117,51 +118,108 @@ fun OrderInfoContentScreen(
             )
         }
 
-
-        // ID заказа
         item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = Dimens.MarginSmall8),
-                contentAlignment = Alignment.Center
-            ) {
-                ClickToCopyText(
-                    text = "ID: ${order.id}",
-                    style = Typography.ExtraSmallTextStyle,
-                    color = Colors.LightGrey
-                )
-            }
+            OrderIdSection(orderId = order.id)
         }
     }
 
-// Диалог для подтверждения желания отменить заказ
-    if (showCancelDialog) {
+    CancelOrderDialog(
+        showDialog = showCancelDialog,
+        onConfirm = {
+            showCancelDialog = false
+            onEvent(OrderInfoEvent.CancelOrder)
+        },
+        onDismiss = { showCancelDialog = false }
+    )
+
+    DeleteOrderDialog(
+        showDialog = showDeleteDialog,
+        onConfirm = {
+            showDeleteDialog = false
+            onEvent(OrderInfoEvent.DeleteOrderFromHistory)
+        },
+        onDismiss = { showDeleteDialog = false }
+    )
+}
+
+@Composable
+private fun PaymentInfoSectionItem(
+    order: IncomingOrder,
+    state: OrderInfoState,
+    onEvent: (OrderInfoEvent) -> Unit,
+) {
+    val paymentMethodCode = state.displayPaymentMethodCode
+    if (paymentMethodCode == null) return
+
+    val isOnlinePayment = state.isOnlinePayment
+    val isOnlinePaymentActive = isOnlinePayment && !order.isClosed
+
+    PaymentInfoSection(
+        paymentStatus = if (isOnlinePayment) state.paymentStatus else null,
+        isPaymentInProgress = if (isOnlinePaymentActive) state.isPaymentInProgress else false,
+        isPaymentProcessing = if (isOnlinePaymentActive) state.isPaymentProcessing else false,
+        isPaymentPolling = if (isOnlinePaymentActive) state.isPaymentPolling else false,
+        canShowPaymentError = if (isOnlinePaymentActive) state.canShowPaymentError else false,
+        canShowPaymentButton = if (isOnlinePaymentActive) state.canShowPaymentButton else false,
+        paymentError = if (isOnlinePaymentActive) state.paymentError else null,
+        paymentMethodCode = paymentMethodCode,
+        isChangingPaymentMethod = state.isChangingPaymentMethod,
+        paymentCanBeChanged = state.paymentCanBeChanged,
+        availablePaymentTypes = state.availablePaymentTypes,
+        onStartPayment = { onEvent(OrderInfoEvent.StartPayment) },
+        onRetryPayment = { onEvent(OrderInfoEvent.RetryPayment) },
+        onLoadPaymentTypes = { onEvent(OrderInfoEvent.LoadPaymentTypesForChange) },
+        onChangePaymentMethod = { code ->
+            onEvent(OrderInfoEvent.ChangePaymentMethod(code))
+        },
+        paymentTimeRemainingSeconds = if (isOnlinePaymentActive) state.paymentTimeRemainingSeconds else null
+    )
+}
+
+@Composable
+private fun OrderIdSection(orderId: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = Dimens.MarginSmall8),
+        contentAlignment = Alignment.Center
+    ) {
+        ClickToCopyText(
+            text = "ID: $orderId",
+            style = Typography.ExtraSmallTextStyle,
+            color = Colors.LightGrey
+        )
+    }
+}
+
+@Composable
+private fun CancelOrderDialog(
+    showDialog: Boolean,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    if (showDialog) {
         RemoveConfirmationDialog(
             title = stringResource(MR.strings.cancel_order_question),
             text = stringResource(MR.strings.cancel_order_confirmation),
-            onConfirm = {
-                showCancelDialog = false
-                onEvent(OrderInfoEvent.CancelOrder)
-            },
-            onDismiss = {
-                showCancelDialog = false
-            }
+            onConfirm = onConfirm,
+            onDismiss = onDismiss
         )
     }
+}
 
-    // Диалог для подтверждения удаления заказа из истории
-    if (showDeleteDialog) {
+@Composable
+private fun DeleteOrderDialog(
+    showDialog: Boolean,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    if (showDialog) {
         RemoveConfirmationDialog(
             title = stringResource(MR.strings.delete_order_from_history_question),
             text = stringResource(MR.strings.delete_order_from_history_confirmation),
-            onConfirm = {
-                showDeleteDialog = false
-                onEvent(OrderInfoEvent.DeleteOrderFromHistory)
-            },
-            onDismiss = {
-                showDeleteDialog = false
-            }
+            onConfirm = onConfirm,
+            onDismiss = onDismiss
         )
     }
 }

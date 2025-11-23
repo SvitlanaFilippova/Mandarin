@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.data.impl.OrderInfoRepositor
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.AddPaymentToOrderUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.CancelOrderUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ChangeOrderRepository
+import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ChangePaymentMethodUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ForceRefreshOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusFromIikoUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
@@ -12,6 +13,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.api.OrderInfoReposito
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.RepeatOrderInteractor
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.AddPaymentToOrderUseCaseImpl
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.CancelOrderUseCaseImpl
+import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.ChangePaymentMethodUseCaseImpl
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.ForceRefreshOrderStatusUseCaseImpl
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.GetOrderStatusFromIikoUseCaseImpl
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.GetOrderStatusUseCaseImpl
@@ -35,6 +37,7 @@ val orderInfoModule = module {
     singleOf(::CancelOrderUseCaseImpl) { bind<CancelOrderUseCase>() }
     singleOf(::RepeatOrderInteractorImpl) { bind<RepeatOrderInteractor>() }
     singleOf(::AddPaymentToOrderUseCaseImpl) { bind<AddPaymentToOrderUseCase>() }
+    singleOf(::ChangePaymentMethodUseCaseImpl) { bind<ChangePaymentMethodUseCase>() }
 
     // --- ViewModel ---
     factoryOf(::OrderInfoViewModel)

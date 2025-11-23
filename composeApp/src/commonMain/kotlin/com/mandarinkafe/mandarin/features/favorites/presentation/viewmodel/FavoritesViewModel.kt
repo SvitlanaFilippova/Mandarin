@@ -37,6 +37,7 @@ class FavoritesViewModel(private val favoritesApi: FavoritesApi) :
             favoritesApi.syncWithRemote()
         }
     }
+
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
     }

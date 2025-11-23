@@ -11,6 +11,7 @@ import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 import io.github.aakira.napier.Napier
+import io.ktor.http.HttpStatusCode
 
 class OrdersHistoryRemoteDataSourceImpl(
     private val api: OrdersHistoryServerApi,
@@ -103,6 +104,51 @@ class OrdersHistoryRemoteDataSourceImpl(
         } catch (e: Exception) {
             Napier.e("OrdersHistoryRemoteDataSource, removeOrderById error: $e", e)
             throw e
+        }
+    }
+
+    override suspend fun changePaymentMethod(
+        orderId: String,
+        paymentMethodCode: String,
+    ): Resource<Unit> {
+        val token = authRepository.getAccessToken()
+        if (token == null) {
+            Napier.e("OrdersHistoryRemoteDataSource, changePaymentMethod - No access token, orderId=$orderId")
+            return Resource.ErrorOther("Токен авторизации не найден")
+        }
+
+        return try {
+            val response =
+                api.changePaymentMethod(buildAuthToken(token), orderId, paymentMethodCode)
+
+            when (response.resultCode) {
+                NO_CONNECTION -> {
+                    Resource.ErrorNoInternet()
+                }
+
+                HTTP_SUCCESS -> {
+                    Resource.Success(Unit)
+                }
+
+                HttpStatusCode.Unauthorized.value -> {
+                    Resource.ErrorOther("Ошибка авторизации")
+                }
+
+                HttpStatusCode.NotFound.value -> {
+                    Resource.ErrorOther("Заказ не найден")
+                }
+
+                else -> {
+                    Napier.e(
+                        "OrdersHistoryRemoteDataSource, changePaymentMethod error: " +
+                                "resultCode=${response.resultCode}, orderId=$orderId"
+                    )
+                    Resource.ErrorOther("Ошибка сервера")
+                }
+            }
+        } catch (e: Exception) {
+            Napier.e("OrdersHistoryRemoteDataSource, changePaymentMethod error: $e", e)
+            Resource.ErrorOther("Ошибка при изменении способа оплаты: ${e.message}")
         }
     }
 }

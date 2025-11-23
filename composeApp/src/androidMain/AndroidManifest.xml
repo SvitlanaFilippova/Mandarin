@@ -23,6 +23,7 @@
         <activity
             android:name="com.mandarinkafe.mandarin.core.presentation.ComposeMainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity">
@@ -30,6 +31,14 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            
+            <!-- Deep link для возврата из браузера после оплаты YooKassa -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="mandarin" android:host="payment" android:pathPrefix="/return" />
             </intent-filter>
         </activity>
         

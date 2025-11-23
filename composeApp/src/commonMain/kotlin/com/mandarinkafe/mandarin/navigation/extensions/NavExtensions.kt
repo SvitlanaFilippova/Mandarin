@@ -17,9 +17,9 @@ import com.mandarinkafe.mandarin.navigation.NavConstants.CONTACTS_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.DELIVERY_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_FROM_ORDER_CREATION
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_EDIT_MODE
-import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_IS_ONLINE_PAYMENT
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_MEAL_ID
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_ORDER_ID
+import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_PAYMENT_METHOD_CODE
 import com.mandarinkafe.mandarin.navigation.NavConstants.KEY_SNACKBAR_MESSAGE
 import com.mandarinkafe.mandarin.navigation.NavConstants.LEGAL_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.MEAL_DETAILS_ROUTE
@@ -127,18 +127,22 @@ fun NavController.navigateToMealDetails(
 fun NavController.navigateToOrderInfo(
     orderId: String,
     fromOrderCreation: Boolean = false,
-    isOnlinePayment: Boolean = false,
+    paymentMethodCode: String? = null,
 ) {
     val encodedOrderId = UrlEncoderUtil.encode(orderId)
+    val encodedPaymentMethodCode = paymentMethodCode?.let { UrlEncoderUtil.encode(it) } ?: ""
     val route =
-        "$ORDER_INFO_ROUTE?$KEY_ORDER_ID=$encodedOrderId&$KEY_FROM_ORDER_CREATION=$fromOrderCreation&$KEY_IS_ONLINE_PAYMENT=$isOnlinePayment"
+        "$ORDER_INFO_ROUTE?$KEY_ORDER_ID=$encodedOrderId" +
+                "&$KEY_FROM_ORDER_CREATION=$fromOrderCreation" +
+                "&$KEY_PAYMENT_METHOD_CODE=$encodedPaymentMethodCode"
 
     if (fromOrderCreation) {
         navigate(
             route,
             navOptions {
-                popUpTo(CART_SCREEN_ROUTE) {
-                    inclusive = true
+                // Очищаем весь стек до меню, чтобы при нажатии "назад" пользователь попадал на меню
+                popUpTo(MENU_SCREEN_ROUTE) {
+                    inclusive = false
                 }
             }
         )

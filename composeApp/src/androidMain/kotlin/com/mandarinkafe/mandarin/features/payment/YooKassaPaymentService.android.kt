@@ -10,6 +10,7 @@ actual class YooKassaPaymentService {
         amount: Double,
         subtitle: String,
         userPhone: String,
+        orderId: String,
     ): PaymentResult {
         val clientApplicationKey = BuildKonfig.YOOKASSA_CLIENT_APPLICATION_KEY
         val shopId = BuildKonfig.YOOKASSA_SHOP_ID
@@ -20,7 +21,8 @@ actual class YooKassaPaymentService {
                 subtitle = subtitle,
                 clientApplicationKey = clientApplicationKey,
                 shopId = shopId,
-                userPhone = userPhone
+                userPhone = userPhone,
+                orderId = orderId
             )
         } catch (e: Exception) {
             PaymentResult(

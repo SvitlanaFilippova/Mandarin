@@ -16,8 +16,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.navigation.NavController
 import androidx.navigation.navOptions
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
-import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.navigation.bottomnav.components.CartIconBox
+import com.mandarinkafe.mandarin.navigation.bottomnav.components.rememberAdaptiveBottomNavFontSize
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -70,7 +70,7 @@ fun BottomNavigation(
                     label = {
                         Text(
                             text = stringResource(item.title),
-                            fontSize = Dimens.TextSizeSuperSmall9,
+                            fontSize = rememberAdaptiveBottomNavFontSize(),
                             maxLines = 1
                         )
                     },

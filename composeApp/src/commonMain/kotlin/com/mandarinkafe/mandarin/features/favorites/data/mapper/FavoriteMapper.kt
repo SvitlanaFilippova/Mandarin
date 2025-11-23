@@ -17,6 +17,7 @@ object FavoriteMapper {
                 createdAt = createdAt,
                 updatedAt = updatedAt
             )
+
             is FavoriteRecord.Custom -> StoredFavoriteMeal(
                 mealId = mealId,
                 createdAt = createdAt,

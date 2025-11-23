@@ -79,6 +79,9 @@
     <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка — пожалуйста,
         позвоните.
     </string>
+    <string name="order_cancelled_but_paid_online">Средства будут автоматически возвращены на&#160;карту.
+        Обычно это происходит быстро, редко&#160;&#8212; в&#160;течение нескольких рабочих дней.
+    </string>
 
 
     <!-- Основное -->
@@ -172,7 +175,7 @@
 
 
     <!-- Оформление заказа - форма -->
-    <string name="your_name">Имя</string>
+    <string name="your_name">Имя *</string>
     <string name="your_phone">Номер телефона</string>
     <string name="phone_prefix">+7</string>
     <string name="phone_mask">(###) ###-##-##</string>
@@ -185,9 +188,9 @@
     <string name="choose_address">Нужно выбрать адрес доставки</string>
     <string name="delivery_type">Способ получения: *</string>
     <string name="payment_type">Способ оплаты: *</string>
-    <string name="payment_online">картой онлайн</string>
-    <string name="payment_self_card">картой при получении</string>
-    <string name="payment_cash">наличными</string>
+    <string name="payment_online">Онлайн</string>
+    <string name="payment_self_card">Картой при получении</string>
+    <string name="payment_cash">Наличными</string>
     <string name="no_change_needed">Без сдачи</string>
     <string name="payment_change">Сдача с</string>
     <string name="payment_default_value">0</string>
@@ -237,6 +240,9 @@
     <string name="error_payment_types_unavailable">Не удалось получить от сервера доступные способы
         оплаты
     </string>
+    <string name="error_online_payment_minimum_amount">Онлайн-оплата доступна только для заказов на
+        сумму от 1&#160;рубля
+    </string>
     <string name="error_missing_required_fields">Нужно заполнить все обязательные поля</string>
     <string name="error_terminal_unavailable">Упс, кажется, сейчас мы не&#160;работаем — заказ
         оформить не&#160;получится 🤷
@@ -245,7 +251,7 @@
     <string name="error_cant_check_terminal_is_alive">Что-то пошло не так — не удалось проверить,
         работает ли сейчас доставка.
     </string>
-    <string name="error_order_creation_failed">Не xcxcxcxc создать заказ</string>
+    <string name="error_order_creation_failed">Не удалось создать заказ</string>
     <string name="error_order_status_failed">Ошибка получения статуса заказа</string>
     <string name="error_order_timeout">Не удалось создать заказ: превышено время ожидания</string>
 
@@ -312,7 +318,12 @@
     </string>
     <string name="label_error">Ошибка</string>
     <string name="label_order_type">Способ получения</string>
-    <string name="label_payment_status">Статус оплаты</string>
+    <string name="label_payment_status">Статус</string>
+    <string name="change_payment_method">Изменить способ оплаты</string>
+    <string name="change_payment_method_dialog_title">Изменить способ оплаты?</string>
+    <string name="change_payment_method_dialog_message">Меняем способ оплаты на \"%1$s\"? Изменить
+        обратно будет нельзя.
+    </string>
     <string name="label_order_items">Позиции заказа: %1$d</string>
     <string name="discount_applied">Применена скидка</string>
     <string name="label_total">Итого</string>
@@ -334,7 +345,9 @@
     <string name="cancel_order_confirmation">Действительно отменить оформленный заказ?</string>
     <string name="delete_order_from_history_button">Удалить заказ из истории</string>
     <string name="delete_order_from_history_question">Удалить заказ?</string>
-    <string name="delete_order_from_history_confirmation">Заказ будет безвозвратно удалён из&#160;истории заказов. Это действие нельзя отменить.</string>
+    <string name="delete_order_from_history_confirmation">Заказ будет безвозвратно удалён из&#160;истории
+        заказов. Это действие нельзя отменить.
+    </string>
     <string name="repeat_order_button">Повторить заказ</string>
     <string name="item_is_no_longer_available">На данный момент в&#160;меню отсутствует эта
         позиция
@@ -571,23 +584,25 @@
     <string name="error_delete_account">Не удалось удалить аккаунт</string>
 
     <!-- Оплата -->
-    <string name="error_payment_init_failed">Не удалось инициализировать платеж</string>
-    <string name="error_payment_creation_failed">Не удалось создать платеж</string>
+    <string name="error_payment_init_failed">Не удалось инициализировать платёж</string>
+    <string name="error_payment_creation_failed">Не удалось создать платёж</string>
     <string name="error_payment_canceled">Оплата отменена</string>
     <string name="error_payment_timeout">Превышено время ожидания оплаты</string>
-    <string name="error_payment_cancel_failed">Не удалось отменить платеж</string>
+    <string name="error_payment_cancel_failed">Не удалось отменить платёж</string>
     <string name="payment_screen_title">Оплата заказа</string>
     <string name="payment_processing">Обработка платежа...</string>
+    <string name="payment_time_left">Осталось на оплату</string>
     <string name="payment_polling">Проверка статуса оплаты...</string>
     <string name="payment_success">Оплата успешно завершена</string>
     <string name="payment_retry">Повторить оплату</string>
-    <string name="payment_cancel">Отменить платеж</string>
-    <string name="payment_cancel_dialog_title">Отменить платеж?</string>
+    <string name="payment_cancel">Отменить платёж</string>
+    <string name="payment_cancel_dialog_title">Отменить платёж?</string>
     <string name="payment_cancel_dialog_message">Оплата не завершена. Отменить заказ?</string>
     <string name="payment_cancel_dialog_confirm">Отменить</string>
     <string name="payment_cancel_dialog_cancel">Нет</string>
     <string name="payment_status_pending">Ожидает оплаты</string>
     <string name="payment_status_succeeded">Оплачено</string>
     <string name="payment_status_canceled">Отменено</string>
+    <string name="payment_status_refunded">Оформлен возврат</string>
     <string name="payment_status_unknown">Неизвестен</string>
 </resources>

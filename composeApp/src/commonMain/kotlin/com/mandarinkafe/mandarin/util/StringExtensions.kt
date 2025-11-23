@@ -107,11 +107,44 @@ fun String?.toVisibleComment(): String {
         .mapNotNull { divider -> indexOf(divider).takeIf { it >= 0 } }
         .minOrNull()
 
-    return if (firstDividerIndex != null) {
+    val commentWithoutTechPart = if (firstDividerIndex != null) {
         substring(0, firstDividerIndex).trim()
     } else {
         this.trim()
     }
+
+    // Фильтруем информацию об оплате из комментария
+    return commentWithoutTechPart.filterPaymentInfoForUser()
+}
+
+/**
+ * Удаляет техническую информацию об оплате из комментария для отображения пользователю.
+ * Удаляет части вида [оплата: ...] из комментария.
+ */
+fun String?.filterPaymentInfoForUser(): String {
+    if (this == null) return ""
+    // Удаляем [оплата: ...] из комментария
+    // Регулярное выражение для поиска [оплата: ...] (включая возможные пробелы)
+    val paymentInfoPattern = Regex("\\[оплата:\\s*[^\\]]+\\]")
+    var result = paymentInfoPattern.replace(this, "")
+
+    // Убираем разделители, которые остались после удаления оплаты
+    // Удаляем ". " сразу после || (если оплата была первой технической частью)
+    result = result.replace(Regex("\\|\\|\\s*\\.\\s+"), " || ")
+    // Удаляем ". " перед || (если оплата была последней перед ||)
+    result = result.replace(Regex("\\.\\s+\\|\\|"), " ||")
+    // Удаляем двойные разделители ". . " (если оплата была в середине)
+    result = result.replace(Regex("\\.\\s+\\.\\s+"), ". ")
+    // Удаляем разделитель ". " в конце строки после || (если оплата была единственной технической частью)
+    result = result.replace(Regex("\\|\\|\\s*\\.\\s*$"), "")
+    // Удаляем разделитель ". " в самом конце строки (если оплата была последней)
+    result = result.replace(Regex("\\.\\s*$"), "")
+    // Удаляем разделитель ". " в начале строки (если оплата была в начале)
+    result = result.replace(Regex("^\\.\\s+"), "")
+    // Убираем лишние пробелы вокруг ||
+    result = result.replace(Regex("\\s*\\|\\|\\s*"), " || ")
+
+    return result.trim()
 }
 
 private const val COMMENT_DIVIDER_1 = "\\\\"

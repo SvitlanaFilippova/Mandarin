@@ -4,19 +4,14 @@ import com.mandarinkafe.mandarin.navigation.bottomnav.BottomNavigationItem
 
 object NavConstants {
     // --- Keys ---
-    const val KEY_MEAL_JSON = "mealJson" // Deprecated, используем KEY_MEAL_ID и другие
     const val KEY_MEAL_ID = "mealId"
-    const val KEY_ADDS_IDS = "addsIds"
-    const val KEY_MODIFIER_IDS = "modifierIds"
-    const val KEY_COMMENT = "comment"
-    const val KEY_CART_ITEM_ID = "cartItemId"
     const val KEY_IS_EDIT_MODE = "isEditMode"
     const val KEY_ADDRESS_JSON = "addressJson"
     const val KEY_FOCUS_INPUT = "focusInput"
     const val KEY_ORDER_ID = "orderId"
     const val KEY_RETURN_TO_ROUTE = "returnTo"
     const val KEY_FROM_ORDER_CREATION = "fromOrderCreation"
-    const val KEY_IS_ONLINE_PAYMENT = "isOnlinePayment"
+    const val KEY_PAYMENT_METHOD_CODE = "paymentMethodCode"
     const val KEY_SNACKBAR_MESSAGE = "snackbarMessage"
     const val KEY_TARGET_ROUTE = "targetRoute"
     const val KEY_PHONE = "phone"
@@ -43,9 +38,6 @@ object NavConstants {
     const val SEARCH_SCREEN_ROUTE = "search"
     const val ORDER_INFO_ROUTE = "order_info"
     const val AUTH_ROUTE = "auth_screen"
-    const val PAYMENT_SCREEN_ROUTE = "payment"
-    const val KEY_AMOUNT = "amount"
-    const val KEY_USER_PHONE = "userPhone"
 
     val bottomNavigationRoutes = getBottomNavigationRoutesFromItems()
 
