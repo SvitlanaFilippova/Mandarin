@@ -286,7 +286,7 @@ class OrderInfoViewModel(
                 setLoading(false)
             }
 
-            else -> showError(result.message ?: "Что-то пошло не так")
+            else -> showError(result.message ?: DEFAULT_ERROR_MESSAGE)
         }
     }
 
@@ -319,7 +319,7 @@ class OrderInfoViewModel(
         setState { copy(isAutoCanceling = false) }
     }
 
-    private fun showError(msg: String? = "Что-то пошло не так") {
+    private fun showError(msg: String? = DEFAULT_ERROR_MESSAGE) {
         msg?.let {
             sendEffect(ShowError(msg))
         }
@@ -590,6 +590,7 @@ class OrderInfoViewModel(
         const val ORDER_STATUS_UPD_DELAY_AFTER_CANCEL = 500L
         const val PAYMENT_SEND_RETRY_MAX_ATTEMPTS = 3
         const val PAYMENT_STATUS_UPDATE_DELAY_MS = 1000L
+        private const val DEFAULT_ERROR_MESSAGE = "Что-то пошло не так"
     }
 }
 

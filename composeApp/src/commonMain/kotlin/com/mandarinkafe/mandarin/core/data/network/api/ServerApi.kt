@@ -21,10 +21,14 @@ class ServerApi(
 ) {
     private val key = BuildKonfig.MANDARIN_API_KEY
 
+    companion object {
+        private const val API_KEY_HEADER = "x-api-key"
+    }
+
     suspend fun getMenu(): Response {
         return try {
             val response: ServerMenuResponse = client.get("/menu") {
-                header("x-api-key", key)
+                header(API_KEY_HEADER, key)
             }.body()
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
@@ -70,7 +74,7 @@ class ServerApi(
         return try {
             val response: ModifierGroupsResponse =
                 client.get("/modifier-groups") {
-                    header("x-api-key", key)
+                    header(API_KEY_HEADER, key)
                 }.body<ModifierGroupsResponse>()
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
@@ -83,7 +87,7 @@ class ServerApi(
         return try {
             val response: PaymentTypesServerResponse =
                 client.get("/payment-types") {
-                    header("x-api-key", key)
+                    header(API_KEY_HEADER, key)
                 }.body()
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {

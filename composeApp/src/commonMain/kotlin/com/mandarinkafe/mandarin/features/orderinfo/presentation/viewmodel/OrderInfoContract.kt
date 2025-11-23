@@ -48,7 +48,8 @@ sealed interface OrderInfoContract {
         val paymentError: StringResource? = null,
         val paymentMethodCodeFromNav: String? = null, // Код способа оплаты из навигации, используется если order.paymentMethodCode == null
         val isChangingPaymentMethod: Boolean = false, // Индикатор загрузки при изменении способа оплаты
-        val availablePaymentTypes: List<com.mandarinkafe.mandarin.features.order.domain.models.PaymentType> = emptyList(), // Доступные способы оплаты для диалога (только CASH, BANK, ONLINE)
+        // Доступные способы оплаты для диалога (только CASH, BANK, ONLINE)
+        val availablePaymentTypes: List<com.mandarinkafe.mandarin.features.order.domain.models.PaymentType> = emptyList(),
         val paymentTimeRemainingSeconds: Int? = null, // Оставшееся время на оплату в секундах
         val isAutoCanceling: Boolean = false, // Флаг автоматической отмены заказа при истечении таймера
     ) : BaseContract.BaseState {

@@ -26,6 +26,8 @@ class PaymentTimerInteractorImpl(
 
     companion object {
         private const val ORDER_STATUS_UPD_DELAY_AFTER_CANCEL = 500L
+        private const val MILLISECONDS_PER_SECOND = 1000
+        private const val TIMEOUT_GRACE_PERIOD_MS = 2000L
         private const val AUTO_CANCEL_CAUSE_ID = "15c16410-972a-402c-96f2-402ee4c05d21"
         private const val AUTO_CANCEL_COMMENT =
             "Онлайн-оплата не была вовремя произведена. Заказ отменён автоматически."
@@ -41,24 +43,24 @@ class PaymentTimerInteractorImpl(
         stopTimer()
 
         timerJob = coroutineScope.launch {
-            while (true) {
+            var shouldContinue = true
+            while (shouldContinue) {
                 val currentTime = Clock.System.now().toEpochMilliseconds()
                 val remainingMillis = paymentDeadline - currentTime
-                val remainingSeconds = (remainingMillis / 1000).toInt().coerceAtLeast(0)
+                val remainingSeconds =
+                    (remainingMillis / MILLISECONDS_PER_SECOND).toInt().coerceAtLeast(0)
 
                 onTimeUpdate(remainingSeconds)
 
                 if (remainingSeconds <= 0) {
                     onTimeUpdate(0)
                     onTimeout()
-                    break
+                    shouldContinue = false
+                } else if (shouldStopTimer()) {
+                    shouldContinue = false
+                } else {
+                    delay(Constants.DELAY_1_SECOND)
                 }
-
-                if (shouldStopTimer()) {
-                    break
-                }
-
-                delay(Constants.DELAY_1_SECOND)
             }
         }
 
@@ -102,7 +104,7 @@ class PaymentTimerInteractorImpl(
         onCancelStarted()
 
         // Ждем 2 секунды на случай, если оплата пришла в последний момент
-        delay(2000L)
+        delay(TIMEOUT_GRACE_PERIOD_MS)
 
         // Повторно проверяем статус перед отменой
         if (!canCancel()) {
@@ -124,7 +126,7 @@ class PaymentTimerInteractorImpl(
             onCancelCompleted(orderId)
         } else {
             // При ошибке повторяем попытку через 2 секунды (один раз)
-            delay(2000L)
+            delay(TIMEOUT_GRACE_PERIOD_MS)
 
             // Повторно проверяем статус
             if (!canCancel()) {

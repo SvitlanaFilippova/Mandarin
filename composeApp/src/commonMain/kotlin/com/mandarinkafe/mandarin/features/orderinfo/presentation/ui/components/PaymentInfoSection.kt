@@ -99,8 +99,13 @@ fun PaymentInfoSection(
             }
 
             // Показываем таймер обратного отсчёта для онлайн-оплаты
-            if (!isChangingPaymentMethod && paymentTimeRemainingSeconds != null && paymentTimeRemainingSeconds > 0 && paymentStatus != PaymentStatus.SUCCEEDED) {
-                PaymentTimer(remainingSeconds = paymentTimeRemainingSeconds)
+            if (shouldShowPaymentTimer(
+                    isChangingPaymentMethod,
+                    paymentTimeRemainingSeconds,
+                    paymentStatus
+                )
+            ) {
+                PaymentTimer(remainingSeconds = paymentTimeRemainingSeconds!!)
             }
 
             // Показываем активные элементы оплаты (индикаторы, кнопки) только если не идет изменение способа оплаты
@@ -152,83 +157,118 @@ private fun PaymentMethodSelector(
 
                 Column {
                     if (paymentCanBeChanged && !isChangingPaymentMethod) {
-                        var rowWidth by remember { mutableStateOf(0.dp) }
-                        val density = LocalDensity.current
-
-                        Box(modifier = Modifier.wrapContentSize()) {
-                            Row(
-                                modifier = Modifier
-                                    .clickable(onClick = {
-                                        onLoadPaymentTypes()
-                                        showMenu = true
-                                    })
-                                    .onGloballyPositioned { coordinates ->
-                                        rowWidth = with(density) { coordinates.size.width.toDp() }
-                                    },
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(
-                                    text = stringResource(uiPaymentType.nameRes),
-                                    style = Typography.RegularTextStyle,
-                                )
-                                Icon(
-                                    painterResource(MR.images.ic_arrow_drop_down),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(Dimens.IconSize24),
-                                    tint = Colors.WhiteTransparent75
-                                )
-                            }
-                            if (rowWidth > 0.dp) {
-                                HorizontalDivider(
-                                    modifier = Modifier
-                                        .align(Alignment.BottomStart)
-                                        .width(rowWidth)
-                                        .height(Dimens.DividerHeight1),
-                                    color = Colors.WhiteTransparent75
-                                )
-                            }
-                        }
-
-                        // Всплывающее меню для выбора способа оплаты
-                        ChangePaymentMethodMenu(
+                        PaymentMethodDropdown(
+                            uiPaymentType = uiPaymentType,
                             availablePaymentTypes = availablePaymentTypes,
                             currentPaymentMethodCode = paymentMethodCode,
+                            onLoadPaymentTypes = onLoadPaymentTypes,
+                            onShowMenu = { showMenu = true },
                             onPaymentMethodSelected = { code ->
                                 showMenu = false
-                                // Если выбранный способ отличается от текущего, показываем диалог
                                 if (code != paymentMethodCode) {
                                     selectedPaymentCode = code
                                     showConfirmationDialog = true
                                 }
                             },
-                            onDismiss = { showMenu = false },
-                            expanded = showMenu && availablePaymentTypes.isNotEmpty()
+                            onDismissMenu = { showMenu = false },
+                            showMenu = showMenu
                         )
 
-                        // Диалог подтверждения изменения способа оплаты
-                        if (showConfirmationDialog && selectedPaymentCode != null) {
-                            val selectedPaymentType = UiPaymentType.fromCode(selectedPaymentCode!!)
-                            selectedPaymentType?.let { paymentType ->
-                                ChangePaymentMethodConfirmationDialog(
-                                    paymentMethodName = stringResource(paymentType.nameRes),
-                                    onConfirm = {
-                                        showConfirmationDialog = false
-                                        selectedPaymentCode?.let { onChangePaymentMethod(it) }
-                                        selectedPaymentCode = null
-                                    },
-                                    onDismiss = {
-                                        showConfirmationDialog = false
-                                        selectedPaymentCode = null
-                                    }
-                                )
+                        PaymentMethodChangeDialog(
+                            showDialog = showConfirmationDialog,
+                            selectedPaymentCode = selectedPaymentCode,
+                            onConfirm = { code ->
+                                showConfirmationDialog = false
+                                onChangePaymentMethod(code)
+                                selectedPaymentCode = null
+                            },
+                            onDismiss = {
+                                showConfirmationDialog = false
+                                selectedPaymentCode = null
                             }
-                        }
+                        )
                     } else {
                         Value(stringResource(uiPaymentType.nameRes))
                     }
                 }
             }
         }
+}
+
+@Composable
+private fun PaymentMethodDropdown(
+    uiPaymentType: UiPaymentType,
+    availablePaymentTypes: List<PaymentType>,
+    currentPaymentMethodCode: String?,
+    onLoadPaymentTypes: () -> Unit,
+    onShowMenu: () -> Unit,
+    onPaymentMethodSelected: (String) -> Unit,
+    onDismissMenu: () -> Unit,
+    showMenu: Boolean,
+) {
+    var rowWidth by remember { mutableStateOf(0.dp) }
+    val density = LocalDensity.current
+
+    Box(modifier = Modifier.wrapContentSize()) {
+        Row(
+            modifier = Modifier
+                .clickable(onClick = {
+                    onLoadPaymentTypes()
+                    onShowMenu()
+                })
+                .onGloballyPositioned { coordinates ->
+                    rowWidth = with(density) { coordinates.size.width.toDp() }
+                },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(uiPaymentType.nameRes),
+                style = Typography.RegularTextStyle,
+            )
+            Icon(
+                painterResource(MR.images.ic_arrow_drop_down),
+                contentDescription = null,
+                modifier = Modifier.size(Dimens.IconSize24),
+                tint = Colors.WhiteTransparent75
+            )
+        }
+        if (rowWidth > 0.dp) {
+            HorizontalDivider(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .width(rowWidth)
+                    .height(Dimens.DividerHeight1),
+                color = Colors.WhiteTransparent75
+            )
+        }
+    }
+
+    ChangePaymentMethodMenu(
+        availablePaymentTypes = availablePaymentTypes,
+        currentPaymentMethodCode = currentPaymentMethodCode,
+        onPaymentMethodSelected = onPaymentMethodSelected,
+        onDismiss = onDismissMenu,
+        expanded = showMenu && availablePaymentTypes.isNotEmpty()
+    )
+}
+
+@Composable
+private fun PaymentMethodChangeDialog(
+    showDialog: Boolean,
+    selectedPaymentCode: String?,
+    onConfirm: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    if (showDialog && selectedPaymentCode != null) {
+        val selectedPaymentType = UiPaymentType.fromCode(selectedPaymentCode)
+        selectedPaymentType?.let { paymentType ->
+            ChangePaymentMethodConfirmationDialog(
+                paymentMethodName = stringResource(paymentType.nameRes),
+                onConfirm = { onConfirm(selectedPaymentCode) },
+                onDismiss = onDismiss
+            )
+        }
+    }
 }
 
 
@@ -342,4 +382,15 @@ private fun PaymentTimer(remainingSeconds: Int) {
             )
         }
     }
+}
+
+private fun shouldShowPaymentTimer(
+    isChangingPaymentMethod: Boolean,
+    paymentTimeRemainingSeconds: Int?,
+    paymentStatus: PaymentStatus?,
+): Boolean {
+    return !isChangingPaymentMethod &&
+            paymentTimeRemainingSeconds != null &&
+            paymentTimeRemainingSeconds > 0 &&
+            paymentStatus != PaymentStatus.SUCCEEDED
 }

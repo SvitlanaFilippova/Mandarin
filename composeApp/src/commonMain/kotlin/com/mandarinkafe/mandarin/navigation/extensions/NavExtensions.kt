@@ -132,7 +132,9 @@ fun NavController.navigateToOrderInfo(
     val encodedOrderId = UrlEncoderUtil.encode(orderId)
     val encodedPaymentMethodCode = paymentMethodCode?.let { UrlEncoderUtil.encode(it) } ?: ""
     val route =
-        "$ORDER_INFO_ROUTE?$KEY_ORDER_ID=$encodedOrderId&$KEY_FROM_ORDER_CREATION=$fromOrderCreation&$KEY_PAYMENT_METHOD_CODE=$encodedPaymentMethodCode"
+        "$ORDER_INFO_ROUTE?$KEY_ORDER_ID=$encodedOrderId" +
+                "&$KEY_FROM_ORDER_CREATION=$fromOrderCreation" +
+                "&$KEY_PAYMENT_METHOD_CODE=$encodedPaymentMethodCode"
 
     if (fromOrderCreation) {
         navigate(

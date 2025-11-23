@@ -27,6 +27,9 @@ class OrderInfoRepositoryImpl(
 ) : OrderInfoRepository {
 
     private companion object {
+        private const val FIRST_RETRY_DELAY_MS = 1000L
+        private const val SECOND_RETRY_DELAY_MS = 2000L
+
         fun buildAuthToken(token: String) = "$BEARER_TOKEN_TYPE $token"
     }
 
@@ -39,14 +42,14 @@ class OrderInfoRepositoryImpl(
 
         // Если сервер вернул 404, делаем повторную попытку через 1 секунду
         // Это нужно, потому что при создании заказа сервер может еще не успеть обработать заказ
-        delay(1000L)
+        delay(FIRST_RETRY_DELAY_MS)
         val retryServerResult = tryGetOrderFromServer(id)
         if (retryServerResult != null) {
             return retryServerResult
         }
 
         // Если и вторая попытка не удалась, делаем третью попытку через еще 2 секунды
-        delay(2000L)
+        delay(SECOND_RETRY_DELAY_MS)
         val thirdRetryServerResult = tryGetOrderFromServer(id)
         if (thirdRetryServerResult != null) {
             return thirdRetryServerResult

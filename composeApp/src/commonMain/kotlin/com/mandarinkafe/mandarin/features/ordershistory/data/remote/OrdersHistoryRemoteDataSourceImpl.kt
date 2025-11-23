@@ -139,7 +139,10 @@ class OrdersHistoryRemoteDataSourceImpl(
                 }
 
                 else -> {
-                    Napier.e("OrdersHistoryRemoteDataSource, changePaymentMethod error: resultCode=${response.resultCode}, orderId=$orderId")
+                    Napier.e(
+                        "OrdersHistoryRemoteDataSource, changePaymentMethod error: " +
+                                "resultCode=${response.resultCode}, orderId=$orderId"
+                    )
                     Resource.ErrorOther("Ошибка сервера")
                 }
             }
