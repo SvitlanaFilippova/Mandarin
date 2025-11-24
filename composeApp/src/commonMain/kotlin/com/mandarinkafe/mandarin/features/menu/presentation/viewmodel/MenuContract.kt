@@ -27,6 +27,7 @@ sealed interface MenuContract {
         val favoriteIds: Set<String> = emptySet(),
         val error: UiError? = null,
         val banners: List<Banner> = emptyList(),
+        val announcements: List<String> = emptyList(),
         val bannersAreLoading: Boolean = false,
         val selectedMenuItemIndex: Int = DEFAULT_UNSELECTED_INDEX,
     ) : BaseContract.BaseState

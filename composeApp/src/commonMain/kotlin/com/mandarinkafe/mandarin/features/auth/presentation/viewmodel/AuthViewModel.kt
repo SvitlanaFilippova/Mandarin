@@ -63,7 +63,6 @@ class AuthViewModel(
             val code = state.value.smsCodeQuery
             val phone = state.value.phoneQuery
             val response = statusInteractor.checkSms(phone = phone, code = code)
-            setLoading(false)
             proceedSmsAuthStatusResponse(response)
         }
     }
@@ -272,23 +271,35 @@ class AuthViewModel(
             is Resource.Success -> {
                 val status = response.data
                 if (status == null) {
-                    setState { copy(error = UiError.OtherError) }
+                    setState { copy(error = UiError.OtherError, isLoading = false) }
                 } else {
                     if (status.isVerified) {
-                        // Верификация успешна - останавливаем таймеры
-                        stopSmsTimer()
-                        setState {
-                            copy(
-                                smsValidationError = null,
-                                smsCodeQuery = "",
-                                activeVerificationPhone = null,
-                                error = null
-                            )
+                        viewModelScope.launch {
+                            // Верификация успешна - останавливаем таймеры
+                            stopSmsTimer()
+                            proceedSuccessAuth(tokens = status.tokens)
+
+                            // небольшая задержка перед очисткой state
+                            delay(Constants.DELAY_1_SECOND)
+                            setState {
+                                copy(
+                                    smsValidationError = null,
+                                    smsCodeQuery = "",
+                                    activeVerificationPhone = null,
+                                    error = null,
+                                    isLoading = false
+                                )
+                            }
                         }
-                        proceedSuccessAuth(tokens = status.tokens)
 
                     } else {
-                        setState { copy(smsValidationError = status.reason, smsCodeQuery = "") }
+                        setState {
+                            copy(
+                                smsValidationError = status.reason,
+                                smsCodeQuery = "",
+                                isLoading = false
+                            )
+                        }
                     }
                 }
             }

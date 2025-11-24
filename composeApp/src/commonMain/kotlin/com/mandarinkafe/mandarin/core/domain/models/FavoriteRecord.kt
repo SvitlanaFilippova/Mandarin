@@ -35,14 +35,15 @@ sealed class FavoriteRecord {
             return other is Custom &&
                     mealId == other.mealId &&
                     addsIds.toSet() == other.addsIds.toSet() &&
-                    modifiers.toSet() == other.modifiers.toSet()
+                    modifiers.hasSameContentAs(other.modifiers)
             // не сравниваем timestamp
         }
 
         override fun hashCode(): Int {
             var result = mealId.hashCode()
             result = 31 * result + addsIds.toSet().hashCode()
-            result = 31 * result + modifiers.toSet().hashCode()
+            // Используем только ID групп и элементов для hashCode
+            result = 31 * result + modifiers.map { it.id to it.items.map { item -> item.id }.toSet() }.hashCode()
             return result
         }
     }

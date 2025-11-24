@@ -102,7 +102,8 @@ fun MenuScreen(
                     bannersAreLoading = bannersAreLoading,
                     selectedMenuItemIndex = state.selectedMenuItemIndex,
                     banners = banners,
-                    sharedEffectFlow = sharedEffectFlow
+                    sharedEffectFlow = sharedEffectFlow,
+                    announcements = state.announcements
                 )
             }
         }

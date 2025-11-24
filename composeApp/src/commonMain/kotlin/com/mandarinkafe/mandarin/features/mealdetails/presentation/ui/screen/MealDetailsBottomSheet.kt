@@ -182,10 +182,16 @@ private fun handleToggleFavorite(
     isFavorite: Boolean,
     onSharedEvent: (SharedContract.SharedEvent) -> Unit,
 ) {
-    if (!isFavorite && meal.isCustomized) {
-        onSharedEvent(SharedContract.SharedEvent.ShowFavoriteDialog(meal))
-    } else {
-        onSharedEvent(SharedContract.SharedEvent.ToggleFavorite(meal.meal))
+    when {
+        !isFavorite && meal.isCustomized -> {
+            onSharedEvent(SharedContract.SharedEvent.ShowFavoriteDialog(meal))
+        }
+        isFavorite && meal.isCustomized -> {
+            onSharedEvent(SharedContract.SharedEvent.ToggleFavorite(item = meal))
+        }
+        else -> {
+            onSharedEvent(SharedContract.SharedEvent.ToggleFavorite(meal = meal.meal))
+        }
     }
 }
 

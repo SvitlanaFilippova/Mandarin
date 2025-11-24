@@ -28,11 +28,20 @@ fun NavBackStackEntry.getBooleanArgument(key: String, defaultValue: Boolean = fa
 
     if (stringResult.isSuccess) {
         val stringValue = stringResult.getOrNull()
-        return when (stringValue?.lowercase()) {
-            "true" -> true
-            "false" -> false
-            else -> defaultValue
+
+        // Защита: проверяем длину и валидность значения
+        // "true"/"false" максимум 5 символов, но оставляем запас для безопасности
+        if (stringValue != null && stringValue.length <= MAX_BOOLEAN_STRING_LENGTH) {
+            return runCatching {
+                when (stringValue.lowercase()) {
+                    "true" -> true
+                    "false" -> false
+                    else -> defaultValue
+                }
+            }.getOrDefault(defaultValue)
         }
+        // Если строка слишком длинная или null, возвращаем defaultValue
+        return defaultValue
     }
 
     // Если не String, пытаемся получить как Boolean (если было установлено программно)
@@ -44,5 +53,5 @@ fun NavBackStackEntry.getBooleanArgument(key: String, defaultValue: Boolean = fa
     return booleanResult.getOrNull() ?: defaultValue
 }
 
-
+private const val MAX_BOOLEAN_STRING_LENGTH = 10
 

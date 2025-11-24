@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
@@ -83,18 +84,22 @@ class MealDetailsViewModel(
     private fun tryAddMeal(item: CartItem?) {
         if (item != null) {
             viewModelScope.launch {
-                val result = cartInteractor.tryAddMeal(item)
-                when (result) {
-                    is MealAddResult.AlreadyExistBaseMeal -> showReplaceOrAddDialog(
-                        newItem = item,
-                        existingItem = result.existing,
-                        message = MR.strings.replace_or_add_message
-                    )
+                try {
+                    val result = cartInteractor.tryAddMeal(item)
+                    when (result) {
+                        is MealAddResult.AlreadyExistBaseMeal -> showReplaceOrAddDialog(
+                            newItem = item,
+                            existingItem = result.existing,
+                            message = MR.strings.replace_or_add_message
+                        )
 
-                    is MealAddResult.Added -> showMessageAndCloseMealDetails(
-                        message = MR.strings.added_to_cart_template,
-                        mealName = item.customizedMeal.meal.name
-                    )
+                        is MealAddResult.Added -> showMessageAndCloseMealDetails(
+                            message = MR.strings.added_to_cart_template,
+                            mealName = item.customizedMeal.meal.name
+                        )
+                    }
+                } catch (e: Exception) {
+                    setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
                 }
             }
 
@@ -132,45 +137,56 @@ class MealDetailsViewModel(
 
     private fun addItem(item: CartItem) {
         viewModelScope.launch {
-            cartInteractor.addItem(cartItem = item)
+            try {
+                cartInteractor.addItem(cartItem = item)
+                showMessageAndCloseMealDetails(
+                    message = MR.strings.added_to_cart_template,
+                    mealName = item.customizedMeal.meal.name
+                )
+            } catch (e: Exception) {
+                setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
+            }
         }
-
-        showMessageAndCloseMealDetails(
-            message = MR.strings.added_to_cart_template,
-            mealName = item.customizedMeal.meal.name
-        )
 
     }
 
     private fun editMealInCart(newItem: CartItem, oldItem: CartItem? = null) {
         viewModelScope.launch {
-            val wasUpdated = cartInteractor.updateItem(newCartItem = newItem, oldItem = oldItem)
-            val message = if (wasUpdated) MR.strings.edited_template else null
-            val mealName = newItem.customizedMeal.meal.name
+            try {
+                val wasUpdated = cartInteractor.updateItem(newCartItem = newItem, oldItem = oldItem)
+                val message = if (wasUpdated) MR.strings.edited_template else null
+                val mealName = newItem.customizedMeal.meal.name
 
-            showMessageAndCloseMealDetails(
-                message = message,
-                mealName = mealName
-            )
+                showMessageAndCloseMealDetails(
+                    message = message,
+                    mealName = mealName
+                )
+            } catch (e: Exception) {
+                setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
+            }
         }
     }
 
     private fun loadMealById(mealId: String, isEditMode: Boolean) {
         viewModelScope.launch {
-            setLoading()
-            val result = getMealById(mealId)
-            when (result) {
-                is Success -> {
-                    val meal = result.data
-                    if (meal != null) {
-                        val item = meal.toCartItem()
-                        applyMealData(item, isEditMode)
-                    } else {
-                        setError(result)
+            try {
+                setLoading()
+                val result = getMealById(mealId)
+                when (result) {
+                    is Success -> {
+                        val meal = result.data
+                        if (meal != null) {
+                            val item = meal.toCartItem()
+                            applyMealData(item, isEditMode)
+                        } else {
+                            setError(result)
+                        }
                     }
-                }
 
-                else -> setError(result)
+                    else -> setError(result)
+                }
+            } catch (e: Exception) {
+                setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
             }
         }
     }
@@ -185,7 +201,13 @@ class MealDetailsViewModel(
         cartItemId: String?,
     ) {
         when {
-            item != null -> viewModelScope.launch { applyMealData(item, isEditMode) }
+            item != null -> viewModelScope.launch {
+                try {
+                    applyMealData(item, isEditMode)
+                } catch (e: Exception) {
+                    setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
+                }
+            }
             mealId != null -> {
                 if (hasCustomizationParams(addsIds, modifierIds, comment, cartItemId)) {
                     // Реконструируем CustomizedMeal из параметров навигации
@@ -226,23 +248,27 @@ class MealDetailsViewModel(
         isEditMode: Boolean,
     ) {
         viewModelScope.launch {
-            setLoading()
-            val result = reconstructCustomizedMealUseCase(
-                mealId = mealId,
-                addsIds = addsIds,
-                modifierIds = modifierIds,
-                comment = comment,
-                cartItemId = cartItemId,
-            )
-            when (result) {
-                is Success -> {
-                    val cartItem = result.data
-                    cartItem?.let {
-                        applyMealData(it, isEditMode)
+            try {
+                setLoading()
+                val result = reconstructCustomizedMealUseCase(
+                    mealId = mealId,
+                    addsIds = addsIds,
+                    modifierIds = modifierIds,
+                    comment = comment,
+                    cartItemId = cartItemId,
+                )
+                when (result) {
+                    is Success -> {
+                        val cartItem = result.data
+                        cartItem?.let {
+                            applyMealData(it, isEditMode)
+                        }
                     }
-                }
 
-                else -> setError(result)
+                    else -> setError(result)
+                }
+            } catch (e: Exception) {
+                setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
             }
         }
     }
@@ -257,10 +283,16 @@ class MealDetailsViewModel(
                 isEditMode = isEditMode
             )
         }
-        with(item.customizedMeal.meal) {
-            if (isAddable) {
-                getAddons(path = categoryPath)
+        loadAddonsIfNeeded(item.customizedMeal.meal)
+    }
+
+    private fun loadAddonsIfNeeded(meal: Meal) {
+        try {
+            if (meal.isAddable && meal.categoryPath.isNotEmpty()) {
+                getAddons(path = meal.categoryPath)
             }
+        } catch (e: Exception) {
+            setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
         }
     }
 
@@ -397,14 +429,18 @@ class MealDetailsViewModel(
     private fun getAddons(path: List<String>) {
         setState { copy(isLoading = true) }
         viewModelScope.launch {
-            getAddonsUseCase(categoryPath = path).collectLatest { result ->
-                setLoading(result is Loading)
-                when (result) {
-                    is Success -> setAddonsData(result.data)
-                    is Loading -> {}
-                    is Idle -> {}
-                    else -> setError(result)
+            try {
+                getAddonsUseCase(categoryPath = path).collectLatest { result ->
+                    setLoading(result is Loading)
+                    when (result) {
+                        is Success -> setAddonsData(result.data)
+                        is Loading -> {}
+                        is Idle -> {}
+                        else -> setError(result)
+                    }
                 }
+            } catch (e: Exception) {
+                setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
             }
         }
     }
@@ -436,5 +472,9 @@ class MealDetailsViewModel(
 
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
+    }
+
+    private companion object {
+        const val UNKNOWN_ERROR_MESSAGE = "Unknown error"
     }
 }

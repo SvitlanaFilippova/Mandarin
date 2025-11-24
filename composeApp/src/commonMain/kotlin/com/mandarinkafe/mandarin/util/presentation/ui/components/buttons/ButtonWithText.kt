@@ -42,6 +42,7 @@ fun ButtonWithText(
         modifier = modifier
             .heightIn(min = Dimens.ButtonWithTextHeight),
         onClick = onClickAction,
+        enabled = shouldBeActive,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColorFinal,
