@@ -67,3 +67,5 @@ DerivedData/
 /composeApp/composeApp.podspec
 /.kotlin/metadata/*
 /.kotlin/
+/iosApp/PRIVACY_MANIFEST_INFO.md
+/iosApp/APP_STORE_CONNECT_PRIVACY.md

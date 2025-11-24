@@ -320,9 +320,9 @@
     <string name="label_order_type">Способ получения</string>
     <string name="label_payment_status">Статус</string>
     <string name="change_payment_method">Изменить способ оплаты</string>
-    <string name="change_payment_method_dialog_title">Изменить способ оплаты?</string>
-    <string name="change_payment_method_dialog_message">Меняем способ оплаты на \"%1$s\"? Изменить
-        обратно будет нельзя.
+    <string name="change_payment_method_dialog_title">Смена способа оплаты</string>
+    <string name="change_payment_method_dialog_message">Изменить способ оплаты на&#160;\"%1$s\"? Это
+        действие не&#160;получится отменить.
     </string>
     <string name="label_order_items">Позиции заказа: %1$d</string>
     <string name="discount_applied">Применена скидка</string>
@@ -558,6 +558,7 @@
     <!-- Личный кабинет -->
     <string name="personal_account">Личный кабинет</string>
     <string name="personal_info">Персональная информация</string>
+    <string name="personal_info_name">Имя для заказов</string>
     <string name="active_devices">Активные устройства</string>
     <string name="unknown_device">Неизвестное устройство</string>
     <string name="login_date">Последний вход: %1$s</string>

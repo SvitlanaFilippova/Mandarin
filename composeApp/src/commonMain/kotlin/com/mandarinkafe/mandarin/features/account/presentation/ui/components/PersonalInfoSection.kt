@@ -53,7 +53,7 @@ fun PersonalInfoSection(
 
             MyTextField(
                 value = nameQuery,
-                labelRes = MR.strings.your_name,
+                labelRes = MR.strings.personal_info_name,
                 onValueChange = { onNameEntered(it) },
                 trailingIcon = if (showNameChangeButtons) {
                     {

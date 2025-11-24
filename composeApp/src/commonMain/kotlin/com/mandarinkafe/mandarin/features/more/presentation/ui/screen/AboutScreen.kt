@@ -127,14 +127,6 @@ fun AboutScreen(
                     color = Colors.LightGrey
                 )
             }
-            state.revision?.let {
-                // Ревизия меню
-                Text(
-                    text = stringResource(MR.strings.menu_revision_text, it),
-                    style = Typography.SmallTextStyle,
-                    color = Colors.LightGrey
-                )
-            }
 
             state.versionName?.let {
                 // Версия приложения

@@ -28,23 +28,25 @@ Multiplatform
 
 ## Возможности приложения ✨
 
-| Функциональность                              | Статус         |
-|-----------------------------------------------|----------------|
-| Получение актуального меню                    | ✔️ Реализовано |
-| Поиск блюда по названию с поддержкой опечаток | ✔️ Реализовано |
-| Фильтры по тегам                              | ✔️ Реализовано |
-| Кастомизация блюда                            | ✔️ Реализовано |
-| Корзина                                       | ✔️ Реализовано |
-| Интерактивная карта с зонами доставки         | ✔️ Реализовано |
-| Избранные с поддержкой кастомизированных блюд | ✔️ Реализовано |
-| Оформление заказа                             | ✔️ Реализовано |
-| Отслеживание статуса заказа                   | ✔️ Реализовано |
-| История заказов                               | ✔️ Реализовано |
-| Сохранение адресов доставки                   | ✔️ Реализовано |
-| Форма обратной связи                          | ✔️ Реализовано |
-| Авторизация через звонок или sms              | ✔️ Реализовано |
-| Личный кабинет                                | ✔️ Реализовано |
-| Онлайн-оплата заказа                          | ✔️ Реализовано |
+| Функциональность                                | Статус         |
+|-------------------------------------------------|----------------|
+| Получение и обработка актуального меню          | ✔️ Реализовано |
+| Синхронизация прокрутки меню и табов категорий  | ✔️ Реализовано |
+| Поиск блюда по названию с поддержкой опечаток   | ✔️ Реализовано |
+| Фильтры по тегам                                | ✔️ Реализовано |
+| Кастомизация блюда                              | ✔️ Реализовано |
+| Корзина с умными рекомендациями товаров         | ✔️ Реализовано |
+| Интерактивная карта с зонами доставки           | ✔️ Реализовано |
+| Избранные с поддержкой кастомизированных блюд   | ✔️ Реализовано |
+| Оформление заказа                               | ✔️ Реализовано |
+| Отслеживание статуса заказа                     | ✔️ Реализовано |
+| История заказов                                 | ✔️ Реализовано |
+| Сохранение адресов доставки                     | ✔️ Реализовано |
+| Форма обратной связи                            | ✔️ Реализовано |
+| Авторизация через звонок или sms                | ✔️ Реализовано |
+| Личный кабинет                                  | ✔️ Реализовано |
+| Онлайн-оплата заказа                            | ✔️ Реализовано |
+| Отмена заказа с автоматическим возвратом оплаты | ✔️ Реализовано |
 
 ## Используемые инструменты и технологии 📚
 
@@ -64,9 +66,11 @@ Multiplatform
 
 ## Скриншоты приложения 📱
 
-<img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/1_Menu.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/2_Search.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/3_Cart.jpg?raw=true" width="30%" height="30%">
+<img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/1_Menu.gif?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/2_Search.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/3_Favorites.jpg?raw=true" width="30%" height="30%">
 
-<img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/4_Checkout.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/5_favorites.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/6_map.jpg?raw=true" width="30%" height="30%">
+<img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/4_Map.gif?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/5_Cart.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/6_Checkout.jpg?raw=true" width="30%" height="30%">
+
+<img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/7_Contacts.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/8_Account.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/9_MealDetails.jpg?raw=true" width="30%" height="30%">
 
 ## Общие требования 🗒️
 
