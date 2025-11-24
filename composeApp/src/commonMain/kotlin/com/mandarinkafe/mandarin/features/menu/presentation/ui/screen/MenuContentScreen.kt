@@ -32,6 +32,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
+import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.AnnouncementsSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BannersSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuItemCard
@@ -60,6 +61,7 @@ fun MenuContentScreen(
     bannersAreLoading: Boolean,
     selectedMenuItemIndex: Int,
     banners: List<Banner>,
+    announcements: List<String>,
     sharedEffectFlow: SharedFlow<SharedEffect>,
 ) {
     val categoryPositions = remember(menuItems) {
@@ -126,6 +128,14 @@ fun MenuContentScreen(
             state = scrollUi.listState,
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8),
         ) {
+
+            //  Секция с обьявлениями (скроллится вместе с контентом)
+            item {
+                AnnouncementsSection(
+                    announcements = announcements,
+                )
+            }
+
             //  Баннеры (скроллятся вместе с контентом)
             item {
                 BannersSection(

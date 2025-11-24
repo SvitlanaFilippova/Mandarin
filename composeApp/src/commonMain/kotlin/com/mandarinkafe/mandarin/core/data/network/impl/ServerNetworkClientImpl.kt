@@ -29,6 +29,13 @@ class ServerNetworkClientImpl(
         return serverApi.getBanners()
     }
 
+    override suspend fun getAnnouncements(): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return serverApi.getAnnouncements()
+    }
+
     override suspend fun getRecommendations(): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }

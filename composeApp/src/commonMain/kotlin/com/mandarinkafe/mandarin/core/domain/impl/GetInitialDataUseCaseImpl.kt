@@ -7,6 +7,7 @@ import com.mandarinkafe.mandarin.features.address.domain.api.DeliveryAreaReposit
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.SyncUserDataUseCase
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CategoryDiscountRepository
+import com.mandarinkafe.mandarin.features.menu.domain.api.AnnouncementsRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.coroutineScope
@@ -20,6 +21,7 @@ class GetInitialDataUseCaseImpl(
     private val authRepository: AuthRepository,
     private val menuCache: MenuCache,
     private val bannersRepository: BannersRepository,
+    private val announcementsRepository: AnnouncementsRepository,
     private val categoryDiscountRepository: CategoryDiscountRepository,
     private val deliveryAreaRepository: DeliveryAreaRepository,
     private val syncUserDataUseCase: SyncUserDataUseCase,
@@ -39,6 +41,7 @@ class GetInitialDataUseCaseImpl(
         // 3. Параллельно грузим всё остальное
         coroutineScope {
             launch { bannersRepository.loadBanners() }
+            launch { announcementsRepository.loadAnnouncements() }
             launch { categoryDiscountRepository.refreshFromApi() }
             launch { deliveryAreaRepository.getAllAreas() }
         }
