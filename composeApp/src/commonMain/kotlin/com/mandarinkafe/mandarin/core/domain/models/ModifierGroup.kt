@@ -21,13 +21,13 @@ data class ModifierGroup(
  */
 fun List<ModifierGroup>.hasSameContentAs(other: List<ModifierGroup>): Boolean {
     if (this.size != other.size) return false
-    
+
     val thisMap = this.associate { group ->
         group.id to group.items.map { it.id }.toSet()
     }
     val otherMap = other.associate { group ->
         group.id to group.items.map { it.id }.toSet()
     }
-    
+
     return thisMap == otherMap
 }

@@ -1,7 +1,5 @@
 package com.mandarinkafe.mandarin.core.domain.models
 
-import com.mandarinkafe.mandarin.core.domain.models.hasSameContentAs
-
 sealed class FavoriteRecord {
     abstract val mealId: String
     abstract val createdAt: Long

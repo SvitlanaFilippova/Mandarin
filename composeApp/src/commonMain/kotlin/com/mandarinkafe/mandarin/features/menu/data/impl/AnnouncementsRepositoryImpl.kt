@@ -7,7 +7,6 @@ import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.applyTypography
 import io.github.aakira.napier.Napier
-import kotlinx.datetime.Instant
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -77,12 +76,12 @@ class AnnouncementsRepositoryImpl(
     override suspend fun loadAnnouncementsIfStale(): Resource<Unit> {
         val now = Clock.System.now().toEpochMilliseconds()
         val timeSinceLastRefresh = now - lastRefreshTime
-        
+
         // Обновляем только если прошло больше 5 минут с последнего обновления
         if (timeSinceLastRefresh > REFRESH_INTERVAL_MS) {
             return loadAnnouncements()
         }
-        
+
         // Если данные свежие, просто возвращаем успех
         return Resource.Success(Unit)
     }
@@ -99,14 +98,14 @@ class AnnouncementsRepositoryImpl(
         return try {
             val start = parseInstant(startTime)
             val end = parseInstant(endTime)
-            
+
             if (start == null || end == null) {
                 // Если не удалось распарсить даты, считаем объявление активным
                 // (сервер уже фильтрует, но на всякий случай)
                 Napier.w("AnnouncementsRepository: не удалось распарсить даты: start=$startTime, end=$endTime")
                 return true
             }
-            
+
             currentTime >= start && currentTime <= end
         } catch (e: Exception) {
             Napier.e("AnnouncementsRepository: ошибка при проверке дат объявления", e)
@@ -121,7 +120,7 @@ class AnnouncementsRepositoryImpl(
     @OptIn(ExperimentalTime::class)
     private fun parseInstant(dateTimeString: String): kotlin.time.Instant? {
         return try {
-            Instant.parse(dateTimeString)
+            kotlin.time.Instant.parse(dateTimeString)
         } catch (e: Exception) {
             Napier.e("AnnouncementsRepository: ошибка парсинга даты: $dateTimeString", e)
             null

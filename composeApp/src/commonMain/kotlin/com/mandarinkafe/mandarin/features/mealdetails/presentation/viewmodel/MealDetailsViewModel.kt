@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
+import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
@@ -98,7 +99,7 @@ class MealDetailsViewModel(
                         )
                     }
                 } catch (e: Exception) {
-                    setError(ErrorOther<Any>(e.message ?: "Unknown error"))
+                    setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
                 }
             }
 
@@ -204,7 +205,7 @@ class MealDetailsViewModel(
                 try {
                     applyMealData(item, isEditMode)
                 } catch (e: Exception) {
-                    setError(ErrorOther<Any>(e.message ?: "Unknown error"))
+                    setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
                 }
             }
             mealId != null -> {
@@ -282,17 +283,16 @@ class MealDetailsViewModel(
                 isEditMode = isEditMode
             )
         }
+        loadAddonsIfNeeded(item.customizedMeal.meal)
+    }
+
+    private fun loadAddonsIfNeeded(meal: Meal) {
         try {
-            with(item.customizedMeal.meal) {
-                if (isAddable) {
-                    val path = categoryPath
-                    if (path.isNotEmpty()) {
-                        getAddons(path = path)
-                    }
-                }
+            if (meal.isAddable && meal.categoryPath.isNotEmpty()) {
+                getAddons(path = meal.categoryPath)
             }
         } catch (e: Exception) {
-            setError(ErrorOther<Any>(e.message ?: "Unknown error"))
+            setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
         }
     }
 
@@ -472,5 +472,9 @@ class MealDetailsViewModel(
 
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
+    }
+
+    private companion object {
+        const val UNKNOWN_ERROR_MESSAGE = "Unknown error"
     }
 }

@@ -28,10 +28,10 @@ fun NavBackStackEntry.getBooleanArgument(key: String, defaultValue: Boolean = fa
 
     if (stringResult.isSuccess) {
         val stringValue = stringResult.getOrNull()
-        
+
         // Защита: проверяем длину и валидность значения
-        // "true"/"false" максимум 5 символов, но оставляем запас до 10 для безопасности
-        if (stringValue != null && stringValue.length <= 10) {
+        // "true"/"false" максимум 5 символов, но оставляем запас для безопасности
+        if (stringValue != null && stringValue.length <= MAX_BOOLEAN_STRING_LENGTH) {
             return runCatching {
                 when (stringValue.lowercase()) {
                     "true" -> true
@@ -53,5 +53,5 @@ fun NavBackStackEntry.getBooleanArgument(key: String, defaultValue: Boolean = fa
     return booleanResult.getOrNull() ?: defaultValue
 }
 
-
+private const val MAX_BOOLEAN_STRING_LENGTH = 10
 
