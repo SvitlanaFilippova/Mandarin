@@ -5,6 +5,8 @@ import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
+import com.mandarinkafe.mandarin.features.menu.domain.api.AnnouncementsRepository
+import com.mandarinkafe.mandarin.features.menu.domain.api.GetAnnouncementsUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.api.GetBannersUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuInteractor
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
@@ -28,6 +30,8 @@ class MenuViewModel(
     private val menuInteractor: MenuInteractor,
     private val favoritesApi: FavoritesApi,
     private val getBannersUseCase: GetBannersUseCase,
+    private val getAnnouncementsUseCase: GetAnnouncementsUseCase,
+    private val announcementsRepository: AnnouncementsRepository,
     private val forceRefreshMenu: ForceRefreshMenuUseCase,
 ) : BaseViewModel<MenuEvent, MenuEffect, MenuState>() {
     override fun setInitialState() = MenuState()
@@ -35,6 +39,7 @@ class MenuViewModel(
     init {
         loadMenu()
         getBanners()
+        getAnnouncements()
         observeFavorites()
     }
 
@@ -52,6 +57,8 @@ class MenuViewModel(
             forceRefreshMenu()
             loadMenu()
             getBanners()
+            // Принудительно обновляем объявления при форс рефреш
+            refreshAnnouncements()
         }
     }
 
@@ -153,6 +160,35 @@ class MenuViewModel(
                     setState { copy(bannersAreLoading = false) }
                 }
             }
+        }
+    }
+
+    private fun getAnnouncements() {
+        viewModelScope.launch {
+            val result = getAnnouncementsUseCase()
+            when (result) {
+                is Success -> {
+                    val announcements = result.data ?: emptyList()
+                    setState { copy(announcements = announcements) }
+                }
+
+                else -> {
+                    // В случае ошибки просто оставляем пустой список
+                    setState { copy(announcements = emptyList()) }
+                }
+            }
+        }
+    }
+
+    /**
+     * Принудительное обновление объявлений (используется при форс рефреш)
+     */
+    private fun refreshAnnouncements() {
+        viewModelScope.launch {
+            // Сначала обновляем кэш в репозитории
+            announcementsRepository.loadAnnouncements()
+            // Затем получаем обновленные данные
+            getAnnouncements()
         }
     }
 }

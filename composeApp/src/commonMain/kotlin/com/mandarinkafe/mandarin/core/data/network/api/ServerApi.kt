@@ -4,6 +4,7 @@ import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.features.address.data.dto.DeliveryZonesResponse
 import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendationsResponse
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesServerResponse
+import com.mandarinkafe.mandarin.features.menu.data.dto.AnnouncementsResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannersResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupsResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.ServerMenuResponse
@@ -44,6 +45,17 @@ class ServerApi(
             BannersResponse(data = bannersList).apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("ServerApi: getBanners(): ошибка получения баннеров", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun getAnnouncements(): Response {
+        return try {
+            val announcementsList: List<com.mandarinkafe.mandarin.features.menu.data.dto.AnnouncementDto> =
+                client.get("/announcements") {}.body()
+            AnnouncementsResponse(data = announcementsList).apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Napier.e("ServerApi: getAnnouncements(): ошибка получения объявлений", e)
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
