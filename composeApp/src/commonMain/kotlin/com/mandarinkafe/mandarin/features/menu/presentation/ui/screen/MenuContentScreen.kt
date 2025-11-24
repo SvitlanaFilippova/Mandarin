@@ -128,7 +128,6 @@ fun MenuContentScreen(
             state = scrollUi.listState,
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8),
         ) {
-
             //  Секция с обьявлениями (скроллится вместе с контентом)
             item {
                 AnnouncementsSection(

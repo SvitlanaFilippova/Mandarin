@@ -144,7 +144,7 @@ class MealDetailsViewModel(
                     mealName = item.customizedMeal.meal.name
                 )
             } catch (e: Exception) {
-                setError(ErrorOther<Any>(e.message ?: "Unknown error"))
+                setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
             }
         }
 
@@ -162,7 +162,7 @@ class MealDetailsViewModel(
                     mealName = mealName
                 )
             } catch (e: Exception) {
-                setError(ErrorOther<Any>(e.message ?: "Unknown error"))
+                setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
             }
         }
     }
@@ -186,7 +186,7 @@ class MealDetailsViewModel(
                     else -> setError(result)
                 }
             } catch (e: Exception) {
-                setError(ErrorOther<Any>(e.message ?: "Unknown error"))
+                setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
             }
         }
     }
@@ -268,7 +268,7 @@ class MealDetailsViewModel(
                     else -> setError(result)
                 }
             } catch (e: Exception) {
-                setError(ErrorOther<Any>(e.message ?: "Unknown error"))
+                setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
             }
         }
     }
@@ -440,7 +440,7 @@ class MealDetailsViewModel(
                     }
                 }
             } catch (e: Exception) {
-                setError(ErrorOther<Any>(e.message ?: "Unknown error"))
+                setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
             }
         }
     }

@@ -9,10 +9,11 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 @Composable
 fun AnnouncementsSection(announcements: List<String>) {
     announcements.forEach { announcement ->
-        if (announcement.isNotEmpty())
+        if (announcement.isNotEmpty()) {
             TooltipText(
                 modifier = Modifier.padding(Dimens.MarginSmall8),
                 text = announcement
             )
+        }
     }
 }
