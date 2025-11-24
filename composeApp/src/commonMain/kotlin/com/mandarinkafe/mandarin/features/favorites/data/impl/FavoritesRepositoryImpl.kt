@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.core.domain.api.FavoritesWriter
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.FavoriteRecord
 import com.mandarinkafe.mandarin.core.domain.models.Meal
+import com.mandarinkafe.mandarin.core.domain.models.hasSameContentAs
 import com.mandarinkafe.mandarin.features.auth.domain.impl.AuthStateChecker
 import com.mandarinkafe.mandarin.features.favorites.data.datastore.FavoritesStorage
 import com.mandarinkafe.mandarin.features.favorites.data.datastore.FavoritesStorageResult
@@ -76,7 +77,7 @@ class FavoritesRepositoryImpl(
         val existingStored = localFavorites.find { stored ->
             stored.mealId == custom.meal.id &&
                     stored.addsIds.toSet() == custom.adds.map { it.id }.toSet() &&
-                    stored.modifiers.toSet() == custom.modifiers.toSet()
+                    stored.modifiers.hasSameContentAs(custom.modifiers)
         }
 
         if (existingStored != null) {
@@ -264,7 +265,7 @@ class FavoritesRepositoryImpl(
                 remoteItemKeys.any { remoteItem ->
                     localItem.mealId == remoteItem.mealId &&
                             localItem.addsIds.toSet() == remoteItem.addsIds.toSet() &&
-                            localItem.modifiers.toSet() == remoteItem.modifiers.toSet()
+                            localItem.modifiers.hasSameContentAs(remoteItem.modifiers)
                 }
             }.toSet()
         }
@@ -283,7 +284,7 @@ class FavoritesRepositoryImpl(
             val remoteItem = remoteItems.find { remoteItem ->
                 localItem.mealId == remoteItem.mealId &&
                         localItem.addsIds.toSet() == remoteItem.addsIds.toSet() &&
-                        localItem.modifiers.toSet() == remoteItem.modifiers.toSet()
+                        localItem.modifiers.hasSameContentAs(remoteItem.modifiers)
             }
             when {
                 remoteItem == null -> !serverIsNewerOrEqual

@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.favorites.data.models
 
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+import com.mandarinkafe.mandarin.core.domain.models.hasSameContentAs
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,7 +15,7 @@ data class StoredFavoriteMeal(
     override fun equals(other: Any?): Boolean {
         return other is StoredFavoriteMeal &&
                 this.mealId == other.mealId &&
-                this.modifiers.toSet() == other.modifiers.toSet() &&
+                this.modifiers.hasSameContentAs(other.modifiers) &&
                 this.addsIds.toSet() == other.addsIds.toSet()
         // не сравниваем timestamp
     }
@@ -22,7 +23,8 @@ data class StoredFavoriteMeal(
     override fun hashCode(): Int {
         var result = mealId.hashCode()
         result = 31 * result + addsIds.toSet().hashCode()
-        result = 31 * result + modifiers.toSet().hashCode()
+        // Используем только ID групп и элементов для hashCode
+        result = 31 * result + modifiers.map { it.id to it.items.map { item -> item.id }.toSet() }.hashCode()
         return result
     }
 }
@@ -33,7 +35,7 @@ fun StoredFavoriteMeal.isBase(): Boolean {
 
 fun StoredFavoriteMeal.sameAs(other: StoredFavoriteMeal): Boolean {
     return mealId == other.mealId &&
-            addsIds == other.addsIds &&
-            modifiers == other.modifiers
+            addsIds.toSet() == other.addsIds.toSet() &&
+            modifiers.hasSameContentAs(other.modifiers)
 }
 
