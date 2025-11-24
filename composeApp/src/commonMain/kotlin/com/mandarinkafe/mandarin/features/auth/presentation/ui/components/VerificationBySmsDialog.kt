@@ -13,8 +13,10 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_LENGTH
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForUi
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
+import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.DialogContainer
 import com.mandarinkafe.mandarin.util.toTimeFormat
 import dev.icerock.moko.resources.StringResource
@@ -102,6 +104,16 @@ fun VerificationBySmsDialog(
                     color = Colors.Orange,
                 )
             }
+
+            Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
+
+            ButtonWithText(
+                modifier = Modifier.fillMaxWidth(),
+                shouldBeActive = code.length == SMS_CODE_LENGTH && !isLoading,
+                text = stringResource(MR.strings.send),
+                onClick = { onComplete(code) },
+                onMissingRequiredInfo = {},
+            )
         }
     }
 }
