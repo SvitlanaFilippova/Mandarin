@@ -175,7 +175,10 @@ private fun shouldAutoStartPayment(
     state: OrderInfoState,
 ): Boolean {
     // Проверяем базовые условия: онлайн-оплата и заказ не закрыт
-    if (!state.isOnlinePayment || state.incomingOrder == null || state.incomingOrder.isClosed) {
+    if (!state.isOnlinePayment ||
+        state.incomingOrder == null ||
+        state.incomingOrder.isClosed
+    ) {
         return false
     }
 
@@ -190,5 +193,6 @@ private fun canStartPayment(state: OrderInfoState): Boolean {
     return !state.isPaymentLoading &&
             !state.isPaymentProcessing &&
             !state.isPaymentPolling &&
-            state.isPaymentPaid != true
+            state.isPaymentPaid != true &&
+            state.incomingOrder?.isClosed != true
 }

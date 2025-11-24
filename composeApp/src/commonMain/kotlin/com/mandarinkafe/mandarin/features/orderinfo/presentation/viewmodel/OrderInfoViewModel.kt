@@ -13,6 +13,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.api.PaymentTimerInter
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.RepeatOrderInteractor
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.PaymentTimerInteractorImpl
 import com.mandarinkafe.mandarin.features.orderinfo.domain.isOnlinePayment
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect.ShowError
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
@@ -275,6 +276,15 @@ class OrderInfoViewModel(
                 if (order.isClosed) {
                     stopObservingOrderInfo()
                     stopPaymentTimer()
+                    // Сбрасываем статус оплаты для отмененных/закрытых заказов, чтобы предотвратить повторный запуск оплаты
+                    if (order.status == DeliveryStatus.CANCELLED) {
+                        setState {
+                            copy(
+                                paymentStatus = null,
+                                isPaymentPaid = false
+                            )
+                        }
+                    }
                 }
             }
 
