@@ -1,6 +1,10 @@
+
 # Mandarin 🔎
+=======
+
 
 Мультиплатформенное приложение для заказа еды из локальной службы доставки Mandarin
+
 
 Kotlin Multiplatform проект, объединяющий Android и iOS клиенты с общим интерфейсом, бизнес-логикой,
 сетевым слоем, репозиториями и базой данных.
@@ -21,8 +25,10 @@ Multiplatform.
 [**Светлана Филиппова**](https://github.com/SvitlanaFilippova) — **архитектор и ведущий разработчик**  
 Архитектура проекта, дизайн UI/UX, разработка клиентской части и серверной логики
 
+
 [**Сергей Шахов**](https://github.com/SergeySh97) — **разработчик**  
 BottomNavigation, интеграция с Yandex MapKit
+
 
 [**Александр Родионов**](https://github.com/AlexDeyl) — **backend разработчик**  
 Админ-панель, настройка зон доставки через интерактивную карту, управление баннерами и
@@ -125,3 +131,4 @@ BottomNavigation, интеграция с Yandex MapKit
 - **Android
   **: [RuStore](https://www.rustore.ru/catalog/app/com.mandarinkafe.mandarin) | [Releases](https://github.com/mandarin-kafe/Mandarin/releases)
 - **iOS**: *Скоро в App Store*
+
