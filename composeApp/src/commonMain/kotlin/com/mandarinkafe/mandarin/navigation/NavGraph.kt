@@ -106,7 +106,15 @@ fun NavGraph(navController: NavHostController) {
             SavedAddressesScreen(navController = navController)
         }
 
+        // Маршрут без параметров (для обычной навигации)
         composable(NavConstants.ACCOUNT_ROUTE) {
+            AccountScreen(navController = navController)
+        }
+
+        // Маршрут с параметром phoneVerified (для редиректа после авторизации)
+        composable(
+            route = "${NavConstants.ACCOUNT_ROUTE}?${NavConstants.KEY_PHONE_VERIFIED}={${NavConstants.KEY_PHONE_VERIFIED}}"
+        ) {
             AccountScreen(navController = navController)
         }
 
