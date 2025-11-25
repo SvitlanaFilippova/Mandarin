@@ -170,7 +170,7 @@ private fun FeedbackFields(
     Column {
         MyTextField(
             value = name,
-            labelRes = MR.strings.your_name,
+            labelRes = MR.strings.your_name_no_obligatory,
             onValueChange = { onNameChange(it) },
             colors = colors
         )

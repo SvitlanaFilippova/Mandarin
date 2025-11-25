@@ -606,4 +606,6 @@
     <string name="payment_status_canceled">Отменено</string>
     <string name="payment_status_refunded">Оформлен возврат</string>
     <string name="payment_status_unknown">Неизвестен</string>
+
+    <string name="your_name_no_obligatory">Имя</string>
 </resources>
