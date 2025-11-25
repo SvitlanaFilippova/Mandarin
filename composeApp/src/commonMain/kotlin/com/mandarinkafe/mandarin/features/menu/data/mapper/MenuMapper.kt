@@ -140,7 +140,7 @@ private data class BaseMealInfo(
 )
 
 private fun extractBaseInfo(firstSize: ItemSizeDto): BaseMealInfo? {
-    val weight = (firstSize.portionWeightGrams ?: 0f)
+    val weight = firstSize.portionWeightGrams ?: 0f
     val price = firstSize.prices?.firstOrNull()?.price?.toInt() ?: return null
     val imageUrl = firstSize.buttonImageUrl
     val thumbnailUrl = BuildKonfig.SERVER_BASE_URL + firstSize.thumbnailUrl

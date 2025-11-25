@@ -47,11 +47,11 @@ fun formatWeight(weight: Float, measureUnitType: MeasureUnitType): String {
 
 /**
  * Форматирует Float с максимум 2 знаками после запятой, убирая лишние нули.
- * Работает в KMP без использования String.format.
  */
 private fun formatFloat(value: Float): String {
     // Округляем до 2 знаков после запятой
-    val rounded = (value * 100f).toInt().toFloat() / 100f
+    val decimalPlacesMultiplier = 100f
+    val rounded = (value * decimalPlacesMultiplier).toInt().toFloat() / decimalPlacesMultiplier
 
     // Преобразуем в строку
     val stringValue = rounded.toString()
