@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.util.presentation
 import androidx.compose.runtime.Composable
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType
+import com.mandarinkafe.mandarin.util.Constants.DECIMAL_PLACES_MULTIPLIER
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -50,8 +51,7 @@ fun formatWeight(weight: Float, measureUnitType: MeasureUnitType): String {
  */
 private fun formatFloat(value: Float): String {
     // Округляем до 2 знаков после запятой
-    val decimalPlacesMultiplier = 100f
-    val rounded = (value * decimalPlacesMultiplier).toInt().toFloat() / decimalPlacesMultiplier
+    val rounded = (value * DECIMAL_PLACES_MULTIPLIER).toInt().toFloat() / DECIMAL_PLACES_MULTIPLIER
 
     // Преобразуем в строку
     val stringValue = rounded.toString()

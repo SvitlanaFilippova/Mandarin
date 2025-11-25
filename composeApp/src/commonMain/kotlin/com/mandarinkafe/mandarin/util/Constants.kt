@@ -93,6 +93,7 @@ object Constants {
     const val SECONDS_TO_CALL_DEFAULT = 300
     const val SECONDS_TO_RESEND_SMS_DEFAULT = 60
     const val DELAY_1_SECOND = 1000L
+    const val DECIMAL_PLACES_MULTIPLIER = 100f
 
 }
 
