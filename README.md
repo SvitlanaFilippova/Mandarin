@@ -18,16 +18,15 @@ Multiplatform.
   <img src="https://contrib.rocks/image?repo=mandarin-kafe/Mandarin&max=6" />
 </a>
 
-[**Светлана Филиппова**](https://github.com/SvitlanaFilippova) — архитектор и ведущий разработчик  
+[**Светлана Филиппова**](https://github.com/SvitlanaFilippova) — **архитектор и ведущий разработчик**  
 Архитектура проекта, дизайн UI/UX, разработка клиентской части и серверной логики
 
-[**Сергей Шахов**](https://github.com/SergeySh97) — разработчик  
+[**Сергей Шахов**](https://github.com/SergeySh97) — **разработчик**  
 BottomNavigation, интеграция с Yandex MapKit
 
-[**Александр Родионов**](https://github.com/AlexDeyl) — backend разработчик  
+[**Александр Родионов**](https://github.com/AlexDeyl) — **backend разработчик**  
 Админ-панель, настройка зон доставки через интерактивную карту, управление баннерами и
-сопутствующими товарами, первичная настройка БД
-[репозиторий сервера](https://github.com/SvitlanaFilippova/Mandarin-server)
+сопутствующими товарами, первичная настройка БД [(репозиторий сервера)](https://github.com/SvitlanaFilippova/Mandarin-server)
 
 
 ## Возможности приложения ✨
@@ -84,7 +83,7 @@ BottomNavigation, интеграция с Yandex MapKit
 структуру с разделением на `data/`, `domain/` и `presentation/` слои. Dependency Injection
 реализован через Koin.
 
-## Скриншоты приложения 📱
+## Интерфейс приложения 📱
 
 <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/1_Menu.gif?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/2_Search.jpg?raw=true" width="30%" height="30%"> <img src="https://github.com/mandarin-kafe/Mandarin/blob/dev/screenshots/3_Favorites.jpg?raw=true" width="30%" height="30%">
 
