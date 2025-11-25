@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class Meal(
     val id: String,
     val name: String,
-    val weight: Int,
+    val weight: Float,
     val measureUnitType: MeasureUnitType,
     val price: Int,
     val mainImageUrl: String,

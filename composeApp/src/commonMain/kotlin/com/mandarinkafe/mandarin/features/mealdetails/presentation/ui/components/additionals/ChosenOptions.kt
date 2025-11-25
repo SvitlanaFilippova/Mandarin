@@ -15,7 +15,7 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.util.presentation.localizedShortText
+import com.mandarinkafe.mandarin.util.presentation.formatWeight
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -45,7 +45,7 @@ fun ChosenOptions(
                         itemName = formatNameWithWeight(
                             name = item.name,
                             weight = item.weight,
-                            measureUnit = item.measureUnitType.localizedShortText()
+                            measureUnitType = item.measureUnitType
                         ),
                         onClick = { onModifierClick(group, item) }
                     )
@@ -56,7 +56,7 @@ fun ChosenOptions(
                     itemName = formatNameWithWeight(
                         name = it.name,
                         weight = it.weight,
-                        measureUnit = it.measureUnitType.localizedShortText()
+                        measureUnitType = it.measureUnitType
                     ),
                     onClick = { onAddClick(it) }
                 )
@@ -66,6 +66,12 @@ fun ChosenOptions(
 }
 
 /** Форматирует название + вес (если вес есть) */
-private fun formatNameWithWeight(name: String, weight: Int, measureUnit: String): String {
-    return if (weight > 0) "$name, $weight $measureUnit" else name
+@Composable
+private fun formatNameWithWeight(
+    name: String,
+    weight: Float,
+    measureUnitType: com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType,
+): String {
+    val weightText = formatWeight(weight, measureUnitType)
+    return if (weightText.isNotEmpty()) "$name, $weightText" else name
 }

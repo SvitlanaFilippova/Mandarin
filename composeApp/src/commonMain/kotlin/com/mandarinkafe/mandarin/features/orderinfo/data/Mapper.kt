@@ -176,7 +176,7 @@ private fun associateItemsWithAdds(
                 amount = safeAmount,
                 price = dto.price,
                 discountedPrice = dto.resultSum?.takeIf { it > 0 }?.div(safeAmount),
-                weight = dto.weight ?: 0,
+                weight = dto.weight ?: 0f,
                 measureUnitType = MeasureUnitType.from(dto.measureUnitType) ?: MeasureUnitType.GRAM,
                 isDeleted = dto.deleted?.deletionMethod != null,
             )

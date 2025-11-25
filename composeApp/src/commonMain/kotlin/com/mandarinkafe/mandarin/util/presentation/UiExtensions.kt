@@ -15,3 +15,51 @@ fun MeasureUnitType.localizedShortText(): String {
     }
     return stringResource(resId)
 }
+
+/**
+ * Форматирует вес для отображения.
+ * Для дробных значений (литры) форматирует как дробное число, для целых - как целое.
+ */
+@Composable
+fun formatWeight(weight: Float, measureUnitType: MeasureUnitType): String {
+    if (weight == 0f) return ""
+
+    // Проверяем, является ли значение целым числом
+    val isWholeNumber = weight % 1f == 0f
+
+    return if (isWholeNumber) {
+        // Для целых чисел используем шаблон с %d
+        stringResource(
+            MR.strings.meal_weight_template,
+            weight.toInt(),
+            measureUnitType.localizedShortText()
+        )
+    } else {
+        // Для дробных чисел форматируем и убираем лишние нули в конце
+        val formatted = formatFloat(weight)
+        stringResource(
+            MR.strings.meal_weight_template_float,
+            formatted,
+            measureUnitType.localizedShortText()
+        )
+    }
+}
+
+/**
+ * Форматирует Float с максимум 2 знаками после запятой, убирая лишние нули.
+ * Работает в KMP без использования String.format.
+ */
+private fun formatFloat(value: Float): String {
+    // Округляем до 2 знаков после запятой
+    val rounded = (value * 100f).toInt().toFloat() / 100f
+
+    // Преобразуем в строку
+    val stringValue = rounded.toString()
+
+    // Если есть точка, убираем лишние нули в конце
+    return if (stringValue.contains('.')) {
+        stringValue.trimEnd('0').trimEnd('.')
+    } else {
+        stringValue
+    }
+}

@@ -17,7 +17,7 @@ import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
-import com.mandarinkafe.mandarin.util.presentation.localizedShortText
+import com.mandarinkafe.mandarin.util.presentation.formatWeight
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -45,13 +45,10 @@ fun MealInfo(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {
-            if (meal.weight != 0) {
+            val weightText = formatWeight(meal.weight, meal.measureUnitType)
+            if (weightText.isNotEmpty()) {
                 Text(
-                    text = stringResource(
-                        MR.strings.meal_weight_template,
-                        meal.weight,
-                        meal.measureUnitType.localizedShortText()
-                    ),
+                    text = weightText,
                     style = Typography.RegularLightTextStyle
                 )
             }

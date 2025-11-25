@@ -22,7 +22,6 @@ import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.NameWeightPriceRow
-import com.mandarinkafe.mandarin.util.presentation.localizedShortText
 
 @Composable
 fun AddsItem(
@@ -66,7 +65,7 @@ fun AddsItem(
                 modifier = Modifier.weight(1f),
                 name = add.name,
                 weight = add.weight,
-                measureUnit = add.measureUnitType.localizedShortText(),
+                measureUnitType = add.measureUnitType,
                 price = add.price
             )
         }

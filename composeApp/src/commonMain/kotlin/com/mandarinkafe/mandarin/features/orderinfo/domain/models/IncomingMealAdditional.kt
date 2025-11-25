@@ -8,7 +8,7 @@ data class IncomingMealAdditional(
     val amount: Double,
     val price: Double,
     val discountedPrice: Double?,
-    val weight: Int,
+    val weight: Float,
     val measureUnitType: MeasureUnitType,
     val isDeleted: Boolean = false,
     val isValidated: Boolean = false,

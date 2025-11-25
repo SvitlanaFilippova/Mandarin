@@ -9,16 +9,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.mandarinkafe.mandarin.MR
+import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.presentation.formatWeight
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun NameWeightPriceRow(
     modifier: Modifier = Modifier,
     name: String,
-    weight: Int,
-    measureUnit: String?,
+    weight: Float,
+    measureUnitType: MeasureUnitType,
     price: Int,
 ) {
     Row(
@@ -41,14 +43,11 @@ fun NameWeightPriceRow(
         )
 
         // Вес (рядом с названием)
-        if (weight != 0) {
+        val weightText = formatWeight(weight, measureUnitType)
+        if (weightText.isNotEmpty()) {
             Text(
                 modifier = Modifier.padding(horizontal = Dimens.MarginSmall8),
-                text = stringResource(
-                    MR.strings.meal_weight_template_for_adds,
-                    weight,
-                    measureUnit ?: ""
-                ),
+                text = weightText,
                 style = Typography.RegularExtraLightTextStyle,
             )
         }

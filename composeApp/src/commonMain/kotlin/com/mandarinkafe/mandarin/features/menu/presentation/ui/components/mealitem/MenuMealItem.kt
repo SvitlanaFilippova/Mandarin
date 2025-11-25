@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.isFavorite
@@ -31,10 +30,9 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_TITLE_IN_MENU
 import com.mandarinkafe.mandarin.util.LabelSize
-import com.mandarinkafe.mandarin.util.presentation.localizedShortText
+import com.mandarinkafe.mandarin.util.presentation.formatWeight
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.MealButtonsRow
 import com.mandarinkafe.mandarin.util.presentation.ui.components.images.MealItemImageBox
-import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun MenuMealItem(
@@ -99,14 +97,11 @@ fun MenuMealItem(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            if (meal.weight != 0) {
+            val weightText = formatWeight(meal.weight, meal.measureUnitType)
+            if (weightText.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(vertical = Dimens.MarginSmall8),
-                    text = stringResource(
-                        MR.strings.meal_weight_template,
-                        meal.weight,
-                        meal.measureUnitType.localizedShortText()
-                    ),
+                    text = weightText,
                     style = Typography.SmallLightTextStyle
                 )
             }

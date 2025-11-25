@@ -84,13 +84,15 @@ fun LabelDto.toDomain() = Label(
 
 fun ModifierItemDto.toDomain(): ModifierItem {
     val safePrice = prices?.firstOrNull()?.price?.toInt() ?: 0
+    val measureUnitType = MeasureUnitType.from(measureUnitType) ?: MeasureUnitType.GRAM
+    val weight = (portionWeightGrams ?: 0.0).toFloat()
 
     return ModifierItem(
         id = itemId,
         name = name?.removeLeadingDash()?.applyTypography() ?: "",
         price = safePrice,
-        weight = portionWeightGrams?.toInt() ?: 0,
-        measureUnitType = MeasureUnitType.from(measureUnitType) ?: MeasureUnitType.GRAM,
+        weight = weight,
+        measureUnitType = measureUnitType,
     )
 }
 
@@ -130,7 +132,7 @@ private fun mergeLabels(mealLabels: List<Label>, categoryLabels: List<Label>): L
 }
 
 private data class BaseMealInfo(
-    val weight: Int,
+    val weight: Float,
     val price: Int,
     val imageUrl: String?,
     val thumbnailUrl: String?,
@@ -138,7 +140,7 @@ private data class BaseMealInfo(
 )
 
 private fun extractBaseInfo(firstSize: ItemSizeDto): BaseMealInfo? {
-    val weight = firstSize.portionWeightGrams?.toInt() ?: 0
+    val weight = (firstSize.portionWeightGrams ?: 0f)
     val price = firstSize.prices?.firstOrNull()?.price?.toInt() ?: return null
     val imageUrl = firstSize.buttonImageUrl
     val thumbnailUrl = BuildKonfig.SERVER_BASE_URL + firstSize.thumbnailUrl

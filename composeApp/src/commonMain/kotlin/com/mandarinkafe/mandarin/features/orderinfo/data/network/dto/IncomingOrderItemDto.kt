@@ -10,7 +10,7 @@ data class IncomingOrderItemDto(
     val price: Double,
     val resultSum: Double? = null,
     val positionId: String? = null,
-    val weight: Int? = null,
+    val weight: Float? = null,
     val measureUnitType: String? = null,
     val deleted: DeletionInfoDto? = null,
     val comment: String? = null,

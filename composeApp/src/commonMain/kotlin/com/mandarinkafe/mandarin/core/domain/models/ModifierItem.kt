@@ -9,6 +9,6 @@ data class ModifierItem(
     val id: String,
     val name: String,
     val price: Int,
-    val weight: Int,
+    val weight: Float,
     val measureUnitType: MeasureUnitType,
 )

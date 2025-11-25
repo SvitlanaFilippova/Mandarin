@@ -22,7 +22,6 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.components.NameWeightPriceRow
-import com.mandarinkafe.mandarin.util.presentation.localizedShortText
 import com.mandarinkafe.mandarin.util.removeLeadingDash
 
 @Composable
@@ -62,7 +61,7 @@ fun ModifierSingleSelectItem(
                 modifier = Modifier.weight(1f),
                 name = item.name.removeLeadingDash(),
                 weight = item.weight,
-                measureUnit = item.measureUnitType.localizedShortText(),
+                measureUnitType = item.measureUnitType,
                 price = item.price
             )
         }

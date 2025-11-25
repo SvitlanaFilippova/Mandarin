@@ -11,7 +11,7 @@ data class MealAdditional(
     val price: Int,
     val discountable: Boolean,
     val orderItemType: String,
-    val weight: Int,
+    val weight: Float,
     val measureUnitType: MeasureUnitType,
 ) {
     override fun equals(other: Any?): Boolean {
