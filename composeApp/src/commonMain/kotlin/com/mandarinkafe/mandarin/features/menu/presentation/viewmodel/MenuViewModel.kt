@@ -10,14 +10,13 @@ import com.mandarinkafe.mandarin.features.menu.domain.api.GetAnnouncementsUseCas
 import com.mandarinkafe.mandarin.features.menu.domain.api.GetBannersUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuInteractor
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
-import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryInteractor
-import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 import com.mandarinkafe.mandarin.features.menu.presentation.mappers.MenuItemMapper.menuToMenuItems
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
 import com.mandarinkafe.mandarin.features.menu.presentation.models.extensions.getName
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEffect
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuState
+import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryInteractor
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
@@ -238,6 +237,7 @@ class MenuViewModel(
                     .take(MAX_ACTIVE_ORDERS_COUNT)
                 setState { copy(activeOrders = activeOrders) }
             }
+
             else -> {
                 // В случае ошибки сохраняем предыдущее состояние
                 // Не обновляем список, чтобы карточки не пропадали при временных проблемах с сетью
@@ -247,6 +247,7 @@ class MenuViewModel(
 
     private companion object {
         const val ORDER_STATUS_UPD_DELAY = 60 // Обновление каждые 60 секунд
-        const val MAX_ACTIVE_ORDERS_COUNT = 3 // Максимальное количество активных заказов для отображения
+        const val MAX_ACTIVE_ORDERS_COUNT =
+            3 // Максимальное количество активных заказов для отображения
     }
 }

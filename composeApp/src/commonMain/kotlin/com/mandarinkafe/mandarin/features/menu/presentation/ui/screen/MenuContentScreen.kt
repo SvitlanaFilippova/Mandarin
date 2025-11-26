@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -39,6 +40,7 @@ import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.Announ
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BannersSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuItemCard
+import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.ScrollUiState
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.TabsSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.rememberScrollUiState
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
@@ -71,19 +73,8 @@ fun MenuContentScreen(
     activeOrders: List<SavedOrder>,
     navController: NavController,
 ) {
-    val categoryPositions = remember(menuItems) {
-        menuItems.mapIndexedNotNull { index, item ->
-            if (item is MenuItem.HeaderItem) index else null
-        }
-    }
-    val subCategoryPositionsMap = remember(menuItems) {
-        categoryPositions.associateWith { headerIndex ->
-            menuItems.mapIndexedNotNull { index, item ->
-                if (index > headerIndex && item is MenuItem.SubHeaderItem) index else null
-            }
-        }
-    }
-
+    val categoryPositions = rememberCategoryPositions(menuItems)
+    val subCategoryPositionsMap = rememberSubCategoryPositionsMap(menuItems, categoryPositions)
     val scrollUi = rememberScrollUiState(categoryPositions, subCategoryPositionsMap)
     val scope = rememberCoroutineScope()
     val activeTabIndex = remember { mutableIntStateOf(0) }
@@ -93,20 +84,118 @@ fun MenuContentScreen(
     val isAtTop by scrollUi.isAtTop.collectAsState()
 
     var showFab by remember { mutableStateOf(false) }
-    fun CoroutineScope.showFabTemporarily() = launch {
-        showFab = true
-        delay(Constants.FORCE_SHOW_FAB_DURATION_MS)
-        showFab = false
+    val showFabTemporarily: CoroutineScope.() -> Unit = {
+        launch {
+            showFab = true
+            delay(Constants.FORCE_SHOW_FAB_DURATION_MS)
+            showFab = false
+        }
     }
 
+    val imageSize = rememberImageSize()
+
+    MenuScrollEffects(
+        scrollUi = scrollUi,
+        activeTabIndex = activeTabIndex,
+        activeSubTabIndex = activeSubTabIndex,
+        selectedMenuItemIndex = selectedMenuItemIndex,
+        scope = scope,
+        showFabTemporarily = showFabTemporarily
+    )
+
+    MenuSharedEffectHandler(
+        sharedEffectFlow = sharedEffectFlow,
+        scrollUi = scrollUi
+    )
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        MenuLazyColumn(
+            menuItems = menuItems,
+            announcements = announcements,
+            activeOrders = activeOrders,
+            banners = banners,
+            bannersAreLoading = bannersAreLoading,
+            cartItems = cartItems,
+            favoriteIds = favoriteIds,
+            inProgressItems = inProgressItems,
+            imageSize = imageSize,
+            activeTabIndex = activeTabIndex.intValue,
+            activeSubTabIndex = activeSubTabIndex.intValue,
+            scrollUi = scrollUi,
+            scope = scope,
+            showFabTemporarily = showFabTemporarily,
+            onBannersClick = onBannersClick,
+            onAddToCart = onAddToCart,
+            onRemoveFromCart = onRemoveFromCart,
+            onToggleFavorite = onToggleFavorite,
+            onMealDetailsClick = onMealDetailsClick,
+            onCategorySelected = { index ->
+                activeTabIndex.intValue = index
+                activeSubTabIndex.intValue = 0
+            },
+            onSubCategorySelected = { subIndex ->
+                activeSubTabIndex.intValue = subIndex
+            },
+            navController = navController
+        )
+
+        BackToTopFAB(
+            modifier = Modifier
+                .align(Alignment.BottomStart),
+            visible = (showFab || isScrollingUp) && !isAtTop,
+            onClick = {
+                scope.launch {
+                    scrollUi.scrollToTop()
+                }
+            }
+        )
+    }
+}
+
+
+@Composable
+private fun rememberCategoryPositions(menuItems: List<MenuItem>): List<Int> {
+    return remember(menuItems) {
+        menuItems.mapIndexedNotNull { index, item ->
+            if (item is MenuItem.HeaderItem) index else null
+        }
+    }
+}
+
+@Composable
+private fun rememberSubCategoryPositionsMap(
+    menuItems: List<MenuItem>,
+    categoryPositions: List<Int>,
+): Map<Int, List<Int>> {
+    return remember(menuItems, categoryPositions) {
+        categoryPositions.associateWith { headerIndex ->
+            menuItems.mapIndexedNotNull { index, item ->
+                if (index > headerIndex && item is MenuItem.SubHeaderItem) index else null
+            }
+        }
+    }
+}
+
+@Composable
+private fun rememberImageSize(): Dp {
     val windowInfo = LocalWindowInfo.current
     val density = LocalDensity.current
     val horizontalPadding = Dimens.MarginSmall8
-    val screenWidthDp = with(density) { windowInfo.containerSize.width.toDp() }
-    val imageSize = remember(screenWidthDp) {
+    return remember(windowInfo, density) {
+        val screenWidthDp = with(density) { windowInfo.containerSize.width.toDp() }
         (screenWidthDp - horizontalPadding * MENU_IMAGE_SPACING_COUNT) / MENU_IMAGE_COLUMN_COUNT
     }
-    // Обновляем активную табу при скролле
+}
+
+@Composable
+private fun MenuScrollEffects(
+    scrollUi: ScrollUiState,
+    activeTabIndex: androidx.compose.runtime.MutableIntState,
+    activeSubTabIndex: androidx.compose.runtime.MutableIntState,
+    selectedMenuItemIndex: Int,
+    scope: CoroutineScope,
+    showFabTemporarily: CoroutineScope.() -> Unit,
+) {
     LaunchedEffect(scrollUi.listState) {
         snapshotFlow { scrollUi.listState.firstVisibleItemIndex }
             .collect {
@@ -128,109 +217,13 @@ fun MenuContentScreen(
             scope.showFabTemporarily()
         }
     }
+}
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            state = scrollUi.listState,
-            verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8),
-        ) {
-            //  Секция с обьявлениями (скроллится вместе с контентом)
-            item {
-                AnnouncementsSection(
-                    announcements = announcements,
-                )
-            }
-
-            //  Секция с активными заказами (скроллится вместе с контентом)
-            if (activeOrders.isNotEmpty()) {
-                items(
-                    items = activeOrders,
-                    key = { order -> order.id }
-                ) { order ->
-                    ActiveOrderCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        order = order,
-                        onClick = {
-                            navController.navigateToOrderInfo(
-                                orderId = order.id,
-                                paymentMethodCode = order.paymentMethodCode
-                            )
-                        }
-                    )
-                }
-            }
-
-            //  Баннеры (скроллятся вместе с контентом)
-            item {
-                BannersSection(
-                    banners = banners,
-                    bannersAreLoading = bannersAreLoading,
-                    onBannerClick = onBannersClick
-                )
-            }
-
-            // Поиск и табы категорий
-            stickyHeader {
-                MenuStickyHeader(
-                    menuItems = menuItems,
-                    activeTabIndex = activeTabIndex.intValue,
-                    activeSubTabIndex = activeSubTabIndex.intValue,
-                    onCategorySelected = { index ->
-                        activeTabIndex.intValue = index
-                        activeSubTabIndex.intValue = 0
-                        scope.launch {
-                            scrollUi.scrollToCategory(index)
-                            scope.showFabTemporarily()
-                        }
-                    },
-                    onSubCategorySelected = { subIndex ->
-                        activeSubTabIndex.intValue = subIndex
-                        scope.launch {
-                            scrollUi.scrollToSubCategory(
-                                activeTabIndex.intValue,
-                                subIndex
-                            )
-                            scope.showFabTemporarily()
-                        }
-                    }
-                )
-            }
-
-            itemsIndexed(
-                items = menuItems,
-                key = { _, item -> item.id }
-            ) { index, item ->
-                val previousItem = menuItems.getOrNull(index - 1)
-                MenuItemCard(
-                    item = item,
-                    previousItem = previousItem,
-                    cartItems = cartItems,
-                    favoriteIds = favoriteIds,
-                    inProgressItems = inProgressItems,
-                    imageSize = imageSize,
-                    onAddToCart = onAddToCart,
-                    onRemoveFromCart = onRemoveFromCart,
-                    onToggleFavorite = onToggleFavorite,
-                    onMealDetailsClick = onMealDetailsClick
-                )
-            }
-            // Отступ внизу
-            item { Spacer(modifier = Modifier.height(Dimens.MarginBig32)) }
-        }
-
-        BackToTopFAB(
-            modifier = Modifier
-                .align(Alignment.BottomStart),
-            visible = (showFab || isScrollingUp) && !isAtTop,
-            onClick = {
-                scope.launch {
-                    scrollUi.scrollToTop()
-                }
-            }
-        )
-    }
-
+@Composable
+private fun MenuSharedEffectHandler(
+    sharedEffectFlow: SharedFlow<SharedEffect>,
+    scrollUi: ScrollUiState,
+) {
     LaunchedEffect(Unit) {
         sharedEffectFlow.collect { effect ->
             if (effect is SharedEffect.ScrollToTop) {
@@ -240,6 +233,112 @@ fun MenuContentScreen(
     }
 }
 
+@Composable
+private fun MenuLazyColumn(
+    menuItems: List<MenuItem>,
+    announcements: List<String>,
+    activeOrders: List<SavedOrder>,
+    banners: List<Banner>,
+    bannersAreLoading: Boolean,
+    cartItems: List<CartItem>,
+    favoriteIds: Set<String>,
+    inProgressItems: Set<String>,
+    imageSize: Dp,
+    activeTabIndex: Int,
+    activeSubTabIndex: Int,
+    scrollUi: ScrollUiState,
+    scope: CoroutineScope,
+    showFabTemporarily: CoroutineScope.() -> Unit,
+    onBannersClick: (Banner) -> Unit,
+    onAddToCart: (Meal) -> Unit,
+    onRemoveFromCart: (Meal) -> Unit,
+    onToggleFavorite: (Meal) -> Unit,
+    onMealDetailsClick: (Meal) -> Unit,
+    onCategorySelected: (Int) -> Unit,
+    onSubCategorySelected: (Int) -> Unit,
+    navController: NavController,
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        state = scrollUi.listState,
+        verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8),
+    ) {
+        item {
+            AnnouncementsSection(announcements = announcements)
+        }
+
+        if (activeOrders.isNotEmpty()) {
+            items(
+                items = activeOrders,
+                key = { order -> order.id }
+            ) { order ->
+                ActiveOrderCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    order = order,
+                    onClick = {
+                        navController.navigateToOrderInfo(
+                            orderId = order.id,
+                            paymentMethodCode = order.paymentMethodCode
+                        )
+                    }
+                )
+            }
+        }
+
+        item {
+            BannersSection(
+                banners = banners,
+                bannersAreLoading = bannersAreLoading,
+                onBannerClick = onBannersClick
+            )
+        }
+
+        stickyHeader {
+            MenuStickyHeader(
+                menuItems = menuItems,
+                activeTabIndex = activeTabIndex,
+                activeSubTabIndex = activeSubTabIndex,
+                onCategorySelected = { index ->
+                    onCategorySelected(index)
+                    scope.launch {
+                        scrollUi.scrollToCategory(index)
+                        scope.showFabTemporarily()
+                    }
+                },
+                onSubCategorySelected = { subIndex ->
+                    onSubCategorySelected(subIndex)
+                    scope.launch {
+                        scrollUi.scrollToSubCategory(activeTabIndex, subIndex)
+                        scope.showFabTemporarily()
+                    }
+                }
+            )
+        }
+
+        itemsIndexed(
+            items = menuItems,
+            key = { _, item -> item.id }
+        ) { index, item ->
+            val previousItem = menuItems.getOrNull(index - 1)
+            MenuItemCard(
+                item = item,
+                previousItem = previousItem,
+                cartItems = cartItems,
+                favoriteIds = favoriteIds,
+                inProgressItems = inProgressItems,
+                imageSize = imageSize,
+                onAddToCart = onAddToCart,
+                onRemoveFromCart = onRemoveFromCart,
+                onToggleFavorite = onToggleFavorite,
+                onMealDetailsClick = onMealDetailsClick
+            )
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(Dimens.MarginBig32))
+        }
+    }
+}
 
 @Composable
 private fun MenuStickyHeader(
