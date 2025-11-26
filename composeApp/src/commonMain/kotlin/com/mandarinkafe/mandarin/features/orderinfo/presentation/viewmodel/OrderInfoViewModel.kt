@@ -184,6 +184,11 @@ class OrderInfoViewModel(
             return
         }
 
+        // Не запускаем оплату для отмененных или закрытых заказов
+        if (order.isClosed || order.status == DeliveryStatus.CANCELLED) {
+            return
+        }
+
         val amount = order.sum ?: 0.0
         val userPhone = order.phone?.formatPhoneNumberForSdk() ?: ""
 
@@ -495,7 +500,10 @@ class OrderInfoViewModel(
                 }
 
                 // Если выбран способ оплаты ONLINE, запускаем процесс оплаты
-                if (newPaymentMethodCode.equals(PAYMENT_ONLINE_CODE, ignoreCase = true)) {
+                // Но не запускаем для отмененных или закрытых заказов
+                if (newPaymentMethodCode.equals(PAYMENT_ONLINE_CODE, ignoreCase = true) &&
+                    !order.isClosed && order.status != DeliveryStatus.CANCELLED
+                ) {
                     // Запускаем оплату (startPayment сам проверит наличие телефона и покажет ошибку при необходимости)
                     startPayment()
                 }

@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.models.UiError.EmptyOrderData
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent.StopObservingStatus
@@ -182,6 +183,11 @@ private fun shouldAutoStartPayment(
         return false
     }
 
+    // Не запускаем оплату для отмененных заказов
+    if (state.incomingOrder.status == DeliveryStatus.CANCELLED) {
+        return false
+    }
+
     // Запускаем оплату если:
     // 1. Заказ только что создан
     // 2. ИЛИ заказ не оплачен (isPaymentPaid != true и paymentStatus != SUCCEEDED)
@@ -194,5 +200,6 @@ private fun canStartPayment(state: OrderInfoState): Boolean {
             !state.isPaymentProcessing &&
             !state.isPaymentPolling &&
             state.isPaymentPaid != true &&
-            state.incomingOrder?.isClosed != true
+            state.incomingOrder?.isClosed != true &&
+            state.incomingOrder?.status != DeliveryStatus.CANCELLED
 }
