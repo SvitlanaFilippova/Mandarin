@@ -23,9 +23,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -46,21 +49,61 @@ fun BannerCarousel(
     easing: androidx.compose.animation.core.Easing = androidx.compose.animation.core.LinearEasing,
     onBannerClick: (Banner) -> Unit,
 ) {
-    val pagerState = rememberPagerState { banners.size }
+    // Создаём расширенный список для бесконечной прокрутки:
+    // [последний] + [все элементы] + [первый]
+    val infiniteBanners = remember(banners) {
+        if (banners.isEmpty()) {
+            emptyList()
+        } else {
+            listOf(banners.last()) + banners + listOf(banners.first())
+        }
+    }
+    
+    // Инициализируем на первом реальном элементе (индекс 1), если список не пустой
+    val pagerState = rememberPagerState(initialPage = if (infiniteBanners.isNotEmpty()) 1 else 0) { 
+        infiniteBanners.size.coerceAtLeast(1)
+    }
     val coroutineScope = rememberCoroutineScope()
+
+    // Бесконечная прокрутка: при достижении границ незаметно переключаемся
+    // Отслеживаем только когда анимация завершена (offsetFraction близок к 0)
+    LaunchedEffect(pagerState) {
+        if (banners.isNotEmpty() && infiniteBanners.size > 2) {
+            snapshotFlow { 
+                pagerState.currentPage to kotlin.math.abs(pagerState.currentPageOffsetFraction)
+            }.collect { (page, offset) ->
+                // Переключаемся только когда анимация завершена (offset < 0.01)
+                if (offset < 0.01f) {
+                    when (page) {
+                        0 -> {
+                            // Достигли дубликата последнего элемента - переключаемся на реальный последний
+                            pagerState.scrollToPage(page = banners.size)
+                        }
+                        infiniteBanners.size - 1 -> {
+                            // Достигли дубликата первого элемента - переключаемся на реальный первый
+                            pagerState.scrollToPage(page = 1)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     // Автопрокрутка
     LaunchedEffect(Unit) {
-        while (true) {
-            delay(autoScrollInterval)
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(
-                    page = (pagerState.currentPage + 1) % banners.size,
-                    animationSpec = tween(
-                        durationMillis = ANIMATION_DURATION_SLOW,
-                        easing = easing
+        if (infiniteBanners.isNotEmpty()) {
+            while (true) {
+                delay(autoScrollInterval)
+                coroutineScope.launch {
+                    val nextPage = (pagerState.currentPage + 1) % infiniteBanners.size
+                    pagerState.animateScrollToPage(
+                        page = nextPage,
+                        animationSpec = tween(
+                            durationMillis = ANIMATION_DURATION_SLOW,
+                            easing = easing
+                        )
                     )
-                )
+                }
             }
         }
     }
@@ -93,15 +136,25 @@ fun BannerCarousel(
                 )
             )
         ) { page ->
-            KamelSubcomposeAsyncImageSimple(
-                model = banners[page].imageUrl,
-                contentDescription = "Banner ${page + 1}",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(BANNERS_ASPECT_RATIO)
-                    .clickable { onBannerClick(banners[page]) },
-                crossfade = true
-            )
+            if (infiniteBanners.isNotEmpty() && banners.isNotEmpty()) {
+                // Получаем реальный индекс баннера (учитываем дублирование)
+                val realIndex = when {
+                    page == 0 -> banners.size - 1 // Дубликат последнего
+                    page == infiniteBanners.size - 1 -> 0 // Дубликат первого
+                    else -> page - 1 // Реальные элементы (смещение на 1 из-за дубликата в начале)
+                }
+                
+                KamelSubcomposeAsyncImageSimple(
+                    model = infiniteBanners[page].imageUrl,
+                    contentDescription = "Banner ${realIndex + 1}",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(BANNERS_ASPECT_RATIO)
+                        .clip(RoundedCornerShape(Dimens.CornerRadius8))
+                        .clickable { onBannerClick(banners[realIndex]) },
+                    crossfade = true
+                )
+            }
         }
 
         // Индикаторы
@@ -118,7 +171,13 @@ fun BannerCarousel(
             )
         ) {
             banners.forEachIndexed { index, _ ->
-                val isActive = pagerState.currentPage == index
+                // Вычисляем реальную активную страницу (учитываем дублирование)
+                val realCurrentPage = when {
+                    pagerState.currentPage == 0 -> banners.size - 1
+                    pagerState.currentPage == infiniteBanners.size - 1 -> 0
+                    else -> pagerState.currentPage - 1
+                }
+                val isActive = realCurrentPage == index
 
                 // Анимированная ширина
                 val animatedWidth by animateDpAsState(
