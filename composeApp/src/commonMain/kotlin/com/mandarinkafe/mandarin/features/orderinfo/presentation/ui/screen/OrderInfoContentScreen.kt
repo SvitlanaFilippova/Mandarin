@@ -62,7 +62,9 @@ fun OrderInfoContentScreen(
         item {
             OrderStatusSection(
                 deliveryStatus = state.deliveryStatus,
-                shouldShowRefundText = shouldShowRefundText
+                shouldShowRefundText = shouldShowRefundText,
+                isOnlinePayment = state.isOnlinePayment,
+                isPaymentPaid = state.isPaymentPaid
             )
         }
 

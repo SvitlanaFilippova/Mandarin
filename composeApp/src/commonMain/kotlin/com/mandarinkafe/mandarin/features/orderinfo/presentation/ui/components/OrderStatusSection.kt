@@ -18,7 +18,12 @@ import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
-fun OrderStatusSection(deliveryStatus: UiDeliveryStatus, shouldShowRefundText: Boolean) {
+fun OrderStatusSection(
+    deliveryStatus: UiDeliveryStatus,
+    shouldShowRefundText: Boolean,
+    isOnlinePayment: Boolean = false,
+    isPaymentPaid: Boolean? = null,
+) {
     Column(
         Modifier
             .fillMaxWidth()
@@ -40,12 +45,23 @@ fun OrderStatusSection(deliveryStatus: UiDeliveryStatus, shouldShowRefundText: B
             verticalAlignment = Alignment.CenterVertically
         ) { Value(stringResource(deliveryStatus.nameRes)) }
 
-        deliveryStatus.extraTextResId?.let {
+        // Для статуса UNCONFIRMED с онлайн-оплатой, если заказ не оплачен, показываем специальный текст
+        val extraTextResId = if (
+            deliveryStatus == UiDeliveryStatus.UNCONFIRMED &&
+            isOnlinePayment &&
+            isPaymentPaid != true
+        ) {
+            MR.strings.delivery_status_extra_unconfirmed_unpay
+        } else {
+            deliveryStatus.extraTextResId
+        }
+
+        extraTextResId?.let {
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
-            ) { Label(stringResource(deliveryStatus.extraTextResId)) }
+            ) { Label(stringResource(it)) }
         }
 
         // Сообщение об отменённом заказе с успешной онлайн-оплатой

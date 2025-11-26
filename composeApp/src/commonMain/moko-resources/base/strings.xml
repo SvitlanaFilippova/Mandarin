@@ -361,11 +361,14 @@
     <string name="delivery_status_extra_unconfirmed">Ожидаем подтверждения заказа. В&#160;ближайшее
         время оператор позвонит, чтобы подтвердить его. Пожалуйста, будь на&#160;связи.
     </string>
-    <string name="delivery_status_wait_cooking">Ожидает готовки</string>
-    <string name="delivery_status_extra_wait_cooking">Заказ принят и&#160;скоро поступит на&#160;кухню.</string>
-    <string name="delivery_status_cooking_started">Начали готовить</string>
-    <string name="delivery_status_extra_cooking_started">Готовим заказ. Это займёт немного
-        времени.
+    <string name="delivery_status_extra_unconfirmed_unpay">Выбрана онлайн-оплата. Оплати заказ в&#160;отведённое
+        время, и&#160;всё будет готово. Или можешь изменить способ оплаты.
+    </string>
+    <string name="delivery_status_wait_cooking">Принят</string>
+    <string name="delivery_status_extra_wait_cooking">Заказ принят и&#160;скоро отправится на&#160;кухню.</string>
+    <string name="delivery_status_cooking_started">Готовим</string>
+    <string name="delivery_status_extra_cooking_started">Заказ перешёл в&#160;самые надёжные руки&#160;&#8212;
+        наши повара взялись за&#160;работу! Всё будет вкусно.
     </string>
     <string name="delivery_status_cooking_completed">Приготовлен</string>
     <string name="delivery_status_extra_cooking_completed">Блюда готовы. Скоро курьер получит
