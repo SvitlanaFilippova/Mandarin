@@ -281,15 +281,6 @@ class OrderInfoViewModel(
                 if (order.isClosed) {
                     stopObservingOrderInfo()
                     stopPaymentTimer()
-                    // Сбрасываем статус оплаты для отмененных/закрытых заказов, чтобы предотвратить повторный запуск оплаты
-                    if (order.status == DeliveryStatus.CANCELLED) {
-                        setState {
-                            copy(
-                                paymentStatus = null,
-                                isPaymentPaid = false
-                            )
-                        }
-                    }
                 }
             }
 
