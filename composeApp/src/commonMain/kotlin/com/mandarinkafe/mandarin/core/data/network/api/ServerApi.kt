@@ -8,6 +8,7 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.AnnouncementsResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannersResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupsResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.ServerMenuResponse
+import com.mandarinkafe.mandarin.features.more.data.dto.AppStoresResponse
 import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
@@ -107,6 +108,17 @@ class ServerApi(
             PaymentTypesServerResponse(
                 paymentTypes = emptyList()
             ).apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun getAppStores(): Response {
+        return try {
+            val appStoresList: List<com.mandarinkafe.mandarin.features.more.data.dto.AppStoreDto> =
+                client.get("/appstores") {}.body()
+            AppStoresResponse(data = appStoresList).apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Napier.e("ServerApi: getAppStores(): ошибка получения сторов", e)
+            AppStoresResponse(data = emptyList()).apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 }

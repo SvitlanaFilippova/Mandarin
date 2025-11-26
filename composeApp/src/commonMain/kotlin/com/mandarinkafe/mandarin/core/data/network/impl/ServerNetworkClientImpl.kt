@@ -56,5 +56,12 @@ class ServerNetworkClientImpl(
         }
         return serverApi.getPaymentTypes()
     }
+
+    override suspend fun getAppStores(): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return serverApi.getAppStores()
+    }
 }
 

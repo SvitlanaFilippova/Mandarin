@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.more.presentation.ui.screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,8 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,9 +31,11 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.more.presentation.models.getStoreIcon
 import com.mandarinkafe.mandarin.features.more.presentation.ui.components.DevFeedbackDialog
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberAboutViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
+import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.StoreLinkButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.OpenUrl
 import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.compose.painterResource
@@ -43,7 +48,7 @@ fun AboutScreen(
     val viewModel = rememberAboutViewModel()
     val state by viewModel.state.collectAsState()
     val aboutMainText = stringResource(MR.strings.about_main_text)
-    val thanksText = stringResource(MR.strings.thanks_text)
+    val askFeedbackText = stringResource(MR.strings.ask_feedback)
     var showDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -83,7 +88,7 @@ fun AboutScreen(
         ) {
             val modifier = Modifier
                 .weight(1f)
-                .padding(vertical = Dimens.MarginStandard16, horizontal = Dimens.MarginSmall8)
+                .padding(Dimens.MarginSmall8)
 
             DevFeedbackLink(
                 modifier = modifier,
@@ -92,24 +97,48 @@ fun AboutScreen(
                 }
             )
 
-            ContactLink(
-                modifier = modifier,
-                url = stringResource(MR.strings.telegram_url),
+            StoreLinkButton(
+                icon = painterResource(MR.images.ic_telegram),
                 label = stringResource(MR.strings.telegram_label),
-                iconRes = MR.images.ic_telegram
+                url = stringResource(MR.strings.telegram_url),
+                modifier = modifier
             )
 
         }
 
         Spacer(modifier = Modifier.height(Dimens.MarginBig32))
 
-        // Спасибо
+        // Ссылки на сторы, чтобы удобно было оставить отзыв
         Text(
-            text = thanksText,
+            text = askFeedbackText,
             style = Typography.RegularLightTextStyle,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            val modifierForButton =
+                Modifier.fillMaxWidth().padding(horizontal = Dimens.MarginStandard16)
+
+            state.appStores.forEach { appStore ->
+                val iconResource = getStoreIcon(appStore.storeId)
+                iconResource?.let { icon ->
+                    StoreLinkButton(
+                        icon = painterResource(icon),
+                        url = appStore.url,
+                        label = appStore.label,
+                        modifier = modifierForButton
+                    )
+                }
+            }
+        }
+
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -148,47 +177,18 @@ fun AboutScreen(
 }
 
 @Composable
-private fun ContactLink(
-    label: String,
-    iconRes: ImageResource,
-    url: String,
-    modifier: Modifier,
-) {
-    var shouldOpenUrl by remember { mutableStateOf<Boolean?>(null) }
-
-
-    shouldOpenUrl?.let {
-        OpenUrl(url = url)
-        LaunchedEffect(Unit) {
-            shouldOpenUrl = null
-        }
-    }
-
-    Row(
-        modifier = modifier
-            .clickable(onClick = { shouldOpenUrl = true }),
-
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painter = painterResource(iconRes),
-            contentDescription = label,
-            tint = Colors.WhiteTransparent75
-        )
-        Spacer(modifier = Modifier.width(Dimens.MarginSmall8))
-        Text(text = label, style = Typography.RegularTextStyle)
-    }
-}
-
-@Composable
 private fun DevFeedbackLink(
     onClick: () -> Unit,
     modifier: Modifier,
 ) {
-    Row(
-        modifier = modifier
-            .clickable { onClick() },
-        verticalAlignment = Alignment.CenterVertically
+    OutlinedButton(
+        onClick = { onClick() },
+        modifier = modifier,
+        shape = RoundedCornerShape(Dimens.CornerRadius8),
+        contentPadding = PaddingValues(
+            horizontal = Dimens.MarginSmall8,
+            vertical = Dimens.MarginSmall8
+        )
     ) {
         Icon(
             painter = painterResource(MR.images.ic_email),
@@ -198,7 +198,6 @@ private fun DevFeedbackLink(
         Spacer(modifier = Modifier.width(Dimens.MarginSmall8))
         Text(
             text = stringResource(MR.strings.dev_feedback_label),
-            style = Typography.RegularTextStyle
         )
     }
 }
