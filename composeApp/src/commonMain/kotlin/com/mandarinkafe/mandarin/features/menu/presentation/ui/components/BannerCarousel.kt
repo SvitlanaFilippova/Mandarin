@@ -35,11 +35,39 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_SLOW
+import com.mandarinkafe.mandarin.util.Constants.BANNERS_ANIMATION_COMPLETE_THRESHOLD
 import com.mandarinkafe.mandarin.util.Constants.BANNERS_ASPECT_RATIO
 import com.mandarinkafe.mandarin.util.Constants.BANNERS_AUTO_SCROLL_INTERVAL
 import com.mandarinkafe.mandarin.util.presentation.ui.components.images.KamelSubcomposeAsyncImageSimple
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+/**
+ * Создаёт расширенный список для бесконечной прокрутки:
+ * последний + все элементы + первый
+ */
+private fun createInfiniteBanners(banners: List<Banner>): List<Banner> {
+    return if (banners.isEmpty()) {
+        emptyList()
+    } else {
+        listOf(banners.last()) + banners + listOf(banners.first())
+    }
+}
+
+/**
+ * Вычисляет реальный индекс баннера с учётом дублирования
+ */
+private fun getRealBannerIndex(
+    page: Int,
+    infiniteBannersSize: Int,
+    bannersSize: Int,
+): Int {
+    return when {
+        page == 0 -> bannersSize - 1 // Дубликат последнего
+        page == infiniteBannersSize - 1 -> 0 // Дубликат первого
+        else -> page - 1 // Реальные элементы (смещение на 1 из-за дубликата в начале)
+    }
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -49,18 +77,10 @@ fun BannerCarousel(
     easing: androidx.compose.animation.core.Easing = androidx.compose.animation.core.LinearEasing,
     onBannerClick: (Banner) -> Unit,
 ) {
-    // Создаём расширенный список для бесконечной прокрутки:
-    // [последний] + [все элементы] + [первый]
-    val infiniteBanners = remember(banners) {
-        if (banners.isEmpty()) {
-            emptyList()
-        } else {
-            listOf(banners.last()) + banners + listOf(banners.first())
-        }
-    }
-    
+    val infiniteBanners = remember(banners) { createInfiniteBanners(banners) }
+
     // Инициализируем на первом реальном элементе (индекс 1), если список не пустой
-    val pagerState = rememberPagerState(initialPage = if (infiniteBanners.isNotEmpty()) 1 else 0) { 
+    val pagerState = rememberPagerState(initialPage = if (infiniteBanners.isNotEmpty()) 1 else 0) {
         infiniteBanners.size.coerceAtLeast(1)
     }
     val coroutineScope = rememberCoroutineScope()
@@ -69,11 +89,11 @@ fun BannerCarousel(
     // Отслеживаем только когда анимация завершена (offsetFraction близок к 0)
     LaunchedEffect(pagerState) {
         if (banners.isNotEmpty() && infiniteBanners.size > 2) {
-            snapshotFlow { 
+            snapshotFlow {
                 pagerState.currentPage to kotlin.math.abs(pagerState.currentPageOffsetFraction)
             }.collect { (page, offset) ->
-                // Переключаемся только когда анимация завершена (offset < 0.01)
-                if (offset < 0.01f) {
+                // Переключаемся только когда анимация завершена
+                if (offset < BANNERS_ANIMATION_COMPLETE_THRESHOLD) {
                     when (page) {
                         0 -> {
                             // Достигли дубликата последнего элемента - переключаемся на реальный последний
@@ -137,13 +157,8 @@ fun BannerCarousel(
             )
         ) { page ->
             if (infiniteBanners.isNotEmpty() && banners.isNotEmpty()) {
-                // Получаем реальный индекс баннера (учитываем дублирование)
-                val realIndex = when {
-                    page == 0 -> banners.size - 1 // Дубликат последнего
-                    page == infiniteBanners.size - 1 -> 0 // Дубликат первого
-                    else -> page - 1 // Реальные элементы (смещение на 1 из-за дубликата в начале)
-                }
-                
+                val realIndex = getRealBannerIndex(page, infiniteBanners.size, banners.size)
+
                 KamelSubcomposeAsyncImageSimple(
                     model = infiniteBanners[page].imageUrl,
                     contentDescription = "Banner ${realIndex + 1}",
@@ -157,51 +172,56 @@ fun BannerCarousel(
             }
         }
 
-        // Индикаторы
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = Dimens.MarginSmall8,
-                    bottom = Dimens.MarginSmall8
+        BannerIndicators(
+            banners = banners,
+            currentPage = pagerState.currentPage,
+            infiniteBannersSize = infiniteBanners.size
+        )
+    }
+}
+
+@Composable
+private fun BannerIndicators(
+    banners: List<Banner>,
+    currentPage: Int,
+    infiniteBannersSize: Int,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                top = Dimens.MarginSmall8,
+                bottom = Dimens.MarginSmall8
+            ),
+        horizontalArrangement = Arrangement.spacedBy(
+            Dimens.MarginSmall8,
+            Alignment.CenterHorizontally
+        )
+    ) {
+        banners.forEachIndexed { index, _ ->
+            val realCurrentPage = getRealBannerIndex(currentPage, infiniteBannersSize, banners.size)
+            val isActive = realCurrentPage == index
+
+            val animatedWidth by animateDpAsState(
+                targetValue = if (isActive) Dimens.BannerIndicatorActiveWidth32 else Dimens.BannerIndicatorInactiveWidth8,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioLowBouncy,
+                    stiffness = Spring.StiffnessLow
                 ),
-            horizontalArrangement = Arrangement.spacedBy(
-                Dimens.MarginSmall8,
-                Alignment.CenterHorizontally
+                label = "indicator_width"
             )
-        ) {
-            banners.forEachIndexed { index, _ ->
-                // Вычисляем реальную активную страницу (учитываем дублирование)
-                val realCurrentPage = when {
-                    pagerState.currentPage == 0 -> banners.size - 1
-                    pagerState.currentPage == infiniteBanners.size - 1 -> 0
-                    else -> pagerState.currentPage - 1
-                }
-                val isActive = realCurrentPage == index
 
-                // Анимированная ширина
-                val animatedWidth by animateDpAsState(
-                    targetValue = if (isActive) Dimens.BannerIndicatorActiveWidth32 else Dimens.BannerIndicatorInactiveWidth8,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioLowBouncy,
-                        stiffness = Spring.StiffnessLow
-                    ),
-                    label = "indicator_width"
-                )
+            val indicatorColor = if (isActive) Colors.Orange else Colors.LightGrey
 
-                // Цвет индикатора
-                val indicatorColor = if (isActive) Colors.Orange else Colors.LightGrey
-
-                Box(
-                    modifier = Modifier
-                        .width(animatedWidth)
-                        .height(Dimens.BannerIndicatorSize4)
-                        .background(
-                            color = indicatorColor,
-                            shape = RoundedCornerShape(Dimens.RadiusImageCorner2)
-                        )
-                )
-            }
+            Box(
+                modifier = Modifier
+                    .width(animatedWidth)
+                    .height(Dimens.BannerIndicatorSize4)
+                    .background(
+                        color = indicatorColor,
+                        shape = RoundedCornerShape(Dimens.RadiusImageCorner2)
+                    )
+            )
         }
     }
 }
