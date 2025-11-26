@@ -47,7 +47,8 @@ fun NavGraph(navController: NavHostController) {
         composable(NavConstants.MENU_SCREEN_ROUTE) {
             MenuScreen(
                 cartViewModel = cartViewModel,
-                sharedViewModel = sharedViewModel
+                sharedViewModel = sharedViewModel,
+                navController = navController
             )
         }
         composable(NavConstants.FAVORITES_SCREEN_ROUTE) {

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,18 +27,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
+import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.ActiveOrderCard
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.AnnouncementsSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BackToTopFAB
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BannersSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.MenuItemCard
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.TabsSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.rememberScrollUiState
+import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
+import com.mandarinkafe.mandarin.navigation.extensions.navigateToOrderInfo
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Constants.MENU_IMAGE_COLUMN_COUNT
@@ -63,6 +68,8 @@ fun MenuContentScreen(
     banners: List<Banner>,
     announcements: List<String>,
     sharedEffectFlow: SharedFlow<SharedEffect>,
+    activeOrders: List<SavedOrder>,
+    navController: NavController,
 ) {
     val categoryPositions = remember(menuItems) {
         menuItems.mapIndexedNotNull { index, item ->
@@ -133,6 +140,25 @@ fun MenuContentScreen(
                 AnnouncementsSection(
                     announcements = announcements,
                 )
+            }
+
+            //  Секция с активными заказами (скроллится вместе с контентом)
+            if (activeOrders.isNotEmpty()) {
+                items(
+                    items = activeOrders,
+                    key = { order -> order.id }
+                ) { order ->
+                    ActiveOrderCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        order = order,
+                        onClick = {
+                            navController.navigateToOrderInfo(
+                                orderId = order.id,
+                                paymentMethodCode = order.paymentMethodCode
+                            )
+                        }
+                    )
+                }
             }
 
             //  Баннеры (скроллятся вместе с контентом)

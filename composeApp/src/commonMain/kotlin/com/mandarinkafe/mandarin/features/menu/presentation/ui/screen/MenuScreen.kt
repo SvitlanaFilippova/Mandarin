@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.core.domain.mapper.Mapper.toCustomizedMeal
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.map
 fun MenuScreen(
     cartViewModel: CartViewModel,
     sharedViewModel: SharedViewModel,
+    navController: NavController,
 ) {
     val menuViewModel = rememberMenuViewModel()
     val state by menuViewModel.state.collectAsState()
@@ -103,7 +105,9 @@ fun MenuScreen(
                     selectedMenuItemIndex = state.selectedMenuItemIndex,
                     banners = banners,
                     sharedEffectFlow = sharedEffectFlow,
-                    announcements = state.announcements
+                    announcements = state.announcements,
+                    activeOrders = state.activeOrders,
+                    navController = navController
                 )
             }
         }

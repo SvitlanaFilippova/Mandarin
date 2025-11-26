@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.util.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -16,6 +17,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 fun ButtonWithCircularProgressIndicator(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
+            .heightIn(min = Dimens.ButtonWithTextHeight)
             .clip(RoundedCornerShape(Dimens.CornerRadius8))
             .background(Colors.OrangeTransparent20)
     ) {
@@ -24,6 +26,5 @@ fun ButtonWithCircularProgressIndicator(modifier: Modifier = Modifier) {
                 .size(Dimens.ProgressBarSmallSize)
                 .align(Alignment.Center)
         )
-
     }
 }
