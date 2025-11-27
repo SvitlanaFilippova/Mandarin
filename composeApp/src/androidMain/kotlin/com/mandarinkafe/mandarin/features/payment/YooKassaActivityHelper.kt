@@ -9,13 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import com.mandarinkafe.mandarin.shared.BuildKonfig
 import kotlinx.coroutines.suspendCancellableCoroutine
 import ru.yoomoney.sdk.kassa.payments.Checkout
 import ru.yoomoney.sdk.kassa.payments.checkoutParameters.Amount
 import ru.yoomoney.sdk.kassa.payments.checkoutParameters.PaymentMethodType
 import ru.yoomoney.sdk.kassa.payments.checkoutParameters.PaymentParameters
 import ru.yoomoney.sdk.kassa.payments.checkoutParameters.SavePaymentMethod
+import ru.yoomoney.sdk.kassa.payments.checkoutParameters.TestParameters
 import java.util.Currency
 import kotlin.coroutines.resume
 
@@ -106,8 +106,7 @@ object YooKassaActivityHelper {
                 subtitle = subtitle,
                 clientApplicationKey = clientApplicationKey,
                 shopId = shopId,
-                userPhone = userPhone,
-                orderId = orderId
+                userPhone = userPhone
             )
             launchPaymentIntent(activity, launcher, paymentParameters)
         } catch (e: Exception) {
@@ -127,9 +126,7 @@ object YooKassaActivityHelper {
         clientApplicationKey: String,
         shopId: String,
         userPhone: String,
-        orderId: String,
     ): PaymentParameters {
-        // Для 3DS через SDK customReturnUrl не нужен (SDK обрабатывает возврат сам)
         return PaymentParameters(
             amount = Amount(
                 value = amount.toBigDecimal(),
@@ -275,12 +272,15 @@ object YooKassaActivityHelper {
 
         try {
             confirmationContinuation = continuation
+
+            val testParameters = TestParameters(showLogs = true)
             val intent = Checkout.createConfirmationIntent(
                 activity,
                 confirmationUrl,
                 methodType,
                 clientApplicationKey,
-                shopId
+                shopId,
+                testParameters = testParameters
             )
             launcher.launch(intent)
         } catch (e: Exception) {
@@ -298,11 +298,13 @@ object YooKassaActivityHelper {
         val continuation = confirmationContinuation ?: return
         confirmationContinuation = null
 
-        when (result.resultCode) {
+        val resultCode = result.resultCode
+        val intent = result.data
+
+        when (resultCode) {
             Activity.RESULT_OK -> {
                 // Процесс подтверждения завершён (3DS или СБП)
                 // Не несет информацию о том, что процесс завершился успешно
-                // Рекомендуется запросить статус платежа
                 continuation.resume(
                     PaymentResult(
                         success = true
@@ -322,9 +324,9 @@ object YooKassaActivityHelper {
 
             Checkout.RESULT_ERROR -> {
                 // Ошибка при подтверждении
-                val errorCode = result.data?.getIntExtra(Checkout.EXTRA_ERROR_CODE, -1)
-                val errorDescription = result.data?.getStringExtra(Checkout.EXTRA_ERROR_DESCRIPTION)
-                val failingUrl = result.data?.getStringExtra(Checkout.EXTRA_ERROR_FAILING_URL)
+                val errorCode = intent?.getIntExtra(Checkout.EXTRA_ERROR_CODE, -1)
+                val errorDescription = intent?.getStringExtra(Checkout.EXTRA_ERROR_DESCRIPTION)
+                val failingUrl = intent?.getStringExtra(Checkout.EXTRA_ERROR_FAILING_URL)
 
                 val errorMessage = buildString {
                     append("Ошибка подтверждения платежа")
@@ -345,7 +347,7 @@ object YooKassaActivityHelper {
                 continuation.resume(
                     PaymentResult(
                         success = false,
-                        error = "Неизвестная ошибка при подтверждении платежа"
+                        error = "Неизвестная ошибка при подтверждении платежа (код: $resultCode)"
                     )
                 )
             }

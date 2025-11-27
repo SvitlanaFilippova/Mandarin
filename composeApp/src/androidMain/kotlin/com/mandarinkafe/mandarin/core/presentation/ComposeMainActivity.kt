@@ -67,6 +67,7 @@ class ComposeMainActivity : AppCompatActivity() {
 
     private fun handleDeepLink(intent: Intent) {
         val data: Uri? = intent.data
+
         if (isPaymentReturnDeepLink(data)) {
             // Извлекаем order_id из query параметров
             val orderId = data?.getQueryParameter("order_id")
@@ -76,8 +77,8 @@ class ComposeMainActivity : AppCompatActivity() {
                     val paymentViewModel: PaymentViewModel = getKoin().get()
                     paymentViewModel.onEvent(PaymentEvent.HandleReturnFromBrowser)
                 } catch (e: Exception) {
-                    Napier.w("handleDeepLink", e)
                     // Если ViewModel еще не создан, это нормально - polling запустится позже
+                    Napier.w("handleDeepLink", e)
                 }
             }
         }

@@ -32,23 +32,27 @@ actual class YooKassaPaymentService {
         }
     }
 
-    actual suspend fun confirmPayment(confirmationUrl: String, paymentMethodType: String?): PaymentResult {
+    actual suspend fun confirmPayment(
+        confirmationUrl: String,
+        paymentMethodType: String?,
+    ): PaymentResult {
         val clientApplicationKey = BuildKonfig.YOOKASSA_CLIENT_APPLICATION_KEY
         val shopId = BuildKonfig.YOOKASSA_SHOP_ID
 
         // Проверяем, поддерживается ли тип платежного метода для SDK confirmation
-        val supportedTypes = setOf("bank_card", "sbp", "sberbank")
+        val supportedTypes = setOf("bank_card", "sbp")
         val isSupportedType = paymentMethodType?.lowercase() in supportedTypes
 
         return if (isSupportedType && paymentMethodType != null) {
-            // Используем SDK confirmation для банковских карт, СБП и Сбербанка
+            // Используем SDK confirmation для банковских карт и СБП
             try {
-                YooKassaActivityHelper.confirmPayment(
+                val result = YooKassaActivityHelper.confirmPayment(
                     confirmationUrl = confirmationUrl,
                     paymentMethodType = paymentMethodType,
                     clientApplicationKey = clientApplicationKey,
                     shopId = shopId
                 )
+                result
             } catch (e: Exception) {
                 PaymentResult(
                     success = false,
@@ -78,3 +82,4 @@ actual class YooKassaPaymentService {
         }
     }
 }
+
