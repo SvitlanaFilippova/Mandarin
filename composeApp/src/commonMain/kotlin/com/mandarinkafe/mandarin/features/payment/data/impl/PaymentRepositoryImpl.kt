@@ -52,7 +52,8 @@ class PaymentRepositoryImpl(
                         description = response.description,
                         createdAt = response.createdAt,
                         updatedAt = null,
-                        confirmationUrl = response.confirmation?.confirmationUrl
+                        confirmationUrl = response.confirmation?.confirmationUrl,
+                        paymentMethodType = response.paymentMethodType
                     )
                     Resource.Success(data = paymentInfo)
                 }

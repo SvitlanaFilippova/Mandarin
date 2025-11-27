@@ -32,28 +32,49 @@ actual class YooKassaPaymentService {
         }
     }
 
-    actual suspend fun openPaymentUrl(confirmationUrl: String): PaymentResult {
-        // Для Android SDK ЮKassa открытие confirmation_url происходит автоматически
-        // после создания платежа на сервере через PaymentActivity.
-        // Если нужно открыть URL вручную (например, для 3DS), можно использовать Intent
+    actual suspend fun confirmPayment(confirmationUrl: String, paymentMethodType: String?): PaymentResult {
+        val clientApplicationKey = BuildKonfig.YOOKASSA_CLIENT_APPLICATION_KEY
+        val shopId = BuildKonfig.YOOKASSA_SHOP_ID
 
-        return try {
-            val activity = YooKassaActivityHelper.currentActivity
-            if (activity != null) {
-                val intent = Intent(Intent.ACTION_VIEW, confirmationUrl.toUri())
-                activity.startActivity(intent)
-                PaymentResult(success = true)
-            } else {
+        // Проверяем, поддерживается ли тип платежного метода для SDK confirmation
+        val supportedTypes = setOf("bank_card", "sbp", "sberbank")
+        val isSupportedType = paymentMethodType?.lowercase() in supportedTypes
+
+        return if (isSupportedType && paymentMethodType != null) {
+            // Используем SDK confirmation для банковских карт, СБП и Сбербанка
+            try {
+                YooKassaActivityHelper.confirmPayment(
+                    confirmationUrl = confirmationUrl,
+                    paymentMethodType = paymentMethodType,
+                    clientApplicationKey = clientApplicationKey,
+                    shopId = shopId
+                )
+            } catch (e: Exception) {
                 PaymentResult(
                     success = false,
-                    error = "Activity не доступна для открытия URL"
+                    error = "Ошибка подтверждения платежа через SDK: ${e.message}"
                 )
             }
-        } catch (e: Exception) {
-            PaymentResult(
-                success = false,
-                error = "Ошибка открытия URL: ${e.message}"
-            )
+        } else {
+            // Для других типов или если paymentMethodType = null используем простое открытие URL
+            try {
+                val activity = YooKassaActivityHelper.currentActivity
+                if (activity != null) {
+                    val intent = Intent(Intent.ACTION_VIEW, confirmationUrl.toUri())
+                    activity.startActivity(intent)
+                    PaymentResult(success = true)
+                } else {
+                    PaymentResult(
+                        success = false,
+                        error = "Activity не доступна для открытия URL"
+                    )
+                }
+            } catch (e: Exception) {
+                PaymentResult(
+                    success = false,
+                    error = "Ошибка открытия URL: ${e.message}"
+                )
+            }
         }
     }
 }

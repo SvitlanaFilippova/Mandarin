@@ -189,6 +189,7 @@ class PaymentViewModel(
                 }
 
                 val confirmationUrl = paymentInfo.confirmationUrl
+                val paymentMethodType = paymentInfo.paymentMethodType
 
                 // Если есть confirmation_url, открываем форму оплаты
                 if (confirmationUrl != null) {
@@ -202,7 +203,7 @@ class PaymentViewModel(
                     }
 
                     // Открываем форму оплаты через SDK
-                    openPaymentForm(confirmationUrl)
+                    openPaymentForm(confirmationUrl, paymentMethodType)
                 } else {
                     // Если нет URL, сразу начинаем polling
                     setState {
@@ -230,8 +231,8 @@ class PaymentViewModel(
         }
     }
 
-    private suspend fun openPaymentForm(confirmationUrl: String) {
-        val result = yooKassaService.openPaymentUrl(confirmationUrl)
+    private suspend fun openPaymentForm(confirmationUrl: String, paymentMethodType: String?) {
+        val result = yooKassaService.confirmPayment(confirmationUrl, paymentMethodType)
 
         // После закрытия формы начинаем polling
         setState { copy(isPaymentProcessing = false) }

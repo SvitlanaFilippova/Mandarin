@@ -29,6 +29,7 @@ object YooKassaActivityHelper {
         private set
 
     private var paymentLauncher: ActivityResultLauncher<Intent>? = null
+    private var confirmationLauncher: ActivityResultLauncher<Intent>? = null
 
     /**
      * Регистрирует Activity для работы с платежами
@@ -37,11 +38,18 @@ object YooKassaActivityHelper {
     fun registerActivity(activity: AppCompatActivity) {
         currentActivity = activity
 
-        // Регистрируем launcher для получения результата платежа
+        // Регистрируем launcher для получения результата токенизации
         paymentLauncher = activity.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             handlePaymentResult(result)
+        }
+
+        // Регистрируем launcher для получения результата confirmation (3DS, СБП)
+        confirmationLauncher = activity.registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            handleConfirmationResult(result)
         }
 
         // Отслеживаем lifecycle для очистки при уничтожении Activity
@@ -50,6 +58,7 @@ object YooKassaActivityHelper {
                 if (event == Lifecycle.Event.ON_DESTROY && source == activity) {
                     currentActivity = null
                     paymentLauncher = null
+                    confirmationLauncher = null
                 }
             }
         })
@@ -120,11 +129,7 @@ object YooKassaActivityHelper {
         userPhone: String,
         orderId: String,
     ): PaymentParameters {
-        // Формируем customReturnUrl для возврата после 3DS проверки
-        // Сервер должен редиректить на mandarin://payment/return?order_id=...
-        val baseUrl = BuildKonfig.SERVER_BASE_URL.removeSuffix("/")
-        val customReturnUrl = "$baseUrl/payment/return?order_id=$orderId"
-
+        // Для 3DS через SDK customReturnUrl не нужен (SDK обрабатывает возврат сам)
         return PaymentParameters(
             amount = Amount(
                 value = amount.toBigDecimal(),
@@ -143,7 +148,7 @@ object YooKassaActivityHelper {
             userPhoneNumber = userPhone,
             customerId = userPhone, // для возможности сохранения и привязки карты к ЛК
             authCenterClientId = null,
-            customReturnUrl = customReturnUrl // URL для возврата после 3DS проверки
+            customReturnUrl = null // Для 3DS через SDK не нужен
         )
     }
 
@@ -200,6 +205,147 @@ object YooKassaActivityHelper {
                     PaymentResult(
                         success = false,
                         error = "Неизвестная ошибка при получении токена"
+                    )
+                )
+            }
+        }
+    }
+
+    /**
+     * Конвертирует формат payment_method_type от сервера (snake_case lowercase)
+     * в enum PaymentMethodType SDK
+     */
+    fun parsePaymentMethodType(serverType: String?): PaymentMethodType? {
+        return when (serverType?.lowercase()) {
+            "bank_card" -> PaymentMethodType.BANK_CARD
+            "sbp" -> PaymentMethodType.SBP
+            "sberbank" -> PaymentMethodType.SBERBANK
+            else -> null
+        }
+    }
+
+    private var confirmationContinuation: kotlin.coroutines.Continuation<PaymentResult>? = null
+
+    /**
+     * Запускает процесс подтверждения платежа через SDK (3DS, СБП)
+     * @param confirmationUrl URL для подтверждения от сервера
+     * @param paymentMethodType Тип платежного метода от сервера (bank_card, sbp, sberbank)
+     * @param clientApplicationKey Ключ приложения
+     * @param shopId ID магазина
+     */
+    suspend fun confirmPayment(
+        confirmationUrl: String,
+        paymentMethodType: String?,
+        clientApplicationKey: String,
+        shopId: String,
+    ): PaymentResult = suspendCancellableCoroutine { continuation ->
+        val activity = currentActivity
+        if (activity == null) {
+            continuation.resume(
+                PaymentResult(
+                    success = false,
+                    error = "Activity не зарегистрирована. Вызовите registerActivity() в onCreate"
+                )
+            )
+            return@suspendCancellableCoroutine
+        }
+
+        val launcher = confirmationLauncher
+        if (launcher == null) {
+            continuation.resume(
+                PaymentResult(
+                    success = false,
+                    error = "Confirmation launcher не инициализирован"
+                )
+            )
+            return@suspendCancellableCoroutine
+        }
+
+        // Конвертируем формат сервера в enum SDK
+        val methodType = parsePaymentMethodType(paymentMethodType)
+        if (methodType == null) {
+            continuation.resume(
+                PaymentResult(
+                    success = false,
+                    error = "Неподдерживаемый тип платежного метода: $paymentMethodType"
+                )
+            )
+            return@suspendCancellableCoroutine
+        }
+
+        try {
+            confirmationContinuation = continuation
+            val intent = Checkout.createConfirmationIntent(
+                activity,
+                confirmationUrl,
+                methodType,
+                clientApplicationKey,
+                shopId
+            )
+            launcher.launch(intent)
+        } catch (e: Exception) {
+            confirmationContinuation = null
+            continuation.resume(
+                PaymentResult(
+                    success = false,
+                    error = "Ошибка подтверждения платежа: ${e.message}"
+                )
+            )
+        }
+    }
+
+    private fun handleConfirmationResult(result: ActivityResult) {
+        val continuation = confirmationContinuation ?: return
+        confirmationContinuation = null
+
+        when (result.resultCode) {
+            Activity.RESULT_OK -> {
+                // Процесс подтверждения завершён (3DS или СБП)
+                // Не несет информацию о том, что процесс завершился успешно
+                // Рекомендуется запросить статус платежа
+                continuation.resume(
+                    PaymentResult(
+                        success = true
+                    )
+                )
+            }
+
+            Activity.RESULT_CANCELED -> {
+                // Пользователь отменил подтверждение
+                continuation.resume(
+                    PaymentResult(
+                        success = false,
+                        error = "Подтверждение платежа отменено пользователем"
+                    )
+                )
+            }
+
+            Checkout.RESULT_ERROR -> {
+                // Ошибка при подтверждении
+                val errorCode = result.data?.getIntExtra(Checkout.EXTRA_ERROR_CODE, -1)
+                val errorDescription = result.data?.getStringExtra(Checkout.EXTRA_ERROR_DESCRIPTION)
+                val failingUrl = result.data?.getStringExtra(Checkout.EXTRA_ERROR_FAILING_URL)
+
+                val errorMessage = buildString {
+                    append("Ошибка подтверждения платежа")
+                    if (errorCode != -1) append(" (код: $errorCode)")
+                    if (errorDescription != null) append(": $errorDescription")
+                    if (failingUrl != null) append(" (URL: $failingUrl)")
+                }
+
+                continuation.resume(
+                    PaymentResult(
+                        success = false,
+                        error = errorMessage
+                    )
+                )
+            }
+
+            else -> {
+                continuation.resume(
+                    PaymentResult(
+                        success = false,
+                        error = "Неизвестная ошибка при подтверждении платежа"
                     )
                 )
             }

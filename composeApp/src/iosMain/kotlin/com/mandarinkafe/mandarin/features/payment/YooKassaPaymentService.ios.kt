@@ -12,7 +12,7 @@ import kotlin.coroutines.resume
  * Для iOS не используем SDK YooKassaPayments, а работаем через API:
  * 1. initializePayment - возвращает success, но paymentToken = null
  *    (сервер создаст платеж без payment_token через API YooKassa)
- * 2. openPaymentUrl - открывает confirmation_url в браузере/Safari
+ * 2. confirmPayment - открывает confirmation_url в браузере/Safari
  */
 actual class YooKassaPaymentService {
 
@@ -31,7 +31,7 @@ actual class YooKassaPaymentService {
         )
     }
 
-    actual suspend fun openPaymentUrl(confirmationUrl: String): PaymentResult {
+    actual suspend fun confirmPayment(confirmationUrl: String, paymentMethodType: String?): PaymentResult {
         return try {
             val url = NSURL(string = confirmationUrl)
             openUrlIfPossible(url, confirmationUrl)

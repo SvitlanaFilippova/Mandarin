@@ -21,5 +21,7 @@ data class PaymentStatusResponse(
     val createdAt: String? = null,
     @SerialName("updated_at")
     val updatedAt: String? = null,
+    @SerialName("payment_method_type")
+    val paymentMethodType: String? = null, // Тип платежного метода от Юкассы (bank_card, sbp, sberbank и т.д.)
 ) : Response()
 
