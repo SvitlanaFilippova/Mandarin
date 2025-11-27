@@ -109,7 +109,7 @@ fun PaymentInfoSection(
             }
 
             // Показываем активные элементы оплаты (индикаторы, кнопки) только если не идет изменение способа оплаты
-            if (!isChangingPaymentMethod && (isPaymentInProgress || paymentError != null)) {
+            if (!isChangingPaymentMethod && (isPaymentInProgress || paymentError != null || canShowPaymentButton)) {
                 PaymentProgressIndicator(
                     isPaymentInProgress = isPaymentInProgress,
                     isPaymentProcessing = isPaymentProcessing,
