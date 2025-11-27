@@ -75,7 +75,6 @@ object YooKassaActivityHelper {
         clientApplicationKey: String,
         shopId: String,
         userPhone: String,
-        orderId: String,
     ): PaymentResult = suspendCancellableCoroutine { continuation ->
         val activity = currentActivity
         if (activity == null) {
@@ -174,7 +173,7 @@ object YooKassaActivityHelper {
                         PaymentResult(
                             success = true,
                             paymentToken = tokenizationResult.paymentToken,
-                            paymentMethodType = tokenizationResult.paymentMethodType?.name
+                            paymentMethodType = tokenizationResult.paymentMethodType.name
                         )
                     )
                 } else {
@@ -236,6 +235,41 @@ object YooKassaActivityHelper {
         clientApplicationKey: String,
         shopId: String,
     ): PaymentResult = suspendCancellableCoroutine { continuation ->
+        val validationResult = validateConfirmationParams(continuation)
+        if (validationResult == null) return@suspendCancellableCoroutine
+
+        val methodType = validatePaymentMethodType(paymentMethodType, continuation)
+        if (methodType == null) return@suspendCancellableCoroutine
+
+        try {
+            confirmationContinuation = continuation
+            launchConfirmationIntent(
+                activity = validationResult.activity,
+                launcher = validationResult.launcher,
+                confirmationUrl = confirmationUrl,
+                methodType = methodType,
+                clientApplicationKey = clientApplicationKey,
+                shopId = shopId
+            )
+        } catch (e: Exception) {
+            confirmationContinuation = null
+            continuation.resume(
+                PaymentResult(
+                    success = false,
+                    error = "Ошибка подтверждения платежа: ${e.message}"
+                )
+            )
+        }
+    }
+
+    private data class ConfirmationParams(
+        val activity: AppCompatActivity,
+        val launcher: ActivityResultLauncher<Intent>,
+    )
+
+    private fun validateConfirmationParams(
+        continuation: kotlin.coroutines.Continuation<PaymentResult>,
+    ): ConfirmationParams? {
         val activity = currentActivity
         if (activity == null) {
             continuation.resume(
@@ -244,7 +278,7 @@ object YooKassaActivityHelper {
                     error = "Activity не зарегистрирована. Вызовите registerActivity() в onCreate"
                 )
             )
-            return@suspendCancellableCoroutine
+            return null
         }
 
         val launcher = confirmationLauncher
@@ -255,10 +289,16 @@ object YooKassaActivityHelper {
                     error = "Confirmation launcher не инициализирован"
                 )
             )
-            return@suspendCancellableCoroutine
+            return null
         }
 
-        // Конвертируем формат сервера в enum SDK
+        return ConfirmationParams(activity, launcher)
+    }
+
+    private fun validatePaymentMethodType(
+        paymentMethodType: String?,
+        continuation: kotlin.coroutines.Continuation<PaymentResult>,
+    ): PaymentMethodType? {
         val methodType = parsePaymentMethodType(paymentMethodType)
         if (methodType == null) {
             continuation.resume(
@@ -267,31 +307,28 @@ object YooKassaActivityHelper {
                     error = "Неподдерживаемый тип платежного метода: $paymentMethodType"
                 )
             )
-            return@suspendCancellableCoroutine
         }
+        return methodType
+    }
 
-        try {
-            confirmationContinuation = continuation
-
-            val testParameters = TestParameters(showLogs = true)
-            val intent = Checkout.createConfirmationIntent(
-                activity,
-                confirmationUrl,
-                methodType,
-                clientApplicationKey,
-                shopId,
-                testParameters = testParameters
-            )
-            launcher.launch(intent)
-        } catch (e: Exception) {
-            confirmationContinuation = null
-            continuation.resume(
-                PaymentResult(
-                    success = false,
-                    error = "Ошибка подтверждения платежа: ${e.message}"
-                )
-            )
-        }
+    private fun launchConfirmationIntent(
+        activity: AppCompatActivity,
+        launcher: ActivityResultLauncher<Intent>,
+        confirmationUrl: String,
+        methodType: PaymentMethodType,
+        clientApplicationKey: String,
+        shopId: String,
+    ) {
+        val testParameters = TestParameters(showLogs = true)
+        val intent = Checkout.createConfirmationIntent(
+            activity,
+            confirmationUrl,
+            methodType,
+            clientApplicationKey,
+            shopId,
+            testParameters = testParameters
+        )
+        launcher.launch(intent)
     }
 
     private fun handleConfirmationResult(result: ActivityResult) {

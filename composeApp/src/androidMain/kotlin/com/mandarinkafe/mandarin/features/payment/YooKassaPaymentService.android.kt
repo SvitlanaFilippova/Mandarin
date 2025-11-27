@@ -21,8 +21,7 @@ actual class YooKassaPaymentService {
                 subtitle = subtitle,
                 clientApplicationKey = clientApplicationKey,
                 shopId = shopId,
-                userPhone = userPhone,
-                orderId = orderId
+                userPhone = userPhone
             )
         } catch (e: Exception) {
             PaymentResult(

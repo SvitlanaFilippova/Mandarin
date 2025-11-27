@@ -89,7 +89,6 @@ fun ActiveOrderCard(
                     enter = fadeIn() + scaleIn(initialScale = 0.8f),
                     exit = fadeOut() + scaleOut(targetScale = 0.8f)
                 ) {
-
                     val orderUiStatus = remember(orderStatus) { orderStatus?.toUi() }
 
                     orderUiStatus?.let {
