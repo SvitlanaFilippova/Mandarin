@@ -20,7 +20,7 @@ val searchModule = module {
     singleOf(::FilterUseCaseImpl) { bind<FilterUseCase>() }
 
     // ViewModel
-    single { SearchViewModel(get(), get(), get(), get()) }
+    singleOf(::SearchViewModel)
 }
 
 
