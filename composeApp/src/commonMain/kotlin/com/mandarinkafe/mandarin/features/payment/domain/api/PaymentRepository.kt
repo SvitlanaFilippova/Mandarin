@@ -11,6 +11,7 @@ interface PaymentRepository {
         currency: String,
         description: String,
         returnUrl: String? = null, // URL для возврата после оплаты (для iOS "умного платежа")
+        paymentMethodType: String? = null, // Тип платежного метода (BANK_CARD, SBERBANK, SBP и т.д.)
     ): Resource<PaymentInfo>
 
     suspend fun getPaymentStatus(orderId: String): Resource<PaymentInfo>

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Мандарин</string>
+    <string name="ym_app_scheme" translatable="false">mandarin</string>
 </resources>

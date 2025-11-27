@@ -171,7 +171,8 @@ object YooKassaActivityHelper {
                     continuation.resume(
                         PaymentResult(
                             success = true,
-                            paymentToken = tokenizationResult.paymentToken
+                            paymentToken = tokenizationResult.paymentToken,
+                            paymentMethodType = tokenizationResult.paymentMethodType?.name
                         )
                     )
                 } else {

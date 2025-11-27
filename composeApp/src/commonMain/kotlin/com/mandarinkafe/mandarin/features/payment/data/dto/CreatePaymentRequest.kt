@@ -14,5 +14,6 @@ data class CreatePaymentRequest(
     val description: String,
     @SerialName("return_url")
     val returnUrl: String? = null, // URL для возврата после оплаты (для iOS "умного платежа")
+    @SerialName("payment_method_type")
+    val paymentMethodType: String? = null, // Тип платежного метода (BANK_CARD, SBERBANK, SBP и т.д.)
 )
-
