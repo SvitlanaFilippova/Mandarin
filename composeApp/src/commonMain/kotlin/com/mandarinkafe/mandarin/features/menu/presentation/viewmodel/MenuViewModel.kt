@@ -55,6 +55,7 @@ class MenuViewModel(
 
     override fun onEvent(event: MenuEvent) {
         when (event) {
+            is MenuEvent.GetActiveOrders -> viewModelScope.launch { loadActiveOrders() }
             is MenuEvent.BannerClick -> findMenuItemByBanner(event.banner)
             is MenuEvent.ResetSelectedMenuItemIndex -> resetSelectedMenuItemIndex()
             is MenuEvent.ForceRefresh -> forceRefresh()

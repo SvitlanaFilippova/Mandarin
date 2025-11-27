@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.menu.presentation.ui.screen
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -55,6 +56,10 @@ fun MenuScreen(
         refreshing = isLoading,
         onRefresh = { onMenuEvent(MenuEvent.ForceRefresh) }
     )
+
+    LaunchedEffect(Unit) {
+        onMenuEvent(MenuEvent.GetActiveOrders)
+    }
 
     PullRefreshLayout(
         modifier = Modifier.fillMaxSize(),

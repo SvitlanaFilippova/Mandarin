@@ -18,6 +18,7 @@ sealed interface MenuContract {
 
         // Обновление данных
         data object ForceRefresh : MenuEvent
+        data object GetActiveOrders : MenuEvent
     }
 
     sealed interface MenuEffect : BaseContract.BaseEffect
