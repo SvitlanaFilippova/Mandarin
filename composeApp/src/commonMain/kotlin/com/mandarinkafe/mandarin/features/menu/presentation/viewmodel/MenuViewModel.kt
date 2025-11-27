@@ -16,6 +16,7 @@ import com.mandarinkafe.mandarin.features.menu.presentation.models.extensions.ge
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEffect
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuState
+import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryInteractor
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.Resource
@@ -40,6 +41,7 @@ class MenuViewModel(
     private val announcementsRepository: AnnouncementsRepository,
     private val forceRefreshMenu: ForceRefreshMenuUseCase,
     private val ordersHistoryInteractor: OrdersHistoryInteractor,
+    private val authRepository: AuthRepository,
 ) : BaseViewModel<MenuEvent, MenuEffect, MenuState>() {
     override fun setInitialState() = MenuState()
 
@@ -50,7 +52,7 @@ class MenuViewModel(
         getBanners()
         getAnnouncements()
         observeFavorites()
-        observeActiveOrders()
+        observeAuthState()
     }
 
     override fun onEvent(event: MenuEvent) {
@@ -205,6 +207,24 @@ class MenuViewModel(
     }
 
     /**
+     * Наблюдение за состоянием авторизации и управление активными заказами
+     */
+    private fun observeAuthState() {
+        viewModelScope.launch {
+            authRepository.authState.collect { isAuthorized ->
+                if (isAuthorized) {
+                    // При авторизации начинаем наблюдение за активными заказами
+                    observeActiveOrders()
+                } else {
+                    // При выходе очищаем активные заказы и останавливаем наблюдение
+                    stopObservingActiveOrders()
+                    clearActiveOrders()
+                }
+            }
+        }
+    }
+
+    /**
      * Периодическое обновление активных заказов
      */
     private fun observeActiveOrders() {
@@ -222,6 +242,13 @@ class MenuViewModel(
     private fun stopObservingActiveOrders() {
         activeOrdersPollingJob?.cancel()
         activeOrdersPollingJob = null
+    }
+
+    /**
+     * Очистка активных заказов при выходе из аккаунта
+     */
+    private fun clearActiveOrders() {
+        setState { copy(activeOrders = emptyList()) }
     }
 
     /**

@@ -42,6 +42,6 @@ val menuModule = module {
     singleOf(::GetAnnouncementsUseCaseImpl) { bind<GetAnnouncementsUseCase>() }
 
     // ViewModel
-    single { MenuViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    single { MenuViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
 }
 
