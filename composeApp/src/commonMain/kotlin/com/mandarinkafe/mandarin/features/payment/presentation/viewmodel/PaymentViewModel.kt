@@ -48,6 +48,7 @@ class PaymentViewModel(
                 event.amount,
                 event.userPhone
             )
+
             is PaymentEvent.CheckPaymentStatus -> checkPaymentStatus(event.orderId)
         }
     }
@@ -89,14 +90,15 @@ class PaymentViewModel(
 
             // Для iOS paymentToken будет null (это нормально для "умного платежа")
             // Для Android paymentToken будет строкой
-            val createResult = createPaymentOnServer(sdkResult?.paymentToken, sdkResult?.paymentMethodType)
+            val createResult =
+                createPaymentOnServer(sdkResult?.paymentToken, sdkResult?.paymentMethodType)
             handlePaymentCreationResult(createResult)
         }
     }
 
     private data class SdkPaymentResult(
         val paymentToken: String?,
-        val paymentMethodType: String?
+        val paymentMethodType: String?,
     )
 
     private suspend fun initializeSdkPayment(): SdkPaymentResult? {
@@ -136,7 +138,7 @@ class PaymentViewModel(
 
     private suspend fun createPaymentOnServer(
         paymentToken: String?,
-        paymentMethodType: String?
+        paymentMethodType: String?,
     ): Resource<PaymentInfo> {
         val description = if (state.value.orderNumber != null) {
             "Заказ №${state.value.orderNumber}, ID ${state.value.orderId}"
@@ -342,6 +344,8 @@ class PaymentViewModel(
     }
 
     private fun retryPayment() {
+        // Останавливаем текущий polling перед началом новой попытки оплаты
+        stopPolling()
         setState { copy(error = null) }
         initPayment()
     }

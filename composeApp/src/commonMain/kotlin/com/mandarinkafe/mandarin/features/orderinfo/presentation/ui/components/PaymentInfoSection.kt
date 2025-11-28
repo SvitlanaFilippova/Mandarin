@@ -18,6 +18,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,12 +37,15 @@ import com.mandarinkafe.mandarin.features.order.domain.models.PaymentType
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
 import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 import com.mandarinkafe.mandarin.features.payment.domain.models.toDisplayString
+import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import com.mandarinkafe.mandarin.util.toTimeFormat
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.delay
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun PaymentInfoSection(
@@ -60,7 +64,7 @@ fun PaymentInfoSection(
     onRetryPayment: () -> Unit = {},
     onLoadPaymentTypes: () -> Unit = {}, // Загрузить доступные способы оплаты
     onChangePaymentMethod: (String) -> Unit = {},
-    paymentTimeRemainingSeconds: Int? = null, // Оставшееся время на оплату в секундах
+    paymentDeadline: Long? = null, // Дедлайн оплаты в миллисекундах (timestamp)
 ) {
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Column(
@@ -101,16 +105,17 @@ fun PaymentInfoSection(
             // Показываем таймер обратного отсчёта для онлайн-оплаты
             if (shouldShowPaymentTimer(
                     isChangingPaymentMethod,
-                    paymentTimeRemainingSeconds,
+                    paymentDeadline,
                     paymentStatus
                 )
             ) {
-                PaymentTimer(remainingSeconds = paymentTimeRemainingSeconds!!)
+                PaymentTimer(paymentDeadline = paymentDeadline!!)
             }
 
             // Показываем активные элементы оплаты (индикаторы, кнопки) только если не идет изменение способа оплаты
             val shouldShowPaymentControls = !isChangingPaymentMethod &&
                     (isPaymentInProgress || paymentError != null || canShowPaymentButton)
+
             if (shouldShowPaymentControls) {
                 PaymentProgressIndicator(
                     isPaymentInProgress = isPaymentInProgress,
@@ -366,7 +371,29 @@ private fun PaymentButton(
 }
 
 @Composable
-private fun PaymentTimer(remainingSeconds: Int) {
+private fun PaymentTimer(paymentDeadline: Long) {
+    // Локальное состояние для оставшегося времени
+    var remainingSeconds by remember(paymentDeadline) {
+        mutableStateOf(
+            calculateRemainingSeconds(paymentDeadline)
+        )
+    }
+
+    // Локальный таймер, который обновляется каждую секунду
+    LaunchedEffect(paymentDeadline) {
+        while (true) {
+            val newRemainingSeconds = calculateRemainingSeconds(paymentDeadline)
+            remainingSeconds = newRemainingSeconds
+
+            // Если время истекло, выходим из цикла
+            if (newRemainingSeconds <= 0) {
+                break
+            }
+
+            delay(Constants.DELAY_1_SECOND)
+        }
+    }
+
     Column {
         Row(
             Modifier.fillMaxWidth(),
@@ -386,13 +413,24 @@ private fun PaymentTimer(remainingSeconds: Int) {
     }
 }
 
+@OptIn(ExperimentalTime::class)
+private fun calculateRemainingSeconds(paymentDeadline: Long): Int {
+    val currentTime = kotlin.time.Clock.System.now().toEpochMilliseconds()
+    val remainingMillis = paymentDeadline - currentTime
+    return (remainingMillis / Constants.DELAY_1_SECOND).toInt().coerceAtLeast(0)
+}
+
+@OptIn(ExperimentalTime::class)
 private fun shouldShowPaymentTimer(
     isChangingPaymentMethod: Boolean,
-    paymentTimeRemainingSeconds: Int?,
+    paymentDeadline: Long?,
     paymentStatus: PaymentStatus?,
 ): Boolean {
-    return !isChangingPaymentMethod &&
-            paymentTimeRemainingSeconds != null &&
-            paymentTimeRemainingSeconds > 0 &&
-            paymentStatus != PaymentStatus.SUCCEEDED
+    if (isChangingPaymentMethod || paymentDeadline == null || paymentStatus == PaymentStatus.SUCCEEDED) {
+        return false
+    }
+    // Проверяем, что дедлайн еще не истек
+    val currentTime = kotlin.time.Clock.System.now().toEpochMilliseconds()
+    val remainingSeconds = ((paymentDeadline - currentTime) / Constants.DELAY_1_SECOND).toInt()
+    return remainingSeconds > 0
 }

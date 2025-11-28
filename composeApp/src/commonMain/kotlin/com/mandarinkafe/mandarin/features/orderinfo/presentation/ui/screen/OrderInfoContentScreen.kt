@@ -156,13 +156,16 @@ private fun PaymentInfoSectionItem(
     val isOnlinePayment = state.isOnlinePayment
     val isOnlinePaymentActive = isOnlinePayment && !order.isClosed
 
+    val canShowPaymentButtonPassed =
+        if (isOnlinePaymentActive) state.canShowPaymentButton else false
+
     PaymentInfoSection(
         paymentStatus = if (isOnlinePayment) state.paymentStatus else null,
         isPaymentInProgress = if (isOnlinePaymentActive) state.isPaymentInProgress else false,
         isPaymentProcessing = if (isOnlinePaymentActive) state.isPaymentProcessing else false,
         isPaymentPolling = if (isOnlinePaymentActive) state.isPaymentPolling else false,
         canShowPaymentError = if (isOnlinePaymentActive) state.canShowPaymentError else false,
-        canShowPaymentButton = if (isOnlinePaymentActive) state.canShowPaymentButton else false,
+        canShowPaymentButton = canShowPaymentButtonPassed,
         paymentError = if (isOnlinePaymentActive) state.paymentError else null,
         paymentMethodCode = paymentMethodCode,
         isChangingPaymentMethod = state.isChangingPaymentMethod,
@@ -174,7 +177,7 @@ private fun PaymentInfoSectionItem(
         onChangePaymentMethod = { code ->
             onEvent(OrderInfoEvent.ChangePaymentMethod(code))
         },
-        paymentTimeRemainingSeconds = if (isOnlinePaymentActive) state.paymentTimeRemainingSeconds else null
+        paymentDeadline = if (isOnlinePaymentActive) order.paymentDeadline else null
     )
 }
 
