@@ -1,0 +1,20 @@
+-- Добавляем updatedAt в cart_items
+ALTER TABLE cart_items ADD COLUMN updatedAt INTEGER NOT NULL DEFAULT 0;
+
+-- Обновляем cart_metadata: убираем isDeleted, переименовываем updatedAt в lastUpdated
+-- Сначала создаем новую таблицу
+CREATE TABLE cart_metadata_new (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    lastUpdated INTEGER NOT NULL
+);
+
+-- Копируем данные (берем updatedAt как lastUpdated)
+INSERT INTO cart_metadata_new (id, lastUpdated)
+SELECT id, updatedAt FROM cart_metadata;
+
+-- Удаляем старую таблицу
+DROP TABLE cart_metadata;
+
+-- Переименовываем новую таблицу
+ALTER TABLE cart_metadata_new RENAME TO cart_metadata;
+

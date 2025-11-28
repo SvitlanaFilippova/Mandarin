@@ -1,0 +1,29 @@
+-- Объединенная миграция:
+-- 1. Переименовываем колонку timestamp в createdAt
+-- 2. Удаляем колонку name (больше не нужна, name получаем из menuCache по mealId)
+-- SQLite не поддерживает ALTER TABLE RENAME COLUMN и DROP COLUMN, поэтому создаем новую таблицу
+
+CREATE TABLE cart_items_new (
+    id TEXT NOT NULL PRIMARY KEY,
+    mealId TEXT NOT NULL,
+    addsIds TEXT NOT NULL,
+    modifiers TEXT NOT NULL,
+    quantity INTEGER NOT NULL,
+    comment TEXT,
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL
+);
+
+-- Копируем данные из старой таблицы:
+-- - timestamp → createdAt
+-- - name не копируем (удаляем)
+INSERT INTO cart_items_new (id, mealId, addsIds, modifiers, quantity, comment, createdAt, updatedAt)
+SELECT id, mealId, addsIds, modifiers, quantity, comment, timestamp, updatedAt
+FROM cart_items;
+
+-- Удаляем старую таблицу
+DROP TABLE cart_items;
+
+-- Переименовываем новую таблицу
+ALTER TABLE cart_items_new RENAME TO cart_items;
+

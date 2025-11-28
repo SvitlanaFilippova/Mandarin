@@ -1,0 +1,69 @@
+package com.mandarinkafe.mandarin.features.orderinfo.domain.impl
+
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
+import com.mandarinkafe.mandarin.core.domain.models.CartItem
+import com.mandarinkafe.mandarin.features.cart.domain.api.CartInteractor
+import com.mandarinkafe.mandarin.features.menu.domain.toMealAdditional
+import com.mandarinkafe.mandarin.features.orderinfo.domain.Mapper.toCartItem
+import com.mandarinkafe.mandarin.features.orderinfo.domain.api.RepeatOrderInteractor
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
+import com.mandarinkafe.mandarin.features.orderinfo.domain.models.RepeatOrderResult
+import com.mandarinkafe.mandarin.util.Resource
+import kotlinx.coroutines.flow.first
+
+class RepeatOrderInteractorImpl(
+    private val menuCache: MenuCache,
+    private val cartInteractor: CartInteractor,
+) : RepeatOrderInteractor {
+
+    override suspend fun mapToCartItems(incoming: List<IncomingOrderItem>): RepeatOrderResult {
+        menuCache.allVisibleMenu.first { it is Resource.Success }
+
+        val validItems = mutableListOf<CartItem>()
+        var invalidFound = false
+
+        for (item in incoming) {
+            val baseMeal = menuCache.getMealById(item.id)
+
+            val shouldSkip = baseMeal?.isDelivery == true || baseMeal == null
+            if (shouldSkip) {
+                if (baseMeal == null) invalidFound = true
+                continue
+            }
+
+            val validAdds = item.chosenAdds.mapNotNull { add ->
+                menuCache.getMealById(add.id)?.toMealAdditional()
+            }
+            if (validAdds.size < item.chosenAdds.size) invalidFound = true
+
+            val validMods =
+                item.chosenModifiers.groupBy { it.groupId }.mapNotNull { (groupId, incomingMods) ->
+                    val referenceGroup = baseMeal.modifiers.find { it.id == groupId }
+                    referenceGroup?.copy(
+                        items = incomingMods.mapNotNull { m -> referenceGroup.items.find { it.id == m.id } }
+                    )?.takeIf { it.items.isNotEmpty() }
+                }
+            // Проверяем, что все модификаторы были найдены
+            val foundModifiersCount = validMods.sumOf { it.items.size }
+            val chosenModifiersCount = item.chosenModifiers.size
+            if (foundModifiersCount < chosenModifiersCount) invalidFound = true
+
+            validItems += item.toCartItem(
+                baseMeal = baseMeal,
+                adds = validAdds,
+                modifiers = validMods
+            )
+        }
+
+        return RepeatOrderResult(
+            cartItems = validItems,
+            hasInvalidItems = invalidFound
+        )
+    }
+
+    override suspend fun repeatOrder(incoming: List<IncomingOrderItem>): RepeatOrderResult {
+        val result = mapToCartItems(incoming)
+        result.cartItems.forEach { cartInteractor.addItem(it) }
+        return result
+    }
+}

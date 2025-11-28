@@ -1,0 +1,58 @@
+package com.mandarinkafe.mandarin.util.presentation.ui.components.buttons
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import com.mandarinkafe.mandarin.MR
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import dev.icerock.moko.resources.compose.painterResource
+
+@Composable
+fun SelectButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(Dimens.CornerRadius8),
+        contentPadding = PaddingValues(Dimens.MarginSuperSmall4),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Colors.Orange,
+            contentColor = Color.White
+        ),
+        modifier = modifier
+            .fillMaxWidth()
+            .widthIn(min = Dimens.ButtonToCartBig120)
+            .height(Dimens.ButtonToCartSmall36)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8)
+        ) {
+            Icon(
+                painter = painterResource(MR.images.ic_arrow_drop_down),
+                contentDescription = text,
+                tint = Color.White
+            )
+            Text(
+                text = text,
+                style = Typography.ButtonTextStyle
+            )
+        }
+    }
+}

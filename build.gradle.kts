@@ -2,18 +2,44 @@ import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+
+    dependencies {
+        classpath(libs.resources.generator)
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.jetbrains.kotlin.android) apply false
     alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.hilt) apply false
     alias(libs.plugins.jetbrains.kotlin.parcelize) apply false
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.sqldelight) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.android.kotlin.multiplatform.library) apply false
+    alias(libs.plugins.android.lint) apply false
+    alias(libs.plugins.composeMultiplatform) apply false
+    alias(libs.plugins.composeCompiler) apply false
+    alias(libs.plugins.kotlinCocoapods) apply false
 }
 
+
+configurations.all {
+    resolutionStrategy {
+        val workVersion = libs.versions.work.get()
+        force("androidx.work:work-runtime:$workVersion")
+        force("androidx.work:work-runtime-ktx:$workVersion")
+    }
+}
 
 tasks.withType<Detekt>().configureEach {
     parallel = true
@@ -107,3 +133,5 @@ dependencies {
     add("detektPlugins", libs.staticAnalysis.detektFormatting)
     add("detektPlugins", libs.staticAnalysis.detektLibraries)
 }
+
+
