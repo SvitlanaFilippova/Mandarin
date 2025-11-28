@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.auth.data.network
 
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.PhoneVerificationRequest
@@ -17,7 +18,6 @@ import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeResponse
-import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import io.github.aakira.napier.Napier

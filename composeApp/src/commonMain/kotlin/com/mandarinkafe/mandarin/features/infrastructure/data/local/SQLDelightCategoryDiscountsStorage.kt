@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.features.infrastructure.data.local
 
-import com.mandarinkafe.mandarin.features.infrastructure.domain.models.CategoryDiscountMap
 import com.mandarinkafe.mandarin.database.CategoryDiscountQueries
 import com.mandarinkafe.mandarin.database.Category_discount
+import com.mandarinkafe.mandarin.features.infrastructure.domain.models.CategoryDiscountMap
 
 class SQLDelightCategoryDiscountsStorage(private val queries: CategoryDiscountQueries) :
     CategoryDiscountsStorage {

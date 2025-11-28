@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.auth.data.network
 
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.features.auth.data.dto.ActiveSessionsDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.ActiveSessionsResponse
@@ -11,7 +12,6 @@ import com.mandarinkafe.mandarin.features.auth.data.dto.RevokeSessionResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.UpdateNameRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.UserInfoDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.ValidateTokenResponse
-import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.BEARER_TOKEN_TYPE
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS

@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.features.cart.data.local
 
+import com.mandarinkafe.mandarin.database.CartItemsQueries
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toParams
 import com.mandarinkafe.mandarin.features.cart.data.Mapper.toStoredCartItem
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
-import com.mandarinkafe.mandarin.database.CartItemsQueries
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

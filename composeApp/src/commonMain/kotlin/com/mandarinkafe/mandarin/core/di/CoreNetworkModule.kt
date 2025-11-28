@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.core.di
 
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.ServerNetworkClient
 import com.mandarinkafe.mandarin.core.data.network.api.IikoApi
@@ -11,7 +12,6 @@ import com.mandarinkafe.mandarin.core.data.network.impl.ServerNetworkClientImpl
 import com.mandarinkafe.mandarin.features.auth.data.network.PublicAuthApi
 import com.mandarinkafe.mandarin.features.auth.data.network.ServerAuthApi
 import com.mandarinkafe.mandarin.features.auth.data.network.ServerAuthProvider
-import com.mandarinkafe.mandarin.BuildKonfig
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth

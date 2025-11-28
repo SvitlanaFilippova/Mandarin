@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
+import com.mandarinkafe.mandarin.database.Cart_items
 import com.mandarinkafe.mandarin.features.cart.data.dto.CartItemDto
 import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendsSchemaDto
 import com.mandarinkafe.mandarin.features.cart.data.local.CartItemInsertParams
@@ -13,7 +14,6 @@ import com.mandarinkafe.mandarin.features.cart.data.local.JsonAdapters
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.models.RecommendsSchemaRule
 import com.mandarinkafe.mandarin.features.menu.domain.toMealAdditional
-import com.mandarinkafe.mandarin.database.Cart_items
 
 object Mapper {
 

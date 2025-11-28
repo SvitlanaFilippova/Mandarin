@@ -1,9 +1,9 @@
 package com.mandarinkafe.mandarin.features.more.data.impl
 
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.features.more.data.network.TelegramApi
 import com.mandarinkafe.mandarin.features.more.domain.api.FeedbackRepository
 import com.mandarinkafe.mandarin.features.more.domain.models.Feedback
-import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.util.Result
 
 class FeedbackRepositoryImpl(
