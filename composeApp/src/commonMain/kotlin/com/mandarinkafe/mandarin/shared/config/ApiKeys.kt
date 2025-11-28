@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.shared.config
 
-import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.BuildKonfig
 
 /**
  * Provides access to API keys from BuildKonfig.

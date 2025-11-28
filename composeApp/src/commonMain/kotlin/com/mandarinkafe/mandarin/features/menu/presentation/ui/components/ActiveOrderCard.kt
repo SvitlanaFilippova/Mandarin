@@ -37,7 +37,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.models.toUi
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.toUi
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
-import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.util.presentation.ui.components.images.KamelSubcomposeAsyncImage
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource

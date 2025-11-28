@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.menu.data.mapper
 
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannerDto
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
-import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.BuildKonfig
 
 fun BannerDto.toDomain() = Banner(
     imageUrl = buildImageUrl(imageUrl ?: ""),

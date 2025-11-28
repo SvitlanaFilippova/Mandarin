@@ -5,7 +5,7 @@ import com.mandarinkafe.mandarin.features.payment.data.dto.CancelPaymentResponse
 import com.mandarinkafe.mandarin.features.payment.data.dto.CreatePaymentRequest
 import com.mandarinkafe.mandarin.features.payment.data.dto.CreatePaymentResponse
 import com.mandarinkafe.mandarin.features.payment.data.dto.PaymentStatusResponse
-import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.ERROR_BODY_READ_FAILED
 import com.mandarinkafe.mandarin.util.Constants.HEADER_API_KEY
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR

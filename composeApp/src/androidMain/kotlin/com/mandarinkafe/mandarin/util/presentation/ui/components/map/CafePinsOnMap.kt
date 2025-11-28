@@ -4,7 +4,7 @@ import android.graphics.PointF
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.mandarinkafe.mandarin.features.map.calculatePinScale
-import com.mandarinkafe.mandarin.shared.R
+import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LATITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_CAFE_LONGITUDE
 import com.mandarinkafe.mandarin.util.ConstantsMap.MANDARIN_PIZZERIA_LATITUDE

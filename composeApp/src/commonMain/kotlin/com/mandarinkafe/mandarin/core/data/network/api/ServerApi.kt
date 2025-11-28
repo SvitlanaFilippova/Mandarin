@@ -9,7 +9,7 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.BannersResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupsResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.ServerMenuResponse
 import com.mandarinkafe.mandarin.features.more.data.dto.AppStoresResponse
-import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import io.github.aakira.napier.Napier

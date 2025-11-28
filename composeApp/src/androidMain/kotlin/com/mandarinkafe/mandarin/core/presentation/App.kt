@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.core.presentation
 
 import android.app.Application
 import com.mandarinkafe.mandarin.kmp.di.initKoinAndroid
-import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.LOCALE_RU
 import com.yandex.mapkit.MapKitFactory
 import io.github.aakira.napier.DebugAntilog

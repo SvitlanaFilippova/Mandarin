@@ -17,7 +17,7 @@ import com.mandarinkafe.mandarin.features.auth.data.dto.SmsVerificationResponse
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeDataDto
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeRequest
 import com.mandarinkafe.mandarin.features.auth.data.dto.VerifySmsCodeResponse
-import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import io.github.aakira.napier.Napier

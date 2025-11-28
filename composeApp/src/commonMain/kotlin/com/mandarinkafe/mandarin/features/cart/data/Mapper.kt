@@ -13,7 +13,7 @@ import com.mandarinkafe.mandarin.features.cart.data.local.JsonAdapters
 import com.mandarinkafe.mandarin.features.cart.data.models.StoredCartItem
 import com.mandarinkafe.mandarin.features.cart.domain.models.RecommendsSchemaRule
 import com.mandarinkafe.mandarin.features.menu.domain.toMealAdditional
-import com.mandarinkafe.mandarin.shared.database.Cart_items
+import com.mandarinkafe.mandarin.database.Cart_items
 
 object Mapper {
 
