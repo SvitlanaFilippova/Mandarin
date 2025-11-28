@@ -16,3 +16,4 @@ DELETE FROM category_discount;
 insertOrReplace:
 INSERT OR REPLACE INTO category_discount(categoryId, discountId)
 VALUES (?, ?);
+

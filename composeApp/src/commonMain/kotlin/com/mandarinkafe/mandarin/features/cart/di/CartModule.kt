@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.cart.di
 import com.mandarinkafe.mandarin.core.di.DiConstants
 import com.mandarinkafe.mandarin.core.domain.api.CartReader
 import com.mandarinkafe.mandarin.core.domain.api.ClearCartUseCase
+import com.mandarinkafe.mandarin.database.AppDatabase
 import com.mandarinkafe.mandarin.features.cart.data.impl.CartRepositoryImpl
 import com.mandarinkafe.mandarin.features.cart.data.impl.RecommendsSchemaRepositoryImpl
 import com.mandarinkafe.mandarin.features.cart.data.local.CartStorage
@@ -18,7 +19,6 @@ import com.mandarinkafe.mandarin.features.cart.domain.impl.CartInteractorImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.ClearCartUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.domain.impl.GetRecommendsUseCaseImpl
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartViewModel
-import com.mandarinkafe.mandarin.shared.database.AppDatabase
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named

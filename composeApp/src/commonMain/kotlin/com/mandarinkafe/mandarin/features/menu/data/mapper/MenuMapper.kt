@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.menu.data.mapper
 
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.core.domain.models.Label
 import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MeasureUnitType
@@ -13,7 +14,6 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierItemDto
 import com.mandarinkafe.mandarin.features.menu.data.dto.TagDto
 import com.mandarinkafe.mandarin.features.menu.domain.models.MealPickupPoint
-import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.TAG_CAFE
 import com.mandarinkafe.mandarin.util.Constants.TAG_IS_DELIVERY_POSITION
 import com.mandarinkafe.mandarin.util.Constants.TAG_NO_ADDS

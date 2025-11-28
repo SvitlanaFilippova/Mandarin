@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.features.ordershistory.data.network
 
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.core.data.network.NetworkMonitor
-import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.HEADER_API_KEY
 import com.mandarinkafe.mandarin.util.Constants.HEADER_AUTHORIZATION
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR

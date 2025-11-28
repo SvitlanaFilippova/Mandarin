@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.features.favorites.data.network
 
-import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.ERROR_BODY_READ_FAILED
 import com.mandarinkafe.mandarin.util.Constants.HEADER_API_KEY
 import com.mandarinkafe.mandarin.util.Constants.HEADER_AUTHORIZATION

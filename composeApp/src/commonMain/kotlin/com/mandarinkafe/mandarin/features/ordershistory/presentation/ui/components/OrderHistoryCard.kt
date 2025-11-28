@@ -20,13 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.order.presentation.models.toUi
 import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
-import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.presentation.ui.components.images.KamelSubcomposeAsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 

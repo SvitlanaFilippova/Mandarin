@@ -1,10 +1,10 @@
 package com.mandarinkafe.mandarin.features.cart.data.network
 
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.features.cart.data.dto.CartItemDto
 import com.mandarinkafe.mandarin.features.cart.data.dto.CartRequest
 import com.mandarinkafe.mandarin.features.cart.data.dto.CartResponse
-import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.Constants.ERROR_BODY_READ_FAILED
 import com.mandarinkafe.mandarin.util.Constants.HEADER_API_KEY
 import com.mandarinkafe.mandarin.util.Constants.HEADER_AUTHORIZATION

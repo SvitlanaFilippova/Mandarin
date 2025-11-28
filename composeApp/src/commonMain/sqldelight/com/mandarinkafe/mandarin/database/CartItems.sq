@@ -37,3 +37,4 @@ DELETE FROM cart_items WHERE id = ?;
 
 deleteAll:
 DELETE FROM cart_items;
+
