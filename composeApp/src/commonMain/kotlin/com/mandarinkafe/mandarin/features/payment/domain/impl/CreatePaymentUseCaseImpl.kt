@@ -16,6 +16,7 @@ class CreatePaymentUseCaseImpl(
         currency: String,
         description: String,
         returnUrl: String?,
+        paymentMethodType: String?,
     ): Resource<PaymentInfo> {
         return repository.createPayment(
             paymentToken = paymentToken,
@@ -23,7 +24,8 @@ class CreatePaymentUseCaseImpl(
             amount = amount,
             currency = currency,
             description = description,
-            returnUrl = returnUrl
+            returnUrl = returnUrl,
+            paymentMethodType = paymentMethodType
         )
     }
 }

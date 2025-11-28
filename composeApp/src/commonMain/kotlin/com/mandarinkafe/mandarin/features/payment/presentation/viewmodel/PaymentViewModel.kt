@@ -48,6 +48,7 @@ class PaymentViewModel(
                 event.amount,
                 event.userPhone
             )
+
             is PaymentEvent.CheckPaymentStatus -> checkPaymentStatus(event.orderId)
         }
     }
@@ -89,12 +90,18 @@ class PaymentViewModel(
 
             // Для iOS paymentToken будет null (это нормально для "умного платежа")
             // Для Android paymentToken будет строкой
-            val createResult = createPaymentOnServer(sdkResult)
+            val createResult =
+                createPaymentOnServer(sdkResult?.paymentToken, sdkResult?.paymentMethodType)
             handlePaymentCreationResult(createResult)
         }
     }
 
-    private suspend fun initializeSdkPayment(): String? {
+    private data class SdkPaymentResult(
+        val paymentToken: String?,
+        val paymentMethodType: String?,
+    )
+
+    private suspend fun initializeSdkPayment(): SdkPaymentResult? {
         val subtitle = if (state.value.orderNumber != null) {
             "Заказ №${state.value.orderNumber}, ID ${state.value.orderId}"
         } else {
@@ -123,10 +130,16 @@ class PaymentViewModel(
         // Для iOS "умного платежа" paymentToken может быть null - это нормально
         // Сервер создаст платеж напрямую через API YooKassa
         // Для Android paymentToken будет строкой
-        return sdkResult.paymentToken
+        return SdkPaymentResult(
+            paymentToken = sdkResult.paymentToken,
+            paymentMethodType = sdkResult.paymentMethodType
+        )
     }
 
-    private suspend fun createPaymentOnServer(paymentToken: String?): Resource<PaymentInfo> {
+    private suspend fun createPaymentOnServer(
+        paymentToken: String?,
+        paymentMethodType: String?,
+    ): Resource<PaymentInfo> {
         val description = if (state.value.orderNumber != null) {
             "Заказ №${state.value.orderNumber}, ID ${state.value.orderId}"
         } else {
@@ -149,7 +162,8 @@ class PaymentViewModel(
                 amount = state.value.amount,
                 currency = "RUB",
                 description = description,
-                returnUrl = returnUrl
+                returnUrl = returnUrl,
+                paymentMethodType = paymentMethodType
             )
         } else {
             // Для iOS "умного платежа" - создаем платеж без payment_token
@@ -159,7 +173,8 @@ class PaymentViewModel(
                 amount = state.value.amount,
                 currency = "RUB",
                 description = description,
-                returnUrl = returnUrl
+                returnUrl = returnUrl,
+                paymentMethodType = paymentMethodType
             )
         }
     }
@@ -176,6 +191,7 @@ class PaymentViewModel(
                 }
 
                 val confirmationUrl = paymentInfo.confirmationUrl
+                val paymentMethodType = paymentInfo.paymentMethodType
 
                 // Если есть confirmation_url, открываем форму оплаты
                 if (confirmationUrl != null) {
@@ -189,7 +205,7 @@ class PaymentViewModel(
                     }
 
                     // Открываем форму оплаты через SDK
-                    openPaymentForm(confirmationUrl)
+                    openPaymentForm(confirmationUrl, paymentMethodType)
                 } else {
                     // Если нет URL, сразу начинаем polling
                     setState {
@@ -217,8 +233,8 @@ class PaymentViewModel(
         }
     }
 
-    private suspend fun openPaymentForm(confirmationUrl: String) {
-        val result = yooKassaService.openPaymentUrl(confirmationUrl)
+    private suspend fun openPaymentForm(confirmationUrl: String, paymentMethodType: String?) {
+        val result = yooKassaService.confirmPayment(confirmationUrl, paymentMethodType)
 
         // После закрытия формы начинаем polling
         setState { copy(isPaymentProcessing = false) }
@@ -328,6 +344,8 @@ class PaymentViewModel(
     }
 
     private fun retryPayment() {
+        // Останавливаем текущий polling перед началом новой попытки оплаты
+        stopPolling()
         setState { copy(error = null) }
         initPayment()
     }

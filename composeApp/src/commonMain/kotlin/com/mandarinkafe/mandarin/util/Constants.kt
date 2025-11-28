@@ -18,6 +18,7 @@ object Constants {
     // Menu UI
     const val BANNERS_AUTO_SCROLL_INTERVAL: Long = 5000L
     const val BANNERS_ASPECT_RATIO = 2.91f
+    const val BANNERS_ANIMATION_COMPLETE_THRESHOLD = 0.01f
     const val FORCE_SHOW_FAB_DURATION_MS = 3000L
     const val DEFAULT_UNSELECTED_INDEX = -1
     const val DEFAULT_SELECTED_FIRST_INDEX = 0

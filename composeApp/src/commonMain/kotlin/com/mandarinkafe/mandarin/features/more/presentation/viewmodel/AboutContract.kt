@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.more.presentation.viewmodel
 
+import com.mandarinkafe.mandarin.features.more.domain.models.AppStore
 import com.mandarinkafe.mandarin.util.presentation.BaseContract
 
 sealed interface AboutContract {
@@ -9,6 +10,7 @@ sealed interface AboutContract {
         val versionName: String? = null,
         val lastUpdated: String? = null,
         val revision: Int? = null,
+        val appStores: List<AppStore> = emptyList(),
     ) : BaseContract.BaseState
 }
 

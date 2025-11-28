@@ -39,9 +39,12 @@ fun MealDto.toDomain(
     val finalMealLabels = mergeLabels(mealLabels, categoryLabels)
     val finalMealTags = mergeTags(mealTags, categoryTags)
 
+    val isPickupOnly = finalMealTags.any { it.name.equals(TAG_NO_DELIVERY, ignoreCase = true) }
+    val mealName = name.applyTypography()
+
     return Meal(
         id = itemId,
-        name = name.applyTypography(),
+        name = mealName,
         description = (description ?: "").applyTypography(),
         sku = sku ?: "",
         weight = baseInfo.weight,
@@ -57,7 +60,7 @@ fun MealDto.toDomain(
         isAddable = checkIfAddable(tags = finalMealTags, catIsAddable = isAddable),
         requireSelection = requireSelection(safeModifiers),
         isModifiable = isModifiable(safeModifiers, baseInfo.price),
-        isPickupOnly = finalMealTags.any { it.name.equals(TAG_NO_DELIVERY, ignoreCase = true) },
+        isPickupOnly = isPickupOnly,
         discountable = isDiscountable(finalMealTags),
         pickupPoint = resolvePickupPoint(finalMealTags),
         orderItemType = orderItemType,

@@ -14,7 +14,8 @@ fun PaymentStatusResponse.toDomain(): PaymentInfo {
         amountCurrency = amountCurrency,
         description = description,
         createdAt = createdAt,
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        paymentMethodType = paymentMethodType
     )
 }
 

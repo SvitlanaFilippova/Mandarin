@@ -14,6 +14,8 @@ data class CreatePaymentResponse(
     @SerialName("created_at")
     val createdAt: String? = null,
     val confirmation: PaymentConfirmationDto? = null,
+    @SerialName("payment_method_type")
+    val paymentMethodType: String? = null, // Тип платежного метода от Юкассы (bank_card, sbp, sberbank и т.д.)
 ) : Response()
 
 

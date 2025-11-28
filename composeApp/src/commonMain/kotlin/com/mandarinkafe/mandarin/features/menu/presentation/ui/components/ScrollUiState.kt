@@ -63,7 +63,12 @@ class ScrollUiState(
     }
 
     suspend fun scrollToCategory(index: Int) {
-        listState.scrollToItem(categoryPositions[index] + 1)
+        val headerPosition = categoryPositions.getOrNull(index) ?: return
+        // Скроллим к следующему элементу после заголовка с оффсетом
+        listState.scrollToItem(
+            index = headerPosition + 2, // +1 для следующего элемента, +1 из-за sticky header
+            scrollOffset = -200 // Оффсет в пикселях, чтобы элемент был выше на экране
+        )
     }
 
     fun getActiveSubTabIndexForHeader(headerIndex: Int): Int {
@@ -76,9 +81,11 @@ class ScrollUiState(
     suspend fun scrollToSubCategory(headerIndex: Int, subIndex: Int) {
         val subPositions =
             subCategoryPositionsMap[categoryPositions.getOrNull(headerIndex)] ?: return
-        val target = subPositions.getOrNull(subIndex) ?: return
+        val subHeaderPosition = subPositions.getOrNull(subIndex) ?: return
+        // Скроллим к следующему элементу после подзаголовка с оффсетом
         listState.scrollToItem(
-            index = target + 1
+            index = subHeaderPosition + 2, // +1 для следующего элемента, +1 из-за sticky header
+            scrollOffset = -200 // Оффсет в пикселях, чтобы элемент был выше на экране
         )
     }
 

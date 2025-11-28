@@ -11,5 +11,6 @@ data class PaymentInfo(
     val createdAt: String?,
     val updatedAt: String?,
     val confirmationUrl: String? = null, // URL для подтверждения платежа
+    val paymentMethodType: String? = null, // Тип платежного метода от сервера (bank_card, sbp, sberbank и т.д.)
 )
 

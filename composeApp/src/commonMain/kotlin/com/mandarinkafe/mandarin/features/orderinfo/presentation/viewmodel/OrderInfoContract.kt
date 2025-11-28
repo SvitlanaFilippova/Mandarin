@@ -70,7 +70,32 @@ sealed interface OrderInfoContract {
             get() = !isPaymentInProgress
 
         val canShowPaymentButton: Boolean
-            get() = isPaymentPaid != true && !isPaymentInProgress && paymentStatus != PaymentStatus.SUCCEEDED
+            get() {
+                // Не показываем кнопку, если платеж уже оплачен или успешно завершен
+                if (isPaymentPaid == true || paymentStatus == PaymentStatus.SUCCEEDED) {
+                    return false
+                }
+
+                // Для статуса PENDING показываем кнопку "Повторить оплату" даже если polling активен
+                // Это позволяет пользователю повторить попытку оплаты, если что-то пошло не так
+                // (особенно важно для iOS "умного платежа", где polling может продолжаться долго)
+                if (paymentStatus == PaymentStatus.PENDING) {
+                    // Не показываем кнопку только если идет начальная загрузка или обработка платежа
+                    // Но показываем, если только polling активен
+                    return !isPaymentLoading && !isPaymentProcessing
+                }
+
+                // Для других статусов не показываем кнопку, если идет процесс оплаты
+                if (isPaymentInProgress) {
+                    return false
+                }
+
+                // Показываем кнопку, если статус null, UNKNOWN или CANCELED
+                // (REFUNDED не показываем, так как платеж уже возвращен)
+                return paymentStatus == null ||
+                        paymentStatus == PaymentStatus.UNKNOWN ||
+                        paymentStatus == PaymentStatus.CANCELED
+            }
 
         val paymentCanBeChanged: Boolean
             get() {

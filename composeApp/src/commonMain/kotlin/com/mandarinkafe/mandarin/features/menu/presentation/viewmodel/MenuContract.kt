@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.menu.presentation.viewmodel
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
+import com.mandarinkafe.mandarin.features.ordershistory.domain.models.SavedOrder
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.presentation.BaseContract
 
@@ -17,6 +18,7 @@ sealed interface MenuContract {
 
         // Обновление данных
         data object ForceRefresh : MenuEvent
+        data object GetActiveOrders : MenuEvent
     }
 
     sealed interface MenuEffect : BaseContract.BaseEffect
@@ -30,10 +32,6 @@ sealed interface MenuContract {
         val announcements: List<String> = emptyList(),
         val bannersAreLoading: Boolean = false,
         val selectedMenuItemIndex: Int = DEFAULT_UNSELECTED_INDEX,
+        val activeOrders: List<SavedOrder> = emptyList(),
     ) : BaseContract.BaseState
 }
-
-
-
-
-

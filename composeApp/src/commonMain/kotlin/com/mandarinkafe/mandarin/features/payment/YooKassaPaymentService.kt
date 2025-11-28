@@ -16,16 +16,18 @@ expect class YooKassaPaymentService {
     ): PaymentResult
 
     /**
-     * Открытие confirmation_url для оплаты через SDK
+     * Подтверждение платежа через SDK (3DS, СБП, Сбербанк) или открытие confirmation_url
      * @param confirmationUrl URL для подтверждения платежа
-     * @return PaymentResult с результатом оплаты
+     * @param paymentMethodType Тип платежного метода от сервера (bank_card, sbp, sberbank и т.д.)
+     * @return PaymentResult с результатом подтверждения
      */
-    suspend fun openPaymentUrl(confirmationUrl: String): PaymentResult
+    suspend fun confirmPayment(confirmationUrl: String, paymentMethodType: String? = null): PaymentResult
 }
 
 data class PaymentResult(
     val success: Boolean,
     val paymentToken: String? = null, // Одноразовый токен от SDK (действителен 1 час)
+    val paymentMethodType: String? = null, // Тип платежного метода (BANK_CARD, SBERBANK, SBP и т.д.)
     val paymentId: String? = null,
     val error: String? = null,
 )

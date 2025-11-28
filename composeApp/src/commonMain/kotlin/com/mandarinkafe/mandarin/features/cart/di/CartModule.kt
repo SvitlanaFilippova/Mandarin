@@ -53,7 +53,7 @@ val cartModule = module {
     singleOf(::ClearCartUseCaseImpl) { bind<ClearCartUseCase>() }
 
     // ViewModel
-    single { CartViewModel(get(), get(), get()) }
+    singleOf(::CartViewModel)
 }
 
 

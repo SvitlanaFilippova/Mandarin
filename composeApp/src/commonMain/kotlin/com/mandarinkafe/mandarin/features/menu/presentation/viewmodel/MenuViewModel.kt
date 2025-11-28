@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
+import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.AnnouncementsRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.GetAnnouncementsUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.api.GetBannersUseCase
@@ -16,6 +17,7 @@ import com.mandarinkafe.mandarin.features.menu.presentation.models.extensions.ge
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEffect
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuState
+import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryInteractor
 import com.mandarinkafe.mandarin.util.Constants.DEFAULT_UNSELECTED_INDEX
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
@@ -23,8 +25,13 @@ import com.mandarinkafe.mandarin.util.Resource.Idle
 import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
+import com.mandarinkafe.mandarin.util.tickerFlow
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 class MenuViewModel(
     private val menuInteractor: MenuInteractor,
@@ -33,18 +40,24 @@ class MenuViewModel(
     private val getAnnouncementsUseCase: GetAnnouncementsUseCase,
     private val announcementsRepository: AnnouncementsRepository,
     private val forceRefreshMenu: ForceRefreshMenuUseCase,
+    private val ordersHistoryInteractor: OrdersHistoryInteractor,
+    private val authRepository: AuthRepository,
 ) : BaseViewModel<MenuEvent, MenuEffect, MenuState>() {
     override fun setInitialState() = MenuState()
+
+    private var activeOrdersPollingJob: Job? = null
 
     init {
         loadMenu()
         getBanners()
         getAnnouncements()
         observeFavorites()
+        observeAuthState()
     }
 
     override fun onEvent(event: MenuEvent) {
         when (event) {
+            is MenuEvent.GetActiveOrders -> viewModelScope.launch { loadActiveOrders() }
             is MenuEvent.BannerClick -> findMenuItemByBanner(event.banner)
             is MenuEvent.ResetSelectedMenuItemIndex -> resetSelectedMenuItemIndex()
             is MenuEvent.ForceRefresh -> forceRefresh()
@@ -59,6 +72,8 @@ class MenuViewModel(
             getBanners()
             // Принудительно обновляем объявления при форс рефреш
             refreshAnnouncements()
+            // Обновляем активные заказы
+            loadActiveOrders()
         }
     }
 
@@ -143,7 +158,6 @@ class MenuViewModel(
 
     private fun resetSelectedMenuItemIndex() {
         setState { copy(selectedMenuItemIndex = DEFAULT_UNSELECTED_INDEX) }
-
     }
 
     private fun getBanners() {
@@ -191,9 +205,77 @@ class MenuViewModel(
             getAnnouncements()
         }
     }
+
+    /**
+     * Наблюдение за состоянием авторизации и управление активными заказами
+     */
+    private fun observeAuthState() {
+        viewModelScope.launch {
+            authRepository.authState.collect { isAuthorized ->
+                if (isAuthorized) {
+                    // При авторизации начинаем наблюдение за активными заказами
+                    observeActiveOrders()
+                } else {
+                    // При выходе очищаем активные заказы и останавливаем наблюдение
+                    stopObservingActiveOrders()
+                    clearActiveOrders()
+                }
+            }
+        }
+    }
+
+    /**
+     * Периодическое обновление активных заказов
+     */
+    private fun observeActiveOrders() {
+        stopObservingActiveOrders()
+        activeOrdersPollingJob = viewModelScope.launch {
+            tickerFlow(period = ORDER_STATUS_UPD_DELAY.seconds)
+                .onStart { emit(Unit) }
+                .map {
+                    loadActiveOrders()
+                }
+                .collect { }
+        }
+    }
+
+    private fun stopObservingActiveOrders() {
+        activeOrdersPollingJob?.cancel()
+        activeOrdersPollingJob = null
+    }
+
+    /**
+     * Очистка активных заказов при выходе из аккаунта
+     */
+    private fun clearActiveOrders() {
+        setState { copy(activeOrders = emptyList()) }
+    }
+
+    /**
+     * Загрузка активных заказов (максимум 3)
+     */
+    private suspend fun loadActiveOrders() {
+        val result = ordersHistoryInteractor.getHistory()
+        when (result) {
+            is Success -> {
+                val allOrders = result.data ?: emptyList()
+                val activeOrders = allOrders
+                    .filter { it.isActive }
+                    .sortedByDescending { it.timestamp }
+                    .take(MAX_ACTIVE_ORDERS_COUNT)
+                setState { copy(activeOrders = activeOrders) }
+            }
+
+            else -> {
+                // В случае ошибки сохраняем предыдущее состояние
+                // Не обновляем список, чтобы карточки не пропадали при временных проблемах с сетью
+            }
+        }
+    }
+
+    private companion object {
+        const val ORDER_STATUS_UPD_DELAY = 60 // Обновление каждые 60 секунд
+        const val MAX_ACTIVE_ORDERS_COUNT =
+            3 // Максимальное количество активных заказов для отображения
+    }
 }
-
-
-
-
-

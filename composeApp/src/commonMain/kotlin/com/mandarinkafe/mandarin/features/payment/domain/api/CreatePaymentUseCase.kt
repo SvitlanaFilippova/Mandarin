@@ -11,6 +11,7 @@ interface CreatePaymentUseCase {
         currency: String = "RUB",
         description: String,
         returnUrl: String? = null, // URL для возврата после оплаты (для iOS "умного платежа")
+        paymentMethodType: String? = null, // Тип платежного метода (BANK_CARD, SBERBANK, SBP и т.д.)
     ): Resource<PaymentInfo>
 }
 
