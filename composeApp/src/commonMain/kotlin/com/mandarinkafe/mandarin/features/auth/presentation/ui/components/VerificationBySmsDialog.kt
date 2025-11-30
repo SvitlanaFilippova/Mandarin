@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -21,6 +23,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.DialogC
 import com.mandarinkafe.mandarin.util.toTimeFormat
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun VerificationBySmsDialog(
@@ -35,12 +38,26 @@ fun VerificationBySmsDialog(
     onResendSms: () -> Unit,
     errorRes: StringResource?,
 ) {
+    // Дебаунс для onComplete: защита от множественных быстро последовательных вызовов
+    val lastCompleteAt = remember { mutableStateOf(0L) }
+
+    @OptIn(ExperimentalTime::class)
+    val debouncedOnComplete = remember(onComplete) {
+        { codeToComplete: String ->
+            val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+            if (now - lastCompleteAt.value > 800) {
+                lastCompleteAt.value = now
+                onComplete(codeToComplete)
+            }
+        }
+    }
+
     // Автоматическое получение SMS-кодов
     rememberSmsRetriever(
         enabled = code.isEmpty(), // Включаем только если код еще не введен
         onCodeReceived = { receivedCode: String ->
             onCodeChange(receivedCode)
-            onComplete(receivedCode)
+            debouncedOnComplete(receivedCode)
         }
     )
 
@@ -77,7 +94,7 @@ fun VerificationBySmsDialog(
                 code = code,
                 onCodeChange = onCodeChange,
                 isError = isError,
-                onComplete = onComplete
+                onComplete = debouncedOnComplete
             )
 
             Spacer(modifier = Modifier.height(Dimens.MarginStandard16))
@@ -111,7 +128,7 @@ fun VerificationBySmsDialog(
                 modifier = Modifier.fillMaxWidth(),
                 shouldBeActive = code.length == SMS_CODE_LENGTH && !isLoading,
                 text = stringResource(MR.strings.send),
-                onClick = { onComplete(code) },
+                onClick = { debouncedOnComplete(code) },
                 onMissingRequiredInfo = {},
             )
         }
