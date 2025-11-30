@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.util
 
 import com.mandarinkafe.mandarin.util.Constants.VALID_PHONE_LENGTH
+import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DIVIDER_FOR_USER_COMMENT
 
 
 /**
@@ -114,7 +115,19 @@ fun String?.toVisibleComment(): String {
     }
 
     // Фильтруем информацию об оплате из комментария
-    return commentWithoutTechPart.filterPaymentInfoForUser()
+    var result = commentWithoutTechPart.filterPaymentInfoForUser()
+    
+    // Удаляем разделитель || в конце строки, если после него ничего нет
+    result = result.trimEnd()
+    // Проверяем, заканчивается ли строка на разделитель (с пробелами или без)
+    val dividerTrimmed = DIVIDER_FOR_USER_COMMENT.trim() // "||"
+    if (result.endsWith(dividerTrimmed)) {
+        result = result.removeSuffix(dividerTrimmed).trimEnd()
+    } else if (result.endsWith(DIVIDER_FOR_USER_COMMENT)) {
+        result = result.removeSuffix(DIVIDER_FOR_USER_COMMENT).trimEnd()
+    }
+    
+    return result.trim()
 }
 
 /**
