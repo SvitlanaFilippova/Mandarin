@@ -24,6 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_DEBOUNCE_DELAY_MS
+import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_FOCUS_CLEAR_DELAY_MS
+import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_INPUT_ALPHA
 import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_LENGTH
 import com.mandarinkafe.mandarin.util.presentation.ui.components.OtpTextField
 import kotlinx.coroutines.delay
@@ -51,7 +54,7 @@ fun SmsCodeInput(
         if (code.length == length) {
             val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
             // Дебаунс: защита от множественных быстро последовательных вызовов
-            if (now - lastCompleteAt.value > 800) {
+            if (now - lastCompleteAt.value > SMS_CODE_DEBOUNCE_DELAY_MS) {
                 lastCompleteAt.value = now
                 val c = code
                 // Запускаем onComplete асинхронно и даём время на завершение автозаполнения/печати
@@ -59,7 +62,7 @@ fun SmsCodeInput(
                 onComplete(c)
                 // Отложенное снятие фокуса
                 launch {
-                    delay(250)
+                    delay(SMS_CODE_FOCUS_CLEAR_DELAY_MS)
                     focusManager.clearFocus()
                 }
             }
@@ -80,7 +83,7 @@ fun SmsCodeInput(
                 .focusRequester(focusRequester)
                 .width((boxWidth + boxSpacing) * length - boxSpacing)
                 .height(boxHeight)
-                .alpha(0.01f), // почти невидим, но не нулевой - iOS не будет считать поле удалённым
+                .alpha(SMS_CODE_INPUT_ALPHA), // почти невидим, но не нулевой - iOS не будет считать поле удалённым
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number
             ),

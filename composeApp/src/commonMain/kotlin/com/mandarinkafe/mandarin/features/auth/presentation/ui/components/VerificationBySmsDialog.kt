@@ -15,6 +15,7 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_DEBOUNCE_DELAY_MS
 import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_LENGTH
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForUi
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
@@ -45,7 +46,7 @@ fun VerificationBySmsDialog(
     val debouncedOnComplete = remember(onComplete) {
         { codeToComplete: String ->
             val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
-            if (now - lastCompleteAt.value > 800) {
+            if (now - lastCompleteAt.value > SMS_CODE_DEBOUNCE_DELAY_MS) {
                 lastCompleteAt.value = now
                 onComplete(codeToComplete)
             }
