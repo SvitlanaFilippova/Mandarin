@@ -53,6 +53,7 @@ fun AccountScreen(
 
         Column(
             modifier = Modifier
+                .weight(1f)
                 .verticalScroll(rememberScrollState())
                 .padding(Dimens.MarginSmall8)
         ) {
@@ -75,9 +76,6 @@ fun AccountScreen(
                 )
             }
         }
-
-        // Отступ, чтобы прижать кнопки к нижней части экрана
-        Spacer(modifier = Modifier.weight(1f))
 
         AccountActionsSection(
             onLogoutClick = { viewModel.onEvent(AccountEvent.Logout) },

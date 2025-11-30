@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.orderinfo.data
 
+import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.core.data.dto.order.DeliveryPointDto
 import com.mandarinkafe.mandarin.core.data.dto.order.OrderTypeDto
 import com.mandarinkafe.mandarin.core.domain.models.Address
@@ -19,7 +20,6 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingMealAdditional
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingModifier
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingOrderItem
-import com.mandarinkafe.mandarin.shared.BuildKonfig
 import com.mandarinkafe.mandarin.util.DateTimeUtils.toHumanDateTimeOrNull
 import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.toVisibleComment

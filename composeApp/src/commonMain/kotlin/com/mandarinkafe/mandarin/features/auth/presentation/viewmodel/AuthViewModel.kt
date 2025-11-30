@@ -34,6 +34,7 @@ class AuthViewModel(
     private var callTimerJob: Job? = null
     private var smsTimerJob: Job? = null
     private var statusPollingJob: Job? = null
+    private var isCheckingSms: Boolean = false
     override fun setInitialState() = AuthState()
 
     override fun onEvent(event: AuthEvent) {
@@ -58,12 +59,20 @@ class AuthViewModel(
     }
 
     private fun checkIfCodeIsValid() {
+        if (isCheckingSms) {
+            return
+        }
+        isCheckingSms = true
         viewModelScope.launch {
-            setLoading()
-            val code = state.value.smsCodeQuery
-            val phone = state.value.phoneQuery
-            val response = statusInteractor.checkSms(phone = phone, code = code)
-            proceedSmsAuthStatusResponse(response)
+            try {
+                setLoading()
+                val code = state.value.smsCodeQuery
+                val phone = state.value.phoneQuery
+                val response = statusInteractor.checkSms(phone = phone, code = code)
+                proceedSmsAuthStatusResponse(response)
+            } finally {
+                isCheckingSms = false
+            }
         }
     }
 

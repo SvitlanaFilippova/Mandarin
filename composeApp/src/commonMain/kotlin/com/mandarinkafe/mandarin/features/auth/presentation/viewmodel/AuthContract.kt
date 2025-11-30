@@ -33,7 +33,7 @@ sealed interface AuthContract {
         val remainingTimeToCall: Int? = null,
         val remainingTimeToResendSms: Int? = null,
         val smsCodeQuery: String = "",
-        val smsValidationError: StringResource?? = null,
+        val smsValidationError: StringResource? = null,
         val smsCheckError: Boolean = false,
         val activeVerificationPhone: String? = null, // Номер, для которого активна сессия верификации
 

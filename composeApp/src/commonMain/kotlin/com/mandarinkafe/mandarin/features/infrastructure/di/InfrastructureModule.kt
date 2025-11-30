@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.infrastructure.di
 
+import com.mandarinkafe.mandarin.database.AppDatabase
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.AliveTerminalRepositoryImpl
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.CategoryDiscountRepositoryImpl
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.PaymentTypesRepositoryImpl
@@ -14,7 +15,6 @@ import com.mandarinkafe.mandarin.features.infrastructure.domain.api.PaymentTypes
 import com.mandarinkafe.mandarin.features.infrastructure.domain.impl.CheckDiscountByPhoneUseCaseImpl
 import com.mandarinkafe.mandarin.features.infrastructure.domain.impl.CheckIfTerminalIsAliveUseCaseImpl
 import com.mandarinkafe.mandarin.features.infrastructure.domain.impl.GetPaymentTypesUseCaseImpl
-import com.mandarinkafe.mandarin.shared.database.AppDatabase
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module

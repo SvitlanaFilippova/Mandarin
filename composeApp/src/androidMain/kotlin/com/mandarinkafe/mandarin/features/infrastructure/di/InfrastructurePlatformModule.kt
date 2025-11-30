@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.infrastructure.di
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.mandarinkafe.mandarin.core.data.network.NetworkMonitor
-import com.mandarinkafe.mandarin.shared.database.AppDatabase
+import com.mandarinkafe.mandarin.database.AppDatabase
 import com.mandarinkafe.mandarin.shared.datastore.createDataStore
 import com.mandarinkafe.mandarin.shared.device.DeviceInfoProvider
 import org.koin.android.ext.koin.androidContext

@@ -6,6 +6,8 @@
         <string>$(MARKETING_VERSION)</string>
         <key>CFBundleVersion</key>
         <string>$(CURRENT_PROJECT_VERSION)</string>
+        <key>CFBundleDevelopmentRegion</key>
+        <string>ru</string>
         <key>CADisableMinimumFrameDurationOnPhone</key>
         <true />
         <key>NSLocationWhenInUseUsageDescription</key>

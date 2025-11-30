@@ -147,11 +147,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.mandarinkafe.mandarin.shared"
+    namespace = "com.mandarinkafe.mandarin"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.mandarinkafe.mandarin.shared"
+        applicationId = "com.mandarinkafe.mandarin"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = libs.versions.versionCode.get().toInt()
@@ -181,7 +181,7 @@ configurations.all {
 sqldelight {
     databases {
         create("AppDatabase") {
-            packageName.set("com.mandarinkafe.mandarin.shared.database")
+            packageName.set("com.mandarinkafe.mandarin.database")
             migrationOutputDirectory.set(file("src/commonMain/sqldelight/migrations"))
         }
     }
@@ -215,7 +215,7 @@ val keys = listOf(
 
 // --- Генерация BuildKonfig для KMP ---
 buildkonfig {
-    packageName = "com.mandarinkafe.mandarin.shared"
+    packageName = "com.mandarinkafe.mandarin"
 
     defaultConfigs {
         keys.forEach { key ->

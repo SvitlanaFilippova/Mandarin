@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.features.payment
 
 import android.content.Intent
 import androidx.core.net.toUri
-import com.mandarinkafe.mandarin.shared.BuildKonfig
+import com.mandarinkafe.mandarin.BuildKonfig
 
 actual class YooKassaPaymentService {
 
