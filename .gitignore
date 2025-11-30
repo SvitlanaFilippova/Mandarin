@@ -60,6 +60,7 @@ DerivedData/
 **/release/composeApp/src/commonMain/kotlin/com/mandarinkafe/mandarin/core/data/config/BuildConfig.kt
 /app/release/baselineProfiles/0/app-release.dm
 /app/release/baselineProfiles/1/app-release.dm
+/composeApp/release/baselineProfiles/**/*.dm
 /app/release/app-release.aab
 /app/release/output-metadata.json
 /tombstone_31
