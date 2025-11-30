@@ -90,7 +90,7 @@ fun OrderTypeChooserHorizontalItem(
 ) {
     val contentColor = when {
         selected -> Colors.Orange
-        !enabled -> Colors.DarkGrey
+        !enabled -> Colors.LightGrey.copy(alpha = 0.3f)
         else -> Colors.White.copy(alpha = 0.8f)
     }
     val borderColor = when {

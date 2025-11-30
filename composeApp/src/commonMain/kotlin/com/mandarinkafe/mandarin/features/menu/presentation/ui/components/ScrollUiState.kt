@@ -66,8 +66,7 @@ class ScrollUiState(
         val headerPosition = categoryPositions.getOrNull(index) ?: return
         // Скроллим к следующему элементу после заголовка с оффсетом
         listState.scrollToItem(
-            index = headerPosition + 2, // +1 для следующего элемента, +1 из-за sticky header
-            scrollOffset = -200 // Оффсет в пикселях, чтобы элемент был выше на экране
+            index = headerPosition + 2,
         )
     }
 

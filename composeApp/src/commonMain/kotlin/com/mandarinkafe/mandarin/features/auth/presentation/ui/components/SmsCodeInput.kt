@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,8 +24,14 @@ import androidx.compose.ui.unit.dp
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_DEBOUNCE_DELAY_MS
+import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_FOCUS_CLEAR_DELAY_MS
+import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_INPUT_ALPHA
 import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_LENGTH
 import com.mandarinkafe.mandarin.util.presentation.ui.components.OtpTextField
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun SmsCodeInput(
@@ -40,11 +47,25 @@ fun SmsCodeInput(
     val boxWidth = Dimens.CodeBoxWidth
     val boxHeight = Dimens.CodeBoxHeight
     val boxSpacing = Dimens.MarginSuperSmall4
+    val lastCompleteAt = remember { mutableStateOf(0L) }
 
+    @OptIn(ExperimentalTime::class)
     LaunchedEffect(code) {
         if (code.length == length) {
-            onComplete(code)
-            focusManager.clearFocus()
+            val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+            // Дебаунс: защита от множественных быстро последовательных вызовов
+            if (now - lastCompleteAt.value > SMS_CODE_DEBOUNCE_DELAY_MS) {
+                lastCompleteAt.value = now
+                val c = code
+                // Запускаем onComplete асинхронно и даём время на завершение автозаполнения/печати
+                // чтобы избежать гонок с нативным кодом
+                onComplete(c)
+                // Отложенное снятие фокуса
+                launch {
+                    delay(SMS_CODE_FOCUS_CLEAR_DELAY_MS)
+                    focusManager.clearFocus()
+                }
+            }
         }
     }
     Box(
@@ -62,7 +83,7 @@ fun SmsCodeInput(
                 .focusRequester(focusRequester)
                 .width((boxWidth + boxSpacing) * length - boxSpacing)
                 .height(boxHeight)
-                .alpha(0f), // полностью скрыт
+                .alpha(SMS_CODE_INPUT_ALPHA), // почти невидим, но не нулевой - iOS не будет считать поле удалённым
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number
             ),
