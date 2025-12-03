@@ -127,6 +127,6 @@ BottomNavigation, интеграция с Yandex MapKit
 
 ## Скачать приложение 📦
 
-- **Android**: [RuStore](https://www.rustore.ru/catalog/app/com.mandarinkafe.mandarin) | [Releases](https://github.com/mandarin-kafe/Mandarin/releases)
+- **Android**: [Google Play](https://play.google.com/store/apps/details?id=com.mandarinkafe.mandarin) | [RuStore](https://www.rustore.ru/catalog/app/com.mandarinkafe.mandarin) | [Releases](https://github.com/mandarin-kafe/Mandarin/releases)
 - **iOS**: [App Store](https://apps.apple.com/ru/app/id6755288260)
 
