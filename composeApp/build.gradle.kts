@@ -126,6 +126,8 @@ kotlin {
                 // Явно указываем версии work-runtime для разрешения конфликтов
                 implementation(libs.androidx.work.runtime)
                 implementation(libs.androidx.work.runtime.ktx)
+
+
             }
         }
 
@@ -168,6 +170,12 @@ android {
         unitTests.isIncludeAndroidResources = true
     }
 }
+
+// Глобально отключаем Advertising ID
+configurations.all {
+    exclude(group = "com.google.android.gms", module = "play-services-ads-identifier")
+}
+
 
 // Разрешение конфликтов зависимостей для androidx.work
 configurations.all {
