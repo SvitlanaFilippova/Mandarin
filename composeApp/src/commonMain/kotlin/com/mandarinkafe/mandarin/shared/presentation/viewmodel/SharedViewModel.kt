@@ -171,6 +171,7 @@ class SharedViewModel(
             }
 
             done.await()
+            setState { copy(isSplashCompleted = true) }
             sendEffect(FinishSplash)
         }
     }
