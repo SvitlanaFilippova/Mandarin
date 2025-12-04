@@ -23,12 +23,12 @@ private fun getAndroidContext(): Context {
             val activityThreadClass = Class.forName("android.app.ActivityThread")
             val currentApplicationMethod = activityThreadClass.getMethod("currentApplication")
             currentApplicationMethod.invoke(null) as? Context
-                ?: throw IllegalStateException("Unable to get Android context")
+                ?: error("Unable to get Android context")
         } catch (reflectionException: Exception) {
-            throw IllegalStateException(
+            Napier.w("getAndroidContext: reflectionException", reflectionException)
+            error(
                 "Unable to get Android context: Koin not initialized and reflection failed. " +
-                        "Make sure Koin is initialized before calling getAppSignatureHashForSms()",
-                reflectionException
+                        "Make sure Koin is initialized before calling getAppSignatureHashForSms()"
             )
         }
     }
@@ -42,6 +42,7 @@ actual fun getAppSignatureHashForSms(): String? {
         val context = getAndroidContext()
         AppSignatureHashHelper.getAppSignatureHash(context)
     } catch (e: Exception) {
+        Napier.w("getAppSignatureHashForSms", e)
         null
     }
 }

@@ -34,18 +34,18 @@ private fun getAndroidContext(): Context {
     } catch (e: Exception) {
         // Fallback: используем рефлексию только если Koin не инициализирован
         // Это может произойти, если функция вызвана до инициализации Koin
-        // ВАЖНО: Это временное решение, рефлексия может не работать на новых версиях Android
+        Napier.w("getAndroidContext fallback на рефлексию", e)
         try {
             @Suppress("DEPRECATION", "UnsafeCallOnNullableType")
             val activityThreadClass = Class.forName("android.app.ActivityThread")
             val currentApplicationMethod = activityThreadClass.getMethod("currentApplication")
             currentApplicationMethod.invoke(null) as? Context
-                ?: throw IllegalStateException("Unable to get Android context")
+                ?: error("Unable to get Android context")
         } catch (reflectionException: Exception) {
-            throw IllegalStateException(
+            Napier.w("getAndroidContext: reflectionException", reflectionException)
+            error(
                 "Unable to get Android context for SmsRetriever: Koin not initialized and reflection failed. " +
-                        "Make sure Koin is initialized before using SmsRetriever",
-                reflectionException
+                        "Make sure Koin is initialized before using SmsRetriever"
             )
         }
     }
@@ -88,7 +88,7 @@ private fun createSmsReceiver(
 
             val status = intent.getStatusExtra()
             Napier.i { "SMS Retriever: получен Intent, статус: ${status?.statusCode}" }
-            
+
             when (status?.statusCode) {
                 CommonStatusCodes.SUCCESS -> {
                     val message = intent.extras?.getString(GoogleSmsRetriever.EXTRA_SMS_MESSAGE)
@@ -104,7 +104,7 @@ private fun createSmsReceiver(
                     Napier.w { "SMS Retriever: timeout - SMS не получена в течение 5 минут" }
                     onCodeReceived(null)
                 }
-                
+
                 else -> {
                     Napier.e { "SMS Retriever: неизвестный статус: ${status?.statusCode}, сообщение: ${status?.statusMessage}" }
                     onCodeReceived(null)
@@ -134,13 +134,13 @@ actual fun getSmsRetriever(): SmsRetriever {
 
             task.addOnSuccessListener {
                 Napier.i { "SMS Retriever: успешно запущен" }
-                val receiver = createSmsReceiver { code -> 
+                val receiver = createSmsReceiver { code ->
                     if (code != null) {
                         Napier.i { "SMS Retriever: получен код: $code" }
                     } else {
                         Napier.w { "SMS Retriever: код не получен (timeout или ошибка)" }
                     }
-                    trySend(code) 
+                    trySend(code)
                 }
                 smsReceiver = receiver
                 val intentFilter = IntentFilter(GoogleSmsRetriever.SMS_RETRIEVED_ACTION)
