@@ -23,15 +23,31 @@ private fun extractCodeFromMessage(message: String): String? {
 }
 
 /**
- * Получает Android контекст через рефлексию
+ * Получает Android Application context через Koin
+ * Если Koin не инициализирован, использует fallback через рефлексию
  */
 private fun getAndroidContext(): Context {
     return try {
-        val activityThreadClass = Class.forName("android.app.ActivityThread")
-        val currentApplicationMethod = activityThreadClass.getMethod("currentApplication")
-        currentApplicationMethod.invoke(null) as Context
+        // Пытаемся получить через Koin (предпочтительный способ)
+        val koin = org.koin.mp.KoinPlatform.getKoin()
+        koin.get<android.app.Application>()
     } catch (e: Exception) {
-        throw IllegalStateException("Unable to get Android context for SmsRetriever", e)
+        // Fallback: используем рефлексию только если Koin не инициализирован
+        // Это может произойти, если функция вызвана до инициализации Koin
+        // ВАЖНО: Это временное решение, рефлексия может не работать на новых версиях Android
+        try {
+            @Suppress("DEPRECATION", "UnsafeCallOnNullableType")
+            val activityThreadClass = Class.forName("android.app.ActivityThread")
+            val currentApplicationMethod = activityThreadClass.getMethod("currentApplication")
+            currentApplicationMethod.invoke(null) as? Context
+                ?: throw IllegalStateException("Unable to get Android context")
+        } catch (reflectionException: Exception) {
+            throw IllegalStateException(
+                "Unable to get Android context for SmsRetriever: Koin not initialized and reflection failed. " +
+                        "Make sure Koin is initialized before using SmsRetriever",
+                reflectionException
+            )
+        }
     }
 }
 
@@ -71,14 +87,26 @@ private fun createSmsReceiver(
             if (GoogleSmsRetriever.SMS_RETRIEVED_ACTION != intent.action) return
 
             val status = intent.getStatusExtra()
+            Napier.i { "SMS Retriever: получен Intent, статус: ${status?.statusCode}" }
+            
             when (status?.statusCode) {
                 CommonStatusCodes.SUCCESS -> {
                     val message = intent.extras?.getString(GoogleSmsRetriever.EXTRA_SMS_MESSAGE)
+                    Napier.i { "SMS Retriever: получено SMS сообщение: $message" }
                     val code = message?.let { extractCodeFromMessage(it) }
+                    if (code == null) {
+                        Napier.w { "SMS Retriever: не удалось извлечь код из сообщения: $message" }
+                    }
                     onCodeReceived(code)
                 }
 
                 CommonStatusCodes.TIMEOUT -> {
+                    Napier.w { "SMS Retriever: timeout - SMS не получена в течение 5 минут" }
+                    onCodeReceived(null)
+                }
+                
+                else -> {
+                    Napier.e { "SMS Retriever: неизвестный статус: ${status?.statusCode}, сообщение: ${status?.statusMessage}" }
                     onCodeReceived(null)
                 }
             }
@@ -105,13 +133,23 @@ actual fun getSmsRetriever(): SmsRetriever {
             val task = client.startSmsRetriever()
 
             task.addOnSuccessListener {
-                val receiver = createSmsReceiver { code -> trySend(code) }
+                Napier.i { "SMS Retriever: успешно запущен" }
+                val receiver = createSmsReceiver { code -> 
+                    if (code != null) {
+                        Napier.i { "SMS Retriever: получен код: $code" }
+                    } else {
+                        Napier.w { "SMS Retriever: код не получен (timeout или ошибка)" }
+                    }
+                    trySend(code) 
+                }
                 smsReceiver = receiver
                 val intentFilter = IntentFilter(GoogleSmsRetriever.SMS_RETRIEVED_ACTION)
                 context.registerSmsReceiver(receiver, intentFilter)
+                Napier.i { "SMS Retriever: BroadcastReceiver зарегистрирован" }
             }
 
-            task.addOnFailureListener {
+            task.addOnFailureListener { exception ->
+                Napier.e(exception) { "SMS Retriever: ошибка при запуске - ${exception.message}" }
                 trySend(null)
             }
 

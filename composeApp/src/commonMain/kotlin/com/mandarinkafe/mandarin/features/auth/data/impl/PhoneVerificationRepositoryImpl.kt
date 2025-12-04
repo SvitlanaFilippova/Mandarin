@@ -16,6 +16,7 @@ import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationDa
 import com.mandarinkafe.mandarin.features.auth.domain.models.PhoneVerificationStatus
 import com.mandarinkafe.mandarin.features.auth.domain.models.SmsVerificationData
 import com.mandarinkafe.mandarin.features.auth.domain.models.VerifySmsCodeResult
+import com.mandarinkafe.mandarin.features.auth.util.getAppSignatureHashForSms
 import com.mandarinkafe.mandarin.shared.device.DeviceInfoProvider
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
@@ -184,8 +185,20 @@ class PhoneVerificationRepositoryImpl(
     override suspend fun requestSmsVerification(phone: String): Resource<SmsVerificationData> {
         return try {
             val platform = deviceInfoProvider.getPlatform()
-            val response =
-                networkClient.requestSmsVerification(SmsVerificationRequest(phone, platform))
+            // Получаем хэш подписи приложения для SMS Retriever (только для Android)
+            val appSignatureHash = getAppSignatureHashForSms()
+            if (appSignatureHash != null) {
+                Napier.i { "SMS Verification: отправляем хэш подписи приложения: $appSignatureHash" }
+            } else if (platform == "android") {
+                Napier.w { "SMS Verification: не удалось получить хэш подписи приложения для Android" }
+            }
+            val response = networkClient.requestSmsVerification(
+                SmsVerificationRequest(
+                    phone = phone,
+                    platform = platform,
+                    appSignatureHash = appSignatureHash
+                )
+            )
             when (response.resultCode) {
                 NO_CONNECTION -> Resource.ErrorNoInternet()
                 HTTP_SUCCESS -> {
