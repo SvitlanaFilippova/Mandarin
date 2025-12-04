@@ -8,13 +8,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
@@ -93,19 +93,29 @@ fun SplashScreen() {
             modifier = Modifier
                 .align(Alignment.Center)
                 .size(Dimens.SplashScreenBackgroundSize220)
-                .background(
-                    color = Colors.AppBlack,
-                    shape = CircleShape
-                )
                 .graphicsLayer { alpha = logoAlpha.value }
         ) {
+            // Фоновое изображение
+            Image(
+                painter = painterResource(MR.images.splash_logo_bg),
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxSize()
+            )
+            
+            // Логотип поверх фона
             Image(
                 painter = painterResource(MR.images.logo_orange_simplified),
                 contentDescription = stringResource(MR.strings.logo_cafe),
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .size(Dimens.SplashScreenLogoSize180)
-                    .graphicsLayer { alpha = logoAlpha.value }
+                    .size(Dimens.SplashScreenLogoSize160)
+                    .graphicsLayer { 
+                        alpha = logoAlpha.value
+                    }
             )
         }
     }
