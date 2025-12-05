@@ -24,7 +24,7 @@ class FavoritesValidator(
 
             when (menuResource) {
                 is Resource.Success -> {
-                    val result = processRecords(raw)
+                    val result = processRecords(raw, menuResource)
                     Resource.Success(
                         result.validPairs
                             .sortedByDescending { it.first.updatedAt }
@@ -48,6 +48,7 @@ class FavoritesValidator(
 
     private fun processRecords(
         raw: Set<FavoriteRecord>,
+        menuResource: Resource.Success<List<com.mandarinkafe.mandarin.core.domain.models.MealCategory>>,
     ): ValidationResult {
         val validPairs = mutableListOf<Pair<FavoriteRecord, CustomizedMeal>>()
 
@@ -69,8 +70,7 @@ class FavoritesValidator(
 
                 is FavoriteRecord.Custom -> {
                     val validAdds = record.addsIds.mapNotNull { id ->
-                        val additional = menuCache.getMealById(id)?.toMealAdditional()
-                        additional
+                        menuCache.getMealById(id)?.toMealAdditional()
                     }
 
                     val validMods = record.modifiers.validateBy(fullMeal.modifiers)

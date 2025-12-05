@@ -68,11 +68,13 @@ class MenuCacheImpl(
         _allVisibleMenu.value = Resource.Loading()
         val result = fetcher()
         if (result is Resource.Success) {
+            // proceedSuccessData уже устанавливает отфильтрованное меню в _allVisibleMenu
             proceedSuccessData(result.data)
         } else {
             _mainMenu.value = result
+            // Только для не-Success результатов устанавливаем напрямую
+            _allVisibleMenu.value = result
         }
-        _allVisibleMenu.value = result
     }
 
     private suspend fun fetchWithRetries(): Resource<List<MealCategory>> {
