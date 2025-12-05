@@ -67,6 +67,9 @@ sealed interface CartContract {
             get() = actualCartItems
                 .filter { !it.customizedMeal.meal.isHidden }
                 .sumOf { it.customizedMeal.totalPrice() * it.quantity }
+
+        val canProceedOrder: Boolean
+            get() = actualCartItems.any { !it.customizedMeal.meal.isHidden }
     }
 }
 

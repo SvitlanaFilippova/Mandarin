@@ -52,8 +52,12 @@ fun CartContentScreen(
     onProceedOrderClick: () -> Unit,
     onCommentAdded: (CartItem, String) -> Unit,
 ) {
-    // Фильтруем элементы с quantity=0 (удаленные элементы)
-    val cartItemsList = state.cartItems.filter { it.quantity > 0 }
+    // Фильтруем элементы с quantity=0 (удаленные элементы) и сортируем: скрытые блюда в конце
+    val cartItemsList = state.cartItems
+        .filter { it.quantity > 0 }
+        .sortedWith(
+            compareBy<CartItem> { it.customizedMeal.meal.isHidden }
+        )
     val ifCartIsEmpty =
         cartItemsList.isEmpty() || cartItemsList.all { it.id in state.pendingDeletionItems }
 
@@ -142,6 +146,7 @@ fun CartContentScreen(
                         ProcessOrderButton(
                             onClick = onProceedOrderClick,
                             totalPrice = state.totalCartPrice,
+                            enabled = state.canProceedOrder,
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .background(color = Colors.Transparent),
@@ -161,6 +166,7 @@ fun CartContentScreen(
                 ProcessOrderButton(
                     onClick = onProceedOrderClick,
                     totalPrice = state.totalCartPrice,
+                    enabled = state.canProceedOrder,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .background(color = Colors.Transparent),

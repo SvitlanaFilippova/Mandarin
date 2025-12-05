@@ -26,6 +26,7 @@ fun ProcessOrderButton(
     modifier: Modifier = Modifier,
     totalPrice: Int,
     proceedOrderIsLoading: Boolean,
+    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     val modifier = modifier
@@ -39,10 +40,13 @@ fun ProcessOrderButton(
         Button(
             modifier = modifier,
             onClick = onClick,
+            enabled = enabled,
             shape = RoundedCornerShape(Dimens.CornerRadius8),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Colors.Orange,
                 contentColor = Color.White,
+                disabledContainerColor = Colors.LightGrey,
+                disabledContentColor = Color.White,
             )
         ) {
             Row(
