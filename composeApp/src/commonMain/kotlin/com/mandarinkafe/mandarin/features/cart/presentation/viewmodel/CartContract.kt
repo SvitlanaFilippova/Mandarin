@@ -64,7 +64,9 @@ sealed interface CartContract {
             get() = cartItems.filter { it.id !in pendingDeletionItems && it.quantity > 0 }
 
         val totalCartPrice: Int
-            get() = actualCartItems.sumOf { it.customizedMeal.totalPrice() * it.quantity }
+            get() = actualCartItems
+                .filter { !it.customizedMeal.meal.isHidden }
+                .sumOf { it.customizedMeal.totalPrice() * it.quantity }
     }
 }
 

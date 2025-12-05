@@ -114,14 +114,15 @@ object Mapper {
     }
 
     fun CartItemDto.toStored(menuCache: MenuCache): StoredCartItem? {
-        val baseMeal = menuCache.getMealById(mealId)
+        // Используем getMealByIdFromAllMenu, чтобы находить скрытые блюда
+        val baseMeal = menuCache.getMealByIdFromAllMenu(mealId)
         if (baseMeal == null) {
             return null
         }
 
-        // Получаем добавки
+        // Получаем добавки (тоже используем allMenu для скрытых добавок)
         addsIds.mapNotNull { addId ->
-            menuCache.getMealById(addId)?.toMealAdditional()
+            menuCache.getMealByIdFromAllMenu(addId)?.toMealAdditional()
         }
 
         // Получаем модификаторы из базового блюда

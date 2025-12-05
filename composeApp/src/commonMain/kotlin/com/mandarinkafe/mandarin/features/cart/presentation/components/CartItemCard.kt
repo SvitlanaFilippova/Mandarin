@@ -9,6 +9,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -33,14 +34,21 @@ fun CartItemCard(
     onDeletionCancel: () -> Unit,
     onCommentAdded: (CartItem, String) -> Unit,
 ) {
+    val isHidden = item.customizedMeal.meal.isHidden
     val contentColor =
         remember(itemInPendingDeletion) { if (itemInPendingDeletion) Colors.LightGreyTransparent75 else Colors.White }
+    val baseModifier = modifier
+        .background(Colors.AppBlack)
+        .padding(horizontal = Dimens.MarginSmall8)
+
+    val finalModifier = if (!isHidden) {
+        baseModifier.clickable(onClick = { onMealDetailsClick() })
+    } else {
+        baseModifier.alpha(0.6f)
+    }
 
     Column(
-        modifier = modifier
-            .background(Colors.AppBlack)
-            .padding(horizontal = Dimens.MarginSmall8)
-            .clickable { onMealDetailsClick() }
+        modifier = finalModifier
 
     ) {
         CartItemBaseInfo(
@@ -56,6 +64,7 @@ fun CartItemCard(
         PriceAndButtons(
             item = item,
             itemInPendingDeletion = itemInPendingDeletion,
+            isHidden = isHidden,
             isInProgress = isInProgress,
             deletionProgress = deletionProgress,
             contentColor = contentColor,

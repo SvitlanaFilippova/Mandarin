@@ -145,7 +145,7 @@
     </string>
     <string name="favorite_variant_base_button">Базовое блюдо 🍽️</string>
     <string name="favorite_variant_custom_button">С выбранными опциями ⚙️</string>
-
+    <string name="item_is_temporary_unavailable">Нет в наличии</string>
 
     <!-- Кастомизация блюда -->
     <string name="adds">Добавки</string>

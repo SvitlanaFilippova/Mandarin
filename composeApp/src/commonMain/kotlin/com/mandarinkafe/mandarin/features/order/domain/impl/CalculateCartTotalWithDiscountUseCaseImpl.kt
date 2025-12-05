@@ -8,7 +8,10 @@ class CalculateCartTotalWithDiscountUseCaseImpl : CalculateCartTotalWithDiscount
         items: List<CartItem>,
         discountAmount: Int,
     ): Double {
-        return items.sumOf { item ->
+        // Исключаем скрытые блюда из расчета суммы
+        return items
+            .filter { !it.customizedMeal.meal.isHidden }
+            .sumOf { item ->
             val mealPrice = item.customizedMeal.meal.price.toDouble()
             val addsPrice = item.customizedMeal.adds.sumOf { it.price.toDouble() }
             val modifiersPrice = item.customizedMeal.modifiers.sumOf { group ->
