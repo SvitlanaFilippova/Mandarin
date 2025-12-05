@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 /**
  * Android реализация OTP текстового поля
  * Использует стандартный BasicTextField
- * Автозаполнение SMS работает через SmsRetriever API
  */
 @Composable
 actual fun OtpTextField(

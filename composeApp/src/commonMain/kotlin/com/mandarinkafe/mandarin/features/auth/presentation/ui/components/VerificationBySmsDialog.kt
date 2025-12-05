@@ -53,15 +53,6 @@ fun VerificationBySmsDialog(
         }
     }
 
-    // Автоматическое получение SMS-кодов
-    rememberSmsRetriever(
-        enabled = code.isEmpty(), // Включаем только если код еще не введен
-        onCodeReceived = { receivedCode: String ->
-            onCodeChange(receivedCode)
-            debouncedOnComplete(receivedCode)
-        }
-    )
-
     DialogContainer(
         dismissOnClickOutside = false,
         onDismissRequest = onDismissRequest,
