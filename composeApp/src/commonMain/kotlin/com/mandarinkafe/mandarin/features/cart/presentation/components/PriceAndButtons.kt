@@ -46,7 +46,9 @@ fun PriceAndButtons(
         Spacer(modifier = Modifier.weight(1f))
 
         // Кнопка "сделать вкуснее"/"редактировать"
-        if ((meal.isCustomizable || meal.requireSelection) && !itemInPendingDeletion && !isHidden) {
+        val canCustomize = meal.isCustomizable || meal.requireSelection
+        val isVisible = !itemInPendingDeletion && !isHidden
+        if (canCustomize && isVisible) {
             MealDetailsButton(
                 isCustomized = item.customizedMeal.isCustomized,
                 onEditMealClick = onMealDetailsClick,
