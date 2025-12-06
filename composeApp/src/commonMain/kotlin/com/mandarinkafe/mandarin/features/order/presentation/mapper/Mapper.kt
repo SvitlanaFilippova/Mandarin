@@ -23,6 +23,8 @@ fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
         changeFrom = if (cash) paymentInfo.changeFrom else "",
     )
     val address = if (deliveryInfo.isPickup) null else deliveryInfo.chosenAddress
+    // Исключаем скрытые блюда из передачи в заказ
+    val visibleItems = cartSummary.items.filter { !it.customizedMeal.meal.isHidden }
     return OutgoingOrder(
         name = userInfo.name.trim(),
         phone = userInfo.phone,
@@ -31,7 +33,7 @@ fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
         chosenAddress = address,
         paymentType = paymentType,
         comment = fullComment,
-        items = cartSummary.items,
+        items = visibleItems,
         deliveryRealCost = deliveryCost,
         totalOrderSum = totalOrderSum,
         discountPercent = cartSummary.discountPercent,

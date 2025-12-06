@@ -18,6 +18,7 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.ALPHA_50
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ButtonWithCircularProgressIndicator
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -26,6 +27,7 @@ fun ProcessOrderButton(
     modifier: Modifier = Modifier,
     totalPrice: Int,
     proceedOrderIsLoading: Boolean,
+    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     val modifier = modifier
@@ -39,10 +41,13 @@ fun ProcessOrderButton(
         Button(
             modifier = modifier,
             onClick = onClick,
+            enabled = enabled,
             shape = RoundedCornerShape(Dimens.CornerRadius8),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Colors.Orange,
                 contentColor = Color.White,
+                disabledContainerColor = Colors.LightGrey.copy(alpha = ALPHA_50),
+                disabledContentColor = Color.White,
             )
         ) {
             Row(

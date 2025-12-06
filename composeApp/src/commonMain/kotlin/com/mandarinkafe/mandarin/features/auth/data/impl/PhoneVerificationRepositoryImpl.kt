@@ -184,8 +184,12 @@ class PhoneVerificationRepositoryImpl(
     override suspend fun requestSmsVerification(phone: String): Resource<SmsVerificationData> {
         return try {
             val platform = deviceInfoProvider.getPlatform()
-            val response =
-                networkClient.requestSmsVerification(SmsVerificationRequest(phone, platform))
+            val response = networkClient.requestSmsVerification(
+                SmsVerificationRequest(
+                    phone = phone,
+                    platform = platform
+                )
+            )
             when (response.resultCode) {
                 NO_CONNECTION -> Resource.ErrorNoInternet()
                 HTTP_SUCCESS -> {

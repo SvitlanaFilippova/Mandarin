@@ -5,8 +5,8 @@
             fill="url(#paint0_linear_83_22)" />
     </g>
     <defs>
-        <linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_83_22" x1="240.5" x2="240.5" y1="0"
-            y2="481">
+        <linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_83_22" x1="240.5"
+            x2="240.5" y1="0" y2="481">
             <stop stop-color="#FB6361" />
             <stop offset="1" stop-color="#ED3E45" />
         </linearGradient>

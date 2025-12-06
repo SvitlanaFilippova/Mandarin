@@ -63,6 +63,7 @@ sealed interface SharedContract {
         val showFavoriteDialog: Boolean = false,
         val selectedMealForFavoriteChoice: CustomizedMeal? = null,
         val cartItemsCount: Int = 0,
+        val isSplashCompleted: Boolean = false,
     ) : BaseContract.BaseState
 }
 

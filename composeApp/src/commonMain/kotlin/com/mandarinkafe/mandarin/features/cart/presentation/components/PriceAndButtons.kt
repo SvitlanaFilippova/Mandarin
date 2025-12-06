@@ -20,6 +20,7 @@ import dev.icerock.moko.resources.compose.stringResource
 fun PriceAndButtons(
     item: CartItem,
     itemInPendingDeletion: Boolean,
+    isHidden: Boolean,
     isInProgress: Boolean,
     deletionProgress: Float,
     contentColor: Color,
@@ -27,7 +28,8 @@ fun PriceAndButtons(
     onAddToCart: () -> Unit,
     onRemoveFromCart: () -> Unit,
     onDeletionCancel: () -> Unit,
-) {
+
+    ) {
     val meal = item.customizedMeal.meal
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -44,7 +46,9 @@ fun PriceAndButtons(
         Spacer(modifier = Modifier.weight(1f))
 
         // Кнопка "сделать вкуснее"/"редактировать"
-        if ((meal.isCustomizable || meal.requireSelection) && !itemInPendingDeletion) {
+        val canCustomize = meal.isCustomizable || meal.requireSelection
+        val isVisible = !itemInPendingDeletion && !isHidden
+        if (canCustomize && isVisible) {
             MealDetailsButton(
                 isCustomized = item.customizedMeal.isCustomized,
                 onEditMealClick = onMealDetailsClick,
@@ -55,6 +59,7 @@ fun PriceAndButtons(
         CartControlWithUndo(
             item = item,
             mealInPendingDeletion = itemInPendingDeletion,
+            isHidden = isHidden,
             isInProgress = isInProgress,
             deletionProgress = deletionProgress,
             onAddToCart = onAddToCart,

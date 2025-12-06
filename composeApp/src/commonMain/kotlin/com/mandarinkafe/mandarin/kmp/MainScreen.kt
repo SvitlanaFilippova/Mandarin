@@ -26,6 +26,7 @@ import com.mandarinkafe.mandarin.core.presentation.AppLifecycleHandler
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.MandarinTheme
 import com.mandarinkafe.mandarin.features.cart.presentation.components.FavoriteVariantChoiceDialog
+import com.mandarinkafe.mandarin.navigation.NavConstants.MENU_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.SPLASH_SCREEN_ROUTE
 import com.mandarinkafe.mandarin.navigation.NavConstants.bottomNavigationRoutes
 import com.mandarinkafe.mandarin.navigation.NavGraph
@@ -72,6 +73,17 @@ fun MainScreen() {
 
         LaunchedEffect(currentRoute) {
             if (isSplashLoading && currentRoute != null && currentRoute != SPLASH_SCREEN_ROUTE) {
+                isSplashLoading = false
+            }
+        }
+
+        // Проверка: если splash уже был завершен, но приложение вернулось на splash screen
+        // (например, при возврате из фона), автоматически переходим к меню
+        LaunchedEffect(sharedState.isSplashCompleted, currentRoute) {
+            if (sharedState.isSplashCompleted && currentRoute == SPLASH_SCREEN_ROUTE) {
+                navController.navigate(MENU_SCREEN_ROUTE) {
+                    popUpTo(SPLASH_SCREEN_ROUTE) { inclusive = true }
+                }
                 isSplashLoading = false
             }
         }

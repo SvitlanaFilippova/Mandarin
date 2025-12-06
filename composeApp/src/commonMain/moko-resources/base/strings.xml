@@ -21,6 +21,9 @@
         было ещё удобнее!
     </string>
     <string name="error_cart_empty">В корзине пока ничего нет</string>
+    <string name="error_cart_empty_on_order">Не&#160;знаю, как так получилось, но&#160;корзина
+        сейчас пуста. Не&#160;получится оформить заказ!
+    </string>
     <string name="error_search_empty">Ничего не найдено :(</string>
     <string name="error_search_empty_extra">Попробуй написать по-другому или просто полистай наше
         меню. Там точно найдутся нужные вкусности!
@@ -145,7 +148,7 @@
     </string>
     <string name="favorite_variant_base_button">Базовое блюдо 🍽️</string>
     <string name="favorite_variant_custom_button">С выбранными опциями ⚙️</string>
-
+    <string name="item_is_temporary_unavailable">Нет в наличии</string>
 
     <!-- Кастомизация блюда -->
     <string name="adds">Добавки</string>
@@ -349,8 +352,7 @@
         заказов. Это действие нельзя отменить.
     </string>
     <string name="repeat_order_button">Повторить заказ</string>
-    <string name="item_is_no_longer_available">На данный момент в&#160;меню отсутствует эта
-        позиция
+    <string name="item_is_no_longer_available">На данный момент в&#160;меню отсутствует эта&#160;позиция
     </string>
     <string name="some_items_unavailable">Некоторые блюда недоступны. Остальные добавлены в&#160;корзину</string>
     <string name="all_items_added_to_cart">Все позиции из&#160;заказа добавлены в&#160;корзину

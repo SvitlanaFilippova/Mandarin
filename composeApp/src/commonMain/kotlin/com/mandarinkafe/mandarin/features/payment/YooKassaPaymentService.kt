@@ -21,7 +21,10 @@ expect class YooKassaPaymentService {
      * @param paymentMethodType Тип платежного метода от сервера (bank_card, sbp, sberbank и т.д.)
      * @return PaymentResult с результатом подтверждения
      */
-    suspend fun confirmPayment(confirmationUrl: String, paymentMethodType: String? = null): PaymentResult
+    suspend fun confirmPayment(
+        confirmationUrl: String,
+        paymentMethodType: String? = null,
+    ): PaymentResult
 }
 
 data class PaymentResult(

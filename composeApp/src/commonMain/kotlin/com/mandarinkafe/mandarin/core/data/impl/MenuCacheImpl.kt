@@ -34,6 +34,8 @@ class MenuCacheImpl(
         private set
     private val _allVisibleMenu =
         MutableStateFlow<Resource<List<MealCategory>>>(Resource.Idle())
+    private val _allMenu =
+        MutableStateFlow<Resource<List<MealCategory>>>(Resource.Idle())
     private val _mainMenu = MutableStateFlow<Resource<List<MealCategory>>>(Resource.Idle())
     private val _addonsCategories = MutableStateFlow<List<MealAdditionalCategory>>(emptyList())
     private val _deliveryItems = MutableStateFlow<MealCategory?>(null)
@@ -45,6 +47,8 @@ class MenuCacheImpl(
 
     override val allVisibleMenu: StateFlow<Resource<List<MealCategory>>> =
         _allVisibleMenu.asStateFlow()
+    override val allMenu: StateFlow<Resource<List<MealCategory>>> =
+        _allMenu.asStateFlow()
     override val mainMenu: StateFlow<Resource<List<MealCategory>>> = _mainMenu.asStateFlow()
     override val addonsCategories: StateFlow<List<MealAdditionalCategory>> =
         _addonsCategories.asStateFlow()
@@ -57,8 +61,13 @@ class MenuCacheImpl(
         if (current is Resource.Success || isLoading) return
         CoroutineScope(Dispatchers.Default).launch {
             _allVisibleMenu.value = Resource.Loading()
+            _allMenu.value = Resource.Loading()
             val result = fetchWithRetries()
-            _allVisibleMenu.value = result
+            // fetchWithRetries вызывает proceedSuccessData, который устанавливает оба меню
+            if (result !is Resource.Success) {
+                _allVisibleMenu.value = result
+                _allMenu.value = result
+            }
         }
     }
 
@@ -66,13 +75,18 @@ class MenuCacheImpl(
         val isLoading = _allVisibleMenu.value is Resource.Loading
         if (isLoading) return
         _allVisibleMenu.value = Resource.Loading()
+        _allMenu.value = Resource.Loading()
         val result = fetcher()
         if (result is Resource.Success) {
+            // proceedSuccessData уже устанавливает отфильтрованное меню в _allVisibleMenu
+            // и неотфильтрованное в _allMenu
             proceedSuccessData(result.data)
         } else {
             _mainMenu.value = result
+            // Только для не-Success результатов устанавливаем напрямую
+            _allVisibleMenu.value = result
+            _allMenu.value = result
         }
-        _allVisibleMenu.value = result
     }
 
     private suspend fun fetchWithRetries(): Resource<List<MealCategory>> {
@@ -101,6 +115,9 @@ class MenuCacheImpl(
     private fun proceedSuccessData(data: List<MealCategory>?): List<MealCategory> {
         lastRefreshTime = getCurrentTimeMillis()
         val rootCategories = data ?: emptyList()
+
+        // Сохраняем неотфильтрованное меню для валидации
+        _allMenu.value = Resource.Success(rootCategories)
 
         val visible = filterVisibleMenu(rootCategories)
         _allVisibleMenu.value = Resource.Success(visible)
@@ -205,6 +222,19 @@ class MenuCacheImpl(
     // ====== Поиск блюд ======
     override fun getMealById(id: String): Meal? {
         val current = _allVisibleMenu.value
+        if (current is Resource.Success) {
+            current.data?.forEach { category ->
+                val result = findMealById(category, id)
+                if (result != null) {
+                    return result
+                }
+            }
+        }
+        return null
+    }
+
+    override fun getMealByIdFromAllMenu(id: String): Meal? {
+        val current = _allMenu.value
         if (current is Resource.Success) {
             current.data?.forEach { category ->
                 val result = findMealById(category, id)

@@ -8,24 +8,27 @@ class CalculateCartTotalWithDiscountUseCaseImpl : CalculateCartTotalWithDiscount
         items: List<CartItem>,
         discountAmount: Int,
     ): Double {
-        return items.sumOf { item ->
-            val mealPrice = item.customizedMeal.meal.price.toDouble()
-            val addsPrice = item.customizedMeal.adds.sumOf { it.price.toDouble() }
-            val modifiersPrice = item.customizedMeal.modifiers.sumOf { group ->
-                group.items.sumOf { it.price.toDouble() }
+        // Исключаем скрытые блюда из расчета суммы
+        return items
+            .filter { !it.customizedMeal.meal.isHidden }
+            .sumOf { item ->
+                val mealPrice = item.customizedMeal.meal.price.toDouble()
+                val addsPrice = item.customizedMeal.adds.sumOf { it.price.toDouble() }
+                val modifiersPrice = item.customizedMeal.modifiers.sumOf { group ->
+                    group.items.sumOf { it.price.toDouble() }
+                }
+                val fullPricePerItem = mealPrice + addsPrice + modifiersPrice
+                val discountModifier = 1 - discountAmount / PERCENT_DIVISOR
+                val discountedPricePerItem = if (item.customizedMeal.meal.discountable) {
+                    // если блюдо discountable, то скидка работает на всё
+                    fullPricePerItem * discountModifier
+                } else {
+                    // иначе - только на добавки и модификаторы, но не на само блюдо
+                    mealPrice + (addsPrice + modifiersPrice) * discountModifier
+                }
+                val total = discountedPricePerItem * item.quantity
+                total
             }
-            val fullPricePerItem = mealPrice + addsPrice + modifiersPrice
-            val discountModifier = 1 - discountAmount / PERCENT_DIVISOR
-            val discountedPricePerItem = if (item.customizedMeal.meal.discountable) {
-                // если блюдо discountable, то скидка работает на всё
-                fullPricePerItem * discountModifier
-            } else {
-                // иначе - только на добавки и модификаторы, но не на само блюдо
-                mealPrice + (addsPrice + modifiersPrice) * discountModifier
-            }
-            val total = discountedPricePerItem * item.quantity
-            total
-        }
 
     }
 

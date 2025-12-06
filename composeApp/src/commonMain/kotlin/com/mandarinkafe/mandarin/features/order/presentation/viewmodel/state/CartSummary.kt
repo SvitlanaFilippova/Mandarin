@@ -11,9 +11,11 @@ data class CartSummary(
     val cartSumWithDiscount: Double = 0.0,
 ) {
     val totalCartSum: Int
-        get() = items.sumOf {
-            it.customizedMeal.totalPrice() * it.quantity
-        }
+        get() = items
+            .filter { !it.customizedMeal.meal.isHidden }
+            .sumOf {
+                it.customizedMeal.totalPrice() * it.quantity
+            }
 
     val discountSum: Double
         get() = totalCartSum - cartSumWithDiscount

@@ -463,8 +463,10 @@ class OrderViewModel(
     private fun recalculateCartSummary(discountSize: Int? = null) {
         setState {
             val discountSize = discountSize ?: cartSummary.discountPercent
+            // Исключаем скрытые блюда из расчета суммы
+            val visibleItems = cartSummary.items.filter { !it.customizedMeal.meal.isHidden }
             val cartSumWithDiscount =
-                cartUseCases.calculateCartTotalWithDiscount(cartSummary.items, discountSize)
+                cartUseCases.calculateCartTotalWithDiscount(visibleItems, discountSize)
             val newCartSummary = cartSummary.copy(
                 cartSumWithDiscount = cartSumWithDiscount,
             )
@@ -553,6 +555,14 @@ class OrderViewModel(
             val order = currentState.toDomain(
                 paymentType = currentState.paymentInfo.chosenPaymentTypeDomain
             )
+
+            // Проверка: заказ не должен быть пустым
+            if (order.items.isEmpty()) {
+                sendErrorEffect(MR.strings.error_cart_empty_on_order)
+                setLoading(false)
+                return@launch
+            }
+
             orderCreator.submit(
                 scope = viewModelScope,
                 order = order,

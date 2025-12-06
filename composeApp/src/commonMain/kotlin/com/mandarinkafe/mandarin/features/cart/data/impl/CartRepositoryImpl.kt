@@ -65,10 +65,11 @@ class CartRepositoryImpl(
             }
 
             // Ждём до MENU_WAIT_TIMEOUT пока меню станет не Loading/Idle
+            // Используем allMenu для валидации, чтобы находить скрытые блюда
             val menuResource = withTimeoutOrNull(MENU_WAIT_TIMEOUT) {
-                menuCache.allVisibleMenu
+                menuCache.allMenu
                     .firstOrNull { it !is Resource.Loading && it !is Resource.Idle }
-            } ?: menuCache.allVisibleMenu.value // если таймаут, берём последнее известное состояние
+            } ?: menuCache.allMenu.value // если таймаут, берём последнее известное состояние
 
             _cartItems.value = when (menuResource) {
                 is Resource.Success -> {
@@ -422,7 +423,8 @@ class CartRepositoryImpl(
 
     private suspend fun updateUIFromStorage() {
         val currentCart = storage.getCartItems()
-        val menuResource = menuCache.allVisibleMenu.value
+        // Используем allMenu для валидации, чтобы находить скрытые блюда
+        val menuResource = menuCache.allMenu.value
         if (menuResource is Resource.Success) {
             val fullMenu = menuResource.data.orEmpty()
             val validItems = mapAndValidate(currentCart, fullMenu)

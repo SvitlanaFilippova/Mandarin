@@ -17,17 +17,21 @@ class FavoritesValidator(
     suspend operator fun invoke(raw: Set<FavoriteRecord>): Resource<List<CustomizedMeal>> {
         return try {
             // Ждём до MENU_WAIT_TIMEOUT пока меню станет не Loading/Idle
+            // Используем allMenu для валидации, чтобы находить скрытые блюда
             val menuResource = withTimeoutOrNull(MENU_WAIT_TIMEOUT) {
-                menuCache.allVisibleMenu
+                menuCache.allMenu
                     .firstOrNull { it !is Resource.Loading && it !is Resource.Idle }
-            } ?: menuCache.allVisibleMenu.value // если таймаут, берём последнее известное состояние
+            } ?: menuCache.allMenu.value // если таймаут, берём последнее известное состояние
 
             when (menuResource) {
                 is Resource.Success -> {
                     val result = processRecords(raw)
                     Resource.Success(
                         result.validPairs
-                            .sortedByDescending { it.first.updatedAt }
+                            .sortedWith(
+                                compareBy<Pair<FavoriteRecord, CustomizedMeal>> { it.second.meal.isHidden }
+                                    .thenByDescending { it.first.updatedAt }
+                            )
                             .map { it.second }
                             .distinctBy { it.id }
                     )
@@ -52,7 +56,8 @@ class FavoritesValidator(
         val validPairs = mutableListOf<Pair<FavoriteRecord, CustomizedMeal>>()
 
         for (record in raw) {
-            val fullMeal = menuCache.getMealById(record.mealId)
+            // Используем getMealByIdFromAllMenu для поиска в неотфильтрованном меню
+            val fullMeal = menuCache.getMealByIdFromAllMenu(record.mealId)
             if (fullMeal == null) {
                 continue
             }
@@ -69,8 +74,7 @@ class FavoritesValidator(
 
                 is FavoriteRecord.Custom -> {
                     val validAdds = record.addsIds.mapNotNull { id ->
-                        val additional = menuCache.getMealById(id)?.toMealAdditional()
-                        additional
+                        menuCache.getMealByIdFromAllMenu(id)?.toMealAdditional()
                     }
 
                     val validMods = record.modifiers.validateBy(fullMeal.modifiers)

@@ -88,10 +88,11 @@ class CartViewModel(
     private suspend fun proceedCartResult(resource: Resource<List<CartItem>>) {
         when (resource) {
             is Success -> {
-                setData(resource.data)
+                val items = resource.data ?: emptyList()
+                setData(items)
                 // Фильтруем элементы с quantity=0 для рекомендаций
-                updateRecommends(resource.data?.filter { it.quantity > 0 }
-                    ?.map { it.customizedMeal.meal }?.toSet())
+                updateRecommends(items.filter { it.quantity > 0 }
+                    .map { it.customizedMeal.meal }.toSet())
             }
 
             is Loading, is Idle -> {

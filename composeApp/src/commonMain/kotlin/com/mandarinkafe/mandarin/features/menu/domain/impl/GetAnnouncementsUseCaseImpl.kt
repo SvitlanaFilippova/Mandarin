@@ -5,7 +5,8 @@ import com.mandarinkafe.mandarin.features.menu.domain.api.GetAnnouncementsUseCas
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.Success
 
-class GetAnnouncementsUseCaseImpl(private val repository: AnnouncementsRepository) : GetAnnouncementsUseCase {
+class GetAnnouncementsUseCaseImpl(private val repository: AnnouncementsRepository) :
+    GetAnnouncementsUseCase {
     override suspend fun invoke(): Resource<List<String>> {
         val result = repository.getAnnouncements()
 
