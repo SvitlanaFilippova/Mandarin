@@ -41,6 +41,7 @@ interface MenuCache {
     val lastRefreshTime: Long
 
     fun getMealById(id: String): Meal?
+
     /**
      * Поиск блюда в неотфильтрованном меню (включая скрытые)
      * Используется для валидации избранного и корзины

@@ -21,7 +21,9 @@
         было ещё удобнее!
     </string>
     <string name="error_cart_empty">В корзине пока ничего нет</string>
-    <string name="error_cart_empty_on_order">Не&#160;знаю, как так получилось, но&#160;корзина сейчас пуста. Не&#160;получится оформить заказ!</string>
+    <string name="error_cart_empty_on_order">Не&#160;знаю, как так получилось, но&#160;корзина
+        сейчас пуста. Не&#160;получится оформить заказ!
+    </string>
     <string name="error_search_empty">Ничего не найдено :(</string>
     <string name="error_search_empty_extra">Попробуй написать по-другому или просто полистай наше
         меню. Там точно найдутся нужные вкусности!

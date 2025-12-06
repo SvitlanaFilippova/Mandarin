@@ -555,14 +555,14 @@ class OrderViewModel(
             val order = currentState.toDomain(
                 paymentType = currentState.paymentInfo.chosenPaymentTypeDomain
             )
-            
+
             // Проверка: заказ не должен быть пустым
             if (order.items.isEmpty()) {
                 sendErrorEffect(MR.strings.error_cart_empty_on_order)
                 setLoading(false)
                 return@launch
             }
-            
+
             orderCreator.submit(
                 scope = viewModelScope,
                 order = order,

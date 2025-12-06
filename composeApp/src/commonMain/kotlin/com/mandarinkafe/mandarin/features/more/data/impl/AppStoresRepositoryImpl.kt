@@ -31,6 +31,7 @@ class AppStoresRepositoryImpl(
                     Resource.Success(appStoresList.map { it.toDomain() })
                 }
             }
+
             else -> Resource.ErrorOther(ERROR_UNKNOWN)
         }
     }

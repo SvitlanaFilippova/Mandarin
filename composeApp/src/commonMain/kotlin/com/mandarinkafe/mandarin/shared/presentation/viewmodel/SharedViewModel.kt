@@ -1,9 +1,11 @@
 package com.mandarinkafe.mandarin.shared.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.data.api.RefreshMenuIfStaleUseCase
 import com.mandarinkafe.mandarin.core.domain.api.FavoritesApi
 import com.mandarinkafe.mandarin.core.domain.api.GetInitialDataUseCase
+import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.api.ObserveCartCountUseCase
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.domain.models.Meal
@@ -43,6 +45,7 @@ class SharedViewModel(
     private val getInitialDataUseCase: GetInitialDataUseCase,
     private val observeCartCountUseCase: ObserveCartCountUseCase,
     private val refreshMenuIfStaleUseCase: RefreshMenuIfStaleUseCase,
+    private val menuCache: MenuCache,
     authRepository: AuthRepository,
 ) :
     BaseViewModel<SharedEvent, SharedEffect, SharedState>() {
@@ -90,15 +93,7 @@ class SharedViewModel(
             is OnPhoneClick -> onPhoneClick(event.phone)
             is SharedEvent.OnLogoClick -> sendEffect(ScrollToTop)
             is OnMealDetailsClick -> {
-                sendEffect(
-                    OpenMealDetailsBS(
-                        meal = event.meal,
-                        item = event.item,
-                        cartItem = event.cartItem,
-                        mealId = event.mealId,
-                        isEditMode = event.isEditMode
-                    )
-                )
+                handleMealDetailsClick(event)
             }
 
             is SharedEvent.ToggleFavorite -> toggleFavorite(event.meal, event.item)
@@ -132,7 +127,44 @@ class SharedViewModel(
 
     private fun onPhoneClick(phone: String?) {
         sendEffect(SharedEffect.OnPhoneClick(phone ?: Constants.MANDARIN_PHONE))
+    }
 
+    private fun handleMealDetailsClick(event: OnMealDetailsClick) {
+        // Если передан meal/item/cartItem - открываем без проверки (это уже валидированные объекты)
+        if (event.meal != null || event.item != null || event.cartItem != null) {
+            sendEffect(
+                OpenMealDetailsBS(
+                    meal = event.meal,
+                    item = event.item,
+                    cartItem = event.cartItem,
+                    mealId = event.mealId,
+                    isEditMode = event.isEditMode
+                )
+            )
+            return
+        }
+
+        // Если передан только mealId - проверяем наличие блюда в видимом меню
+        val mealId = event.mealId
+        if (mealId != null) {
+            val meal = menuCache.getMealById(mealId)
+            if (meal == null) {
+                // Блюдо не найдено в видимом меню - показываем снэкбар
+                sendEffect(
+                    SnackbarEffect(
+                        messageRes = MR.strings.item_is_no_longer_available
+                    )
+                )
+            } else {
+                // Блюдо найдено - открываем MealDetails
+                sendEffect(
+                    OpenMealDetailsBS(
+                        mealId = mealId,
+                        isEditMode = event.isEditMode
+                    )
+                )
+            }
+        }
     }
 
     private fun toggleFavorite(meal: Meal?, item: CustomizedMeal?) {

@@ -93,7 +93,7 @@ class AnnouncementsRepositoryImpl(
     private fun isAnnouncementActive(
         startTime: String,
         endTime: String,
-        currentTime: kotlin.time.Instant
+        currentTime: kotlin.time.Instant,
     ): Boolean {
         return try {
             val start = parseInstant(startTime)

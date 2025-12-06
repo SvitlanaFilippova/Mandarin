@@ -104,7 +104,7 @@ fun SplashScreen() {
                     .align(Alignment.Center)
                     .fillMaxSize()
             )
-            
+
             // Логотип поверх фона
             Image(
                 painter = painterResource(MR.images.logo_orange_simplified),
@@ -113,7 +113,7 @@ fun SplashScreen() {
                 modifier = Modifier
                     .align(Alignment.Center)
                     .size(Dimens.SplashScreenLogoSize160)
-                    .graphicsLayer { 
+                    .graphicsLayer {
                         alpha = logoAlpha.value
                     }
             )

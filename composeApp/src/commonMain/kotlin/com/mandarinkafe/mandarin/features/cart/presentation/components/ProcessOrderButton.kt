@@ -18,6 +18,7 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.ALPHA_50
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ButtonWithCircularProgressIndicator
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -45,7 +46,7 @@ fun ProcessOrderButton(
             colors = ButtonDefaults.buttonColors(
                 containerColor = Colors.Orange,
                 contentColor = Color.White,
-                disabledContainerColor = Colors.LightGrey,
+                disabledContainerColor = Colors.LightGrey.copy(alpha = ALPHA_50),
                 disabledContentColor = Color.White,
             )
         ) {

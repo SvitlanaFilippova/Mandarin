@@ -14,6 +14,7 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.util.Constants.ALPHA_50
 
 /**
  * Компонент, который отвечает за отображение товара, который выбрали в меню
@@ -44,7 +45,7 @@ fun CartItemCard(
     val finalModifier = if (!isHidden) {
         baseModifier.clickable(onClick = { onMealDetailsClick() })
     } else {
-        baseModifier.alpha(0.6f)
+        baseModifier.alpha(ALPHA_50)
     }
 
     Column(

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +28,7 @@ import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.Constants.ALPHA_50
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_DESCRIPTION_IN_MENU
 import com.mandarinkafe.mandarin.util.Constants.MAX_LINES_FOR_MEAL_TITLE_IN_MENU
 import com.mandarinkafe.mandarin.util.LabelSize
@@ -67,7 +67,7 @@ fun FavoritesItemCard(
     val finalModifier = if (!isHidden) {
         baseModifier.clickable(onClick = { onMealDetailsClick(item) })
     } else {
-        baseModifier.alpha(0.6f)
+        baseModifier.alpha(ALPHA_50)
     }
 
     Row(
@@ -142,7 +142,7 @@ fun FavoritesItemCard(
                         .fillMaxWidth(),
                     shouldBeActive = false,
                     text = stringResource(MR.strings.item_is_temporary_unavailable),
-                    onClick = {  },
+                    onClick = { },
                 )
             }
         }

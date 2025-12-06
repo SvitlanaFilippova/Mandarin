@@ -99,6 +99,7 @@ fun BannerCarousel(
                             // Достигли дубликата последнего элемента - переключаемся на реальный последний
                             pagerState.scrollToPage(page = banners.size)
                         }
+
                         infiniteBanners.size - 1 -> {
                             // Достигли дубликата первого элемента - переключаемся на реальный первый
                             pagerState.scrollToPage(page = 1)

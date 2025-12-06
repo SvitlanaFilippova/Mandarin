@@ -43,6 +43,7 @@ class AboutViewModel(
                         copy(appStores = result.data ?: emptyList())
                     }
                 }
+
                 else -> {
                     // В случае ошибки оставляем пустой список
                     setState {

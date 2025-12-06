@@ -208,6 +208,7 @@ class MealDetailsViewModel(
                     setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
                 }
             }
+
             mealId != null -> {
                 if (hasCustomizationParams(addsIds, modifierIds, comment, cartItemId)) {
                     // Реконструируем CustomizedMeal из параметров навигации

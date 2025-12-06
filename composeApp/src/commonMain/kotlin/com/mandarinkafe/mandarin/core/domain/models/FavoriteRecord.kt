@@ -43,7 +43,9 @@ sealed class FavoriteRecord {
             var result = mealId.hashCode()
             result = 31 * result + addsIds.toSet().hashCode()
             // Используем только ID групп и элементов для hashCode
-            result = 31 * result + modifiers.map { it.id to it.items.map { item -> item.id }.toSet() }.hashCode()
+            result =
+                31 * result + modifiers.map { it.id to it.items.map { item -> item.id }.toSet() }
+                    .hashCode()
             return result
         }
     }
