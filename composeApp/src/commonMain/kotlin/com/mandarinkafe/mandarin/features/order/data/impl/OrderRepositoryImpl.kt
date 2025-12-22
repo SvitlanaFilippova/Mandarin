@@ -10,7 +10,8 @@ import com.mandarinkafe.mandarin.features.order.data.mapper.toDeliveryPointDto
 import com.mandarinkafe.mandarin.features.order.data.mapper.toOrderItems
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscountInfoDto
-import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscountTypeDto
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscountItemDto
+import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingIikoCardDiscountDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingOrderDto
 import com.mandarinkafe.mandarin.features.order.domain.api.OrderRepository
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
@@ -30,7 +31,10 @@ class OrderRepositoryImpl(
     override suspend fun createOrder(outgoingOrder: OutgoingOrder): Resource<IncomingOrder> {
         return try {
             val orderItems = prepareOrderItems(outgoingOrder)
-            val discountInfo = createDiscountInfo(outgoingOrder.discountTypeId, orderItems)
+            val discountInfo = createDiscountInfo(
+                discountPercent = outgoingOrder.discountPercent,
+                items = orderItems
+            )
             val orderDto = buildOrderDto(outgoingOrder, orderItems, discountInfo)
             val response = networkClient.createDelivery(orderDto)
             handleCreateOrderResponse(response)
@@ -99,27 +103,57 @@ class OrderRepositoryImpl(
 
 
     private fun createDiscountInfo(
-        discountTypeId: String?,
+        discountPercent: Int,
         items: List<OutgoingOrderItem>,
     ): OutgoingDiscountInfoDto? {
-        if (discountTypeId.isNullOrBlank()) return null
+        if (discountPercent <= 0) return null
 
-        val selectivePositions = items
-            .filter { it.discountable }
-            .flatMap { item ->
-                val mealPosId = listOf(item.positionId)
-                val modifiersPosIds = item.modifiers?.map { it.positionId } ?: emptyList()
-                mealPosId + modifiersPosIds
+        val discountItems = buildList {
+            items.forEach { item ->
+                // Добавляем само блюдо, если оно discountable
+                if (item.discountable) {
+                    val discountSum = item.price * item.amount * (discountPercent / 100.0)
+                    add(
+                        OutgoingDiscountItemDto(
+                            positionId = item.positionId,
+                            sum = discountSum,
+                            amount = item.amount
+                        )
+                    )
+                }
+
+                // Добавляем модификаторы, если они discountable
+                item.modifiers?.forEach { modifier ->
+                    if (modifier.discountable) {
+                        val discountSum = modifier.price * modifier.amount * (discountPercent / 100.0)
+                        add(
+                            OutgoingDiscountItemDto(
+                                positionId = modifier.positionId,
+                                sum = discountSum,
+                                amount = modifier.amount
+                            )
+                        )
+                    }
+                }
             }
+        }
+
+        if (discountItems.isEmpty()) return null
 
         return OutgoingDiscountInfoDto(
             discounts = listOf(
-                OutgoingDiscountTypeDto(
-                    discountTypeId = discountTypeId,
-                    selectivePositions = selectivePositions,
-                    type = OrderConstants.DISCOUNT_TYPE_RMS
+                OutgoingIikoCardDiscountDto(
+                    programId = DISCOUNT_PROGRAM_ID,
+                    programName = DISCOUNT_PROGRAM_NAME,
+                    discountItems = discountItems,
+                    type = OrderConstants.DISCOUNT_TYPE_IIKO_CARD
                 )
             )
         )
+    }
+
+    private companion object {
+        const val DISCOUNT_PROGRAM_ID = "f8990000-6beb-ac1f-a9f4-08dd129f16da"
+        const val DISCOUNT_PROGRAM_NAME = "Скидки"
     }
 }

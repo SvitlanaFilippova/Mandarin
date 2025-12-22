@@ -7,6 +7,7 @@ object OrderConstants {
     const val CUSTOMER_TYPE_REGULAR = "regular"
     const val ADDRESS_TYPE_LEGACY = "legacy"
     const val DISCOUNT_TYPE_RMS = "RMS"
+    const val DISCOUNT_TYPE_IIKO_CARD = "iikoCard"
     const val DEFAULT_AMOUNT = 1.0
 
     // Комментарии
