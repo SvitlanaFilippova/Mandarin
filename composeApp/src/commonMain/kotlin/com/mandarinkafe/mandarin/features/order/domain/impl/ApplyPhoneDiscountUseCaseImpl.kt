@@ -21,7 +21,6 @@ class ApplyPhoneDiscountUseCaseImpl(
                 when (val result = checkDiscountByPhone(rawPhone)) {
                     is Resource.Success -> DiscountByPhoneResult(
                         discountSize = result.data?.discountPercent ?: 0,
-                        discountId = result.data?.discountId,
                         shouldUpdate = true
                     )
 
