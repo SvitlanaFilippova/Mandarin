@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.features.infrastructure.di
 
-import com.mandarinkafe.mandarin.database.AppDatabase
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.AliveTerminalRepositoryImpl
 import com.mandarinkafe.mandarin.features.infrastructure.data.impl.PaymentTypesRepositoryImpl
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.AliveTerminalRepository

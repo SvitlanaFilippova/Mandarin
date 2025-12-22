@@ -112,7 +112,7 @@ class OrderRepositoryImpl(
             items.forEach { item ->
                 // Добавляем само блюдо, если оно discountable
                 if (item.discountable) {
-                    val discountSum = item.price * item.amount * (discountPercent / 100.0)
+                    val discountSum = item.price * item.amount * (discountPercent / PERCENT_DIVISOR)
                     add(
                         OutgoingDiscountItemDto(
                             positionId = item.positionId,
@@ -125,7 +125,7 @@ class OrderRepositoryImpl(
                 // Добавляем модификаторы, если они discountable
                 item.modifiers?.forEach { modifier ->
                     if (modifier.discountable) {
-                        val discountSum = modifier.price * modifier.amount * (discountPercent / 100.0)
+                        val discountSum = modifier.price * modifier.amount * (discountPercent / PERCENT_DIVISOR)
                         add(
                             OutgoingDiscountItemDto(
                                 positionId = modifier.positionId,
@@ -155,5 +155,6 @@ class OrderRepositoryImpl(
     private companion object {
         const val DISCOUNT_PROGRAM_ID = "f8990000-6beb-ac1f-a9f4-08dd129f16da"
         const val DISCOUNT_PROGRAM_NAME = "Скидки"
+        const val PERCENT_DIVISOR = 100.0
     }
 }
