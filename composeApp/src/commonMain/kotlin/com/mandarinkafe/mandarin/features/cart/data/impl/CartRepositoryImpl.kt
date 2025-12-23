@@ -150,6 +150,9 @@ class CartRepositoryImpl(
             // Существующий элемент - сохраняем старый createdAt
             existingStored.createdAt
         }
+        // Сохраняем старое значение элемента ДО обновления для проверки изменений
+        val oldCartItem = cartItems.find { it.id == item.id }
+
         // updatedAt устанавливается в 0L - маркер "эта позиция изменена/новая, обновляй"
         val storedItem = item.toStoredCartItem(createdAt, updatedAt = 0L)
         storage.addOrUpdateItem(storedItem)
@@ -157,9 +160,11 @@ class CartRepositoryImpl(
         // Обновляем UI из storage
         updateUIFromStorage()
 
-        var wasUpdated = cartItems.any { it.id == item.id && it != item }
-        if (!wasUpdated && existingStored == null) {
-            wasUpdated = true // Новый элемент добавлен
+        // Проверяем, было ли реальное изменение содержимого
+        val wasUpdated = when {
+            oldCartItem == null -> true // Новый элемент добавлен
+            oldCartItem != item -> true // Содержимое изменилось
+            else -> false // Содержимое не изменилось
         }
 
         // Шаг 3: Отправляем корзину на сервер и получаем обновленную версию с updatedAt

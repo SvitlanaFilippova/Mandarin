@@ -13,15 +13,29 @@ fun NavBackStackEntry.getStringArgument(key: String): String? {
 /**
  * Кроссплатформенная функция для получения boolean параметра из navigation arguments
  *
- * Параметры из URL приходят как строки, поэтому безопасно получаем значение
- * и преобразуем его в Boolean
+ * На iOS Navigation Compose может сохранять boolean как Boolean, а не как String.
+ * Поэтому сначала пытаемся получить как Boolean, затем как String.
  */
 fun NavBackStackEntry.getBooleanArgument(key: String, defaultValue: Boolean = false): Boolean {
     if (!savedStateHandle.contains(key)) {
         return defaultValue
     }
 
-    // Пытаемся получить как String (параметры из URL всегда строки)
+    // На iOS Navigation Compose может сохранять boolean как Boolean, а не как String
+    // Поэтому сначала пытаемся получить как Boolean
+    val booleanResult = runCatching {
+        @Suppress("UNCHECKED_CAST")
+        savedStateHandle.get<Boolean>(key)
+    }
+
+    if (booleanResult.isSuccess) {
+        val booleanValue = booleanResult.getOrNull()
+        if (booleanValue != null) {
+            return booleanValue
+        }
+    }
+
+    // Если не Boolean, пытаемся получить как String (параметры из URL приходят как строки)
     val stringResult = runCatching {
         savedStateHandle.get<String>(key)
     }
@@ -31,26 +45,18 @@ fun NavBackStackEntry.getBooleanArgument(key: String, defaultValue: Boolean = fa
 
         // Защита: проверяем длину и валидность значения
         // "true"/"false" максимум 5 символов, но оставляем запас для безопасности
-        if (stringValue != null && stringValue.length <= MAX_BOOLEAN_STRING_LENGTH) {
-            return runCatching {
-                when (stringValue.lowercase()) {
-                    "true" -> true
-                    "false" -> false
-                    else -> defaultValue
-                }
-            }.getOrDefault(defaultValue)
+        if (stringValue != null && stringValue.length > 0 && stringValue.length <= MAX_BOOLEAN_STRING_LENGTH) {
+            return when (stringValue.lowercase()) {
+                "true" -> true
+                "false" -> false
+                else -> defaultValue
+            }
         }
-        // Если строка слишком длинная или null, возвращаем defaultValue
         return defaultValue
     }
 
-    // Если не String, пытаемся получить как Boolean (если было установлено программно)
-    val booleanResult = runCatching {
-        @Suppress("UNCHECKED_CAST")
-        savedStateHandle.get<Boolean>(key)
-    }
-
-    return booleanResult.getOrNull() ?: defaultValue
+    // Если не получилось получить ни как Boolean, ни как String, возвращаем defaultValue
+    return defaultValue
 }
 
 private const val MAX_BOOLEAN_STRING_LENGTH = 10

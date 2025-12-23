@@ -20,16 +20,20 @@ import com.mandarinkafe.mandarin.features.address.domain.api.AddressRepository
 import com.mandarinkafe.mandarin.features.address.domain.models.AddressSearchResult
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import platform.Foundation.NSError
 import platform.Foundation.NSNumber
 import platform.Foundation.numberWithDouble
 import platform.Foundation.setValue
 
 @OptIn(ExperimentalForeignApi::class)
-class AddressRepositoryImpl : AddressRepository {
+class AddressRepositoryImpl(
+    private val coroutineScope: CoroutineScope,
+) : AddressRepository {
     private val searchManager: YMKSearchManager by lazy {
         YMKMapKit.sharedInstance()
         YMKSearchFactory.instance().createSearchManagerWithSearchManagerType(
@@ -39,24 +43,26 @@ class AddressRepositoryImpl : AddressRepository {
 
     private var session: YMKSearchSession? = null
 
-    private val _addressListChannel =
-        Channel<Resource<List<AddressSearchResult>>>(Channel.BUFFERED)
+    private val _addressListFlow =
+        MutableSharedFlow<Resource<List<AddressSearchResult>>>(extraBufferCapacity = 1)
     override val addressListFlow: Flow<Resource<List<AddressSearchResult>>> =
-        _addressListChannel.receiveAsFlow()
+        _addressListFlow.asSharedFlow()
 
-    private val _addressStringChannel =
-        Channel<Resource<AddressSearchResult>>(Channel.BUFFERED)
+    private val _addressStringFlow =
+        MutableSharedFlow<Resource<AddressSearchResult>>(extraBufferCapacity = 1)
     override val addressStringFlow: Flow<Resource<AddressSearchResult>> =
-        _addressStringChannel.receiveAsFlow()
+        _addressStringFlow.asSharedFlow()
 
     // --- Поиск по строке ---
     override suspend fun searchAddressByString(query: String, point: GeoPoint) {
-        _addressListChannel.trySend(Resource.Loading())
+        coroutineScope.launch {
+            _addressListFlow.emit(Resource.Loading())
+        }
 
         val yPoint = point.toYandexPoint()
         val geometry = createGeometry(yPoint)
         val options = createSearchOptions(userPosition = yPoint)
-        // Отменяем предыдущую сессию, если была
+
         session?.cancel()
 
         session = searchManager.submitWithText(
@@ -66,15 +72,15 @@ class AddressRepositoryImpl : AddressRepository {
         ) { response: YMKSearchResponse?, error: NSError? ->
             when {
                 error != null -> {
-                    _addressListChannel.trySend(
-                        Resource.ErrorOther(
-                            error.localizedDescription
-                        )
-                    )
+                    coroutineScope.launch {
+                        _addressListFlow.emit(Resource.ErrorOther(error.localizedDescription))
+                    }
                 }
 
                 response == null -> {
-                    _addressListChannel.trySend(Resource.ErrorOther("No response"))
+                    coroutineScope.launch {
+                        _addressListFlow.emit(Resource.ErrorOther("No response"))
+                    }
                 }
 
                 else -> {
@@ -83,9 +89,13 @@ class AddressRepositoryImpl : AddressRepository {
 
                     if (geoObjects.isNotEmpty()) {
                         val mapped = geoObjects.map { it.toAddressSearchResult() }
-                        _addressListChannel.trySend(Resource.Success(mapped))
+                        coroutineScope.launch {
+                            _addressListFlow.emit(Resource.Success(mapped))
+                        }
                     } else {
-                        _addressListChannel.trySend(Resource.ErrorEmptyData())
+                        coroutineScope.launch {
+                            _addressListFlow.emit(Resource.ErrorEmptyData())
+                        }
                     }
                 }
             }
@@ -93,7 +103,9 @@ class AddressRepositoryImpl : AddressRepository {
     }
 
     override suspend fun getAddressFromPoint(point: GeoPoint) {
-        _addressStringChannel.trySend(Resource.Loading())
+        coroutineScope.launch {
+            _addressStringFlow.emit(Resource.Loading())
+        }
 
         val yPoint = point.toYandexPoint()
         val options = YMKSearchOptions().apply {
@@ -109,15 +121,15 @@ class AddressRepositoryImpl : AddressRepository {
         ) { response: YMKSearchResponse?, error: NSError? ->
             when {
                 error != null -> {
-                    _addressStringChannel.trySend(
-                        Resource.ErrorOther(
-                            error.localizedDescription
-                        )
-                    )
+                    coroutineScope.launch {
+                        _addressStringFlow.emit(Resource.ErrorOther(error.localizedDescription))
+                    }
                 }
 
                 response == null -> {
-                    _addressStringChannel.trySend(Resource.ErrorOther("No response"))
+                    coroutineScope.launch {
+                        _addressStringFlow.emit(Resource.ErrorOther("No response"))
+                    }
                 }
 
                 else -> {
@@ -126,9 +138,14 @@ class AddressRepositoryImpl : AddressRepository {
 
                     val geoObj = items.firstOrNull()?.obj
                     if (geoObj != null) {
-                        _addressStringChannel.trySend(Resource.Success(geoObj.toAddressSearchResult()))
+                        val result = geoObj.toAddressSearchResult()
+                        coroutineScope.launch {
+                            _addressStringFlow.emit(Resource.Success(result))
+                        }
                     } else {
-                        _addressStringChannel.trySend(Resource.ErrorEmptyData())
+                        coroutineScope.launch {
+                            _addressStringFlow.emit(Resource.ErrorEmptyData())
+                        }
                     }
                 }
             }

@@ -12,15 +12,15 @@ actual fun NavGraphBuilder.platformMealDetailsRoute(
 ) {
     composable(
         route = "${NavConstants.MEAL_DETAILS_ROUTE}?" +
-                "${NavConstants.KEY_MEAL_ID}={${NavConstants.KEY_MEAL_ID}}&" +
-                "${NavConstants.KEY_IS_EDIT_MODE}={${NavConstants.KEY_IS_EDIT_MODE}}",
+                "${NavConstants.KEY_IS_EDIT_MODE}={${NavConstants.KEY_IS_EDIT_MODE}}&" +
+                "${NavConstants.KEY_MEAL_ID}={${NavConstants.KEY_MEAL_ID}}",
         arguments = listOf(
-            navArgument(NavConstants.KEY_MEAL_ID) {
-                type = NavType.StringType
-            },
             navArgument(NavConstants.KEY_IS_EDIT_MODE) {
                 type = NavType.BoolType
                 defaultValue = false
+            },
+            navArgument(NavConstants.KEY_MEAL_ID) {
+                type = NavType.StringType
             }
         )
     ) { backStackEntry ->

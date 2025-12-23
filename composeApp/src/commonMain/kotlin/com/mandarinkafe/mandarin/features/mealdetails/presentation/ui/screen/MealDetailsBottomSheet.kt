@@ -48,7 +48,12 @@ fun MealDetailsBottomSheet(
     if (initItem == null && mealId == null) return
 
     val state by viewModel.state.collectAsState()
-    val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
+
+    // Мемоизируем favorites, чтобы избежать лишних recomposition
+    val favorites by remember(sharedViewModel) {
+        sharedViewModel.favoritesItemsFlow
+    }.collectAsState(initial = emptyList())
+
     val effectFlow = viewModel.effect
 
     val onSharedEvent = sharedViewModel::onEvent
@@ -239,14 +244,16 @@ private fun HandleCloseAndShowMessageEffect(
         }
     }
 
-    LaunchedEffect(formattedMessage) {
-        formattedMessage?.let { message ->
-            onSharedEvent(
-                SharedContract.SharedEvent.ShowSnackbar(
-                    message = message,
-                    showToCartButton = !state.isEditMode
+    LaunchedEffect(pendingCloseAndShowMessage) {
+        pendingCloseAndShowMessage?.let {
+            formattedMessage?.let { message ->
+                onSharedEvent(
+                    SharedContract.SharedEvent.ShowSnackbar(
+                        message = message,
+                        showToCartButton = !state.isEditMode
+                    )
                 )
-            )
+            }
             onClose()
             resetMessage()
         }

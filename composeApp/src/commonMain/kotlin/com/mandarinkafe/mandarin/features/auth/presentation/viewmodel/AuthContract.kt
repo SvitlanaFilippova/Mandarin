@@ -12,6 +12,7 @@ sealed interface AuthContract {
         data class SetPhone(val query: String) : AuthEvent
         data object RequestAuth : AuthEvent
         data object ForceRefresh : AuthEvent
+        data object OnCallClicked : AuthEvent
 
         // SMS
         data object AskSmsCode : AuthEvent

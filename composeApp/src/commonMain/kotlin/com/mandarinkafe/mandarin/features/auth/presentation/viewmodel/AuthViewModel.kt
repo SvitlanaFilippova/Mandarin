@@ -19,6 +19,7 @@ import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForUi
+import com.mandarinkafe.mandarin.util.getCurrentTimeMillis
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -35,6 +36,7 @@ class AuthViewModel(
     private var smsTimerJob: Job? = null
     private var statusPollingJob: Job? = null
     private var isCheckingSms: Boolean = false
+    private var fastPollingUntil: Long? = null
     override fun setInitialState() = AuthState()
 
     override fun onEvent(event: AuthEvent) {
@@ -45,6 +47,7 @@ class AuthViewModel(
             is AuthEvent.CodeEntered -> checkIfCodeIsValid()
             is AuthEvent.SetCodeQuery -> setCodeQuery(event.query)
             is AuthEvent.ForceRefresh -> forceRefresh()
+            is AuthEvent.OnCallClicked -> onCallClicked()
         }
     }
 
@@ -226,6 +229,32 @@ class AuthViewModel(
         setState { copy(isLoading = isLoading, error = null, smsValidationError = null) }
     }
 
+    private fun onCallClicked() {
+        // Устанавливаем время, до которого нужно использовать быстрый polling (30 секунд)
+        fastPollingUntil = getCurrentTimeMillis() + FAST_POLLING_DURATION_MS
+        // Перезапускаем polling с ускоренным режимом
+        restartPollingWithFastMode()
+    }
+
+    private fun restartPollingWithFastMode() {
+        // Отменяем предыдущий пулинг, если он был
+        statusPollingJob?.cancel()
+        statusPollingJob = null
+
+        val phone = state.value.phoneQuery
+        if (phone.isEmpty()) {
+            return
+        }
+
+        val shouldForceFastPolling = fastPollingUntil?.let { it > getCurrentTimeMillis() } == true
+        statusPollingJob = viewModelScope.launch {
+            statusInteractor.observeStatusByPhone(phone, forceFastPolling = shouldForceFastPolling)
+                .collect { response ->
+                    proceedAuthStatusResponse(response)
+                }
+        }
+    }
+
     private fun startObservingAuthByPhoneStatus() {
         // Отменяем предыдущий пулинг, если он был
         statusPollingJob?.cancel()
@@ -236,10 +265,12 @@ class AuthViewModel(
             return
         }
 
+        val shouldForceFastPolling = fastPollingUntil?.let { it > getCurrentTimeMillis() } == true
         statusPollingJob = viewModelScope.launch {
-            statusInteractor.observeStatusByPhone(phone).collect { response ->
-                proceedAuthStatusResponse(response)
-            }
+            statusInteractor.observeStatusByPhone(phone, forceFastPolling = shouldForceFastPolling)
+                .collect { response ->
+                    proceedAuthStatusResponse(response)
+                }
         }
     }
 
@@ -335,5 +366,9 @@ class AuthViewModel(
     private fun stopStatusPolling() {
         statusPollingJob?.cancel()
         statusPollingJob = null
+    }
+
+    private companion object {
+        private const val FAST_POLLING_DURATION_MS = 30_000L // 30 секунд
     }
 }
