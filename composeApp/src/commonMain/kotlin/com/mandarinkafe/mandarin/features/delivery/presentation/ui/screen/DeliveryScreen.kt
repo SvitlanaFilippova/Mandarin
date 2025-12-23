@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,9 +36,16 @@ fun DeliveryScreen(
     val onEvent = viewModel::onEvent
     var mapShouldBeVisible by remember { mutableStateOf(true) }
 
+    // Проверяем состояние подписки при возврате на экран
+    LaunchedEffect(Unit) {
+        viewModel.ensureSubscriptionActive()
+    }
+
     // Проверяем разрешение на определение местоположения. Если его нет - запрашиваем. Если есть - определеяем.
     RequestLocationPermission(
-        onGranted = { onEvent(DeliveryEvent.RequestAddress) }
+        onGranted = { 
+            onEvent(DeliveryEvent.RequestAddress) 
+        }
     )
 
     Column(
@@ -61,7 +69,7 @@ fun DeliveryScreen(
         ) {
             Spacer(modifier = Modifier.height(Dimens.MarginSmall8))
 
-            // Все зоны доставки
+            // Карта и Все зоны доставки
             with(state) {
                 DeliveryZonesSection(
                     deliveryAreas = deliveryAreas,
@@ -73,7 +81,9 @@ fun DeliveryScreen(
                     isError = error != null,
                     locationChosen = locationChosen,
                     mapShouldBeVisible = mapShouldBeVisible,
-                    onCameraMoved = { onEvent(DeliveryEvent.CameraMoved(it)) }
+                    onCameraMoved = { 
+                        onEvent(DeliveryEvent.CameraMoved(it)) 
+                    }
                 )
             }
 

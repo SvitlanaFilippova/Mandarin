@@ -11,5 +11,9 @@ import org.koin.dsl.module
 val addressPlatformModule = module {
     // iOS-specific Repositories
     singleOf(::FusedLocationRepositoryImpl) { bind<FusedLocationRepository>() }
-    singleOf(::AddressRepositoryImpl) { bind<AddressRepository>() }
+    single {
+        AddressRepositoryImpl(
+            coroutineScope = get()
+        )
+    }.bind<AddressRepository>()
 }
