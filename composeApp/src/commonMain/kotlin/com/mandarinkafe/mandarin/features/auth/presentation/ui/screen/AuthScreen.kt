@@ -208,6 +208,7 @@ private fun AuthDialogs(
             data = state.phoneVerificationData,
             remainingTimeSeconds = state.remainingTimeToCall,
             onCallClick = {
+                onEvent(AuthContract.AuthEvent.OnCallClicked)
                 onSharedEvent(
                     SharedEvent.OnPhoneClick(
                         state.phoneVerificationData.phoneToCall

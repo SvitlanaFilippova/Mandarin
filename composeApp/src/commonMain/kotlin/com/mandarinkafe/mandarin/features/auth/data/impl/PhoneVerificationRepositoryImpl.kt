@@ -21,6 +21,7 @@ import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
+import com.mandarinkafe.mandarin.util.getCurrentTimeMillis
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -99,24 +100,30 @@ class PhoneVerificationRepositoryImpl(
         }
     }
 
-    override fun observeVerificationStatusByPhone(phone: String): Flow<Resource<PhoneVerificationStatus>> =
+    override fun observeVerificationStatusByPhone(phone: String, forceFastPolling: Boolean): Flow<Resource<PhoneVerificationStatus>> =
         flow {
             val deviceName = deviceInfoProvider.getDeviceName()
             val request =
                 PhoneVerificationStatusByPhoneRequest(phone = phone, deviceName = deviceName)
+            val fastPollingStartTime = if (forceFastPolling) getCurrentTimeMillis() else null
+
 
             while (true) {
                 val delayMs = try {
                     val response = checkVerificationStatusByPhone(request)
                     emit(response)
-                    calculateDelayAndCheckIfShouldContinue(response)
+                    // Проверяем, активен ли еще быстрый polling (30 секунд с момента начала)
+                    val isFastPollingActive = fastPollingStartTime?.let { 
+                        getCurrentTimeMillis() - it < FAST_POLLING_DURATION_MS 
+                    } == true
+                    calculateDelayAndCheckIfShouldContinue(response, isFastPollingActive)
                 } catch (e: Exception) {
                     Napier.e(
                         "PhoneVerificationRepository: observeVerificationStatusByPhone - Exception",
                         e
                     )
                     emit(Resource.ErrorOther(formatError(e)))
-                    POLLING_INTERVAL_SLOW_MS
+                    if (forceFastPolling) POLLING_INTERVAL_FAST_MS else POLLING_INTERVAL_SLOW_MS
                 }
 
                 if (delayMs == null) break
@@ -124,25 +131,29 @@ class PhoneVerificationRepositoryImpl(
             }
         }
 
-    private fun calculateDelayAndCheckIfShouldContinue(response: Resource<PhoneVerificationStatus>): Long? {
+    private fun calculateDelayAndCheckIfShouldContinue(response: Resource<PhoneVerificationStatus>, forceFastPolling: Boolean): Long? {
         return when (response) {
-            is Resource.Success -> handleSuccessResponse(response.data)
-            is Resource.ErrorNoInternet -> POLLING_INTERVAL_MEDIUM_MS
-            else -> POLLING_INTERVAL_SLOW_MS
+            is Resource.Success -> handleSuccessResponse(response.data, forceFastPolling)
+            is Resource.ErrorNoInternet -> if (forceFastPolling) POLLING_INTERVAL_FAST_MS else POLLING_INTERVAL_MEDIUM_MS
+            else -> if (forceFastPolling) POLLING_INTERVAL_FAST_MS else POLLING_INTERVAL_SLOW_MS
         }
     }
 
-    private fun handleSuccessResponse(status: PhoneVerificationStatus?): Long? {
-        if (status == null) return POLLING_INTERVAL_SLOW_MS
+    private fun handleSuccessResponse(status: PhoneVerificationStatus?, forceFastPolling: Boolean): Long? {
+        if (status == null) return if (forceFastPolling) POLLING_INTERVAL_FAST_MS else POLLING_INTERVAL_SLOW_MS
         if (status.shouldStopPolling == true) return null
 
         val expiresIn = status.expiresInSeconds
         if (expiresIn == null || expiresIn <= 0) return null
 
-        return calculatePollingInterval(expiresIn)
+        return calculatePollingInterval(expiresIn, forceFastPolling)
     }
 
-    private fun calculatePollingInterval(expiresInSeconds: Int): Long {
+    private fun calculatePollingInterval(expiresInSeconds: Int, forceFastPolling: Boolean): Long {
+        // Если принудительный быстрый polling активен, всегда используем быстрый интервал
+        if (forceFastPolling) {
+            return POLLING_INTERVAL_FAST_MS
+        }
         return when {
             expiresInSeconds > SECONDS_TO_CALL_DEFAULT - FAST_POLLING_START_SECONDS -> POLLING_INTERVAL_FAST_MS
             expiresInSeconds <= FAST_POLLING_END_SECONDS -> POLLING_INTERVAL_FAST_MS
@@ -235,9 +246,10 @@ class PhoneVerificationRepositoryImpl(
 
     companion object {
         private const val POLLING_INTERVAL_FAST_MS = 2000L // 2 секунды - частое опрашивание
-        private const val POLLING_INTERVAL_MEDIUM_MS = 7000L // 7 секунд - среднее опрашивание
-        private const val POLLING_INTERVAL_SLOW_MS = 15000L // 15 секунд - редкое опрашивание
+        private const val POLLING_INTERVAL_MEDIUM_MS = 5000L // 5 секунд - среднее опрашивание
+        private const val POLLING_INTERVAL_SLOW_MS = 10000L // 10 секунд - редкое опрашивание
 
+        private const val FAST_POLLING_DURATION_MS = 30_000L // 30 секунд
         private const val FAST_POLLING_START_SECONDS = 60 // Первые 60 секунд - часто
         private const val FAST_POLLING_END_SECONDS = 30 // Последние 30 секунд - часто
         private const val SECONDS_TO_CALL_DEFAULT = 300
