@@ -66,8 +66,8 @@ class DeliveryViewModel(
                 is Resource.Success -> result.data
                 else -> null
             }
-            setState { 
-                copy(userLocation = point) 
+            setState {
+                copy(userLocation = point)
             }
         }
     }
@@ -77,8 +77,8 @@ class DeliveryViewModel(
             val deliveryAreasResource = deliveryAreaRepository.getAllAreas()
             if (deliveryAreasResource is Resource.Success) {
                 val deliveryAreas = deliveryAreasResource.data?.map { it.toUi() }
-                deliveryAreas?.let { 
-                    setState { copy(deliveryAreas = deliveryAreas) } 
+                deliveryAreas?.let {
+                    setState { copy(deliveryAreas = deliveryAreas) }
                 }
             }
         }
@@ -95,8 +95,8 @@ class DeliveryViewModel(
     }
 
     private fun fetchAddressWithDebounce(point: GeoPoint) {
-        setState { 
-            copy(fetchAddressInProgress = true, error = null, currentPinPoint = point) 
+        setState {
+            copy(fetchAddressInProgress = true, error = null, currentPinPoint = point)
         }
         fetchAddressDebounce.cancel()
         fetchAddressDebounce.invoke(point)
@@ -111,7 +111,7 @@ class DeliveryViewModel(
     private fun observeDisplayAddress() {
         val previousJob = observeDisplayAddressJob
         previousJob?.cancel()
-        
+
         observeDisplayAddressJob = viewModelScope.launch {
             try {
                 searchInteractor.observeAddress()
@@ -154,14 +154,14 @@ class DeliveryViewModel(
     private suspend fun checkDeliveryArea(point: GeoPoint) {
         val deliveryArea = getDeliveryZone(point)
         val uiDeliveryArea = deliveryArea?.toUi()
-        setState { 
-            copy(deliveryArea = uiDeliveryArea) 
+        setState {
+            copy(deliveryArea = uiDeliveryArea)
         }
     }
 
     override fun setLoading(isLoading: Boolean) {
-        setState { 
-            copy(fetchAddressInProgress = true, error = null, displayAddress = null) 
+        setState {
+            copy(fetchAddressInProgress = true, error = null, displayAddress = null)
         }
     }
 
