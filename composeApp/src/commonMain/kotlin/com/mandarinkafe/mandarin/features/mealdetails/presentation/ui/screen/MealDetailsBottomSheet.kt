@@ -239,14 +239,16 @@ private fun HandleCloseAndShowMessageEffect(
         }
     }
 
-    LaunchedEffect(formattedMessage) {
-        formattedMessage?.let { message ->
-            onSharedEvent(
-                SharedContract.SharedEvent.ShowSnackbar(
-                    message = message,
-                    showToCartButton = !state.isEditMode
+    LaunchedEffect(pendingCloseAndShowMessage) {
+        pendingCloseAndShowMessage?.let {
+            formattedMessage?.let { message ->
+                onSharedEvent(
+                    SharedContract.SharedEvent.ShowSnackbar(
+                        message = message,
+                        showToCartButton = !state.isEditMode
+                    )
                 )
-            )
+            }
             onClose()
             resetMessage()
         }
