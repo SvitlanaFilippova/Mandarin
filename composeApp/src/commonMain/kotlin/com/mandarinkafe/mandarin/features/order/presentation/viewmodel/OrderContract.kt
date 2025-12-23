@@ -71,7 +71,10 @@ sealed interface OrderContract {
             val paymentMethodCode: String? = null,
         ) : OrderEffect
 
-        data class ShowMessage(val message: StringResource) : OrderEffect
+        data class ShowMessage(
+            val message: StringResource,
+            val details: String? = null,
+        ) : OrderEffect
     }
 
     data class OrderState(

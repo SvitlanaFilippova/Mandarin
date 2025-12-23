@@ -25,6 +25,7 @@ fun HandleOrderEffects(
     snackbarHostState: SnackbarHostState,
 ) {
     var pendingMessageRes: StringResource? by remember { mutableStateOf(null) }
+    var pendingDetails: String? by remember { mutableStateOf(null) }
 
     LaunchedEffect(Unit) {
         effectFlow.collectLatest { effect ->
@@ -43,6 +44,7 @@ fun HandleOrderEffects(
 
                 is OrderEffect.ShowMessage -> {
                     pendingMessageRes = effect.message
+                    pendingDetails = effect.details
                 }
 
                 is OrderEffect.ShowSuccess ->
@@ -66,9 +68,15 @@ fun HandleOrderEffects(
 
     val pendingMessage: String? = pendingMessageRes?.let { stringResource(it) }
 
-    LaunchedEffect(pendingMessage) {
+    LaunchedEffect(pendingMessage, pendingDetails) {
         val msg = pendingMessage ?: return@LaunchedEffect
-        snackbarHostState.showSnackbar(msg)
+        val fullMessage = if (pendingDetails != null) {
+            "$msg\n$pendingDetails"
+        } else {
+            msg
+        }
+        snackbarHostState.showSnackbar(fullMessage)
         pendingMessageRes = null
+        pendingDetails = null
     }
 }

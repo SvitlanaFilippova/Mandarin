@@ -257,7 +257,7 @@
     <string name="error_cant_check_terminal_is_alive">Что-то пошло не так — не удалось проверить,
         работает ли сейчас доставка.
     </string>
-    <string name="error_order_creation_failed">Не удалось создать заказ</string>
+    <string name="error_order_creation_failed">Не удалось создать заказ:</string>
     <string name="error_order_status_failed">Ошибка получения статуса заказа</string>
     <string name="error_order_timeout">Не удалось создать заказ: превышено время ожидания</string>
 

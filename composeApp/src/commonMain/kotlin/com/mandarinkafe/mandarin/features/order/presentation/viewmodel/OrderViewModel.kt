@@ -632,8 +632,8 @@ class OrderViewModel(
         getSavedUserInfo()
     }
 
-    private fun sendErrorEffect(msg: StringResource) {
+    private fun sendErrorEffect(msg: StringResource, details: String? = null) {
         setLoading(false)
-        sendEffect(ShowMessage(msg))
+        sendEffect(ShowMessage(msg, details))
     }
 }
