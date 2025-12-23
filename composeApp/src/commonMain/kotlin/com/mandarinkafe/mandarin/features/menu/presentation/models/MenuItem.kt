@@ -16,6 +16,7 @@ sealed interface MenuItem {
         val description: String,
     ) : MenuItem
 
+    @Stable
     data class SubHeaderItem(
         override val id: String,
         val categoryName: String,
@@ -24,7 +25,10 @@ sealed interface MenuItem {
     ) : MenuItem
 
     sealed interface MealItem : MenuItem {
+        @Stable
         data class SingleMealItem(override val id: String, val meal: Meal) : MealItem
+        
+        @Stable
         data class MealRow(override val id: String, val left: Meal, val right: Meal) : MealItem
     }
 }

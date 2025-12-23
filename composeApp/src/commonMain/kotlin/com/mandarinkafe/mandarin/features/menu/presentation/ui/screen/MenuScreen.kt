@@ -21,6 +21,7 @@ import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import dev.materii.pullrefresh.PullRefreshIndicator
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 @Composable
@@ -32,13 +33,25 @@ fun MenuScreen(
     val menuViewModel = rememberMenuViewModel()
     val state by menuViewModel.state.collectAsState()
 
-    val cartItemsFlow = remember { cartViewModel.state.map { it.cartItems } }
+    // Используем distinctUntilChanged для предотвращения лишних recomposition
+    val cartItemsFlow = remember {
+        cartViewModel.state
+            .map { it.cartItems }
+            .distinctUntilChanged()
+    }
     val cartItems by cartItemsFlow.collectAsState(initial = emptyList())
 
-    val cartInProgressItemsFlow = remember { cartViewModel.state.map { it.inProgressItems } }
+    val cartInProgressItemsFlow = remember {
+        cartViewModel.state
+            .map { it.inProgressItems }
+            .distinctUntilChanged()
+    }
     val cartInProgressItems by cartInProgressItemsFlow.collectAsState(initial = emptySet())
 
-    val favoriteIds by sharedViewModel.favoritesIDs.collectAsState(emptySet())
+    // favoritesIDs уже StateFlow, но можно добавить distinctUntilChanged для безопасности
+    val favoriteIds by remember {
+        sharedViewModel.favoritesIDs
+    }.collectAsState(initial = emptySet())
 
     val menuItems = state.menuItems
     val banners = state.banners

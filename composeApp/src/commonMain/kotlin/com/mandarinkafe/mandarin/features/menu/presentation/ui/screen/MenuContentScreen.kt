@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -80,6 +81,14 @@ fun MenuContentScreen(
     val activeTabIndex = remember { mutableIntStateOf(0) }
     val activeSubTabIndex = remember { mutableIntStateOf(-1) }
 
+    // Мемоизируем headers для stickyHeader - это критично для производительности
+    // Это предотвращает пересборку stickyHeader при каждом скролле
+    val headers = remember(menuItems) {
+        menuItems.filterIsInstance<MenuItem.HeaderItem>()
+    }
+
+    // StateFlow уже оптимизирован и не эмитит повторяющиеся значения
+    // collectAsState() здесь оптимален
     val isScrollingUp by scrollUi.isScrollingUp.collectAsState()
     val isAtTop by scrollUi.isAtTop.collectAsState()
 
@@ -90,6 +99,11 @@ fun MenuContentScreen(
             delay(Constants.FORCE_SHOW_FAB_DURATION_MS)
             showFab = false
         }
+    }
+
+    // Мемоизируем вычисление видимости FAB
+    val fabVisible = remember(showFab, isScrollingUp, isAtTop) {
+        (showFab || isScrollingUp) && !isAtTop
     }
 
     val imageSize = rememberImageSize()
@@ -111,6 +125,7 @@ fun MenuContentScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         MenuLazyColumn(
             menuItems = menuItems,
+            headers = headers,
             announcements = announcements,
             activeOrders = activeOrders,
             banners = banners,
@@ -119,8 +134,8 @@ fun MenuContentScreen(
             favoriteIds = favoriteIds,
             inProgressItems = inProgressItems,
             imageSize = imageSize,
-            activeTabIndex = activeTabIndex.intValue,
-            activeSubTabIndex = activeSubTabIndex.intValue,
+            activeTabIndex = activeTabIndex,
+            activeSubTabIndex = activeSubTabIndex,
             scrollUi = scrollUi,
             scope = scope,
             showFabTemporarily = showFabTemporarily,
@@ -142,7 +157,7 @@ fun MenuContentScreen(
         BackToTopFAB(
             modifier = Modifier
                 .align(Alignment.BottomStart),
-            visible = (showFab || isScrollingUp) && !isAtTop,
+            visible = fabVisible,
             onClick = {
                 scope.launch {
                     scrollUi.scrollToTop()
@@ -196,17 +211,23 @@ private fun MenuScrollEffects(
     scope: CoroutineScope,
     showFabTemporarily: CoroutineScope.() -> Unit,
 ) {
+    // Используем snapshotFlow для отслеживания изменений scroll position
+    // Оптимизация: обновляем state только когда значения реально изменились
     LaunchedEffect(scrollUi.listState) {
-        snapshotFlow { scrollUi.listState.firstVisibleItemIndex }
-            .collect {
+        snapshotFlow { 
+            scrollUi.listState.firstVisibleItemIndex to scrollUi.listState.firstVisibleItemScrollOffset
+        }
+            .collect { (_, _) ->
                 val newIndex = scrollUi.getActiveTabIndex()
                 if (activeTabIndex.intValue != newIndex) {
                     activeTabIndex.intValue = newIndex
                     activeSubTabIndex.intValue = 0
-                }
-                val newSubIndex = scrollUi.getActiveSubTabIndexForHeader(activeTabIndex.intValue)
-                if (activeSubTabIndex.intValue != newSubIndex) {
-                    activeSubTabIndex.intValue = newSubIndex
+                } else {
+                    // Обновляем subTab только если tab не изменился
+                    val newSubIndex = scrollUi.getActiveSubTabIndexForHeader(newIndex)
+                    if (activeSubTabIndex.intValue != newSubIndex) {
+                        activeSubTabIndex.intValue = newSubIndex
+                    }
                 }
             }
     }
@@ -236,6 +257,7 @@ private fun MenuSharedEffectHandler(
 @Composable
 private fun MenuLazyColumn(
     menuItems: List<MenuItem>,
+    headers: List<MenuItem.HeaderItem>,
     announcements: List<String>,
     activeOrders: List<SavedOrder>,
     banners: List<Banner>,
@@ -244,8 +266,8 @@ private fun MenuLazyColumn(
     favoriteIds: Set<String>,
     inProgressItems: Set<String>,
     imageSize: Dp,
-    activeTabIndex: Int,
-    activeSubTabIndex: Int,
+    activeTabIndex: androidx.compose.runtime.MutableIntState,
+    activeSubTabIndex: androidx.compose.runtime.MutableIntState,
     scrollUi: ScrollUiState,
     scope: CoroutineScope,
     showFabTemporarily: CoroutineScope.() -> Unit,
@@ -258,6 +280,9 @@ private fun MenuLazyColumn(
     onSubCategorySelected: (Int) -> Unit,
     navController: NavController,
 ) {
+    // Мемоизируем стабильные параметры для уменьшения пересборок
+    val stableActiveTabIndex = activeTabIndex.intValue
+    val stableActiveSubTabIndex = activeSubTabIndex.intValue
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = scrollUi.listState,
@@ -295,9 +320,9 @@ private fun MenuLazyColumn(
 
         stickyHeader {
             MenuStickyHeader(
-                menuItems = menuItems,
-                activeTabIndex = activeTabIndex,
-                activeSubTabIndex = activeSubTabIndex,
+                headers = headers,
+                activeTabIndex = stableActiveTabIndex,
+                activeSubTabIndex = stableActiveSubTabIndex,
                 onCategorySelected = { index ->
                     onCategorySelected(index)
                     scope.launch {
@@ -308,7 +333,7 @@ private fun MenuLazyColumn(
                 onSubCategorySelected = { subIndex ->
                     onSubCategorySelected(subIndex)
                     scope.launch {
-                        scrollUi.scrollToSubCategory(activeTabIndex, subIndex)
+                        scrollUi.scrollToSubCategory(stableActiveTabIndex, subIndex)
                         scope.showFabTemporarily()
                     }
                 }
@@ -342,7 +367,7 @@ private fun MenuLazyColumn(
 
 @Composable
 private fun MenuStickyHeader(
-    menuItems: List<MenuItem>,
+    headers: List<MenuItem.HeaderItem>,
     activeTabIndex: Int,
     activeSubTabIndex: Int,
     onCategorySelected: (Int) -> Unit,
@@ -354,8 +379,7 @@ private fun MenuStickyHeader(
             .animateContentSize(animationSpec = tween(durationMillis = Constants.ANIMATION_DURATION_FAST))
             .background(color = Colors.AppBlack)
     ) {
-        // Табы категорий
-        val headers = menuItems.filterIsInstance<MenuItem.HeaderItem>()
+        // Headers уже мемоизированы и переданы извне - это критично для производительности
         TabsSection(
             headers = headers,
             activeTabIndex = activeTabIndex,
