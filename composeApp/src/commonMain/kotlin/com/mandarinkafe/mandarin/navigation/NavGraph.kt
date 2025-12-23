@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,7 +27,6 @@ import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchSc
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberCartViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberSharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
-import io.github.aakira.napier.Napier
 import io.ktor.http.decodeURLPart
 import kotlinx.serialization.json.Json
 
@@ -141,16 +141,20 @@ fun NavGraph(navController: NavHostController) {
 
         // --- MEAL DETAILS (BottomSheet на Android и composable у IOS) ---
         this.platformMealDetailsRoute { backStackEntry ->
-            val isEditMode = backStackEntry.getBooleanArgument(
-                NavConstants.KEY_IS_EDIT_MODE,
-                defaultValue = false
-            )
-            val encodedParams = backStackEntry.getStringArgument(NavConstants.KEY_MEAL_ID)
-            val params = encodedParams?.let {
-                runCatching {
-                    val decodedString = it.decodeURLPart()
-                    Json.decodeFromString<MealDetailsNavParams>(decodedString)
-                }.getOrNull()
+            val isEditMode = remember(backStackEntry) {
+                backStackEntry.getBooleanArgument(
+                    NavConstants.KEY_IS_EDIT_MODE,
+                    defaultValue = false
+                )
+            }
+            val params = remember(backStackEntry) {
+                val encodedParams = backStackEntry.getStringArgument(NavConstants.KEY_MEAL_ID)
+                encodedParams?.let {
+                    runCatching {
+                        val decodedString = it.decodeURLPart()
+                        Json.decodeFromString<MealDetailsNavParams>(decodedString)
+                    }.getOrNull()
+                }
             }
 
             MealDetailsBottomSheet(

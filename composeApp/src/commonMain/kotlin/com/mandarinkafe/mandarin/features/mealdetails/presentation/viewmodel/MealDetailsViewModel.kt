@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.CustomizedMeal
-import com.mandarinkafe.mandarin.core.domain.models.Meal
 import com.mandarinkafe.mandarin.core.domain.models.MealAdditional
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.core.domain.models.ModifierItem
@@ -29,7 +28,9 @@ import com.mandarinkafe.mandarin.util.Resource.Loading
 import com.mandarinkafe.mandarin.util.Resource.Success
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dev.icerock.moko.resources.StringResource
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class MealDetailsViewModel(
@@ -274,26 +275,45 @@ class MealDetailsViewModel(
         }
     }
 
-    private fun applyMealData(item: CartItem, isEditMode: Boolean) {
+    private suspend fun applyMealData(item: CartItem, isEditMode: Boolean) {
+        val meal = item.customizedMeal.meal
+        val needsAddons = meal.isAddable && meal.categoryPath.isNotEmpty()
+        
+        // Если addons не нужны - обновляем state сразу
+        if (!needsAddons) {
+            setState {
+                copy(
+                    isLoading = false,
+                    initItem = item,
+                    customizedMeal = item.customizedMeal,
+                    comment = item.comment,
+                    isEditMode = isEditMode
+                )
+            }
+            return
+        }
+        
+        // Если нужны addons - загружаем их и обновляем state одним разом
+        val addons = try {
+            getAddonsUseCase(categoryPath = meal.categoryPath)
+                .first { it !is Loading && it !is Idle }
+                .let { result ->
+                    if (result is Success) result.data else null
+                }
+        } catch (e: Exception) {
+            Napier.w("MealDetailsViewModel - failed loading addons", e)
+            null
+        }
+        
         setState {
             copy(
                 isLoading = false,
                 initItem = item,
                 customizedMeal = item.customizedMeal,
                 comment = item.comment,
-                isEditMode = isEditMode
+                isEditMode = isEditMode,
+                addons = addons ?: emptyList()
             )
-        }
-        loadAddonsIfNeeded(item.customizedMeal.meal)
-    }
-
-    private fun loadAddonsIfNeeded(meal: Meal) {
-        try {
-            if (meal.isAddable && meal.categoryPath.isNotEmpty()) {
-                getAddons(path = meal.categoryPath)
-            }
-        } catch (e: Exception) {
-            setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
         }
     }
 
