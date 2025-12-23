@@ -123,7 +123,7 @@ fun NavController.navigateToMealDetails(
     val route = "$MEAL_DETAILS_ROUTE?" +
             "$KEY_IS_EDIT_MODE=$isEditMode&" +
             "$KEY_MEAL_ID=$encodedParams"
-    
+
     navigate(route)
 }
 

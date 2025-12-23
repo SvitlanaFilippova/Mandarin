@@ -213,7 +213,7 @@ private fun MenuScrollEffects(
     // Используем snapshotFlow для отслеживания изменений scroll position
     // Оптимизация: обновляем state только когда значения реально изменились
     LaunchedEffect(scrollUi.listState) {
-        snapshotFlow { 
+        snapshotFlow {
             scrollUi.listState.firstVisibleItemIndex to scrollUi.listState.firstVisibleItemScrollOffset
         }
             .collect { (_, _) ->

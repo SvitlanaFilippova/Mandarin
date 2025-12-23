@@ -48,12 +48,12 @@ fun MealDetailsBottomSheet(
     if (initItem == null && mealId == null) return
 
     val state by viewModel.state.collectAsState()
-    
+
     // Мемоизируем favorites, чтобы избежать лишних recomposition
     val favorites by remember(sharedViewModel) {
         sharedViewModel.favoritesItemsFlow
     }.collectAsState(initial = emptyList())
-    
+
     val effectFlow = viewModel.effect
 
     val onSharedEvent = sharedViewModel::onEvent

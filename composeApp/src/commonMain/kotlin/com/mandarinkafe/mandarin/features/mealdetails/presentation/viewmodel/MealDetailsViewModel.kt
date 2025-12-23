@@ -278,7 +278,7 @@ class MealDetailsViewModel(
     private suspend fun applyMealData(item: CartItem, isEditMode: Boolean) {
         val meal = item.customizedMeal.meal
         val needsAddons = meal.isAddable && meal.categoryPath.isNotEmpty()
-        
+
         // Если addons не нужны - обновляем state сразу
         if (!needsAddons) {
             setState {
@@ -292,7 +292,7 @@ class MealDetailsViewModel(
             }
             return
         }
-        
+
         // Если нужны addons - загружаем их и обновляем state одним разом
         val addons = try {
             getAddonsUseCase(categoryPath = meal.categoryPath)
@@ -304,7 +304,7 @@ class MealDetailsViewModel(
             Napier.w("MealDetailsViewModel - failed loading addons", e)
             null
         }
-        
+
         setState {
             copy(
                 isLoading = false,
@@ -444,25 +444,6 @@ class MealDetailsViewModel(
                 customizedMeal = currentMeal.copy(adds = currentAdds)
             )
 
-        }
-    }
-
-    private fun getAddons(path: List<String>) {
-        setState { copy(isLoading = true) }
-        viewModelScope.launch {
-            try {
-                getAddonsUseCase(categoryPath = path).collectLatest { result ->
-                    setLoading(result is Loading)
-                    when (result) {
-                        is Success -> setAddonsData(result.data)
-                        is Loading -> {}
-                        is Idle -> {}
-                        else -> setError(result)
-                    }
-                }
-            } catch (e: Exception) {
-                setError(ErrorOther<Any>(e.message ?: UNKNOWN_ERROR_MESSAGE))
-            }
         }
     }
 
