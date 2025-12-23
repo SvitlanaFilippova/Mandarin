@@ -140,9 +140,17 @@ class OrderViewModel(
 
             if (initialInfo != null) {
                 setState {
+                    val currentName = this.userInfo.name.trim()
+                    val savedName = initialInfo.name.trim()
+                    // Не перезаписываем имя пустым значением, если пользователь уже ввел имя
+                    val nameToSet = if (currentName.isNotEmpty() && savedName.isEmpty()) {
+                        currentName
+                    } else {
+                        savedName
+                    }
                     copy(
                         userInfo = this.userInfo.copy(
-                            name = initialInfo.name,
+                            name = nameToSet,
                             phone = initialInfo.phone.formatPhoneNumberForDomain(),
                         ),
                         savedNameIsEmpty = initialInfo.name.trim().isEmpty(),
@@ -169,9 +177,17 @@ class OrderViewModel(
                     val phoneChanged = previousPhone != newPhone
 
                     setState {
+                        val currentName = this.userInfo.name.trim()
+                        val savedName = userInfo.name.trim()
+                        // Не перезаписываем имя пустым значением, если пользователь уже ввел имя
+                        val nameToSet = if (currentName.isNotEmpty() && savedName.isEmpty()) {
+                            currentName
+                        } else {
+                            savedName
+                        }
                         copy(
                             userInfo = this.userInfo.copy(
-                                name = userInfo.name,
+                                name = nameToSet,
                                 phone = newPhone,
                             ),
                             savedNameIsEmpty = userInfo.name.trim().isEmpty(),
