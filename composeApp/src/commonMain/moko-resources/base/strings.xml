@@ -263,6 +263,7 @@
 
 
     <!-- Адрес -->
+    <string name="choose_address_by_text">Введите адрес текстом или выберите на&#160;карте</string>
     <string name="deliver_to_this_location">Доставить сюда</string>
     <string name="to_my_location">Вернуться к моей локации</string>
     <string name="to_init_location">Вернуться к изначальной позиции</string>
