@@ -13,10 +13,14 @@ import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.data.Mapper.toGeoPoint
 import com.mandarinkafe.mandarin.features.address.data.Mapper.toYandexPoint
 import com.mandarinkafe.mandarin.features.address.presentation.ui.models.UiDeliveryArea
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.features.map.MapCameraController
 import com.mandarinkafe.mandarin.features.map.MapCameraControllerImpl
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.openAppSettings
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.MapWithDeliveryAreas
+import com.mandarinkafe.mandarin.util.presentation.ui.components.map.rememberLocationPermissionLauncher
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.moveCamera
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.cinterop.ExperimentalForeignApi
 
 @OptIn(ExperimentalForeignApi::class)
@@ -36,6 +40,10 @@ actual fun AddressMapContentScreen(
     isError: Boolean,
     onCameraMoved: (GeoPoint) -> Unit,
     cameraController: MapCameraController,
+    onRequestLocation: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    onShowSnackbarWithAction: (String, String, () -> Unit) -> Unit,
+    onOpenSettings: () -> Unit,
 ) {
     val initLocationYandex = remember(initLocation) { initLocation?.toYandexPoint() }
     val userLocationYandex = remember(userLocation) { userLocation?.toYandexPoint() }
@@ -55,8 +63,39 @@ actual fun AddressMapContentScreen(
         }
     }
 
+    val permissionDeniedMessage = stringResource(MR.strings.location_permission_denied)
+    val permissionDeniedReason = stringResource(MR.strings.location_permission_denied_reason)
+    val openSettingsLabel = stringResource(MR.strings.open_settings)
+    val permissionLauncher = rememberLocationPermissionLauncher(
+        onGranted = {
+            onRequestLocation()
+        },
+        onDenied = {
+            onShowSnackbar(permissionDeniedReason)
+        }
+    )
+
     val onBackToInitClick = initLocation?.let { { cameraController.moveCamera(it) } }
-    val onBackToUserClick = userLocation?.let { { cameraController.moveCamera(it) } }
+    val onBackToUserClick: () -> Unit = {
+        if (permissionLauncher.hasPermission()) {
+            if (userLocation != null) {
+                cameraController.moveCamera(userLocation)
+            } else {
+                onRequestLocation()
+            }
+        } else {
+            if (permissionLauncher.canRequestPermission()) {
+                permissionLauncher.requestPermission()
+            } else {
+                // Разрешение было отклонено и нельзя запросить повторно - показываем snackbar с кнопкой
+                onShowSnackbarWithAction(
+                    permissionDeniedMessage,
+                    openSettingsLabel,
+                    onOpenSettings
+                )
+            }
+        }
+    }
 
     MapWithDeliveryAreas(
         mapView = mapView,

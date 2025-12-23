@@ -34,6 +34,10 @@ fun DeliveryZonesSection(
     userLocation: GeoPoint?,
     mapShouldBeVisible: Boolean,
     onCameraMoved: (GeoPoint) -> Unit,
+    onRequestLocation: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    onShowSnackbarWithAction: (String, String, () -> Unit) -> Unit,
+    onOpenSettings: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -80,7 +84,11 @@ fun DeliveryZonesSection(
                     onCameraMoved = onCameraMoved,
                     locationChosen = locationChosen,
                     initLocation = initLocation,
-                    userLocation = userLocation
+                    userLocation = userLocation,
+                    onRequestLocation = onRequestLocation,
+                    onShowSnackbar = onShowSnackbar,
+                    onShowSnackbarWithAction = onShowSnackbarWithAction,
+                    onOpenSettings = onOpenSettings
                 )
             }
 

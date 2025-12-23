@@ -42,6 +42,9 @@
     <string name="check_terminal_failed">Что-то пошло не так — не удалось проверить, работает ли
         сейчас доставка.
     </string>
+    <string name="location_permission_denied_reason">Без разрешения на&#160;доступ к&#160;геолокации не&#160;можем определить адрес</string>
+    <string name="location_permission_denied">Разрешите доступ к&#160;геолокации</string>
+    <string name="open_settings">В настройки</string>
 
 
     <!-- Orders History Messages -->

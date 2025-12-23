@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.getContextForSettings
 import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.Address
@@ -26,6 +27,12 @@ import com.mandarinkafe.mandarin.features.map.MapCameraController
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.LocationIcon
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberAddressViewModel
 import com.mandarinkafe.mandarin.util.Constants.MIN_LINES_FOR_ADDRESS_INPUT
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.runtime.rememberCoroutineScope
+import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.openAppSettings
+import kotlinx.coroutines.launch
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.RequestLocationPermission
@@ -67,14 +74,50 @@ fun AddressMapScreen(
     }
     val initLocation = state.initPinPoint
     val userLocation = state.userLocation
-
-    // Проверяем разрешение на определение местоположения. Если его нет - запрашиваем. Если есть - определеяем.
-    RequestLocationPermission(
-        onGranted = { onEvent(AddressContract.AddressEvent.RequestAddress) }
-    )
+    val snackbarHostState = LocalSnackbarHostState.current
+    val coroutineScope = rememberCoroutineScope()
 
     val keyboardController =
         LocalSoftwareKeyboardController.current
+
+    val context = getContextForSettings()
+    val onShowSnackbar: (String) -> Unit = { message ->
+        coroutineScope.launch {
+            snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short,
+                withDismissAction = true
+            )
+        }
+    }
+
+    val permissionDeniedReason = stringResource(MR.strings.location_permission_denied_reason)
+
+    // Проверяем разрешение на определение местоположения. Если его нет - запрашиваем. Если есть - определеяем.
+    RequestLocationPermission(
+        onGranted = { onEvent(AddressContract.AddressEvent.RequestAddress) },
+        onDenied = {
+            onShowSnackbar(permissionDeniedReason)
+        }
+    )
+
+    val onOpenSettings: () -> Unit = {
+        openAppSettings(context)
+    }
+
+    val onShowSnackbarWithAction: (String, String, () -> Unit) -> Unit = { message, actionLabel, onAction ->
+        coroutineScope.launch {
+            val result = snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Long,
+                withDismissAction = true,
+                actionLabel = actionLabel
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                onAction()
+            }
+        }
+    }
 
 
     Column(
@@ -124,7 +167,11 @@ fun AddressMapScreen(
                                 )
                             )
                         },
-                        cameraController = cameraController
+                        cameraController = cameraController,
+                        onRequestLocation = { onEvent(AddressContract.AddressEvent.RequestAddress) },
+                        onShowSnackbar = onShowSnackbar,
+                        onShowSnackbarWithAction = onShowSnackbarWithAction,
+                        onOpenSettings = onOpenSettings
                     )
                 }
 

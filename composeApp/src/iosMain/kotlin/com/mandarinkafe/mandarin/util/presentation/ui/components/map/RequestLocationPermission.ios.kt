@@ -10,11 +10,16 @@ import platform.CoreLocation.CLLocationManager
 import platform.CoreLocation.CLLocationManagerDelegateProtocol
 import platform.CoreLocation.kCLAuthorizationStatusAuthorizedAlways
 import platform.CoreLocation.kCLAuthorizationStatusAuthorizedWhenInUse
+import platform.CoreLocation.kCLAuthorizationStatusDenied
 import platform.CoreLocation.kCLAuthorizationStatusNotDetermined
+import platform.CoreLocation.kCLAuthorizationStatusRestricted
 import platform.darwin.NSObject
 
 @Composable
-actual fun RequestLocationPermission(onGranted: () -> Unit) {
+actual fun RequestLocationPermission(
+    onGranted: () -> Unit,
+    onDenied: () -> Unit,
+) {
     val locationManager = remember { CLLocationManager() }
     var authorizationStatus by remember {
         mutableStateOf(CLLocationManager.authorizationStatus())
@@ -29,6 +34,11 @@ actual fun RequestLocationPermission(onGranted: () -> Unit) {
                     kCLAuthorizationStatusAuthorizedAlways,
                         -> {
                         onGranted()
+                    }
+                    kCLAuthorizationStatusDenied,
+                    kCLAuthorizationStatusRestricted,
+                        -> {
+                        onDenied()
                     }
                 }
             }
@@ -47,6 +57,11 @@ actual fun RequestLocationPermission(onGranted: () -> Unit) {
             kCLAuthorizationStatusAuthorizedAlways,
                 -> {
                 onGranted()
+            }
+            kCLAuthorizationStatusDenied,
+            kCLAuthorizationStatusRestricted,
+                -> {
+                onDenied()
             }
         }
 

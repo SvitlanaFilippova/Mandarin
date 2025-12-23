@@ -7,14 +7,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.getContextForSettings
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.openAppSettings
+import kotlinx.coroutines.launch
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.delivery.presentation.ui.components.DeliveryZonesSection
@@ -35,18 +42,54 @@ fun DeliveryScreen(
     val initLocation = state.initPinPoint
     val onEvent = viewModel::onEvent
     var mapShouldBeVisible by remember { mutableStateOf(true) }
+    val snackbarHostState = LocalSnackbarHostState.current
+    val coroutineScope = rememberCoroutineScope()
+    val context = getContextForSettings()
 
     // Проверяем состояние подписки при возврате на экран
     LaunchedEffect(Unit) {
         viewModel.ensureSubscriptionActive()
     }
 
+    val onShowSnackbar: (String) -> Unit = { message ->
+        coroutineScope.launch {
+            snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short,
+                withDismissAction = true
+            )
+        }
+    }
+
+    val permissionDeniedReason = stringResource(MR.strings.location_permission_denied_reason)
+
     // Проверяем разрешение на определение местоположения. Если его нет - запрашиваем. Если есть - определеяем.
     RequestLocationPermission(
         onGranted = { 
             onEvent(DeliveryEvent.RequestAddress) 
+        },
+        onDenied = {
+            onShowSnackbar(permissionDeniedReason)
         }
     )
+
+    val onOpenSettings: () -> Unit = {
+        openAppSettings(context)
+    }
+
+    val onShowSnackbarWithAction: (String, String, () -> Unit) -> Unit = { message, actionLabel, onAction ->
+        coroutineScope.launch {
+            val result = snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Long,
+                withDismissAction = true,
+                actionLabel = actionLabel
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                onAction()
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -83,7 +126,11 @@ fun DeliveryScreen(
                     mapShouldBeVisible = mapShouldBeVisible,
                     onCameraMoved = { 
                         onEvent(DeliveryEvent.CameraMoved(it)) 
-                    }
+                    },
+                    onRequestLocation = { onEvent(DeliveryEvent.RequestAddress) },
+                    onShowSnackbar = onShowSnackbar,
+                    onShowSnackbarWithAction = onShowSnackbarWithAction,
+                    onOpenSettings = onOpenSettings
                 )
             }
 
@@ -103,3 +150,4 @@ fun DeliveryScreen(
         }
     }
 }
+
