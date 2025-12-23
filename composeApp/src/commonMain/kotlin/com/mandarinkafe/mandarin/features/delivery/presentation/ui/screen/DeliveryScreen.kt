@@ -18,20 +18,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
-import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.getContextForSettings
-import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.openAppSettings
-import kotlinx.coroutines.launch
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.delivery.presentation.ui.components.DeliveryZonesSection
 import com.mandarinkafe.mandarin.features.delivery.presentation.viewmodel.DeliveryContract.DeliveryEvent
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberDeliveryViewModel
+import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InfoCard
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.getContextForSettings
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.openAppSettings
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.RequestLocationPermission
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 
 @Composable
 fun DeliveryScreen(
@@ -65,8 +65,8 @@ fun DeliveryScreen(
 
     // Проверяем разрешение на определение местоположения. Если его нет - запрашиваем. Если есть - определеяем.
     RequestLocationPermission(
-        onGranted = { 
-            onEvent(DeliveryEvent.RequestAddress) 
+        onGranted = {
+            onEvent(DeliveryEvent.RequestAddress)
         },
         onDenied = {
             onShowSnackbar(permissionDeniedReason)
@@ -77,19 +77,20 @@ fun DeliveryScreen(
         openAppSettings(context)
     }
 
-    val onShowSnackbarWithAction: (String, String, () -> Unit) -> Unit = { message, actionLabel, onAction ->
-        coroutineScope.launch {
-            val result = snackbarHostState.showSnackbar(
-                message = message,
-                duration = SnackbarDuration.Long,
-                withDismissAction = true,
-                actionLabel = actionLabel
-            )
-            if (result == SnackbarResult.ActionPerformed) {
-                onAction()
+    val onShowSnackbarWithAction: (String, String, () -> Unit) -> Unit =
+        { message, actionLabel, onAction ->
+            coroutineScope.launch {
+                val result = snackbarHostState.showSnackbar(
+                    message = message,
+                    duration = SnackbarDuration.Long,
+                    withDismissAction = true,
+                    actionLabel = actionLabel
+                )
+                if (result == SnackbarResult.ActionPerformed) {
+                    onAction()
+                }
             }
         }
-    }
 
     Column(
         modifier = Modifier
@@ -124,8 +125,8 @@ fun DeliveryScreen(
                     isError = error != null,
                     locationChosen = locationChosen,
                     mapShouldBeVisible = mapShouldBeVisible,
-                    onCameraMoved = { 
-                        onEvent(DeliveryEvent.CameraMoved(it)) 
+                    onCameraMoved = {
+                        onEvent(DeliveryEvent.CameraMoved(it))
                     },
                     onRequestLocation = { onEvent(DeliveryEvent.RequestAddress) },
                     onShowSnackbar = onShowSnackbar,

@@ -43,11 +43,13 @@ class AddressRepositoryImpl(
 
     private var session: YMKSearchSession? = null
 
-    private val _addressListFlow = MutableSharedFlow<Resource<List<AddressSearchResult>>>(extraBufferCapacity = 1)
+    private val _addressListFlow =
+        MutableSharedFlow<Resource<List<AddressSearchResult>>>(extraBufferCapacity = 1)
     override val addressListFlow: Flow<Resource<List<AddressSearchResult>>> =
         _addressListFlow.asSharedFlow()
 
-    private val _addressStringFlow = MutableSharedFlow<Resource<AddressSearchResult>>(extraBufferCapacity = 1)
+    private val _addressStringFlow =
+        MutableSharedFlow<Resource<AddressSearchResult>>(extraBufferCapacity = 1)
     override val addressStringFlow: Flow<Resource<AddressSearchResult>> =
         _addressStringFlow.asSharedFlow()
 
@@ -60,7 +62,7 @@ class AddressRepositoryImpl(
         val yPoint = point.toYandexPoint()
         val geometry = createGeometry(yPoint)
         val options = createSearchOptions(userPosition = yPoint)
-        
+
         session?.cancel()
 
         session = searchManager.submitWithText(

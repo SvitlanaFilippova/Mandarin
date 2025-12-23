@@ -100,7 +100,10 @@ class PhoneVerificationRepositoryImpl(
         }
     }
 
-    override fun observeVerificationStatusByPhone(phone: String, forceFastPolling: Boolean): Flow<Resource<PhoneVerificationStatus>> =
+    override fun observeVerificationStatusByPhone(
+        phone: String,
+        forceFastPolling: Boolean,
+    ): Flow<Resource<PhoneVerificationStatus>> =
         flow {
             val deviceName = deviceInfoProvider.getDeviceName()
             val request =
@@ -113,8 +116,8 @@ class PhoneVerificationRepositoryImpl(
                     val response = checkVerificationStatusByPhone(request)
                     emit(response)
                     // Проверяем, активен ли еще быстрый polling (30 секунд с момента начала)
-                    val isFastPollingActive = fastPollingStartTime?.let { 
-                        getCurrentTimeMillis() - it < FAST_POLLING_DURATION_MS 
+                    val isFastPollingActive = fastPollingStartTime?.let {
+                        getCurrentTimeMillis() - it < FAST_POLLING_DURATION_MS
                     } == true
                     calculateDelayAndCheckIfShouldContinue(response, isFastPollingActive)
                 } catch (e: Exception) {
@@ -131,7 +134,10 @@ class PhoneVerificationRepositoryImpl(
             }
         }
 
-    private fun calculateDelayAndCheckIfShouldContinue(response: Resource<PhoneVerificationStatus>, forceFastPolling: Boolean): Long? {
+    private fun calculateDelayAndCheckIfShouldContinue(
+        response: Resource<PhoneVerificationStatus>,
+        forceFastPolling: Boolean,
+    ): Long? {
         return when (response) {
             is Resource.Success -> handleSuccessResponse(response.data, forceFastPolling)
             is Resource.ErrorNoInternet -> if (forceFastPolling) POLLING_INTERVAL_FAST_MS else POLLING_INTERVAL_MEDIUM_MS
@@ -139,7 +145,10 @@ class PhoneVerificationRepositoryImpl(
         }
     }
 
-    private fun handleSuccessResponse(status: PhoneVerificationStatus?, forceFastPolling: Boolean): Long? {
+    private fun handleSuccessResponse(
+        status: PhoneVerificationStatus?,
+        forceFastPolling: Boolean,
+    ): Long? {
         if (status == null) return if (forceFastPolling) POLLING_INTERVAL_FAST_MS else POLLING_INTERVAL_SLOW_MS
         if (status.shouldStopPolling == true) return null
 

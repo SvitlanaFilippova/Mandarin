@@ -8,18 +8,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
+import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.data.Mapper.toGeoPoint
 import com.mandarinkafe.mandarin.features.address.data.Mapper.toYandexPoint
 import com.mandarinkafe.mandarin.features.address.presentation.ui.models.UiDeliveryArea
-import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.features.map.MapCameraController
 import com.mandarinkafe.mandarin.features.map.MapCameraControllerImpl
-import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.openAppSettings
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.MapWithDeliveryAreas
-import com.mandarinkafe.mandarin.util.presentation.ui.components.map.rememberLocationPermissionLauncher
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.moveCamera
+import com.mandarinkafe.mandarin.util.presentation.ui.components.map.rememberLocationPermissionLauncher
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.cinterop.ExperimentalForeignApi
 

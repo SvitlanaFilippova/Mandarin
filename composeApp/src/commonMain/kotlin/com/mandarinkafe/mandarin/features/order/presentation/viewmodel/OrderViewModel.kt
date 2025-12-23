@@ -130,41 +130,11 @@ class OrderViewModel(
 
     private fun getSavedUserInfo() {
         viewModelScope.launch {
-            var isFirstLoad = true
+            val initialInfo = loadInitialUserInfo()
+            processInitialUserInfo(initialInfo)
 
-            // Ждем первое не-null значение с таймаутом
-
-            val initialInfo = withTimeoutOrNull(Constants.USER_DATA_WAIT_TIMEOUT) {
-                userInfoRepository.userInfo.first { it != null }
-            }
-
-            if (initialInfo != null) {
-                setState {
-                    val currentName = this.userInfo.name.trim()
-                    val savedName = initialInfo.name.trim()
-                    // Не перезаписываем имя пустым значением, если пользователь уже ввел имя
-                    val nameToSet = if (currentName.isNotEmpty() && savedName.isEmpty()) {
-                        currentName
-                    } else {
-                        savedName
-                    }
-                    copy(
-                        userInfo = this.userInfo.copy(
-                            name = nameToSet,
-                            phone = initialInfo.phone.formatPhoneNumberForDomain(),
-                        ),
-                        savedNameIsEmpty = initialInfo.name.trim().isEmpty(),
-                    )
-                }
-
-                checkDiscount(initialInfo.phone.formatPhoneNumberForDomain())
-                isFirstLoad = false
-            } else {
-                Napier.w("OrderViewModel: Timeout waiting for user info")
-            }
-
-            // Подписываемся на дальнейшие обновления (пропускаем первое, если уже загрузили)
             var previousPhone: String? = initialInfo?.phone?.formatPhoneNumberForDomain()
+            var isFirstLoad = initialInfo == null
 
             userInfoRepository.userInfo.collect { userInfo ->
                 if (isFirstLoad) {
@@ -173,35 +143,72 @@ class OrderViewModel(
                 }
 
                 userInfo?.let {
-                    val newPhone = userInfo.phone.formatPhoneNumberForDomain()
-                    val phoneChanged = previousPhone != newPhone
-
-                    setState {
-                        val currentName = this.userInfo.name.trim()
-                        val savedName = userInfo.name.trim()
-                        // Не перезаписываем имя пустым значением, если пользователь уже ввел имя
-                        val nameToSet = if (currentName.isNotEmpty() && savedName.isEmpty()) {
-                            currentName
-                        } else {
-                            savedName
-                        }
-                        copy(
-                            userInfo = this.userInfo.copy(
-                                name = nameToSet,
-                                phone = newPhone,
-                            ),
-                            savedNameIsEmpty = userInfo.name.trim().isEmpty(),
-                        )
-                    }
-
-                    // Пересчитываем скидку при изменении телефона
-                    if (phoneChanged) {
-                        checkDiscount(newPhone)
-                    }
-
-                    previousPhone = newPhone
+                    previousPhone = processUserInfoUpdate(it, previousPhone)
                 }
             }
+        }
+    }
+
+    private suspend fun loadInitialUserInfo(): com.mandarinkafe.mandarin.core.domain.models.UserInfo? {
+        return withTimeoutOrNull(Constants.USER_DATA_WAIT_TIMEOUT) {
+            userInfoRepository.userInfo.first { it != null }
+        } ?: run {
+            Napier.w("OrderViewModel: Timeout waiting for user info")
+            null
+        }
+    }
+
+    private fun processInitialUserInfo(initialInfo: com.mandarinkafe.mandarin.core.domain.models.UserInfo?) {
+        if (initialInfo == null) return
+
+        val nameToSet =
+            calculateNameToSet(state.value.userInfo.name.trim(), initialInfo.name.trim())
+        val formattedPhone = initialInfo.phone.formatPhoneNumberForDomain()
+
+        setState {
+            copy(
+                userInfo = this.userInfo.copy(
+                    name = nameToSet,
+                    phone = formattedPhone,
+                ),
+                savedNameIsEmpty = initialInfo.name.trim().isEmpty(),
+            )
+        }
+
+        checkDiscount(formattedPhone)
+    }
+
+    private fun processUserInfoUpdate(
+        userInfo: com.mandarinkafe.mandarin.core.domain.models.UserInfo,
+        previousPhone: String?,
+    ): String {
+        val newPhone = userInfo.phone.formatPhoneNumberForDomain()
+        val phoneChanged = previousPhone != newPhone
+        val nameToSet = calculateNameToSet(state.value.userInfo.name.trim(), userInfo.name.trim())
+
+        setState {
+            copy(
+                userInfo = this.userInfo.copy(
+                    name = nameToSet,
+                    phone = newPhone,
+                ),
+                savedNameIsEmpty = userInfo.name.trim().isEmpty(),
+            )
+        }
+
+        if (phoneChanged) {
+            checkDiscount(newPhone)
+        }
+
+        return newPhone
+    }
+
+    private fun calculateNameToSet(currentName: String, savedName: String): String {
+        // Не перезаписываем имя пустым значением, если пользователь уже ввел имя
+        return if (currentName.isNotEmpty() && savedName.isEmpty()) {
+            currentName
+        } else {
+            savedName
         }
     }
 

@@ -19,8 +19,8 @@ import com.mandarinkafe.mandarin.util.Constants.SMS_CODE_LENGTH
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
 import com.mandarinkafe.mandarin.util.formatPhoneNumberForUi
-import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.mandarinkafe.mandarin.util.getCurrentTimeMillis
+import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -248,9 +248,10 @@ class AuthViewModel(
 
         val shouldForceFastPolling = fastPollingUntil?.let { it > getCurrentTimeMillis() } == true
         statusPollingJob = viewModelScope.launch {
-            statusInteractor.observeStatusByPhone(phone, forceFastPolling = shouldForceFastPolling).collect { response ->
-                proceedAuthStatusResponse(response)
-            }
+            statusInteractor.observeStatusByPhone(phone, forceFastPolling = shouldForceFastPolling)
+                .collect { response ->
+                    proceedAuthStatusResponse(response)
+                }
         }
     }
 
@@ -266,9 +267,10 @@ class AuthViewModel(
 
         val shouldForceFastPolling = fastPollingUntil?.let { it > getCurrentTimeMillis() } == true
         statusPollingJob = viewModelScope.launch {
-            statusInteractor.observeStatusByPhone(phone, forceFastPolling = shouldForceFastPolling).collect { response ->
-                proceedAuthStatusResponse(response)
-            }
+            statusInteractor.observeStatusByPhone(phone, forceFastPolling = shouldForceFastPolling)
+                .collect { response ->
+                    proceedAuthStatusResponse(response)
+                }
         }
     }
 

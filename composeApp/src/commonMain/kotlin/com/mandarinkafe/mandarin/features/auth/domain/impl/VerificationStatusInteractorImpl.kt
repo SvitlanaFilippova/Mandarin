@@ -17,9 +17,15 @@ class VerificationStatusInteractorImpl(
         return result
     }
 
-    override fun observeStatusByPhone(phone: String, forceFastPolling: Boolean): Flow<Resource<PhoneVerificationStatus>> {
+    override fun observeStatusByPhone(
+        phone: String,
+        forceFastPolling: Boolean,
+    ): Flow<Resource<PhoneVerificationStatus>> {
         val phoneWithPrefix = "$PHONE_PREFIX_RU$phone"
-        return phoneVerificationRepository.observeVerificationStatusByPhone(phone = phoneWithPrefix, forceFastPolling = forceFastPolling)
+        return phoneVerificationRepository.observeVerificationStatusByPhone(
+            phone = phoneWithPrefix,
+            forceFastPolling = forceFastPolling,
+        )
     }
 
     override suspend fun checkSms(
