@@ -20,7 +20,6 @@ import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.Mea
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEffect.ShowRequiredModifiersDialog
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsEvent
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsContract.MealDetailsState
-import com.mandarinkafe.mandarin.features.menu.domain.models.MealAdditionalCategory
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorOther
 import com.mandarinkafe.mandarin.util.Resource.Idle
@@ -29,7 +28,6 @@ import com.mandarinkafe.mandarin.util.Resource.Success
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dev.icerock.moko.resources.StringResource
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -444,17 +442,6 @@ class MealDetailsViewModel(
                 customizedMeal = currentMeal.copy(adds = currentAdds)
             )
 
-        }
-    }
-
-    private fun setAddonsData(data: List<MealAdditionalCategory>?) {
-        if (!data.isNullOrEmpty()) {
-            setState {
-                copy(
-                    addons = data,
-                    errorMessage = null
-                )
-            }
         }
     }
 
