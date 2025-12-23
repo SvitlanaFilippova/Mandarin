@@ -120,7 +120,10 @@ fun NavController.navigateToMealDetails(
     val jsonString = Json.encodeToString(params)
     val encodedParams = UrlEncoderUtil.encode(jsonString)
 
-    val route = "$MEAL_DETAILS_ROUTE?$KEY_MEAL_ID=$encodedParams&$KEY_IS_EDIT_MODE=$isEditMode"
+    val route = "$MEAL_DETAILS_ROUTE?" +
+            "$KEY_IS_EDIT_MODE=$isEditMode&" +
+            "$KEY_MEAL_ID=$encodedParams"
+    
     navigate(route)
 }
 

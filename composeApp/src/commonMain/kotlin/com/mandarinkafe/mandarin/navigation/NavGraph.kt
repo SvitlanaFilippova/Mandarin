@@ -26,6 +26,7 @@ import com.mandarinkafe.mandarin.features.search.presentation.ui.screen.SearchSc
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberCartViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberSharedViewModel
 import com.mandarinkafe.mandarin.splash.presentation.SplashScreen
+import io.github.aakira.napier.Napier
 import io.ktor.http.decodeURLPart
 import kotlinx.serialization.json.Json
 
