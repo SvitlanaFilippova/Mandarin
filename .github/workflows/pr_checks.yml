@@ -128,3 +128,4 @@ jobs:
         with:
           name: composeApp-debug.apk
           path: composeApp/build/outputs/apk/debug/*.apk
+          retention-days: 3
