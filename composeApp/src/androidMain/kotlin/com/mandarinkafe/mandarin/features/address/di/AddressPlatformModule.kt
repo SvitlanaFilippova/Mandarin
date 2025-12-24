@@ -14,6 +14,7 @@ import com.yandex.mapkit.search.SearchManagerType
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val addressPlatformModule = module {
@@ -36,7 +37,12 @@ val addressPlatformModule = module {
 
     // Android-specific Repositories
     singleOf(::FusedLocationRepositoryImpl) { bind<FusedLocationRepository>() }
-    singleOf(::AddressRepositoryImpl) { bind<AddressRepository>() }
+    single {
+        AddressRepositoryImpl(
+            searchManager = get(),
+            coroutineScope = get()
+        )
+    }.bind<AddressRepository>()
 
 }
 

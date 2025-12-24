@@ -24,4 +24,8 @@ expect fun AddressMapContentScreen(
     isError: Boolean,
     onCameraMoved: (GeoPoint) -> Unit,
     cameraController: MapCameraController,
+    onRequestLocation: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    onShowSnackbarWithAction: (String, String, () -> Unit) -> Unit,
+    onOpenSettings: () -> Unit,
 )

@@ -15,4 +15,8 @@ expect fun MapDeliveryScreenContent(
     userLocation: GeoPoint?,
     onCameraMoved: (GeoPoint) -> Unit,
     locationChosen: Boolean,
+    onRequestLocation: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    onShowSnackbarWithAction: (String, String, () -> Unit) -> Unit,
+    onOpenSettings: () -> Unit,
 )

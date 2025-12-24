@@ -5,12 +5,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +23,7 @@ import androidx.navigation.NavController
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.address.presentation.ui.components.HandleAddressEffects
 import com.mandarinkafe.mandarin.features.address.presentation.ui.components.SearchByTextResults
 import com.mandarinkafe.mandarin.features.address.presentation.viewmodel.AddressContract
@@ -26,11 +31,15 @@ import com.mandarinkafe.mandarin.features.map.MapCameraController
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.LocationIcon
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberAddressViewModel
 import com.mandarinkafe.mandarin.util.Constants.MIN_LINES_FOR_ADDRESS_INPUT
+import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.ButtonWithText
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.getContextForSettings
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.openAppSettings
 import com.mandarinkafe.mandarin.util.presentation.ui.components.map.RequestLocationPermission
 import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.MyTextField
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -67,14 +76,51 @@ fun AddressMapScreen(
     }
     val initLocation = state.initPinPoint
     val userLocation = state.userLocation
-
-    // Проверяем разрешение на определение местоположения. Если его нет - запрашиваем. Если есть - определеяем.
-    RequestLocationPermission(
-        onGranted = { onEvent(AddressContract.AddressEvent.RequestAddress) }
-    )
+    val snackbarHostState = LocalSnackbarHostState.current
+    val coroutineScope = rememberCoroutineScope()
 
     val keyboardController =
         LocalSoftwareKeyboardController.current
+
+    val context = getContextForSettings()
+    val onShowSnackbar: (String) -> Unit = { message ->
+        coroutineScope.launch {
+            snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short,
+                withDismissAction = true
+            )
+        }
+    }
+
+    val permissionDeniedReason = stringResource(MR.strings.location_permission_denied_reason)
+
+    // Проверяем разрешение на определение местоположения. Если его нет - запрашиваем. Если есть - определеяем.
+    RequestLocationPermission(
+        onGranted = { onEvent(AddressContract.AddressEvent.RequestAddress) },
+        onDenied = {
+            onShowSnackbar(permissionDeniedReason)
+        }
+    )
+
+    val onOpenSettings: () -> Unit = {
+        openAppSettings(context)
+    }
+
+    val onShowSnackbarWithAction: (String, String, () -> Unit) -> Unit =
+        { message, actionLabel, onAction ->
+            coroutineScope.launch {
+                val result = snackbarHostState.showSnackbar(
+                    message = message,
+                    duration = SnackbarDuration.Long,
+                    withDismissAction = true,
+                    actionLabel = actionLabel
+                )
+                if (result == SnackbarResult.ActionPerformed) {
+                    onAction()
+                }
+            }
+        }
 
 
     Column(
@@ -85,6 +131,14 @@ fun AddressMapScreen(
         ScreenTitleWithBackButton(
             name = stringResource(MR.strings.address_screen_title),
             onBackClick = { navController.popBackStack() }
+        )
+
+        Text(
+            text = stringResource(MR.strings.choose_address_by_text),
+            style = Typography.SmallLightTextStyle,
+            modifier = Modifier.padding(
+                Dimens.MarginSuperSmall4
+            )
         )
 
         // Строка с адресом
@@ -124,7 +178,11 @@ fun AddressMapScreen(
                                 )
                             )
                         },
-                        cameraController = cameraController
+                        cameraController = cameraController,
+                        onRequestLocation = { onEvent(AddressContract.AddressEvent.RequestAddress) },
+                        onShowSnackbar = onShowSnackbar,
+                        onShowSnackbarWithAction = onShowSnackbarWithAction,
+                        onOpenSettings = onOpenSettings
                     )
                 }
 
