@@ -12,7 +12,7 @@ import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.debounce
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import com.mandarinkafe.mandarin.util.presentation.isSameAs
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class DeliveryViewModel(
@@ -31,6 +31,8 @@ class DeliveryViewModel(
         fetchAddress(point)
     }
 
+    private var observeDisplayAddressJob: Job? = null
+
     init {
         getDeliveryZones()
         observeDisplayAddress()
@@ -38,23 +40,35 @@ class DeliveryViewModel(
 
     override fun onEvent(event: DeliveryContract.DeliveryEvent) {
         when (event) {
-            is DeliveryContract.DeliveryEvent.CameraMoved -> onCameraMoved(event.center)
-            DeliveryContract.DeliveryEvent.RequestAddress -> requestLocation()
+            is DeliveryContract.DeliveryEvent.CameraMoved -> {
+                onCameraMoved(event.center)
+            }
+            DeliveryContract.DeliveryEvent.RequestAddress -> {
+                requestLocation()
+            }
+        }
+    }
+
+    /**
+     * Проверяет состояние подписки и переподписывается, если нужно
+     */
+    fun ensureSubscriptionActive() {
+        val job = observeDisplayAddressJob
+        val isActive = job?.isActive == true
+        if (!isActive) {
+            observeDisplayAddress()
         }
     }
 
     private fun requestLocation() {
         viewModelScope.launch {
             val point = when (val result = getUserLocation()) {
-                is Resource.Success -> {
-                    result.data
-                }
-
-                else -> {
-                    null
-                }
+                is Resource.Success -> result.data
+                else -> null
             }
-            setState { copy(userLocation = point) }
+            setState {
+                copy(userLocation = point)
+            }
         }
     }
 
@@ -63,7 +77,9 @@ class DeliveryViewModel(
             val deliveryAreasResource = deliveryAreaRepository.getAllAreas()
             if (deliveryAreasResource is Resource.Success) {
                 val deliveryAreas = deliveryAreasResource.data?.map { it.toUi() }
-                deliveryAreas?.let { setState { copy(deliveryAreas = deliveryAreas) } }
+                deliveryAreas?.let {
+                    setState { copy(deliveryAreas = deliveryAreas) }
+                }
             }
         }
     }
@@ -79,7 +95,9 @@ class DeliveryViewModel(
     }
 
     private fun fetchAddressWithDebounce(point: GeoPoint) {
-        setState { copy(fetchAddressInProgress = true, error = null, currentPinPoint = point) }
+        setState {
+            copy(fetchAddressInProgress = true, error = null, currentPinPoint = point)
+        }
         fetchAddressDebounce.cancel()
         fetchAddressDebounce.invoke(point)
     }
@@ -91,44 +109,60 @@ class DeliveryViewModel(
     }
 
     private fun observeDisplayAddress() {
-        viewModelScope.launch {
-            searchInteractor.observeAddress().collectLatest { result ->
-                when (result) {
-                    is Resource.Loading -> setLoading()
-                    is Resource.Success -> {
-                        val address = result.data
-                        address?.let {
-                            setState {
-                                copy(
-                                    displayAddress = address.addressSingleLine,
-                                    fetchAddressInProgress = false,
-                                    error = null,
-                                )
+        val previousJob = observeDisplayAddressJob
+        previousJob?.cancel()
+
+        observeDisplayAddressJob = viewModelScope.launch {
+            try {
+                searchInteractor.observeAddress()
+                    .collect { result ->
+                        when (result) {
+                            is Resource.Loading -> {
+                                setLoading()
+                            }
+                            is Resource.Success -> {
+                                val address = result.data
+                                address?.let {
+                                    setState {
+                                        copy(
+                                            displayAddress = address.addressSingleLine,
+                                            fetchAddressInProgress = false,
+                                            error = null,
+                                            isLoading = false
+                                        )
+                                    }
+                                }
+                            }
+
+                            else -> {
+                                setState {
+                                    copy(
+                                        error = MR.strings.fail_to_fetch_address,
+                                        fetchAddressInProgress = false,
+                                        displayAddress = null
+                                    )
+                                }
                             }
                         }
                     }
-
-                    else -> {
-                        setState {
-                            copy(
-                                error = MR.strings.fail_to_fetch_address,
-                                fetchAddressInProgress = false,
-                                displayAddress = null
-                            )
-                        }
-                    }
-                }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e // Re-throw cancellation exceptions
             }
         }
     }
 
     private suspend fun checkDeliveryArea(point: GeoPoint) {
         val deliveryArea = getDeliveryZone(point)
-        setState { copy(deliveryArea = deliveryArea?.toUi()) }
+        val uiDeliveryArea = deliveryArea?.toUi()
+        setState {
+            copy(deliveryArea = uiDeliveryArea)
+        }
     }
 
     override fun setLoading(isLoading: Boolean) {
-        setState { copy(fetchAddressInProgress = true, error = null, displayAddress = null) }
+        setState {
+            copy(fetchAddressInProgress = true, error = null, displayAddress = null)
+        }
     }
 
     private companion object {

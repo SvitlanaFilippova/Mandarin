@@ -12,23 +12,25 @@ import com.yandex.mapkit.search.SearchManager
 import com.yandex.mapkit.search.SearchOptions
 import com.yandex.mapkit.search.Session
 import com.yandex.runtime.Error
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AddressRepositoryImpl(
     private val searchManager: SearchManager,
+    private val coroutineScope: CoroutineScope,
 ) : AddressRepository {
     private var session: Session? = null
-    private val _addressListChannel = Channel<Resource<List<AddressSearchResult>>>(Channel.BUFFERED)
-    override val addressListFlow: Flow<Resource<List<AddressSearchResult>>> =
-        _addressListChannel.receiveAsFlow()
+    private val _addressListFlow = MutableSharedFlow<Resource<List<AddressSearchResult>>>()
+    override val addressListFlow: SharedFlow<Resource<List<AddressSearchResult>>> =
+        _addressListFlow
 
-    private val _addressStringChannel = Channel<Resource<AddressSearchResult>>(Channel.BUFFERED)
-    override val addressStringFlow: Flow<Resource<AddressSearchResult>> =
-        _addressStringChannel.receiveAsFlow()
+    private val _addressStringFlow = MutableSharedFlow<Resource<AddressSearchResult>>()
+    override val addressStringFlow: SharedFlow<Resource<AddressSearchResult>> =
+        _addressStringFlow
 
     // Слушатель для поиска по текстовому запросу
     private val listenerForSearchByText = object : Session.SearchListener {
@@ -36,16 +38,20 @@ class AddressRepositoryImpl(
             val geoObjects = response.collection.children.mapNotNull { it.obj }
 
             if (geoObjects.isNotEmpty()) {
-                _addressListChannel.trySend(
-                    Resource.Success(geoObjects.map { it.toAddressSearchResult() })
-                )
+                coroutineScope.launch {
+                    _addressListFlow.emit(Resource.Success(geoObjects.map { it.toAddressSearchResult() }))
+                }
             } else {
-                _addressListChannel.trySend(Resource.ErrorEmptyData())
+                coroutineScope.launch {
+                    _addressListFlow.emit(Resource.ErrorEmptyData())
+                }
             }
         }
 
         override fun onSearchError(error: Error) {
-            _addressListChannel.trySend(Resource.ErrorOther(error.toString()))
+            coroutineScope.launch {
+                _addressListFlow.emit(Resource.ErrorOther(error.toString()))
+            }
         }
     }
 
@@ -53,7 +59,10 @@ class AddressRepositoryImpl(
         val yPoint = point.toYandexPoint()
         val geometry = Geometry.fromPoint(yPoint)
         val searchOptions = SearchOptions()
-        _addressListChannel.trySend(Resource.Loading())
+
+        coroutineScope.launch {
+            _addressListFlow.emit(Resource.Loading())
+        }
 
         withContext(Dispatchers.Main) {
             session?.cancel()
@@ -69,26 +78,49 @@ class AddressRepositoryImpl(
     // Слушатель для обратного геокодинга
     private val listener = object : Session.SearchListener {
         override fun onSearchResponse(response: Response) {
+            val currentSession = session
+            if (currentSession == null) {
+                return
+            }
+
             val geoObj = response.collection.children.firstOrNull()?.obj
             if (geoObj != null) {
-                _addressStringChannel.trySend(Resource.Success(geoObj.toAddressSearchResult()))
+                val result = geoObj.toAddressSearchResult()
+                coroutineScope.launch {
+                    _addressStringFlow.emit(Resource.Success(result))
+                }
             } else {
-                _addressStringChannel.trySend(Resource.ErrorEmptyData())
+                coroutineScope.launch {
+                    _addressStringFlow.emit(Resource.ErrorEmptyData())
+                }
             }
         }
 
         override fun onSearchError(error: Error) {
-            _addressStringChannel.trySend(Resource.ErrorOther(error.toString()))
+            val currentSession = session
+            if (currentSession == null) {
+                return
+            }
+
+            coroutineScope.launch {
+                _addressStringFlow.emit(Resource.ErrorOther(error.toString()))
+            }
         }
     }
 
     override suspend fun getAddressFromPoint(point: GeoPoint) {
         val yPoint = point.toYandexPoint()
         val searchOptions = SearchOptions()
-        _addressStringChannel.trySend(Resource.Loading())
+
+        coroutineScope.launch {
+            _addressStringFlow.emit(Resource.Loading())
+        }
 
         withContext(Dispatchers.Main) {
-            session?.cancel()
+            val previousSession = session
+            session = null
+            previousSession?.cancel()
+
             session = searchManager.submit(
                 yPoint,
                 DEFAULT_ZOOM_FOR_SEARCH,

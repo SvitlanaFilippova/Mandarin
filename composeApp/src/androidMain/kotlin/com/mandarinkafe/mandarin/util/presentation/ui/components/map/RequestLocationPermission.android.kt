@@ -14,7 +14,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 
 @Composable
-actual fun RequestLocationPermission(onGranted: () -> Unit) {
+actual fun RequestLocationPermission(
+    onGranted: () -> Unit,
+    onDenied: () -> Unit,
+) {
     val context = LocalContext.current
     var hasPermission by remember {
         mutableStateOf(
@@ -23,19 +26,30 @@ actual fun RequestLocationPermission(onGranted: () -> Unit) {
             ) == PackageManager.PERMISSION_GRANTED
         )
     }
+    var callbackInvoked by remember { mutableStateOf(false) }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         hasPermission = isGranted
-        if (isGranted) onGranted()
+        if (!callbackInvoked) {
+            callbackInvoked = true
+            if (isGranted) {
+                onGranted()
+            } else {
+                onDenied()
+            }
+        }
     }
 
     LaunchedEffect(Unit) {
-        if (!hasPermission) {
-            launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        } else {
-            onGranted()
+        if (!callbackInvoked) {
+            if (!hasPermission) {
+                launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            } else {
+                callbackInvoked = true
+                onGranted()
+            }
         }
     }
 }

@@ -11,7 +11,10 @@ interface PhoneVerificationRepository {
     // --- Верификация номера через звонок ---
     suspend fun requestPhoneVerification(phone: String): Resource<PhoneVerificationData>
     suspend fun checkVerificationStatusByCheckId(checkId: String): Resource<PhoneVerificationStatus>
-    fun observeVerificationStatusByPhone(phone: String): Flow<Resource<PhoneVerificationStatus>>
+    fun observeVerificationStatusByPhone(
+        phone: String,
+        forceFastPolling: Boolean = false,
+    ): Flow<Resource<PhoneVerificationStatus>>
 
     // --- Верификация по SMS ---
     suspend fun requestSmsVerification(phone: String): Resource<SmsVerificationData>

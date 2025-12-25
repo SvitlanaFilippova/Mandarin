@@ -28,7 +28,7 @@ class OrderCreator(
         scope: CoroutineScope,
         order: OutgoingOrder,
         onSuccess: (IncomingOrder) -> Unit,
-        onError: (StringResource) -> Unit,
+        onError: (StringResource, String?) -> Unit,
         onLoading: () -> Unit,
     ) {
         when (val result = createOrder(order)) {
@@ -43,26 +43,27 @@ class OrderCreator(
                     }
 
                     CreationStatus.SUCCESS -> onSuccess(orderInfo)
-                    CreationStatus.ERROR ->
-                        onError(
-                            orderInfo.errorInfo?.message?.let { MR.strings.error_order_creation_failed }
-                                ?: MR.strings.error_order_creation_failed
-                        )
+                    CreationStatus.ERROR -> {
+                        val errorDetails = buildErrorDetails(orderInfo.errorInfo)
+                        onError(MR.strings.error_order_creation_failed, errorDetails)
+                    }
 
                     null -> onError(
-                        MR.strings.error_empty_server_response
+                        MR.strings.error_empty_server_response,
+                        null,
                     )
                 }
             }
 
             is Resource.ErrorNoInternet -> onError(
-                MR.strings.error_no_internet
+                MR.strings.error_no_internet,
+                null,
             )
 
-            else -> onError(
-                result.message?.let { MR.strings.error_order_creation_failed }
-                    ?: MR.strings.error_order_creation_failed
-            )
+            else -> {
+                val errorDetails = result.message
+                onError(MR.strings.error_order_creation_failed, errorDetails)
+            }
         }
     }
 
@@ -70,7 +71,7 @@ class OrderCreator(
         scope: CoroutineScope,
         orderId: String?,
         onSuccess: (IncomingOrder) -> Unit,
-        onError: (StringResource) -> Unit,
+        onError: (StringResource, String?) -> Unit,
         onLoading: () -> Unit,
     ) {
         Napier.d("HISTORY DEBUG - observeOrderUntilSuccess started")
@@ -93,9 +94,9 @@ class OrderCreator(
         }
     }
 
-    private fun validateOrderId(orderId: String?, onError: (StringResource) -> Unit): Boolean {
+    private fun validateOrderId(orderId: String?, onError: (StringResource, String?) -> Unit): Boolean {
         if (orderId.isNullOrBlank()) {
-            onError(MR.strings.error_order_creation_failed)
+            onError(MR.strings.error_order_creation_failed, null)
             return false
         }
         return true
@@ -104,21 +105,18 @@ class OrderCreator(
     private fun handleOrderStatusResult(
         result: Resource<IncomingOrder>,
         onSuccess: (IncomingOrder) -> Unit,
-        onError: (StringResource) -> Unit,
+        onError: (StringResource, String?) -> Unit,
         onLoading: () -> Unit,
     ) {
         when (result) {
             is Resource.Success -> handleCreationStatus(result, onSuccess, onError, onLoading)
             is Resource.ErrorNoInternet -> {
-                onError(MR.strings.error_no_internet)
+                onError(MR.strings.error_no_internet, null)
                 stopObserving()
             }
 
             is Resource.ErrorOther -> {
-                onError(
-                    result.message?.let { MR.strings.error_order_status_failed }
-                        ?: MR.strings.error_order_status_failed
-                )
+                onError(MR.strings.error_order_status_failed, result.message)
                 stopObserving()
             }
 
@@ -129,7 +127,7 @@ class OrderCreator(
     private fun handleCreationStatus(
         result: Resource.Success<IncomingOrder>,
         onSuccess: (IncomingOrder) -> Unit,
-        onError: (StringResource) -> Unit,
+        onError: (StringResource, String?) -> Unit,
         onLoading: () -> Unit,
     ) {
         when (result.data?.creationStatus) {
@@ -139,10 +137,8 @@ class OrderCreator(
             }
 
             CreationStatus.ERROR -> {
-                onError(
-                    result.data.errorInfo?.message?.let { MR.strings.error_order_creation_failed }
-                        ?: MR.strings.error_order_creation_failed
-                )
+                val errorDetails = buildErrorDetails(result.data?.errorInfo)
+                onError(MR.strings.error_order_creation_failed, errorDetails)
                 stopObserving()
             }
 
@@ -150,9 +146,9 @@ class OrderCreator(
         }
     }
 
-    private fun handleTimeout(isCompleted: Boolean?, onError: (StringResource) -> Unit) {
+    private fun handleTimeout(isCompleted: Boolean?, onError: (StringResource, String?) -> Unit) {
         if (isCompleted == null) {
-            onError(MR.strings.error_order_timeout)
+            onError(MR.strings.error_order_timeout, null)
             stopObserving()
         }
     }
@@ -160,6 +156,24 @@ class OrderCreator(
     fun stopObserving() {
         observeJob?.cancel()
         observeJob = null
+    }
+
+    private fun buildErrorDetails(errorInfo: com.mandarinkafe.mandarin.features.order.domain.models.ErrorInfo?): String? {
+        if (errorInfo == null) return null
+
+        return buildString {
+            errorInfo.message?.let { message ->
+                append(message)
+            }
+            errorInfo.errorReason?.let { reason ->
+                if (isNotEmpty()) append("\n")
+                append("Причина: $reason")
+            }
+            errorInfo.code.takeIf { it.isNotBlank() }?.let { code ->
+                if (isNotEmpty()) append("\n")
+                append("Код ошибки: $code")
+            }
+        }.takeIf { it.isNotEmpty() }
     }
 
     private companion object {

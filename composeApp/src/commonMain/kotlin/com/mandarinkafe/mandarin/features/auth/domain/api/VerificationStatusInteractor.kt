@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface VerificationStatusInteractor {
     suspend fun checkByCheckId(checkId: String): Resource<PhoneVerificationStatus>
-    fun observeStatusByPhone(phone: String): Flow<Resource<PhoneVerificationStatus>>
+    fun observeStatusByPhone(phone: String, forceFastPolling: Boolean = false): Flow<Resource<PhoneVerificationStatus>>
     suspend fun checkSms(phone: String, code: String): Resource<VerifySmsCodeResult>
 }
 
