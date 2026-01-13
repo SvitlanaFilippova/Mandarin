@@ -36,6 +36,9 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         }
     }
     val orderType = order?.orderType?.toDomain()
+    val items = order?.items?.toDomainWithAdds(addons) ?: emptyList()
+
+    val discountSize = items.sumOf { it.totalPrice - it.totalDiscountedPrice }
 
     return IncomingOrder(
         id = id,
@@ -48,7 +51,7 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         deliveryAddress = order?.deliveryPoint?.toAddress(),
         comment = order?.comment, // Храним полный комментарий, фильтрация будет в UI
         customerName = order?.customer?.name,
-        items = order?.items?.toDomainWithAdds(addons) ?: emptyList(),
+        items = items,
         paymentName = order?.payments?.firstOrNull()?.paymentType?.name,
         paymentMethodCode = order?.paymentMethodCode,
         status = order?.status?.toDeliveryStatus() ?: DeliveryStatus.UNCONFIRMED,
@@ -56,7 +59,7 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         orderType = orderType,
         processedPaymentsSum = order?.processedPaymentsSum,
         sum = order?.sum,
-        discountReason = order?.discounts?.firstOrNull()?.discountType?.name?.applyTypography(),
+        discountSize = discountSize,
         whenCancelled = order?.cancelInfo?.whenCancelled?.toHumanDateTimeOrNull(),
         whenClosed = order?.whenClosed?.toHumanDateTimeOrNull(),
         whenConfirmed = order?.whenConfirmed?.toHumanDateTimeOrNull(),

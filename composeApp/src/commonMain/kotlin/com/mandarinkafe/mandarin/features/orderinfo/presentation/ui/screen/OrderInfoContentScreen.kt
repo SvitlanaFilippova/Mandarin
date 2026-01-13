@@ -85,7 +85,7 @@ fun OrderInfoContentScreen(
                 OrderItemsSection(
                     items = order.items,
                     sum = order.sum,
-                    discountName = order.discountReason,
+                    discountSize = order.discountSize,
                     onOpenMealDetails = onOpenMealDetails,
                     showNoLongerInMenuMessage = showNoLongerInMenuMessage,
                 )
