@@ -42,7 +42,9 @@
     <string name="check_terminal_failed">Что-то пошло не так — не удалось проверить, работает ли
         сейчас доставка.
     </string>
-    <string name="location_permission_denied_reason">Без разрешения на&#160;доступ к&#160;геолокации не&#160;можем определить адрес</string>
+    <string name="location_permission_denied_reason">Без разрешения на&#160;доступ к&#160;геолокации
+        не&#160;можем определить адрес
+    </string>
     <string name="location_permission_denied">Разрешите доступ к&#160;геолокации</string>
     <string name="open_settings">В настройки</string>
 
@@ -451,8 +453,7 @@
     <string name="message_developer">Связаться с разработчиком:</string>
     <string name="dev_feedback_label">Через форму</string>
     <string name="dev_feedback_form_title">Сообщение разработчику</string>
-    <string name="telegram_label">Telegram</string>
-    <string name="telegram_url">https://t.me/SvitlanaFilippova</string>
+    <string name="telegram_dev_url">https://t.me/SvitlanaFilippova</string>
     <string name="ask_feedback">P.S: отзывы в сторах тоже приветствуются 😊</string>
 
 
@@ -461,7 +462,12 @@
     <string name="working_hours_title">График работы</string>
     <string name="working_hours_value">Ежедневно с 11:00 до 22:00</string>
     <string name="addresses_title">Адреса</string>
+    <string name="messengers_title">Мессенджеры</string>
     <string name="phone_title">Телефон</string>
+    <string name="telegram_label">Telegram</string>
+    <string name="telegram_url">https://t.me/mandarinchg</string>
+    <string name="whatsapp_label">WhatsApp</string>
+    <string name="whatsapp_url">https://wa.me/79257202404</string>
 
 
     <!-- Доставка -->

@@ -21,7 +21,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.OpenUrl
 
 @Composable
-fun StoreLinkButton(
+fun IconLinkButton(
     icon: Painter,
     label: String,
     url: String,

@@ -33,7 +33,7 @@ import com.mandarinkafe.mandarin.features.more.presentation.models.getStoreIcon
 import com.mandarinkafe.mandarin.features.more.presentation.ui.components.DevFeedbackDialog
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberAboutViewModel
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
-import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.StoreLinkButton
+import com.mandarinkafe.mandarin.util.presentation.ui.components.buttons.IconLinkButton
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -93,10 +93,10 @@ fun AboutScreen(
                 }
             )
 
-            StoreLinkButton(
+            IconLinkButton(
                 icon = painterResource(MR.images.ic_telegram),
                 label = stringResource(MR.strings.telegram_label),
-                url = stringResource(MR.strings.telegram_url),
+                url = stringResource(MR.strings.telegram_dev_url),
                 modifier = modifier
             )
 
@@ -125,7 +125,7 @@ fun AboutScreen(
             state.appStores.forEach { appStore ->
                 val iconResource = getStoreIcon(appStore.storeId)
                 iconResource?.let { icon ->
-                    StoreLinkButton(
+                    IconLinkButton(
                         icon = painterResource(icon),
                         url = appStore.url,
                         label = appStore.label,

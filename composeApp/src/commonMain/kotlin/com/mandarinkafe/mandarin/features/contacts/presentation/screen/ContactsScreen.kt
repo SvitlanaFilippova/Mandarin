@@ -16,11 +16,13 @@ import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.contacts.presentation.components.MapWithCafePins
+import com.mandarinkafe.mandarin.features.contacts.presentation.components.MessengersCard
 import com.mandarinkafe.mandarin.features.contacts.presentation.components.OurAddressesCard
 import com.mandarinkafe.mandarin.util.presentation.ui.components.InfoCard
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ScreenTitleWithBackButton
 import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.MakeCall
 import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.OpenGeoLocation
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.OpenUrl
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -32,6 +34,8 @@ fun ContactsScreen(onBackClick: () -> Unit) {
     )
 
     val phoneNumber = stringResource(MR.strings.cafe_phone_number)
+    val telegramUrl = stringResource(MR.strings.telegram_url)
+    val whatsappUrl = stringResource(MR.strings.whatsapp_url)
     var shouldMakePhoneCall by remember { mutableStateOf(false) }
     var addressToOpen by remember { mutableStateOf<String?>(null) }
 
@@ -50,6 +54,19 @@ fun ContactsScreen(onBackClick: () -> Unit) {
             addressToOpen = null
         }
     }
+
+    var messengerUrlToOpen by remember { mutableStateOf<String?>(null) }
+
+    messengerUrlToOpen?.let { url ->
+        OpenUrl(
+            url = url,
+            onFail = { messengerUrlToOpen = null }
+        )
+        LaunchedEffect(Unit) {
+            messengerUrlToOpen = null
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -86,7 +103,14 @@ fun ContactsScreen(onBackClick: () -> Unit) {
                 )
             )
 
-            MapWithCafePins()
+            MessengersCard(
+                onTelegramClick = {
+                    messengerUrlToOpen = telegramUrl
+                },
+                onWhatsappClick = {
+                    messengerUrlToOpen = whatsappUrl
+                },
+            )
 
             OurAddressesCard(
                 lines = addresses.map { resId ->
@@ -96,6 +120,9 @@ fun ContactsScreen(onBackClick: () -> Unit) {
                     }
                 }
             )
+
+            MapWithCafePins()
+
         }
     }
 }
