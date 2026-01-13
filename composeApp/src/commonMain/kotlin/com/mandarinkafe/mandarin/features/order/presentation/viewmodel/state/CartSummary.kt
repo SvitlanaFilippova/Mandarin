@@ -7,7 +7,6 @@ data class CartSummary(
     val items: List<CartItem> = emptyList(),
     val containNotDiscountable: Boolean = false,
     val discountPercent: Int = 0,
-    val discountId: String? = null,
     val cartSumWithDiscount: Double = 0.0,
 ) {
     val totalCartSum: Int

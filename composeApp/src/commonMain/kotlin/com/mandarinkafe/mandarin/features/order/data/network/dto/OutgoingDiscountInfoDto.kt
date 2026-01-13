@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OutgoingDiscountInfoDto(
-    val discounts: List<OutgoingDiscountTypeDto>,
+    val discounts: List<OutgoingIikoCardDiscountDto>? = null,
     val fixedLoyaltyDiscounts: Boolean = true,
 )
