@@ -17,6 +17,7 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEvent
+import com.mandarinkafe.mandarin.util.Constants
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -32,7 +33,6 @@ fun AppTopBar(
                 .fillMaxWidth()
                 .height(Dimens.ToolbarHeadHeight40)
         ) {
-
             Row(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
@@ -52,7 +52,7 @@ fun AppTopBar(
                         modifier = Modifier
                             .size(Dimens.IconSize24)
                             .align(Alignment.Center)
-                            .alpha(0.8f)
+                            .alpha(Constants.ALPHA_80)
                     )
                 }
 
@@ -69,7 +69,7 @@ fun AppTopBar(
                         modifier = Modifier
                             .size(Dimens.IconSize24)
                             .align(Alignment.Center)
-                            .alpha(0.8f)
+                            .alpha(Constants.ALPHA_80)
                     )
                 }
             }
