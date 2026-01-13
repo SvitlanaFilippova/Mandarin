@@ -6,7 +6,6 @@ import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.features.address.domain.api.DeliveryAreaRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.SyncUserDataUseCase
-import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CategoryDiscountRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.AnnouncementsRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.util.Resource
@@ -22,7 +21,6 @@ class GetInitialDataUseCaseImpl(
     private val menuCache: MenuCache,
     private val bannersRepository: BannersRepository,
     private val announcementsRepository: AnnouncementsRepository,
-    private val categoryDiscountRepository: CategoryDiscountRepository,
     private val deliveryAreaRepository: DeliveryAreaRepository,
     private val syncUserDataUseCase: SyncUserDataUseCase,
 ) : GetInitialDataUseCase {
@@ -42,7 +40,6 @@ class GetInitialDataUseCaseImpl(
         coroutineScope {
             launch { bannersRepository.loadBanners() }
             launch { announcementsRepository.loadAnnouncements() }
-            launch { categoryDiscountRepository.refreshFromApi() }
             launch { deliveryAreaRepository.getAllAreas() }
         }
 

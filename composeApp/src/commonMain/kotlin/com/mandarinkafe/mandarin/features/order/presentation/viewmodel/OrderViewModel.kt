@@ -468,8 +468,7 @@ class OrderViewModel(
                 setState {
                     copy(
                         cartSummary = cartSummary.copy(
-                            discountPercent = discount.discountSize,
-                            discountId = discount.discountId
+                            discountPercent = discount.discountSize
                         )
                     )
                 }

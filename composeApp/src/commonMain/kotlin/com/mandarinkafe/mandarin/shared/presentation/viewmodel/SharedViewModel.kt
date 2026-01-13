@@ -122,6 +122,8 @@ class SharedViewModel(
             )
 
             is SharedEvent.RefreshMenuIfStale -> viewModelScope.launch { refreshMenuIfStaleUseCase() }
+            is SharedEvent.OnTelegramClick -> sendEffect(SharedEffect.OnTelegramClick)
+            is SharedEvent.OnWhatsappClick -> sendEffect(SharedEffect.OnWhatsappClick)
         }
     }
 

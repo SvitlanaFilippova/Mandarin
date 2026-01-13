@@ -10,6 +10,8 @@ sealed interface SharedContract {
 
     sealed interface SharedEvent : BaseContract.BaseEvent {
         data class OnPhoneClick(val phone: String? = null) : SharedEvent
+        data object OnTelegramClick : SharedEvent
+        data object OnWhatsappClick : SharedEvent
         data object OnLogoClick : SharedEvent
         data object HideTopBar : SharedEvent
         data object ShowTopBar : SharedEvent
@@ -41,6 +43,8 @@ sealed interface SharedContract {
         data object GoBackEffect : SharedEffect
         data object ScrollToTop : SharedEffect
         data class OnPhoneClick(val phoneToCall: String) : SharedEffect
+        data object OnTelegramClick : SharedEffect
+        data object OnWhatsappClick : SharedEffect
 
         data class OpenMealDetailsBS(
             val cartItem: CartItem? = null,

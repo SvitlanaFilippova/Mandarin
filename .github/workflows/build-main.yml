@@ -85,6 +85,7 @@ jobs:
         with:
           name: app-release.apk
           path: composeApp/build/outputs/apk/release/*.apk
+          retention-days: 90
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

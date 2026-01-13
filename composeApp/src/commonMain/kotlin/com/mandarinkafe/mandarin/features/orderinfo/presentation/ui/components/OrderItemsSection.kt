@@ -27,7 +27,7 @@ import dev.icerock.moko.resources.compose.stringResource
 fun OrderItemsSection(
     items: List<IncomingOrderItem>,
     sum: Double?,
-    discountName: String?,
+    discountSize: Double?,
     onOpenMealDetails: (String) -> Unit,
     showNoLongerInMenuMessage: () -> Unit,
 ) {
@@ -54,7 +54,7 @@ fun OrderItemsSection(
             }
 
 
-            discountName?.let {
+            discountSize?.let {
                 Row(
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -67,7 +67,10 @@ fun OrderItemsSection(
                     Text(
                         modifier = Modifier.padding(start = Dimens.MarginSmall8),
                         textAlign = TextAlign.Center,
-                        text = discountName,
+                        text = "-" + stringResource(
+                            MR.strings.float_price_template,
+                            it.toFloat()
+                        ),
                         style = Typography.RegularLightTextStyle.copy(color = Color.Gray)
                     )
                 }
@@ -84,6 +87,7 @@ fun OrderItemsSection(
                         text = stringResource(MR.strings.label_total),
                         style = Typography.RegularTextStyle
                     )
+
                     Text(
                         text = stringResource(
                             MR.strings.float_price_template,

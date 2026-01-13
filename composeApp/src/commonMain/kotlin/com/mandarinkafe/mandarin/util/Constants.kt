@@ -52,6 +52,7 @@ object Constants {
     const val ANIMATION_DURATION_FAST = 300
     const val GRADIENT_HEIGHT_RATIO = 0.5f
     const val ALPHA_50 = 0.5f
+    const val ALPHA_80 = 0.8f
     const val TITLE_FONT_WEIGHT = 800
     const val NON_BRAKING_SPACE = "\u00A0"
     const val RATIO_FOR_IMAGE_CROP_MIN = 0.75f

@@ -37,7 +37,6 @@ fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
         deliveryRealCost = deliveryCost,
         totalOrderSum = totalOrderSum,
         discountPercent = cartSummary.discountPercent,
-        discountTypeId = cartSummary.discountId,
         deliveryZoneID = deliveryInfo.deliveryZone?.id,
     )
 }

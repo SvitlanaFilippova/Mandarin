@@ -17,6 +17,7 @@ import com.mandarinkafe.mandarin.navigation.extensions.navigateToCart
 import com.mandarinkafe.mandarin.navigation.extensions.navigateToMealDetails
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEffect
 import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.MakeCall
+import com.mandarinkafe.mandarin.util.presentation.ui.components.intents.OpenUrl
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +33,24 @@ fun HandleEffects(
     var pendingSnackbarMessage: String? by remember { mutableStateOf(null) }
     var pendingShowToCart by remember { mutableStateOf(false) }
     var shouldMakeCallToPhone: String? by remember { mutableStateOf(null) }
+    val telegramUrl = stringResource(MR.strings.telegram_url)
+    val whatsappUrl = stringResource(MR.strings.whatsapp_url)
+    var urlToOpen by remember { mutableStateOf<String?>(null) }
+
+    urlToOpen?.let { url ->
+        OpenUrl(
+            url = url,
+            onFail = {
+                // покажем снекбар «Не удалось открыть ссылку»
+                pendingSnackbarRes = MR.strings.cannot_open_link
+                pendingSnackbarMessage = null
+                pendingShowToCart = false
+            }
+        )
+        LaunchedEffect(Unit) {
+            urlToOpen = null
+        }
+    }
 
     shouldMakeCallToPhone?.let {
         MakeCall(
@@ -50,7 +69,10 @@ fun HandleEffects(
                 setPendingRes = { pendingSnackbarRes = it },
                 setPendingMessage = { pendingSnackbarMessage = it },
                 setPendingShowToCart = { pendingShowToCart = it },
-                setShouldMakePhoneCall = { shouldMakeCallToPhone = it }
+                setShouldMakePhoneCall = { shouldMakeCallToPhone = it },
+                setUrlToOpen = { urlToOpen = it },
+                telegramUrl = telegramUrl,
+                whatsappUrl = whatsappUrl,
             )
         }
     }
@@ -82,6 +104,9 @@ private fun processSharedEffect(
     setPendingMessage: (String?) -> Unit,
     setPendingShowToCart: (Boolean) -> Unit,
     setShouldMakePhoneCall: (String) -> Unit,
+    setUrlToOpen: (String) -> Unit,
+    telegramUrl: String,
+    whatsappUrl: String,
 ) {
     when (effect) {
         is SharedEffect.OpenMealDetailsBS -> {
@@ -117,8 +142,18 @@ private fun processSharedEffect(
             setPendingShowToCart(effect.showToCartButton)
         }
 
+
+        is SharedEffect.OnTelegramClick -> {
+            setUrlToOpen(telegramUrl)
+        }
+
+        is SharedEffect.OnWhatsappClick -> {
+            setUrlToOpen(whatsappUrl)
+        }
+
         is SharedEffect.ScrollToTop -> {
             // обрабатывается отдельно;
         }
+
     }
 }
