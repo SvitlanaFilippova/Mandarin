@@ -33,7 +33,7 @@ fun MenuScreen(
     val menuViewModel = rememberMenuViewModel()
     val state by menuViewModel.state.collectAsState()
 
-    // Используем distinctUntilChanged для предотвращения лишних recomposition
+    // Используем distinctUntilChanged для предотвращения лишних рекомпозиций
     val cartItemsFlow = remember {
         cartViewModel.state
             .map { it.cartItems }
@@ -48,7 +48,6 @@ fun MenuScreen(
     }
     val cartInProgressItems by cartInProgressItemsFlow.collectAsState(initial = emptySet())
 
-    // favoritesIDs уже StateFlow, но можно добавить distinctUntilChanged для безопасности
     val favoriteIds by remember {
         sharedViewModel.favoritesIDs
     }.collectAsState(initial = emptySet())
