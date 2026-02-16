@@ -139,7 +139,11 @@ class MenuViewModel(
         viewModelScope.launch {
             val menuItems = state.value.menuItems
             val targetIndex = findMenuItemIndex(banner, menuItems)
-            setState { copy(selectedMenuItemIndex = targetIndex + 1) } // Добавленн оффсет 1, чтобы искомый элемент был не внизу экрана
+            setState {
+                copy(
+                    selectedMenuItemIndex = targetIndex + 1
+                )
+            } // Добавленн оффсет 1, чтобы искомый элемент был не внизу экрана
         }
     }
 
