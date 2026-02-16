@@ -105,6 +105,15 @@ sealed interface OrderContract {
                 else -> 0
             }
 
+        val toFreeDelivery: Double?
+            get() = when {
+                deliveryCost > 0 -> {
+                    deliveryInfo.deliveryZone?.freeDeliveryThreshold?.minus(cartSummary.cartSumWithDiscount)
+                }
+
+                else -> null
+
+            }
         val totalOrderSum: Double
             get() = cartSummary.cartSumWithDiscount + deliveryCost.toDouble()
 

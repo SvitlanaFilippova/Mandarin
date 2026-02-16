@@ -207,6 +207,7 @@
     <string name="total_cart_cost">Сумма заказа</string>
     <string name="discount_template">Скидка %1$d%%</string>
     <string name="delivery_cost">Стоимость доставки</string>
+    <string name="to_free_delivery">До бесплатной доставки</string>
     <string name="submit_order">Оформить заказ</string>
     <string name="submit_order_online">Оплатить заказ</string>
     <string name="save_name_for_future">Сохранить имя для будущих заказов</string>
