@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mandarinkafe.mandarin.MR
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.util.presentation.ui.components.TooltipText
 import dev.icerock.moko.resources.compose.stringResource
@@ -22,6 +23,7 @@ fun OrderSummaryData(
     freeDeliveryThreshold: Int?,
     containNotDiscountable: Boolean,
     deliveryInfoIsLoading: Boolean,
+    toFreeDelivery: Double?,
 ) {
     Column(modifier = Modifier.padding(Dimens.MarginSmall8)) {
         Spacer(modifier = Modifier.size(Dimens.MarginStandard16))
@@ -63,6 +65,14 @@ fun OrderSummaryData(
                         amount = deliveryCost.toFloat(),
                         hintText = hintText
                     )
+
+                    toFreeDelivery?.let {
+                        OrderSummaryRow(
+                            name = stringResource(MR.strings.to_free_delivery),
+                            amount = it.toFloat(),
+                            color = Colors.Orange
+                        )
+                    }
                 }
             }
         }

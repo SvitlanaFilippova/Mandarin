@@ -80,14 +80,10 @@ fun MenuContentScreen(
     val activeTabIndex = remember { mutableIntStateOf(0) }
     val activeSubTabIndex = remember { mutableIntStateOf(-1) }
 
-    // Мемоизируем headers для stickyHeader - это критично для производительности
-    // Это предотвращает пересборку stickyHeader при каждом скролле
     val headers = remember(menuItems) {
         menuItems.filterIsInstance<MenuItem.HeaderItem>()
     }
 
-    // StateFlow уже оптимизирован и не эмитит повторяющиеся значения
-    // collectAsState() здесь оптимален
     val isScrollingUp by scrollUi.isScrollingUp.collectAsState()
     val isAtTop by scrollUi.isAtTop.collectAsState()
 

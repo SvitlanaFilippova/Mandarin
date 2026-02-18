@@ -199,6 +199,7 @@ fun OrderContent(
                     discountSum = discountSum,
                     discountSize = discountPercent,
                     deliveryCost = state.deliveryCost,
+                    toFreeDelivery = state.toFreeDelivery,
                     containNotDiscountable = containNotDiscountable,
                     addressInNotInDeliveryArea = state.deliveryInfo.addressOutOfDeliveryZone,
                     deliveryInfoIsLoading = state.deliveryInfo.isLoading,

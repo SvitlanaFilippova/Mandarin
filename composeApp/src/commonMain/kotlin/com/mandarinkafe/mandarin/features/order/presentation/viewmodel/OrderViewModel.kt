@@ -104,8 +104,7 @@ class OrderViewModel(
 
     private fun getPaymentTypes() {
         viewModelScope.launch {
-            val response = infoUseCases.getPaymentTypesUseCase()
-            when (response) {
+            when (val response = infoUseCases.getPaymentTypesUseCase()) {
                 is Resource.ErrorNoInternet ->
                     sendErrorEffect(MR.strings.error_no_internet)
 
@@ -234,8 +233,7 @@ class OrderViewModel(
                 // Получаем access token
                 val accessToken = authRepository.getAccessToken()
                 if (accessToken != null) {
-                    val result = userInfoRepository.updateName(accessToken, enteredName)
-                    when (result) {
+                    when (val result = userInfoRepository.updateName(accessToken, enteredName)) {
                         is Resource.Success -> {
                             Napier.d("OrderViewModel: Name saved successfully")
                         }
@@ -286,8 +284,10 @@ class OrderViewModel(
     }
 
     private fun removeSavedAddress(id: String) {
-        viewModelScope.launch { addressUseCases.removeAddress(id) }
+        viewModelScope.launch {
+            addressUseCases.removeAddress(id)
         getSavedAddresses()
+        }
     }
 
     private fun observeCartItems() {
@@ -528,8 +528,7 @@ class OrderViewModel(
     private fun checkIfOrderCanBeSubmitted() {
         viewModelScope.launch {
             setLoading()
-            val terminalResponse = infoUseCases.checkIfTerminalIsAlive()
-            when (terminalResponse) {
+            when (val terminalResponse = infoUseCases.checkIfTerminalIsAlive()) {
                 is Resource.Success -> {
                     if (terminalResponse.data == true) {
                         submitOrder()

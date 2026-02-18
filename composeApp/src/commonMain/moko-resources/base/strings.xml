@@ -207,6 +207,7 @@
     <string name="total_cart_cost">Сумма заказа</string>
     <string name="discount_template">Скидка %1$d%%</string>
     <string name="delivery_cost">Стоимость доставки</string>
+    <string name="to_free_delivery">До бесплатной доставки</string>
     <string name="submit_order">Оформить заказ</string>
     <string name="submit_order_online">Оплатить заказ</string>
     <string name="save_name_for_future">Сохранить имя для будущих заказов</string>
@@ -252,9 +253,8 @@
         сумму от 1&#160;рубля
     </string>
     <string name="error_missing_required_fields">Нужно заполнить все обязательные поля</string>
-    <string name="error_terminal_unavailable">Упс, кажется, сейчас мы не&#160;работаем — заказ
-        оформить не&#160;получится 🤷
-        Возвращайся в рабочее время!
+    <string name="error_terminal_unavailable">Упс, кажется, у&#160;нас технические неполадки&#160;&#8212;
+        сейчас не&#160;получится оформить заказ через приложение 🤷
     </string>
     <string name="error_cant_check_terminal_is_alive">Что-то пошло не так — не удалось проверить,
         работает ли сейчас доставка.
@@ -366,8 +366,9 @@
 
     <!-- Статусы заказа -->
     <string name="delivery_status_unconfirmed">Не подтверждён</string>
-    <string name="delivery_status_extra_unconfirmed">Ожидаем подтверждения заказа. В&#160;ближайшее
-        время оператор позвонит, чтобы подтвердить его. Пожалуйста, будь на&#160;связи.
+    <string name="delivery_status_extra_unconfirmed">Заказ пока не&#160;подтверждён. Обычно мы&#160;не&#160;звоним,
+        но&#160;в&#160;редких случаях оператор может связаться с&#160;тобой для уточнения. За&#160;статусом
+        заказа можно следить здесь.
     </string>
     <string name="delivery_status_extra_unconfirmed_unpay">Выбрана онлайн-оплата. Оплати заказ в&#160;отведённое
         время, и&#160;всё будет готово. Или можешь изменить способ оплаты.

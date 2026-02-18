@@ -139,7 +139,11 @@ class MenuViewModel(
         viewModelScope.launch {
             val menuItems = state.value.menuItems
             val targetIndex = findMenuItemIndex(banner, menuItems)
-            setState { copy(selectedMenuItemIndex = targetIndex) }
+            setState {
+                copy(
+                    selectedMenuItemIndex = targetIndex + 1
+                )
+            } // Добавленн оффсет 1, чтобы искомый элемент был не внизу экрана
         }
     }
 
@@ -163,8 +167,7 @@ class MenuViewModel(
     private fun getBanners() {
         viewModelScope.launch {
             setState { copy(bannersAreLoading = true) }
-            val result = getBannersUseCase()
-            when (result) {
+            when (val result = getBannersUseCase()) {
                 is Success -> {
                     val banners = result.data ?: emptyList()
                     setState { copy(banners = banners, bannersAreLoading = false) }
@@ -179,8 +182,7 @@ class MenuViewModel(
 
     private fun getAnnouncements() {
         viewModelScope.launch {
-            val result = getAnnouncementsUseCase()
-            when (result) {
+            when (val result = getAnnouncementsUseCase()) {
                 is Success -> {
                     val announcements = result.data ?: emptyList()
                     setState { copy(announcements = announcements) }
@@ -255,8 +257,7 @@ class MenuViewModel(
      * Загрузка активных заказов (максимум 3)
      */
     private suspend fun loadActiveOrders() {
-        val result = ordersHistoryInteractor.getHistory()
-        when (result) {
+        when (val result = ordersHistoryInteractor.getHistory()) {
             is Success -> {
                 val allOrders = result.data ?: emptyList()
                 val activeOrders = allOrders
