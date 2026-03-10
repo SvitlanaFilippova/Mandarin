@@ -13,7 +13,8 @@ val addressPlatformModule = module {
     singleOf(::FusedLocationRepositoryImpl) { bind<FusedLocationRepository>() }
     single<AddressRepository> {
         AddressRepositoryImpl(
-            coroutineScope = get()
+            coroutineScope = get(),
+            networkMonitor = get()
         )
     }
 }

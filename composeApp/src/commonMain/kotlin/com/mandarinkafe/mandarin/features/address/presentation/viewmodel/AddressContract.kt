@@ -30,6 +30,7 @@ sealed interface AddressContract {
     sealed interface AddressEffect : BaseContract.BaseEffect {
         data object GoBack : AddressEffect
         data class GoToAddressDetailsEffect(val address: Address) : AddressEffect
+        data class ShowSnackbar(val message: String) : AddressEffect
     }
 
     data class AddressState(

@@ -13,6 +13,7 @@ import YandexMapKit.YMKSearchSession
 import YandexMapKit.YMKSearchTypeBiz
 import YandexMapKit.YMKSearchTypeGeo
 import YandexMapKit.sharedInstance
+import com.mandarinkafe.mandarin.core.data.network.NetworkMonitor
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.data.Mapper.toAddressSearchResult
 import com.mandarinkafe.mandarin.features.address.data.Mapper.toYandexPoint
@@ -33,6 +34,7 @@ import platform.Foundation.setValue
 @OptIn(ExperimentalForeignApi::class)
 class AddressRepositoryImpl(
     private val coroutineScope: CoroutineScope,
+    private val networkMonitor: NetworkMonitor,
 ) : AddressRepository {
     private val searchManager: YMKSearchManager by lazy {
         YMKMapKit.sharedInstance()
@@ -55,6 +57,8 @@ class AddressRepositoryImpl(
 
     // --- Поиск по строке ---
     override suspend fun searchAddressByString(query: String, point: GeoPoint) {
+        if (!checkIfNetworkOk()) return
+
         coroutineScope.launch {
             _addressListFlow.emit(Resource.Loading())
         }
@@ -103,6 +107,8 @@ class AddressRepositoryImpl(
     }
 
     override suspend fun getAddressFromPoint(point: GeoPoint) {
+        if (!checkIfNetworkOk()) return
+
         coroutineScope.launch {
             _addressStringFlow.emit(Resource.Loading())
         }
@@ -167,6 +173,15 @@ class AddressRepositoryImpl(
         options.setSearchTypes(YMKSearchTypeBiz or YMKSearchTypeGeo)
         userPosition?.let { options.setUserPosition(it) }
         return options
+    }
+
+    private fun checkIfNetworkOk(): Boolean {
+        if (!networkMonitor.isNetworkAvailable()) {
+            coroutineScope.launch {
+                _addressListFlow.emit(Resource.ErrorNoInternet())
+            }
+            return true
+        } else return false
     }
 
     private companion object {

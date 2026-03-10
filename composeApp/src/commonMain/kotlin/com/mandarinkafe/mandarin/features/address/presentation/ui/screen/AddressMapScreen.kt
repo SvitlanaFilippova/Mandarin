@@ -226,6 +226,7 @@ fun AddressMapScreen(
     HandleAddressEffects(
         effectFlow = viewModel.effect,
         navController = navController,
+        snackbarHostState = snackbarHostState,
         returnToRoute = returnToRoute
     )
 

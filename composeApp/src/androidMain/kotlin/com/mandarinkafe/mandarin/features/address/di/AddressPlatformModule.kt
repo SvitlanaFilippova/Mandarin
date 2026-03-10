@@ -40,7 +40,8 @@ val addressPlatformModule = module {
     single {
         AddressRepositoryImpl(
             searchManager = get(),
-            coroutineScope = get()
+            coroutineScope = get(),
+            networkMonitor = get(),
         )
     }.bind<AddressRepository>()
 
