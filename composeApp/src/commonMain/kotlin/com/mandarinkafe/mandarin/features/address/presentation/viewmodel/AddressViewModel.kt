@@ -252,7 +252,9 @@ class AddressViewModel(
     private fun showError(errorText: String? = null) {
         val finalErrorText = if (errorText != null) {
             "Не удалось определить адрес: $errorText"
-        } else "Не удалось определить адрес"
+        } else {
+            "Не удалось определить адрес"
+        }
 
         setState {
             copy(

@@ -127,12 +127,14 @@ class AddressRepositoryImpl(
     }
 
     private fun checkIfNetworkOk(): Boolean {
-        if (!networkMonitor.isNetworkAvailable()) {
+        return if (!networkMonitor.isNetworkAvailable()) {
             coroutineScope.launch {
                 _addressListFlow.emit(Resource.ErrorNoInternet())
             }
-            return true
-        } else return false
+            true
+        } else {
+            false
+        }
     }
 
     private companion object {
