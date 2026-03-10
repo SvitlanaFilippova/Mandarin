@@ -96,7 +96,14 @@ class AddressViewModel(
                     is Resource.Success -> {
                         setSearchResult(result.data)
                     }
-
+                    is Resource.ErrorNoInternet -> {
+                        setState {
+                            copy(
+                                searchError = MR.strings.error_no_internet,
+                                searchInProgress = false
+                            )
+                        }
+                    }
                     else -> {
                         setState {
                             copy(
@@ -203,7 +210,9 @@ class AddressViewModel(
                         }
                     }
 
-                    is Resource.ErrorNoInternet -> showError("Нет подключения к интернету")
+                    is Resource.ErrorNoInternet -> {
+                        showError("Нет подключения к интернету")
+                    }
 
                     is Resource.ErrorOther -> showError(result.message)
                     else -> {

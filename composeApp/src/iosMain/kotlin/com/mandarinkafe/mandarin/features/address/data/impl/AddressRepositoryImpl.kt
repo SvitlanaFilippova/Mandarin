@@ -46,29 +46,29 @@ class AddressRepositoryImpl(
     private var session: YMKSearchSession? = null
 
     private val _addressListFlow =
-        MutableSharedFlow<Resource<List<AddressSearchResult>>>(extraBufferCapacity = 1)
+        MutableSharedFlow<Resource<List<AddressSearchResult>>>()
     override val addressListFlow: Flow<Resource<List<AddressSearchResult>>> =
         _addressListFlow.asSharedFlow()
 
-    private val _addressStringFlow =
-        MutableSharedFlow<Resource<AddressSearchResult>>(extraBufferCapacity = 1)
+    private val _addressStringFlow = MutableSharedFlow<Resource<AddressSearchResult>>()
     override val addressStringFlow: Flow<Resource<AddressSearchResult>> =
         _addressStringFlow.asSharedFlow()
 
+
     // --- Поиск по строке ---
     override suspend fun searchAddressByString(query: String, point: GeoPoint) {
-        if (!checkIfNetworkOk()) return
-
-        coroutineScope.launch {
-            _addressListFlow.emit(Resource.Loading())
+        if (!networkMonitor.isNetworkAvailable()) {
+            _addressListFlow.emit(Resource.ErrorNoInternet())
+            return
         }
+
+        _addressListFlow.emit(Resource.Loading())
 
         val yPoint = point.toYandexPoint()
         val geometry = createGeometry(yPoint)
         val options = createSearchOptions(userPosition = yPoint)
 
         session?.cancel()
-
         session = searchManager.submitWithText(
             query,
             geometry,
@@ -107,11 +107,12 @@ class AddressRepositoryImpl(
     }
 
     override suspend fun getAddressFromPoint(point: GeoPoint) {
-        if (!checkIfNetworkOk()) return
-
-        coroutineScope.launch {
-            _addressStringFlow.emit(Resource.Loading())
+        if (!networkMonitor.isNetworkAvailable()) {
+            _addressStringFlow.emit(Resource.ErrorNoInternet())
+            return
         }
+
+        _addressStringFlow.emit(Resource.Loading())
 
         val yPoint = point.toYandexPoint()
         val options = YMKSearchOptions().apply {
@@ -159,31 +160,18 @@ class AddressRepositoryImpl(
     }
 
     private fun createGeometry(point: YMKPoint): YMKGeometry {
-        YMKGeometry()
         val geometry = YMKGeometry()
         geometry.setValue(point, forKey = "point")
         return geometry
     }
 
     private fun createSearchOptions(userPosition: YMKPoint?): YMKSearchOptions {
-        YMKSearchOptions()
         val options = YMKSearchOptions()
         options.setGeometry(true)
         options.setDisableSpellingCorrection(false)
         options.setSearchTypes(YMKSearchTypeBiz or YMKSearchTypeGeo)
         userPosition?.let { options.setUserPosition(it) }
         return options
-    }
-
-    private fun checkIfNetworkOk(): Boolean {
-        return if (!networkMonitor.isNetworkAvailable()) {
-            coroutineScope.launch {
-                _addressListFlow.emit(Resource.ErrorNoInternet())
-            }
-            true
-        } else {
-            false
-        }
     }
 
     private companion object {

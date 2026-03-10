@@ -38,7 +38,6 @@ class AddressRepositoryImpl(
     private val listenerForSearchByText = object : Session.SearchListener {
         override fun onSearchResponse(response: Response) {
             val geoObjects = response.collection.children.mapNotNull { it.obj }
-
             if (geoObjects.isNotEmpty()) {
                 coroutineScope.launch {
                     _addressListFlow.emit(Resource.Success(geoObjects.map { it.toAddressSearchResult() }))
@@ -58,15 +57,19 @@ class AddressRepositoryImpl(
     }
 
     override suspend fun searchAddressByString(query: String, point: GeoPoint) {
-        if (!checkIfNetworkOk()) return
+        if (!networkMonitor.isNetworkAvailable()) {
+            coroutineScope.launch {
+                _addressListFlow.emit(Resource.ErrorNoInternet())
+            }
+            return
+        }
 
         val yPoint = point.toYandexPoint()
         val geometry = Geometry.fromPoint(yPoint)
         val searchOptions = SearchOptions()
 
-        coroutineScope.launch {
-            _addressListFlow.emit(Resource.Loading())
-        }
+        _addressListFlow.emit(Resource.Loading())
+
 
         withContext(Dispatchers.Main) {
             session?.cancel()
@@ -103,37 +106,26 @@ class AddressRepositoryImpl(
     }
 
     override suspend fun getAddressFromPoint(point: GeoPoint) {
-        if (!checkIfNetworkOk()) return
+        if (!networkMonitor.isNetworkAvailable()) {
+            coroutineScope.launch {
+                _addressStringFlow.emit(Resource.ErrorNoInternet())
+            }
+            return
+        }
 
         val yPoint = point.toYandexPoint()
         val searchOptions = SearchOptions()
 
-        coroutineScope.launch {
-            _addressStringFlow.emit(Resource.Loading())
-        }
+        _addressStringFlow.emit(Resource.Loading())
 
         withContext(Dispatchers.Main) {
-            val previousSession = session
-            session = null
-            previousSession?.cancel()
-
+            session?.cancel()
             session = searchManager.submit(
                 yPoint,
                 DEFAULT_ZOOM_FOR_SEARCH,
                 searchOptions,
                 listener
             )
-        }
-    }
-
-    private fun checkIfNetworkOk(): Boolean {
-        return if (!networkMonitor.isNetworkAvailable()) {
-            coroutineScope.launch {
-                _addressListFlow.emit(Resource.ErrorNoInternet())
-            }
-            true
-        } else {
-            false
         }
     }
 

@@ -48,6 +48,6 @@ sealed interface AddressContract {
         val searchResults: List<AddressSearchResult> = listOf(),
     ) : BaseContract.BaseState {
         val locationChosen: Boolean
-            get() = displayAddress?.isNotEmpty() == true && error == null && !searchInProgress && !fetchAddressInProgress
+            get() = displayAddress?.isNotEmpty() == true && error == null && searchError == null && !searchInProgress && !fetchAddressInProgress
     }
 }
