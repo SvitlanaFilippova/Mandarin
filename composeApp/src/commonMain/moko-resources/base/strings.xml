@@ -383,9 +383,14 @@
     <string name="delivery_status_extra_cooking_completed">Блюда готовы. Скоро курьер получит
         заказ.
     </string>
+    <string name="delivery_status_extra_cooking_completed_selfpickup">Блюда готовы. Сейчас только
+        упакуем и&#160;можно будет забирать!
+    </string>
     <string name="delivery_status_waiting">Упакован</string>
     <string name="delivery_status_extra_waiting">Ожидаем курьера. Это может занять несколько
         минут.
+    </string>
+    <string name="delivery_status_extra_waiting_selfpickup">Заказ уже готов. Можно забирать!
     </string>
     <string name="delivery_status_on_way">В пути</string>
     <string name="delivery_status_extra_on_way">Курьер уже забрал заказ и&#160;выдвинулся в&#160;путь.</string>

@@ -13,6 +13,7 @@ import YandexMapKit.YMKSearchSession
 import YandexMapKit.YMKSearchTypeBiz
 import YandexMapKit.YMKSearchTypeGeo
 import YandexMapKit.sharedInstance
+import com.mandarinkafe.mandarin.core.data.network.NetworkMonitor
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.data.Mapper.toAddressSearchResult
 import com.mandarinkafe.mandarin.features.address.data.Mapper.toYandexPoint
@@ -33,6 +34,7 @@ import platform.Foundation.setValue
 @OptIn(ExperimentalForeignApi::class)
 class AddressRepositoryImpl(
     private val coroutineScope: CoroutineScope,
+    private val networkMonitor: NetworkMonitor,
 ) : AddressRepository {
     private val searchManager: YMKSearchManager by lazy {
         YMKMapKit.sharedInstance()
@@ -44,27 +46,29 @@ class AddressRepositoryImpl(
     private var session: YMKSearchSession? = null
 
     private val _addressListFlow =
-        MutableSharedFlow<Resource<List<AddressSearchResult>>>(extraBufferCapacity = 1)
+        MutableSharedFlow<Resource<List<AddressSearchResult>>>()
     override val addressListFlow: Flow<Resource<List<AddressSearchResult>>> =
         _addressListFlow.asSharedFlow()
 
-    private val _addressStringFlow =
-        MutableSharedFlow<Resource<AddressSearchResult>>(extraBufferCapacity = 1)
+    private val _addressStringFlow = MutableSharedFlow<Resource<AddressSearchResult>>()
     override val addressStringFlow: Flow<Resource<AddressSearchResult>> =
         _addressStringFlow.asSharedFlow()
 
+
     // --- Поиск по строке ---
     override suspend fun searchAddressByString(query: String, point: GeoPoint) {
-        coroutineScope.launch {
-            _addressListFlow.emit(Resource.Loading())
+        if (!networkMonitor.isNetworkAvailable()) {
+            _addressListFlow.emit(Resource.ErrorNoInternet())
+            return
         }
+
+        _addressListFlow.emit(Resource.Loading())
 
         val yPoint = point.toYandexPoint()
         val geometry = createGeometry(yPoint)
         val options = createSearchOptions(userPosition = yPoint)
 
         session?.cancel()
-
         session = searchManager.submitWithText(
             query,
             geometry,
@@ -103,9 +107,12 @@ class AddressRepositoryImpl(
     }
 
     override suspend fun getAddressFromPoint(point: GeoPoint) {
-        coroutineScope.launch {
-            _addressStringFlow.emit(Resource.Loading())
+        if (!networkMonitor.isNetworkAvailable()) {
+            _addressStringFlow.emit(Resource.ErrorNoInternet())
+            return
         }
+
+        _addressStringFlow.emit(Resource.Loading())
 
         val yPoint = point.toYandexPoint()
         val options = YMKSearchOptions().apply {
@@ -153,14 +160,12 @@ class AddressRepositoryImpl(
     }
 
     private fun createGeometry(point: YMKPoint): YMKGeometry {
-        YMKGeometry()
         val geometry = YMKGeometry()
         geometry.setValue(point, forKey = "point")
         return geometry
     }
 
     private fun createSearchOptions(userPosition: YMKPoint?): YMKSearchOptions {
-        YMKSearchOptions()
         val options = YMKSearchOptions()
         options.setGeometry(true)
         options.setDisableSpellingCorrection(false)

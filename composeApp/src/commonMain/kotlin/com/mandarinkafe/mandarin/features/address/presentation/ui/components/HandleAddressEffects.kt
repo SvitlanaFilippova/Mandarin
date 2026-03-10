@@ -1,5 +1,7 @@
 package com.mandarinkafe.mandarin.features.address.presentation.ui.components
 
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
@@ -12,6 +14,7 @@ fun HandleAddressEffects(
     effectFlow: Flow<AddressEffect>,
     navController: NavController,
     returnToRoute: String,
+    snackbarHostState: SnackbarHostState,
 ) {
     LaunchedEffect(effectFlow) {
         effectFlow.collect { effect ->
@@ -22,6 +25,13 @@ fun HandleAddressEffects(
                         address = effect.address,
                         isEditMode = false,
                         returnToRoute = returnToRoute,
+                    )
+                }
+                is AddressEffect.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = effect.message,
+                        duration = SnackbarDuration.Short,
+                        withDismissAction = true,
                     )
                 }
             }

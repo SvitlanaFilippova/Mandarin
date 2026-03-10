@@ -55,7 +55,8 @@ sealed interface OrderInfoContract {
     ) : BaseContract.BaseState {
 
         val deliveryStatus: UiDeliveryStatus
-            get() = incomingOrder?.status?.toUi() ?: UiDeliveryStatus.UNCONFIRMED
+            get() = incomingOrder?.status?.toUi(incomingOrder.isDelivery)
+                ?: UiDeliveryStatus.UNCONFIRMED
 
         val isOnlinePayment: Boolean
             get() = incomingOrder.isOnlinePayment(paymentMethodCodeFromNav)

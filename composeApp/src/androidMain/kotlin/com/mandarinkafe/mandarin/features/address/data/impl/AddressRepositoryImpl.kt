@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.address.data.impl
 
+import com.mandarinkafe.mandarin.core.data.network.NetworkMonitor
 import com.mandarinkafe.mandarin.core.domain.models.GeoPoint
 import com.mandarinkafe.mandarin.features.address.data.Mapper.toAddressSearchResult
 import com.mandarinkafe.mandarin.features.address.data.Mapper.toYandexPoint
@@ -22,6 +23,7 @@ import kotlinx.coroutines.withContext
 class AddressRepositoryImpl(
     private val searchManager: SearchManager,
     private val coroutineScope: CoroutineScope,
+    private val networkMonitor: NetworkMonitor,
 ) : AddressRepository {
     private var session: Session? = null
     private val _addressListFlow = MutableSharedFlow<Resource<List<AddressSearchResult>>>()
@@ -36,7 +38,6 @@ class AddressRepositoryImpl(
     private val listenerForSearchByText = object : Session.SearchListener {
         override fun onSearchResponse(response: Response) {
             val geoObjects = response.collection.children.mapNotNull { it.obj }
-
             if (geoObjects.isNotEmpty()) {
                 coroutineScope.launch {
                     _addressListFlow.emit(Resource.Success(geoObjects.map { it.toAddressSearchResult() }))
@@ -56,13 +57,19 @@ class AddressRepositoryImpl(
     }
 
     override suspend fun searchAddressByString(query: String, point: GeoPoint) {
+        if (!networkMonitor.isNetworkAvailable()) {
+            coroutineScope.launch {
+                _addressListFlow.emit(Resource.ErrorNoInternet())
+            }
+            return
+        }
+
         val yPoint = point.toYandexPoint()
         val geometry = Geometry.fromPoint(yPoint)
         val searchOptions = SearchOptions()
 
-        coroutineScope.launch {
-            _addressListFlow.emit(Resource.Loading())
-        }
+        _addressListFlow.emit(Resource.Loading())
+
 
         withContext(Dispatchers.Main) {
             session?.cancel()
@@ -78,11 +85,6 @@ class AddressRepositoryImpl(
     // Слушатель для обратного геокодинга
     private val listener = object : Session.SearchListener {
         override fun onSearchResponse(response: Response) {
-            val currentSession = session
-            if (currentSession == null) {
-                return
-            }
-
             val geoObj = response.collection.children.firstOrNull()?.obj
             if (geoObj != null) {
                 val result = geoObj.toAddressSearchResult()
@@ -97,11 +99,6 @@ class AddressRepositoryImpl(
         }
 
         override fun onSearchError(error: Error) {
-            val currentSession = session
-            if (currentSession == null) {
-                return
-            }
-
             coroutineScope.launch {
                 _addressStringFlow.emit(Resource.ErrorOther(error.toString()))
             }
@@ -109,18 +106,20 @@ class AddressRepositoryImpl(
     }
 
     override suspend fun getAddressFromPoint(point: GeoPoint) {
+        if (!networkMonitor.isNetworkAvailable()) {
+            coroutineScope.launch {
+                _addressStringFlow.emit(Resource.ErrorNoInternet())
+            }
+            return
+        }
+
         val yPoint = point.toYandexPoint()
         val searchOptions = SearchOptions()
 
-        coroutineScope.launch {
-            _addressStringFlow.emit(Resource.Loading())
-        }
+        _addressStringFlow.emit(Resource.Loading())
 
         withContext(Dispatchers.Main) {
-            val previousSession = session
-            session = null
-            previousSession?.cancel()
-
+            session?.cancel()
             session = searchManager.submit(
                 yPoint,
                 DEFAULT_ZOOM_FOR_SEARCH,

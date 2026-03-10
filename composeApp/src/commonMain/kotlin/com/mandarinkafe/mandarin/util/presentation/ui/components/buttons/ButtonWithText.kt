@@ -21,18 +21,8 @@ fun ButtonWithText(
     onClick: () -> Unit,
     containerColor: Color = Colors.Orange,
     contentColor: Color = Colors.White,
+    disabledContainerColor: Color = Colors.LightGrey.copy(alpha = 0.8f),
 ) {
-    val contentColor = if (shouldBeActive) {
-        contentColor
-    } else {
-        contentColor
-    }
-    val containerColorFinal = if (shouldBeActive) {
-        containerColor
-    } else {
-        Colors.LightGrey.copy(alpha = 0.6f)
-    }
-
     val onClickAction = when {
         !shouldBeActive -> onMissingRequiredInfo
         else -> onClick
@@ -45,8 +35,9 @@ fun ButtonWithText(
         enabled = shouldBeActive,
         shape = RoundedCornerShape(Dimens.CornerRadius8),
         colors = ButtonDefaults.buttonColors(
-            containerColor = containerColorFinal,
-            contentColor = contentColor
+            containerColor = containerColor,
+            contentColor = contentColor,
+            disabledContainerColor = disabledContainerColor
         ),
     ) {
         Text(

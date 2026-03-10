@@ -96,7 +96,14 @@ class AddressViewModel(
                     is Resource.Success -> {
                         setSearchResult(result.data)
                     }
-
+                    is Resource.ErrorNoInternet -> {
+                        setState {
+                            copy(
+                                searchError = MR.strings.error_no_internet,
+                                searchInProgress = false
+                            )
+                        }
+                    }
                     else -> {
                         setState {
                             copy(
@@ -197,25 +204,19 @@ class AddressViewModel(
                                     error = null,
                                 )
                             }
+
                         } else {
-                            setState {
-                                copy(
-                                    error = "Не удалось определить адрес",
-                                    fetchAddressInProgress = false,
-                                    displayAddress = null
-                                )
-                            }
+                            showError(result.message)
                         }
                     }
 
+                    is Resource.ErrorNoInternet -> {
+                        showError("Нет подключения к интернету")
+                    }
+
+                    is Resource.ErrorOther -> showError(result.message)
                     else -> {
-                        setState {
-                            copy(
-                                error = "Не удалось определить адрес",
-                                fetchAddressInProgress = false,
-                                displayAddress = null
-                            )
-                        }
+                        showError()
                     }
                 }
             }
@@ -254,7 +255,24 @@ class AddressViewModel(
     }
 
     override fun setLoading(isLoading: Boolean) {
-        setState { copy(fetchAddressInProgress = true, error = null, displayAddress = null) }
+        setState { copy(fetchAddressInProgress = true, error = null) }
+    }
+
+    private fun showError(errorText: String? = null) {
+        val finalErrorText = if (errorText != null) {
+            "Не удалось определить адрес: $errorText"
+        } else {
+            "Не удалось определить адрес"
+        }
+
+        setState {
+            copy(
+                error = finalErrorText,
+                fetchAddressInProgress = false,
+                displayAddress = null
+            )
+        }
+        sendEffect(AddressEffect.ShowSnackbar(finalErrorText))
     }
 
     private companion object {

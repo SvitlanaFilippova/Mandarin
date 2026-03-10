@@ -30,6 +30,7 @@ sealed interface AddressContract {
     sealed interface AddressEffect : BaseContract.BaseEffect {
         data object GoBack : AddressEffect
         data class GoToAddressDetailsEffect(val address: Address) : AddressEffect
+        data class ShowSnackbar(val message: String) : AddressEffect
     }
 
     data class AddressState(
@@ -47,6 +48,6 @@ sealed interface AddressContract {
         val searchResults: List<AddressSearchResult> = listOf(),
     ) : BaseContract.BaseState {
         val locationChosen: Boolean
-            get() = displayAddress?.isNotEmpty() == true && error == null && !searchInProgress && !fetchAddressInProgress
+            get() = displayAddress?.isNotEmpty() == true && error == null && searchError == null && !searchInProgress && !fetchAddressInProgress
     }
 }
