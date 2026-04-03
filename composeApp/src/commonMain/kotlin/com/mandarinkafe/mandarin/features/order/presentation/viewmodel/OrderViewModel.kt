@@ -3,7 +3,6 @@ package com.mandarinkafe.mandarin.features.order.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.Address
-import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.account.domain.api.UserInfoRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.OrderAcceptStatusRepository
@@ -12,14 +11,11 @@ import com.mandarinkafe.mandarin.features.order.domain.api.PickupOnlyRemoveUseCa
 import com.mandarinkafe.mandarin.features.order.domain.api.SaveOrderToHistoryUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.Utensil
-import com.mandarinkafe.mandarin.features.order.presentation.mapper.toDomain
 import com.mandarinkafe.mandarin.features.order.presentation.models.UiPaymentType
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.AddNewAddress
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.EditAddress
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowMessage
-import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowOrderClosingDialog
-import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowSuccess
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.helpers.CartObserver
@@ -31,14 +27,9 @@ import com.mandarinkafe.mandarin.features.savedadresses.domain.CartContentUseCas
 import com.mandarinkafe.mandarin.features.savedadresses.domain.OrderInfoUseCases
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Resource
-import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
-import com.mandarinkafe.mandarin.util.formatPhoneNumberForSdk
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import dev.icerock.moko.resources.StringResource
-import io.github.aakira.napier.Napier
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 
 class OrderViewModel(
     private val cartUseCases: CartContentUseCases,
@@ -57,6 +48,35 @@ class OrderViewModel(
         observeCartItems = cartUseCases.observeCartItems,
         resolvePickupPoint = cartUseCases.resolvePickupPoint,
         recalculateCartSummary = ::recalculateCartSummary
+    )
+
+    private val orderUserInfo = OrderViewModelUserInfo(
+        scope = viewModelScope,
+        userInfoRepository = userInfoRepository,
+        authRepository = authRepository,
+        getState = { state.value },
+        setState = { setState(it) },
+        onPhoneChangedDiscount = ::checkDiscount,
+    )
+
+    private val submitFlow = OrderViewModelSubmitFlow(
+        OrderSubmitFlowDependencies(
+            scope = viewModelScope,
+            orderAcceptStatusRepository = orderAcceptStatusRepository,
+            infoUseCases = infoUseCases,
+            cartUseCases = cartUseCases,
+            orderCreator = orderCreator,
+            saveOrderToHistory = saveOrderToHistory,
+            getState = { state.value },
+            setState = { setState(it) },
+            setLoading = ::setLoading,
+            sendEffect = ::sendEffect,
+            sendErrorEffect = ::sendErrorEffect,
+            clearState = ::clearState,
+            onRefreshUserInfoAfterOrder = { orderUserInfo.getSavedUserInfo() },
+            saveUserName = { orderUserInfo.saveUserName() },
+            showMissingRequiredInfo = ::showMissingRequiredInfo,
+        ),
     )
 
     init {
@@ -84,8 +104,8 @@ class OrderViewModel(
             is OrderEvent.RemoveAddress -> removeSavedAddress(event.id)
             is OrderEvent.SelectAddressById -> selectAddressById(event.id)
             is OrderEvent.OnMissingRequiredInfo -> showMissingRequiredInfo()
-            is OrderEvent.SubmitOrder -> checkIfOrderCanBeSubmitted()
-            is OrderEvent.OrderClosingDialogConfirm -> proceedTerminalThenSubmitOrder()
+            is OrderEvent.SubmitOrder -> submitFlow.checkIfOrderCanBeSubmitted()
+            is OrderEvent.OrderClosingDialogConfirm -> submitFlow.proceedTerminalThenSubmitOrder()
             is OrderEvent.OrderClosingDialogDismiss -> Unit
             is OrderEvent.StopObservingStatus -> orderCreator.stopObserving()
             is OrderEvent.ToggleSaveUserInfo -> toggleSaveUserInfo(event.checked)
@@ -96,7 +116,7 @@ class OrderViewModel(
     private fun getInitData() {
         getPaymentTypes()
         getSavedAddresses()
-        getSavedUserInfo()
+        orderUserInfo.getSavedUserInfo()
     }
 
     private fun removePickupOnly() {
@@ -130,136 +150,6 @@ class OrderViewModel(
 
     private fun toggleSaveUserInfo(checked: Boolean) {
         setState { copy(shouldSaveUserName = checked) }
-    }
-
-    private fun getSavedUserInfo() {
-        viewModelScope.launch {
-            val initialInfo = loadInitialUserInfo()
-            processInitialUserInfo(initialInfo)
-
-            var previousPhone: String? = initialInfo?.phone?.formatPhoneNumberForDomain()
-            var isFirstLoad = initialInfo == null
-
-            userInfoRepository.userInfo.collect { userInfo ->
-                if (isFirstLoad) {
-                    isFirstLoad = false
-                    return@collect
-                }
-
-                userInfo?.let {
-                    previousPhone = processUserInfoUpdate(it, previousPhone)
-                }
-            }
-        }
-    }
-
-    private suspend fun loadInitialUserInfo(): com.mandarinkafe.mandarin.core.domain.models.UserInfo? {
-        return withTimeoutOrNull(Constants.USER_DATA_WAIT_TIMEOUT) {
-            userInfoRepository.userInfo.first { it != null }
-        } ?: run {
-            Napier.w("OrderViewModel: Timeout waiting for user info")
-            null
-        }
-    }
-
-    private fun processInitialUserInfo(initialInfo: com.mandarinkafe.mandarin.core.domain.models.UserInfo?) {
-        if (initialInfo == null) return
-
-        val nameToSet =
-            calculateNameToSet(state.value.userInfo.name.trim(), initialInfo.name.trim())
-        val formattedPhone = initialInfo.phone.formatPhoneNumberForDomain()
-
-        setState {
-            copy(
-                userInfo = this.userInfo.copy(
-                    name = nameToSet,
-                    phone = formattedPhone,
-                ),
-                savedNameIsEmpty = initialInfo.name.trim().isEmpty(),
-            )
-        }
-
-        checkDiscount(formattedPhone)
-    }
-
-    private fun processUserInfoUpdate(
-        userInfo: com.mandarinkafe.mandarin.core.domain.models.UserInfo,
-        previousPhone: String?,
-    ): String {
-        val newPhone = userInfo.phone.formatPhoneNumberForDomain()
-        val phoneChanged = previousPhone != newPhone
-        val nameToSet = calculateNameToSet(state.value.userInfo.name.trim(), userInfo.name.trim())
-
-        setState {
-            copy(
-                userInfo = this.userInfo.copy(
-                    name = nameToSet,
-                    phone = newPhone,
-                ),
-                savedNameIsEmpty = userInfo.name.trim().isEmpty(),
-            )
-        }
-
-        if (phoneChanged) {
-            checkDiscount(newPhone)
-        }
-
-        return newPhone
-    }
-
-    private fun calculateNameToSet(currentName: String, savedName: String): String {
-        // Не перезаписываем имя пустым значением, если пользователь уже ввел имя
-        return if (currentName.isNotEmpty() && savedName.isEmpty()) {
-            currentName
-        } else {
-            savedName
-        }
-    }
-
-    private fun saveUserName() {
-        viewModelScope.launch {
-            val currentUserInfo = userInfoRepository.getUserInfo()
-            val enteredName = state.value.userInfo.name.trim()
-
-            // Проверяем, что имя не пустое после trim
-            if (enteredName.isBlank()) {
-                Napier.w("OrderViewModel: Cannot save empty name")
-                return@launch
-            }
-
-            // Обновляем имя на сервере, если оно было пустое или изменилось
-            val hasValidUserInfo = currentUserInfo != null
-            val isNameEmptyOrChanged = hasValidUserInfo &&
-                    (currentUserInfo.name.trim()
-                        .isBlank() || currentUserInfo.name.trim() != enteredName)
-            val shouldUpdateName = hasValidUserInfo && isNameEmptyOrChanged
-
-            if (shouldUpdateName) {
-                // Получаем access token
-                val accessToken = authRepository.getAccessToken()
-                if (accessToken != null) {
-                    when (val result = userInfoRepository.updateName(accessToken, enteredName)) {
-                        is Resource.Success -> {
-                            Napier.d("OrderViewModel: Name saved successfully")
-                        }
-
-                        is Resource.ErrorNoInternet -> {
-                            Napier.w("OrderViewModel: No internet connection, name not saved")
-                            // Не показываем ошибку пользователю, так как заказ уже создан
-                        }
-
-                        is Resource.ErrorOther -> {
-                            Napier.e("OrderViewModel: Failed to save name: ${result.message}")
-                            // Не показываем ошибку пользователю, так как заказ уже создан
-                        }
-
-                        else -> {}
-                    }
-                } else {
-                    Napier.w("OrderViewModel: No access token, can't update name")
-                }
-            }
-        }
     }
 
     private fun selectAddressById(id: String) {
@@ -528,138 +418,6 @@ class OrderViewModel(
 
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
-    }
-
-    private fun checkIfOrderCanBeSubmitted() {
-        viewModelScope.launch {
-            setLoading()
-            val snapshot = orderAcceptStatusRepository.fetchOrderAcceptStatusFresh()
-            if (!snapshot.isAcceptingOrders) {
-                setLoading(false)
-                sendEffect(
-                    ShowOrderClosingDialog(
-                        isClosedForWholeDay = snapshot.isClosedForWholeDay,
-                        closingTime = if (snapshot.isClosedForWholeDay) {
-                            null
-                        } else {
-                            snapshot.closingTimeOrPlaceholder()
-                        },
-                    ),
-                )
-                return@launch
-            }
-            proceedTerminalThenSubmitOrder()
-        }
-    }
-
-    private fun proceedTerminalThenSubmitOrder() {
-        viewModelScope.launch {
-            setLoading()
-            when (val terminalResponse = infoUseCases.checkIfTerminalIsAlive()) {
-                is Resource.Success -> {
-                    if (terminalResponse.data == true) {
-                        submitOrder()
-                    } else {
-                        setLoading(false)
-                        sendErrorEffect(
-                            MR.strings.error_terminal_unavailable
-                        )
-                    }
-                }
-
-                is Resource.ErrorNoInternet -> {
-                    setLoading(false)
-                    sendErrorEffect(MR.strings.error_no_internet)
-                }
-
-                else -> {
-                    setLoading(false)
-                    sendErrorEffect(MR.strings.error_unknown)
-                }
-            }
-        }
-    }
-
-    private fun submitOrder() {
-        val minAmountForOnlinePayment = 1.0
-        val currentState = state.value
-
-        // Проверка обязательных полей: имя должно быть заполнено
-        if (!currentState.isNameValid) {
-            showMissingRequiredInfo()
-            return
-        }
-
-        // Финальная проверка: запрещаем онлайн-оплату для заказов меньше 1 рубля
-        if (currentState.paymentInfo.chosenPaymentType == UiPaymentType.ONLINE &&
-            currentState.totalOrderSum < minAmountForOnlinePayment
-        ) {
-            sendErrorEffect(MR.strings.error_online_payment_minimum_amount)
-            // Сбрасываем выбор оплаты
-            setState {
-                copy(paymentInfo = paymentInfo.copy(chosenPaymentType = null))
-            }
-            return
-        }
-
-        if (currentState.shouldSaveUserName) saveUserName()
-        viewModelScope.launch {
-            setLoading()
-            val order = currentState.toDomain(
-                paymentType = currentState.paymentInfo.chosenPaymentTypeDomain
-            )
-
-            // Проверка: заказ не должен быть пустым
-            if (order.items.isEmpty()) {
-                sendErrorEffect(MR.strings.error_cart_empty_on_order)
-                setLoading(false)
-                return@launch
-            }
-
-            orderCreator.submit(
-                scope = viewModelScope,
-                order = order,
-                onSuccess = ::onSuccessOrderCreation,
-                onError = ::sendErrorEffect,
-                onLoading = ::setLoading
-            )
-        }
-    }
-
-    private fun onSuccessOrderCreation(order: IncomingOrder) {
-        // Сохраняем выбранный тип оплаты ДО clearState, так как clearState сбрасывает состояние
-        val savedChosenPaymentType = state.value.paymentInfo.chosenPaymentType
-        val savedUserPhone = state.value.userInfo.phone
-
-        clearState()
-
-        // Очищаем корзину сразу после создания заказа
-        viewModelScope.launch {
-            cartUseCases.clearCart()
-            // В момент создания заказа iiko не возвращает paymentMethodCode
-            // Используем код из выбранного типа оплаты для сохранения в историю
-            // Сервер потом сам добавит paymentMethodCode при получении заказа
-            val paymentMethodCode = savedChosenPaymentType?.code
-            saveOrderToHistory(order, paymentMethodCode)
-        }
-
-        // Если выбрана онлайн-оплата, запускаем процесс оплаты
-        val paymentMethodCode = savedChosenPaymentType?.code
-        if (savedChosenPaymentType == UiPaymentType.ONLINE) {
-            val userPhone = savedUserPhone.formatPhoneNumberForSdk()
-            sendEffect(
-                OrderEffect.StartOnlinePayment(
-                    order.id,
-                    order.sum ?: 0.0,
-                    userPhone,
-                    paymentMethodCode
-                )
-            )
-        } else {
-            // Для других способов оплаты - обычный флоу
-            sendEffect(ShowSuccess(order.id, paymentMethodCode))
-        }
-        getSavedUserInfo()
     }
 
     private fun sendErrorEffect(msg: StringResource, details: String? = null) {

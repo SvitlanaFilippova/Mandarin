@@ -6,18 +6,21 @@ import com.mandarinkafe.mandarin.features.menu.domain.models.OrderAcceptStatusSn
 import com.mandarinkafe.mandarin.util.Constants.ORDER_ACCEPT_ENDING_SOON_THRESHOLD_MS
 import com.mandarinkafe.mandarin.util.Constants.ORDER_ACCEPT_LOCAL_TIME_ZONE_ID
 import io.github.aakira.napier.Napier
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Instant
 
 /**
  * Баннер на главной: «осталось меньше порога до orderAcceptanceEndTime», пока заказы ещё принимаются.
  * Не используется в корзине при переходе к оформлению.
  */
 object OrderAcceptBannerUrgency {
+
+    private const val LAST_HOUR_OF_DAY = 23
+    private const val LAST_MINUTE_OF_HOUR = 59
 
     fun shouldShowEndingSoonBanner(
         snapshot: OrderAcceptStatusSnapshot,
@@ -54,7 +57,7 @@ object OrderAcceptBannerUrgency {
         if (parts.size != 2) return null
         val h = parts[0].toIntOrNull() ?: return null
         val m = parts[1].toIntOrNull() ?: return null
-        if (h !in 0..23 || m !in 0..59) return null
+        if (h !in 0..LAST_HOUR_OF_DAY || m !in 0..LAST_MINUTE_OF_HOUR) return null
         return h to m
     }
 }

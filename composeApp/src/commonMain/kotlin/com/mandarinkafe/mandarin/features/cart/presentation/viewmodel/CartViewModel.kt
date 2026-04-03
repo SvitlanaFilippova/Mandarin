@@ -26,6 +26,7 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.api.OrderAcceptStatusRepository
+import com.mandarinkafe.mandarin.features.menu.domain.models.closingTimeOrPlaceholder
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
 import com.mandarinkafe.mandarin.util.Resource.ErrorNoInternet
