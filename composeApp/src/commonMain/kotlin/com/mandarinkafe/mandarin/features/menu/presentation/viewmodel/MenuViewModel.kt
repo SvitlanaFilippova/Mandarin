@@ -6,13 +6,16 @@ import com.mandarinkafe.mandarin.core.domain.api.ForceRefreshMenuUseCase
 import com.mandarinkafe.mandarin.core.domain.models.MealCategory
 import com.mandarinkafe.mandarin.core.presentation.models.UiError
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
+import com.mandarinkafe.mandarin.features.menu.domain.OrderAcceptBannerUrgency
 import com.mandarinkafe.mandarin.features.menu.domain.api.AnnouncementsRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.GetAnnouncementsUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.api.GetBannersUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuInteractor
+import com.mandarinkafe.mandarin.features.menu.domain.api.OrderAcceptStatusRepository
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.mappers.MenuItemMapper.menuToMenuItems
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
+import com.mandarinkafe.mandarin.features.menu.presentation.models.OrderClosingBannerUi
 import com.mandarinkafe.mandarin.features.menu.presentation.models.extensions.getName
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEffect
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuContract.MenuEvent
@@ -39,6 +42,7 @@ class MenuViewModel(
     private val getBannersUseCase: GetBannersUseCase,
     private val getAnnouncementsUseCase: GetAnnouncementsUseCase,
     private val announcementsRepository: AnnouncementsRepository,
+    private val orderAcceptStatusRepository: OrderAcceptStatusRepository,
     private val forceRefreshMenu: ForceRefreshMenuUseCase,
     private val ordersHistoryInteractor: OrdersHistoryInteractor,
     private val authRepository: AuthRepository,
@@ -51,6 +55,7 @@ class MenuViewModel(
         loadMenu()
         getBanners()
         getAnnouncements()
+        getOrderAcceptStatusForMenu()
         observeFavorites()
         observeAuthState()
     }
@@ -72,6 +77,7 @@ class MenuViewModel(
             getBanners()
             // Принудительно обновляем объявления при форс рефреш
             refreshAnnouncements()
+            refreshOrderAcceptStatus()
             // Обновляем активные заказы
             loadActiveOrders()
         }
@@ -193,6 +199,43 @@ class MenuViewModel(
                     setState { copy(announcements = emptyList()) }
                 }
             }
+        }
+    }
+
+    private fun getOrderAcceptStatusForMenu() {
+        viewModelScope.launch {
+            when (val result = orderAcceptStatusRepository.getOrderAcceptStatus()) {
+                is Success -> {
+                    val snap = result.data
+                    val banner: OrderClosingBannerUi? = when {
+                        snap == null -> null
+                        !snap.isAcceptingOrders && snap.isClosedForWholeDay ->
+                            OrderClosingBannerUi.ClosedToday
+
+                        !snap.isAcceptingOrders && !snap.closingTime.isNullOrBlank() ->
+                            OrderClosingBannerUi.WithClosingTime(snap.closingTime.trim())
+
+                        snap.isAcceptingOrders &&
+                                OrderAcceptBannerUrgency.shouldShowEndingSoonBanner(snap) ->
+                            snap.orderAcceptanceEndTime
+                                ?.trim()
+                                ?.takeIf { it.isNotBlank() }
+                                ?.let { OrderClosingBannerUi.AcceptanceEndingSoon(it) }
+
+                        else -> null
+                    }
+                    setState { copy(orderClosingBanner = banner) }
+                }
+
+                else -> setState { copy(orderClosingBanner = null) }
+            }
+        }
+    }
+
+    private fun refreshOrderAcceptStatus() {
+        viewModelScope.launch {
+            orderAcceptStatusRepository.loadOrderAcceptStatus()
+            getOrderAcceptStatusForMenu()
         }
     }
 

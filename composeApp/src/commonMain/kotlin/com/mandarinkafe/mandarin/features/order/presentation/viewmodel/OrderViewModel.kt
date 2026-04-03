@@ -6,6 +6,7 @@ import com.mandarinkafe.mandarin.core.domain.models.Address
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.account.domain.api.UserInfoRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
+import com.mandarinkafe.mandarin.features.menu.domain.api.OrderAcceptStatusRepository
 import com.mandarinkafe.mandarin.features.order.domain.api.ApplyPhoneDiscountUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.PickupOnlyRemoveUseCase
 import com.mandarinkafe.mandarin.features.order.domain.api.SaveOrderToHistoryUseCase
@@ -17,6 +18,7 @@ import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderCont
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.AddNewAddress
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.EditAddress
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowMessage
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowOrderClosingDialog
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect.ShowSuccess
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderState
@@ -48,6 +50,7 @@ class OrderViewModel(
     private val saveOrderToHistory: SaveOrderToHistoryUseCase,
     private val userInfoRepository: UserInfoRepository,
     private val authRepository: AuthRepository,
+    private val orderAcceptStatusRepository: OrderAcceptStatusRepository,
 ) : BaseViewModel<OrderEvent, OrderEffect, OrderState>() {
 
     private val cartObserver = CartObserver(
@@ -82,6 +85,8 @@ class OrderViewModel(
             is OrderEvent.SelectAddressById -> selectAddressById(event.id)
             is OrderEvent.OnMissingRequiredInfo -> showMissingRequiredInfo()
             is OrderEvent.SubmitOrder -> checkIfOrderCanBeSubmitted()
+            is OrderEvent.OrderClosingDialogConfirm -> proceedTerminalThenSubmitOrder()
+            is OrderEvent.OrderClosingDialogDismiss -> Unit
             is OrderEvent.StopObservingStatus -> orderCreator.stopObserving()
             is OrderEvent.ToggleSaveUserInfo -> toggleSaveUserInfo(event.checked)
             is OrderEvent.RemovePickupOnly -> removePickupOnly()
@@ -286,7 +291,7 @@ class OrderViewModel(
     private fun removeSavedAddress(id: String) {
         viewModelScope.launch {
             addressUseCases.removeAddress(id)
-        getSavedAddresses()
+            getSavedAddresses()
         }
     }
 
@@ -528,11 +533,34 @@ class OrderViewModel(
     private fun checkIfOrderCanBeSubmitted() {
         viewModelScope.launch {
             setLoading()
+            val snapshot = orderAcceptStatusRepository.fetchOrderAcceptStatusFresh()
+            if (!snapshot.isAcceptingOrders) {
+                setLoading(false)
+                sendEffect(
+                    ShowOrderClosingDialog(
+                        isClosedForWholeDay = snapshot.isClosedForWholeDay,
+                        closingTime = if (snapshot.isClosedForWholeDay) {
+                            null
+                        } else {
+                            snapshot.closingTimeOrPlaceholder()
+                        },
+                    ),
+                )
+                return@launch
+            }
+            proceedTerminalThenSubmitOrder()
+        }
+    }
+
+    private fun proceedTerminalThenSubmitOrder() {
+        viewModelScope.launch {
+            setLoading()
             when (val terminalResponse = infoUseCases.checkIfTerminalIsAlive()) {
                 is Resource.Success -> {
                     if (terminalResponse.data == true) {
                         submitOrder()
                     } else {
+                        setLoading(false)
                         sendErrorEffect(
                             MR.strings.error_terminal_unavailable
                         )
@@ -540,10 +568,14 @@ class OrderViewModel(
                 }
 
                 is Resource.ErrorNoInternet -> {
+                    setLoading(false)
                     sendErrorEffect(MR.strings.error_no_internet)
                 }
 
-                else -> sendErrorEffect(MR.strings.error_unknown)
+                else -> {
+                    setLoading(false)
+                    sendErrorEffect(MR.strings.error_unknown)
+                }
             }
         }
     }

@@ -50,6 +50,8 @@ sealed interface OrderContract {
         data object RemovePickupOnly : OrderEvent
         data object OnMissingRequiredInfo : OrderEvent
         data object SubmitOrder : OrderEvent
+        data object OrderClosingDialogConfirm : OrderEvent
+        data object OrderClosingDialogDismiss : OrderEvent
         data object StopObservingStatus : OrderEvent
     }
 
@@ -74,6 +76,11 @@ sealed interface OrderContract {
         data class ShowMessage(
             val message: StringResource,
             val details: String? = null,
+        ) : OrderEffect
+
+        data class ShowOrderClosingDialog(
+            val isClosedForWholeDay: Boolean,
+            val closingTime: String?,
         ) : OrderEffect
     }
 

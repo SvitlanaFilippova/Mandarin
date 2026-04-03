@@ -3,6 +3,7 @@ package com.mandarinkafe.mandarin.features.menu.data.impl
 import com.mandarinkafe.mandarin.core.data.network.ServerNetworkClient
 import com.mandarinkafe.mandarin.features.menu.data.dto.AnnouncementsResponse
 import com.mandarinkafe.mandarin.features.menu.domain.api.AnnouncementsRepository
+import com.mandarinkafe.mandarin.util.Constants.MENU_REMOTE_CACHE_STALE_INTERVAL_MS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.applyTypography
@@ -78,7 +79,7 @@ class AnnouncementsRepositoryImpl(
         val timeSinceLastRefresh = now - lastRefreshTime
 
         // Обновляем только если прошло больше 5 минут с последнего обновления
-        if (timeSinceLastRefresh > REFRESH_INTERVAL_MS) {
+        if (timeSinceLastRefresh > MENU_REMOTE_CACHE_STALE_INTERVAL_MS) {
             return loadAnnouncements()
         }
 
@@ -127,8 +128,5 @@ class AnnouncementsRepositoryImpl(
         }
     }
 
-    private companion object {
-        const val REFRESH_INTERVAL_MS = 5 * 60 * 1000L // 5 минут
-    }
 }
 

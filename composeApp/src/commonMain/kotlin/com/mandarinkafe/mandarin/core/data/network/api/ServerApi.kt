@@ -8,6 +8,8 @@ import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymen
 import com.mandarinkafe.mandarin.features.menu.data.dto.AnnouncementsResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannersResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.ModifierGroupsResponse
+import com.mandarinkafe.mandarin.features.menu.data.dto.OrderAcceptStatusDto
+import com.mandarinkafe.mandarin.features.menu.data.dto.OrderAcceptStatusHttpResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.ServerMenuResponse
 import com.mandarinkafe.mandarin.features.more.data.dto.AppStoresResponse
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
@@ -57,6 +59,19 @@ class ServerApi(
             AnnouncementsResponse(data = announcementsList).apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("ServerApi: getAnnouncements(): ошибка получения объявлений", e)
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun getOrderAcceptStatus(): Response {
+        return try {
+            val payload: OrderAcceptStatusDto = client.get("/order-accept-status") {}.body()
+            OrderAcceptStatusHttpResponse(payload).apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Napier.e(
+                "ServerApi: getOrderAcceptStatus(): ошибка получения статуса приёма заказов",
+                e
+            )
             Response().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }

@@ -34,6 +34,9 @@ sealed interface CartContract {
 
         // Переход к оформлению заказа
         data object OnProceedOrderClick : CartEvent
+
+        data object OrderClosingDialogConfirm : CartEvent
+        data object OrderClosingDialogDismiss : CartEvent
     }
 
     sealed interface CartEffect : BaseContract.BaseEffect {
@@ -46,6 +49,10 @@ sealed interface CartContract {
 
         data object ShowClearCartConfirmDialog : CartEffect
 
+        data class ShowOrderClosingDialog(
+            val isClosedForWholeDay: Boolean,
+            val closingTime: String?,
+        ) : CartEffect
     }
 
     data class CartState(

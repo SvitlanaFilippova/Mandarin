@@ -25,6 +25,7 @@ import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.Sh
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.SharedEvent
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
+import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.OrderClosingInfoDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.screen.PlaceholderScreen
 import dev.icerock.moko.resources.StringResource
@@ -49,6 +50,11 @@ fun CartScreen(
     val onCartEvent = cartViewModel::onEvent
     val favorites by sharedViewModel.favoritesItemsFlow.collectAsState()
     var showClearCartDialog by remember { mutableStateOf(false) }
+    var pendingOrderClosingDialog by remember {
+        mutableStateOf<CartEffect.ShowOrderClosingDialog?>(
+            null
+        )
+    }
     val snackbarHostState = LocalSnackbarHostState.current
     var pendingSnackbarRes: StringResource? by remember { mutableStateOf(null) }
     var pendingShowToCart: Boolean by remember { mutableStateOf(false) }
@@ -140,6 +146,21 @@ fun CartScreen(
         }
     }
 
+    pendingOrderClosingDialog?.let { dlg ->
+        OrderClosingInfoDialog(
+            isClosedForWholeDay = dlg.isClosedForWholeDay,
+            closingTime = dlg.closingTime,
+            onScheduleAnotherDay = {
+                pendingOrderClosingDialog = null
+                onCartEvent(CartEvent.OrderClosingDialogConfirm)
+            },
+            onDismiss = {
+                pendingOrderClosingDialog = null
+                onCartEvent(CartEvent.OrderClosingDialogDismiss)
+            },
+        )
+    }
+
     // Диалог для подтверждения желания очистить корзину
     if (showClearCartDialog) {
         RemoveConfirmationDialog(
@@ -161,6 +182,7 @@ fun CartScreen(
                 when (effect) {
                     is CartEffect.ShowClearCartConfirmDialog -> showClearCartDialog = true
                     is CartEffect.ProceedOrder -> navController.navigateToOrder()
+                    is CartEffect.ShowOrderClosingDialog -> pendingOrderClosingDialog = effect
                     is CartEffect.ShowSnackbar -> {
                         pendingSnackbarRes = effect.message
                         pendingShowToCart = effect.showToCartButton

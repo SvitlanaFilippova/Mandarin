@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.SyncUserDataUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.api.AnnouncementsRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
+import com.mandarinkafe.mandarin.features.menu.domain.api.OrderAcceptStatusRepository
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +21,7 @@ class AppLifecycleManager(
     private val authRepository: AuthRepository,
     private val bannersRepository: BannersRepository,
     private val announcementsRepository: AnnouncementsRepository,
+    private val orderAcceptStatusRepository: OrderAcceptStatusRepository,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -32,6 +34,7 @@ class AppLifecycleManager(
                 // Обновляем баннеры и объявления при возврате из фона (только если устарели)
                 launch { bannersRepository.loadBanners() }
                 launch { announcementsRepository.loadAnnouncementsIfStale() }
+                launch { orderAcceptStatusRepository.loadOrderAcceptStatusIfStale() }
 
                 // Синхронизируем данные пользователя, если он авторизован
                 if (authRepository.isAuthorized()) {

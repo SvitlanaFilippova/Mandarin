@@ -122,6 +122,7 @@ fun MenuScreen(
                     selectedMenuItemIndex = state.selectedMenuItemIndex,
                     banners = banners,
                     sharedEffectFlow = sharedEffectFlow,
+                    orderClosingBanner = state.orderClosingBanner,
                     announcements = state.announcements,
                     activeOrders = state.activeOrders,
                     navController = navController
