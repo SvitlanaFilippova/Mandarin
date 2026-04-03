@@ -3,6 +3,9 @@ package com.mandarinkafe.mandarin.features.cart.presentation.components
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,14 +16,17 @@ import com.mandarinkafe.mandarin.core.domain.models.CartItem
 import com.mandarinkafe.mandarin.core.domain.models.isCustomizable
 import com.mandarinkafe.mandarin.core.domain.models.isCustomized
 import com.mandarinkafe.mandarin.core.domain.models.totalPrice
+import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.util.presentation.ui.components.UndoIndicator
+import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun PriceAndButtons(
     item: CartItem,
     itemInPendingDeletion: Boolean,
-    isHidden: Boolean,
+    outOfStock: Boolean,
     isInProgress: Boolean,
     deletionProgress: Float,
     contentColor: Color,
@@ -47,7 +53,7 @@ fun PriceAndButtons(
 
         // Кнопка "сделать вкуснее"/"редактировать"
         val canCustomize = meal.isCustomizable || meal.requireSelection
-        val isVisible = !itemInPendingDeletion && !isHidden
+        val isVisible = !itemInPendingDeletion && !outOfStock
         if (canCustomize && isVisible) {
             MealDetailsButton(
                 isCustomized = item.customizedMeal.isCustomized,
@@ -56,10 +62,31 @@ fun PriceAndButtons(
             )
         }
 
+        if (outOfStock) {
+            IconButton(
+                onClick = onRemoveFromCart
+            ) {
+                if (!itemInPendingDeletion) {
+                    Icon(
+                        modifier = Modifier.padding(Dimens.MarginSmall8),
+                        painter = painterResource(MR.images.ic_delete),
+                        tint = Color.White,
+                        contentDescription = stringResource(MR.strings.remove_from_cart),
+                    )
+                } else {
+                    UndoIndicator(
+                        progress = deletionProgress,
+                        onCancel = onDeletionCancel,
+                    )
+                }
+
+            }
+        }
+
         CartControlWithUndo(
             item = item,
             mealInPendingDeletion = itemInPendingDeletion,
-            isHidden = isHidden,
+            isHidden = outOfStock,
             isInProgress = isInProgress,
             deletionProgress = deletionProgress,
             onAddToCart = onAddToCart,

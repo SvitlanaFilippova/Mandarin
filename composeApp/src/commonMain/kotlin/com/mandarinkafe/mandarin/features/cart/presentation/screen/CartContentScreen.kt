@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.features.cart.presentation.screen
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -18,8 +19,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalDensity
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.CartItem
@@ -28,10 +31,12 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.cart.presentation.components.CartClearTextButton
-import com.mandarinkafe.mandarin.features.cart.presentation.components.CartItemCard
+import com.mandarinkafe.mandarin.features.cart.presentation.components.CartItemBaseInfo
+import com.mandarinkafe.mandarin.features.cart.presentation.components.PriceAndButtons
 import com.mandarinkafe.mandarin.features.cart.presentation.components.ProcessOrderButton
 import com.mandarinkafe.mandarin.features.cart.presentation.components.RecommendsSection
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
+import com.mandarinkafe.mandarin.util.Constants.ALPHA_50
 import com.mandarinkafe.mandarin.util.Constants.ANIMATION_DURATION_FAST
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -174,5 +179,72 @@ fun CartContentScreen(
                 )
             }
         }
+    }
+}
+
+/**
+ * Карточка позиции корзины (в том же файле, что и экран, чтобы избежать отдельного фасада *Kt при загрузке на Android).
+ */
+@Composable
+private fun CartItemCard(
+    modifier: Modifier,
+    item: CartItem,
+    itemInPendingDeletion: Boolean,
+    favorites: List<CustomizedMeal>,
+    isInProgress: Boolean,
+    deletionProgress: Float,
+    onToggleFavorite: (CustomizedMeal) -> Unit,
+    onShowFavoriteDialog: (CustomizedMeal) -> Unit,
+    onAddToCart: () -> Unit,
+    onRemoveFromCart: () -> Unit,
+    onMealDetailsClick: () -> Unit,
+    onDeletionCancel: () -> Unit,
+    onCommentAdded: (CartItem, String) -> Unit,
+) {
+    val outOfStock = item.customizedMeal.meal.isHidden
+
+    val contentColor =
+        remember(itemInPendingDeletion) { if (itemInPendingDeletion) Colors.LightGreyTransparent75 else Colors.White }
+    val baseModifier = modifier
+        .background(Colors.AppBlack)
+        .padding(horizontal = Dimens.MarginSmall8)
+
+    val finalModifier = if (!outOfStock) {
+        baseModifier.clickable(onClick = { onMealDetailsClick() })
+    } else {
+        baseModifier.alpha(ALPHA_50)
+    }
+
+    Column(modifier = finalModifier) {
+        CartItemBaseInfo(
+            item = item,
+            itemInPendingDeletion = itemInPendingDeletion,
+            favorites = favorites,
+            contentColor = contentColor,
+            onToggleFavorite = onToggleFavorite,
+            onShowFavoriteDialog = onShowFavoriteDialog,
+            onCommentAdded = { text -> onCommentAdded(item, text) },
+        )
+
+        PriceAndButtons(
+            item = item,
+            itemInPendingDeletion = itemInPendingDeletion,
+            outOfStock = outOfStock,
+            isInProgress = isInProgress,
+            deletionProgress = deletionProgress,
+            contentColor = contentColor,
+            onMealDetailsClick = onMealDetailsClick,
+            onAddToCart = onAddToCart,
+            onRemoveFromCart = onRemoveFromCart,
+            onDeletionCancel = onDeletionCancel,
+        )
+
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = Dimens.MarginSmall8),
+            thickness = Dimens.DividerHeight1,
+            color = Colors.LightGrey.copy(alpha = 0.2f),
+        )
     }
 }
