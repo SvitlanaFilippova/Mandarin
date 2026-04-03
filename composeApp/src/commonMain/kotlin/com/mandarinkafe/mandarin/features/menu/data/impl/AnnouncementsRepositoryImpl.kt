@@ -5,11 +5,16 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.AnnouncementsResponse
 import com.mandarinkafe.mandarin.features.menu.domain.api.AnnouncementsRepository
 import com.mandarinkafe.mandarin.util.Constants.MENU_REMOTE_CACHE_STALE_INTERVAL_MS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
+import com.mandarinkafe.mandarin.util.Constants.ORDER_ACCEPT_LOCAL_TIME_ZONE_ID
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.applyTypography
 import io.github.aakira.napier.Napier
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 class AnnouncementsRepositoryImpl(
     private val networkClient: ServerNetworkClient,
@@ -116,14 +121,29 @@ class AnnouncementsRepositoryImpl(
     }
 
     /**
-     * Парсит ISO 8601 строку в Instant
+     * Парсит дату в [Instant]: полный ISO‑8601 с `Z` или оффсетом — через [Instant.parse];
+     * строка **без** зоны (`2026-04-03T11:00:00`) — как локальное время в [ORDER_ACCEPT_LOCAL_TIME_ZONE_ID].
      */
     @OptIn(ExperimentalTime::class)
-    private fun parseInstant(dateTimeString: String): kotlin.time.Instant? {
+    private fun parseInstant(dateTimeString: String): Instant? {
+        val trimmed = dateTimeString.trim()
+        if (trimmed.isEmpty()) return null
         return try {
-            kotlin.time.Instant.parse(dateTimeString)
+            Instant.parse(trimmed)
+        } catch (_: Exception) {
+            parseLocalDateTimeAsInstantInCafeZone(trimmed)
+        }
+    }
+
+    @OptIn(ExperimentalTime::class)
+    private fun parseLocalDateTimeAsInstantInCafeZone(localIso: String): Instant? {
+        return try {
+            val local = LocalDateTime.parse(localIso)
+            val zone = TimeZone.of(ORDER_ACCEPT_LOCAL_TIME_ZONE_ID)
+            val kxInstant = local.toInstant(zone)
+            Instant.fromEpochMilliseconds(kxInstant.toEpochMilliseconds())
         } catch (e: Exception) {
-            Napier.e("AnnouncementsRepository: ошибка парсинга даты: $dateTimeString", e)
+            Napier.e("AnnouncementsRepository: ошибка парсинга даты: $localIso", e)
             null
         }
     }
