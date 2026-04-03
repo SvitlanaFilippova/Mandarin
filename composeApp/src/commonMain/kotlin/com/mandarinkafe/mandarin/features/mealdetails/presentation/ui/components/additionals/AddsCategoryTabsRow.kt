@@ -3,7 +3,7 @@ package com.mandarinkafe.mandarin.features.mealdetails.presentation.ui.component
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,12 +19,12 @@ fun AddsCategoryTabsRow(
     onTabSelected: (Int) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        ScrollableTabRow(
-            containerColor = Colors.AppBlack,
-            edgePadding = Dimens.ZeroDp0,
+        PrimaryScrollableTabRow(
             selectedTabIndex = selectedTabIndex,
-            indicator = { },
+            edgePadding = Dimens.ZeroDp0,
+            containerColor = Colors.AppBlack,
             divider = { },
+            indicator = { },
         ) {
             categories.forEachIndexed { index, category ->
                 SubCategoryTabItem(

@@ -18,12 +18,14 @@ import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.HandleOrderEffects
 import com.mandarinkafe.mandarin.features.order.presentation.ui.components.ObserveNavBackstack
+import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEffect
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderContract.OrderEvent.StopObservingStatus
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedViewModel
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberOrderViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
+import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.OrderClosingInfoDialog
 import com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs.RemoveConfirmationDialog
 import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshIndicator
@@ -44,6 +46,11 @@ fun OrderScreen(
     val scrollState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     var showAllAddresses by remember { mutableStateOf(false) }
+    var pendingOrderClosingDialog by remember {
+        mutableStateOf<OrderEffect.ShowOrderClosingDialog?>(
+            null
+        )
+    }
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
@@ -113,6 +120,29 @@ fun OrderScreen(
         DisposableEffect(Unit) {
             onDispose {
                 onEvent(StopObservingStatus)
+            }
+        }
+    }
+
+    pendingOrderClosingDialog?.let { dlg ->
+        OrderClosingInfoDialog(
+            isClosedForWholeDay = dlg.isClosedForWholeDay,
+            closingTime = dlg.closingTime,
+            onScheduleAnotherDay = {
+                pendingOrderClosingDialog = null
+                onEvent(OrderEvent.OrderClosingDialogConfirm)
+            },
+            onDismiss = {
+                pendingOrderClosingDialog = null
+                onEvent(OrderEvent.OrderClosingDialogDismiss)
+            },
+        )
+    }
+
+    LaunchedEffect(Unit) {
+        effectFlow.collect { effect ->
+            if (effect is OrderEffect.ShowOrderClosingDialog) {
+                pendingOrderClosingDialog = effect
             }
         }
     }

@@ -35,12 +35,11 @@
 
 
     <!-- System Messages -->
-    <string name="terminal_unavailable">Упс, кажется, сейчас мы не работаем — заказ оформить не
-        получится🤷
-        Возвращайся в рабочее время!
+    <string name="terminal_unavailable">Что-то пошло не&#160;так, и&#160;терминал сейчас не&#160;работает.
+        Оформить заказ онлайн временно нельзя 🙁 Попробуй позже или свяжись с&#160;нами по&#160;телефону!
     </string>
     <string name="check_terminal_failed">Что-то пошло не так — не удалось проверить, работает ли
-        сейчас доставка.
+        сейчас доставка. Попробуй ещё раз. Если проблема повторяется - пожалуйста, позвони нам.
     </string>
     <string name="location_permission_denied_reason">Без разрешения на&#160;доступ к&#160;геолокации
         не&#160;можем определить адрес
@@ -416,6 +415,28 @@
     <string name="error_empty_server_response">Ошибка: пустой ответ от сервера</string>
     <string name="error_unknown">Неизвестная ошибка</string>
     <string name="error_something_wrong">Что-то пошло не так 🤷</string>
+    <string name="error_we_are_closing">Кафе работает до&#160;%s.\n\nУвы, на&#160;сегодня заказы
+        уже не&#160;принимаются.
+    </string>
+    <string name="error_we_are_closing_cart_title">Кафе работает до&#160;%s
+    </string>
+    <string name="error_we_are_closing_cart_hint">Увы, на&#160;сегодня заказы
+        уже не&#160;принимаются.\n Если хотите оформить на&#160;другой день&#160;&#8212; укажите
+        дату в&#160;комментарии (например: &#171;на&#160;завтра&#187;).
+    </string>
+
+    <string name="cafe_closed_today_announcement">Кафе сегодня не&#160;работает.\n\nБудем рады
+        вашему заказу в&#160;другой день.
+    </string>
+    <string name="order_accept_ending_soon_announcement">Заказы на сегодня принимаются до&#160;%s.\n\nУспейте
+        оформить заказ.
+    </string>
+    <string name="error_cafe_closed_today_title">Кафе сегодня не&#160;работает</string>
+    <string name="error_cafe_closed_today_hint">Увы, на&#160;сегодня заказы
+        не&#160;принимаются.\nЕсли хотите оформить на&#160;другой день&#160;&#8212; укажите
+        дату в&#160;комментарии (например: &#171;на&#160;завтра&#187;).
+    </string>
+    <string name="order_schedule_for_another_day">Оформить на&#160;другой день</string>
 
     <!-- Меню "Ещё" -->
     <string name="more_orders_history">История заказов</string>

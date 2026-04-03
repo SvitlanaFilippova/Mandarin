@@ -6,12 +6,14 @@ import com.mandarinkafe.mandarin.features.menu.data.impl.AnnouncementsRepository
 import com.mandarinkafe.mandarin.features.menu.data.impl.BannersRepositoryImpl
 import com.mandarinkafe.mandarin.features.menu.data.impl.MenuMetaCacheImpl
 import com.mandarinkafe.mandarin.features.menu.data.impl.MenuRepositoryImpl
+import com.mandarinkafe.mandarin.features.menu.data.impl.OrderAcceptStatusRepositoryImpl
 import com.mandarinkafe.mandarin.features.menu.domain.api.AnnouncementsRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.GetAnnouncementsUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.api.GetBannersUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuInteractor
 import com.mandarinkafe.mandarin.features.menu.domain.api.MenuRepository
+import com.mandarinkafe.mandarin.features.menu.domain.api.OrderAcceptStatusRepository
 import com.mandarinkafe.mandarin.features.menu.domain.impl.GetAnnouncementsUseCaseImpl
 import com.mandarinkafe.mandarin.features.menu.domain.impl.GetBannersUseCaseImpl
 import com.mandarinkafe.mandarin.features.menu.domain.impl.MenuInteractorImpl
@@ -31,6 +33,8 @@ val menuModule = module {
     singleOf(::BannersRepositoryImpl) { bind<BannersRepository>() }
 
     singleOf(::AnnouncementsRepositoryImpl) { bind<AnnouncementsRepository>() }
+
+    singleOf(::OrderAcceptStatusRepositoryImpl) { bind<OrderAcceptStatusRepository>() }
 
     singleOf(::MenuMetaCacheImpl) { bind<MenuMetaCache>() }
 

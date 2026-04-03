@@ -37,6 +37,7 @@ fun BottomNavigation(
     ) {
         NavigationBar(
             containerColor = Colors.AppBlack,
+            windowInsets = navigationBarWindowInsets(),
         ) {
             val routeWithoutArgs = currentRoute?.substringBefore("?")
 

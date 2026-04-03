@@ -8,6 +8,7 @@ import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.auth.domain.api.SyncUserDataUseCase
 import com.mandarinkafe.mandarin.features.menu.domain.api.AnnouncementsRepository
 import com.mandarinkafe.mandarin.features.menu.domain.api.BannersRepository
+import com.mandarinkafe.mandarin.features.menu.domain.api.OrderAcceptStatusRepository
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +22,7 @@ class GetInitialDataUseCaseImpl(
     private val menuCache: MenuCache,
     private val bannersRepository: BannersRepository,
     private val announcementsRepository: AnnouncementsRepository,
+    private val orderAcceptStatusRepository: OrderAcceptStatusRepository,
     private val deliveryAreaRepository: DeliveryAreaRepository,
     private val syncUserDataUseCase: SyncUserDataUseCase,
 ) : GetInitialDataUseCase {
@@ -40,6 +42,7 @@ class GetInitialDataUseCaseImpl(
         coroutineScope {
             launch { bannersRepository.loadBanners() }
             launch { announcementsRepository.loadAnnouncements() }
+            launch { orderAcceptStatusRepository.loadOrderAcceptStatus() }
             launch { deliveryAreaRepository.getAllAreas() }
         }
 

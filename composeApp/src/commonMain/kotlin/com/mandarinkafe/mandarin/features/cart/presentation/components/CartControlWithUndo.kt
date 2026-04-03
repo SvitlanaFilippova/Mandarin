@@ -24,7 +24,7 @@ import dev.icerock.moko.resources.compose.stringResource
 fun CartControlWithUndo(
     item: CartItem,
     mealInPendingDeletion: Boolean,
-    isHidden: Boolean,
+    outOfStock: Boolean,
     deletionProgress: Float,
     onAddToCart: () -> Unit,
     onRemoveFromCart: () -> Unit,
@@ -45,7 +45,7 @@ fun CartControlWithUndo(
             }
 
         // надпись "нет в наличии" в виде неактивной кнопки
-        isHidden -> {
+        outOfStock -> {
             ButtonWithText(
                 modifier = Modifier
                     .widthIn(min = Dimens.ButtonToCartBig120)

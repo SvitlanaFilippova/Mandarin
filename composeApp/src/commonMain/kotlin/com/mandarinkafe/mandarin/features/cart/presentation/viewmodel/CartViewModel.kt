@@ -21,8 +21,12 @@ import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContra
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnProceedOrderClick
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduce
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OnReduceWithDelay
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OrderClosingDialogConfirm
+import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartEvent.OrderClosingDialogDismiss
 import com.mandarinkafe.mandarin.features.cart.presentation.viewmodel.CartContract.CartState
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
+import com.mandarinkafe.mandarin.features.menu.domain.api.OrderAcceptStatusRepository
+import com.mandarinkafe.mandarin.features.menu.domain.models.closingTimeOrPlaceholder
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.Resource.ErrorEmptyData
 import com.mandarinkafe.mandarin.util.Resource.ErrorNoInternet
@@ -39,6 +43,7 @@ class CartViewModel(
     private val cartInteractor: CartInteractor,
     private val recommendsUseCase: GetRecommendsUseCase,
     private val checkIfTerminalIsAlive: CheckIfTerminalIsAliveUseCase,
+    private val orderAcceptStatusRepository: OrderAcceptStatusRepository,
 ) : BaseViewModel<CartEvent, CartEffect, CartState>() {
     override fun setInitialState() = CartState()
     private val itemTimers = mutableMapOf<CartItem, Job>()
@@ -57,6 +62,8 @@ class CartViewModel(
             is ClearCart -> clearConfirmation()
             is ConfirmClearCart -> clear()
             is OnProceedOrderClick -> onProceedOrderClick()
+            is OrderClosingDialogConfirm -> onOrderClosingDialogConfirm()
+            is OrderClosingDialogDismiss -> Unit
             is AddCommentToItem -> setCommentToItem(event.item, event.comment)
             is ForceRefresh -> forceRefresh()
             is CartEvent.SyncWithRemote -> syncWithRemote()
@@ -204,24 +211,49 @@ class CartViewModel(
     private fun onProceedOrderClick() {
         viewModelScope.launch {
             setState { copy(proceedOrderIsLoading = true) }
-            val terminalResponse = checkIfTerminalIsAlive()
-
+            val snapshot = orderAcceptStatusRepository.fetchOrderAcceptStatusFresh()
             setState { copy(proceedOrderIsLoading = false) }
-            when (terminalResponse) {
-                is Success -> {
-                    if (terminalResponse.data == true) {
-                        sendEffect(CartEffect.ProceedOrder)
-                    } else {
-                        showSnackbar(
-                            message = MR.strings.terminal_unavailable,
-                        )
-                    }
-                }
-
-                is ErrorNoInternet -> showSnackbar(MR.strings.error_no_internet)
-
-                else -> showSnackbar(MR.strings.check_terminal_failed)
+            if (!snapshot.isAcceptingOrders) {
+                sendEffect(
+                    CartEffect.ShowOrderClosingDialog(
+                        isClosedForWholeDay = snapshot.isClosedForWholeDay,
+                        closingTime = if (snapshot.isClosedForWholeDay) {
+                            null
+                        } else {
+                            snapshot.closingTimeOrPlaceholder()
+                        },
+                    ),
+                )
+                return@launch
             }
+            proceedThroughTerminalToOrder()
+        }
+    }
+
+    private fun onOrderClosingDialogConfirm() {
+        viewModelScope.launch {
+            proceedThroughTerminalToOrder()
+        }
+    }
+
+    private suspend fun proceedThroughTerminalToOrder() {
+        setState { copy(proceedOrderIsLoading = true) }
+        val terminalResponse = checkIfTerminalIsAlive()
+        setState { copy(proceedOrderIsLoading = false) }
+        when (terminalResponse) {
+            is Success -> {
+                if (terminalResponse.data == true) {
+                    sendEffect(CartEffect.ProceedOrder)
+                } else {
+                    showSnackbar(
+                        message = MR.strings.terminal_unavailable,
+                    )
+                }
+            }
+
+            is ErrorNoInternet -> showSnackbar(MR.strings.error_no_internet)
+
+            else -> showSnackbar(MR.strings.check_terminal_failed)
         }
     }
 

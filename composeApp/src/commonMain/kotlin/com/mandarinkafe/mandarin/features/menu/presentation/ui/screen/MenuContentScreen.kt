@@ -35,6 +35,7 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.features.menu.domain.models.Banner
 import com.mandarinkafe.mandarin.features.menu.presentation.models.MenuItem
+import com.mandarinkafe.mandarin.features.menu.presentation.models.OrderClosingBannerUi
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.ActiveOrderCard
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.AnnouncementsSection
 import com.mandarinkafe.mandarin.features.menu.presentation.ui.components.BackToTopFAB
@@ -68,6 +69,7 @@ fun MenuContentScreen(
     bannersAreLoading: Boolean,
     selectedMenuItemIndex: Int,
     banners: List<Banner>,
+    orderClosingBanner: OrderClosingBannerUi?,
     announcements: List<String>,
     sharedEffectFlow: SharedFlow<SharedEffect>,
     activeOrders: List<SavedOrder>,
@@ -121,6 +123,7 @@ fun MenuContentScreen(
         MenuLazyColumn(
             menuItems = menuItems,
             headers = headers,
+            orderClosingBanner = orderClosingBanner,
             announcements = announcements,
             activeOrders = activeOrders,
             banners = banners,
@@ -253,6 +256,7 @@ private fun MenuSharedEffectHandler(
 private fun MenuLazyColumn(
     menuItems: List<MenuItem>,
     headers: List<MenuItem.HeaderItem>,
+    orderClosingBanner: OrderClosingBannerUi?,
     announcements: List<String>,
     activeOrders: List<SavedOrder>,
     banners: List<Banner>,
@@ -284,7 +288,10 @@ private fun MenuLazyColumn(
         verticalArrangement = Arrangement.spacedBy(Dimens.MarginSmall8),
     ) {
         item {
-            AnnouncementsSection(announcements = announcements)
+            AnnouncementsSection(
+                announcements = announcements,
+                orderClosingBanner = orderClosingBanner,
+            )
         }
 
         if (activeOrders.isNotEmpty()) {

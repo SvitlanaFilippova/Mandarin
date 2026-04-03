@@ -31,6 +31,18 @@ object Constants {
     const val MENU_IMAGE_SPACING_COUNT = 3
     const val MENU_IMAGE_COLUMN_COUNT = 2
 
+    /** Как у объявлений: интервал обновления кэша объявлений и статуса приёма заказов при stale-запросе. */
+    const val MENU_REMOTE_CACHE_STALE_INTERVAL_MS = 5 * 60 * 1000L
+
+    /** Если время закрытия с сервера пустое, подставляем в диалоги и строки с `%s`. */
+    const val CLOSING_TIME_PLACEHOLDER_EM_DASH = "—"
+
+    /** Баннер «скоро конец приёма» на главной: осталось меньше этого интервала. */
+    const val ORDER_ACCEPT_ENDING_SOON_THRESHOLD_MS = 60 * 60 * 1000L
+
+    /** Часовой пояс кафе для расчёта конца приёма по `serverTime` и `orderAcceptanceEndTime` (HH:mm). */
+    const val ORDER_ACCEPT_LOCAL_TIME_ZONE_ID = "Europe/Moscow"
+
     // Splash screen
     const val SPLASH_SCREEN_DURATION = 5000L
     const val SPLASH_APPEARING_DURATION = 1000

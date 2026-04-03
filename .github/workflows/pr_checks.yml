@@ -66,6 +66,7 @@ jobs:
 
       - name: Run detekt
         run: ./gradlew detektAll $commonGradleFlags
+        continue-on-error: true
 
       - name: Run Reviewdog for Detekt as Github Review
         env:

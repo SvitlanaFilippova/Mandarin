@@ -36,6 +36,13 @@ class ServerNetworkClientImpl(
         return serverApi.getAnnouncements()
     }
 
+    override suspend fun getOrderAcceptStatus(): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return serverApi.getOrderAcceptStatus()
+    }
+
     override suspend fun getRecommendations(): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }

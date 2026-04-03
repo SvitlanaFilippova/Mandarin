@@ -47,6 +47,8 @@ fun HandleOrderEffects(
                     pendingDetails = effect.details
                 }
 
+                is OrderEffect.ShowOrderClosingDialog -> Unit
+
                 is OrderEffect.ShowSuccess ->
                     navController.navigateToOrderInfo(
                         orderId = effect.orderId,
