@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -63,30 +64,36 @@ fun PriceAndButtons(
         }
 
         if (outOfStock) {
-            IconButton(
-                onClick = onRemoveFromCart
-            ) {
-                if (!itemInPendingDeletion) {
-                    Icon(
-                        modifier = Modifier.padding(Dimens.MarginSmall8),
-                        painter = painterResource(MR.images.ic_delete),
-                        tint = Color.White,
-                        contentDescription = stringResource(MR.strings.remove_from_cart),
-                    )
-                } else {
+            when {
+                !itemInPendingDeletion -> {
+                    IconButton(
+                        onClick = onRemoveFromCart,
+                        modifier = Modifier.size(Dimens.ButtonToCartSmall36)
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(Dimens.MarginSmall8),
+                            painter = painterResource(MR.images.ic_delete),
+                            tint = Color.White,
+                            contentDescription = stringResource(MR.strings.remove_from_cart),
+                        )
+                    }
+                }
+
+                else -> {
                     UndoIndicator(
                         progress = deletionProgress,
                         onCancel = onDeletionCancel,
                     )
                 }
-
             }
+
+            Spacer(Modifier.size(Dimens.MarginSuperSmall4))
         }
 
         CartControlWithUndo(
             item = item,
             mealInPendingDeletion = itemInPendingDeletion,
-            isHidden = outOfStock,
+            outOfStock = outOfStock,
             isInProgress = isInProgress,
             deletionProgress = deletionProgress,
             onAddToCart = onAddToCart,
