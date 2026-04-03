@@ -4,6 +4,7 @@ import com.mandarinkafe.mandarin.features.infrastructure.domain.api.AliveTermina
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.CheckIfTerminalIsAliveUseCase
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.getCurrentTimeMillis
+import kotlinx.coroutines.delay
 
 class CheckIfTerminalIsAliveUseCaseImpl(private val repository: AliveTerminalRepository) :
     CheckIfTerminalIsAliveUseCase {
@@ -18,7 +19,7 @@ class CheckIfTerminalIsAliveUseCaseImpl(private val repository: AliveTerminalRep
         return if (useCache) {
             Resource.Success(cachedStatus!!)
         } else {
-            val result = repository.checkAliveTerminals()
+            val result = fetchAliveStatusWithSingleRetry()
             if (result is Resource.Success) {
                 cachedStatus = result.data
                 lastCacheTime = now
@@ -27,8 +28,21 @@ class CheckIfTerminalIsAliveUseCaseImpl(private val repository: AliveTerminalRep
         }
     }
 
+    /**
+     * Повторяем один раз при сбоях сети/сервера; без сети повтор бессмысленен.
+     */
+    private suspend fun fetchAliveStatusWithSingleRetry(): Resource<Boolean> {
+        val first = repository.checkAliveTerminals()
+        if (first is Resource.Success || first is Resource.ErrorNoInternet) {
+            return first
+        }
+        delay(RETRY_DELAY_MS)
+        return repository.checkAliveTerminals()
+    }
+
     companion object {
         private const val CACHE_TTL_MS = 60 * 1000L // 1 минута
         private const val INITIAL_CACHE_TIME = 0L
+        private const val RETRY_DELAY_MS = 500L
     }
 }
