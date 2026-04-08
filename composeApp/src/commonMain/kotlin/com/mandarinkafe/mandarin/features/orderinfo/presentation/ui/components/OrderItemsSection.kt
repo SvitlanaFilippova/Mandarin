@@ -55,24 +55,26 @@ fun OrderItemsSection(
 
 
             discountSize?.let {
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Label(
-                        text = stringResource(MR.strings.discount_applied),
-                    )
+                if (discountSize != 0.0) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Label(
+                            text = stringResource(MR.strings.discount_applied),
+                        )
 
-                    Text(
-                        modifier = Modifier.padding(start = Dimens.MarginSmall8),
-                        textAlign = TextAlign.Center,
-                        text = "-" + stringResource(
-                            MR.strings.float_price_template,
-                            it.toFloat()
-                        ),
-                        style = Typography.RegularLightTextStyle.copy(color = Color.Gray)
-                    )
+                        Text(
+                            modifier = Modifier.padding(start = Dimens.MarginSmall8),
+                            textAlign = TextAlign.Center,
+                            text = "-" + stringResource(
+                                MR.strings.float_price_template,
+                                it.toFloat()
+                            ),
+                            style = Typography.RegularLightTextStyle.copy(color = Color.Gray)
+                        )
+                    }
                 }
             }
 
