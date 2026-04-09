@@ -20,7 +20,6 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.GetOrderStatusUs
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.RepeatOrderInteractorImpl
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
 import org.koin.core.module.dsl.bind
-import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -39,8 +38,20 @@ val orderInfoModule = module {
     singleOf(::AddPaymentToOrderUseCaseImpl) { bind<AddPaymentToOrderUseCase>() }
     singleOf(::ChangePaymentMethodUseCaseImpl) { bind<ChangePaymentMethodUseCase>() }
 
-    // --- ViewModel ---
-    factoryOf(::OrderInfoViewModel)
+    // --- ViewModel — явный вызов конструктора (см. PaymentModule / R8)
+    factory {
+        OrderInfoViewModel(
+            getOrderStatus = get(),
+            forceRefreshOrderStatus = get(),
+            cancelOrderUseCase = get(),
+            repeatOrderInteractor = get(),
+            ordersHistoryInteractor = get(),
+            paymentViewModel = get(),
+            addPaymentToOrderUseCase = get(),
+            changePaymentMethodUseCase = get(),
+            getPaymentTypesUseCase = get(),
+        )
+    }
 
 }
 

@@ -131,10 +131,14 @@ class OrderInfoViewModel(
 
                     is PaymentEffect.PaymentStatusChecked -> {
                         val paymentInfo = effect.paymentInfo
+                        val paymentSucceeded =
+                            paymentInfo?.paid == true || paymentInfo?.status == PaymentStatus.SUCCEEDED
                         setState {
+                            val previousPaymentError = paymentError
                             copy(
                                 paymentStatus = paymentInfo?.status,
-                                isPaymentPaid = paymentInfo?.paid
+                                isPaymentPaid = paymentInfo?.paid,
+                                paymentError = if (paymentSucceeded) null else previousPaymentError
                             )
                         }
                     }

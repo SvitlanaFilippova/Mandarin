@@ -150,8 +150,7 @@ private fun PaymentInfoSectionItem(
     state: OrderInfoState,
     onEvent: (OrderInfoEvent) -> Unit,
 ) {
-    val paymentMethodCode = state.displayPaymentMethodCode
-    if (paymentMethodCode == null) return
+    val paymentMethodCode = state.displayPaymentMethodCode ?: return
 
     val isOnlinePayment = state.isOnlinePayment
     val isOnlinePaymentActive = isOnlinePayment && !order.isClosed

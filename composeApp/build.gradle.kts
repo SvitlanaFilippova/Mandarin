@@ -169,6 +169,20 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+
+    buildTypes {
+        debug {
+            isMinifyEnabled = false
+        }
+        release {
+            // Явно: без обфускации, как раньше. При включении isMinifyEnabled = true нужны правила из proguard-rules.pro
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+        }
+    }
 }
 
 // Глобально отключаем Advertising ID
