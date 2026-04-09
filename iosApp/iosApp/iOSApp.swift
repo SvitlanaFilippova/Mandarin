@@ -7,6 +7,7 @@ struct iOSApp: App {
     init() {
         // Инициализируем Yandex MapKit
         YMKMapKit.setApiKey(ApiKeys.shared.mapKitApiKey)
+        YMKMapKit.setLocale("ru_RU")
         YMKMapKit.sharedInstance()
     }
 
