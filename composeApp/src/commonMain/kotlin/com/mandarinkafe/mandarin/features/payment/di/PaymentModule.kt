@@ -14,7 +14,6 @@ import com.mandarinkafe.mandarin.features.payment.domain.impl.CreatePaymentUseCa
 import com.mandarinkafe.mandarin.features.payment.domain.impl.GetPaymentStatusUseCaseImpl
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentViewModel
 import org.koin.core.module.dsl.bind
-import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -38,8 +37,15 @@ val paymentModule = module {
     singleOf(::GetPaymentStatusUseCaseImpl) { bind<GetPaymentStatusUseCase>() }
     singleOf(::CancelPaymentUseCaseImpl) { bind<CancelPaymentUseCase>() }
 
-    // ViewModel
-    factoryOf(::PaymentViewModel)
+    // ViewModel — явный вызов конструктора, чтобы в DEX была стабильная ссылка на класс (Koin factoryOf + R8)
+    factory {
+        PaymentViewModel(
+            yooKassaService = get(),
+            createPaymentUseCase = get(),
+            getPaymentStatusUseCase = get(),
+            cancelPaymentUseCase = get(),
+        )
+    }
 
     // YooKassa Service регистрируется в platform-specific модулях
     // см. PaymentPlatformModule.kt в androidMain и iosMain

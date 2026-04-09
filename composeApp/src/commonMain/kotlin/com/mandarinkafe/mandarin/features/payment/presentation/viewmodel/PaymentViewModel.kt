@@ -283,6 +283,7 @@ class PaymentViewModel(
                 when (status) {
                     PaymentStatus.SUCCEEDED -> {
                         stopPolling()
+                        setState { copy(error = null) }
                         sendEffect(
                             PaymentSuccess(
                                 state.value.orderId,
@@ -399,10 +400,14 @@ class PaymentViewModel(
             val result = getPaymentStatusUseCase(orderId)
             when (result) {
                 is Resource.Success -> {
+                    val paymentInfo = result.data
+                    if (paymentInfo != null && (paymentInfo.paid || paymentInfo.status == PaymentStatus.SUCCEEDED)) {
+                        setState { copy(error = null) }
+                    }
                     sendEffect(
                         PaymentEffect.PaymentStatusChecked(
                             orderId = orderId,
-                            paymentInfo = result.data
+                            paymentInfo = paymentInfo
                         )
                     )
                 }
