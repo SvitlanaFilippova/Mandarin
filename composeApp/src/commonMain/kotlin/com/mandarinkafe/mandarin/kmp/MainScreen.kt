@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.mandarinkafe.mandarin.core.presentation.AppLifecycleHandler
@@ -66,6 +68,8 @@ fun MainScreen() {
             baseRoute !in bottomNavigationRoutes
         } == true
         val showBottomBar = !isSplash && !isInnerScreen
+        val density = LocalDensity.current
+        val isImeVisible = WindowInsets.ime.getBottom(density) > 0
 
         LaunchedEffect(Unit) {
             onEvent(SharedEvent.RefreshMenuIfStale)
@@ -103,7 +107,7 @@ fun MainScreen() {
             },
             bottomBar = {
                 BottomNavigation(
-                    visible = showBottomBar,
+                    visible = showBottomBar && !isImeVisible,
                     navController = navController,
                     cartCount = sharedState.cartItemsCount,
                     currentRoute = currentRoute?.substringBefore("?")

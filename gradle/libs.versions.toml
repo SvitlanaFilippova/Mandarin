@@ -2,8 +2,8 @@
 compileSdk = "36"
 minSdk = "26"
 targetSdk = "36"
-versionCode = "16"
-versionName = "1.1.2"
+versionCode = "17"
+versionName = "1.1.3"
 java = "VERSION_17"
 
 activity = "1.11.0"

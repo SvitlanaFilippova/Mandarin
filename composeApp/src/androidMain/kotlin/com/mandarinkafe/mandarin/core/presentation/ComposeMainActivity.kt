@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.compose.runtime.CompositionLocalProvider
 import com.mandarinkafe.mandarin.features.payment.YooKassaActivityHelper
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEvent
@@ -34,7 +36,14 @@ import java.io.File
 
 class ComposeMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        // Тёмный UI: светлые иконки в статус- и навигационной панели (после edge-to-edge по умолчанию могут стать тёмными)
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
 
         // Регистрируем Activity для работы с YooKassa платежами
         YooKassaActivityHelper.registerActivity(this)
