@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.api.CancelOrderUseCas
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.PaymentTimerInteractor
 import com.mandarinkafe.mandarin.features.orderinfo.domain.isOnlinePayment
+import com.mandarinkafe.mandarin.features.orderinfo.domain.isPaidByProcessedSum
 import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 import com.mandarinkafe.mandarin.util.Constants
 import com.mandarinkafe.mandarin.util.Resource
@@ -27,7 +28,7 @@ class PaymentTimerInteractorImpl(
     companion object {
         private const val ORDER_STATUS_UPD_DELAY_AFTER_CANCEL = 500L
         private const val MILLISECONDS_PER_SECOND = 1000
-        private const val TIMEOUT_GRACE_PERIOD_MS = 2000L
+        private const val TIMEOUT_GRACE_PERIOD_MS = 1000L
         private const val AUTO_CANCEL_CAUSE_ID = "15c16410-972a-402c-96f2-402ee4c05d21"
         private const val AUTO_CANCEL_COMMENT =
             "Онлайн-оплата не была вовремя произведена. Заказ отменён автоматически."
@@ -50,16 +51,21 @@ class PaymentTimerInteractorImpl(
                 val remainingSeconds =
                     (remainingMillis / MILLISECONDS_PER_SECOND).toInt().coerceAtLeast(0)
 
-                onTimeUpdate(remainingSeconds)
-
                 if (remainingSeconds <= 0) {
-                    onTimeUpdate(0)
-                    onTimeout()
-                    shouldContinue = false
-                } else if (shouldStopTimer()) {
-                    shouldContinue = false
+                    if (shouldStopTimer()) {
+                        shouldContinue = false
+                    } else {
+                        onTimeUpdate(0)
+                        onTimeout()
+                        shouldContinue = false
+                    }
                 } else {
-                    delay(Constants.DELAY_1_SECOND)
+                    onTimeUpdate(remainingSeconds)
+                    if (shouldStopTimer()) {
+                        shouldContinue = false
+                    } else {
+                        delay(Constants.DELAY_1_SECOND)
+                    }
                 }
             }
         }
@@ -81,7 +87,8 @@ class PaymentTimerInteractorImpl(
         // Проверяем, что заказ не оплачен и не закрыт
         if (paymentStatus == PaymentStatus.SUCCEEDED ||
             isPaymentPaid == true ||
-            order?.isClosed == true
+            order?.isClosed == true ||
+            order?.isPaidByProcessedSum() == true
         ) {
             return false
         }
@@ -103,7 +110,7 @@ class PaymentTimerInteractorImpl(
 
         onCancelStarted()
 
-        // Ждем 2 секунды на случай, если оплата пришла в последний момент
+        // Короткая пауза после проверок во ViewModel; основное ожидание — там
         delay(TIMEOUT_GRACE_PERIOD_MS)
 
         // Повторно проверяем статус перед отменой
@@ -125,7 +132,7 @@ class PaymentTimerInteractorImpl(
             getOrderStatusUseCase(orderId)
             onCancelCompleted(orderId)
         } else {
-            // При ошибке повторяем попытку через 2 секунды (один раз)
+            // При ошибке повторяем попытку через паузу (один раз)
             delay(TIMEOUT_GRACE_PERIOD_MS)
 
             // Повторно проверяем статус

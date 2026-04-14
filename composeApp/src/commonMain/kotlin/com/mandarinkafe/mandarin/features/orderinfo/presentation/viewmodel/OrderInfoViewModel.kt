@@ -13,12 +13,15 @@ import com.mandarinkafe.mandarin.features.orderinfo.domain.api.PaymentTimerInter
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.RepeatOrderInteractor
 import com.mandarinkafe.mandarin.features.orderinfo.domain.impl.PaymentTimerInteractorImpl
 import com.mandarinkafe.mandarin.features.orderinfo.domain.isOnlinePayment
+import com.mandarinkafe.mandarin.features.orderinfo.domain.isPaidByProcessedSum
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEffect.ShowError
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoEvent
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoContract.OrderInfoState
 import com.mandarinkafe.mandarin.features.ordershistory.domain.api.OrdersHistoryInteractor
+import com.mandarinkafe.mandarin.features.payment.domain.api.GetPaymentStatusUseCase
+import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentInfo
 import com.mandarinkafe.mandarin.features.payment.domain.models.PaymentStatus
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEffect
 import com.mandarinkafe.mandarin.features.payment.presentation.viewmodel.PaymentContract.PaymentEvent
@@ -36,8 +39,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 class OrderInfoViewModel(
     private val getOrderStatus: GetOrderStatusUseCase,
     private val forceRefreshOrderStatus: ForceRefreshOrderStatusUseCase,
@@ -48,12 +54,14 @@ class OrderInfoViewModel(
     private val addPaymentToOrderUseCase: AddPaymentToOrderUseCase,
     private val changePaymentMethodUseCase: ChangePaymentMethodUseCase,
     private val getPaymentTypesUseCase: GetPaymentTypesUseCase,
+    private val getPaymentStatusUseCase: GetPaymentStatusUseCase,
 ) : BaseViewModel<OrderInfoEvent, OrderInfoEffect, OrderInfoState>() {
     override fun setInitialState() = OrderInfoState()
 
     private var observeJob: Job? = null
     private var paymentStateObserverJob: Job? = null
     private var paymentEffectObserverJob: Job? = null
+    private var deferPaymentVerificationJob: Job? = null
 
     private val paymentTimerInteractor: PaymentTimerInteractor = PaymentTimerInteractorImpl(
         cancelOrderUseCase = cancelOrderUseCase,
@@ -322,6 +330,8 @@ class OrderInfoViewModel(
     }
 
     private fun stopObservingOrderInfo() {
+        deferPaymentVerificationJob?.cancel()
+        deferPaymentVerificationJob = null
         observeJob?.cancel()
         observeJob = null
         // Останавливаем таймер, когда прекращаем наблюдение за заказом
@@ -347,7 +357,11 @@ class OrderInfoViewModel(
         status?.let { order ->
             if (order.isOnlinePayment(state.value.paymentMethodCodeFromNav)) {
                 // Останавливаем таймер, если заказ закрыт или оплачен
-                if (order.isClosed || state.value.paymentStatus == PaymentStatus.SUCCEEDED || state.value.isPaymentPaid == true) {
+                if (order.isClosed ||
+                    state.value.paymentStatus == PaymentStatus.SUCCEEDED ||
+                    state.value.isPaymentPaid == true ||
+                    order.isPaidByProcessedSum()
+                ) {
                     stopPaymentTimer()
                     setState { copy(isAutoCanceling = false) }
                     checkPaymentStatus(order.id)
@@ -362,7 +376,7 @@ class OrderInfoViewModel(
                                 previousPaymentDeadline != order.paymentDeadline)
 
                 if (shouldStartTimer) {
-                    startPaymentTimer(order.paymentDeadline)
+                    schedulePaymentTimer(order)
                 }
                 // Если paymentDeadline null, не запускаем таймер, но и не останавливаем существующий
                 // Таймер запустится автоматически при следующем обновлении, когда paymentDeadline появится
@@ -406,8 +420,7 @@ class OrderInfoViewModel(
     private fun loadPaymentTypesForChange() {
         viewModelScope.launch {
             // Загружаем доступные способы оплаты
-            val paymentTypesResult = getPaymentTypesUseCase()
-            when (paymentTypesResult) {
+            when (val paymentTypesResult = getPaymentTypesUseCase()) {
                 is Resource.Success -> {
                     val paymentTypes = paymentTypesResult.data ?: emptyList()
                     // Фильтруем только CASH, BANK, ONLINE (как в OrderViewModel)
@@ -550,6 +563,7 @@ class OrderInfoViewModel(
                 currentState.paymentStatus == PaymentStatus.SUCCEEDED ||
                         currentState.isPaymentPaid == true ||
                         currentState.incomingOrder?.isClosed == true ||
+                        currentState.incomingOrder?.isPaidByProcessedSum() == true ||
                         !currentState.incomingOrder.isOnlinePayment(currentState.paymentMethodCodeFromNav)
             },
             onTimeout = {
@@ -568,6 +582,24 @@ class OrderInfoViewModel(
         if (orderId == null || state.value.isAutoCanceling) {
             return // Уже идет отмена или нет ID заказа
         }
+
+        if (verifyPaymentStatusWithRetries(orderId)) {
+            stopPaymentTimer()
+            setState { copy(isAutoCanceling = false) }
+            return
+        }
+
+        if (!paymentTimerInteractor.canCancelOrder(
+                order = state.value.incomingOrder,
+                paymentStatus = state.value.paymentStatus,
+                isPaymentPaid = state.value.isPaymentPaid,
+                paymentMethodCodeFromNav = state.value.paymentMethodCodeFromNav,
+            )
+        ) {
+            setState { copy(isAutoCanceling = false) }
+            return
+        }
+
         paymentTimerInteractor.autoCancelOnTimeout(
             orderId = orderId,
             canCancel = {
@@ -593,9 +625,109 @@ class OrderInfoViewModel(
 
     override fun onCleared() {
         super.onCleared()
+        deferPaymentVerificationJob?.cancel()
         paymentStateObserverJob?.cancel()
         paymentEffectObserverJob?.cancel()
         paymentTimerInteractor.stopTimer()
+    }
+
+    /**
+     * Если дедлайн уже в прошлом — сначала проверяем оплату с ретраями, затем при необходимости запускаем таймер.
+     */
+    private fun schedulePaymentTimer(order: IncomingOrder) {
+        val deadline = order.paymentDeadline ?: run {
+            setState { copy(paymentTimeRemainingSeconds = null) }
+            return
+        }
+
+        if (order.isPaidByProcessedSum()) {
+            stopPaymentTimer()
+            setState { copy(isAutoCanceling = false) }
+            checkPaymentStatus(order.id)
+            return
+        }
+
+        val now = Clock.System.now().toEpochMilliseconds()
+        if (now < deadline) {
+            startPaymentTimer(deadline)
+            return
+        }
+
+        deferPaymentVerificationJob?.cancel()
+        deferPaymentVerificationJob = viewModelScope.launch {
+            val confirmed = verifyPaymentStatusWithRetries(order.id)
+            if (confirmed) {
+                stopPaymentTimer()
+                setState { copy(isAutoCanceling = false) }
+            } else {
+                startPaymentTimer(deadline)
+            }
+        }
+    }
+
+    private fun applyPaymentStatusFromGateway(paymentInfo: PaymentInfo?) {
+        val paymentSucceeded =
+            paymentInfo?.paid == true || paymentInfo?.status == PaymentStatus.SUCCEEDED
+        setState {
+            val previousPaymentError = paymentError
+            copy(
+                paymentStatus = paymentInfo?.status,
+                isPaymentPaid = paymentInfo?.paid,
+                paymentError = if (paymentSucceeded) null else previousPaymentError,
+            )
+        }
+    }
+
+    /**
+     * @return true если оплата подтверждена (платёжка или заказ по processedPaymentsSum), и отменять не нужно.
+     */
+    private suspend fun verifyPaymentStatusWithRetries(orderId: String): Boolean {
+        if (state.value.incomingOrder?.isPaidByProcessedSum() == true) {
+            return true
+        }
+
+        var backoffMs = PAYMENT_VERIFY_INITIAL_BACKOFF_MS
+        repeat(PAYMENT_VERIFY_MAX_ATTEMPTS) { attempt ->
+            if (state.value.incomingOrder?.isPaidByProcessedSum() == true) {
+                return true
+            }
+
+            when (val result = getPaymentStatusUseCase(orderId)) {
+                is Resource.Success -> {
+                    val info = result.data
+                    applyPaymentStatusFromGateway(info)
+                    if (info != null && (info.paid || info.status == PaymentStatus.SUCCEEDED)) {
+                        return true
+                    }
+                    if (attempt < PAYMENT_VERIFY_MAX_ATTEMPTS - 1) {
+                        delay(backoffMs)
+                    }
+                }
+
+                is Resource.ErrorNoInternet -> {
+                    if (attempt < PAYMENT_VERIFY_MAX_ATTEMPTS - 1) {
+                        delay(backoffMs)
+                    }
+                }
+
+                else -> {
+                    if (attempt < PAYMENT_VERIFY_MAX_ATTEMPTS - 1) {
+                        delay(backoffMs)
+                    }
+                }
+            }
+            backoffMs = (backoffMs * 2).coerceAtMost(PAYMENT_VERIFY_MAX_BACKOFF_MS)
+        }
+
+        val orderResult = getOrderStatus(orderId)
+        if (orderResult is Resource.Success) {
+            val order = orderResult.data
+            if (order != null && order.isPaidByProcessedSum()) {
+                setState { copy(incomingOrder = order) }
+                return true
+            }
+        }
+        return false
     }
 
     private companion object {
@@ -605,6 +737,10 @@ class OrderInfoViewModel(
         const val PAYMENT_STATUS_UPDATE_DELAY_MS = 1000L
         private const val DEFAULT_ERROR_MESSAGE = "Что-то пошло не так"
         private const val NO_INTERNET_ERROR_MESSAGE = "Нет подключения к интернету"
+
+        private const val PAYMENT_VERIFY_MAX_ATTEMPTS = 5
+        private const val PAYMENT_VERIFY_INITIAL_BACKOFF_MS = 2000L
+        private const val PAYMENT_VERIFY_MAX_BACKOFF_MS = 16_000L
     }
 }
 

@@ -50,6 +50,7 @@ val orderInfoModule = module {
             addPaymentToOrderUseCase = get(),
             changePaymentMethodUseCase = get(),
             getPaymentTypesUseCase = get(),
+            getPaymentStatusUseCase = get(),
         )
     }
 
