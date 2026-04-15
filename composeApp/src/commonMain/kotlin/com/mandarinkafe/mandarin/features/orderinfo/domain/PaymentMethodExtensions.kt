@@ -20,3 +20,15 @@ fun IncomingOrder?.getPaymentMethodCode(paymentMethodCodeFromNav: String? = null
     return this?.paymentMethodCode ?: paymentMethodCodeFromNav
 }
 
+private const val PAYMENT_SUM_COMPARISON_EPSILON = 0.01
+
+/**
+ * Заказ оплачен по данным заказа: сумма проведённых оплат покрывает сумму заказа (IIKO / backend).
+ */
+fun IncomingOrder.isPaidByProcessedSum(): Boolean {
+    val orderSum = sum ?: return false
+    if (orderSum <= 0.0) return false
+    val processed = processedPaymentsSum ?: return false
+    return processed + PAYMENT_SUM_COMPARISON_EPSILON >= orderSum
+}
+

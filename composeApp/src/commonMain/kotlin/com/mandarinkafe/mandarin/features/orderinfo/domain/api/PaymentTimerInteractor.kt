@@ -13,7 +13,7 @@ interface PaymentTimerInteractor {
      * @param paymentDeadline дедлайн оплаты в миллисекундах
      * @param orderId ID заказа
      * @param onTimeUpdate callback для обновления оставшегося времени (в секундах)
-     * @param shouldStopTimer callback для проверки, нужно ли остановить таймер
+     * @param shouldStopTimer callback для проверки, нужно ли остановить таймер (в том числе при нуле секунд)
      * @param onTimeout callback, вызываемый при истечении времени
      * @return Job таймера для возможности его отмены
      */
