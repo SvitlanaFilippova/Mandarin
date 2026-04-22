@@ -32,7 +32,7 @@ class SearchViewModel(
     private val searchDebounce = debounce<String>(
         SEARCH_DELAY,
         viewModelScope,
-        useLastParam = true
+        cancelPrevious = true
     ) { filterMenu() }
 
     init {

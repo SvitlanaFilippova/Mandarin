@@ -32,7 +32,7 @@ class AddressViewModel(
     private val fetchAddressDebounce = debounce<GeoPoint>(
         FETCH_ADDRESS_DELAY,
         viewModelScope,
-        useLastParam = true
+        cancelPrevious = true
     ) { point ->
         fetchAddress(point)
     }
@@ -40,7 +40,7 @@ class AddressViewModel(
     private val searchWithDebounce = debounce<String>(
         SEARCH_DELAY,
         viewModelScope,
-        useLastParam = true
+        cancelPrevious = true
     ) {
         startSearch(it)
     }
@@ -96,6 +96,7 @@ class AddressViewModel(
                     is Resource.Success -> {
                         setSearchResult(result.data)
                     }
+
                     is Resource.ErrorNoInternet -> {
                         setState {
                             copy(
@@ -104,6 +105,7 @@ class AddressViewModel(
                             )
                         }
                     }
+
                     else -> {
                         setState {
                             copy(
@@ -123,17 +125,18 @@ class AddressViewModel(
         searchWithDebounce.cancel()
         if (query.isNotEmpty()) {
             searchWithDebounce.invoke(query)
-            setSearchLoading()
         } else {
-            setState { copy(searchError = null) }
+            setState { copy(searchError = null, searchInProgress = false) }
         }
 
     }
 
     private fun startSearch(searchText: String) {
         searchWithDebounce.cancel()
+        setSearchLoading()
         val point = state.value.currentPinPoint
         if (point == null) {
+            setState { copy(searchInProgress = false) }
             return
         } else {
             viewModelScope.launch {
@@ -143,14 +146,12 @@ class AddressViewModel(
     }
 
     private fun setSearchResult(data: List<AddressSearchResult>?) {
-        data?.let {
-            setState {
-                copy(
-                    searchError = null,
-                    searchInProgress = false,
-                    searchResults = data
-                )
-            }
+        setState {
+            copy(
+                searchError = null,
+                searchInProgress = false,
+                searchResults = data.orEmpty()
+            )
         }
     }
 
@@ -255,7 +256,7 @@ class AddressViewModel(
     }
 
     override fun setLoading(isLoading: Boolean) {
-        setState { copy(fetchAddressInProgress = true, error = null) }
+        setState { copy(fetchAddressInProgress = isLoading, error = null) }
     }
 
     private fun showError(errorText: String? = null) {

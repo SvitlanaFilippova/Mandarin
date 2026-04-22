@@ -26,7 +26,7 @@ class DeliveryViewModel(
     private val fetchAddressDebounce = debounce<GeoPoint>(
         FETCH_ADDRESS_DELAY,
         viewModelScope,
-        useLastParam = true
+        cancelPrevious = true
     ) { point ->
         fetchAddress(point)
     }

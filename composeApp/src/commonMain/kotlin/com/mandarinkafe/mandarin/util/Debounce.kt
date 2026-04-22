@@ -8,20 +8,22 @@ import kotlinx.coroutines.launch
 fun <T> debounce(
     delayMillis: Long,
     coroutineScope: CoroutineScope,
-    useLastParam: Boolean,
+    cancelPrevious: Boolean = false, // 👈 новое
     action: (T) -> Unit,
 ): DebounceResult<T> {
-    // Коллекция для хранения активных задач
+
+    var lastJob: Job? = null
     val debounceJobs = mutableMapOf<T, Job>()
 
     val cancel: () -> Unit = {
+        lastJob?.cancel()
         debounceJobs.values.forEach { it.cancel() }
         debounceJobs.clear()
     }
 
     val invoke: (T) -> Unit = { param: T ->
-        if (useLastParam) {
-            debounceJobs[param]?.cancel()
+        if (cancelPrevious) {
+            lastJob?.cancel()
         }
 
         val job = coroutineScope.launch {
@@ -29,7 +31,12 @@ fun <T> debounce(
             action(param)
         }
 
-        // Сохраняем новую задачу в коллекции
+        job.invokeOnCompletion {
+            if (lastJob == job) lastJob = null
+            debounceJobs.remove(param)
+        }
+
+        lastJob = job
         debounceJobs[param] = job
     }
 
