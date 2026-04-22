@@ -75,7 +75,8 @@ fun SearchBarInputField(
             ),
             placeholder = {
                 Text(
-                    text = placeholderText, color = Colors.White
+                    text = placeholderText,
+                    color = Colors.White
                 )
             },
 
