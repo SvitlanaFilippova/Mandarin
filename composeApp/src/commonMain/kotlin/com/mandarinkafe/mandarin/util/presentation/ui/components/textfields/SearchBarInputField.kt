@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
@@ -73,15 +74,35 @@ fun SearchBarInputField(
         leadingIcon = leadingIcon,
 
         trailingIcon = {
-            if (query.isNotEmpty()) {
-                IconButton(onClick = { onClear() }) {
-                    Icon(
-                        painter = painterResource(MR.images.ic_close),
-                        contentDescription = stringResource(MR.strings.clear_text),
-                        tint = Colors.White
-                    )
-                }
-            }
+            DefaultTrailingIcon(
+                value = query,
+                onClick = onClear
+            )
         },
     )
+}
+
+
+@Composable
+private fun DefaultTrailingIcon(value: String, onClick: () -> Unit) {
+    val focusManager = LocalFocusManager.current
+
+    val onClick: () -> Unit = when {
+        value.isNotEmpty() -> {
+            {
+                onClick()
+            }
+        }
+
+        else -> {
+            { focusManager.clearFocus() }
+        }
+    }
+    IconButton(onClick = onClick) {
+        Icon(
+            painter = painterResource(MR.images.ic_close),
+            contentDescription = stringResource(MR.strings.clear_text),
+            tint = Colors.LightGrey
+        )
+    }
 }

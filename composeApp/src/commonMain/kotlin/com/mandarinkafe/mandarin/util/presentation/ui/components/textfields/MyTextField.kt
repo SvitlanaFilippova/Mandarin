@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import com.mandarinkafe.mandarin.MR
@@ -116,19 +117,37 @@ fun MyTextField(
             keyboardOptions = keyboardOptions.copy(imeAction = ImeAction.Done),
             visualTransformation = visualTransformation,
             trailingIcon = trailingIcon ?: {
-                if (enabled && value.isNotEmpty()) {
-                    IconButton(onClick = { onValueChange("") }) {
-                        Icon(
-                            painter = painterResource(MR.images.ic_close),
-                            contentDescription = stringResource(MR.strings.clear_text),
-                            tint = Colors.LightGrey
-                        )
-                    }
+                if (enabled) {
+                    DefaultTrailingIcon(value = value, onClick = { onValueChange("") })
                 }
             },
             leadingIcon = leadingIcon,
             prefix = prefix,
 
             )
+    }
+}
+
+@Composable
+private fun DefaultTrailingIcon(value: String, onClick: () -> Unit) {
+    val focusManager = LocalFocusManager.current
+
+    val onClick: () -> Unit = when {
+        value.isNotEmpty() -> {
+            {
+                onClick()
+            }
+        }
+
+        else -> {
+            { focusManager.clearFocus() }
+        }
+    }
+    IconButton(onClick = onClick) {
+        Icon(
+            painter = painterResource(MR.images.ic_close),
+            contentDescription = stringResource(MR.strings.clear_text),
+            tint = Colors.LightGrey
+        )
     }
 }
