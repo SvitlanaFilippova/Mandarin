@@ -108,6 +108,7 @@
     <string name="placeholder_call">Позвонить</string>
     <string name="remove_yes">Да 🗑️</string>
     <string name="remove_no">Нет-нет! 🙈</string>
+    <string name="hide_keyboard">Убрать клавиатуру</string>
 
     <!-- Заголовки экранов -->
     <string name="menu">Меню</string>
