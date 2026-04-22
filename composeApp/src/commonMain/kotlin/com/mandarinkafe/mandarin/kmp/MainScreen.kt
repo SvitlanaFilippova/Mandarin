@@ -37,6 +37,7 @@ import com.mandarinkafe.mandarin.shared.presentation.viewmodel.SharedContract.Sh
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberAppLifecycleManager
 import com.mandarinkafe.mandarin.shared.presentation.viewmodel.rememberSharedViewModel
 import com.mandarinkafe.mandarin.util.presentation.LocalSnackbarHostState
+import com.mandarinkafe.mandarin.util.presentation.clearFocusOnTap
 import com.mandarinkafe.mandarin.util.presentation.ui.components.AppTopBar
 import com.mandarinkafe.mandarin.util.presentation.ui.components.CustomSnackbarHost
 import com.mandarinkafe.mandarin.util.presentation.ui.components.HandleEffects
@@ -119,6 +120,7 @@ fun MainScreen() {
                     modifier = Modifier
                         .padding(innerPadding)
                         .background(Colors.AppBlack)
+                        .clearFocusOnTap()
                 ) {
                     NavGraph(navController = navController)
                 }

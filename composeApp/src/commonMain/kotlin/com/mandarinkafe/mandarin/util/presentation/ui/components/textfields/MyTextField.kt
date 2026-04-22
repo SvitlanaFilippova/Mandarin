@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
@@ -23,13 +21,12 @@ import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
-import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.Constants.DELAY_FOR_UI_RENDERING
+import com.mandarinkafe.mandarin.util.presentation.ui.components.TextFieldTrailingIcon
 import dev.icerock.moko.resources.StringResource
-import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.delay
 
@@ -53,7 +50,6 @@ fun MyTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
 ) {
     val focusRequester = remember { FocusRequester() }
-
     var focusEnabled by remember {
         mutableStateOf(
             autofocus
@@ -116,19 +112,15 @@ fun MyTextField(
             keyboardOptions = keyboardOptions.copy(imeAction = ImeAction.Done),
             visualTransformation = visualTransformation,
             trailingIcon = trailingIcon ?: {
-                if (enabled && value.isNotEmpty()) {
-                    IconButton(onClick = { onValueChange("") }) {
-                        Icon(
-                            painter = painterResource(MR.images.ic_close),
-                            contentDescription = stringResource(MR.strings.clear_text),
-                            tint = Colors.LightGrey
-                        )
-                    }
+                if (enabled) {
+                    TextFieldTrailingIcon(
+                        value = value,
+                        onClear = { onValueChange("") })
                 }
             },
             leadingIcon = leadingIcon,
             prefix = prefix,
-
-            )
+        )
     }
 }
+
