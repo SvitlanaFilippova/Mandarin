@@ -8,11 +8,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import com.mandarinkafe.mandarin.MR
+import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
+import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.models.UiDeliveryStatus
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
@@ -21,6 +25,7 @@ import dev.icerock.moko.resources.compose.stringResource
 fun OrderStatusSection(
     deliveryStatus: UiDeliveryStatus,
     shouldShowRefundText: Boolean,
+    cancelComment: String? = null,
     isOnlinePayment: Boolean = false,
     isPaymentPaid: Boolean? = null,
 ) {
@@ -64,6 +69,21 @@ fun OrderStatusSection(
             ) { Label(stringResource(it)) }
         }
 
+        cancelComment?.let { text ->
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(MR.strings.order_cancel_reason_template, text),
+                    style = Typography.RegularLightTextStyle.copy(color = Colors.Red),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(Dimens.MarginSmall8)
+                )
+            }
+        }
+
         // Сообщение об отменённом заказе с успешной онлайн-оплатой
         if (shouldShowRefundText) {
             Row(
@@ -72,5 +92,7 @@ fun OrderStatusSection(
                 verticalAlignment = Alignment.CenterVertically
             ) { Label(stringResource(MR.strings.order_cancelled_but_paid_online)) }
         }
+
+
     }
 }

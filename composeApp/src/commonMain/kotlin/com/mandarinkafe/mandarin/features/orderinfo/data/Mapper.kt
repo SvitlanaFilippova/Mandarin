@@ -25,16 +25,10 @@ import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.toVisibleComment
 
 fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): IncomingOrder {
-    val cancelInfo = buildString {
-        val cause = order?.cancelInfo?.cause?.name.orEmpty().applyTypography()
-        val comment = order?.cancelInfo?.comment.orEmpty().applyTypography()
-
-        if (cause.isNotBlank()) append(cause)
-        if (comment.isNotBlank()) {
-            if (isNotEmpty()) append(": ")
-            append(comment)
-        }
-    }
+    val cancelComment = (order?.cancelInfo?.comment)
+        .toVisibleComment()
+        .takeIf { it.isNotEmpty() }
+        ?.applyTypography()
     val orderType = order?.orderType?.toDomain()
     val items = order?.items?.toDomainWithAdds(addons) ?: emptyList()
 
@@ -55,7 +49,7 @@ fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): Incomin
         paymentName = order?.payments?.firstOrNull()?.paymentType?.name,
         paymentMethodCode = order?.paymentMethodCode,
         status = order?.status?.toDeliveryStatus() ?: DeliveryStatus.UNCONFIRMED,
-        cancelInfo = cancelInfo,
+        cancelComment = cancelComment,
         orderType = orderType,
         processedPaymentsSum = order?.processedPaymentsSum,
         sum = order?.sum,

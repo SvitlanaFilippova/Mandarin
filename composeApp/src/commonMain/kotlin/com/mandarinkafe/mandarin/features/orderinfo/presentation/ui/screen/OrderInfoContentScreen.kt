@@ -63,6 +63,7 @@ fun OrderInfoContentScreen(
             OrderStatusSection(
                 deliveryStatus = state.deliveryStatus,
                 shouldShowRefundText = shouldShowRefundText,
+                cancelComment = order.cancelComment,
                 isOnlinePayment = state.isOnlinePayment,
                 isPaymentPaid = state.isPaymentPaid
             )

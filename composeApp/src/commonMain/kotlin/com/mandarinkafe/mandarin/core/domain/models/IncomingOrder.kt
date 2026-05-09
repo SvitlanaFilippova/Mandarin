@@ -19,7 +19,7 @@ data class IncomingOrder(
     val customerName: String? = null,
     val items: List<IncomingOrderItem>,
     val status: DeliveryStatus,
-    val cancelInfo: String? = null,
+    val cancelComment: String? = null,
     val orderType: OrderType? = null,
     val paymentName: String? = null,
     val paymentMethodCode: String? = null,

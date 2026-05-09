@@ -89,6 +89,7 @@
     <string name="order_cancelled_but_paid_online">Средства будут автоматически возвращены на&#160;карту.
         Обычно это происходит быстро, редко&#160;&#8212; в&#160;течение нескольких рабочих дней.
     </string>
+    <string name="order_cancel_reason_template">Причина: %1$s</string>
 
 
     <!-- Основное -->
