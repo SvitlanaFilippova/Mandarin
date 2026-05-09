@@ -47,7 +47,10 @@ fun OrderSummaryData(
         if (!isPickup && !deliveryInfoIsLoading) {
             when (addressInNotInDeliveryArea) {
                 true -> {
-                    TooltipText(text = stringResource(MR.strings.delivery_validation_error))
+                    TooltipText(
+                        text = stringResource(MR.strings.delivery_validation_error),
+                        useErrorAccent = true,
+                    )
                 }
 
                 false -> {

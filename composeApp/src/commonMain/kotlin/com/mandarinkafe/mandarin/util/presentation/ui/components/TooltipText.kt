@@ -29,12 +29,36 @@ fun TooltipText(
     extraText: String? = null,
     extraTextRes: StringResource? = null,
     extraComposable: @Composable (() -> Unit)? = null,
+    /** Яркое предупреждение: красная иконка, рамка и контрастнее текст (например, ошибка зоны доставки). */
+    useErrorAccent: Boolean = false,
 ) {
+    val shape = RoundedCornerShape(Dimens.CornerRadius8)
+    val borderColor = if (useErrorAccent) {
+        Colors.Red
+    } else {
+        Colors.DarkGrey
+    }
+    val iconTint = if (useErrorAccent) {
+        Colors.Red
+    } else {
+        Colors.WhiteTransparent75
+    }
+    val bodyColor = if (useErrorAccent) {
+        Colors.White
+    } else {
+        Colors.WhiteTransparent75
+    }
+    val icon = if (useErrorAccent) {
+        MR.images.ic_error
+    } else {
+        MR.images.ic_info
+    }
+
     Box(
         modifier = modifier
             .border(
-                BorderStroke(width = Dimens.Border1, color = Colors.DarkGrey),
-                shape = RoundedCornerShape(Dimens.CornerRadius8)
+                BorderStroke(width = Dimens.Border1, color = borderColor),
+                shape = shape
             )
     ) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -44,21 +68,21 @@ fun TooltipText(
                     top = Dimens.MarginStandard16,
                     bottom = Dimens.MarginStandard16
                 ),
-                painter = painterResource(MR.images.ic_info),
-                tint = Colors.WhiteTransparent75,
+                painter = painterResource(icon),
+                tint = iconTint,
                 contentDescription = null
             )
             Column(modifier = Modifier.padding(Dimens.MarginStandard16)) {
                 Text(
                     text = text,
-                    style = Typography.SmallTextStyle.copy(color = Colors.WhiteTransparent75),
+                    style = Typography.SmallTextStyle.copy(color = bodyColor),
                 )
                 extraTextRes?.let {
                     Text(
                         modifier = Modifier.padding(top = Dimens.MarginStandard16),
                         text = stringResource(it),
                         style = Typography.SmallTextStyle.copy(
-                            color = Colors.WhiteTransparent75,
+                            color = bodyColor,
                             fontWeight = FontWeight.Light
                         ),
                     )
@@ -68,7 +92,7 @@ fun TooltipText(
                         modifier = Modifier.padding(top = Dimens.MarginStandard16),
                         text = extraText,
                         style = Typography.SmallTextStyle.copy(
-                            color = Colors.WhiteTransparent75,
+                            color = bodyColor,
                             fontWeight = FontWeight.Light
                         ),
                     )

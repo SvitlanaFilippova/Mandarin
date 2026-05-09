@@ -323,7 +323,7 @@ private fun PaymentProgressIndicator(
                 isPaymentPolling -> stringResource(MR.strings.payment_polling)
                 else -> stringResource(MR.strings.payment_processing)
             }
-            Value(text = loadingText)
+            Value(text = loadingText, isSoloInLine = true)
         }
     }
 }

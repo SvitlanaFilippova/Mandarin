@@ -9,6 +9,8 @@ data class OutgoingOrder(
     val deliveryType: DeliveryType,
     val chosenAddress: Address?,
     val paymentType: PaymentType,
+    /** [оплата: …] и сдача; дописывается к комментарию точки доставки после COMMENT_TECH_VISIBILITY_DIVIDER. */
+    val deliveryPointPaymentSuffix: String? = null,
     val comment: String,
     val items: List<CartItem>,
     val discountPercent: Int,

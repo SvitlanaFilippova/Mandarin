@@ -11,7 +11,6 @@ fun <T> debounce(
     cancelPrevious: Boolean = false, // 👈 новое
     action: (T) -> Unit,
 ): DebounceResult<T> {
-
     var lastJob: Job? = null
     val debounceJobs = mutableMapOf<T, Job>()
 

@@ -36,9 +36,16 @@ fun Label(text: String) {
 }
 
 @Composable
-fun Value(text: String, color: Color? = null) {
+fun Value(text: String, color: Color? = null, isSoloInLine: Boolean = false) {
+    val textAlign = if (isSoloInLine) {
+        TextAlign.Unspecified
+    } else {
+        TextAlign.End
+    }
+
     Text(
         text = text,
+        textAlign = textAlign,
         style = Typography.RegularTextStyle.copy(color = color ?: Color.Unspecified),
     )
 }

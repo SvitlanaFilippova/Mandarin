@@ -5,6 +5,7 @@ import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
+import com.mandarinkafe.mandarin.features.order.presentation.mapper.IikoErrorFormatter
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusFromIikoUseCase
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.tickerFlow
@@ -94,7 +95,10 @@ class OrderCreator(
         }
     }
 
-    private fun validateOrderId(orderId: String?, onError: (StringResource, String?) -> Unit): Boolean {
+    private fun validateOrderId(
+        orderId: String?,
+        onError: (StringResource, String?) -> Unit,
+    ): Boolean {
         if (orderId.isNullOrBlank()) {
             onError(MR.strings.error_order_creation_failed, null)
             return false
@@ -137,8 +141,9 @@ class OrderCreator(
             }
 
             CreationStatus.ERROR -> {
-                val errorDetails = buildErrorDetails(result.data?.errorInfo)
+                val errorDetails = buildErrorDetails(result.data.errorInfo)
                 onError(MR.strings.error_order_creation_failed, errorDetails)
+                Napier.e("ERROR creating order: $errorDetails")
                 stopObserving()
             }
 
@@ -163,7 +168,7 @@ class OrderCreator(
 
         return buildString {
             errorInfo.message?.let { message ->
-                append(message)
+                append(IikoErrorFormatter.format(message))
             }
             errorInfo.errorReason?.let { reason ->
                 if (isNotEmpty()) append("\n")
