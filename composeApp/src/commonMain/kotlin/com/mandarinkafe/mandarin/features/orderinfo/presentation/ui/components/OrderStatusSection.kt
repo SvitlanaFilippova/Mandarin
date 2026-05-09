@@ -48,7 +48,7 @@ fun OrderStatusSection(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
-        ) { Value(stringResource(deliveryStatus.nameRes)) }
+        ) { Value(stringResource(deliveryStatus.nameRes), isSoloInLine = true) }
 
         // Для статуса UNCONFIRMED с онлайн-оплатой, если заказ не оплачен, показываем специальный текст
         val extraTextResId = if (

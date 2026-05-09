@@ -46,7 +46,7 @@ fun AddressInfo(
             ) {
                 address?.let {
                     Label(stringResource(MR.strings.label_address))
-                    Value(it.streetAndBuilding)
+                    Value(it.streetAndBuilding, isSoloInLine = true)
                     val details = remember { it.getDetailsString() }
                     if (details.isNotEmpty()) {
                         Text(

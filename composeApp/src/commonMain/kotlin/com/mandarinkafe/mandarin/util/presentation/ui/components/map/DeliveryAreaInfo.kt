@@ -1,6 +1,8 @@
 package com.mandarinkafe.mandarin.util.presentation.ui.components.map
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,11 +28,19 @@ fun DeliveryAreaInfo(
     modifier: Modifier = Modifier,
     deliveryArea: UiDeliveryArea?,
 ) {
+    val shape = RoundedCornerShape(Dimens.CornerRadius8)
     Box(
         modifier = modifier
             .padding(Dimens.MarginSmall8)
-            .clip(RoundedCornerShape(Dimens.CornerRadius8))
+            .clip(shape)
             .background(Colors.AppBlack80)
+            .then(
+                if (deliveryArea == null) {
+                    Modifier.border(BorderStroke(Dimens.Border1, Colors.Red), shape)
+                } else {
+                    Modifier
+                },
+            ),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -58,10 +68,10 @@ fun DeliveryAreaInfo(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter = painterResource(MR.images.ic_info),
+                        painter = painterResource(MR.images.ic_error),
                         modifier = Modifier
                             .padding(Dimens.MarginSmall8),
-                        tint = Colors.White.copy(alpha = 0.5f),
+                        tint = Colors.Red,
                         contentDescription = null
                     )
                     Text(
@@ -71,7 +81,7 @@ fun DeliveryAreaInfo(
                             MR.strings.delivery_validation_error
                         ),
                         style = Typography.RegularLightTextStyle,
-                        color = Colors.White
+                        color = Colors.White,
                     )
                 }
             }

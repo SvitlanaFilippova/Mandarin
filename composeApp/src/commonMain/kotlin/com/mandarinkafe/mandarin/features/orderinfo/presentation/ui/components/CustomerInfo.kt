@@ -52,7 +52,7 @@ fun CustomerInfo(
                     val visibleComment = it.toVisibleComment()
                     if (visibleComment.isNotEmpty()) {
                         Label(stringResource(MR.strings.label_comment))
-                        Value(visibleComment)
+                        Value(text = visibleComment, isSoloInLine = true)
                     }
                 }
             }
