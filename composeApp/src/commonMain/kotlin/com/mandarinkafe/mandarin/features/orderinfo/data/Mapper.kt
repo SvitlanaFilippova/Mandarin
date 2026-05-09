@@ -25,7 +25,7 @@ import com.mandarinkafe.mandarin.util.applyTypography
 import com.mandarinkafe.mandarin.util.toVisibleComment
 
 fun OrderInfoResponseDto.toDomain(addons: List<MealAdditionalCategory>): IncomingOrder {
-    val cancelComment = (order?.cancelInfo?.comment)
+    val cancelComment = order?.cancelInfo?.comment
         .toVisibleComment()
         .takeIf { it.isNotEmpty() }
         ?.applyTypography()
