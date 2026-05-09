@@ -12,6 +12,7 @@ import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants.DEFAULT_AMOUNT
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingModifier
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrderItem
+import com.mandarinkafe.mandarin.util.COMMENT_TECH_VISIBILITY_DIVIDER
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -78,7 +79,7 @@ fun ModifierGroup.toOutgoingModifier(): List<OutgoingModifier> {
     }
 }
 
-fun Address?.toDeliveryPointDto(): DeliveryPointDto? {
+fun Address?.toDeliveryPointDto(internalPaymentSuffix: String? = null): DeliveryPointDto? {
     return if (this == null) {
         null
     } else {
@@ -99,8 +100,23 @@ fun Address?.toDeliveryPointDto(): DeliveryPointDto? {
                 doorphone = intercom,
                 type = OrderConstants.ADDRESS_TYPE_LEGACY,
             ),
-            comment = comment.ifBlank { null }
+            comment = buildDeliveryPointCourierComment(comment, internalPaymentSuffix),
         )
+    }
+}
+
+private fun buildDeliveryPointCourierComment(
+    addressComment: String,
+    internalPaymentSuffix: String?,
+): String? {
+    val base = addressComment.trim()
+    val suffix = internalPaymentSuffix?.trim().orEmpty()
+    if (base.isEmpty() && suffix.isEmpty()) return null
+    if (suffix.isEmpty()) return base.ifEmpty { null }
+    return if (base.isEmpty()) {
+        COMMENT_TECH_VISIBILITY_DIVIDER + suffix
+    } else {
+        base + COMMENT_TECH_VISIBILITY_DIVIDER + suffix
     }
 }
 

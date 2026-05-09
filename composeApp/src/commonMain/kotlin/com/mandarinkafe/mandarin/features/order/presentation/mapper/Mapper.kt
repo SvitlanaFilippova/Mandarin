@@ -15,12 +15,17 @@ import com.mandarinkafe.mandarin.util.Constants.PAYMENT_ONLINE_CODE
 
 fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
     val cash = paymentType.code == PAYMENT_CASH_CODE
+    val cashNoChange = if (cash) paymentInfo.noChange else null
+    val cashChangeFrom = if (cash) paymentInfo.changeFrom else ""
+    val paymentLine = buildPaymentAndChangeTechLine(
+        paymentTypeCode = paymentType.code,
+        noChange = cashNoChange,
+        changeFrom = cashChangeFrom,
+    )
     val fullComment = buildFullComment(
         userComment = comment.trim(),
         utensils = utensils,
-        paymentTypeCode = paymentType.code,
-        noChange = if (cash) paymentInfo.noChange else null,
-        changeFrom = if (cash) paymentInfo.changeFrom else "",
+        paymentLine = paymentLine,
     )
     val address = if (deliveryInfo.isPickup) null else deliveryInfo.chosenAddress
     // Исключаем скрытые блюда из передачи в заказ
@@ -32,6 +37,11 @@ fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
             ?: error("deliveryType is null"),
         chosenAddress = address,
         paymentType = paymentType,
+        deliveryPointPaymentSuffix = buildDeliveryPointPaymentSuffix(
+            paymentTypeCode = paymentType.code,
+            cashNoChange = cashNoChange,
+            cashChangeFrom = cashChangeFrom,
+        ),
         comment = fullComment,
         items = visibleItems,
         deliveryRealCost = deliveryCost,
@@ -41,12 +51,69 @@ fun OrderState.toDomain(paymentType: PaymentType): OutgoingOrder {
     )
 }
 
+/**
+ * Суффикс комментария к адресу для курьера: при наличных — `[оплата: наличные, …сдача]` в одних скобках;
+ * при прочих способах — строка как в [buildPaymentAndChangeTechLine].
+ */
+private fun buildDeliveryPointPaymentSuffix(
+    paymentTypeCode: String,
+    cashNoChange: Boolean?,
+    cashChangeFrom: String,
+): String {
+    val label = paymentLabelForComment(paymentTypeCode)
+    if (paymentTypeCode.equals(PAYMENT_CASH_CODE, ignoreCase = true)) {
+        val changeSegment = when {
+            cashNoChange == null -> null
+            cashNoChange -> OrderConstants.NO_CHANGE_COMMENT
+            cashChangeFrom.isNotEmpty() ->
+                OrderConstants.CHANGE_FROM_COMMENT_PREFIX + cashChangeFrom
+
+            else -> null
+        }
+        return buildString {
+            append("[оплата: ")
+            append(label)
+            if (changeSegment != null) {
+                append(", ")
+                append(changeSegment)
+            }
+            append(']')
+        }
+    }
+    return OrderConstants.PAYMENT_TYPE_TECH_FORMAT.replace("%s", label)
+}
+
+private fun paymentLabelForComment(paymentTypeCode: String): String =
+    when (paymentTypeCode.uppercase()) {
+        PAYMENT_CASH_CODE -> "наличные"
+        PAYMENT_BANK_CODE -> "картой при получении"
+        PAYMENT_ONLINE_CODE -> "онлайн-оплата"
+        else -> paymentTypeCode.lowercase()
+    }
+
+/**
+ * Техническая часть комментария к заказу: оплата и при наличных — сдача (через `. `).
+ */
+private fun buildPaymentAndChangeTechLine(
+    paymentTypeCode: String,
+    noChange: Boolean?,
+    changeFrom: String,
+): String {
+    val paymentLabel = paymentLabelForComment(paymentTypeCode)
+    val paymentTypePart = OrderConstants.PAYMENT_TYPE_TECH_FORMAT.replace("%s", paymentLabel)
+    val changePart = when {
+        noChange == null -> null
+        noChange -> OrderConstants.NO_CHANGE_COMMENT
+        changeFrom.isNotEmpty() -> OrderConstants.CHANGE_FROM_COMMENT_PREFIX + changeFrom
+        else -> null
+    }
+    return listOfNotNull(paymentTypePart, changePart).joinToString(DIVIDER_FOR_TECH_PART)
+}
+
 private fun buildFullComment(
     userComment: String,
     utensils: Utensils,
-    noChange: Boolean?,
-    changeFrom: String,
-    paymentTypeCode: String,
+    paymentLine: String,
 ): String {
     val utensilsPart = when {
         utensils.noNeedUtensils -> OrderConstants.NO_UTENSILS_COMMENT
@@ -56,27 +123,7 @@ private fun buildFullComment(
         else -> null
     }
 
-    // Определяем тип оплаты для комментария по коду
-    // paymentTypeCode может быть: "CASH", "CARD" (для ONLINE), "BANK"
-    val paymentType = when (paymentTypeCode.uppercase()) {
-        PAYMENT_CASH_CODE -> "наличные"
-        PAYMENT_BANK_CODE -> "картой при получении"
-        PAYMENT_ONLINE_CODE -> "онлайн-оплата"
-        else -> {
-            // Если не распознали, используем код как есть
-            paymentTypeCode.lowercase()
-        }
-    }
-
-    val paymentTypePart = OrderConstants.PAYMENT_TYPE_TECH_FORMAT.replace("%s", paymentType)
-    val changePart = when {
-        noChange == null -> null
-        noChange -> OrderConstants.NO_CHANGE_COMMENT
-        changeFrom.isNotEmpty() -> OrderConstants.CHANGE_FROM_COMMENT_PREFIX + changeFrom
-        else -> null
-    }
-
-    val techParts = listOfNotNull(paymentTypePart, changePart, utensilsPart)
+    val techParts = listOfNotNull(paymentLine, utensilsPart)
         .takeIf { it.isNotEmpty() }
         ?.joinToString(DIVIDER_FOR_TECH_PART)
 

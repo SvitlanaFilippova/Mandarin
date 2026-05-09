@@ -61,7 +61,9 @@ class OrderRepositoryImpl(
                 } else {
                     OrderConstants.DELIVERY_TYPE_PICKUP
                 },
-                deliveryPoint = chosenAddress?.toDeliveryPointDto(),
+                deliveryPoint = chosenAddress?.toDeliveryPointDto(
+                    internalPaymentSuffix = outgoingOrder.deliveryPointPaymentSuffix,
+                ),
                 comment = comment,
                 customer = CustomerDto(
                     name = name,
@@ -125,7 +127,8 @@ class OrderRepositoryImpl(
                 // Добавляем модификаторы, если они discountable
                 item.modifiers?.forEach { modifier ->
                     if (modifier.discountable) {
-                        val discountSum = modifier.price * modifier.amount * (discountPercent / PERCENT_DIVISOR)
+                        val discountSum =
+                            modifier.price * modifier.amount * (discountPercent / PERCENT_DIVISOR)
                         add(
                             OutgoingDiscountItemDto(
                                 positionId = modifier.positionId,
