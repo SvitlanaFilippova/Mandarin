@@ -12,22 +12,11 @@ import com.mandarinkafe.mandarin.features.infrastructure.data.network.LoyaltyCus
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.TerminalGroupsIdsRequest
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.AliveTerminalGroupsResponse
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.TerminalGroupsIdsResponse
-import com.mandarinkafe.mandarin.features.order.data.network.CreateDeliveryRequest
-import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
-import com.mandarinkafe.mandarin.features.orderinfo.data.network.AddPaymentsRequest
-import com.mandarinkafe.mandarin.features.orderinfo.data.network.AddPaymentsResponse
-import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderRequest
-import com.mandarinkafe.mandarin.features.orderinfo.data.network.CancelOrderResponse
-import com.mandarinkafe.mandarin.features.orderinfo.data.network.OderInfoRequest
-import com.mandarinkafe.mandarin.features.orderinfo.data.network.OrdersInfoResponse
-import com.mandarinkafe.mandarin.util.Constants
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
-import kotlinx.serialization.json.Json
 
 class IikoApi(
     private val client: HttpClient,
@@ -67,79 +56,6 @@ class IikoApi(
             response.body()
         } catch (e: Exception) {
             logError("getAliveTerminalGroups", e)
-            throw e
-        }
-    }
-
-    // Заказ
-    suspend fun createDelivery(body: CreateDeliveryRequest): CreateDeliveryResponse {
-        return try {
-            val response = client.post("/api/1/deliveries/create") {
-                setBody(body)
-            }
-            response.body()
-        } catch (e: Exception) {
-            logError("createDelivery", e)
-            throw e
-        }
-    }
-
-    suspend fun getOrdersStatusById(body: OderInfoRequest): OrdersInfoResponse {
-        return try {
-            val response = client.post("/api/1/deliveries/by_id") {
-                setBody(body)
-            }
-            response.body()
-        } catch (e: Exception) {
-            logError("getOrdersStatusById", e)
-            throw e
-        }
-    }
-
-    suspend fun cancelOrderById(body: CancelOrderRequest): CancelOrderResponse {
-        return try {
-            val response = client.post("/api/1/deliveries/cancel") {
-                setBody(body)
-            }
-            response.body()
-        } catch (e: Exception) {
-            logError("cancelOrderById", e)
-            throw e
-        }
-    }
-
-    suspend fun addPayments(body: AddPaymentsRequest): AddPaymentsResponse {
-        return try {
-            val json = Json { ignoreUnknownKeys = true; isLenient = true }
-
-            val response = client.post("/api/1/deliveries/add_payments") {
-                setBody(body)
-            }
-
-            val responseStatus = response.status
-            val responseBodyText = try {
-                response.bodyAsText()
-            } catch (e: Exception) {
-                "Failed to read response body: ${e.message}"
-            }
-
-            // Десериализуем ответ
-            val responseBody = try {
-                json.decodeFromString(AddPaymentsResponse.serializer(), responseBodyText)
-            } catch (e: Exception) {
-                logError("addPayments - deserialization", e)
-                AddPaymentsResponse()
-            }
-
-            // Проверяем статус и ошибку
-            if (responseStatus.value >= Constants.HTTP_400 || responseBody.error != null) {
-                val errorMsg = responseBody.error ?: "HTTP ${responseStatus.value}"
-                error("iiko error: $errorMsg")
-            }
-
-            responseBody
-        } catch (e: Exception) {
-            logError("addPayments", e)
             throw e
         }
     }

@@ -143,8 +143,6 @@ internal class OrderViewModelSubmitFlow(
 
         deps.scope.launch {
             deps.cartUseCases.clearCart()
-            val paymentMethodCode = savedChosenPaymentType?.code
-            deps.saveOrderToHistory(order, paymentMethodCode)
         }
 
         val paymentMethodCode = savedChosenPaymentType?.code

@@ -120,8 +120,8 @@ class OrderCreator(
             }
 
             is Resource.ErrorOther -> {
-                onError(MR.strings.error_order_status_failed, result.message)
-                stopObserving()
+                Napier.w("Order status polling transient error: ${result.message}")
+                onLoading()
             }
 
             else -> Unit
@@ -185,4 +185,3 @@ class OrderCreator(
         const val ORDER_STATUS_UPD_DELAY = 1
     }
 }
-

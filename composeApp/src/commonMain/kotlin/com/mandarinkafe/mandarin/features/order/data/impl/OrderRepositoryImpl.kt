@@ -2,10 +2,11 @@ package com.mandarinkafe.mandarin.features.order.data.impl
 
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.core.data.dto.order.CustomerDto
-import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
+import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants
+import com.mandarinkafe.mandarin.features.order.data.network.ServerCreateOrderRequest
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDeliveryPointDto
 import com.mandarinkafe.mandarin.features.order.data.mapper.toOrderItems
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
@@ -18,25 +19,36 @@ import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrderItem
 import com.mandarinkafe.mandarin.features.orderinfo.data.toDomain
+import com.mandarinkafe.mandarin.features.ordershistory.data.network.OrdersHistoryServerApi
+import com.mandarinkafe.mandarin.util.Constants.BEARER_TOKEN_TYPE
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
 import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import com.mandarinkafe.mandarin.util.Resource
 import io.github.aakira.napier.Napier
 
 class OrderRepositoryImpl(
-    private val networkClient: IikoNetworkClient,
+    private val serverApi: OrdersHistoryServerApi,
+    private val authRepository: AuthRepository,
     private val menuCache: MenuCache,
 ) : OrderRepository {
 
     override suspend fun createOrder(outgoingOrder: OutgoingOrder): Resource<IncomingOrder> {
         return try {
+            val token = authRepository.getAccessToken()
+                ?: return Resource.ErrorOther("Токен авторизации не найден")
             val orderItems = prepareOrderItems(outgoingOrder)
             val discountInfo = createDiscountInfo(
                 discountPercent = outgoingOrder.discountPercent,
                 items = orderItems
             )
             val orderDto = buildOrderDto(outgoingOrder, orderItems, discountInfo)
-            val response = networkClient.createDelivery(orderDto)
+            val response = serverApi.createOrder(
+                token = buildAuthToken(token),
+                body = ServerCreateOrderRequest(
+                    order = orderDto,
+                    paymentMethodCode = outgoingOrder.paymentType.code,
+                ),
+            )
             handleCreateOrderResponse(response)
         } catch (e: Exception) {
             Napier.e("Exception in createOrder: ${e.message}", e)
@@ -70,11 +82,14 @@ class OrderRepositoryImpl(
                     type = OrderConstants.CUSTOMER_TYPE_REGULAR
                 ),
                 items = orderItems,
+                paymentMethodCode = paymentType.code,
                 payments = null,
                 discountsInfo = discountInfo
             )
         }
     }
+
+    private fun buildAuthToken(token: String): String = "$BEARER_TOKEN_TYPE $token"
 
     private fun handleCreateOrderResponse(response: Response): Resource<IncomingOrder> {
         return when (response.resultCode) {

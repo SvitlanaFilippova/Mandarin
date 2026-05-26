@@ -14,13 +14,13 @@ data class OutgoingOrderDto(
     val comment: String? = null,
     val customer: CustomerDto? = null,
     val items: List<OutgoingOrderItem?>,
+    val paymentMethodCode: String? = null,
     val discountsInfo: OutgoingDiscountInfoDto? = null,
     val payments: List<OutgoingPaymentDto>? = null,
     val orderType: OrderTypeDto? = null,
     val processedPaymentsSum: Int? = null,
     val sum: Int? = null,
 )
-
 
 
 
