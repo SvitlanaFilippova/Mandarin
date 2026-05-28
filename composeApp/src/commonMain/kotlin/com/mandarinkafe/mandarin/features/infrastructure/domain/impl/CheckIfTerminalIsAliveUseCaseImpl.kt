@@ -41,7 +41,7 @@ class CheckIfTerminalIsAliveUseCaseImpl(private val repository: AliveTerminalRep
     }
 
     companion object {
-        private const val CACHE_TTL_MS = 60 * 1000L // 1 минута
+        private const val CACHE_TTL_MS = 30 * 1000L
         private const val INITIAL_CACHE_TIME = 0L
         private const val RETRY_DELAY_MS = 500L
     }

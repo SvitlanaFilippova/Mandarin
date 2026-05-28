@@ -148,6 +148,7 @@ private fun String.toDeliveryStatus(): DeliveryStatus {
 fun ErrorInfoDto.toDomain() = ErrorInfo(
     code = code,
     message = message,
+    userMessage = userMessage,
     errorReason = errorReason,
 )
 

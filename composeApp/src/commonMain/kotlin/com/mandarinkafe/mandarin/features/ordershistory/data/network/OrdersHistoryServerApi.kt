@@ -3,6 +3,11 @@ package com.mandarinkafe.mandarin.features.ordershistory.data.network
 import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.core.data.network.NetworkMonitor
+import com.mandarinkafe.mandarin.features.order.data.network.ServerAddPaymentRequest
+import com.mandarinkafe.mandarin.features.order.data.network.ServerCancelOrderRequest
+import com.mandarinkafe.mandarin.features.order.data.network.ServerCreateOrderRequest
+import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
+import com.mandarinkafe.mandarin.features.orderinfo.data.network.OrdersInfoResponse
 import com.mandarinkafe.mandarin.util.Constants.HEADER_API_KEY
 import com.mandarinkafe.mandarin.util.Constants.HEADER_AUTHORIZATION
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
@@ -30,6 +35,151 @@ class OrdersHistoryServerApi(
 
     private fun isConnected(): Boolean {
         return networkMonitor.isNetworkAvailable()
+    }
+
+    suspend fun createOrder(token: String, body: ServerCreateOrderRequest): CreateDeliveryResponse {
+        if (!isConnected()) {
+            return CreateDeliveryResponse(correlationId = "").apply { resultCode = NO_CONNECTION }
+        }
+
+        return try {
+            val httpResponse = client.post("/orders/create") {
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
+                setBody(body)
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> {
+                    val responseBody: CreateDeliveryResponse = httpResponse.body()
+                    responseBody.apply { resultCode = HTTP_SUCCESS }
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    CreateDeliveryResponse(correlationId = "")
+                        .apply { resultCode = HttpStatusCode.Unauthorized.value }
+                }
+
+                HttpStatusCode.BadRequest, HttpStatusCode.UnprocessableEntity -> {
+                    val errorBody = httpResponse.bodyAsText()
+                    Napier.e("createOrder validation error: $errorBody")
+                    CreateDeliveryResponse(correlationId = "")
+                        .apply { resultCode = httpResponse.status.value }
+                }
+
+                else -> {
+                    CreateDeliveryResponse(correlationId = "").apply { resultCode = HTTP_SERVER_ERROR }
+                }
+            }
+        } catch (e: Throwable) {
+            Napier.e("createOrder error: $e")
+            CreateDeliveryResponse(correlationId = "").apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun getOrderStatus(token: String, orderId: String): OrdersInfoResponse {
+        if (!isConnected()) {
+            return OrdersInfoResponse(correlationId = "").apply { resultCode = NO_CONNECTION }
+        }
+
+        return try {
+            val httpResponse = client.get("/orders/status/$orderId") {
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> {
+                    val responseBody: OrdersInfoResponse = httpResponse.body()
+                    responseBody.apply { resultCode = HTTP_SUCCESS }
+                }
+
+                HttpStatusCode.NotFound -> {
+                    OrdersInfoResponse(correlationId = "")
+                        .apply { resultCode = HttpStatusCode.NotFound.value }
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    OrdersInfoResponse(correlationId = "")
+                        .apply { resultCode = HttpStatusCode.Unauthorized.value }
+                }
+
+                else -> {
+                    OrdersInfoResponse(correlationId = "").apply { resultCode = HTTP_SERVER_ERROR }
+                }
+            }
+        } catch (e: Throwable) {
+            Napier.e("getOrderStatus error: $e")
+            OrdersInfoResponse(correlationId = "").apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun cancelOrder(
+        token: String,
+        orderId: String,
+        body: ServerCancelOrderRequest,
+    ): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+
+        return try {
+            val httpResponse = client.post("/orders/$orderId/cancel") {
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
+                setBody(body)
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> Response().apply { resultCode = HTTP_SUCCESS }
+                HttpStatusCode.Unauthorized -> Response().apply {
+                    resultCode = HttpStatusCode.Unauthorized.value
+                }
+
+                HttpStatusCode.NotFound -> Response().apply {
+                    resultCode = HttpStatusCode.NotFound.value
+                }
+
+                else -> Response().apply { resultCode = HTTP_SERVER_ERROR }
+            }
+        } catch (e: Throwable) {
+            Napier.e("cancelOrder error: $e")
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun addPayment(
+        token: String,
+        orderId: String,
+        body: ServerAddPaymentRequest,
+    ): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+
+        return try {
+            val httpResponse = client.post("/orders/$orderId/payments") {
+                header(HEADER_API_KEY, key)
+                header(HEADER_AUTHORIZATION, token)
+                setBody(body)
+            }
+
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> Response().apply { resultCode = HTTP_SUCCESS }
+                HttpStatusCode.Unauthorized -> Response().apply {
+                    resultCode = HttpStatusCode.Unauthorized.value
+                }
+
+                HttpStatusCode.NotFound -> Response().apply {
+                    resultCode = HttpStatusCode.NotFound.value
+                }
+
+                else -> Response().apply { resultCode = HTTP_SERVER_ERROR }
+            }
+        } catch (e: Throwable) {
+            Napier.e("addPayment error: $e")
+            Response().apply { resultCode = HTTP_SERVER_ERROR }
+        }
     }
 
     suspend fun getOrdersHistory(token: String): OrdersHistoryResponse {
@@ -233,4 +383,3 @@ class OrdersHistoryServerApi(
         }
     }
 }
-

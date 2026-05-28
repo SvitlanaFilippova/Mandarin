@@ -9,28 +9,17 @@ class CheckDiscountByPhoneUseCaseImpl(
     private val repository: LoyaltyCustomerRepository,
 ) : CheckDiscountByPhoneUseCase {
     override suspend fun invoke(phone: String): Resource<CustomersMaxDiscount?> {
-        val resource = repository.getLoyaltyCustomerInfo(phone)
-        return when (resource) {
+        return when (val resource = repository.getMaxDiscountPercent(phone)) {
             is Resource.Success -> {
-                val customerInfo = resource.data
-
-                if (customerInfo == null || customerInfo.isDeleted) {
+                val discountPercent = resource.data
+                if (discountPercent == null || discountPercent <= 0) {
                     Resource.Success(null)
                 } else {
-                    val activeCategories = customerInfo.categories.filter { it.isActive }
-                    val maxCategory = activeCategories.maxByOrNull { it.name.toIntOrNull() ?: 0 }
-
-                    if (maxCategory != null) {
-                        val discountPercent = maxCategory.name.toIntOrNull() ?: 0
-
-                        Resource.Success(
-                            CustomersMaxDiscount(
-                                discountPercent = discountPercent
-                            )
+                    Resource.Success(
+                        CustomersMaxDiscount(
+                            discountPercent = discountPercent
                         )
-                    } else {
-                        Resource.Success(null)
-                    }
+                    )
                 }
             }
 
