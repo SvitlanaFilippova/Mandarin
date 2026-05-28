@@ -4,6 +4,9 @@ import com.mandarinkafe.mandarin.BuildKonfig
 import com.mandarinkafe.mandarin.core.data.dto.Response
 import com.mandarinkafe.mandarin.features.address.data.dto.DeliveryZonesResponse
 import com.mandarinkafe.mandarin.features.cart.data.dto.RecommendationsResponse
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.PhoneDiscountRequest
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.PhoneDiscountResponse
+import com.mandarinkafe.mandarin.features.infrastructure.data.network.TerminalStatusServerResponse
 import com.mandarinkafe.mandarin.features.infrastructure.data.network.dto.paymenttype.PaymentTypesServerResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.AnnouncementsResponse
 import com.mandarinkafe.mandarin.features.menu.data.dto.BannersResponse
@@ -19,6 +22,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 
 class ServerApi(
     private val client: HttpClient,
@@ -123,6 +128,33 @@ class ServerApi(
             PaymentTypesServerResponse(
                 paymentTypes = emptyList()
             ).apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun getTerminalStatus(): Response {
+        return try {
+            val response: TerminalStatusServerResponse =
+                client.get("/terminal-status") {
+                    header(API_KEY_HEADER, key)
+                }.body()
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Napier.e("ServerApi: getTerminalStatus(): ошибка проверки терминала", e)
+            TerminalStatusServerResponse().apply { resultCode = HTTP_SERVER_ERROR }
+        }
+    }
+
+    suspend fun getPhoneDiscount(phone: String): Response {
+        return try {
+            val response: PhoneDiscountResponse =
+                client.post("/loyalty/phone-discount") {
+                    header(API_KEY_HEADER, key)
+                    setBody(PhoneDiscountRequest(phone))
+                }.body()
+            response.apply { resultCode = HTTP_SUCCESS }
+        } catch (e: Throwable) {
+            Napier.e("ServerApi: getPhoneDiscount(): ошибка получения скидки", e)
+            PhoneDiscountResponse().apply { resultCode = HTTP_SERVER_ERROR }
         }
     }
 

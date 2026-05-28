@@ -10,5 +10,7 @@ interface ServerNetworkClient {
     suspend fun getDeliveryZones(): Response
     suspend fun getMenu(): Response
     suspend fun getPaymentTypes(): Response
+    suspend fun getTerminalStatus(): Response
+    suspend fun getPhoneDiscount(phone: String): Response
     suspend fun getAppStores(): Response
 }
