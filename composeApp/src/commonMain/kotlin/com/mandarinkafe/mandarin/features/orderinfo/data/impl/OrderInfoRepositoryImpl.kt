@@ -26,6 +26,7 @@ class OrderInfoRepositoryImpl(
     private companion object {
         private const val FIRST_RETRY_DELAY_MS = 1000L
         private const val SECOND_RETRY_DELAY_MS = 2000L
+        private const val ERROR_EMPTY_SERVER_RESPONSE = "Ошибка сервера или пустой ответ"
 
         fun buildAuthToken(token: String) = "$BEARER_TOKEN_TYPE $token"
     }
@@ -109,16 +110,16 @@ class OrderInfoRepositoryImpl(
                         val validatedOrder = validateOrderItemsWithMenu(order = orderInfo)
                         Resource.Success(data = validatedOrder)
                     } else {
-                        Resource.ErrorOther("Ошибка сервера или пустой ответ")
+                        Resource.ErrorOther(ERROR_EMPTY_SERVER_RESPONSE)
                     }
                 }
 
                 HttpStatusCode.NotFound.value -> Resource.ErrorOther("Заказ не найден")
-                else -> Resource.ErrorOther("Ошибка сервера или пустой ответ")
+                else -> Resource.ErrorOther(ERROR_EMPTY_SERVER_RESPONSE)
             }
         } catch (e: Exception) {
             Napier.e("OrderInfoRepositoryImpl, getOrderFromIiko(server) error: $e", e)
-            Resource.ErrorOther("Ошибка сервера или пустой ответ")
+            Resource.ErrorOther(ERROR_EMPTY_SERVER_RESPONSE)
         }
     }
 
