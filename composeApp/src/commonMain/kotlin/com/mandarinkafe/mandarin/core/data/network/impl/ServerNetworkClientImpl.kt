@@ -64,6 +64,20 @@ class ServerNetworkClientImpl(
         return serverApi.getPaymentTypes()
     }
 
+    override suspend fun getTerminalStatus(): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return serverApi.getTerminalStatus()
+    }
+
+    override suspend fun getPhoneDiscount(phone: String): Response {
+        if (!isConnected()) {
+            return Response().apply { resultCode = NO_CONNECTION }
+        }
+        return serverApi.getPhoneDiscount(phone)
+    }
+
     override suspend fun getAppStores(): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
@@ -71,4 +85,3 @@ class ServerNetworkClientImpl(
         return serverApi.getAppStores()
     }
 }
-

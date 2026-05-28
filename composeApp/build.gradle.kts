@@ -225,7 +225,6 @@ val props = Properties().apply {
 
 val keys = listOf(
     "MAPKIT_API_KEY",
-    "IIKO_API_KEY",
     "TG_BOT_TOKEN",
     "TG_CHANNEL_ID",
     "DEV_TG_CHAT_ID",
@@ -281,4 +280,3 @@ tasks.register("updateIOSVersion") {
 tasks.named("packForXcode") {
     dependsOn("updateIOSVersion")
 }
-

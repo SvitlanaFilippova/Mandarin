@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 data class ErrorInfoDto(
     val code: String,
     val message: String?,
+    val userMessage: String? = null,
     val errorReason: String?,
 )
-
 
 
 

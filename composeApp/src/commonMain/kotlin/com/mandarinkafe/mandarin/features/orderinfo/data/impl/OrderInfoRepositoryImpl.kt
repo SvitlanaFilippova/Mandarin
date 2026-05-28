@@ -1,11 +1,9 @@
 package com.mandarinkafe.mandarin.features.orderinfo.data.impl
 
-import com.mandarinkafe.mandarin.core.data.network.IikoNetworkClient
 import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.core.domain.models.ModifierGroup
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
-import com.mandarinkafe.mandarin.features.orderinfo.data.network.OrdersInfoResponse
 import com.mandarinkafe.mandarin.features.orderinfo.data.toDomain
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.OrderInfoRepository
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.IncomingModifier
@@ -21,7 +19,6 @@ import kotlinx.coroutines.delay
 
 class OrderInfoRepositoryImpl(
     private val serverApi: OrdersHistoryServerApi,
-    private val networkClient: IikoNetworkClient,
     private val menuCache: MenuCache,
     private val authRepository: AuthRepository,
 ) : OrderInfoRepository {
@@ -29,6 +26,7 @@ class OrderInfoRepositoryImpl(
     private companion object {
         private const val FIRST_RETRY_DELAY_MS = 1000L
         private const val SECOND_RETRY_DELAY_MS = 2000L
+        private const val ERROR_EMPTY_SERVER_RESPONSE = "Ошибка сервера или пустой ответ"
 
         fun buildAuthToken(token: String) = "$BEARER_TOKEN_TYPE $token"
     }
@@ -55,8 +53,8 @@ class OrderInfoRepositoryImpl(
             return thirdRetryServerResult
         }
 
-        // Если все три попытки не удались, fallback на iiko
-        return getOrderFromIikoDirectly(id)
+        // Если детали ещё не успели сохраниться из webhook/create, просим сервер сам сходить в iiko.
+        return getOrderFromIiko(id)
     }
 
     private suspend fun tryGetOrderFromServer(id: String): Resource<IncomingOrder>? {
@@ -95,31 +93,33 @@ class OrderInfoRepositoryImpl(
     }
 
     override suspend fun getOrderFromIiko(id: String): Resource<IncomingOrder> {
-        return getOrderFromIikoDirectly(id)
-    }
+        val token = authRepository.getAccessToken()
+            ?: return Resource.ErrorOther("Токен авторизации не найден")
 
-    private suspend fun getOrderFromIikoDirectly(id: String): Resource<IncomingOrder> {
-        val response = networkClient.getSingleOrderInfoById(id)
-        return when (response.resultCode) {
-            NO_CONNECTION -> Resource.ErrorNoInternet()
-            HTTP_SUCCESS -> {
-                val addons = menuCache.addonsCategories.value
-                val orderInfo = (response as OrdersInfoResponse)
-                    .orders
-                    .firstOrNull { it.id == id }
-                    ?.toDomain(addons)
+        return try {
+            val response = serverApi.getOrderStatus(buildAuthToken(token), id)
+            when (response.resultCode) {
+                NO_CONNECTION -> Resource.ErrorNoInternet()
+                HTTP_SUCCESS -> {
+                    val addons = menuCache.addonsCategories.value
+                    val orderInfo = response.orders
+                        .firstOrNull { it.id == id }
+                        ?.toDomain(addons)
 
-                if (orderInfo != null) {
-                    val validatedOrder = validateOrderItemsWithMenu(order = orderInfo)
-                    Resource.Success(data = validatedOrder)
-                } else {
-                    Resource.ErrorOther(
-                        "Ошибка сервера или пустой ответ"
-                    )
+                    if (orderInfo != null) {
+                        val validatedOrder = validateOrderItemsWithMenu(order = orderInfo)
+                        Resource.Success(data = validatedOrder)
+                    } else {
+                        Resource.ErrorOther(ERROR_EMPTY_SERVER_RESPONSE)
+                    }
                 }
-            }
 
-            else -> Resource.ErrorOther("Ошибка сервера или пустой ответ")
+                HttpStatusCode.NotFound.value -> Resource.ErrorOther("Заказ не найден")
+                else -> Resource.ErrorOther(ERROR_EMPTY_SERVER_RESPONSE)
+            }
+        } catch (e: Exception) {
+            Napier.e("OrderInfoRepositoryImpl, getOrderFromIiko(server) error: $e", e)
+            Resource.ErrorOther(ERROR_EMPTY_SERVER_RESPONSE)
         }
     }
 
