@@ -5,7 +5,6 @@ import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.order.domain.api.CreateOrderUseCase
 import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.OutgoingOrder
-import com.mandarinkafe.mandarin.features.order.presentation.mapper.IikoErrorFormatter
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.GetOrderStatusFromIikoUseCase
 import com.mandarinkafe.mandarin.util.Resource
 import com.mandarinkafe.mandarin.util.tickerFlow
@@ -167,8 +166,8 @@ class OrderCreator(
         if (errorInfo == null) return null
 
         return buildString {
-            errorInfo.message?.let { message ->
-                append(IikoErrorFormatter.format(message))
+            (errorInfo.userMessage ?: errorInfo.message)?.let { message ->
+                append(message)
             }
             errorInfo.errorReason?.let { reason ->
                 if (isNotEmpty()) append("\n")

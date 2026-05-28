@@ -6,9 +6,9 @@ import com.mandarinkafe.mandarin.core.domain.api.MenuCache
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.auth.domain.api.AuthRepository
 import com.mandarinkafe.mandarin.features.order.data.mapper.OrderConstants
-import com.mandarinkafe.mandarin.features.order.data.network.ServerCreateOrderRequest
 import com.mandarinkafe.mandarin.features.order.data.mapper.toDeliveryPointDto
 import com.mandarinkafe.mandarin.features.order.data.mapper.toOrderItems
+import com.mandarinkafe.mandarin.features.order.data.network.ServerCreateOrderRequest
 import com.mandarinkafe.mandarin.features.order.data.network.dto.CreateDeliveryResponse
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscountInfoDto
 import com.mandarinkafe.mandarin.features.order.data.network.dto.OutgoingDiscountItemDto
@@ -107,7 +107,11 @@ class OrderRepositoryImpl(
                         Resource.Success(data = orderInfo)
 
                     else ->
-                        Resource.ErrorOther(orderInfo.errorInfo.message ?: "Неизвестная ошибка")
+                        Resource.ErrorOther(
+                            orderInfo.errorInfo.userMessage
+                                ?: orderInfo.errorInfo.message
+                                ?: "Неизвестная ошибка"
+                        )
                 }
             }
 
