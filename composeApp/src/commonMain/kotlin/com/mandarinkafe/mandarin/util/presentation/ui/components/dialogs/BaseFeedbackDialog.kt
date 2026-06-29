@@ -3,9 +3,7 @@ package com.mandarinkafe.mandarin.util.presentation.ui.components.dialogs
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -18,16 +16,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
-import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.util.presentation.ui.components.CheckboxWithTextRow
 import com.mandarinkafe.mandarin.util.presentation.ui.components.ConsentTextWithLinks
 import com.mandarinkafe.mandarin.util.presentation.ui.components.MyCircularProgressIndicator
 import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.MyTextField
-import com.mandarinkafe.mandarin.util.presentation.ui.components.textfields.PhoneField
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.Flow
@@ -41,15 +36,8 @@ fun <Effect, Event> BaseFeedbackDialog(
     onEvent: (Event) -> Unit,
     submitEvent: Event,
     mapEffect: (Effect) -> Pair<String, Boolean>, // message, isSuccess
-    name: String,
-    phone: String,
-    email: String,
     message: String,
     needAnswer: Boolean,
-    isContactValid: Boolean,
-    onNameChange: (String) -> Unit,
-    onPhoneChange: (String) -> Unit,
-    onEmailChange: (String) -> Unit,
     onMessageChange: (String) -> Unit,
     onSetNeedFeedback: (Boolean) -> Unit,
     isFormValid: Boolean,
@@ -81,17 +69,10 @@ fun <Effect, Event> BaseFeedbackDialog(
         text = {
             FeedbackFields(
                 colors = colors,
-                name = name,
-                phone = phone,
-                email = email,
                 message = message,
                 needAnswer = needAnswer,
-                onNameChange = onNameChange,
-                onPhoneChange = onPhoneChange,
-                onEmailChange = onEmailChange,
                 onMessageChange = onMessageChange,
                 onSetNeedFeedback = onSetNeedFeedback,
-                isContactValid = isContactValid,
                 isError = isError,
             )
         },
@@ -154,47 +135,13 @@ fun <Effect, Event> BaseFeedbackDialog(
 @Composable
 private fun FeedbackFields(
     colors: TextFieldColors,
-    onNameChange: (String) -> Unit,
-    onPhoneChange: (String) -> Unit,
-    onEmailChange: (String) -> Unit,
     onMessageChange: (String) -> Unit,
     onSetNeedFeedback: (Boolean) -> Unit,
-    name: String,
-    phone: String,
-    email: String,
     message: String,
     needAnswer: Boolean,
-    isContactValid: Boolean,
     isError: Boolean,
 ) {
     Column {
-        MyTextField(
-            value = name,
-            labelRes = MR.strings.your_name_no_obligatory,
-            onValueChange = { onNameChange(it) },
-            colors = colors
-        )
-
-        Spacer(Modifier.height(Dimens.MarginSmall8))
-
-        PhoneField(
-            value = phone,
-            isError = !isContactValid && isError,
-            onValueChange = { onPhoneChange(it) },
-            colors = colors
-        )
-
-        MyTextField(
-            value = email,
-            labelRes = MR.strings.your_email,
-            isError = !isContactValid && isError,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            onValueChange = { onEmailChange(it) },
-            colors = colors
-        )
-
-        Spacer(Modifier.height(Dimens.MarginSmall8))
-
         MyTextField(
             value = message,
             onValueChange = { onMessageChange(it) },
@@ -213,14 +160,6 @@ private fun FeedbackFields(
         )
         Spacer(Modifier.height(Dimens.MarginSmall8))
 
-        if (needAnswer && !isContactValid && isError) {
-            Text(
-                text = stringResource(MR.strings.contacts_are_required),
-                style = Typography.ErrorTextStyle,
-                modifier = Modifier.padding(start = Dimens.MarginStandard16)
-            )
-            Spacer(Modifier.height(Dimens.MarginSmall8))
-        }
         ConsentTextWithLinks(
             buttonName = stringResource(MR.strings.send)
         )

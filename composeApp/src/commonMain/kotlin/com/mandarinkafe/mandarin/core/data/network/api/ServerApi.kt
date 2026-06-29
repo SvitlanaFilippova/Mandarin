@@ -17,13 +17,16 @@ import com.mandarinkafe.mandarin.features.menu.data.dto.ServerMenuResponse
 import com.mandarinkafe.mandarin.features.more.data.dto.AppStoresResponse
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SERVER_ERROR
 import com.mandarinkafe.mandarin.util.Constants.HTTP_SUCCESS
+import com.mandarinkafe.mandarin.util.Constants.NO_CONNECTION
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import kotlinx.io.IOException
 
 class ServerApi(
     private val client: HttpClient,
@@ -34,6 +37,14 @@ class ServerApi(
         private const val API_KEY_HEADER = "x-api-key"
     }
 
+    private fun <T : Response> T.withNetworkFailure(e: Throwable): T = apply {
+        resultCode = if (e is IOException || e is SocketTimeoutException) {
+            NO_CONNECTION
+        } else {
+            HTTP_SERVER_ERROR
+        }
+    }
+
     suspend fun getMenu(): Response {
         return try {
             val response: ServerMenuResponse = client.get("/menu") {
@@ -42,7 +53,7 @@ class ServerApi(
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("ServerApi: getMenu(): ошибка получения меню", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
+            Response().withNetworkFailure(e)
         }
     }
 
@@ -53,7 +64,7 @@ class ServerApi(
             BannersResponse(data = bannersList).apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("ServerApi: getBanners(): ошибка получения баннеров", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
+            Response().withNetworkFailure(e)
         }
     }
 
@@ -64,7 +75,7 @@ class ServerApi(
             AnnouncementsResponse(data = announcementsList).apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("ServerApi: getAnnouncements(): ошибка получения объявлений", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
+            Response().withNetworkFailure(e)
         }
     }
 
@@ -77,7 +88,7 @@ class ServerApi(
                 "ServerApi: getOrderAcceptStatus(): ошибка получения статуса приёма заказов",
                 e
             )
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
+            Response().withNetworkFailure(e)
         }
     }
 
@@ -88,7 +99,7 @@ class ServerApi(
             RecommendationsResponse(data = recommendsList).apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("ServerApi: getRecommendations(): ошибка получения рекомендаций", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
+            Response().withNetworkFailure(e)
         }
     }
 
@@ -99,7 +110,7 @@ class ServerApi(
             DeliveryZonesResponse(data = deliveryZones).apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("ServerApi: getDeliveryZones(): ошибка получения зон доставки", e)
-            Response().apply { resultCode = HTTP_SERVER_ERROR }
+            Response().withNetworkFailure(e)
         }
     }
 
@@ -112,7 +123,7 @@ class ServerApi(
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("ServerApi: getModifierGroups(): ошибка получения групп модификаторов", e)
-            ModifierGroupsResponse().apply { resultCode = HTTP_SERVER_ERROR }
+            ModifierGroupsResponse().withNetworkFailure(e)
         }
     }
 
@@ -127,7 +138,7 @@ class ServerApi(
             Napier.e("ServerApi: getPaymentTypes(): ошибка получения способов оплаты", e)
             PaymentTypesServerResponse(
                 paymentTypes = emptyList()
-            ).apply { resultCode = HTTP_SERVER_ERROR }
+            ).withNetworkFailure(e)
         }
     }
 
@@ -140,7 +151,7 @@ class ServerApi(
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("ServerApi: getTerminalStatus(): ошибка проверки терминала", e)
-            TerminalStatusServerResponse().apply { resultCode = HTTP_SERVER_ERROR }
+            TerminalStatusServerResponse().withNetworkFailure(e)
         }
     }
 
@@ -154,7 +165,7 @@ class ServerApi(
             response.apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("ServerApi: getPhoneDiscount(): ошибка получения скидки", e)
-            PhoneDiscountResponse().apply { resultCode = HTTP_SERVER_ERROR }
+            PhoneDiscountResponse().withNetworkFailure(e)
         }
     }
 
@@ -165,7 +176,7 @@ class ServerApi(
             AppStoresResponse(data = appStoresList).apply { resultCode = HTTP_SUCCESS }
         } catch (e: Throwable) {
             Napier.e("ServerApi: getAppStores(): ошибка получения сторов", e)
-            AppStoresResponse(data = emptyList()).apply { resultCode = HTTP_SERVER_ERROR }
+            AppStoresResponse(data = emptyList()).withNetworkFailure(e)
         }
     }
 }
