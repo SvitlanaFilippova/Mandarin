@@ -479,8 +479,6 @@
         поделиться впечатлениями (и&#160;сказать, какая я&#160;классная), буду рада обратной связи!
     </string>
     <string name="message_developer">Связаться с разработчиком:</string>
-    <string name="dev_feedback_label">Через форму</string>
-    <string name="dev_feedback_form_title">Сообщение разработчику</string>
     <string name="telegram_dev_url">https://t.me/SvitlanaFilippova</string>
     <string name="ask_feedback">P.S: отзывы в сторах тоже приветствуются 😊</string>
 

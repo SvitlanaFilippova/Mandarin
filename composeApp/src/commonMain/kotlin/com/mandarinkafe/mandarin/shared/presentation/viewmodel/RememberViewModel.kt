@@ -13,7 +13,6 @@ import com.mandarinkafe.mandarin.features.favorites.presentation.viewmodel.Favor
 import com.mandarinkafe.mandarin.features.mealdetails.presentation.viewmodel.MealDetailsViewModel
 import com.mandarinkafe.mandarin.features.menu.presentation.viewmodel.MenuViewModel
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.AboutViewModel
-import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.DevFeedbackViewModel
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackViewModel
 import com.mandarinkafe.mandarin.features.order.presentation.viewmodel.OrderViewModel
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel.OrderInfoViewModel
@@ -54,12 +53,6 @@ fun rememberAddressViewModel(): AddressViewModel {
 fun rememberDeliveryViewModel(): DeliveryViewModel {
     val koin = getKoin()
     return remember { koin.get<DeliveryViewModel>() }
-}
-
-@Composable
-fun rememberDevFeedbackViewModel(): DevFeedbackViewModel {
-    val koin = getKoin()
-    return remember { koin.get<DevFeedbackViewModel>() }
 }
 
 @Composable
@@ -145,7 +138,6 @@ fun rememberAppLifecycleManager(): AppLifecycleManager {
     val koin = getKoin()
     return remember { koin.get<AppLifecycleManager>() }
 }
-
 
 
 

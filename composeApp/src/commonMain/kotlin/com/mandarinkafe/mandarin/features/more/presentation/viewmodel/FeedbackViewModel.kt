@@ -7,7 +7,6 @@ import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackCo
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackContract.FeedbackEvent
 import com.mandarinkafe.mandarin.features.more.presentation.viewmodel.FeedbackContract.FeedbackState
 import com.mandarinkafe.mandarin.util.Result
-import com.mandarinkafe.mandarin.util.formatPhoneNumberForDomain
 import com.mandarinkafe.mandarin.util.presentation.BaseViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -20,11 +19,8 @@ class FeedbackViewModel(
 
     override fun onEvent(event: FeedbackEvent) {
         when (event) {
-            is FeedbackEvent.SetEmail -> setState { copy(email = event.query) }
             is FeedbackEvent.SetMessage -> setState { copy(message = event.query) }
-            is FeedbackEvent.SetName -> setState { copy(name = event.query) }
             is FeedbackEvent.SetNeedFeedback -> setState { copy(needAnswer = event.flag) }
-            is FeedbackEvent.SetPhone -> setPhone(event.query)
             is FeedbackEvent.SubmitForm -> submitForm()
         }
     }
@@ -33,9 +29,6 @@ class FeedbackViewModel(
         val feedback =
             with(state.value) {
                 Feedback(
-                    name = name,
-                    phone = phone,
-                    email = email,
                     message = message,
                     needAnswer = needAnswer
                 )
@@ -65,10 +58,6 @@ class FeedbackViewModel(
         }
     }
 
-    private fun setPhone(rawPhone: String) {
-        setState { copy(phone = rawPhone.formatPhoneNumberForDomain()) }
-    }
-
     override fun setLoading(isLoading: Boolean) {
         setState { copy(isLoading = isLoading) }
     }
@@ -77,4 +66,3 @@ class FeedbackViewModel(
         const val DELAY_FOR_FORM_RESET_AFTER_SUBMIT = 5000L
     }
 }
-

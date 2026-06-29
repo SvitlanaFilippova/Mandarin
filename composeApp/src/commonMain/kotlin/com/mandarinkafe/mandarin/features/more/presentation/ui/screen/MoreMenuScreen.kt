@@ -97,13 +97,15 @@ fun MoreMenuScreen(
             }
         )
 
-        MenuItem(
-            title = stringResource(MR.strings.more_message_manager),
-            iconRes = MR.images.ic_email,
-            onClick = {
-                showDialog = true
-            }
-        )
+        if (isAuthorized) {
+            MenuItem(
+                title = stringResource(MR.strings.more_message_manager),
+                iconRes = MR.images.ic_email,
+                onClick = {
+                    showDialog = true
+                }
+            )
+        }
 
         MenuItem(
             title = stringResource(MR.strings.more_section_legal_info),
@@ -123,7 +125,7 @@ fun MoreMenuScreen(
     }
 
 
-    if (showDialog) {
+    if (showDialog && isAuthorized) {
         FeedbackDialog(
             onDismissRequest = { showDialog = false },
         )

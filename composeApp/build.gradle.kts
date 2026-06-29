@@ -225,9 +225,6 @@ val props = Properties().apply {
 
 val keys = listOf(
     "MAPKIT_API_KEY",
-    "TG_BOT_TOKEN",
-    "TG_CHANNEL_ID",
-    "DEV_TG_CHAT_ID",
     "SERVER_BASE_URL",
     "MANDARIN_API_KEY",
     "YOOKASSA_CLIENT_APPLICATION_KEY",

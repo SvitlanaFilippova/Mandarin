@@ -33,15 +33,8 @@ fun FeedbackDialog(
                         successTitle to true
                 }
             },
-            name = name,
-            phone = phone,
-            email = email,
             message = message,
             needAnswer = needAnswer,
-            isContactValid = isContactValid,
-            onNameChange = { viewModel.onEvent(FeedbackEvent.SetName(it)) },
-            onPhoneChange = { viewModel.onEvent(FeedbackEvent.SetPhone(it)) },
-            onEmailChange = { viewModel.onEvent(FeedbackEvent.SetEmail(it)) },
             onMessageChange = { viewModel.onEvent(FeedbackEvent.SetMessage(it)) },
             onSetNeedFeedback = { viewModel.onEvent(FeedbackEvent.SetNeedFeedback(it)) },
             isFormValid = isFormValid,

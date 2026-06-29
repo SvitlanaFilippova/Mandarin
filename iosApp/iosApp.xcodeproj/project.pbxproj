@@ -53,6 +53,8 @@
 		};
 		F0F83B406E57FF95B2F7762A /* Configuration */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = Configuration;
 			sourceTree = "<group>";
 		};
@@ -178,8 +180,6 @@
 			);
 			mainGroup = 30097092C2963D1CF4A53797;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 55AFEE646A66DFC37EF71D37 /* Products */;
 			projectDirPath = "";
@@ -219,7 +219,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "${SRCROOT}/update_version.sh\n";
+			shellScript = "\"${SRCROOT}/update_version.sh\"\n";
 		};
 		035EA40C2EA2325300C1DEA6 /* copyFrameworkResourcesToApp */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -269,13 +269,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
