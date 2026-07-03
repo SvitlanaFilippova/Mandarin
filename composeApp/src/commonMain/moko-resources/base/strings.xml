@@ -403,6 +403,10 @@
     <string name="delivery_status_extra_cancelled">Заказ отменён. Если это ошибка&#160;&#8212;
         пожалуйста, позвоните.
     </string>
+    <string name="order_creation_status_error">Ошибка создания</string>
+    <string name="order_creation_status_error_extra">Заказ не&#160;был создан. Причина указана
+        ниже.
+    </string>
 
 
     <!-- Общие ошибки и сообщения -->

@@ -15,17 +15,22 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun OrderProblemSection(errorInfo: ErrorInfo?) {
-    errorInfo?.let {
-        Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
-            Column(
-                Modifier.padding(Dimens.MarginStandard16),
-                verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
-            ) {
-                LabelValue(
-                    stringResource(MR.strings.label_error),
-                    (it.userMessage ?: it.message).toString()
-                )
-            }
+    val message = errorInfo?.displayMessage() ?: return
+
+    Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
+        Column(
+            Modifier.padding(Dimens.MarginStandard16),
+            verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
+        ) {
+            LabelValue(
+                stringResource(MR.strings.label_error),
+                message
+            )
         }
     }
+}
+
+private fun ErrorInfo.displayMessage(): String? {
+    return listOf(userMessage, message, errorReason, code)
+        .firstOrNull { !it.isNullOrBlank() }
 }

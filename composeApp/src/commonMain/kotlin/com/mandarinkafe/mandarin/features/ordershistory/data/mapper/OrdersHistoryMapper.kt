@@ -1,7 +1,11 @@
 package com.mandarinkafe.mandarin.features.ordershistory.data.mapper
 
+import com.mandarinkafe.mandarin.features.order.data.network.dto.ErrorInfoDto
+import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.order.domain.models.DeliveryType
+import com.mandarinkafe.mandarin.features.order.domain.models.ErrorInfo
 import com.mandarinkafe.mandarin.features.orderinfo.data.network.dto.OrderInfoResponseDto
+import com.mandarinkafe.mandarin.features.orderinfo.data.toDomain
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 import com.mandarinkafe.mandarin.features.ordershistory.data.network.OrderDetailsResponse
 import com.mandarinkafe.mandarin.features.ordershistory.data.network.dto.SavedOrderDto
@@ -23,17 +27,27 @@ object OrdersHistoryMapper {
             paymentMethodCode = paymentMethodCode,
             mealIds = mealIds,
             status = status?.apiName,
+            creationStatus = creationStatus?.apiName,
+            errorInfo = errorInfo?.toDto(),
         )
     }
 
     fun SavedOrderDto.toDomain(): SavedOrder {
         val domainStatus = status?.toDeliveryStatus()
+        val domainCreationStatus = creationStatus?.let { CreationStatus.fromApiName(it) }
         if (status != null && domainStatus == null) {
             Napier.w(
                 "ORDERS_HISTORY_STATUS [Mapper] orderId=$id: статус '$status' НЕ распознан! Доступные статусы: ${
                     DeliveryStatus.entries.joinToString(
                         ", "
                     ) { it.apiName }
+                }"
+            )
+        }
+        if (creationStatus != null && domainCreationStatus == null) {
+            Napier.w(
+                "ORDERS_HISTORY_STATUS [Mapper] orderId=$id: статус создания '$creationStatus' НЕ распознан! Доступные статусы: ${
+                    CreationStatus.entries.joinToString(", ") { it.apiName }
                 }"
             )
         }
@@ -47,6 +61,8 @@ object OrdersHistoryMapper {
             addressDetails = addressDetails,
             mealNames = mealNames,
             status = domainStatus,
+            creationStatus = domainCreationStatus,
+            errorInfo = errorInfo?.toDomain(),
             paymentMethodCode = paymentMethodCode,
             mealIds = mealIds,
         )
@@ -65,6 +81,13 @@ object OrdersHistoryMapper {
         return DeliveryStatus.entries.find { it.apiName.equals(this, ignoreCase = true) }
     }
 
+    private fun ErrorInfo.toDto() = ErrorInfoDto(
+        code = code,
+        message = message,
+        userMessage = userMessage,
+        errorReason = errorReason,
+    )
+
     fun OrderDetailsResponse.toOrderInfoResponseDto(): OrderInfoResponseDto {
         return OrderInfoResponseDto(
             id = id,
@@ -76,4 +99,3 @@ object OrdersHistoryMapper {
         )
     }
 }
-

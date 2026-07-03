@@ -27,6 +27,12 @@ import dev.icerock.moko.resources.compose.stringResource
 fun AddressInfo(
     address: Address?,
 ) {
+    val safeAddress = address ?: return
+    val details = remember(safeAddress) { safeAddress.getDetailsString() }
+    if (safeAddress.streetAndBuilding.isBlank() && details.isBlank()) {
+        return
+    }
+
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Row(
             modifier = Modifier
@@ -44,18 +50,17 @@ fun AddressInfo(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
             ) {
-                address?.let {
-                    Label(stringResource(MR.strings.label_address))
-                    Value(it.streetAndBuilding, isSoloInLine = true)
-                    val details = remember { it.getDetailsString() }
-                    if (details.isNotEmpty()) {
-                        Text(
-                            text = details,
-                            overflow = TextOverflow.Ellipsis,
-                            style = Typography.SmallLightTextStyle,
-                            maxLines = 3
-                        )
-                    }
+                Label(stringResource(MR.strings.label_address))
+                if (safeAddress.streetAndBuilding.isNotBlank()) {
+                    Value(safeAddress.streetAndBuilding, isSoloInLine = true)
+                }
+                if (details.isNotEmpty()) {
+                    Text(
+                        text = details,
+                        overflow = TextOverflow.Ellipsis,
+                        style = Typography.SmallLightTextStyle,
+                        maxLines = 3
+                    )
                 }
             }
         }
