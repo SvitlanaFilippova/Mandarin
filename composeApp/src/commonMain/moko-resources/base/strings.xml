@@ -404,9 +404,7 @@
         пожалуйста, позвоните.
     </string>
     <string name="order_creation_status_error">Ошибка создания</string>
-    <string name="order_creation_status_error_extra">Заказ не&#160;был создан. Причина указана
-        ниже.
-    </string>
+    <string name="order_creation_status_error_extra">Заказ не&#160;был создан. Причина указана ниже.</string>
 
 
     <!-- Общие ошибки и сообщения -->
