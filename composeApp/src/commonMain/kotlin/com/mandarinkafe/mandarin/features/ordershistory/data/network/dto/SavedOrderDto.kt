@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.features.ordershistory.data.network.dto
 
+import com.mandarinkafe.mandarin.features.order.data.network.dto.ErrorInfoDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -17,5 +18,6 @@ data class SavedOrderDto(
     val paymentMethodCode: String? = null,
     val mealIds: List<String> = emptyList(),
     val status: String? = null,
+    val creationStatus: String? = null,
+    val errorInfo: ErrorInfoDto? = null,
 )
-

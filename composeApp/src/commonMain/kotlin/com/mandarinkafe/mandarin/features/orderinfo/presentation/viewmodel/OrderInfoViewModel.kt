@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.MR
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.features.infrastructure.domain.api.GetPaymentTypesUseCase
+import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.AddPaymentToOrderUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.CancelOrderUseCase
 import com.mandarinkafe.mandarin.features.orderinfo.domain.api.ChangePaymentMethodUseCase
@@ -196,8 +197,8 @@ class OrderInfoViewModel(
             return
         }
 
-        // Не запускаем оплату для отмененных или закрытых заказов
-        if (order.isClosed || order.status == DeliveryStatus.CANCELLED) {
+        // Не запускаем оплату для отмененных, закрытых или не созданных заказов
+        if (order.isClosed || order.status == DeliveryStatus.CANCELLED || order.isCreationError()) {
             return
         }
 
@@ -250,6 +251,10 @@ class OrderInfoViewModel(
         viewModelScope.launch {
             setOrderRepeatingInProgress(true)
             val incomingOrder = state.value.incomingOrder
+            if (incomingOrder?.isCreationError() == true) {
+                setOrderRepeatingInProgress(false)
+                return@launch
+            }
             incomingOrder?.let {
                 val result = repeatOrderInteractor.repeatOrder(it.items)
                 setOrderRepeatingInProgress(false)
@@ -264,7 +269,11 @@ class OrderInfoViewModel(
 
     private fun cancel() {
         viewModelScope.launch {
-            val id = state.value.incomingOrder?.id
+            val order = state.value.incomingOrder
+            if (order?.isCreationError() == true) {
+                return@launch
+            }
+            val id = order?.id
             id?.let {
                 setLoading()
                 val cancelResult = cancelOrderUseCase.invoke(it)
@@ -290,7 +299,7 @@ class OrderInfoViewModel(
                     return
                 }
                 setStatus(order)
-                if (order.isClosed) {
+                if (order.isClosed || order.isCreationError()) {
                     stopObservingOrderInfo()
                     stopPaymentTimer()
                 }
@@ -321,7 +330,10 @@ class OrderInfoViewModel(
                     // Параллельно проверяем статус оплаты, если заказ с онлайн-оплатой
                     result.data?.let { order ->
                         // Проверяем статус оплаты даже для отменённых заказов
-                        if (order.isOnlinePayment(state.value.paymentMethodCodeFromNav)) {
+                        if (
+                            !order.isCreationError() &&
+                            order.isOnlinePayment(state.value.paymentMethodCodeFromNav)
+                        ) {
                             checkPaymentStatus(orderId)
                         }
                     }
@@ -355,6 +367,12 @@ class OrderInfoViewModel(
         // Если заказ с онлайн-оплатой, проверяем статус платежа
         // Проверяем даже для отменённых заказов, чтобы знать, была ли оплата успешной
         status?.let { order ->
+            if (order.isCreationError()) {
+                stopPaymentTimer()
+                setState { copy(isAutoCanceling = false) }
+                return@let
+            }
+
             if (order.isOnlinePayment(state.value.paymentMethodCodeFromNav)) {
                 // Останавливаем таймер, если заказ закрыт или оплачен
                 if (order.isClosed ||
@@ -510,7 +528,9 @@ class OrderInfoViewModel(
                 // Если выбран способ оплаты ONLINE, запускаем процесс оплаты
                 // Но не запускаем для отмененных или закрытых заказов
                 if (newPaymentMethodCode.equals(PAYMENT_ONLINE_CODE, ignoreCase = true) &&
-                    !order.isClosed && order.status != DeliveryStatus.CANCELLED
+                    !order.isClosed &&
+                    order.status != DeliveryStatus.CANCELLED &&
+                    !order.isCreationError()
                 ) {
                     // Запускаем оплату (startPayment сам проверит наличие телефона и покажет ошибку при необходимости)
                     startPayment()
@@ -563,6 +583,7 @@ class OrderInfoViewModel(
                 currentState.paymentStatus == PaymentStatus.SUCCEEDED ||
                         currentState.isPaymentPaid == true ||
                         currentState.incomingOrder?.isClosed == true ||
+                        currentState.incomingOrder?.isCreationError() == true ||
                         currentState.incomingOrder?.isPaidByProcessedSum() == true ||
                         !currentState.incomingOrder.isOnlinePayment(currentState.paymentMethodCodeFromNav)
             },
@@ -744,3 +765,4 @@ class OrderInfoViewModel(
     }
 }
 
+private fun IncomingOrder.isCreationError(): Boolean = creationStatus == CreationStatus.ERROR

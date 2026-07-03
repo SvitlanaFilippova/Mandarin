@@ -19,6 +19,7 @@ import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
 import com.mandarinkafe.mandarin.core.presentation.theme.Colors
 import com.mandarinkafe.mandarin.core.presentation.theme.Dimens
 import com.mandarinkafe.mandarin.core.presentation.theme.Typography
+import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.AddressInfo
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.CustomerInfo
 import com.mandarinkafe.mandarin.features.orderinfo.presentation.ui.components.OrderActionsButtons
@@ -52,6 +53,7 @@ fun OrderInfoContentScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     val shouldShowRefundText = state.paymentStatus == PaymentStatus.REFUNDED
+    val isCreationError = order.creationStatus == CreationStatus.ERROR
 
     LazyColumn(
         modifier = Modifier
@@ -71,11 +73,14 @@ fun OrderInfoContentScreen(
 
         item { OrderProblemSection(order.errorInfo) }
 
-        item { OrderTypeSection(order.orderType) }
+        if (order.orderType != null) {
+            item { OrderTypeSection(order.orderType) }
+        }
 
         item {
             PaymentInfoSectionItem(
                 order = order,
+                isCreationError = isCreationError,
                 state = state,
                 onEvent = onEvent
             )
@@ -93,25 +98,33 @@ fun OrderInfoContentScreen(
             }
         }
 
-        if (order.isDelivery) {
+        if (order.isDelivery && order.deliveryAddress != null) {
             item { AddressInfo(address = order.deliveryAddress) }
         }
 
-        item {
-            CustomerInfo(
-                phone = order.phone,
-                comment = order.comment,
-                customerName = order.customerName,
-            )
+        if (
+            !order.phone.isNullOrBlank() ||
+            !order.comment.isNullOrBlank() ||
+            !order.customerName.isNullOrBlank()
+        ) {
+            item {
+                CustomerInfo(
+                    phone = order.phone,
+                    comment = order.comment,
+                    customerName = order.customerName,
+                )
+            }
         }
 
-        item { OrderTimesSection(order) }
+        if (order.hasTimelineData()) {
+            item { OrderTimesSection(order) }
+        }
 
         item {
             OrderActionsButtons(
-                isClosed = order.isClosed,
-                hasItems = order.items.isNotEmpty(),
-                canBeCanceled = order.canBeCanceled,
+                isClosed = order.isClosed || isCreationError,
+                hasItems = order.items.isNotEmpty() && !isCreationError,
+                canBeCanceled = order.canBeCanceled && !isCreationError,
                 fromOrderCreation = fromOrderCreation,
                 onCancelClick = { showCancelDialog = true },
                 orderRepeatingInProgress = orderRepeatingInProgress,
@@ -148,13 +161,14 @@ fun OrderInfoContentScreen(
 @Composable
 private fun PaymentInfoSectionItem(
     order: IncomingOrder,
+    isCreationError: Boolean,
     state: OrderInfoState,
     onEvent: (OrderInfoEvent) -> Unit,
 ) {
     val paymentMethodCode = state.displayPaymentMethodCode ?: return
 
     val isOnlinePayment = state.isOnlinePayment
-    val isOnlinePaymentActive = isOnlinePayment && !order.isClosed
+    val isOnlinePaymentActive = isOnlinePayment && !order.isClosed && !isCreationError
 
     val canShowPaymentButtonPassed =
         if (isOnlinePaymentActive) state.canShowPaymentButton else false
@@ -179,6 +193,16 @@ private fun PaymentInfoSectionItem(
         },
         paymentDeadline = if (isOnlinePaymentActive) order.paymentDeadline else null
     )
+}
+
+private fun IncomingOrder.hasTimelineData(): Boolean {
+    return whenCreated != null ||
+            whenConfirmed != null ||
+            whenCancelled != null ||
+            whenCookingCompleted != null ||
+            whenSent != null ||
+            whenDelivered != null ||
+            whenClosed != null
 }
 
 @Composable

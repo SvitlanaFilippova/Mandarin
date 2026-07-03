@@ -20,6 +20,17 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun OrderTimesSection(order: IncomingOrder) {
+    val hasTimelineData = with(order) {
+        whenCreated != null ||
+                whenConfirmed != null ||
+                whenCancelled != null ||
+                whenCookingCompleted != null ||
+                whenSent != null ||
+                whenDelivered != null ||
+                whenClosed != null
+    }
+    if (!hasTimelineData) return
+
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Row(
             modifier = Modifier

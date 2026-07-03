@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.features.orderinfo.presentation.viewmodel
 
 import com.mandarinkafe.mandarin.core.domain.models.IncomingOrder
+import com.mandarinkafe.mandarin.features.order.domain.models.CreationStatus
 import com.mandarinkafe.mandarin.features.orderinfo.domain.getPaymentMethodCode
 import com.mandarinkafe.mandarin.features.orderinfo.domain.isOnlinePayment
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
@@ -55,8 +56,12 @@ sealed interface OrderInfoContract {
     ) : BaseContract.BaseState {
 
         val deliveryStatus: UiDeliveryStatus
-            get() = incomingOrder?.status?.toUi(incomingOrder.isDelivery)
-                ?: UiDeliveryStatus.UNCONFIRMED
+            get() = if (incomingOrder?.creationStatus == CreationStatus.ERROR) {
+                UiDeliveryStatus.CREATION_ERROR
+            } else {
+                incomingOrder?.status?.toUi(incomingOrder.isDelivery)
+                    ?: UiDeliveryStatus.UNCONFIRMED
+            }
 
         val isOnlinePayment: Boolean
             get() = incomingOrder.isOnlinePayment(paymentMethodCodeFromNav)
@@ -100,6 +105,10 @@ sealed interface OrderInfoContract {
 
         val paymentCanBeChanged: Boolean
             get() {
+                if (incomingOrder?.creationStatus == CreationStatus.ERROR) {
+                    return false
+                }
+
                 val canChangeByStatus = incomingOrder?.status == DeliveryStatus.UNCONFIRMED
                         || incomingOrder?.status == DeliveryStatus.WAIT_COOKING
                         || incomingOrder?.status == DeliveryStatus.READY_FOR_COOKING
@@ -118,4 +127,3 @@ sealed interface OrderInfoContract {
             }
     }
 }
-

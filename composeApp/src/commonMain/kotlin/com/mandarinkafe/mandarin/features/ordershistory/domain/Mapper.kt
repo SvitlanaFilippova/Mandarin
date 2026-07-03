@@ -30,6 +30,9 @@ object Mapper {
             addressLine1 = deliveryAddress?.streetAndBuilding ?: "",
             addressDetails = deliveryAddress?.getDetailsString() ?: "",
             mealNames = names,
+            status = status,
+            creationStatus = creationStatus,
+            errorInfo = errorInfo,
             paymentMethodCode = paymentMethodCode,
             mealIds = mealIds
         )
