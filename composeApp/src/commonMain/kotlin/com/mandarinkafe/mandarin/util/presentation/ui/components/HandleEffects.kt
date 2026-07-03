@@ -124,6 +124,8 @@ private fun processSharedEffect(
         }
 
         is SharedEffect.FinishSplash -> {
+            // При холодном старте NavHost может ещё не успеть установить graph.
+            if (navController.currentDestination == null) return
             navController.navigate(
                 route = NavConstants.MENU_SCREEN_ROUTE
             ) {
