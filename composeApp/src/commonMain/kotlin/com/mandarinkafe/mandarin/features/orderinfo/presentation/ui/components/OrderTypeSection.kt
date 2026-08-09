@@ -16,15 +16,14 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun OrderTypeSection(orderType: OrderType?) {
+    if (orderType == null) return
+
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Column(
             Modifier.padding(Dimens.MarginStandard16),
             verticalArrangement = Arrangement.spacedBy(Dimens.MarginSuperSmall4)
         ) {
-            orderType?.let {
-                LabelValue(stringResource(MR.strings.label_order_type), it.name)
-
-            }
+            LabelValue(stringResource(MR.strings.label_order_type), orderType.name)
         }
     }
 }

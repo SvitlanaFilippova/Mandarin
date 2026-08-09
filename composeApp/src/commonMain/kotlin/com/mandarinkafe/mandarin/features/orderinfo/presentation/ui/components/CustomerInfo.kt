@@ -25,6 +25,11 @@ fun CustomerInfo(
     comment: String?,
     customerName: String?,
 ) {
+    val visibleComment = comment?.toVisibleComment().orEmpty()
+    if (phone.isNullOrBlank() && customerName.isNullOrBlank() && visibleComment.isBlank()) {
+        return
+    }
+
     Card(colors = CardDefaults.cardColors(containerColor = Colors.DarkGrey)) {
         Row(
             modifier = Modifier
@@ -48,12 +53,9 @@ fun CustomerInfo(
                 customerName?.let {
                     LabelValue(stringResource(MR.strings.label_customer), it)
                 }
-                comment?.let {
-                    val visibleComment = it.toVisibleComment()
-                    if (visibleComment.isNotEmpty()) {
-                        Label(stringResource(MR.strings.label_comment))
-                        Value(text = visibleComment, isSoloInLine = true)
-                    }
+                if (visibleComment.isNotEmpty()) {
+                    Label(stringResource(MR.strings.label_comment))
+                    Value(text = visibleComment, isSoloInLine = true)
                 }
             }
         }

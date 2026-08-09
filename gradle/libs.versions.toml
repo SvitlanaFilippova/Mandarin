@@ -2,8 +2,8 @@
 compileSdk = "36"
 minSdk = "26"
 targetSdk = "36"
-versionCode = "22"
-versionName = "1.2.1"
+versionCode = "23"
+versionName = "1.2.2"
 java = "VERSION_17"
 
 activity = "1.11.0"
@@ -39,7 +39,7 @@ pullrefresh = "1.4.0-beta03"
 runnerVersion = "1.7.0"
 sqldelight = "2.1.0"
 urlencoderLib = "1.6.0"
-yookassaAndroidSdkVersion = "8.2.0"
+yookassaAndroidSdkVersion = "8.4.0"
 work = "2.11.0"
 
 [libraries]
@@ -139,4 +139,3 @@ android-lint = { id = "com.android.lint", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
-

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- YooKassa 3DS may open bank pages chained to Russian Trusted Root CA. -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!-- Preserve normal HTTPS trust for the rest of the application. -->
+            <certificates src="system" />
+            <certificates src="@raw/russian_trusted_root_ca" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

@@ -61,6 +61,11 @@ enum class UiDeliveryStatus(
         null,
         MR.images.ic_no_food
     ),
+    CREATION_ERROR(
+        MR.strings.order_creation_status_error,
+        MR.strings.order_creation_status_error_extra,
+        MR.images.ic_error
+    ),
     COOKING_COMPLETED_SELFPICKUP(
         MR.strings.delivery_status_cooking_completed,
         MR.strings.delivery_status_extra_cooking_completed_selfpickup,
@@ -103,4 +108,3 @@ fun DeliveryStatus.toUi(isDelivery: Boolean? = null): UiDeliveryStatus {
 
     return baseUi()
 }
-

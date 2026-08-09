@@ -22,14 +22,22 @@ import com.mandarinkafe.mandarin.core.presentation.theme.Typography
 import com.mandarinkafe.mandarin.features.orderinfo.domain.models.DeliveryStatus
 
 @Composable
-fun DateAndStatusSection(orderStatus: DeliveryStatus?, whenCreated: String) {
-    val color = remember(orderStatus) {
-        when (orderStatus) {
-            null -> Colors.White
-            DeliveryStatus.UNCONFIRMED -> Colors.Orange
-            DeliveryStatus.CLOSED -> Colors.White
-            DeliveryStatus.CANCELLED -> Colors.Red
-            else -> Colors.Green
+fun DateAndStatusSection(
+    orderStatus: DeliveryStatus?,
+    whenCreated: String,
+    isCreationError: Boolean = false,
+) {
+    val color = remember(orderStatus, isCreationError) {
+        if (isCreationError) {
+            Colors.Red
+        } else {
+            when (orderStatus) {
+                null -> Colors.White
+                DeliveryStatus.UNCONFIRMED -> Colors.Orange
+                DeliveryStatus.CLOSED -> Colors.White
+                DeliveryStatus.CANCELLED -> Colors.Red
+                else -> Colors.Green
+            }
         }
     }
 
@@ -45,12 +53,13 @@ fun DateAndStatusSection(orderStatus: DeliveryStatus?, whenCreated: String) {
         Spacer(modifier = Modifier.weight(1f))
 
         AnimatedVisibility(
-            visible = orderStatus != null,
+            visible = isCreationError || orderStatus != null,
             enter = fadeIn() + scaleIn(initialScale = 0.8f),
             exit = fadeOut() + scaleOut(targetScale = 0.8f)
         ) {
             HistoryOrderStatusSection(
                 orderStatus = orderStatus,
+                isCreationError = isCreationError,
                 color = color
             )
         }
